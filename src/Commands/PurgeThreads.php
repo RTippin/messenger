@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Commands;
 
+use RTippin\Messenger\Jobs\PurgeThreads as PurgeThreadsJob;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
 use RTippin\Messenger\Models\Thread;

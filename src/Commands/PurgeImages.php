@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
+use RTippin\Messenger\Jobs\PurgeImageMessages;
 use RTippin\Messenger\Models\Message;
 
 class PurgeImages extends Command
