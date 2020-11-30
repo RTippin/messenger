@@ -13,6 +13,7 @@
     "keywords": ["Laravel", "Messenger"],
     "require": {
         "php": "^7.4",
+        "ext-json": "*",
         "laravel/framework": "^8.0",
         "staudenmeir/eloquent-eager-limit": "^1.6",
         "edujugon/push-notification": "^4.4",

@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Http\Collections;
 use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use Exception;
 use Illuminate\Http\Request;
+use RTippin\Messenger\Http\Resources\PendingFriendResource;
 use Throwable;
 
 class PendingFriendCollection extends MessengerCollection
