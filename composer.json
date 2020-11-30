@@ -14,7 +14,11 @@
     "require": {
         "php": "^7.4",
         "laravel/framework": "^8.0",
-        "staudenmeir/eloquent-eager-limit": "^1.6"
+        "staudenmeir/eloquent-eager-limit": "^1.6",
+        "edujugon/push-notification": "^4.4",
+        "joypixels/emoji-toolkit": "^6.0",
+        "intervention/image": "^2.5",
+        "intervention/imagecache": "^2.5"
     },
     "require-dev": {
         "phpunit/phpunit": "~9.0",

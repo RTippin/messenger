@@ -2,7 +2,7 @@
 
 namespace RTippin\Messenger\Models;
 
-use RTippin\Messenger\Models\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
@@ -10,9 +10,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
-use Illuminate\Support\Facades\Cache;
 
 /**
  * App\Models\Messages\Call
@@ -47,7 +45,7 @@ use Illuminate\Support\Facades\Cache;
  * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call whereThreadId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call whereType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call whereUpdatedAt($value)
- * @mixin Model
+ * @mixin Model|\Eloquent
  * @property-read Model|MessengerProvider $owner
  * @method static Builder|Call videoCall()
  * @method static Builder|Call active()

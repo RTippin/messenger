@@ -2,7 +2,7 @@
 
 namespace RTippin\Messenger\Models;
 
-use RTippin\Messenger\Models\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -45,7 +45,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|Invite whereCode($value)
  * @method static Builder|Message valid()
  * @method static Builder|Message invalid()
- * @mixin Model
+ * @mixin Model|\Eloquent
  */
 class Invite extends Model
 {

@@ -61,7 +61,7 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @method static Builder|Thread whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|Thread withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Thread withoutTrashed()
- * @mixin Model
+ * @mixin Model|\Eloquent
  * @property bool $invitations
  * @method static Builder|Thread whereInvitations($value)
  */

@@ -2,7 +2,7 @@
 
 namespace RTippin\Messenger\Models;
 
-use RTippin\Messenger\Models\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -57,7 +57,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @method static \Illuminate\Database\Eloquent\Builder|Participant whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|Participant withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Participant withoutTrashed()
- * @mixin Model
+ * @mixin Model|\Eloquent
  * @method static Builder|Participant admins()
  * @method static Builder|Participant validProviders()
  * @method static Builder|Participant notMuted()

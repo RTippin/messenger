@@ -2,7 +2,7 @@
 
 namespace RTippin\Messenger\Models;
 
-use RTippin\Messenger\Models\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -30,7 +30,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\CallParticipant whereOwnerId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\CallParticipant whereOwnerType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\CallParticipant whereUpdatedAt($value)
- * @mixin Model
+ * @mixin Model|\Eloquent
  * @property-read Model|MessengerProvider $owner
  * @property int $kicked
  * @method static \Illuminate\Database\Eloquent\Builder|CallParticipant whereKicked($value)

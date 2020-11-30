@@ -16,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\GhostUser newModelQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\GhostUser newQuery()
  * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\GhostUser query()
- * @mixin Eloquent
+ * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|GhostUser[] $devices
  * @property-read int|null $devices_count
  */

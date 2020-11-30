@@ -1,0 +1,108 @@
+<?php
+
+namespace RTippin\Messenger\Repositories;
+
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\Thread;
+
+class PrivateThreadRepository
+{
+    /**
+     * @var Messenger
+     */
+    protected Messenger $messenger;
+
+    /**
+     * @var ThreadRepository
+     */
+    private ThreadRepository $threadRepository;
+
+    /**
+     * PrivateThreadRepository constructor.
+     *
+     * @param Messenger $messenger
+     * @param ThreadRepository $threadRepository
+     */
+    public function __construct(Messenger $messenger,
+                                ThreadRepository $threadRepository)
+    {
+        $this->messenger = $messenger;
+        $this->threadRepository = $threadRepository;
+    }
+
+    /**
+     * @return Thread|Builder
+     */
+    public function getProviderPrivateThreadsBuilder(): Builder
+    {
+        return $this->threadRepository
+            ->getProviderThreadsBuilder()
+            ->private();
+    }
+
+    /**
+     * @param MessengerProvider|null $recipient
+     * @return Thread|null
+     */
+    public function getProviderPrivateThreadWithRecipient(MessengerProvider $recipient = null)
+    {
+        if($this->messenger->isValidMessengerProvider($recipient))
+        {
+            return $this->getProviderPrivateThreadsBuilder()
+                ->whereHas('participants',
+                fn(Builder $query) => $query->where('owner_id', '=', $recipient->getKey())
+                    ->where('owner_type', '=', get_class($recipient))
+            )->first();
+        }
+
+        return null;
+    }
+
+    /**
+     * @return Collection|mixed
+     */
+    public function getProviderPrivateThreadsIndex()
+    {
+        return $this->getProviderPrivateThreadsBuilder()
+            ->latest('updated_at')
+            ->with([
+                'participants.owner',
+                'recentMessage.owner',
+                'activeCall.participants.owner'
+            ])
+            ->limit($this->messenger->getThreadsIndexCount())
+            ->get();
+    }
+
+    /**
+     * @param Thread $thread
+     * @return Collection
+     */
+    public function getProviderPrivateThreadsPage(Thread $thread)
+    {
+        return $this->getProviderPrivateThreadsBuilder()
+            ->latest('updated_at')
+            ->with([
+                'participants.owner',
+                'recentMessage.owner',
+                'activeCall.participants.owner'
+            ])
+            ->where('threads.updated_at', '<=', $thread->updated_at)
+            ->where('threads.id', '!=', $thread->id)
+            ->limit($this->messenger->getThreadsPageCount())
+            ->get();
+    }
+
+    /**
+     * @return Thread|null
+     */
+    public function getProviderOldestPrivateThread()
+    {
+        return $this->getProviderPrivateThreadsBuilder()
+            ->oldest('updated_at')
+            ->first();
+    }
+}

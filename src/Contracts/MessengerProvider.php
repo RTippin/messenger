@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 /**
  * App\Contracts\MessengerProvider
  *
- * @mixin Model
+ * @mixin Model|Friendable|Searchable|\Eloquent
  */
 interface MessengerProvider
 {

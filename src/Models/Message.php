@@ -2,7 +2,7 @@
 
 namespace RTippin\Messenger\Models;
 
-use RTippin\Messenger\Models\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\MessageFactory;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Traits\Uuids;
@@ -44,7 +44,7 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @method static \Illuminate\Database\Eloquent\Builder|Message whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|Message withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Message withoutTrashed()
- * @mixin Model
+ * @mixin Model|\Eloquent
  * @method static Builder|Message text()
  * @method static Builder|Message document()
  * @method static Builder|Message image()

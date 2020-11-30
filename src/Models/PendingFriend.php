@@ -27,7 +27,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\PendingFriend whereSenderId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\PendingFriend whereSenderType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\PendingFriend whereUpdatedAt($value)
- * @mixin Model
+ * @mixin Model|\Eloquent
  * @property-read MessengerProvider $recipient
  * @property-read MessengerProvider $sender
  */

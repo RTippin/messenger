@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Models;
 
-use RTippin\Messenger\Models\Contracts\MessengerProvider;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use RTippin\Messenger\Contracts\MessengerProvider;
 
 
 /**
@@ -38,7 +38,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
  * @method static \Illuminate\Database\Eloquent\Builder|Messenger whereOwnerType($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Messenger whereTimezone($value)
  * @method static \Illuminate\Database\Eloquent\Builder|Messenger whereUpdatedAt($value)
- * @mixin Model
+ * @mixin Model|\Eloquent
  */
 class Messenger extends Model
 {
