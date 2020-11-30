@@ -9,7 +9,7 @@ use RTippin\Messenger\MessengerProviderVerification;
 use Throwable;
 use LogicException;
 
-class MessengerProvidersCache extends Command
+class ProvidersCache extends Command
 {
     use MessengerProviderVerification;
 

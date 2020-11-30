@@ -4,6 +4,14 @@ namespace RTippin\Messenger;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use RTippin\Messenger\Commands\CallsActivityCheck;
+use RTippin\Messenger\Commands\InvitesCheck;
+use RTippin\Messenger\Commands\ProvidersCache;
+use RTippin\Messenger\Commands\ProvidersClear;
+use RTippin\Messenger\Commands\PurgeDocuments;
+use RTippin\Messenger\Commands\PurgeImages;
+use RTippin\Messenger\Commands\PurgeMessages;
+use RTippin\Messenger\Commands\PurgeThreads;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\PushNotificationDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
@@ -54,7 +62,7 @@ class MessengerServiceProvider extends ServiceProvider
     {
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'rtippin');
          $this->loadViewsFrom(__DIR__.'/../resources/views', 'messenger');
-        // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         // $this->loadRoutesFrom(__DIR__.'/routes.php');
 
         $this->registerPolicies();
@@ -174,7 +182,16 @@ class MessengerServiceProvider extends ServiceProvider
         ], 'messenger.views');*/
 
         // Registering package commands.
-        // $this->commands([]);
+         $this->commands([
+             CallsActivityCheck::class,
+             InvitesCheck::class,
+             ProvidersCache::class,
+             ProvidersClear::class,
+             PurgeDocuments::class,
+             PurgeImages::class,
+             PurgeMessages::class,
+             PurgeThreads::class
+         ]);
     }
     /**
      * Register the application's policies.

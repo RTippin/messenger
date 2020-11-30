@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Filesystem\Filesystem;
 
-class MessengerProvidersClear extends Command
+class ProvidersClear extends Command
 {
     /**
      * The name and signature of the console command.
