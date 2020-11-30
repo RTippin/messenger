@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Broadcasting;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 

@@ -7,7 +7,6 @@ use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use Closure;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -54,15 +53,6 @@ interface Action
      * @throws LogicException
      */
     public function chain(string $abstractAction): Action;
-
-    /**
-     * Allow the use of chaining an anonymous method,
-     * injecting the current action class
-     *
-     * @param Closure|null $closure
-     * @return $this
-     */
-    public function chainClosure(Closure $closure = null);
 
     /**
      * Let action know it is being chained
