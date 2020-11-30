@@ -106,6 +106,8 @@ class MessengerServiceProvider extends ServiceProvider
             VideoDriver::class,
             $this->getVideoImplementation()
         );
+
+        $this->app->register(MessengerEventServiceProvider::class);
     }
 
     /**
