@@ -13,7 +13,7 @@ class ViewPortalController
      */
     public function index()
     {
-        return view('messenger')->with('mode', 5);
+        return view('messenger::messenger')->with('mode', 5);
     }
 
     /**
@@ -22,7 +22,7 @@ class ViewPortalController
      */
     public function showThread(string $thread)
     {
-        return view('portal')->with([
+        return view('messenger::portal')->with([
             'mode' => 0,
             'thread_id' => $thread
         ]);
@@ -35,7 +35,7 @@ class ViewPortalController
      */
     public function showCreatePrivate(string $alias, string $id)
     {
-        return view('portal')->with([
+        return view('messenger::portal')->with([
             'mode' => 3,
             'alias' => $alias,
             'id' => $id
@@ -49,7 +49,7 @@ class ViewPortalController
      */
     public function showVideoCall(string $thread, string $call)
     {
-        return view('video')->with([
+        return view('messenger::video')->with([
             'threadId' => $thread,
             'callId' => $call
         ]);
@@ -61,7 +61,7 @@ class ViewPortalController
      */
     public function showJoinWithInvite(string $invite)
     {
-        return view('invitation')->with([
+        return view('messenger::invitation')->with([
             'code' => $invite,
             'special_flow' => true
         ]);
