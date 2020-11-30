@@ -17,7 +17,6 @@ class CreateMobileDevicesTable extends Migration
             $table->uuid('id')->primary();
             $table->uuidMorphs('owner');
             $table->string('device_id')->unique();
-            $table->string('oauth_access_token', 100)->nullable()->index();
             $table->string('device_token')->index()->nullable();
             $table->string('device_os');
             $table->string('device_name')->nullable();
