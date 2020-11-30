@@ -41,7 +41,7 @@ class GhostUser extends Eloquent
         'last' => 'Profile',
         'slug' => 'ghost',
         'picture' => null,
-        'email' => 'ghost@flipsetter.com'
+        'email' => 'ghost@example.org'
     ];
 
     /**

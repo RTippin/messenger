@@ -53,7 +53,7 @@ class MessengerServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'rtippin');
-        // $this->loadViewsFrom(__DIR__.'/../resources/views', 'rtippin');
+         $this->loadViewsFrom(__DIR__.'/../resources/views', 'messenger');
         // $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
         // $this->loadRoutesFrom(__DIR__.'/routes.php');
 
