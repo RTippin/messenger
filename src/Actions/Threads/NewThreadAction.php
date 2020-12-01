@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Actions\Threads;
 
-
 use RTippin\Messenger\Actions\Base\BaseMessengerAction;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Http\Resources\Broadcast\NewThreadBroadcastResource;

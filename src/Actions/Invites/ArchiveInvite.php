@@ -16,7 +16,7 @@ class ArchiveInvite extends BaseMessengerAction
     private Dispatcher $dispatcher;
 
     /**
-     * DemoteAdmin constructor.
+     * ArchiveInvite constructor.
      *
      * @param Dispatcher $dispatcher
      */

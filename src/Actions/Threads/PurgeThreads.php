@@ -15,7 +15,7 @@ class PurgeThreads extends BaseMessengerAction
     private FileService $fileService;
 
     /**
-     * PurgeImageMessages constructor.
+     * PurgeThreads constructor.
      *
      * @param FileService $fileService
      */

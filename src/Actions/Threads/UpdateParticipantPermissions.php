@@ -30,7 +30,7 @@ class UpdateParticipantPermissions extends ThreadParticipantAction
     private Dispatcher $dispatcher;
 
     /**
-     * DemoteAdmin constructor.
+     * UpdateParticipantPermissions constructor.
      *
      * @param Messenger $messenger
      * @param BroadcastDriver $broadcaster

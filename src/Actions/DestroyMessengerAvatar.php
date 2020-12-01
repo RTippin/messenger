@@ -19,7 +19,7 @@ class DestroyMessengerAvatar extends BaseMessengerAction
     private Messenger $messenger;
 
     /**
-     * StoreMessengerAvatar constructor.
+     * DestroyMessengerAvatar constructor.
      *
      * @param Messenger $messenger
      * @param FileService $fileService

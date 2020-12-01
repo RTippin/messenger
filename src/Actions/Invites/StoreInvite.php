@@ -25,7 +25,7 @@ class StoreInvite extends BaseMessengerAction
     private Dispatcher $dispatcher;
 
     /**
-     * DemoteAdmin constructor.
+     * StoreInvite constructor.
      *
      * @param Messenger $messenger
      * @param Dispatcher $dispatcher

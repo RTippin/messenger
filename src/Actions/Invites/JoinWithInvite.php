@@ -30,7 +30,7 @@ class JoinWithInvite extends BaseMessengerAction
     private DatabaseManager $database;
 
     /**
-     * DemoteAdmin constructor.
+     * JoinWithInvite constructor.
      *
      * @param Messenger $messenger
      * @param DatabaseManager $database
