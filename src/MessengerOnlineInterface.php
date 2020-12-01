@@ -15,7 +15,7 @@ trait MessengerOnlineInterface
      * Put the given or loaded model into cache as online
      *
      * @param null|MessengerProvider $provider
-     * @return MessengerOnlineInterface
+     * @return $this
      */
     public function setProviderToOnline($provider = null): self
     {
@@ -65,7 +65,7 @@ trait MessengerOnlineInterface
      * Remove the given or loaded model from online cache
      *
      * @param null|MessengerProvider $provider
-     * @return MessengerOnlineInterface
+     * @return $this
      */
     public function setProviderToOffline($provider = null): self
     {
@@ -89,7 +89,7 @@ trait MessengerOnlineInterface
      * Put the given or loaded model into cache as away
      *
      * @param null|MessengerProvider $provider
-     * @return MessengerOnlineInterface
+     * @return $this
      */
     public function setProviderToAway($provider = null): self
     {

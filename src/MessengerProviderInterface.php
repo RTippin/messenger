@@ -81,31 +81,31 @@ trait MessengerProviderInterface
      * such as in a custom job or action
      *
      * @param MessengerProvider|mixed|null $provider
-     * @return MessengerProviderInterface|self|void
+     * @return $this
      * @throws InvalidMessengerProvider
      */
     public function setProvider($provider = null): self
     {
-        if($this->isValidMessengerProvider($provider))
+        if( ! $this->isValidMessengerProvider($provider))
         {
-            $this->alias = $this->findProviderAlias($provider);
-            $interactions = $this->providers->get($this->alias)['provider_interactions'];
-            $this->provider = $provider;
-            $this->providerClass = get_class($provider);
-            $this->providerHasFriends = $this->isProviderFriendable($provider);
-            $this->providerHasMobileDevices = $this->providers->get($this->alias)['mobile_devices'];
-            $this->providerCanMessageFirst = $interactions['can_message'];
-            $this->providerCanFriend = $interactions['can_friend'];
-            $this->providerCanSearch = $interactions['can_search'];
-            $this->id = $provider->getKey();
-            $this->providerIsSet = true;
-
-            $this->app->instance(MessengerProvider::class, $provider);
-
-            return $this;
+            $this->unsetProvider()->throwProviderError();
         }
 
-        $this->unsetProvider()->throwProviderError();
+        $this->alias = $this->findProviderAlias($provider);
+        $interactions = $this->providers->get($this->alias)['provider_interactions'];
+        $this->provider = $provider;
+        $this->providerClass = get_class($provider);
+        $this->providerHasFriends = $this->isProviderFriendable($provider);
+        $this->providerHasMobileDevices = $this->providers->get($this->alias)['mobile_devices'];
+        $this->providerCanMessageFirst = $interactions['can_message'];
+        $this->providerCanFriend = $interactions['can_friend'];
+        $this->providerCanSearch = $interactions['can_search'];
+        $this->id = $provider->getKey();
+        $this->providerIsSet = true;
+
+        $this->app->instance(MessengerProvider::class, $provider);
+
+        return $this;
     }
 
     /**

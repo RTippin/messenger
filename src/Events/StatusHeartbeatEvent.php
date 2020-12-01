@@ -12,7 +12,7 @@ class StatusHeartbeatEvent
     /**
      * @var MessengerProvider
      */
-    public MessengerProvider $model;
+    public MessengerProvider $provider;
 
     /**
      * @var string
@@ -27,15 +27,15 @@ class StatusHeartbeatEvent
     /**
      * Create a new event instance.
      *
-     * @param MessengerProvider $model
+     * @param MessengerProvider $provider
      * @param bool $away
      * @param string $IP
      */
-    public function __construct(MessengerProvider $model,
+    public function __construct(MessengerProvider $provider,
                                 bool $away,
                                 string $IP)
     {
-        $this->model = $model;
+        $this->provider = $provider;
         $this->IP = $IP;
         $this->away = $away;
     }
