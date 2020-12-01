@@ -174,6 +174,7 @@ trait MessengerConfigInterface
         'alias',
         'ghost',
         'providerClass',
+        'providerMessengerModel',
         'providerHasFriends',
         'ghostParticipant',
         'providerIsSet',
