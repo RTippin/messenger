@@ -14,7 +14,7 @@ class PendingFriendRepository
     protected Messenger $messenger;
 
     /**
-     * FriendRepository constructor.
+     * PendingFriendRepository constructor.
      *
      * @param Messenger $messenger
      */

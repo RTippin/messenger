@@ -37,7 +37,7 @@ class SearchProvidersService
     private bool $onlySearchableForProvider = true;
 
     /**
-     * ProviderSearchService constructor.
+     * SearchProvidersService constructor.
      *
      * @param Messenger $messenger
      */

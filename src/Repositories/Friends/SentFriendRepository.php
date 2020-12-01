@@ -14,7 +14,7 @@ class SentFriendRepository
     protected Messenger $messenger;
 
     /**
-     * FriendRepository constructor.
+     * SentFriendRepository constructor.
      *
      * @param Messenger $messenger
      */

@@ -8,6 +8,7 @@ use Illuminate\Contracts\Broadcasting\Factory;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Collection;
+use RTippin\Messenger\Broadcasting\Base\MessengerBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\BroadcastEvent;
 use RTippin\Messenger\Contracts\MessengerProvider;
@@ -17,6 +18,7 @@ use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Repositories\ParticipantRepository;
 
 class BroadcastBroker implements BroadcastDriver
 {

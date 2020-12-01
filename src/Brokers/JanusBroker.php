@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Brokers;
 
-
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;

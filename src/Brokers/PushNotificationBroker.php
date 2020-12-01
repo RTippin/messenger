@@ -2,13 +2,13 @@
 
 namespace RTippin\Messenger\Brokers;
 
-
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Collection;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\PushNotificationDriver;
+use RTippin\Messenger\Events\PushNotificationEvent;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Participant;
