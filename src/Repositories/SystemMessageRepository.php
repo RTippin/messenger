@@ -15,7 +15,7 @@ class SystemMessageRepository
     protected Messenger $messenger;
 
     /**
-     * MessageRepository constructor.
+     * SystemMessageRepository constructor.
      *
      * @param Messenger $messenger
      */

@@ -15,7 +15,7 @@ class ImageMessageRepository
     protected Messenger $messenger;
 
     /**
-     * MessageRepository constructor.
+     * ImageMessageRepository constructor.
      *
      * @param Messenger $messenger
      */

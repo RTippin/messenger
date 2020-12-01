@@ -15,7 +15,7 @@ class DocumentMessageRepository
     protected Messenger $messenger;
 
     /**
-     * MessageRepository constructor.
+     * DocumentMessageRepository constructor.
      *
      * @param Messenger $messenger
      */

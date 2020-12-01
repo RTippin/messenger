@@ -20,7 +20,7 @@ class GroupThreadRepository
     private ThreadRepository $threadRepository;
 
     /**
-     * ThreadRepository constructor.
+     * GroupThreadRepository constructor.
      *
      * @param Messenger $messenger
      * @param ThreadRepository $threadRepository

@@ -15,7 +15,7 @@ class ParticipantRepository
     protected Messenger $messenger;
 
     /**
-     * CallRepository constructor.
+     * ParticipantRepository constructor.
      *
      * @param Messenger $messenger
      */
