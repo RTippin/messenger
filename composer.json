@@ -31,13 +31,13 @@
         }
     },
     "autoload-dev": {
+        "files": [
+            "src/helpers.php"
+        ],
         "psr-4": {
             "RTippin\\Messenger\\Tests\\": "tests",
             "RTippin\\Messenger\\Database\\Factories\\": "database/factories/"
-        },
-        "files": [
-            "src/helpers.php"
-        ]
+        }
     },
     "extra": {
         "laravel": {
