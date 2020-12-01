@@ -13,7 +13,7 @@ class UnmuteThread
     use AuthorizesRequests;
 
     /**
-     * Mute the thread to stop further notifications/updates
+     * Un-Mute the thread.
      *
      * @param UnmuteThreadAction $unmuteThread
      * @param Thread $thread

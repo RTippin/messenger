@@ -14,7 +14,7 @@ class LeaveCall
     use AuthorizesRequests;
 
     /**
-     * Is the thread unread for current participant?
+     * Leave the call.
      *
      * @param LeaveCallAction $leaveCall
      * @param Thread $thread

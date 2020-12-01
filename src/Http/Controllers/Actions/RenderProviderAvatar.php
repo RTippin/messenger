@@ -9,7 +9,7 @@ use Symfony\Component\HttpFoundation\BinaryFileResponse;
 class RenderProviderAvatar
 {
     /**
-     * Render message image
+     * Render provider avatar
      *
      * @param ImageRenderService $service
      * @param string $alias

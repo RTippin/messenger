@@ -15,7 +15,7 @@ class EndCall
     use AuthorizesRequests;
 
     /**
-     * Store or restore a call participant / join call.
+     * End the call.
      *
      * @param EndCallAction $endCall
      * @param Thread $thread
