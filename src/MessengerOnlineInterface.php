@@ -209,6 +209,6 @@ trait MessengerOnlineInterface
      */
     private function getOnlineStatusSetting(MessengerProvider $provider): int
     {
-        return $provider->messenger->online_status;
+        return $this->getProviderMessenger($provider)->online_status;
     }
 }

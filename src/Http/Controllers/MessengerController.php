@@ -44,7 +44,7 @@ class MessengerController
     public function settings()
     {
         return new MessengerResource(
-            $this->messenger->getProvider()->messenger
+            $this->messenger->getProviderMessenger()
         );
     }
 
@@ -72,7 +72,7 @@ class MessengerController
         );
 
         return new MessengerResource(
-            $this->messenger->getProvider()->messenger
+            $this->messenger->getProviderMessenger()
         );
     }
 
@@ -90,7 +90,7 @@ class MessengerController
         $storeMessengerAvatar->execute($request->validated());
 
         return new MessengerResource(
-            $this->messenger->getProvider()->messenger
+            $this->messenger->getProviderMessenger()
         );
     }
 
@@ -106,7 +106,7 @@ class MessengerController
         $destroyMessengerAvatar->execute();
 
         return new MessengerResource(
-            $this->messenger->getProvider()->messenger
+            $this->messenger->getProviderMessenger()
         );
     }
 

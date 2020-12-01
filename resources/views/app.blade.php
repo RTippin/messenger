@@ -15,7 +15,7 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <meta name="title" content="@yield('title', 'Messenger')">
     <title>@yield('title', 'Messenger')</title>
-    @if(auth()->check() && messenger()->getProvider()->messenger->dark_mode)
+    @if(auth()->check() && messenger()->getProviderMessenger()->dark_mode)
         <link id="main_css" href="{{ mix("css/dark.css") }}" rel="stylesheet">
     @else
         <link id="main_css" href="{{ mix("css/app.css") }}" rel="stylesheet">

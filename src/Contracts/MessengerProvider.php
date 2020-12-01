@@ -2,22 +2,16 @@
 
 namespace RTippin\Messenger\Contracts;
 
-use RTippin\Messenger\Models\Messenger;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
  * App\Contracts\MessengerProvider
  *
- * @mixin Model|Friendable|Searchable|\Eloquent
+ * @mixin Model|\Eloquent
  */
 interface MessengerProvider
 {
-    /**
-     * @return Messenger
-     */
-    public function messenger();
-
     /**
      * @return Carbon|string|null
      */

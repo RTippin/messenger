@@ -63,7 +63,7 @@ class ProviderStatusResource extends JsonResource
             'online_status_verbose' => Definitions::OnlineStatus[$this->provider->onlineStatus()],
             'unread_threads_count' => $this->unreadThreadsCount(),
             'pending_friends_count' => $this->pendingFriendsCount(),
-            'settings' => $this->provider->messenger
+            'settings' => messenger()->getProviderMessenger($this->provider)
         ];
     }
 

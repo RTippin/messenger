@@ -3,10 +3,8 @@
 namespace RTippin\Messenger\Traits;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Support\Str;
 use RTippin\Messenger\Definitions;
-use RTippin\Messenger\Models\Messenger;
 
 /**
  * App\Traits\Messageable
@@ -26,17 +24,6 @@ trait Messageable
      * @var null|string
      */
     public ?string $onlineStatusCache = null;
-
-    /**
-     * MessengerSystem Settings relationship.
-     *
-     * @return MorphOne
-     *
-     */
-    public function messenger()
-    {
-        return $this->morphOne(Messenger::class, 'owner');
-    }
 
     /**
      * @param bool $full

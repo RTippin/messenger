@@ -11,10 +11,10 @@
     Messenger.init({
         load : {
             NotifyManager : {
-                notify_sound : {{messenger()->getProvider()->messenger->notify_sound}},
-                message_popups : {{messenger()->getProvider()->messenger->message_popups}},
-                message_sound : {{messenger()->getProvider()->messenger->message_sound}},
-                call_ringtone_sound : {{messenger()->getProvider()->messenger->call_ringtone_sound}},
+                notify_sound : {{messenger()->getProviderMessenger()->notify_sound}},
+                message_popups : {{messenger()->getProviderMessenger()->message_popups}},
+                message_sound : {{messenger()->getProviderMessenger()->message_sound}},
+                call_ringtone_sound : {{messenger()->getProviderMessenger()->call_ringtone_sound}},
                 src : '{{mix("js/managers/NotifyManager.js")}}'
             },
 @stack('Messenger-load')

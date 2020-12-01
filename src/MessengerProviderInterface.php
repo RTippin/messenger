@@ -4,6 +4,7 @@ namespace RTippin\Messenger;
 
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Exceptions\InvalidMessengerProvider;
+use RTippin\Messenger\Models\Messenger as MessengerModel;
 use Illuminate\Contracts\Foundation\Application;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Participant;
@@ -22,6 +23,11 @@ trait MessengerProviderInterface
      * @var null|MessengerProvider
      */
     private ?MessengerProvider $provider = null;
+
+    /**
+     * @var MessengerModel|null
+     */
+    private ?MessengerModel $providerMessengerModel = null;
 
     /**
      * @var null|string|int
@@ -106,6 +112,41 @@ trait MessengerProviderInterface
         $this->app->instance(MessengerProvider::class, $provider);
 
         return $this;
+    }
+
+    /**
+     * This will firstOrCreate a messenger model instance
+     * for the given or currently set provider
+     *
+     * @param MessengerProvider|mixed|null $provider
+     * @return MessengerModel|null
+     */
+    public function getProviderMessenger($provider = null): ?MessengerModel
+    {
+        if($this->isProviderSet()
+            && (is_null($provider)
+                || $this->getProvider()->is($provider)))
+        {
+            if(is_null($this->providerMessengerModel))
+            {
+                $this->providerMessengerModel = MessengerModel::firstOrCreate([
+                    'owner_id' => $this->getProviderId(),
+                    'owner_type' => $this->getProviderClass()
+                ]);
+            }
+
+            return $this->providerMessengerModel;
+        }
+        else if( ! is_null($provider)
+            && $this->isValidMessengerProvider($provider))
+        {
+            return MessengerModel::firstOrCreate([
+                'owner_id' => $provider->getKey(),
+                'owner_type' => get_class($provider)
+            ]);
+        }
+
+        return null;
     }
 
     /**

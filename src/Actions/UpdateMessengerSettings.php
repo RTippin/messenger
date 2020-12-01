@@ -30,8 +30,7 @@ class UpdateMessengerSettings extends BaseMessengerAction
      */
     public function execute(...$parameters): self
     {
-        $this->messenger->getProvider()
-            ->messenger
+        $this->messenger->getProviderMessenger()
             ->update($parameters[0]);
 
         return $this;

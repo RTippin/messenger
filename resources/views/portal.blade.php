@@ -12,7 +12,7 @@
             ThreadManager : {
                 type : 0,
                 setup : true,
-                online_status_setting : {{messenger()->getProvider()->messenger->online_status}},
+                online_status_setting : {{messenger()->getProviderMessenger()->online_status}},
                 thread_id : '{{$thread_id}}',
                 src : '{{mix("js/managers/ThreadManager.js")}}'
             },
@@ -22,7 +22,7 @@
         @push('Messenger-load')
             ThreadManager : {
                 type : 3,
-                online_status_setting : {{messenger()->getProvider()->messenger->online_status}},
+                online_status_setting : {{messenger()->getProviderMessenger()->online_status}},
                 setup : true,
                 id : '{{$id}}',
                 alias : '{{$alias}}',
@@ -34,7 +34,7 @@
         @push('Messenger-load')
             ThreadManager : {
                 type : 5,
-                online_status_setting : {{messenger()->getProvider()->messenger->online_status}},
+                online_status_setting : {{messenger()->getProviderMessenger()->online_status}},
                 setup : true,
                 src : '{{mix("js/managers/ThreadManager.js")}}'
             },
