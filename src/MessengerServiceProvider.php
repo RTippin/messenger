@@ -60,6 +60,8 @@ class MessengerServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        //load helper files
+        $this->registerHelpers();
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'rtippin');
          $this->loadViewsFrom(__DIR__.'/../resources/views', 'messenger');
          $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
@@ -70,6 +72,19 @@ class MessengerServiceProvider extends ServiceProvider
         // Publishing is only necessary when using the CLI.
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
+        }
+    }
+
+    /**
+     * Register helpers file
+     * @noinspection PhpIncludeInspection
+     */
+    public function registerHelpers()
+    {
+        // Load the helpers
+        if (file_exists($file = __DIR__.'/helpers.php'))
+        {
+            require_once $file;
         }
     }
 
