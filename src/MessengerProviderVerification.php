@@ -3,10 +3,8 @@
 namespace RTippin\Messenger;
 
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Contracts\MobileDevices;
 use RTippin\Messenger\Contracts\Searchable;
 use ReflectionClass;
-use RTippin\Messenger\Contracts\Friendable;
 use Illuminate\Support\Collection;
 use ReflectionException;
 use Illuminate\Support\Str;
@@ -127,10 +125,7 @@ trait MessengerProviderVerification
      */
     private function passesFriendable(array $provider): bool
     {
-        return $provider['friendable'] === true
-            && $this->passesReflectionInterface(
-                $provider['model'], Friendable::class
-            );
+        return $provider['friendable'] === true;
     }
 
     /**
@@ -151,10 +146,7 @@ trait MessengerProviderVerification
      */
     private function passesHasDevices(array $provider): bool
     {
-        return $provider['mobile_devices'] === true
-            && $this->passesReflectionInterface(
-                $provider['model'], MobileDevices::class
-            );
+        return $provider['mobile_devices'] === true;
     }
 
     /**
