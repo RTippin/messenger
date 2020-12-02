@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Brokers;
 
-
 use Illuminate\Broadcasting\BroadcastException;
 use Illuminate\Contracts\Broadcasting\Factory;
 use Illuminate\Contracts\Container\BindingResolutionException;
@@ -65,7 +64,7 @@ class BroadcastBroker implements BroadcastDriver
     /**
      * @var PushNotificationDriver
      */
-    private PushNotificationDriver $pushNotification;
+    protected PushNotificationDriver $pushNotification;
 
     /**
      * BroadcastBroker constructor.
