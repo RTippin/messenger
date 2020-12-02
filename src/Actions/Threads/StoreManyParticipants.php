@@ -195,7 +195,7 @@ class StoreManyParticipants extends ThreadParticipantAction
         return $providers->reject(
             fn(MessengerProvider $provider) => $existing
                 ->where('owner_id', '=', $provider->getKey())
-                ->where('owner_type', '=', get_class($providers))
+                ->where('owner_type', '=', get_class($provider))
                 ->first()
         );
     }
