@@ -182,7 +182,7 @@ class BroadcastBroker implements BroadcastDriver
     /**
      * @inheritDoc
      */
-    public function broadcast(string $abstract): self
+    public function broadcast(string $abstract): void
     {
         if( ! is_null($this->recipients)
             && $this->recipients->count()
@@ -209,8 +209,6 @@ class BroadcastBroker implements BroadcastDriver
                 $this->executePushNotify($abstract);
             }
         }
-
-        return $this;
     }
 
     /**

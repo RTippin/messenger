@@ -31,7 +31,6 @@ interface PushNotificationDriver
      * for our listener to handle on the queue.
      *
      * @param string|BroadcastEvent $abstract
-     * @return $this
      */
-    public function notify(string $abstract): self;
+    public function notify(string $abstract): void;
 }

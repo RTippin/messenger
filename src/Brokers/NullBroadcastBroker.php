@@ -67,8 +67,8 @@ class NullBroadcastBroker implements BroadcastDriver
     /**
      * @inheritDoc
      */
-    public function broadcast(string $abstract): self
+    public function broadcast(string $abstract): void
     {
-        return $this;
+        //
     }
 }

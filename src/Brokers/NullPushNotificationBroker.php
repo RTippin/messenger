@@ -17,8 +17,8 @@ class NullPushNotificationBroker implements PushNotificationDriver
         return $this;
     }
 
-    public function notify(string $abstract): self
+    public function notify(string $abstract): void
     {
-        return $this;
+        //
     }
 }

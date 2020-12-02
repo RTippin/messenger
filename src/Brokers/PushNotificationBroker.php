@@ -79,7 +79,7 @@ class PushNotificationBroker implements PushNotificationDriver
     /**
      * @inheritDoc
      */
-    public function notify(string $abstract): self
+    public function notify(string $abstract): void
     {
         if( ! is_null($this->recipients)
             && $this->recipients->count())
@@ -93,8 +93,6 @@ class PushNotificationBroker implements PushNotificationDriver
                 $this->dispatchNotification($broadcastAs, $filteredRecipients);
             }
         }
-
-        return $this;
     }
 
     /**

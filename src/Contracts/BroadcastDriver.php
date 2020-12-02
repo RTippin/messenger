@@ -80,7 +80,6 @@ interface BroadcastDriver
      * inject the channels and resource, then broadcast the resource!
      *
      * @param string|BroadcastEvent $abstract
-     * @return $this
      */
-    public function broadcast(string $abstract): self;
+    public function broadcast(string $abstract): void;
 }
