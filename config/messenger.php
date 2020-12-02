@@ -170,18 +170,18 @@ return [
     */
     'files' => [
         'message_documents' => [
-            'upload' => env('MESSENGER_DOCUMENT_UPLOAD', true),
-            'download' => env('MESSENGER_DOCUMENT_DOWNLOAD', true)
+            'upload' => env('MESSENGER_MESSAGE_DOCUMENT_UPLOAD', true),
+            'download' => env('MESSENGER_MESSAGE_DOCUMENT_DOWNLOAD', true)
         ],
         'message_images' => [
-            'upload' => env('MESSENGER_IMAGE_UPLOAD', true)
+            'upload' => env('MESSENGER_MESSAGE_IMAGE_UPLOAD', true)
         ],
-        'thread_avatar' => [
+        'thread_avatars' => [
             'upload' => env('MESSENGER_THREAD_AVATAR_UPLOAD', true)
         ],
-        'provider_avatar' => [
-            'upload' => env('MESSENGER_AVATAR_UPLOAD', true),
-            'removal' => env('MESSENGER_AVATAR_REMOVAL', true)
+        'provider_avatars' => [
+            'upload' => env('MESSENGER_PROVIDER_AVATAR_UPLOAD', true),
+            'removal' => env('MESSENGER_PROVIDER_AVATAR_REMOVAL', true)
         ]
     ],
 

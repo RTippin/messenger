@@ -112,6 +112,11 @@ trait MessengerConfigInterface
     private bool $messageImageUpload;
 
     /**
+     * @var bool
+     */
+    private bool $threadAvatarUpload;
+
+    /**
      * @var int
      */
     private int $searchPageCount;
@@ -409,6 +414,25 @@ trait MessengerConfigInterface
     public function setMessageDocumentUpload(bool $messageDocumentUpload): self
     {
         $this->messageDocumentUpload = $messageDocumentUpload;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isThreadAvatarUploadEnabled(): bool
+    {
+        return $this->threadAvatarUpload;
+    }
+
+    /**
+     * @param bool $threadAvatarUpload
+     * @return $this
+     */
+    public function setThreadAvatarUpload(bool $threadAvatarUpload): self
+    {
+        $this->threadAvatarUpload = $threadAvatarUpload;
 
         return $this;
     }
@@ -748,11 +772,12 @@ trait MessengerConfigInterface
         $this->onlineStatus = $this->configRepo->get('messenger.online_status.enabled');
         $this->onlineCacheLifetime = $this->configRepo->get('messenger.online_status.lifetime');
         $this->calling = $this->configRepo->get('messenger.calling.enabled');
-        $this->providerAvatarUpload = $this->configRepo->get('messenger.files.provider_avatar.upload');
-        $this->providerAvatarRemoval = $this->configRepo->get('messenger.files.provider_avatar.removal');
+        $this->providerAvatarUpload = $this->configRepo->get('messenger.files.provider_avatars.upload');
+        $this->providerAvatarRemoval = $this->configRepo->get('messenger.files.provider_avatars.removal');
         $this->messageImageUpload = $this->configRepo->get('messenger.files.message_images.upload');
         $this->messageDocumentUpload = $this->configRepo->get('messenger.files.message_documents.upload');
         $this->messageDocumentDownload = $this->configRepo->get('messenger.files.message_documents.download');
+        $this->threadAvatarUpload = $this->configRepo->get('messenger.files.thread_avatars.upload');
         $this->searchPageCount = $this->configRepo->get('messenger.collections.search.page_count');
         $this->threadsIndexCount = $this->configRepo->get('messenger.collections.threads.index_count');
         $this->threadsPageCount = $this->configRepo->get('messenger.collections.threads.page_count');
