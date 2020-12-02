@@ -89,12 +89,12 @@ trait MessengerConfigInterface
     /**
      * @var bool
      */
-    private bool $avatarUpload;
+    private bool $providerAvatarUpload;
 
     /**
      * @var bool
      */
-    private bool $avatarRemoval;
+    private bool $providerAvatarRemoval;
 
     /**
      * @var bool
@@ -110,11 +110,6 @@ trait MessengerConfigInterface
      * @var bool
      */
     private bool $imageUpload;
-
-    /**
-     * @var bool
-     */
-    private bool $imageRender;
 
     /**
      * @var int
@@ -402,25 +397,6 @@ trait MessengerConfigInterface
     /**
      * @return bool
      */
-    public function isImageRenderEnabled(): bool
-    {
-        return $this->imageRender;
-    }
-
-    /**
-     * @param bool $imageRender
-     * @return $this
-     */
-    public function setImageRender(bool $imageRender): self
-    {
-        $this->imageRender = $imageRender;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
     public function isDocumentUploadEnabled(): bool
     {
         return $this->documentUpload;
@@ -459,18 +435,18 @@ trait MessengerConfigInterface
     /**
      * @return bool
      */
-    public function isAvatarUploadEnabled(): bool
+    public function isProviderAvatarUploadEnabled(): bool
     {
-        return $this->avatarUpload;
+        return $this->providerAvatarUpload;
     }
 
     /**
-     * @param bool $avatarUpload
+     * @param bool $providerAvatarUpload
      * @return $this
      */
-    public function setAvatarUpload(bool $avatarUpload): self
+    public function setProviderAvatarUpload(bool $providerAvatarUpload): self
     {
-        $this->avatarUpload = $avatarUpload;
+        $this->providerAvatarUpload = $providerAvatarUpload;
 
         return $this;
     }
@@ -478,18 +454,18 @@ trait MessengerConfigInterface
     /**
      * @return bool
      */
-    public function isAvatarRemovalEnabled(): bool
+    public function isProviderAvatarRemovalEnabled(): bool
     {
-        return $this->avatarRemoval;
+        return $this->providerAvatarRemoval;
     }
 
     /**
-     * @param bool $avatarRemoval
+     * @param bool $providerAvatarRemoval
      * @return $this
      */
-    public function setAvatarRemoval(bool $avatarRemoval): self
+    public function setProviderAvatarRemoval(bool $providerAvatarRemoval): self
     {
-        $this->avatarRemoval = $avatarRemoval;
+        $this->providerAvatarRemoval = $providerAvatarRemoval;
 
         return $this;
     }
@@ -772,10 +748,9 @@ trait MessengerConfigInterface
         $this->onlineStatus = $this->configRepo->get('messenger.online_status.enabled');
         $this->onlineCacheLifetime = $this->configRepo->get('messenger.online_status.lifetime');
         $this->calling = $this->configRepo->get('messenger.calling.enabled');
-        $this->avatarUpload = $this->configRepo->get('messenger.avatar.upload');
-        $this->avatarRemoval = $this->configRepo->get('messenger.avatar.removal');
+        $this->providerAvatarUpload = $this->configRepo->get('messenger.files.provider_avatar.upload');
+        $this->providerAvatarRemoval = $this->configRepo->get('messenger.files.provider_avatar.removal');
         $this->imageUpload = $this->configRepo->get('messenger.images.upload');
-        $this->imageRender = $this->configRepo->get('messenger.images.render');
         $this->documentUpload = $this->configRepo->get('messenger.documents.upload');
         $this->documentDownload = $this->configRepo->get('messenger.documents.download');
         $this->searchPageCount = $this->configRepo->get('messenger.collections.search.page_count');

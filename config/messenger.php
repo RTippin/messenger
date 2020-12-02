@@ -23,8 +23,11 @@ return [
     | *PLEASE NOTE: Once you choose an alias, you should not change it
     | unless you plan to move the uploads/directory names around yourself
     |
-    | *Searchable, friendable and devices expect provider to implement the matching contract.
-    | Fields are set false at runtime if provider does not pass validation
+    | *Each provider you list must implement our MessengerProvider contract
+    | RTippin\Messenger\Contracts\MessengerProvider
+    |
+    | *Searchable expects provider to implement the matching contract. see:
+    | RTippin\Messenger\Contracts\Searchable
     |
     | *Provider interactions give fine grain control over how your provider can interact with other providers, should you have
     | multiple. A provider always has full permission for interactions between itself, e.g : User to User. To allow full
@@ -34,14 +37,14 @@ return [
     |
     |   'providers' => [                                    //List all providers in your app
     |       'user' => [                                     //alias given to your provider
-    |           'model' => App\Models\User::class,                 //Model patch of your provider
-    |           'searchable' => true,                       //Provider implements/is searchable
-    |           'friendable' => true,                       //Provider implements/is friendable
-    |           'devices' => true,                          //Provider has devices / mobile app
+    |           'model' => App\Models\User::class,          //Path to the provider's model
+    |           'searchable' => true,                       //Provider implements/is searchable - true|false
+    |           'friendable' => true,                       //Provider is friendable - true|false
+    |           'devices' => true,                          //Provider has tokens for push notifications - true|false
     |           'provider_interactions' => [                //What your provider can do with other providers
-    |               'can_message' => 'company',             //Able to start new threads with other listed providers
-    |               'can_search' => 'teacher|company',      //Able to search other listed providers
-    |               'can_friend' => null,                   //Able to send friend request to  other listed providers
+    |               'can_message' => 'company',             //Able to start new threads with other listed providers - true|false|null|string
+    |               'can_search' => 'teacher|company',      //Able to search other listed providers - true|false|null|string
+    |               'can_friend' => null,                   //Able to send friend request to  other listed providers - true|false|null|string
     |           ]
     |       ],
     |   ],

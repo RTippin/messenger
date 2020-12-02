@@ -103,8 +103,7 @@ class ImageRenderService
                                        string $size,
                                        string $fileNameChallenge)
     {
-        if( ! $this->messenger->isImageRenderEnabled()
-            || ! $message->isImage()
+        if( ! $message->isImage()
             || $fileNameChallenge !== $message->body
             || ! $this->filesystemManager
                 ->disk($message->getStorageDisk())
@@ -140,8 +139,7 @@ class ImageRenderService
                                       string $size,
                                       string $fileNameChallenge)
     {
-        if( ! $this->messenger->isImageRenderEnabled()
-            || ! $thread->isGroup()
+        if( ! $thread->isGroup()
             || $fileNameChallenge !== $thread->image)
         {
             return $this->renderDefaultImage();
