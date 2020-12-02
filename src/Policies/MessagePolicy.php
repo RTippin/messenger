@@ -91,7 +91,7 @@ class MessagePolicy
      */
     public function createImage($user, Thread $thread)
     {
-        return $this->messenger->isImageUploadEnabled() && $thread->canMessage()
+        return $this->messenger->isMessageImageUploadEnabled() && $thread->canMessage()
             ? $this->allow()
             : $this->deny('Not authorized to send messages.');
     }

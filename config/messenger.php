@@ -164,6 +164,29 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | General file toggles to enable / disable features
+    |--------------------------------------------------------------------------
+    |
+    */
+    'files' => [
+        'message_documents' => [
+            'upload' => env('MESSENGER_DOCUMENT_UPLOAD', true),
+            'download' => env('MESSENGER_DOCUMENT_DOWNLOAD', true)
+        ],
+        'message_images' => [
+            'upload' => env('MESSENGER_IMAGE_UPLOAD', true)
+        ],
+        'thread_avatar' => [
+            'upload' => env('MESSENGER_THREAD_AVATAR_UPLOAD', true)
+        ],
+        'provider_avatar' => [
+            'upload' => env('MESSENGER_AVATAR_UPLOAD', true),
+            'removal' => env('MESSENGER_AVATAR_REMOVAL', true)
+        ]
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Thread invitations
     |--------------------------------------------------------------------------
     |
@@ -191,32 +214,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Document settings
-    |--------------------------------------------------------------------------
-    |
-    | Enable or disable document uploads and downloads
-    |
-    */
-    'documents' => [
-        'upload' => env('MESSENGER_DOCUMENT_UPLOAD', true),
-        'download' => env('MESSENGER_DOCUMENT_DOWNLOAD', true)
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Image settings
-    |--------------------------------------------------------------------------
-    |
-    | Enable or disable image uploads and renders
-    |
-    */
-    'images' => [
-        'upload' => env('MESSENGER_IMAGE_UPLOAD', true),
-        'render' => env('MESSENGER_IMAGE_RENDER', true)
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Provider online/away status
     |--------------------------------------------------------------------------
     |
@@ -227,21 +224,6 @@ return [
     'online_status' => [
         'enabled' => env('MESSENGER_ONLINE_STATUS_ENABLED', true),
         'lifetime' => env('MESSENGER_ONLINE_STATUS_LIFETIME', 4)
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Enable uploads or removing of avatars
-    |--------------------------------------------------------------------------
-    |
-    | If enabled, we check user_devices when broadcasting messenger events.
-    | If the user has a device, we push to FCM/APN depending if they
-    | have a voip token APN(apple) otherwise FCM(google/all)
-    |
-    */
-    'avatar' => [
-        'upload' => env('MESSENGER_AVATAR_UPLOAD', true),
-        'removal' => env('MESSENGER_AVATAR_REMOVAL', true)
     ],
 
     /*

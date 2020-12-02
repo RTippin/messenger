@@ -109,7 +109,7 @@ trait MessengerConfigInterface
     /**
      * @var bool
      */
-    private bool $imageUpload;
+    private bool $messageImageUpload;
 
     /**
      * @var int
@@ -378,18 +378,18 @@ trait MessengerConfigInterface
     /**
      * @return bool
      */
-    public function isImageUploadEnabled(): bool
+    public function isMessageImageUploadEnabled(): bool
     {
-        return $this->imageUpload;
+        return $this->messageImageUpload;
     }
 
     /**
-     * @param bool $imageUpload
+     * @param bool $messageImageUpload
      * @return $this
      */
-    public function setImageUpload(bool $imageUpload): self
+    public function setMessageImageUpload(bool $messageImageUpload): self
     {
-        $this->imageUpload = $imageUpload;
+        $this->messageImageUpload = $messageImageUpload;
 
         return $this;
     }
@@ -750,7 +750,7 @@ trait MessengerConfigInterface
         $this->calling = $this->configRepo->get('messenger.calling.enabled');
         $this->providerAvatarUpload = $this->configRepo->get('messenger.files.provider_avatar.upload');
         $this->providerAvatarRemoval = $this->configRepo->get('messenger.files.provider_avatar.removal');
-        $this->imageUpload = $this->configRepo->get('messenger.images.upload');
+        $this->messageImageUpload = $this->configRepo->get('messenger.files.message_images.upload');
         $this->messageDocumentUpload = $this->configRepo->get('messenger.files.message_documents.upload');
         $this->messageDocumentDownload = $this->configRepo->get('messenger.files.message_documents.download');
         $this->searchPageCount = $this->configRepo->get('messenger.collections.search.page_count');
