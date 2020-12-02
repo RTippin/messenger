@@ -70,7 +70,7 @@ class DownloadMessageFile
      */
     private function checkDownloadsEnabled()
     {
-        if( ! $this->messenger->isDocumentDownloadEnabled())
+        if( ! $this->messenger->isMessageDocumentDownloadEnabled())
         {
             throw new AuthorizationException('Document downloads are currently disabled.');
         }

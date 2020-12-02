@@ -77,7 +77,7 @@ class MessagePolicy
      */
     public function createDocument($user, Thread $thread)
     {
-        return $this->messenger->isDocumentUploadEnabled() && $thread->canMessage()
+        return $this->messenger->isMessageDocumentUploadEnabled() && $thread->canMessage()
             ? $this->allow()
             : $this->deny('Not authorized to upload a document.');
     }

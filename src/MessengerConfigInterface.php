@@ -99,12 +99,12 @@ trait MessengerConfigInterface
     /**
      * @var bool
      */
-    private bool $documentUpload;
+    private bool $messageDocumentUpload;
 
     /**
      * @var bool
      */
-    private bool $documentDownload;
+    private bool $messageDocumentDownload;
 
     /**
      * @var bool
@@ -397,18 +397,18 @@ trait MessengerConfigInterface
     /**
      * @return bool
      */
-    public function isDocumentUploadEnabled(): bool
+    public function isMessageDocumentUploadEnabled(): bool
     {
-        return $this->documentUpload;
+        return $this->messageDocumentUpload;
     }
 
     /**
-     * @param bool $documentUpload
+     * @param bool $messageDocumentUpload
      * @return $this
      */
-    public function setDocumentUpload(bool $documentUpload): self
+    public function setMessageDocumentUpload(bool $messageDocumentUpload): self
     {
-        $this->documentUpload = $documentUpload;
+        $this->messageDocumentUpload = $messageDocumentUpload;
 
         return $this;
     }
@@ -416,18 +416,18 @@ trait MessengerConfigInterface
     /**
      * @return bool
      */
-    public function isDocumentDownloadEnabled(): bool
+    public function isMessageDocumentDownloadEnabled(): bool
     {
-        return $this->documentDownload;
+        return $this->messageDocumentDownload;
     }
 
     /**
-     * @param bool $documentDownload
+     * @param bool $messageDocumentDownload
      * @return $this
      */
-    public function setDocumentDownload(bool $documentDownload): self
+    public function setMessageDocumentDownload(bool $messageDocumentDownload): self
     {
-        $this->documentDownload = $documentDownload;
+        $this->messageDocumentDownload = $messageDocumentDownload;
 
         return $this;
     }
@@ -751,8 +751,8 @@ trait MessengerConfigInterface
         $this->providerAvatarUpload = $this->configRepo->get('messenger.files.provider_avatar.upload');
         $this->providerAvatarRemoval = $this->configRepo->get('messenger.files.provider_avatar.removal');
         $this->imageUpload = $this->configRepo->get('messenger.images.upload');
-        $this->documentUpload = $this->configRepo->get('messenger.documents.upload');
-        $this->documentDownload = $this->configRepo->get('messenger.documents.download');
+        $this->messageDocumentUpload = $this->configRepo->get('messenger.files.message_documents.upload');
+        $this->messageDocumentDownload = $this->configRepo->get('messenger.files.message_documents.download');
         $this->searchPageCount = $this->configRepo->get('messenger.collections.search.page_count');
         $this->threadsIndexCount = $this->configRepo->get('messenger.collections.threads.index_count');
         $this->threadsPageCount = $this->configRepo->get('messenger.collections.threads.page_count');
