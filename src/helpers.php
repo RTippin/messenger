@@ -1,5 +1,6 @@
 <?php
 
+use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Messenger;
 
 if ( ! function_exists('messenger'))
@@ -11,6 +12,18 @@ if ( ! function_exists('messenger'))
     function messenger()
     {
         return resolve(Messenger::class);
+    }
+}
+
+if ( ! function_exists('messengerFriends'))
+{
+    /**
+     * @return FriendDriver;
+     * Return the active instance of the messenger system
+     */
+    function messengerFriends()
+    {
+        return resolve(FriendDriver::class);
     }
 }
 

@@ -7,6 +7,7 @@ use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Collection;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
+use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
@@ -44,6 +45,11 @@ class StoreManyParticipants extends ThreadParticipantAction
     private Dispatcher $dispatcher;
 
     /**
+     * @var FriendDriver
+     */
+    private FriendDriver $friends;
+
+    /**
      * StoreManyParticipants constructor.
      *
      * @param Messenger $messenger
@@ -51,18 +57,21 @@ class StoreManyParticipants extends ThreadParticipantAction
      * @param Dispatcher $dispatcher
      * @param ProvidersRepository $providersRepository
      * @param DatabaseManager $database
+     * @param FriendDriver $friends
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
                                 Dispatcher $dispatcher,
                                 ProvidersRepository $providersRepository,
-                                DatabaseManager $database)
+                                DatabaseManager $database,
+                                FriendDriver $friends)
     {
         $this->messenger = $messenger;
         $this->providersRepository = $providersRepository;
         $this->database = $database;
         $this->broadcaster = $broadcaster;
         $this->dispatcher = $dispatcher;
+        $this->friends = $friends;
     }
 
     /**
@@ -164,7 +173,7 @@ class StoreManyParticipants extends ThreadParticipantAction
                 )
                 ->reject(
                     fn(MessengerProvider $provider) =>
-                        $this->messenger->getProvider()->friendStatus($provider) !== 1
+                        $this->friends->friendStatus($provider) !== 1
                 );
 
             return $isNewGroup

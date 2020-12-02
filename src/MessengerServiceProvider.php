@@ -4,6 +4,7 @@ namespace RTippin\Messenger;
 
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use RTippin\Messenger\Brokers\FriendBroker;
 use RTippin\Messenger\Commands\CallsActivityCheck;
 use RTippin\Messenger\Commands\InvitesCheck;
 use RTippin\Messenger\Commands\ProvidersCache;
@@ -13,6 +14,7 @@ use RTippin\Messenger\Commands\PurgeImages;
 use RTippin\Messenger\Commands\PurgeMessages;
 use RTippin\Messenger\Commands\PurgeThreads;
 use RTippin\Messenger\Contracts\BroadcastDriver;
+use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\PushNotificationDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Models\Call;
@@ -105,6 +107,11 @@ class MessengerServiceProvider extends ServiceProvider
         $this->app->alias(
             Messenger::class,
             'messenger'
+        );
+
+        $this->app->singleton(
+            FriendDriver::class,
+            FriendBroker::class
         );
 
         $this->app->singleton(

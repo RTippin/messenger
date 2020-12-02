@@ -82,8 +82,8 @@ class ProviderStatusResource extends JsonResource
      */
     private function pendingFriendsCount(): int
     {
-        return messenger()->getProvider()
-            ->pendingFriendRequest()
+        return messengerFriends()
+            ->getProviderPendingFriends()
             ->count();
     }
 

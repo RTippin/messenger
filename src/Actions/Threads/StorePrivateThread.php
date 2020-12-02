@@ -11,6 +11,7 @@ use RTippin\Messenger\Actions\Messages\StoreImageMessage;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
+use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Http\Request\PrivateThreadRequest;
@@ -63,18 +64,25 @@ class StorePrivateThread extends NewThreadAction
     private Dispatcher $dispatcher;
 
     /**
+     * @var FriendDriver
+     */
+    private FriendDriver $friends;
+
+    /**
      * StorePrivateThread constructor.
      *
      * @param Messenger $messenger
      * @param BroadcastDriver $broadcaster
      * @param DatabaseManager $database
      * @param Dispatcher $dispatcher
+     * @param FriendDriver $friends
      * @param RecipientThreadLocator $locator
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
                                 DatabaseManager $database,
                                 Dispatcher $dispatcher,
+                                FriendDriver $friends,
                                 RecipientThreadLocator $locator)
     {
         parent::__construct($messenger);
@@ -83,6 +91,7 @@ class StorePrivateThread extends NewThreadAction
         $this->broadcaster = $broadcaster;
         $this->database = $database;
         $this->dispatcher = $dispatcher;
+        $this->friends = $friends;
     }
 
     /**
@@ -238,7 +247,7 @@ class StorePrivateThread extends NewThreadAction
     {
         if($this->messenger->providerHasFriends()
             && $this->messenger->isProviderFriendable($this->recipient)
-            && $this->messenger->getProvider()->friendStatus($this->recipient) === 1)
+            && $this->friends->friendStatus($this->recipient) === 1)
         {
             $this->pending = false;
         }

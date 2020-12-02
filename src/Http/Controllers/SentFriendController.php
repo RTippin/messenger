@@ -8,12 +8,12 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use RTippin\Messenger\Actions\Friends\CancelFriendRequest;
 use RTippin\Messenger\Actions\Friends\StoreFriendRequest;
+use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Http\Collections\SentFriendCollection;
 use RTippin\Messenger\Http\Request\FriendRequest;
 use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Http\Resources\SentFriendResource;
 use RTippin\Messenger\Models\SentFriend;
-use RTippin\Messenger\Repositories\Friends\SentFriendRepository;
 
 class SentFriendController
 {
@@ -22,16 +22,16 @@ class SentFriendController
     /**
      * Display a listing of the resource.
      *
-     * @param SentFriendRepository $repository
+     * @param FriendDriver $repository
      * @return SentFriendCollection
      * @throws AuthorizationException
      */
-    public function index(SentFriendRepository $repository)
+    public function index(FriendDriver $repository)
     {
         $this->authorize('viewAny', SentFriend::class);
 
         return new SentFriendCollection(
-            $repository->getProviderSentFriends()
+            $repository->getProviderSentFriends(true)
         );
     }
 

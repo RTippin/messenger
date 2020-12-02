@@ -4,26 +4,26 @@ namespace RTippin\Messenger\Http\Controllers\Actions;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Http\Collections\FriendCollection;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Repositories\Friends\FriendRepository;
 
 class FilterAddParticipants
 {
     use AuthorizesRequests;
 
     /**
-     * @param FriendRepository $friendRepository
+     * @param FriendDriver $repository
      * @param Thread $thread
      * @return FriendCollection
      * @throws AuthorizationException
      */
-    public function __invoke(FriendRepository $friendRepository, Thread $thread)
+    public function __invoke(FriendDriver $repository, Thread $thread)
     {
         $this->authorize('addParticipants', $thread);
 
         return new FriendCollection(
-            $friendRepository->getProviderFriendsNotInThread($thread)
+            $repository->getProviderFriendsNotInThread($thread)
         );
     }
 }

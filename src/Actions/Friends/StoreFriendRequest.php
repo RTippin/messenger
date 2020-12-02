@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use RTippin\Messenger\Actions\Base\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\FriendRequestBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
+use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\FriendRequestEvent;
 use RTippin\Messenger\Http\Request\FriendRequest;
@@ -45,22 +46,30 @@ class StoreFriendRequest extends BaseMessengerAction
     private Dispatcher $dispatcher;
 
     /**
+     * @var FriendDriver
+     */
+    private FriendDriver $friends;
+
+    /**
      * StoreFriendRequest constructor.
      *
      * @param Messenger $messenger
      * @param ProvidersRepository $providersRepository
      * @param BroadcastDriver $broadcaster
      * @param Dispatcher $dispatcher
+     * @param FriendDriver $friends
      */
     public function __construct(Messenger $messenger,
                                 ProvidersRepository $providersRepository,
                                 BroadcastDriver $broadcaster,
-                                Dispatcher $dispatcher)
+                                Dispatcher $dispatcher,
+                                FriendDriver $friends)
     {
         $this->messenger = $messenger;
         $this->providersRepository = $providersRepository;
         $this->broadcaster = $broadcaster;
         $this->dispatcher = $dispatcher;
+        $this->friends = $friends;
     }
 
     /**
@@ -113,7 +122,7 @@ class StoreFriendRequest extends BaseMessengerAction
         }
 
         if( ! $this->messenger->canFriendProvider($this->recipient)
-            || $this->messenger->getProvider()->friendStatus($this->recipient) !== 0)
+            || $this->friends->friendStatus($this->recipient) !== 0)
         {
             $this->throwAuthorizationError();
         }

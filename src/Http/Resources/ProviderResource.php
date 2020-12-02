@@ -193,7 +193,7 @@ class ProviderResource extends JsonResource
     {
         if(is_null($this->forceFriendStatus))
         {
-            return messenger()->getProvider()->friendStatus($this->provider);
+            return messengerFriends()->friendStatus($this->provider);
         }
 
         return $this->forceFriendStatus;
@@ -205,8 +205,8 @@ class ProviderResource extends JsonResource
      */
     private function getFriendResourceId(int $friendStatus)
     {
-        return optional(messenger()->getProvider()
-            ->getFriendResource(
+        return optional(
+            messengerFriends()->getFriendResource(
                 $friendStatus,
                 $this->provider
             )

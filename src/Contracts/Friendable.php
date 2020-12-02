@@ -16,49 +16,5 @@ use RTippin\Messenger\Models\SentFriend;
  */
 interface Friendable
 {
-    /**
-     * @return mixed|MorphMany|Friend
-     */
-    public function friends();
 
-    /**
-     * @return mixed|MorphMany|SentFriend
-     */
-    public function sentFriendRequest();
-
-    /**
-     * @return mixed|MorphMany|PendingFriend
-     */
-    public function pendingFriendRequest();
-
-    /**
-     * @param $model
-     * @return bool
-     */
-    public function isFriend($model);
-
-    /**
-     * @param $model
-     * @return bool
-     */
-    public function isSentFriendRequest($model);
-
-    /**
-     * @param $model
-     * @return bool
-     */
-    public function isPendingFriendRequest($model);
-
-    /**
-     * @param $model
-     * @return int
-     */
-    public function friendStatus($model);
-
-    /**
-     * @param int $friendStatus
-     * @param $model
-     * @return Friend|PendingFriend|SentFriend|null
-     */
-    public function getFriendResource(int $friendStatus, $model);
 }

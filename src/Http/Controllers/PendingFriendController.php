@@ -7,12 +7,12 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use RTippin\Messenger\Actions\Friends\AcceptFriendRequest;
 use RTippin\Messenger\Actions\Friends\DenyFriendRequest;
+use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Http\Collections\PendingFriendCollection;
 use RTippin\Messenger\Http\Resources\FriendResource;
 use RTippin\Messenger\Http\Resources\PendingFriendResource;
 use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Models\PendingFriend;
-use RTippin\Messenger\Repositories\Friends\PendingFriendRepository;
 use Throwable;
 
 class PendingFriendController
@@ -22,16 +22,16 @@ class PendingFriendController
     /**
      * Display a listing of the resource.
      *
-     * @param PendingFriendRepository $repository
+     * @param FriendDriver $repository
      * @return PendingFriendCollection
      * @throws AuthorizationException
      */
-    public function index(PendingFriendRepository $repository)
+    public function index(FriendDriver $repository)
     {
         $this->authorize('viewAny', PendingFriend::class);
 
         return new PendingFriendCollection(
-            $repository->getProviderPendingFriends()
+            $repository->getProviderPendingFriends(true)
         );
     }
 

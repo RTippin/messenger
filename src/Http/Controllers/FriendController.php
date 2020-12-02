@@ -6,11 +6,11 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use RTippin\Messenger\Actions\Friends\RemoveFriend;
+use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Http\Collections\FriendCollection;
 use RTippin\Messenger\Http\Resources\FriendResource;
 use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Models\Friend;
-use RTippin\Messenger\Repositories\Friends\FriendRepository;
 use Throwable;
 
 class FriendController
@@ -20,16 +20,16 @@ class FriendController
     /**
      * Display a listing of the resource.
      *
-     * @param FriendRepository $repository
+     * @param FriendDriver $repository
      * @return FriendCollection|JsonResponse
      * @throws AuthorizationException
      */
-    public function index(FriendRepository $repository)
+    public function index(FriendDriver $repository)
     {
         $this->authorize('viewAny', Friend::class);
 
         return new FriendCollection(
-            $repository->getProviderFriends()
+            $repository->getProviderFriends(true)
         );
     }
 
