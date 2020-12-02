@@ -215,6 +215,8 @@ class UpdateGroupAvatar extends BaseMessengerAction
      */
     private function updateThread(string $image): self
     {
+        $this->getThread()->timestamps = false;
+
         $this->getThread()->update([
             'image' => $image
         ]);

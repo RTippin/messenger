@@ -79,6 +79,8 @@ class UpdateGroupSettings extends BaseMessengerAction
      */
     private function updateThread(array $attributes): self
     {
+        $this->getThread()->timestamps = false;
+
         $this->getThread()->update($attributes);
 
         if( ! $this->getThread()->wasChanged())
