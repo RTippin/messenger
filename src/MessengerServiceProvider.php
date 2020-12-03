@@ -20,6 +20,7 @@ use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\PushNotificationDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
+use RTippin\Messenger\Http\Middleware\AuthenticateOptional;
 use RTippin\Messenger\Http\Middleware\SetMessengerProvider;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
@@ -133,7 +134,15 @@ class MessengerServiceProvider extends ServiceProvider
     {
         $router = $this->app->make(Router::class);
 
-        $router->aliasMiddleware('messenger.provider', SetMessengerProvider::class);
+        $router->aliasMiddleware(
+            'messenger.provider',
+            SetMessengerProvider::class
+        );
+
+        $router->aliasMiddleware(
+            'auth.optional',
+            AuthenticateOptional::class
+        );
     }
 
     /**
