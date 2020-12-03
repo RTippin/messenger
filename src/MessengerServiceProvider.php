@@ -2,6 +2,8 @@
 
 namespace RTippin\Messenger;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -18,6 +20,7 @@ use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\PushNotificationDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
+use RTippin\Messenger\Http\Middleware\SetMessengerProvider;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Friend;
@@ -60,36 +63,65 @@ class MessengerServiceProvider extends ServiceProvider
      * Perform post-registration booting of services.
      *
      * @return void
+     * @throws BindingResolutionException
      */
     public function boot(): void
     {
-        //load helper files
         $this->registerHelpers();
-        // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'rtippin');
-         $this->loadViewsFrom(__DIR__.'/../resources/views', 'messenger');
 
-        // $this->loadRoutesFrom(__DIR__.'/routes.php');
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'messenger');
+
+        $this->registerMiddleware();
 
         $this->registerRoutes();
 
-        $this->registerPolicies();
+        if($this->app['config']->get('messenger.routing.api.enabled'))
+        {
+            $this->registerPolicies();
+        }
 
-        // Publishing is only necessary when using the CLI.
-        if ($this->app->runningInConsole()) {
+        if ($this->app->runningInConsole())
+        {
             $this->bootForConsole();
         }
     }
 
     /**
+     * @throws BindingResolutionException
+     */
+    protected function registerMiddleware()
+    {
+        $router = $this->app->make(Router::class);
+
+        $router->aliasMiddleware('messenger.provider', SetMessengerProvider::class);
+    }
+
+    /**
      * Register all routes used by messenger
+     * @noinspection PhpIncludeInspection
      */
     protected function registerRoutes()
     {
         if($this->app['config']->get('messenger.routing.api.enabled'))
         {
-            Route::group($this->routeConfiguration(), function () {
+            Route::group($this->apiRouteConfiguration(), function () {
                 $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
             });
+        }
+
+        if($this->app['config']->get('messenger.routing.web.enabled'))
+        {
+            Route::group($this->webRouteConfiguration(), function () {
+                $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+            });
+        }
+
+        if($this->app['config']->get('messenger.routing.channels.enabled'))
+        {
+            if (file_exists($file = __DIR__.'/../routes/channels.php'))
+            {
+                require_once $file;
+            }
         }
     }
 
@@ -98,12 +130,26 @@ class MessengerServiceProvider extends ServiceProvider
      *
      * @return array
      */
-    protected function routeConfiguration(): array
+    protected function apiRouteConfiguration(): array
     {
         return [
             'domain' => $this->app['config']->get('messenger.routing.api.domain'),
             'prefix' => $this->app['config']->get('messenger.routing.api.prefix'),
             'middleware' => $this->app['config']->get('messenger.routing.api.middleware'),
+        ];
+    }
+
+    /**
+     * Get the Messenger API route group configuration array.
+     *
+     * @return array
+     */
+    protected function webRouteConfiguration(): array
+    {
+        return [
+            'domain' => $this->app['config']->get('messenger.routing.web.domain'),
+            'prefix' => $this->app['config']->get('messenger.routing.web.prefix'),
+            'middleware' => $this->app['config']->get('messenger.routing.web.middleware'),
         ];
     }
 
@@ -114,7 +160,6 @@ class MessengerServiceProvider extends ServiceProvider
      */
     protected function registerHelpers()
     {
-        // Load the helpers
         if (file_exists($file = __DIR__.'/helpers.php'))
         {
             require_once $file;
@@ -230,7 +275,6 @@ class MessengerServiceProvider extends ServiceProvider
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
-        // Publishing the configuration file.
         $this->publishes([
             __DIR__.'/../config/messenger.php' => config_path('messenger.php'),
         ], 'messenger.config');

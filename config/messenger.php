@@ -92,19 +92,17 @@ return [
 
     'routing' => [
         'web' => [
-            'enabled' => true,
+            'enabled' => false,
             'domain' => null,
             'prefix' => 'messenger',
-            'middleware' => []
+            'middleware' => ['messenger.provider']
         ],
         'api' => [
             'enabled' => true,
             'domain' => null,
             'prefix' => 'api/v1/messenger',
-            'middleware' => [
-                SetMessengerProvider::class
-            ],
-            'invite_public_middleware' => [],
+            'middleware' => ['api', 'messenger.provider:required'],
+            'invite_public_middleware' => ['api', 'messenger.provider'],
         ],
         'channels' => [
             'enabled' => true
