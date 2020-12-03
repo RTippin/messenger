@@ -3,7 +3,12 @@
 namespace RTippin\Messenger\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use RTippin\Messenger\Contracts\MessengerInterface;
 
+/**
+ * @mixin \RTippin\Messenger\Messenger
+ * @see MessengerInterface
+ */
 class Messenger extends Facade
 {
     /**

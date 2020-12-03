@@ -6,13 +6,14 @@ use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Filesystem\Filesystem;
+use RTippin\Messenger\Contracts\MessengerInterface;
 
 /**
  * Class MessengerService
  * @package App\Services\MessengerSystem
  */
 
-final class Messenger
+final class Messenger implements MessengerInterface
 {
     /**
      * MessengerService Provider Verifications
