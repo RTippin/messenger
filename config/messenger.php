@@ -96,7 +96,7 @@ return [
     |
     | You may choose to load our built in routes, or disable to setup your own.
     | The built in routing has all policy mappings and controllers already
-    | setup. Our built in middleware 'messenger.provider' simple takes the
+    | setup. Our built in middleware 'messenger.provider' simply takes the
     | authenticated user via the request and sets them as the current
     | messenger provider. You are free to use your own custom middleware
     | to set your provider, and add any other middleware you may want,

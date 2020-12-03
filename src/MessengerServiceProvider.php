@@ -85,6 +85,48 @@ class MessengerServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register any package services.
+     *
+     * @return void
+     */
+    public function register(): void
+    {
+        $this->mergeConfigFrom(__DIR__.'/../config/messenger.php', 'messenger');
+
+        $this->app->singleton(
+            Messenger::class,
+            Messenger::class
+        );
+
+        $this->app->alias(
+            Messenger::class,
+            'messenger'
+        );
+
+        $this->app->singleton(
+            FriendDriver::class,
+            FriendBroker::class
+        );
+
+        $this->app->singleton(
+            BroadcastDriver::class,
+            $this->getBroadcastImplementation()
+        );
+
+        $this->app->singleton(
+            PushNotificationDriver::class,
+            $this->getPushNotificationImplementation()
+        );
+
+        $this->app->singleton(
+            VideoDriver::class,
+            $this->getVideoImplementation()
+        );
+
+        $this->app->register(MessengerEventServiceProvider::class);
+    }
+
+    /**
      * @throws BindingResolutionException
      */
     protected function registerMiddleware(): void
@@ -202,48 +244,6 @@ class MessengerServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register any package services.
-     *
-     * @return void
-     */
-    public function register(): void
-    {
-        $this->mergeConfigFrom(__DIR__.'/../config/messenger.php', 'messenger');
-
-        $this->app->singleton(
-            Messenger::class,
-            Messenger::class
-        );
-
-        $this->app->alias(
-            Messenger::class,
-            'messenger'
-        );
-
-        $this->app->singleton(
-            FriendDriver::class,
-            FriendBroker::class
-        );
-
-        $this->app->singleton(
-            BroadcastDriver::class,
-            $this->getBroadcastImplementation()
-        );
-
-        $this->app->singleton(
-            PushNotificationDriver::class,
-            $this->getPushNotificationImplementation()
-        );
-
-        $this->app->singleton(
-            VideoDriver::class,
-            $this->getVideoImplementation()
-        );
-
-        $this->app->register(MessengerEventServiceProvider::class);
-    }
-
-    /**
      * Get the driver set in config for our services broadcasting feature
      *
      * @return string
@@ -296,7 +296,6 @@ class MessengerServiceProvider extends ServiceProvider
      */
     protected function bootForConsole(): void
     {
-        // Registering package commands.
         $this->commands([
             CallsActivityCheck::class,
             InvitesCheck::class,
@@ -316,21 +315,16 @@ class MessengerServiceProvider extends ServiceProvider
 
         // Publishing the views.
         /*$this->publishes([
-            __DIR__.'/../resources/views' => base_path('resources/views/vendor/rtippin'),
+            __DIR__.'/../resources/views' => base_path('resources/views/vendor/messenger'),
         ], 'messenger.views');*/
 
         // Publishing assets.
         /*$this->publishes([
-            __DIR__.'/../resources/assets' => public_path('vendor/rtippin'),
+            __DIR__.'/../resources/assets' => public_path('vendor/messenger'),
         ], 'messenger.views');*/
-
-        // Publishing the translation files.
-        /*$this->publishes([
-            __DIR__.'/../resources/lang' => resource_path('lang/vendor/rtippin'),
-        ], 'messenger.views');*/
-
 
     }
+
     /**
      * Register the application's policies.
      *
@@ -355,5 +349,4 @@ class MessengerServiceProvider extends ServiceProvider
     {
         return $this->policies;
     }
-
 }
