@@ -26,6 +26,6 @@
         </div>
     </main>
 </wrapper>
-@include('scripts')
+@include('messenger::scripts')
 </body>
 </html>

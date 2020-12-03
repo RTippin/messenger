@@ -1,4 +1,4 @@
-@extends('app')
+@extends('messenger::app')
 @section('title')
     Join Group
 @endsection

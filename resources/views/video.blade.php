@@ -1,4 +1,4 @@
-@extends('popup')
+@extends('messenger::popup')
 @section('title')Video Call @endsection
 @section('content')
     <div id="videos" class="container-fluid h-100 NS">

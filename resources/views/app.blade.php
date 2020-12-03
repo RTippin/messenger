@@ -35,7 +35,7 @@
             <span class="badge badge-pill badge-danger mr-n2" id="nav_mobile_total_count"></span>
         </button>
         <div id="navbarNavDropdown" class="navbar-collapse collapse">
-            @include('nav')
+            @include('messenger::nav')
         </div>
     </nav>
     <main id="FS_main_section" class="pt-5 mt-4 flex-fill">
@@ -44,6 +44,6 @@
         </div>
     </main>
 </wrapper>
-@include('scripts')
+@include('messenger::scripts')
 </body>
 </html>

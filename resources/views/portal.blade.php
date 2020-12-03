@@ -1,4 +1,4 @@
-@extends('messenger')
+@extends('messenger::messenger')
 
 @push('js')
 {{--<script src="{{mix("js/managers/ThreadManager.js")}}"></script>--}}

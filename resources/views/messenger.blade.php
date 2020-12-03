@@ -1,4 +1,4 @@
-@extends('app')
+@extends('messenger::app')
 @section('title'){{messenger()->getProvider()->name()}} - Messenger @endsection
 {{--@push('css')<link href="{{ asset("css/emoji/emoji.css?").config('app.version') }}" rel="stylesheet">--}}
 {{--    <link href="{{ mix("css/messages.css") }}" rel="stylesheet">--}}

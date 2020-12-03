@@ -1,6 +1,6 @@
-<script src="{{ mix('js/app.js') }}"></script>
+{{--<script src="{{ mix('js/app.js') }}"></script>--}}
 @if(auth()->check())
-<script src="{{mix("js/managers/NotifyManager.js")}}"></script>
+{{--<script src="{{mix("js/managers/NotifyManager.js")}}"></script>--}}
 @endif
 @stack('js')
 @if(auth()->check())
