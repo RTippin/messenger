@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Gate;
@@ -40,6 +39,7 @@ use RTippin\Messenger\Policies\ParticipantPolicy;
 use RTippin\Messenger\Policies\PendingFriendPolicy;
 use RTippin\Messenger\Policies\SentFriendPolicy;
 use RTippin\Messenger\Policies\ThreadPolicy;
+use Illuminate\Contracts\Container\BindingResolutionException;
 
 class MessengerServiceProvider extends ServiceProvider
 {
@@ -70,16 +70,13 @@ class MessengerServiceProvider extends ServiceProvider
     {
         $this->registerHelpers();
 
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'messenger');
-
         $this->registerMiddleware();
 
         $this->registerRoutes();
 
-        if($this->app['config']->get('messenger.routing.api.enabled'))
-        {
-            $this->registerPolicies();
-        }
+        $this->registerPolicies();
+
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'messenger');
 
         if ($this->app->runningInConsole())
         {
@@ -90,7 +87,7 @@ class MessengerServiceProvider extends ServiceProvider
     /**
      * @throws BindingResolutionException
      */
-    protected function registerMiddleware()
+    protected function registerMiddleware(): void
     {
         $router = $this->app->make(Router::class);
 
@@ -101,7 +98,7 @@ class MessengerServiceProvider extends ServiceProvider
      * Register all routes used by messenger
      * @noinspection PhpIncludeInspection
      */
-    protected function registerRoutes()
+    protected function registerRoutes(): void
     {
         if($this->app['config']->get('messenger.routing.api.enabled'))
         {
@@ -117,9 +114,16 @@ class MessengerServiceProvider extends ServiceProvider
             });
         }
 
+        if($this->app['config']->get('messenger.routing.provider_avatar.enabled'))
+        {
+            Route::group($this->providerAvatarRouteConfiguration(), function () {
+                $this->loadRoutesFrom(__DIR__.'/../routes/image.php');
+            });
+        }
+
         if($this->app['config']->get('messenger.routing.channels.enabled'))
         {
-//            Broadcast::routes($this->channelRouteConfiguration());
+            Broadcast::routes($this->channelRouteConfiguration());
 
             if (file_exists($file = __DIR__.'/../routes/channels.php'))
             {
@@ -157,6 +161,20 @@ class MessengerServiceProvider extends ServiceProvider
     }
 
     /**
+     * Get the Messenger API route group configuration array.
+     *
+     * @return array
+     */
+    protected function providerAvatarRouteConfiguration(): array
+    {
+        return [
+            'domain' => $this->app['config']->get('messenger.routing.provider_avatar.domain'),
+            'prefix' => $this->app['config']->get('messenger.routing.provider_avatar.prefix'),
+            'middleware' => $this->app['config']->get('messenger.routing.provider_avatar.middleware'),
+        ];
+    }
+
+    /**
      * Get the Broadcasting channel route group configuration array.
      *
      * @return array
@@ -175,7 +193,7 @@ class MessengerServiceProvider extends ServiceProvider
      * Register helpers file
      * @noinspection PhpIncludeInspection
      */
-    protected function registerHelpers()
+    protected function registerHelpers(): void
     {
         if (file_exists($file = __DIR__.'/helpers.php'))
         {
@@ -266,7 +284,7 @@ class MessengerServiceProvider extends ServiceProvider
      *
      * @return array
      */
-    public function provides()
+    public function provides(): array
     {
         return ['messenger'];
     }
@@ -318,10 +336,13 @@ class MessengerServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function registerPolicies()
+    protected function registerPolicies(): void
     {
-        foreach ($this->policies() as $key => $value) {
-            Gate::policy($key, $value);
+        if($this->app['config']->get('messenger.routing.api.enabled'))
+        {
+            foreach ($this->policies() as $key => $value) {
+                Gate::policy($key, $value);
+            }
         }
     }
 
@@ -330,7 +351,7 @@ class MessengerServiceProvider extends ServiceProvider
      *
      * @return array
      */
-    protected function policies()
+    protected function policies(): array
     {
         return $this->policies;
     }

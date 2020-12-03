@@ -8,7 +8,6 @@ use RTippin\Messenger\Brokers\NullBroadcastBroker;
 use RTippin\Messenger\Brokers\NullPushNotificationBroker;
 use RTippin\Messenger\Brokers\NullVideoBroker;
 use RTippin\Messenger\Brokers\PushNotificationBroker;
-use RTippin\Messenger\Http\Middleware\SetMessengerProvider;
 
 return [
 
@@ -90,24 +89,56 @@ return [
         ]
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Messenger routing config
+    |--------------------------------------------------------------------------
+    |
+    | You may choose to load our built in routes, or disable to setup your own.
+    | The built in routing has all policy mappings and controllers already
+    | setup. Our built in middleware 'messenger.provider' simple takes the
+    | authenticated user via the request and sets them as the current
+    | messenger provider. You are free to use your own custom middleware
+    | to set your provider, and add any other middleware you may want,
+    | such as 'auth:api' etc.
+    |
+    | *For the broadcasting channels to register, you must have already
+    | setup/defined your laravel apps broadcast driver
+    |
+    */
     'routing' => [
+        // All web based view/template routes
         'web' => [
             'enabled' => true,
             'domain' => null,
             'prefix' => 'messenger',
-            'middleware' => ['messenger.provider']
+            'middleware' => ['auth', 'messenger.provider']
         ],
+        // Single route for viewing provider avatar image
+        'provider_avatar' => [
+            'enabled' => true,
+            'domain' => null,
+            'prefix' => 'images',
+            'middleware' => ['cache.headers:public, max-age=86400;']
+        ],
+        // All messenger API routes used to return json
         'api' => [
             'enabled' => true,
             'domain' => null,
             'prefix' => 'api/v1/messenger',
-            'middleware' => ['api', 'messenger.provider:required'],
+            'middleware' => ['api', 'auth', 'messenger.provider:required'],
+            // The group invite GET via code is separated so that you may let
+            // guest users load information on the invite without being
+            // logged in, should you choose
             'invite_public_middleware' => ['api', 'messenger.provider'],
         ],
+        // Broadcasting routes and channels that will be used by your driver
+        // (pusher, socket, etc) for authenticating private and presence
+        // channels
         'channels' => [
             'enabled' => false,
             'domain' => null,
-            'prefix' => 'api/v1',
+            'prefix' => 'api',
             'middleware' => ['api', 'messenger.provider'],
         ]
     ],
