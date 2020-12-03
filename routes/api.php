@@ -46,12 +46,11 @@ use RTippin\Messenger\Http\Controllers\ThreadController;
 |--------------------------------------------------------------------------
 */
 
-//Messenger routes
 Route::name('api.messenger.')->group(function(){
     //Messenger view service settings
     Route::get( '/', [MessengerController::class, 'index'])->name('info');
     //Invitation join
-    Route::post('join/{invite:code}', JoinGroupInvite::class)->name('invite.join');
+    Route::post('join/{invite:code}', JoinGroupInvite::class);
     //Search
     Route::get('search/{query?}', Search::class)->middleware('throttle:45,1');
     //Friends routes

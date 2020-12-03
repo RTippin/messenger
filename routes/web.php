@@ -3,7 +3,6 @@
 use RTippin\Messenger\Http\Controllers\Actions\DownloadMessageFile;
 use RTippin\Messenger\Http\Controllers\Actions\RenderGroupAvatar;
 use RTippin\Messenger\Http\Controllers\Actions\RenderMessageImage;
-use RTippin\Messenger\Http\Controllers\Actions\RenderProviderAvatar;
 use RTippin\Messenger\Http\Controllers\ViewPortalController;
 
 /*
@@ -12,15 +11,6 @@ use RTippin\Messenger\Http\Controllers\ViewPortalController;
 |--------------------------------------------------------------------------
 */
 
-//Images
-Route::get('images/{alias}/{id}/{size}/{image}', RenderProviderAvatar::class)
-    ->name('avatar.render')
-    ->middleware('cache.headers:public, max-age=86400;');
-
-//Messenger Invite Join
-Route::get('join/{invite}', [ViewPortalController::class, 'showJoinWithInvite'])->name('messenger.invites.join');
-
-//Main messenger web routes
 Route::name('messenger.')->group(function(){
     Route::get('/', [ViewPortalController::class, 'index'])->name('portal');
     Route::get('{thread}', [ViewPortalController::class, 'showThread'])->name('show');

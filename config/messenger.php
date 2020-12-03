@@ -100,56 +100,73 @@ return [
     | authenticated user via the request and sets them as the current
     | messenger provider. You are free to use your own custom middleware
     | to set your provider, and add any other middleware you may want,
-    | such as 'auth:api' etc.
+    | such as 'auth:api' etc. We also include an extension of laravels
+    | 'auth' middleware that lets it be optional for routes we want
+    | both guest and auth to see.
+    |
+    | All API routes return json, and are best used stateless through
+    | auth:api such as passport or sanctum.
+    |
+    | Invite view / redemption routes for both web and api have individual
+    | middleware control so you may allow both guest or authed users to
+    | access.
+    |
+    | * Included middleware
     |
     | *For the broadcasting channels to register, you must have already
-    | setup/defined your laravel apps broadcast driver
+    | setup/defined your laravel apps broadcast driver.
     |
     */
     'routing' => [
-
-        // All web based view/template routes
-        'web' => [
-            'enabled' => true,
-            'domain' => null,
-            'prefix' => 'messenger',
-            'middleware' => ['web', 'auth', 'messenger.provider']
-        ],
-
-        // Single route for viewing provider avatar image
-        'provider_avatar' => [
-            'enabled' => true,
-            'domain' => null,
-            'prefix' => 'images',
-            'middleware' => ['web', 'cache.headers:public, max-age=86400;']
-        ],
-
-        // All messenger API routes used to return json. Best option would be to
-        // set in your api group and auth:api via passport or sanctum for
-        // stateless API responses XD
-        // ** prefix is concatenated with path but used to
-        // ** strip 'prefix' from returned rendered routes
         'api' => [
             'enabled' => true,
             'domain' => null,
             'prefix' => 'api/v1',
             'path' => 'messenger',
-            'middleware' => ['web', 'auth', 'messenger.provider:required'],
-
-            // The group invite GET via code is separated so that you may let
-            // guest users load information on the invite without being
-            // logged in, should you choose
-            'invite_public_middleware' => ['api', 'messenger.provider'],
+            'middleware' => [
+                'web',
+                'auth',
+                'messenger.provider:required'
+            ],
+            'invite_api_middleware' => [
+                'web',
+                'auth.optional',
+                'messenger.provider'
+            ],
         ],
-
-        // Broadcasting routes and channels that will be used by your driver
-        // (pusher, socket, etc) for authenticating private and presence
-        // channels
+        'web' => [
+            'enabled' => true,
+            'domain' => null,
+            'prefix' => 'messenger',
+            'middleware' => [
+                'web',
+                'auth',
+                'messenger.provider'
+            ],
+            'invite_web_middleware' => [
+                'web',
+                'auth.optional',
+                'messenger.provider'
+            ],
+        ],
+        'provider_avatar' => [
+            'enabled' => true,
+            'domain' => null,
+            'prefix' => 'images',
+            'middleware' => [
+                'web',
+                'cache.headers:public, max-age=86400;'
+            ]
+        ],
         'channels' => [
             'enabled' => false,
             'domain' => null,
-            'prefix' => 'api',
-            'middleware' => ['web', 'auth', 'messenger.provider'],
+            'prefix' => 'messenger',
+            'middleware' => [
+                'web',
+                'auth',
+                'messenger.provider:required'
+            ],
         ]
     ],
 

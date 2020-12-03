@@ -147,6 +147,10 @@ class MessengerServiceProvider extends ServiceProvider
             Route::group($this->apiRouteConfiguration(), function () {
                 $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
             });
+
+            Route::group($this->apiRouteConfiguration(true), function () {
+                $this->loadRoutesFrom(__DIR__.'/../routes/invite_api.php');
+            });
         }
 
         if($this->app['config']->get('messenger.routing.web.enabled'))
@@ -154,12 +158,16 @@ class MessengerServiceProvider extends ServiceProvider
             Route::group($this->webRouteConfiguration(), function () {
                 $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
             });
+
+            Route::group($this->webRouteConfiguration(true), function () {
+                $this->loadRoutesFrom(__DIR__.'/../routes/invite_web.php');
+            });
         }
 
         if($this->app['config']->get('messenger.routing.provider_avatar.enabled'))
         {
             Route::group($this->providerAvatarRouteConfiguration(), function () {
-                $this->loadRoutesFrom(__DIR__.'/../routes/image.php');
+                $this->loadRoutesFrom(__DIR__.'/../routes/avatar.php');
             });
         }
 
@@ -177,28 +185,34 @@ class MessengerServiceProvider extends ServiceProvider
     /**
      * Get the Messenger API route group configuration array.
      *
+     * @param bool $invite
      * @return array
      */
-    protected function apiRouteConfiguration(): array
+    protected function apiRouteConfiguration(bool $invite = false): array
     {
         return [
             'domain' => $this->app['config']->get('messenger.routing.api.domain'),
             'prefix' => $this->app['config']->get('messenger.routing.api.prefix') . '/' . $this->app['config']->get('messenger.routing.api.path'),
-            'middleware' => $this->app['config']->get('messenger.routing.api.middleware'),
+            'middleware' => $invite
+                ? $this->app['config']->get('messenger.routing.api.invite_api_middleware')
+                : $this->app['config']->get('messenger.routing.api.middleware'),
         ];
     }
 
     /**
      * Get the Messenger API route group configuration array.
      *
+     * @param bool $invite
      * @return array
      */
-    protected function webRouteConfiguration(): array
+    protected function webRouteConfiguration(bool $invite = false): array
     {
         return [
             'domain' => $this->app['config']->get('messenger.routing.web.domain'),
             'prefix' => $this->app['config']->get('messenger.routing.web.prefix'),
-            'middleware' => $this->app['config']->get('messenger.routing.web.middleware'),
+            'middleware' => $invite
+                ? $this->app['config']->get('messenger.routing.web.invite_web_middleware')
+                : $this->app['config']->get('messenger.routing.web.middleware'),
         ];
     }
 
