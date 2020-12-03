@@ -107,31 +107,38 @@ return [
     |
     */
     'routing' => [
+
         // All web based view/template routes
         'web' => [
             'enabled' => true,
             'domain' => null,
             'prefix' => 'messenger',
-            'middleware' => ['auth', 'messenger.provider']
+            'middleware' => ['web', 'auth', 'messenger.provider']
         ],
+
         // Single route for viewing provider avatar image
         'provider_avatar' => [
             'enabled' => true,
             'domain' => null,
             'prefix' => 'images',
-            'middleware' => ['cache.headers:public, max-age=86400;']
+            'middleware' => ['web', 'cache.headers:public, max-age=86400;']
         ],
-        // All messenger API routes used to return json
+
+        // All messenger API routes used to return json. Best option would be to
+        // set in your api group and auth:api via passport or sanctum for
+        // stateless API responses XD
         'api' => [
             'enabled' => true,
             'domain' => null,
             'prefix' => 'api/v1/messenger',
-            'middleware' => ['api', 'auth', 'messenger.provider:required'],
+            'middleware' => ['web', 'auth', 'messenger.provider:required'],
+
             // The group invite GET via code is separated so that you may let
             // guest users load information on the invite without being
             // logged in, should you choose
             'invite_public_middleware' => ['api', 'messenger.provider'],
         ],
+
         // Broadcasting routes and channels that will be used by your driver
         // (pusher, socket, etc) for authenticating private and presence
         // channels
@@ -139,7 +146,7 @@ return [
             'enabled' => false,
             'domain' => null,
             'prefix' => 'api',
-            'middleware' => ['api', 'messenger.provider'],
+            'middleware' => ['web', 'auth', 'messenger.provider'],
         ]
     ],
 
