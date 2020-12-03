@@ -119,7 +119,7 @@ class MessengerServiceProvider extends ServiceProvider
 
         if($this->app['config']->get('messenger.routing.channels.enabled'))
         {
-            Broadcast::routes($this->channelRouteConfiguration());
+//            Broadcast::routes($this->channelRouteConfiguration());
 
             if (file_exists($file = __DIR__.'/../routes/channels.php'))
             {
