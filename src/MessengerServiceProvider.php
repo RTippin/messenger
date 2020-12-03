@@ -3,6 +3,7 @@
 namespace RTippin\Messenger;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Route;
@@ -118,6 +119,8 @@ class MessengerServiceProvider extends ServiceProvider
 
         if($this->app['config']->get('messenger.routing.channels.enabled'))
         {
+            Broadcast::routes($this->channelRouteConfiguration());
+
             if (file_exists($file = __DIR__.'/../routes/channels.php'))
             {
                 require_once $file;
@@ -150,6 +153,20 @@ class MessengerServiceProvider extends ServiceProvider
             'domain' => $this->app['config']->get('messenger.routing.web.domain'),
             'prefix' => $this->app['config']->get('messenger.routing.web.prefix'),
             'middleware' => $this->app['config']->get('messenger.routing.web.middleware'),
+        ];
+    }
+
+    /**
+     * Get the Broadcasting channel route group configuration array.
+     *
+     * @return array
+     */
+    protected function channelRouteConfiguration(): array
+    {
+        return [
+            'domain' => $this->app['config']->get('messenger.routing.channels.domain'),
+            'prefix' => $this->app['config']->get('messenger.routing.channels.prefix'),
+            'middleware' => $this->app['config']->get('messenger.routing.channels.middleware'),
         ];
     }
 

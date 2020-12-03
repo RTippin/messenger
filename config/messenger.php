@@ -92,7 +92,7 @@ return [
 
     'routing' => [
         'web' => [
-            'enabled' => false,
+            'enabled' => true,
             'domain' => null,
             'prefix' => 'messenger',
             'middleware' => ['messenger.provider']
@@ -105,7 +105,10 @@ return [
             'invite_public_middleware' => ['api', 'messenger.provider'],
         ],
         'channels' => [
-            'enabled' => true
+            'enabled' => false,
+            'domain' => null,
+            'prefix' => 'api/v1',
+            'middleware' => ['api', 'messenger.provider'],
         ]
     ],
 
