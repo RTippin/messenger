@@ -16,9 +16,9 @@
     <meta name="title" content="@yield('title', 'Messenger')">
     <title>@yield('title', 'Messenger')</title>
     @if(auth()->check() && messenger()->getProviderMessenger()->dark_mode)
-        <link id="main_css" href="{{ mix("css/dark.css") }}" rel="stylesheet">
+{{--        <link id="main_css" href="{{ mix("css/dark.css") }}" rel="stylesheet">--}}
     @else
-        <link id="main_css" href="{{ mix("css/app.css") }}" rel="stylesheet">
+{{--        <link id="main_css" href="{{ mix("css/app.css") }}" rel="stylesheet">--}}
     @endif
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.7.1/css/all.min.css">
     <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
@@ -27,7 +27,7 @@
 <body>
 <wrapper class="d-flex flex-column">
     <nav id="FS_navbar" class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="{{auth()->check() ? route('messenger.portal') : url('/')}}">
+        <a class="navbar-brand" href="{{route('messenger.portal')}}">
             Messenger
         </a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -38,7 +38,7 @@
             @include('nav')
         </div>
     </nav>
-    <main id="FS_main_section" class="{{request()->is('messenger*') ? 'pt-5' : 'py-5'}} mt-4 flex-fill">
+    <main id="FS_main_section" class="pt-5 mt-4 flex-fill">
         <div id="app">
             @yield('content')
         </div>

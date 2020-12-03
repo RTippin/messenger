@@ -40,12 +40,10 @@
                     <button onclick="JanusServer.toggleMute()" data-tooltip="tooltip" title="Mute mic" data-placement="top" class="btn btn-outline-success pt-1 pb-0 px-3 rtc_audio_on rtc_nav_opt NS"><i class="fas fa-microphone fa-2x"></i></button>
                     <button onclick="JanusServer.toggleMute()" data-tooltip="tooltip" title="Unmute mic" data-placement="top" class="btn btn-outline-danger pt-1 pb-0 px-2 rtc_audio_off rtc_nav_opt NS"><i class="fas fa-microphone-slash fa-2x"></i></button>
                 </li>
-                @if(!agent()->isMobile())
-                    <li class="nav-item mr-2 rtc_nav_opt rtc_nav_screen NS">
-                        <button onclick="JanusServer.toggleScreenShare()" data-tooltip="tooltip" title="Share screen" data-placement="top" class="btn btn-outline-info pt-1 pb-0 px-2 rtc_screen_off rtc_nav_opt NS"><i class="fas fa-desktop fa-2x"></i></button>
-                        <button onclick="JanusServer.toggleScreenShare()" data-tooltip="tooltip" title="Stop screen share" data-placement="top" class="btn btn-outline-success pt-1 pb-0 px-2 rtc_screen_on rtc_nav_opt glowing_warning_btn NS"><i class="fas fa-desktop fa-2x"></i></button>
-                    </li>
-                @endif
+                <li class="nav-item mr-2 rtc_nav_opt rtc_nav_screen NS">
+                    <button onclick="JanusServer.toggleScreenShare()" data-tooltip="tooltip" title="Share screen" data-placement="top" class="btn btn-outline-info pt-1 pb-0 px-2 rtc_screen_off rtc_nav_opt NS"><i class="fas fa-desktop fa-2x"></i></button>
+                    <button onclick="JanusServer.toggleScreenShare()" data-tooltip="tooltip" title="Stop screen share" data-placement="top" class="btn btn-outline-success pt-1 pb-0 px-2 rtc_screen_on rtc_nav_opt glowing_warning_btn NS"><i class="fas fa-desktop fa-2x"></i></button>
+                </li>
             </ul>
         </nav>
     </div>

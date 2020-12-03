@@ -10,9 +10,9 @@
     <meta name="title" content="@yield('title', 'Messenger')">
     <title>@yield('title', 'Messenger')</title>
     @if(auth()->check() && messenger()->getProviderMessenger()->dark_mode)
-        <link id="main_css" href="{{ mix("css/dark.css") }}" rel="stylesheet">
+{{--        <link id="main_css" href="{{ mix("css/dark.css") }}" rel="stylesheet">--}}
     @else
-        <link id="main_css" href="{{ mix("css/app.css") }}" rel="stylesheet">
+{{--        <link id="main_css" href="{{ mix("css/app.css") }}" rel="stylesheet">--}}
     @endif
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css" integrity="sha384-fnmOCqbTlWIlj8LyTjo7mOUStjsKC4pOpQbqyi7RrhN7udi9RwhKkMHpvLbHG9Sr" crossorigin="anonymous">
     <link href="https://cdn.datatables.net/1.10.19/css/dataTables.bootstrap4.min.css" rel="stylesheet">
