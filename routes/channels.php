@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Broadcast;
 use RTippin\Messenger\Broadcasting\CallChannel;
 use RTippin\Messenger\Broadcasting\ProviderChannel;
 use RTippin\Messenger\Broadcasting\ThreadChannel;

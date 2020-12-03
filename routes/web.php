@@ -18,8 +18,6 @@ use RTippin\Messenger\Http\Controllers\ViewPortalController;
 */
 
 //Images
-
-
 Route::get('images/{alias}/{id}/{size}/{image}', RenderProviderAvatar::class)
     ->name('avatar.render')
     ->middleware('cache.headers:public, max-age=86400;');

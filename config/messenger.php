@@ -89,6 +89,30 @@ return [
         ]
     ],
 
+    'routing' => [
+        'web' => [
+            'enabled' => true,
+            'domain' => null,
+            'path' => 'messenger',
+            'middleware' => []
+        ],
+        'api' => [
+            'enabled' => true,
+            'domain' => null,
+            'prefix' => 'api/v1',
+            'messenger' => [
+                'path' => 'messenger',
+                'middleware' => []
+            ],
+            'friends' => [],
+            'search' => [],
+            'invites' => []
+        ],
+        'channels' => [
+            'enabled' => true
+        ]
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Feature/Service drivers
