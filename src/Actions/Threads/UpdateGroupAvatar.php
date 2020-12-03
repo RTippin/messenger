@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Actions\Threads;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Actions\Base\BaseMessengerAction;
@@ -85,6 +86,7 @@ class UpdateGroupAvatar extends BaseMessengerAction
      * @var Thread $thread $parameters[0]
      * @var GroupAvatarRequest $validated $parameters[1]
      * @return $this
+     * @throws AuthorizationException
      */
     public function execute(...$parameters): self
     {
@@ -145,6 +147,7 @@ class UpdateGroupAvatar extends BaseMessengerAction
     /**
      * @param array $params
      * @return $this
+     * @throws AuthorizationException
      */
     private function handleAction(array $params): self
     {
@@ -172,9 +175,12 @@ class UpdateGroupAvatar extends BaseMessengerAction
     /**
      * @param UploadedFile $image
      * @return string|null
+     * @throws AuthorizationException
      */
     private function uploadAvatar(UploadedFile $image): ?string
     {
+        $this->isThreadAvatarUploadEnabled();
+
         return $this->fileService
             ->setType('image')
             ->setDisk($this->getThread()->getStorageDisk())
@@ -276,6 +282,20 @@ class UpdateGroupAvatar extends BaseMessengerAction
                 $this->messenger->getProvider()->withoutRelations(),
                 $this->getThread(true)
             ));
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws AuthorizationException
+     */
+    private function isThreadAvatarUploadEnabled(): self
+    {
+        if( ! $this->messenger->isThreadAvatarUploadEnabled())
+        {
+            throw new AuthorizationException("Thread avatar uploads are currently disabled.");
         }
 
         return $this;
