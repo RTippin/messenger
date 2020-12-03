@@ -127,10 +127,13 @@ return [
         // All messenger API routes used to return json. Best option would be to
         // set in your api group and auth:api via passport or sanctum for
         // stateless API responses XD
+        // ** prefix is concatenated with path but used to
+        // ** strip 'prefix' from returned rendered routes
         'api' => [
             'enabled' => true,
             'domain' => null,
-            'prefix' => 'api/v1/messenger',
+            'prefix' => 'api/v1',
+            'path' => 'messenger',
             'middleware' => ['web', 'auth', 'messenger.provider:required'],
 
             // The group invite GET via code is separated so that you may let

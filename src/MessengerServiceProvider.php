@@ -183,7 +183,7 @@ class MessengerServiceProvider extends ServiceProvider
     {
         return [
             'domain' => $this->app['config']->get('messenger.routing.api.domain'),
-            'prefix' => $this->app['config']->get('messenger.routing.api.prefix'),
+            'prefix' => $this->app['config']->get('messenger.routing.api.prefix') . '/' . $this->app['config']->get('messenger.routing.api.path'),
             'middleware' => $this->app['config']->get('messenger.routing.api.middleware'),
         ];
     }
