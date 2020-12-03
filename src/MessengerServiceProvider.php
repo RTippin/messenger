@@ -3,6 +3,7 @@
 namespace RTippin\Messenger;
 
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use RTippin\Messenger\Brokers\FriendBroker;
 use RTippin\Messenger\Commands\CallsActivityCheck;
@@ -66,7 +67,7 @@ class MessengerServiceProvider extends ServiceProvider
         $this->registerHelpers();
         // $this->loadTranslationsFrom(__DIR__.'/../resources/lang', 'rtippin');
          $this->loadViewsFrom(__DIR__.'/../resources/views', 'messenger');
-         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+
         // $this->loadRoutesFrom(__DIR__.'/routes.php');
 
         $this->registerPolicies();
@@ -77,9 +78,31 @@ class MessengerServiceProvider extends ServiceProvider
         }
     }
 
+    /**
+     * Register all routes used by messenger
+     */
     protected function registerRoutes()
     {
+        if($this->app['config']->get('messenger.routing.api.enabled'))
+        {
+            Route::group($this->routeConfiguration(), function () {
+                $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
+            });
+        }
+    }
 
+    /**
+     * Get the Messenger API route group configuration array.
+     *
+     * @return array
+     */
+    protected function routeConfiguration(): array
+    {
+        return [
+            'domain' => $this->app['config']->get('messenger.routing.api.domain'),
+            'prefix' => $this->app['config']->get('messenger.routing.api.prefix'),
+            'middleware' => $this->app['config']->get('messenger.routing.api.middleware'),
+        ];
     }
 
 
@@ -202,6 +225,8 @@ class MessengerServiceProvider extends ServiceProvider
             PurgeMessages::class,
             PurgeThreads::class
         ]);
+
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         // Publishing the configuration file.
         $this->publishes([

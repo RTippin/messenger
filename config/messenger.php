@@ -8,6 +8,7 @@ use RTippin\Messenger\Brokers\NullBroadcastBroker;
 use RTippin\Messenger\Brokers\NullPushNotificationBroker;
 use RTippin\Messenger\Brokers\NullVideoBroker;
 use RTippin\Messenger\Brokers\PushNotificationBroker;
+use RTippin\Messenger\Http\Middleware\SetMessengerProvider;
 
 return [
 
@@ -100,7 +101,9 @@ return [
             'enabled' => true,
             'domain' => null,
             'prefix' => 'api/v1/messenger',
-            'middleware' => ['auth'],
+            'middleware' => [
+                SetMessengerProvider::class
+            ],
             'invite_public_middleware' => [],
         ],
         'channels' => [
