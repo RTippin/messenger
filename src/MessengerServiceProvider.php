@@ -70,6 +70,8 @@ class MessengerServiceProvider extends ServiceProvider
 
         // $this->loadRoutesFrom(__DIR__.'/routes.php');
 
+        $this->registerRoutes();
+
         $this->registerPolicies();
 
         // Publishing is only necessary when using the CLI.
