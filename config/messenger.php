@@ -93,20 +93,15 @@ return [
         'web' => [
             'enabled' => true,
             'domain' => null,
-            'path' => 'messenger',
+            'prefix' => 'messenger',
             'middleware' => []
         ],
         'api' => [
             'enabled' => true,
             'domain' => null,
-            'prefix' => 'api/v1',
-            'messenger' => [
-                'path' => 'messenger',
-                'middleware' => []
-            ],
-            'friends' => [],
-            'search' => [],
-            'invites' => []
+            'prefix' => 'api/v1/messenger',
+            'middleware' => ['auth'],
+            'invite_public_middleware' => [],
         ],
         'channels' => [
             'enabled' => true

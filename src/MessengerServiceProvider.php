@@ -77,11 +77,17 @@ class MessengerServiceProvider extends ServiceProvider
         }
     }
 
+    protected function registerRoutes()
+    {
+
+    }
+
+
     /**
      * Register helpers file
      * @noinspection PhpIncludeInspection
      */
-    public function registerHelpers()
+    protected function registerHelpers()
     {
         // Load the helpers
         if (file_exists($file = __DIR__.'/helpers.php'))
@@ -137,7 +143,7 @@ class MessengerServiceProvider extends ServiceProvider
      *
      * @return string
      */
-    private function getBroadcastImplementation(): string
+    protected function getBroadcastImplementation(): string
     {
         $alias = $this->app['config']->get('messenger.broadcasting.driver');
 
@@ -149,7 +155,7 @@ class MessengerServiceProvider extends ServiceProvider
      *
      * @return string
      */
-    private function getPushNotificationImplementation(): string
+    protected function getPushNotificationImplementation(): string
     {
         $alias = $this->app['config']->get('messenger.push_notifications.driver');
 
@@ -161,7 +167,7 @@ class MessengerServiceProvider extends ServiceProvider
      *
      * @return string
      */
-    private function getVideoImplementation(): string
+    protected function getVideoImplementation(): string
     {
         $alias = $this->app['config']->get('messenger.calling.driver');
 
@@ -185,6 +191,18 @@ class MessengerServiceProvider extends ServiceProvider
      */
     protected function bootForConsole(): void
     {
+        // Registering package commands.
+        $this->commands([
+            CallsActivityCheck::class,
+            InvitesCheck::class,
+            ProvidersCache::class,
+            ProvidersClear::class,
+            PurgeDocuments::class,
+            PurgeImages::class,
+            PurgeMessages::class,
+            PurgeThreads::class
+        ]);
+
         // Publishing the configuration file.
         $this->publishes([
             __DIR__.'/../config/messenger.php' => config_path('messenger.php'),
@@ -205,24 +223,14 @@ class MessengerServiceProvider extends ServiceProvider
             __DIR__.'/../resources/lang' => resource_path('lang/vendor/rtippin'),
         ], 'messenger.views');*/
 
-        // Registering package commands.
-         $this->commands([
-             CallsActivityCheck::class,
-             InvitesCheck::class,
-             ProvidersCache::class,
-             ProvidersClear::class,
-             PurgeDocuments::class,
-             PurgeImages::class,
-             PurgeMessages::class,
-             PurgeThreads::class
-         ]);
+
     }
     /**
      * Register the application's policies.
      *
      * @return void
      */
-    private function registerPolicies()
+    protected function registerPolicies()
     {
         foreach ($this->policies() as $key => $value) {
             Gate::policy($key, $value);
@@ -234,7 +242,7 @@ class MessengerServiceProvider extends ServiceProvider
      *
      * @return array
      */
-    private function policies()
+    protected function policies()
     {
         return $this->policies;
     }
