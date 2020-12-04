@@ -148,7 +148,7 @@ class ImageRenderService
         if(in_array($thread->image, Definitions::DefaultGroupAvatars))
         {
             return $this->responseFactory->file(
-                public_path("images/messenger/{$thread->image}")
+                public_path("vendor/messenger/images/{$thread->image}")
             );
         }
 
@@ -184,11 +184,11 @@ class ImageRenderService
         switch($type)
         {
             case 'user':
-                return $this->responseFactory->file(public_path('images/users.png'));
+                return $this->responseFactory->file(public_path('vendor/messenger/users.png'));
             case 'company':
-                return $this->responseFactory->file(public_path('images/company.png'));
+                return $this->responseFactory->file(public_path('vendor/messenger/company.png'));
             default:
-                return $this->responseFactory->file(public_path('images/image404.png'));
+                return $this->responseFactory->file(public_path('vendor/messenger/image404.png'));
         }
     }
 
