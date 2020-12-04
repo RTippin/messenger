@@ -341,10 +341,9 @@ class MessengerServiceProvider extends ServiceProvider
             __DIR__.'/../resources/views' => base_path('resources/views/vendor/messenger'),
         ], 'messenger.views');*/
 
-        // Publishing assets.
-        /*$this->publishes([
-            __DIR__.'/../resources/assets' => public_path('vendor/messenger'),
-        ], 'messenger.views');*/
+        $this->publishes([
+            __DIR__.'/../public' => public_path('vendor/messenger'),
+        ], 'messenger.assets');
 
     }
 
