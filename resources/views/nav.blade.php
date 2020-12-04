@@ -1,3 +1,6 @@
+<ul class="navbar-nav mr-auto">
+
+</ul>
 <ul class="navbar-nav mb-1">
     <li id="active_calls_nav" class="nav-item dropdown mx-1 my-2 my-lg-0">
         <a id="active_calls_link" href="#" class="dropdown-toggle nav-link pt-1 pb-0" data-toggle="dropdown" role="button" aria-expanded="false">

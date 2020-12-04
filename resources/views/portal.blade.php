@@ -1,14 +1,8 @@
 @extends('messenger::messenger')
 
-@push('js')
-{{--<script src="{{mix("js/managers/ThreadManager.js")}}"></script>--}}
-{{--<script src="{{mix("js/templates/ThreadTemplates.js")}}"></script>--}}
-{{--<script src="{{mix("js/modules/MessengerSettings.js")}}"></script>--}}
-@endpush
-
 @switch($mode)
     @case(0)
-        @push('Messenger-load')
+        @push('messenger::Messenger-load')
             ThreadManager : {
                 type : 0,
                 setup : true,
@@ -19,7 +13,7 @@
         @endpush
     @break
     @case(3)
-        @push('Messenger-load')
+        @push('messenger::Messenger-load')
             ThreadManager : {
                 type : 3,
                 online_status_setting : {{messenger()->getProviderMessenger()->online_status}},
@@ -31,7 +25,7 @@
         @endpush
     @break
     @case(5)
-        @push('Messenger-load')
+        @push('messenger::Messenger-load')
             ThreadManager : {
                 type : 5,
                 online_status_setting : {{messenger()->getProviderMessenger()->online_status}},
@@ -41,7 +35,7 @@
         @endpush
     @break
 @endswitch
-        @push('Messenger-modules')
+        @push('messenger::Messenger-modules')
             ThreadTemplates : {src : 'ThreadTemplates.js'},
             MessengerSettings : {src : 'MessengerSettings.js'},
         @endpush

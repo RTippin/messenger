@@ -23,7 +23,7 @@
     {{--Your login form--}}
     @endguest
 @endsection
-@push('Messenger-modules')
+@push('messenger::Messenger-modules')
     InviteJoin : {
     src : 'InviteJoin.js',
     code : '{{$code}}'
