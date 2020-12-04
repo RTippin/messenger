@@ -25,11 +25,8 @@
 @endsection
 @push('Messenger-modules')
     InviteJoin : {
-    src : '{{mix("js/modules/InviteJoin.js")}}',
+    src : 'InviteJoin.js',
     code : '{{$code}}'
     },
-@endpush
-@push('js')
-    <script src="{{mix("js/modules/InviteJoin.js")}}"></script>
 @endpush
 

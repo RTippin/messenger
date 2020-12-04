@@ -1,7 +1,4 @@
-{{--<script src="{{ mix('js/app.js') }}"></script>--}}
-@if(auth()->check())
-{{--<script src="{{mix("js/managers/NotifyManager.js")}}"></script>--}}
-@endif
+<script src="{{ asset(mix('app.js', 'vendor/messenger')) }}"></script>
 @stack('js')
 @if(auth()->check())
 <script src="https://cdn.jsdelivr.net/npm/emojione@4.0.0/lib/js/emojione.min.js"></script>
@@ -15,7 +12,7 @@
                 message_popups : {{messenger()->getProviderMessenger()->message_popups}},
                 message_sound : {{messenger()->getProviderMessenger()->message_sound}},
                 call_ringtone_sound : {{messenger()->getProviderMessenger()->call_ringtone_sound}},
-                src : '{{mix("js/managers/NotifyManager.js")}}'
+                src : 'NotifyManager.js'
             },
 @stack('Messenger-load')
 
@@ -27,8 +24,8 @@
             slug : '{{ messenger()->getProvider()->getAvatarRoute('sm')}}',
             avatar_md : '{{ messenger()->getProvider()->getAvatarRoute('md')}}',
             mobile : 'false',
-            base_css : '{{ mix("css/app.css") }}',
-            dark_css : '{{ mix("css/dark.css") }}',
+            base_css : '{{ asset(mix('app.css', 'vendor/messenger')) }}',
+            dark_css : '{{ asset(mix('dark.css', 'vendor/messenger')) }}',
             {{-- websockets : false--}}
         },
         modules : {

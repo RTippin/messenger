@@ -50,11 +50,11 @@
 @stop
 
 @push('js')
-<script src="{{mix("js/janus/JanusServer.js")}}"></script>
+<script src="{{asset(mix('JanusServer.js', 'vendor/messenger'))}}"></script>
 @endpush
 
     @push('Messenger-load')
-            JanusServer : {src : '{{mix("js/janus/JanusServer.js")}}'},
+            JanusServer : {src : 'JanusServer.js'},
     @endpush
 @push('Messenger-call')
     call : {
@@ -65,7 +65,6 @@
     },
 @endpush
 @push('css')
-    <link href="{{ mix("css/calls.css") }}" rel="stylesheet">
     <style>
         body {
             background: #3d9a9b;

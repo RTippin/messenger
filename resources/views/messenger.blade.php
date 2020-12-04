@@ -1,8 +1,8 @@
 @extends('messenger::app')
 @section('title'){{messenger()->getProvider()->name()}} - Messenger @endsection
-{{--@push('css')<link href="{{ asset("css/emoji/emoji.css?").config('app.version') }}" rel="stylesheet">--}}
-{{--    <link href="{{ mix("css/messages.css") }}" rel="stylesheet">--}}
-{{--@endpush--}}
+@push('css')<link href="{{ asset(mix('emoji.css', 'vendor/messenger')) }}" rel="stylesheet">
+
+@endpush
 @section('content')
 <div class="container-fluid mt-n3">
     <div id="messenger_container" class="row inbox main-inbox d-flex">
