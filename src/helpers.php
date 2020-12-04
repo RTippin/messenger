@@ -41,7 +41,7 @@ if ( ! function_exists('messengerRoute'))
     {
         try{
             return str_replace(
-                config('messenger.routing.api.prefix'),
+                '/' . config('messenger.routing.api.prefix'),
                 '',
                 app('url')->route(
                     $name,
