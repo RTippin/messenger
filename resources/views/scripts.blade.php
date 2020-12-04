@@ -23,7 +23,7 @@
             name : '{{ messenger()->getProvider()->name()}}',
             slug : '{{ messenger()->getProvider()->getAvatarRoute('sm')}}',
             avatar_md : '{{ messenger()->getProvider()->getAvatarRoute('md')}}',
-            mobile : 'false',
+            mobile : false,
             base_css : '{{ asset(mix('app.css', 'vendor/messenger')) }}',
             dark_css : '{{ asset(mix('dark.css', 'vendor/messenger')) }}',
             {{-- websockets : false--}}
