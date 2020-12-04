@@ -13,7 +13,7 @@ class ViewPortalController
      */
     public function index()
     {
-        return view('messenger::messenger')->with('mode', 5);
+        return view('messenger::portal')->with('mode', 5);
     }
 
     /**

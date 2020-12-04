@@ -2,7 +2,7 @@
 
 @switch($mode)
     @case(0)
-        @push('messenger::Messenger-load')
+        @push('Messenger-load')
             ThreadManager : {
                 type : 0,
                 setup : true,
@@ -13,7 +13,7 @@
         @endpush
     @break
     @case(3)
-        @push('messenger::Messenger-load')
+        @push('Messenger-load')
             ThreadManager : {
                 type : 3,
                 online_status_setting : {{messenger()->getProviderMessenger()->online_status}},
@@ -25,7 +25,7 @@
         @endpush
     @break
     @case(5)
-        @push('messenger::Messenger-load')
+        @push('Messenger-load')
             ThreadManager : {
                 type : 5,
                 online_status_setting : {{messenger()->getProviderMessenger()->online_status}},
@@ -35,7 +35,7 @@
         @endpush
     @break
 @endswitch
-        @push('messenger::Messenger-modules')
+        @push('Messenger-modules')
             ThreadTemplates : {src : 'ThreadTemplates.js'},
             MessengerSettings : {src : 'MessengerSettings.js'},
         @endpush
