@@ -184,11 +184,11 @@ class ImageRenderService
         switch($type)
         {
             case 'user':
-                return $this->responseFactory->file(public_path('vendor/messenger/users.png'));
+                return $this->responseFactory->file(public_path('vendor/messenger/images/users.png'));
             case 'company':
-                return $this->responseFactory->file(public_path('vendor/messenger/company.png'));
+                return $this->responseFactory->file(public_path('vendor/messenger/images/company.png'));
             default:
-                return $this->responseFactory->file(public_path('vendor/messenger/image404.png'));
+                return $this->responseFactory->file(public_path('vendor/messenger/images/image404.png'));
         }
     }
 
