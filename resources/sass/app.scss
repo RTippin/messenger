@@ -1,0 +1,39 @@
+// Fonts
+@import url('https://fonts.googleapis.com/css?family=Nunito');
+
+// Variables
+@import 'variables';
+
+@import "switches";
+
+// Bootstrap
+@import '~bootstrap/scss/bootstrap';
+
+@import 'animations';
+
+@import "toastr";
+
+@import '~simplebar/dist/simplebar.css';
+
+@import "common";
+
+@import "messages";
+
+@import "calls";
+
+.pill-tab-nav > .nav-pills > a {
+  background-color: #E9F1F5;
+  color: #000 !important;
+}
+
+.pill-tab-nav > .nav-pills > a.active {
+  color: #fff !important;
+}
+
+.pill-tab-nav > .nav-pills > a.active:hover{
+  background-color: #0088dd;
+}
+
+.pill-tab-nav > .nav-pills > a:hover{
+  background-color: #BAD2E0;
+}

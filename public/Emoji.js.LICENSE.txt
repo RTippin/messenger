@@ -1,0 +1,18 @@
+/*!
+ * EmojioneArea v3.4.1
+ * https://github.com/mervick/emojionearea
+ * Copyright Andrey Izman and other contributors
+ * Released under the MIT license
+ * Date: 2018-04-27T09:03Z
+ */
+
+/*!
+ * Sizzle CSS Selector Engine v2.3.5
+ * https://sizzlejs.com/
+ *
+ * Copyright JS Foundation and other contributors
+ * Released under the MIT license
+ * https://js.foundation/
+ *
+ * Date: 2020-03-14
+ */

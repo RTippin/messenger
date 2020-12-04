@@ -1,0 +1,73 @@
+#my_video_ctrn.mine_video_call {
+  position: fixed;
+  left: 50%;
+  bottom: 58px;
+  margin-left: -120px;
+  width: 240px;
+}
+
+#videos{
+  margin-bottom: 60px;
+}
+
+.group_stream.embed-responsive{
+  max-height: calc(100vh*.80);
+}
+
+.medium-image-call{
+  height: 150px;
+  width: 150px;
+}
+
+.other_stream_ctnr .player_main_controls {
+  visibility: hidden;
+  opacity: 0;
+  transition: visibility 0.2s, opacity 0.2s linear;
+}
+
+.other_stream_ctnr:hover .player_main_controls {
+  visibility: visible;
+  opacity: 1;
+}
+
+span.player_control_expand {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  z-index: 1;
+}
+
+span.player_control_sound {
+  display: block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+}
+
+span.player_control_play {
+  display: block;
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  z-index: 1;
+}
+
+span.player_control_play button {
+  position: relative;
+  left: -50%;
+}
+
+span.player_control_play_large {
+  display: block;
+  position: absolute;
+  top: 33%;
+  left: 50%;
+  z-index: 1;
+}
+
+span.player_control_play_large button {
+  position: relative;
+  left: -50%;
+}
