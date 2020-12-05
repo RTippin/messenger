@@ -3,7 +3,7 @@
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
 use RTippin\Messenger\Http\Collections\SearchCollection;
-use RTippin\Messenger\Services\Messenger\SearchProvidersService;
+use RTippin\Messenger\SearchProvidersService;
 
 class Search
 {

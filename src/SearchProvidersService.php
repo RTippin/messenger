@@ -1,12 +1,11 @@
 <?php
 
-namespace RTippin\Messenger\Services\Messenger;
+namespace RTippin\Messenger;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use RTippin\Messenger\Contracts\Searchable;
-use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Messenger as MessengerModel;
 
 class SearchProvidersService
