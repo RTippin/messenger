@@ -102,6 +102,9 @@ class MessengerServiceProvider extends ServiceProvider
             __DIR__.'/../public' => public_path('vendor/messenger'),
         ], 'messenger.assets');
 
+        $this->publishes([
+            __DIR__.'/../database/migrations' => database_path('migrations'),
+        ], 'messenger.migrations');
     }
 
     /**
