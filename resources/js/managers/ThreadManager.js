@@ -1351,7 +1351,7 @@ window.ThreadManager = (function () {
             opt.thread.history_loading = true;
             opt.elements.msg_stack.prepend(ThreadTemplates.render().loading_history());
             Messenger.xhr().request({
-                route : '/api/v1'+opt.thread.history_route,
+                route : opt.thread.history_route,
                 success : methods.manageHistoryMessages,
                 fail : function(){
                     $("#loading_history_marker").remove();
