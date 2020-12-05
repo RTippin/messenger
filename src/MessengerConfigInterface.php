@@ -183,7 +183,9 @@ trait MessengerConfigInterface
         'providerCanSearch',
         'providerCanFriend',
         'providerCanMessageFirst',
-        'providerHasMobileDevices'
+        'providerHasMobileDevices',
+        'avatarStorage',
+        'threadStorage'
     ];
 
     /**
