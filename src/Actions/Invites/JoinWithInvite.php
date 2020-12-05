@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use RTippin\Messenger\Actions\Base\BaseMessengerAction;
+use RTippin\Messenger\Actions\Threads\StoreParticipant;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\InviteUsedEvent;
 use RTippin\Messenger\Messenger;
@@ -78,8 +79,8 @@ class JoinWithInvite extends BaseMessengerAction
         else
         {
             $this->database->transaction(
-                fn() => $this->executeTransactions($invite),
-                3);
+                fn() => $this->executeTransactions($invite), 3
+            );
         }
 
         return $this;

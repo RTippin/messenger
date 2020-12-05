@@ -172,8 +172,7 @@ class StoreManyParticipants extends ThreadParticipantAction
                     fn($provider) => ! is_null($provider)
                 )
                 ->reject(
-                    fn(MessengerProvider $provider) =>
-                        $this->friends->friendStatus($provider) !== 1
+                    fn(MessengerProvider $provider) => $this->friends->friendStatus($provider) !== 1
                 );
 
             return $isNewGroup
