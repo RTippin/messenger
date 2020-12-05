@@ -48,7 +48,7 @@ use RTippin\Messenger\Http\Controllers\ThreadController;
 */
 
 //Provider Avatars API render
-Route::get('{alias}/{id}/{size}/{image}', RenderProviderAvatar::class)->name('api.avatar.render');
+Route::get(trim(config('messenger.routing.provider_avatar.prefix'), '/') . '/{alias}/{id}/{size}/{image}', RenderProviderAvatar::class)->name('api.avatar.render');
 
 Route::name('api.messenger.')->group(function(){
     //Messenger view service settings
