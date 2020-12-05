@@ -3,7 +3,7 @@
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
 use RTippin\Messenger\Http\Resources\RecipientThreadResource;
-use RTippin\Messenger\Services\Messenger\RecipientThreadLocator;
+use RTippin\Messenger\RecipientThreadLocator;
 
 class FindRecipientThread
 {

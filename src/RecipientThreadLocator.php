@@ -1,9 +1,8 @@
 <?php
 
-namespace RTippin\Messenger\Services\Messenger;
+namespace RTippin\Messenger;
 
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\PrivateThreadRepository;
 use RTippin\Messenger\Repositories\ProvidersRepository;
