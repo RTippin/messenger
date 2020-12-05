@@ -2,7 +2,7 @@ window.CallManager = (function () {
     var opt = {
         initialized : false,
         INIT_time : null,
-        API : '/api/v1/messenger/',
+        API : Messenger.common().API,
         demo : false,
         processing : false,
         _call : null,
@@ -137,7 +137,7 @@ window.CallManager = (function () {
                 title : 'Call session not found. Redirecting you...'
             });
             setTimeout(function(){
-                window.location.href = "/messenger";
+                window.location.href = Messenger.common().WEB;
             }, 4000);
             setTimeout(function(){
                     window.close();
@@ -396,11 +396,11 @@ window.CallManager = (function () {
                     h4 : false,
                     body : '<div class="card"><div class="card-body bg-warning shadow rounded">' +
                         '<h5>It appears your browser is blocking popups. Please allow popups or click the link below to join the call</h5>' +
-                        '</div></div><div class="mt-4 col-12 text-center h3 font-weight-bold"><a onclick="Messenger.alert().destroyModal()" target="_blank" href="/messenger/threads/'+call.thread_id+'/calls/'+call.id+'" ><i class="fas fa-video"></i> Join Call</a></div>'
+                        '</div></div><div class="mt-4 col-12 text-center h3 font-weight-bold"><a onclick="Messenger.alert().destroyModal()" target="_blank" href="'+Messenger.common().WEB+'/threads/'+call.thread_id+'/calls/'+call.id+'" ><i class="fas fa-video"></i> Join Call</a></div>'
                 });
                 return;
             }
-            if(popUp.location.href === 'about:blank') popUp.location.href = '/messenger/threads/'+call.thread_id+'/calls/'+call.id;
+            if(popUp.location.href === 'about:blank') popUp.location.href = Messenger.common().WEB + '/threads/'+call.thread_id+'/calls/'+call.id;
             popUp.focus()
         },
         endCall : function(){

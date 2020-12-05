@@ -18,6 +18,8 @@
 
         },
         common : {
+            api_endpoint : '{{messenger()->getApiEndpoint()}}',
+            web_endpoint : '{{messenger()->getWebEndpoint()}}',
             model : '{{messenger()->getProviderAlias()}}',
             id : '{{messenger()->getProviderId()}}',
             name : '{{ messenger()->getProvider()->name()}}',

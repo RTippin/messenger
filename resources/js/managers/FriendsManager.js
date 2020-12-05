@@ -58,7 +58,7 @@ window.FriendsManager = (function () {
         },
         addFriend : function(arg){
             Messenger.xhr().payload({
-                route : '/api/v1/messenger/friends/sent',
+                route : Messenger.common().API + 'friends/sent',
                 data : {
                     recipient_id : arg.provider_id,
                     recipient_alias : arg.provider_alias
@@ -80,7 +80,7 @@ window.FriendsManager = (function () {
         },
         acceptFriend : function(arg){
             Messenger.xhr().payload({
-                route : '/api/v1/messenger/friends/pending/' + arg.pending_friend_id,
+                route : Messenger.common().API + 'friends/pending/' + arg.pending_friend_id,
                 data : {},
                 shared : arg,
                 success : function(friend){
@@ -100,7 +100,7 @@ window.FriendsManager = (function () {
         },
         cancelFriend : function(arg){
             Messenger.xhr().payload({
-                route : '/api/v1/messenger/friends/sent/' + arg.sent_friend_id,
+                route : Messenger.common().API + 'friends/sent/' + arg.sent_friend_id,
                 data : {},
                 shared : arg,
                 success : function(provider){
@@ -120,7 +120,7 @@ window.FriendsManager = (function () {
         },
         denyFriend : function(arg){
             Messenger.xhr().payload({
-                route : '/api/v1/messenger/friends/pending/' + arg.pending_friend_id,
+                route : Messenger.common().API + 'friends/pending/' + arg.pending_friend_id,
                 data : {},
                 shared : arg,
                 success : function(provider){
@@ -140,7 +140,7 @@ window.FriendsManager = (function () {
         },
         removeFriend : function(arg){
             Messenger.xhr().payload({
-                route : '/api/v1/messenger/friends/' + arg.friend_id,
+                route : Messenger.common().API + 'friends/' + arg.friend_id,
                 data : {},
                 shared : arg,
                 success : function(provider){

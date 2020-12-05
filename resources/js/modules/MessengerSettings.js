@@ -1,6 +1,6 @@
 window.MessengerSettings = (function () {
     var opt = {
-        API : '/api/v1/messenger/',
+        API : Messenger.common().API,
         lock : true,
         elements : {
             profile_avatar_upload : null

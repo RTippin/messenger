@@ -235,7 +235,7 @@ window.NotifyManager = (function () {
     Heartbeat = {
         gather : function(onPass, onFail){
             Messenger.xhr().request({
-                route : '/api/v1/messenger/heartbeat',
+                route : Messenger.common().API + 'heartbeat',
                 success : Heartbeat.manage,
                 shared : {
                     onPass : onPass
@@ -245,7 +245,7 @@ window.NotifyManager = (function () {
         },
         update : function(state, onPass, onFail){
             Messenger.xhr().payload({
-                route : '/api/v1/messenger/heartbeat',
+                route : Messenger.common().API + 'heartbeat',
                 data : {
                     away : state
                 },
@@ -357,7 +357,7 @@ window.NotifyManager = (function () {
                 theme : 'info',
                 toast_options : {
                     onclick : function(){
-                        window.location.href = '/messenger/'+data.thread_id
+                        window.location.href = Messenger.common().WEB + '/'+data.thread_id
                     },
                     timeOut : 5000
                 }
@@ -404,7 +404,7 @@ window.NotifyManager = (function () {
                         ThreadManager.load().initiate_thread({thread_id : data.thread.id});
                         return;
                     }
-                    window.location.href = '/messenger/'+data.thread.id
+                    window.location.href = Messenger.common().WEB + '/'+data.thread.id
                 },
                 cb_close : true,
                 timer : 15000
@@ -572,21 +572,21 @@ window.NotifyManager = (function () {
         },
         pullSentFriendRequest : function(){
             Messenger.xhr().request({
-                route : '/api/v1/messenger/friends/sent',
+                route : Messenger.common().API + 'friends/sent',
                 success : methods.updateSentFriends,
                 fail_alert : true
             })
         },
         pullFriendRequest : function(){
             Messenger.xhr().request({
-                route : '/api/v1/messenger/friends/pending',
+                route : Messenger.common().API + 'friends/pending',
                 success : methods.updatePendingFriends,
                 fail_alert : true
             })
         },
         pullActiveCalls : function(){
             Messenger.xhr().request({
-                route : '/api/v1/messenger/active-calls',
+                route : Messenger.common().API + 'active-calls',
                 success : methods.updateActiveCalls,
                 fail_alert : true
             })

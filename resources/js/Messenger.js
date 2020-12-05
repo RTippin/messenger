@@ -2,6 +2,7 @@ window.Messenger = (function () {
     var opt = {
         initialized : false,
         API : null,
+        WEB : null,
         env : 'production',
         websockets : true,
         lockout : false,
@@ -28,6 +29,8 @@ window.Messenger = (function () {
             opt.initialized = true;
             if("call" in arg) CallManager.init(arg.call);
             if("common" in arg){
+                opt.API = arg.api_endpoint + '/';
+                opt.WEB = arg.web_endpoint + '/';
                 opt.model = arg.common.model;
                 opt.auth = true;
                 opt.id = arg.common.id;
@@ -652,6 +655,7 @@ window.Messenger = (function () {
         common : function(){
             return {
                 API : opt.API,
+                WEB : opt.WEB,
                 model : opt.model,
                 id : opt.id,
                 name : opt.name,

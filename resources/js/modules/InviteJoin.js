@@ -1,6 +1,6 @@
 window.InviteJoin = (function () {
     var opt = {
-        API : '/api/v1/messenger/join/',
+        API : Messenger.common().API + 'join/',
         lock : true,
         invite : null,
         elements : {
@@ -74,7 +74,7 @@ window.InviteJoin = (function () {
                 route : opt.API,
                 data : {},
                 success : function () {
-                    window.location.replace('/messenger/' + opt.invite.thread_id)
+                    window.location.replace(Messenger.common().WEB + '/' + opt.invite.thread_id)
                 },
                 fail : methods.bad,
                 bypass : true,
@@ -90,11 +90,11 @@ window.InviteJoin = (function () {
     },
     templates = {
         join : function(){
-            return '<button onclick="window.location.href = \'/messenger\';" type="button" data-toggle="tooltip" data-placement="left" title="Cancel" class="mx-3 mb-4 shadow-lg btn btn-circle btn-circle-xl btn-danger">No <i class="fas fa-times"></i></button>\n' +
+            return '<button onclick="window.location.href = \'/'+Messenger.common().WEB+'\';" type="button" data-toggle="tooltip" data-placement="left" title="Cancel" class="mx-3 mb-4 shadow-lg btn btn-circle btn-circle-xl btn-danger">No <i class="fas fa-times"></i></button>\n' +
                 '<button onclick="InviteJoin.join()" type="button" data-toggle="tooltip" data-placement="right" title="Join Group!" class="mx-3 mb-4 shadow-lg btn btn-circle btn-circle-xl btn-success">Join <i class="fas fa-users"></i></button>';
         },
         enter : function(){
-            return '<button onclick="window.location.href=\'/messenger/'+opt.invite.thread_id+'\'" type="button" data-toggle="tooltip"\n' +
+            return '<button onclick="window.location.href=\'/'+Messenger.common().WEB+'/'+opt.invite.thread_id+'\'" type="button" data-toggle="tooltip"\n' +
                 ' data-placement="bottom" title="View Group" class="shadow-lg btn btn-circle btn-circle-xl btn-success">Enter <i class="fas fa-users"></i></button>';
         },
         exit : function(){

@@ -3,7 +3,7 @@ window.ThreadManager = (function () {
         INIT : false,
         ORIGINAL_ARG : null,
         SETUP : true,
-        API : '/api/v1/messenger/',
+        API : Messenger.common().API,
         thread : {
             id : null,
             type : null,
@@ -181,7 +181,7 @@ window.ThreadManager = (function () {
             setInterval(function(){
                 if(!NotifyManager.sockets().forced_disconnect) LoadIn.threads()
             }, 300000);
-            if(opt.thread.type === 5) window.history.replaceState({type : 5}, null, '/messenger');
+            if(opt.thread.type === 5) window.history.replaceState({type : 5}, null, Messenger.common().WEB);
             window.onpopstate = function(event) {
                 if(event.state && "type" in event.state && !opt.states.lock){
                     switch(event.state.type){
@@ -840,7 +840,7 @@ window.ThreadManager = (function () {
             }
             opt.storage.participants = data.resources.hasOwnProperty('participants') ? data.resources.participants.data : [];
             opt.elements.message_container.html(ThreadTemplates.render().render_private(data));
-            if(!noHistory) window.history.pushState({type : 1, thread_id : data.id}, null, '/messenger/'+data.id);
+            if(!noHistory) window.history.pushState({type : 1, thread_id : data.id}, null, Messenger.common().WEB + '/'+data.id);
             opt.thread.created_at = data.created_at;
             opt.thread.muted = data.options.muted;
             mounted.Initialize({
@@ -872,7 +872,7 @@ window.ThreadManager = (function () {
             }
             opt.storage.participants = data.resources.hasOwnProperty('participants') ? data.resources.participants.data : [];
             opt.elements.message_container.html(ThreadTemplates.render().render_group(data));
-            if(!noHistory) window.history.pushState({type : 2, thread_id : data.id}, null, '/messenger/'+data.id);
+            if(!noHistory) window.history.pushState({type : 2, thread_id : data.id}, null, Messenger.common().WEB + '/'+data.id);
             opt.thread.created_at = data.created_at;
             opt.thread.muted = data.options.muted;
             mounted.Initialize({
@@ -2569,7 +2569,7 @@ window.ThreadManager = (function () {
             mounted.Initialize({
                 type : 5
             });
-            window.history.pushState({type : 5}, null, '/messenger')
+            window.history.pushState({type : 5}, null, Messenger.common().WEB)
         },
         callThreads : function(){
 
@@ -2760,7 +2760,7 @@ window.ThreadManager = (function () {
             mounted.Initialize({
                 type : 7,
             });
-            if(!noHistory) window.history.pushState({type : 7}, null, '/messenger?search');
+            if(!noHistory) window.history.pushState({type : 7}, null, Messenger.common().WEB + '?search');
         },
         contacts : function(noHistory){
             if(!opt.INIT) return;
@@ -2772,7 +2772,7 @@ window.ThreadManager = (function () {
                 route : opt.API + 'friends',
                 success : function(data){
                     $("#messenger_contacts_ctnr").html(ThreadTemplates.render().contacts(data));
-                    if(!noHistory) window.history.pushState({type : 6}, null, '/messenger?contacts');
+                    if(!noHistory) window.history.pushState({type : 6}, null, Messenger.common().WEB + '?contacts');
                     methods.loadDataTable( $("#contact_list_table"), true)
                 },
                 fail : LoadIn.closeOpened,
@@ -2782,7 +2782,7 @@ window.ThreadManager = (function () {
         },
         createPrivate : function(arg, noHistory){
             if(CallManager.state().initialized){
-                window.open('/messenger/recipient/'+arg.alias+'/'+arg.id);
+                window.open(Messenger.common().WEB + '/recipient/'+arg.alias+'/'+arg.id);
                 return;
             }
             opt.elements.message_container.html(ThreadTemplates.render().loading_thread_base());
@@ -2797,7 +2797,7 @@ window.ThreadManager = (function () {
                         return;
                     }
                     opt.elements.message_container.html(ThreadTemplates.render().render_new_private(data.recipient));
-                    if(!noHistory) window.history.pushState({type : 3, id : arg.id, alias : arg.alias}, null, '/messenger/recipient/'+arg.alias+'/'+arg.id);
+                    if(!noHistory) window.history.pushState({type : 3, id : arg.id, alias : arg.alias}, null, Messenger.common().WEB + '/recipient/'+arg.alias+'/'+arg.id);
                     opt.thread.messaging = data.recipient.options.can_message_first;
                     mounted.Initialize({
                         type : 3,
@@ -2815,7 +2815,7 @@ window.ThreadManager = (function () {
             if(opt.states.lock) return;
             mounted.reset(false);
             opt.elements.message_container.html(ThreadTemplates.render().new_group_base());
-            if(!noHistory) window.history.pushState({type : 4}, null, '/messenger?newGroup');
+            if(!noHistory) window.history.pushState({type : 4}, null, Messenger.common().WEB + '?newGroup');
             if(Messenger.common().mobile) ThreadTemplates.mobile(true);
             mounted.Initialize({
                 type : 4
