@@ -363,6 +363,16 @@ interface MessengerInterface
     /**
      * @return string
      */
+    public function getApiEndpoint(): string;
+
+    /**
+     * @return string
+     */
+    public function getWebEndpoint(): string;
+
+    /**
+     * @return string
+     */
     public function getPushNotificationDriver(): string;
 
     /**

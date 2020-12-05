@@ -29,6 +29,16 @@ trait ConfigInterface
     /**
      * @var string
      */
+    private string $apiEndpoint;
+
+    /**
+     * @var string
+     */
+    private string $webEndpoint;
+
+    /**
+     * @var string
+     */
     private string $broadcastDriver;
 
     /**
@@ -758,10 +768,28 @@ trait ConfigInterface
     }
 
     /**
+     * @return string
+     */
+    public function getApiEndpoint(): string
+    {
+        return $this->apiEndpoint;
+    }
+
+    /**
+     * @return string
+     */
+    public function getWebEndpoint(): string
+    {
+        return $this->webEndpoint;
+    }
+
+    /**
      * Set all configs from the config file
      */
     private function setMessengerConfig(): void
     {
+        $this->apiEndpoint = '/' . $this->configRepo->get('messenger.routing.api.prefix');
+        $this->webEndpoint = '/' . $this->configRepo->get('messenger.routing.web.prefix');
         $this->avatarStorage = $this->configRepo->get('messenger.storage.avatars');
         $this->threadStorage = $this->configRepo->get('messenger.storage.threads');
         $this->broadcastDriver = $this->configRepo->get('messenger.broadcasting.driver') ?? 'null';

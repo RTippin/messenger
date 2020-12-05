@@ -92,6 +92,8 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static getFriendableForCurrentProvider()
  * @method static formatValidProviders(array $providers)
  * @method static passesReflectionInterface(string $abstract, string $contract)
+ * @method static getApiEndpoint()
+ * @method static getWebEndpoint()
  *
  * @mixin \RTippin\Messenger\Messenger
  * @see MessengerInterface

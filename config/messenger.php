@@ -127,8 +127,7 @@ return [
         'api' => [
             'enabled' => true,
             'domain' => null,
-            'prefix' => 'api/v1',
-            'path' => 'messenger',
+            'prefix' => 'api/v1/messenger',
             'middleware' => [
                 'web',
                 'auth',
