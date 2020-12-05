@@ -2,8 +2,9 @@
 
 namespace RTippin\Messenger;
 
+use Illuminate\Contracts\Auth\Access\Gate;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Support\Facades\Gate;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Friend;
@@ -49,13 +50,16 @@ trait PolicyMap
      * Register the application's policies.
      *
      * @return void
+     * @throws BindingResolutionException
      */
     protected function registerPolicies(): void
     {
         if($this->app['config']->get('messenger.routing.api.enabled'))
         {
+            $gate = $this->app->make(Gate::class);
+
             foreach ($this->policies as $key => $value) {
-                Gate::policy($key, $value);
+                $gate->policy($key, $value);
             }
         }
     }

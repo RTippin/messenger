@@ -21,11 +21,8 @@ trait ChannelMap
         if($this->app['config']->get('messenger.routing.channels.enabled'))
         {
             Broadcast::routes($this->channelRouteConfiguration());
-
             Broadcast::channel('{alias}.{id}', ProviderChannel::class);
-
             Broadcast::channel('call.{call}.thread.{thread}', CallChannel::class);
-
             Broadcast::channel('thread.{thread}', ThreadChannel::class);
         }
     }

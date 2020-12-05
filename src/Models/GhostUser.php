@@ -3,22 +3,10 @@
 namespace RTippin\Messenger\Models;
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * App\GhostUser
- *
- * @property-read string $avatar
- * @property-read string $j_s_name
- * @property-read Messenger $messenger
- * @property-read string $name
- * @property-read int $online_status_number
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\GhostUser newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\GhostUser newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\GhostUser query()
  * @mixin \Eloquent
- * @property-read \Illuminate\Database\Eloquent\Collection|GhostUser[] $devices
- * @property-read int|null $devices_count
  */
 class GhostUser extends Eloquent
 {
@@ -43,14 +31,6 @@ class GhostUser extends Eloquent
         'picture' => null,
         'email' => 'ghost@example.org'
     ];
-
-    /**
-     * @return string|null
-     */
-    public function providerAlias()
-    {
-        return 'ghost';
-    }
 
     /**
      * @return null

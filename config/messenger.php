@@ -37,14 +37,14 @@ return [
     |
     |   'providers' => [                                    //List all providers in your app
     |       'user' => [                                     //alias given to your provider
-    |           'model' => App\Models\User::class,          //Path to the provider's model
+    |           'model' => App\Models\Company::class,       //Path to the provider's model
     |           'searchable' => true,                       //Provider implements/is searchable - true|false
     |           'friendable' => true,                       //Provider is friendable - true|false
     |           'devices' => true,                          //Provider has tokens for push notifications - true|false
     |           'provider_interactions' => [                //What your provider can do with other providers
-    |               'can_message' => 'company',             //Able to start new threads with other listed providers - true|false|null|string
-    |               'can_search' => 'teacher|company',      //Able to search other listed providers - true|false|null|string
-    |               'can_friend' => null,                   //Able to send friend request to  other listed providers - true|false|null|string
+    |               'can_message' => 'user|company',        //Able to start new threads with other listed providers - true|false|null|string
+    |               'can_search' => 'user|company',         //Able to search other listed providers - true|false|null|string
+    |               'can_friend' => false,                  //Able to send friend request to  other listed providers - true|false|null|string
     |           ]
     |       ],
     |   ],
@@ -223,6 +223,16 @@ return [
     'calling' => [
         'enabled' => env('MESSENGER_CALLING_ENABLED', false),
         'driver' => env('MESSENGER_CALLING_DRIVER', 'null')
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Queue names for our dispatched events / listeners / jobs
+    |--------------------------------------------------------------------------
+    |
+    */
+    'queues' => [
+        //TODO
     ],
 
     /*
