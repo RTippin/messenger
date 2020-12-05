@@ -9,8 +9,8 @@ use Illuminate\Filesystem\Filesystem;
 use RTippin\Messenger\Contracts\MessengerInterface;
 
 /**
- * Class MessengerService
- * @package App\Services\MessengerSystem
+ * Class Messenger
+ * @package Messenger by Richard Tippin
  */
 
 final class Messenger implements MessengerInterface
@@ -56,7 +56,7 @@ final class Messenger implements MessengerInterface
     private ConfigRepository $configRepo;
 
     /**
-     * MessengerService constructor.
+     * Messenger constructor.
      * Load config values to use at runtime
      *
      * @param Application $app
