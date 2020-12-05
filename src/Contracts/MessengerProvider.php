@@ -20,27 +20,27 @@ interface MessengerProvider
     /**
      * @return string
      */
-    public function name();
+    public function name(): string;
 
     /**
      * @param string $size
      * @return string|null
      */
-    public function getAvatarRoute(string $size = 'sm');
+    public function getAvatarRoute(string $size = 'sm'): ?string;
 
     /**
      * @param bool $full
      * @return string
      */
-    public function slug($full = false);
+    public function slug($full = false): string;
 
     /**
      * @return int
      */
-    public function onlineStatus();
+    public function onlineStatus(): int;
 
     /**
      * @return string
      */
-    public function onlineStatusVerbose();
+    public function onlineStatusVerbose(): string;
 }

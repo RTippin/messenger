@@ -29,21 +29,24 @@ trait Messageable
      * @param bool $full
      * @return string
      */
-    public function slug($full = false)
+    public function slug($full = false): string
     {
-        return $full
-            ? route('model_profile', [
-                    messenger()->findProviderAlias($this),
-                    $this->slug
-                ], false)
-            : $this->slug;
+        return '#';
+    }
+
+    /**
+     * @return string
+     */
+    public function name(): string
+    {
+        return strip_tags(ucwords($this->name));
     }
 
     /**
      * @param string $size
      * @return string|null
      */
-    public function getAvatarRoute(string $size = 'sm')
+    public function getAvatarRoute(string $size = 'sm'): ?string
     {
         return messengerRoute('avatar.render',
             [
@@ -58,7 +61,7 @@ trait Messageable
     /**
      * @return int
      */
-    public function onlineStatus()
+    public function onlineStatus(): int
     {
         if( ! is_null($this->isOnlineCache))
         {
@@ -73,7 +76,7 @@ trait Messageable
     /**
      * @return string
      */
-    public function onlineStatusVerbose()
+    public function onlineStatusVerbose(): string
     {
         return Str::lower(Definitions::OnlineStatus[$this->onlineStatus()]);
     }
