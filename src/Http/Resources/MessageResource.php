@@ -79,10 +79,10 @@ class MessageResource extends JsonResource
             'temporary_id' => $this->when($this->message->hasTemporaryId(),
                 fn() => $this->message->temporaryId()
             ),
-            'image' => $this->when($this->message->isImage(),
+            $this->mergeWhen($this->message->isImage(),
                 fn() => $this->linksForImage()
             ),
-            'document' => $this->when($this->message->isDocument(),
+            $this->mergeWhen($this->message->isDocument(),
                 fn() => $this->linksForDocument()
             )
         ];
@@ -284,17 +284,27 @@ class MessageResource extends JsonResource
     public function linksForImage()
     {
         return [
-            'sm' => $this->message->getImageViewRoute('sm'),
-            'md' => $this->message->getImageViewRoute('md'),
-            'lg' => $this->message->getImageViewRoute('lg')
+            'api_image' => [
+                'sm' => $this->message->getImageViewRoute('sm', true),
+                'md' => $this->message->getImageViewRoute('md', true),
+                'lg' => $this->message->getImageViewRoute('lg', true)
+            ],
+            'image' => [
+                'sm' => $this->message->getImageViewRoute('sm'),
+                'md' => $this->message->getImageViewRoute('md'),
+                'lg' => $this->message->getImageViewRoute('lg')
+            ]
         ];
     }
 
     /**
-     * @return string
+     * @return array
      */
     public function linksForDocument()
     {
-        return $this->message->getDocumentDownloadRoute();
+        return [
+            'api_document' => $this->message->getDocumentDownloadRoute(true),
+            'document' => $this->message->getDocumentDownloadRoute()
+        ];
     }
 }

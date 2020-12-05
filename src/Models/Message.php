@@ -216,16 +216,17 @@ class Message extends Model
 
     /**
      * @param string $size
+     * @param bool $api
      * @return string|null
      */
-    public function getImageViewRoute(string $size = 'sm')
+    public function getImageViewRoute(string $size = 'sm', $api = false)
     {
-        if(! $this->isImage())
+        if( ! $this->isImage())
         {
             return null;
         }
 
-        return messengerRoute('api.messenger.threads.gallery.render',
+        return messengerRoute(($api ? 'api.' : '') . 'messenger.threads.gallery.render',
             [
                 'thread' => $this->thread_id,
                 'message' => $this->id,
@@ -236,16 +237,17 @@ class Message extends Model
     }
 
     /**
+     * @param bool $api
      * @return string|null
      */
-    public function getDocumentDownloadRoute()
+    public function getDocumentDownloadRoute($api = false)
     {
         if(! $this->isDocument())
         {
             return null;
         }
 
-        return messengerRoute('api.messenger.threads.files.download',
+        return messengerRoute(($api ? 'api.' : '') . 'messenger.threads.files.download',
             [
                 'thread' => $this->thread_id,
                 'message' => $this->id,

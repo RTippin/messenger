@@ -40,14 +40,10 @@ if ( ! function_exists('messengerRoute'))
     function messengerRoute(string $name, $parameters = null, bool $absolute = false)
     {
         try{
-            return str_replace(
-                '/' . config('messenger.routing.api.prefix'),
-                '',
-                app('url')->route(
-                    $name,
-                    $parameters ? $parameters : [],
-                    $absolute
-                )
+            return app('url')->route(
+                $name,
+                $parameters ? $parameters : [],
+                $absolute
             );
         }catch (Exception $e){
             report($e);
