@@ -378,11 +378,12 @@ class Thread extends Model
 
     /**
      * @param string $size
+     * @param bool $api
      * @return string|null
      */
-    public function getThreadAvatarRoute(string $size = 'sm'): string
+    public function getThreadAvatarRoute(string $size = 'sm', $api = false): string
     {
-        return messengerRoute('api.messenger.threads.avatar.render',
+        return messengerRoute(($api ? 'api.' : '') . 'messenger.threads.avatar.render',
             [
                 'thread' => $this->id,
                 'size' => $size,
@@ -392,23 +393,24 @@ class Thread extends Model
     }
 
     /**
+     * @param bool $api
      * @return array
      */
-    public function threadAvatar(): array
+    public function threadAvatar($api = false): array
     {
         if($this->isPrivate())
         {
             return [
-                'sm' => $this->recipient()->owner->getAvatarRoute('sm'),
-                'md' => $this->recipient()->owner->getAvatarRoute('md'),
-                'lg' => $this->recipient()->owner->getAvatarRoute('lg')
+                'sm' => $this->recipient()->owner->getAvatarRoute('sm', $api),
+                'md' => $this->recipient()->owner->getAvatarRoute('md', $api),
+                'lg' => $this->recipient()->owner->getAvatarRoute('lg', $api)
             ];
         }
 
         return [
-            'sm' => $this->getThreadAvatarRoute('sm'),
-            'md' => $this->getThreadAvatarRoute('md'),
-            'lg' => $this->getThreadAvatarRoute('lg')
+            'sm' => $this->getThreadAvatarRoute('sm', $api),
+            'md' => $this->getThreadAvatarRoute('md', $api),
+            'lg' => $this->getThreadAvatarRoute('lg', $api)
         ];
     }
 

@@ -24,9 +24,10 @@ interface MessengerProvider
 
     /**
      * @param string $size
+     * @param bool $api
      * @return string|null
      */
-    public function getAvatarRoute(string $size = 'sm');
+    public function getAvatarRoute(string $size = 'sm', $api = false);
 
     /**
      * @param bool $full

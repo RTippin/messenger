@@ -84,11 +84,12 @@ class GhostUser extends Eloquent
 
     /**
      * @param string $size
+     * @param bool $api
      * @return string|null
      */
-    public function getAvatarRoute(string $size = 'sm')
+    public function getAvatarRoute(string $size = 'sm', $api = false)
     {
-        return messengerRoute('avatar.render',
+        return messengerRoute(($api ? 'api.' : '') . 'avatar.render',
             [
                 'alias' => 'ghost',
                 'id' => 'ghost',
@@ -115,35 +116,12 @@ class GhostUser extends Eloquent
     }
 
     /**
-     * @return HasMany
-     */
-    public function devices()
-    {
-        return $this->newHasMany($this->newQuery(), $this, '', '');
-    }
-
-    /**
      * @param bool $full
      * @return string
      */
     public function slug($full = false)
     {
-        return $full ? route(
-            'model_profile',
-            [
-                'ghost',
-                'ghost'
-            ],
-            false)
-            : 'ghost';
-    }
-
-    /**
-     * @return string
-     */
-    public function getNameAttribute()
-    {
-        return $this->name();
+        return 'ghost';
     }
 
     /**
@@ -152,13 +130,5 @@ class GhostUser extends Eloquent
     public function name()
     {
         return "Ghost Profile";
-    }
-
-    /**
-     * @return string
-     */
-    public function getJSNameAttribute()
-    {
-        return $this->name();
     }
 }

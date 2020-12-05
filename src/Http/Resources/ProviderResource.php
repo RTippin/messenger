@@ -69,11 +69,6 @@ class ProviderResource extends JsonResource
     {
         return [
             'name' => $this->provider->name(),
-            'avatar' => [
-                'sm' => $this->provider->getAvatarRoute('sm'),
-                'md' => $this->provider->getAvatarRoute('md'),
-                'lg' => $this->provider->getAvatarRoute('lg')
-            ],
             'slug' => $this->provider->slug(false),
             'route' => $this->provider->slug(true),
             'provider_id' => $this->provider->getKey(),
@@ -83,7 +78,27 @@ class ProviderResource extends JsonResource
             ),
             'options' => $this->when($this->addOptions,
                 fn() => $this->addOptions()
-            )
+            ),
+            $this->merge($this->addAvatar())
+        ];
+    }
+
+    /**
+     * @return array[]
+     */
+    private function addAvatar(): array
+    {
+        return [
+            'api_avatar' => [
+                'sm' => $this->provider->getAvatarRoute('sm', true),
+                'md' => $this->provider->getAvatarRoute('md', true),
+                'lg' => $this->provider->getAvatarRoute('lg', true)
+            ],
+            'avatar' => [
+                'sm' => $this->provider->getAvatarRoute('sm'),
+                'md' => $this->provider->getAvatarRoute('md'),
+                'lg' => $this->provider->getAvatarRoute('lg')
+            ],
         ];
     }
 

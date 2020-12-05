@@ -44,11 +44,12 @@ trait Messageable
 
     /**
      * @param string $size
+     * @param bool $api
      * @return string|null
      */
-    public function getAvatarRoute(string $size = 'sm'): ?string
+    public function getAvatarRoute(string $size = 'sm', $api = false): ?string
     {
-        return messengerRoute('avatar.render',
+        return messengerRoute(($api ? 'api.' : '') . 'avatar.render',
             [
                 'alias' => messenger()->findProviderAlias($this),
                 'id' => $this->getKey(),

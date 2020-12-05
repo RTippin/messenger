@@ -18,6 +18,7 @@ use RTippin\Messenger\Http\Controllers\Actions\PrivateThreadApproval;
 use RTippin\Messenger\Http\Controllers\Actions\PromoteAdmin;
 use RTippin\Messenger\Http\Controllers\Actions\RenderGroupAvatar;
 use RTippin\Messenger\Http\Controllers\Actions\RenderMessageImage;
+use RTippin\Messenger\Http\Controllers\Actions\RenderProviderAvatar;
 use RTippin\Messenger\Http\Controllers\Actions\Search;
 use RTippin\Messenger\Http\Controllers\Actions\StatusHeartbeat;
 use RTippin\Messenger\Http\Controllers\Actions\ThreadArchiveState;
@@ -45,6 +46,9 @@ use RTippin\Messenger\Http\Controllers\ThreadController;
 | Messenger API Routes
 |--------------------------------------------------------------------------
 */
+
+//Provider Avatars API render
+Route::get('{alias}/{id}/{size}/{image}', RenderProviderAvatar::class)->name('api.avatar.render');
 
 Route::name('api.messenger.')->group(function(){
     //Messenger view service settings
