@@ -42,17 +42,21 @@ use RTippin\Messenger\Contracts\MessengerProvider;
  */
 class Messenger extends Model
 {
-    public static function boot()
-    {
-        parent::boot();
-
-        static::saving(function($model)
-        {
-            if($model->owner_type === 'App\GhostUser') return false;
-
-            return true;
-        });
-    }
+    /**
+     * The model's default values for attributes.
+     *
+     * @var array
+     */
+    protected $attributes = [
+        'message_popups' => 1,
+        'message_sound' => 1,
+        'call_ringtone_sound' => 1,
+        'notify_sound' => 1,
+        'online_status' => 1,
+        'dark_mode' => 1,
+        'ip' => null,
+        'timezone' => null
+    ];
 
     /**
      * @var bool
@@ -68,7 +72,6 @@ class Messenger extends Model
      * @var string
      */
     protected $primaryKey = 'owner_id';
-
     /**
      * @var array
      */

@@ -45,28 +45,6 @@ class GhostUser extends Eloquent
     ];
 
     /**
-     * @return Messenger
-     */
-    public function getMessengerAttribute()
-    {
-        return new Messenger([
-            'owner_id' => '12345678-1234-5678-9123-123456789874',
-            'owner_type' => 'App\GhostUser',
-            'message_popups' => 0,
-            'message_sound' => 0,
-            'call_ringtone_sound' => 0,
-            'notify_sound' => 0,
-            'online_status' => 0,
-            'knoks' => 0,
-            'friend_approval' => 0,
-            'calls_outside_networks' => 0,
-            'dark_mode' => 0,
-            'ip' => null,
-            'timezone' => null
-        ]);
-    }
-
-    /**
      * @return string|null
      */
     public function providerAlias()
