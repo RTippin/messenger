@@ -140,7 +140,7 @@ window.ThreadManager = (function () {
                     }
                     else{
                         Messenger.xhr().script({
-                            file : '/js/modules/Emoji.js',
+                            file : [window.location.protocol, '//', window.location.host].join('') + '/vendor/messenger/Emoji.js',
                             success : mounted.loadEmoji,
                             fail : function(){
                                 opt.elements.emoji_editor = opt.elements.emoji;
