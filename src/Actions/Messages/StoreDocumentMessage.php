@@ -8,7 +8,7 @@ use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Services\Messenger\FileService;
+use RTippin\Messenger\FileService;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
