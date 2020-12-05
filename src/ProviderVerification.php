@@ -9,7 +9,7 @@ use Illuminate\Support\Collection;
 use ReflectionException;
 use Illuminate\Support\Str;
 
-trait MessengerProviderVerification
+trait ProviderVerification
 {
     /**
      * On boot, we set the services allowed provider classes.

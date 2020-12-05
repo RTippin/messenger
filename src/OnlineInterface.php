@@ -9,7 +9,7 @@ use Psr\SimpleCache\InvalidArgumentException;
 /**
  * @property-read Repository $cacheDriver
  */
-trait MessengerOnlineInterface
+trait OnlineInterface
 {
     /**
      * Put the given or loaded model into cache as online

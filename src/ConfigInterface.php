@@ -14,7 +14,7 @@ use Illuminate\Support\Collection;
  * @property-read Repository $configRepo
  * @property-read Filesystem $filesystem
  */
-trait MessengerConfigInterface
+trait ConfigInterface
 {
     /**
      * @var Collection

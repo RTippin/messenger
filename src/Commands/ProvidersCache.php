@@ -5,13 +5,13 @@ namespace RTippin\Messenger\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Filesystem\Filesystem;
-use RTippin\Messenger\MessengerProviderVerification;
+use RTippin\Messenger\ProviderVerification;
 use Throwable;
 use LogicException;
 
 class ProvidersCache extends Command
 {
-    use MessengerProviderVerification;
+    use ProviderVerification;
 
     /**
      * The name and signature of the console command.

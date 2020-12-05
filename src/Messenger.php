@@ -18,22 +18,22 @@ final class Messenger implements MessengerInterface
     /**
      * MessengerService Provider Verifications
      */
-    use MessengerProviderVerification;
+    use ProviderVerification;
 
     /**
      * MessengerService Provider Actions
      */
-    use MessengerProviderInterface;
+    use ProviderInterface;
 
     /**
      * MessengerService Config Actions
      */
-    use MessengerConfigInterface;
+    use ConfigInterface;
 
     /**
      * MessengerService Provider Online Actions
      */
-    use MessengerOnlineInterface;
+    use OnlineInterface;
 
     /**
      * @var Application

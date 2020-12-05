@@ -12,7 +12,7 @@ use RTippin\Messenger\Models\Participant;
 /**
  * @property-read Application $app
  */
-trait MessengerProviderInterface
+trait ProviderInterface
 {
     /**
      * @var string
