@@ -61,7 +61,9 @@
         call_id : '{{$callId}}',
         thread_id : '{{$threadId}}',
         janus_secret : '{{config('janus.api_secret')}}',
-        janus_debug : {{config('janus.client_debug') ? 'true' : 'false'}}
+        janus_debug : {{config('janus.client_debug') ? 'true' : 'false'}},
+        janus_ice : @json(config('janus.ice_servers')),
+        janus_main : @json(config('janus.main_servers'))
     },
 @endpush
 @push('css')

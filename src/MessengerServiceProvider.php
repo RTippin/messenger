@@ -105,6 +105,13 @@ class MessengerServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'messenger.migrations');
+
+        if($this->app['config']->get('messenger.calling.driver') === 'janus')
+        {
+            $this->publishes([
+                __DIR__.'/../config/janus.php' => config_path('janus.php'),
+            ], 'messenger.janus.config');
+        }
     }
 
     /**

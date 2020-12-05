@@ -22,6 +22,8 @@ window.CallManager = (function () {
         room_pin : null,
         janus_secret : null,
         janus_debug : false,
+        janus_ice : [],
+        janus_main : [],
         channel : null,
         channel_status : false,
         active_profiles : [],
@@ -34,6 +36,8 @@ window.CallManager = (function () {
             opt.call = true;
             opt.janus_secret = arg.janus_secret;
             opt.janus_debug = arg.janus_debug;
+            opt.janus_main = arg.janus_main;
+            opt.janus_ice = arg.janus_ice;
             opt.initialized = true;
             if(arg.hasOwnProperty('demo'))
             {
@@ -490,6 +494,8 @@ window.CallManager = (function () {
                 room_pin : opt.room_pin,
                 janus_secret : opt.janus_secret,
                 janus_debug : opt.janus_debug,
+                janus_main : opt.janus_main,
+                janus_ice : opt.janus_ice,
                 created_at : opt.created_at,
                 thread_id : opt.thread_id,
                 thread_name : opt.thread_name,

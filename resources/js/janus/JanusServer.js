@@ -45,12 +45,8 @@ window.JanusServer = (function () {
             api_secret : null,
             room_joined : false,
             retries : 0,
-            main : [
-                "wss://janus/janus-ws",
-            ],
-            ice : [
-
-            ]
+            main : [],
+            ice : []
         },
         storage : {
             display : null,
@@ -68,6 +64,8 @@ window.JanusServer = (function () {
             opt.lock = false;
             if(demo) opt.DEMO = true;
             opt.server.api_secret = CallManager.state().janus_secret;
+            opt.server.main = CallManager.state().janus_main;
+            opt.server.ice = CallManager.state().janus_ice;
             opt.storage.display = {
                 id : Messenger.common().id,
                 name : Messenger.common().name,
