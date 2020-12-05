@@ -98,7 +98,7 @@ class CallActivityChecker extends BaseMessengerAction
     /**
      * @param Call $call
      */
-    private function removeInactiveParticipants(Call $call)
+    private function removeInactiveParticipants(Call $call): void
     {
         $call->participants()->inCall()->each(
             fn(CallParticipant $participant) => $this->removeIfNotInCache($call, $participant)

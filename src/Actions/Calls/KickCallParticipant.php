@@ -75,9 +75,9 @@ class KickCallParticipant extends CallParticipantAction
 
     /**
      * @param bool $kicked
-     * @return array|false[]
+     * @return array
      */
-    private function participantState(bool $kicked)
+    private function participantState(bool $kicked): array
     {
         return $kicked
             ? [

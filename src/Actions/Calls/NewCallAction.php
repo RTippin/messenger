@@ -158,18 +158,19 @@ abstract class NewCallAction extends BaseMessengerAction
      */
     protected function storeCall(string $type, bool $isSetupComplete): self
     {
-        $this->setCall($this->getThread()
-            ->calls()
-            ->create([
-                'type' => array_search($type,Definitions::Call),
-                'owner_id' => $this->messenger->getProviderId(),
-                'owner_type' => $this->messenger->getProviderClass(),
-                'setup_complete' => $isSetupComplete
-            ])
-            ->setRelations([
-                'owner' => $this->messenger->getProvider(),
-                'thread' => $this->getThread()
-            ])
+        $this->setCall(
+            $this->getThread()
+                ->calls()
+                ->create([
+                    'type' => array_search($type,Definitions::Call),
+                    'owner_id' => $this->messenger->getProviderId(),
+                    'owner_type' => $this->messenger->getProviderClass(),
+                    'setup_complete' => $isSetupComplete
+                ])
+                ->setRelations([
+                    'owner' => $this->messenger->getProvider(),
+                    'thread' => $this->getThread()
+                ])
         );
 
         $this->setData($this->getCall());

@@ -69,16 +69,17 @@ class CallBrokerSetup extends BaseMessengerAction
     /**
      * Update the call with the information we received from our video provider
      */
-    private function updateCall()
+    private function updateCall(): void
     {
-        $this->setData($this->getCall()
-            ->update([
-                'setup_complete' => true,
-                'room_id' => $this->videoDriver->getRoomId(),
-                'room_pin' => $this->videoDriver->getRoomPin(),
-                'room_secret' => $this->videoDriver->getRoomSecret(),
-                'payload' => $this->videoDriver->getExtraPayload()
-            ])
+        $this->setData(
+            $this->getCall()
+                ->update([
+                    'setup_complete' => true,
+                    'room_id' => $this->videoDriver->getRoomId(),
+                    'room_pin' => $this->videoDriver->getRoomPin(),
+                    'room_secret' => $this->videoDriver->getRoomSecret(),
+                    'payload' => $this->videoDriver->getExtraPayload()
+                ])
         );
     }
 }
