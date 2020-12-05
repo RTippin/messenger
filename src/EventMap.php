@@ -2,7 +2,9 @@
 
 namespace RTippin\Messenger;
 
-use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Contracts\Foundation\Application;
 use RTippin\Messenger\Events\CallEndedEvent;
 use RTippin\Messenger\Events\CallLeftEvent;
 use RTippin\Messenger\Events\CallStartedEvent;
@@ -30,14 +32,17 @@ use RTippin\Messenger\Listeners\ThreadAvatarMessage;
 use RTippin\Messenger\Listeners\ThreadLeftMessage;
 use RTippin\Messenger\Listeners\ThreadNameMessage;
 
-class MessengerEventServiceProvider extends ServiceProvider
+/**
+ * @property-read Application $app
+ */
+trait EventMap
 {
     /**
-     * The event listener mappings for the application.
+     * The event listener mappings for Messenger.
      *
      * @var array
      */
-    protected $listen = [
+    protected array $events = [
         CallStartedEvent::class => [
             SetupCall::class,
         ],
@@ -79,14 +84,19 @@ class MessengerEventServiceProvider extends ServiceProvider
     ];
 
     /**
-     * Register any events for your application.
+     * Register the Event / Listener mappings.
      *
      * @return void
+     * @throws BindingResolutionException
      */
-    public function boot()
+    protected function registerEvents()
     {
-        parent::boot();
+        $events = $this->app->make(Dispatcher::class);
 
-        //
+        foreach ($this->events as $event => $listeners) {
+            foreach ($listeners as $listener) {
+                $events->listen($event, $listener);
+            }
+        }
     }
 }
