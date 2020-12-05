@@ -165,7 +165,7 @@ return [
             ]
         ],
         'channels' => [
-            'enabled' => false,
+            'enabled' => true,
             'domain' => null,
             'prefix' => 'messenger',
             'middleware' => [
