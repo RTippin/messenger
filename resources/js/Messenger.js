@@ -1,6 +1,7 @@
 window.Messenger = (function () {
     var opt = {
         initialized : false,
+        API : null,
         env : 'production',
         websockets : true,
         lockout : false,
@@ -8,8 +9,8 @@ window.Messenger = (function () {
         auth : false,
         id : ''+(Math.floor(Math.random() * 90000) + 10000)+'',
         name : 'Guest User',
-        slug : '/images/user/1/sm/guest.png',
-        avatar_md : '/images/user/1/md/guest.png',
+        slug : '#',
+        avatar_md : null,
         mobile : false,
         teapot : 0,
         modal_close : null,
@@ -650,6 +651,7 @@ window.Messenger = (function () {
         init : methods.Initialize,
         common : function(){
             return {
+                API : opt.API,
                 model : opt.model,
                 id : opt.id,
                 name : opt.name,
