@@ -210,17 +210,6 @@ class Call extends Model
     }
 
     /**
-     * @param Thread|null $thread
-     * @return array
-     */
-    public function avatar(Thread $thread = null)
-    {
-        return $thread
-            ? $thread->threadAvatar()
-            : $this->thread->threadAvatar();
-    }
-
-    /**
      * @return CallParticipant|mixed|null
      */
     public function currentCallParticipant()
