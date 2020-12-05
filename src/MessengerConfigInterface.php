@@ -711,7 +711,7 @@ trait MessengerConfigInterface
     {
         if( ! is_null($config))
         {
-            return $this->avatarStorage[$config];
+            return trim($this->avatarStorage[$config], '/');
         }
 
         return $this->avatarStorage;
@@ -725,7 +725,7 @@ trait MessengerConfigInterface
     {
         if( ! is_null($config))
         {
-            return $this->threadStorage[$config];
+            return trim($this->threadStorage[$config], '/');
         }
 
         return $this->threadStorage;
@@ -760,8 +760,8 @@ trait MessengerConfigInterface
      */
     private function setMessengerConfig(): void
     {
-        $this->avatarStorage = trim($this->configRepo->get('messenger.storage.avatars'), '/');
-        $this->threadStorage = trim($this->configRepo->get('messenger.storage.threads'), '/');
+        $this->avatarStorage = $this->configRepo->get('messenger.storage.avatars');
+        $this->threadStorage = $this->configRepo->get('messenger.storage.threads');
         $this->broadcastDriver = $this->configRepo->get('messenger.broadcasting.driver') ?? 'null';
         $this->pushNotificationDriver = $this->configRepo->get('messenger.push_notifications.driver') ?? 'null';
         $this->videoDriver = $this->configRepo->get('messenger.calling.driver') ?? 'null';
