@@ -40,7 +40,7 @@ trait ChannelMap
         return [
             'domain' => $this->app['config']->get('messenger.routing.channels.domain'),
             'prefix' => $this->app['config']->get('messenger.routing.channels.prefix'),
-            'middleware' => $this->app['config']->get('messenger.routing.channels.middleware'),
+            'middleware' => $this->mergeApiMiddleware($this->app['config']->get('messenger.routing.channels.middleware')),
         ];
     }
 }

@@ -11,11 +11,6 @@ use Illuminate\Support\Facades\Route;
 trait RouteMap
 {
     /**
-     * Base middleware we apply to our API routes
-     */
-    protected array $apiMiddleware = ['messenger.api'];
-
-    /**
      * Register all routes used by messenger
      */
     protected function registerRoutes(): void
@@ -58,10 +53,10 @@ trait RouteMap
     {
         return [
             'domain' => $this->app['config']->get('messenger.routing.api.domain'),
-            'prefix' => $this->app['config']->get('messenger.routing.api.prefix') . '/' . $this->app['config']->get('messenger.routing.api.path'),
+            'prefix' => trim($this->app['config']->get('messenger.routing.api.prefix') . '/' . $this->app['config']->get('messenger.routing.api.path'), '/'),
             'middleware' => $invite
-                ? $this->app['config']->get('messenger.routing.api.invite_api_middleware')
-                : $this->app['config']->get('messenger.routing.api.middleware'),
+                ? $this->mergeApiMiddleware($this->app['config']->get('messenger.routing.api.invite_api_middleware'))
+                : $this->mergeApiMiddleware($this->app['config']->get('messenger.routing.api.middleware')),
         ];
     }
 
@@ -75,7 +70,7 @@ trait RouteMap
     {
         return [
             'domain' => $this->app['config']->get('messenger.routing.web.domain'),
-            'prefix' => $this->app['config']->get('messenger.routing.web.prefix'),
+            'prefix' => trim($this->app['config']->get('messenger.routing.web.prefix'), '/'),
             'middleware' => $invite
                 ? $this->app['config']->get('messenger.routing.web.invite_web_middleware')
                 : $this->app['config']->get('messenger.routing.web.middleware'),
@@ -91,7 +86,7 @@ trait RouteMap
     {
         return [
             'domain' => $this->app['config']->get('messenger.routing.provider_avatar.domain'),
-            'prefix' => $this->app['config']->get('messenger.routing.provider_avatar.prefix'),
+            'prefix' => trim($this->app['config']->get('messenger.routing.provider_avatar.prefix'), '/'),
             'middleware' => $this->app['config']->get('messenger.routing.provider_avatar.middleware'),
         ];
     }

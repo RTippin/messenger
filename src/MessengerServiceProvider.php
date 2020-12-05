@@ -34,6 +34,11 @@ class MessengerServiceProvider extends ServiceProvider
     use RouteMap;
 
     /**
+     * Base middleware we apply to our API routes
+     */
+    protected array $apiMiddleware = ['messenger.api'];
+
+    /**
      * Get the services provided by the provider.
      *
      * @return array
@@ -207,5 +212,21 @@ class MessengerServiceProvider extends ServiceProvider
         $alias = $this->app['config']->get('messenger.calling.driver');
 
         return $this->app['config']->get('messenger.drivers.calling')[$alias ?? 'null'];
+    }
+
+    /**
+     * Sanitize user defined middleware in case not array
+     *
+     * @param $middleware
+     * @return array
+     */
+    protected function mergeApiMiddleware($middleware): array
+    {
+        return array_merge(
+            $this->apiMiddleware,
+            is_array($middleware)
+                ? $middleware
+                : [$middleware]
+        );
     }
 }
