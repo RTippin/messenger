@@ -29,8 +29,8 @@ window.Messenger = (function () {
             opt.initialized = true;
             if("call" in arg) CallManager.init(arg.call);
             if("common" in arg){
-                opt.API = arg.api_endpoint + '/';
-                opt.WEB = arg.web_endpoint + '/';
+                opt.API = arg.common.api_endpoint + '/';
+                opt.WEB = arg.common.web_endpoint;
                 opt.model = arg.common.model;
                 opt.auth = true;
                 opt.id = arg.common.id;
