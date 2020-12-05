@@ -50,7 +50,17 @@ return [
     |   ],
     */
     'providers' => [
-
+        'user' => [
+            'model' => App\Models\User::class,
+            'searchable' => true,
+            'friendable' => true,
+            'mobile_devices' => false,
+            'provider_interactions' => [
+                'can_message' => true,
+                'can_search' => true,
+                'can_friend' => true,
+            ]
+        ],
     ],
 
     /*
@@ -60,8 +70,6 @@ return [
     |
     | For each option below, please seleck the filesystem disk and leading
     | directory you wish you use.
-    |
-    | ** DO NOT HAVE A LEADING OR TRAILING FORWARD SLASH **
     |
     | *The avatar is where we will store a providers uploaded image. By default,
     | this will store into the storage_path('app/public/images/{alias}/{id}'),
@@ -102,7 +110,7 @@ return [
     | to set your provider, and add any other middleware you may want,
     | such as 'auth:api' etc. We also include an extension of laravels
     | 'auth' middleware that lets it be optional for routes we want
-    | both guest and auth to see.
+    | both guest and auth to see, 'auth.optional|auth.optional:api'
     |
     | All API routes return json, and are best used stateless through
     | auth:api such as passport or sanctum.
@@ -110,8 +118,6 @@ return [
     | Invite view / redemption routes for both web and api have individual
     | middleware control so you may allow both guest or authed users to
     | access.
-    |
-    | * Included middleware
     |
     | *For the broadcasting channels to register, you must have already
     | setup/defined your laravel apps broadcast driver.
@@ -175,8 +181,13 @@ return [
     | Feature/Service drivers
     |--------------------------------------------------------------------------
     |
-    | Broadcast Driver must implement BroadcastDriver contract.
-    | Video Driver must implement VideoDriver contract.
+    | Below are the service drivers we use for features within this messenger
+    | system. You are free to create your own service drivers as long as they
+    | implement the corresponding contract. See each Drivers contract for
+    | more information.
+    |
+    | * NULL drivers are a simple way to disable a service,
+    |  especially useful in testing.
     |
     */
     'drivers' => [
@@ -194,50 +205,14 @@ return [
         ]
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Broadcasting driver
-    |--------------------------------------------------------------------------
-    |
-    | Disable all socket broadcasting by using the 'null' driver or select a
-    | driver alias from the above listed drivers. You may also create your
-    | own or extend the ones already included.
-    |
-    | *Please note that by default, if you disable / use null broadcast
-    | driver, the push notification driver will not be called
-    |
-    */
     'broadcasting' => [
         'driver' => env('MESSENGER_BROADCASTING_DRIVER', 'default'),
-
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Push Notifications driver
-    |--------------------------------------------------------------------------
-    |
-    | Disable all push notifications by using the 'null' driver or select
-    | a driver alias from the above listed drivers. You may also create
-    | your own or extend the ones already included.
-    |
-    */
     'push_notifications' => [
         'driver' => env('MESSENGER_PUSH_NOTIFICATION_DRIVER', 'null'),
     ],
 
-    /*
-    |--------------------------------------------------------------------------
-    | Calling and drivers
-    |--------------------------------------------------------------------------
-    |
-    | Enable or disable the calling feature
-    |
-    | Driver must implement VideoDriver contract. You may select a driver alias
-    | from the above calling drivers. You may also create your own or extend
-    | the ones already included.
-    |
-    */
     'calling' => [
         'enabled' => env('MESSENGER_CALLING_ENABLED', false),
         'driver' => env('MESSENGER_CALLING_DRIVER', 'null')
