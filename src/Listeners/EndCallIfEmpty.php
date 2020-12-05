@@ -14,7 +14,7 @@ class EndCallIfEmpty implements ShouldQueue
      *
      * @var string|null
      */
-    public $queue = 'messenger';
+    public string $queue = 'messenger';
 
     /**
      * @var EndCall
@@ -38,7 +38,7 @@ class EndCallIfEmpty implements ShouldQueue
      * @return void
      * @throws Throwable
      */
-    public function handle(CallLeftEvent $event)
+    public function handle(CallLeftEvent $event): void
     {
         if( ! $event->call->participants()->inCall()->count())
         {

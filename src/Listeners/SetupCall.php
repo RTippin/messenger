@@ -19,7 +19,7 @@ class SetupCall implements ShouldQueue
      *
      * @var string|null
      */
-    public $queue = 'messenger';
+    public string $queue = 'messenger';
 
     /**
      * Create the event listener.
@@ -38,7 +38,7 @@ class SetupCall implements ShouldQueue
      * @return void
      * @throws Exception
      */
-    public function handle(CallStartedEvent $event)
+    public function handle(CallStartedEvent $event): void
     {
         $this->callBrokerSetup->execute(
             $event->thread,

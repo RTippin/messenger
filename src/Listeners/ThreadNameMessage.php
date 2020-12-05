@@ -14,7 +14,7 @@ class ThreadNameMessage implements ShouldQueue
      *
      * @var string|null
      */
-    public $queue = 'messenger';
+    public string $queue = 'messenger';
 
     /**
      * @var StoreSystemMessage
@@ -63,7 +63,7 @@ class ThreadNameMessage implements ShouldQueue
      * @param ThreadSettingsEvent $event
      * @return bool
      */
-    public function shouldQueue(ThreadSettingsEvent $event)
+    public function shouldQueue(ThreadSettingsEvent $event): bool
     {
         return $event->nameChanged;
     }

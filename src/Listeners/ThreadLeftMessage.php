@@ -14,7 +14,7 @@ class ThreadLeftMessage implements ShouldQueue
      *
      * @var string|null
      */
-    public $queue = 'messenger';
+    public string $queue = 'messenger';
 
     /**
      * @var StoreSystemMessage

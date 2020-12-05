@@ -227,18 +227,6 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Queue names for our dispatched events / listeners / jobs, etc
-    |--------------------------------------------------------------------------
-    |
-    */
-    'queues' => [
-        'listeners' => 'messenger',
-        'jobs' => 'messenger-jobs',
-        'push_notifications' => 'messenger-push-notify'
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | General file toggles to enable / disable features
     |--------------------------------------------------------------------------
     |

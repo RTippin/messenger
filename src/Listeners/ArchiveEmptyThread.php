@@ -15,7 +15,7 @@ class ArchiveEmptyThread implements ShouldQueue
      *
      * @var string|null
      */
-    public $queue = 'messenger';
+    public string $queue = 'messenger';
 
     /**
      * @var ArchiveThread
@@ -60,7 +60,7 @@ class ArchiveEmptyThread implements ShouldQueue
      * @param ThreadLeftEvent $event
      * @return bool
      */
-    public function shouldQueue(ThreadLeftEvent $event)
+    public function shouldQueue(ThreadLeftEvent $event): bool
     {
         return ! $event->thread->participants()->count();
     }
