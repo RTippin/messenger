@@ -90,9 +90,6 @@ window.CallManager = (function () {
             mounted.setJanusInfo(call)
         },
         loadCall : function(thread, call, success){
-            console.log(thread);
-            console.log(call);
-            console.log(Messenger.common().API + 'threads/' + thread + '/calls/' + call);
             Messenger.xhr().request({
                 route : Messenger.common().API + 'threads/' + thread + '/calls/' + call,
                 success : success,
@@ -143,12 +140,12 @@ window.CallManager = (function () {
                 pre_loader : true,
                 title : 'Call session not found. Redirecting you...'
             });
-            // setTimeout(function(){
-            //     window.location.href = Messenger.common().WEB;
-            // }, 4000);
-            // setTimeout(function(){
-            //         window.close();
-            // }, 3000);
+            setTimeout(function(){
+                window.location.href = Messenger.common().WEB;
+            }, 4000);
+            setTimeout(function(){
+                    window.close();
+            }, 3000);
         }
     },
     Sockets = {

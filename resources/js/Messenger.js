@@ -28,7 +28,6 @@ window.Messenger = (function () {
         Initialize : function(arg, environment){
             if(opt.initialized) return;
             opt.initialized = true;
-            if("call" in arg) CallManager.init(arg.call);
             if("common" in arg){
                 opt.API = arg.common.api_endpoint + '/';
                 opt.WEB = arg.common.web_endpoint;
@@ -44,6 +43,7 @@ window.Messenger = (function () {
                 if('dark_css' in arg.common) opt.css.dark = arg.common.dark_css;
                 if('websockets' in arg.common) opt.websockets = arg.common.websockets;
             }
+            if("call" in arg) CallManager.init(arg.call);
             if(environment) opt.env = environment;
             PageListeners.init();
             for(let key in arg.load){
