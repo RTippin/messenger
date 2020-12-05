@@ -1,6 +1,5 @@
 window.MessengerSettings = (function () {
     var opt = {
-        API : Messenger.common().API,
         lock : true,
         elements : {
             profile_avatar_upload : null
@@ -29,7 +28,7 @@ window.MessengerSettings = (function () {
                 cb_btn_theme : 'success',
                 onReady: function () {
                     Messenger.xhr().request({
-                        route : opt.API + 'settings',
+                        route : Messenger.common().API + 'settings',
                         success : function(data){
                             Messenger.alert().fillModal({
                                 title : 'General Settings',
@@ -49,7 +48,7 @@ window.MessengerSettings = (function () {
             if(opt.lock) return;
             opt.lock = true;
             Messenger.xhr().payload({
-                route : opt.API + 'settings',
+                route : Messenger.common().API + 'settings',
                 data : {
                     message_popups : $("#message_popups").is(":checked"),
                     message_sound : $("#message_sounds").is(":checked"),
@@ -96,7 +95,7 @@ window.MessengerSettings = (function () {
                 Messenger.alert().fillModal({loader : true, no_close : true, body : null, title : 'Uploading...'});
             }
             Messenger.xhr().payload({
-                route : opt.API + 'avatar',
+                route : Messenger.common().API + 'avatar',
                 data : data,
                 success : methods.manageNewAvatar,
                 fail_alert : true,
@@ -122,7 +121,7 @@ window.MessengerSettings = (function () {
         },
         removeProfileAvatar : function () {
             Messenger.xhr().payload({
-                route : opt.API + 'avatar',
+                route : Messenger.common().API + 'avatar',
                 data : {},
                 success : methods.manageNewAvatar,
                 fail_alert : true,

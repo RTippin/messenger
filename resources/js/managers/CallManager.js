@@ -87,7 +87,7 @@ window.CallManager = (function () {
         },
         loadCall : function(thread, call, success){
             Messenger.xhr().request({
-                route : opt.API + 'threads/' + thread + '/calls/' + call,
+                route : Messenger.common().API + 'threads/' + thread + '/calls/' + call,
                 success : success,
                 fail : mounted.callFailed
             })
@@ -150,7 +150,7 @@ window.CallManager = (function () {
             let beat = function(){
                 if(Messenger.common().modules.includes('NotifyManager') && !NotifyManager.sockets().forced_disconnect){
                     Messenger.xhr().request({
-                        route : opt.API + 'threads/' + opt.thread_id + '/calls/' + opt.call_id + '/heartbeat',
+                        route : Messenger.common().API + 'threads/' + opt.thread_id + '/calls/' + opt.call_id + '/heartbeat',
                         success : function(){
                             opt.heartbeat_retries = 0
                         },
@@ -322,7 +322,7 @@ window.CallManager = (function () {
                     theme: 'info',
                     onReady : function () {
                         Messenger.xhr().payload({
-                            route : opt.API + 'threads/' + call.thread_id + '/calls/' + call.id + '/join',
+                            route : Messenger.common().API + 'threads/' + call.thread_id + '/calls/' + call.id + '/join',
                             data : {},
                             success : complete,
                             fail : function(){
@@ -356,7 +356,7 @@ window.CallManager = (function () {
                 route =  opt.thread_id + '/calls/' + opt.call_id + '/leave';
             }
             Messenger.xhr().payload({
-                route : opt.API + 'threads/' + route,
+                route : Messenger.common().API + 'threads/' + route,
                 data : {},
                 success : function(data){
                     if(parent){
@@ -412,7 +412,7 @@ window.CallManager = (function () {
             }
             let route = opt.thread_id + '/calls/' + opt.call_id + '/end';
             Messenger.xhr().payload({
-                route : opt.API + 'threads/' + route,
+                route : Messenger.common().API + 'threads/' + route,
                 data : {},
                 success : function(){
                     if(opt.call_type === 1){

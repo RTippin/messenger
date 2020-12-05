@@ -12,10 +12,10 @@ window.io = require('socket.io-client');
 window.NotifyManager = (function () {
     var opt = {
         sounds : {
-            // notify_sound_file : new Audio('/sounds/notify_tone.mp3'),
-            // message_sound_file : new Audio('/sounds/message_tone.mp3'),
-            // call_sound_file : new Audio('/sounds/call_tone.mp3'),
-            // knok_sound_file : new Audio('/sounds/knok.mp3')
+            notify_sound_file : new Audio(window.location.href+'/vendor/messenger/sounds/notify_tone.mp3'),
+            message_sound_file : new Audio(window.location.href+'/vendor/messenger/sounds/message_tone.mp3'),
+            call_sound_file : new Audio(window.location.href+'/vendor/messenger/sounds/call_tone.mp3'),
+            knok_sound_file : new Audio(window.location.href+'/vendor/messenger/sounds/knok.mp3')
         },
         elements : {
             notify_count_area : $("#nav_notify_count"),
@@ -599,36 +599,36 @@ window.NotifyManager = (function () {
             if("notifications" in arg) opt.settings.notifications = arg.notifications;
         },
         playAlertSound : function(type){
-            // let soundOff = function () {
-            //     opt.settings.sound_playing = false;
-            // };
-            // try{
-            //     switch(type){
-            //         case 'message':
-            //             opt.sounds.message_sound_file.volume = 0.2;
-            //             if(!opt.settings.message_sound || opt.settings.sound_playing) return;
-            //             opt.settings.sound_playing = true;
-            //             opt.sounds.message_sound_file.play().then(soundOff).catch(soundOff);
-            //         break;
-            //         case 'notify':
-            //             if(!opt.settings.notify_sound || opt.settings.sound_playing) return;
-            //             opt.settings.sound_playing = true;
-            //             opt.sounds.notify_sound_file.play().then(soundOff).catch(soundOff);
-            //         break;
-            //         case 'call':
-            //             if(!opt.settings.call_ringtone_sound || opt.settings.sound_playing) return;
-            //             opt.settings.sound_playing = true;
-            //             opt.sounds.call_sound_file.play().then(soundOff).catch(soundOff);
-            //         break;
-            //         case 'knok':
-            //             if(opt.settings.sound_playing) return;
-            //             opt.settings.sound_playing = true;
-            //             opt.sounds.knok_sound_file.play().then(soundOff).catch(soundOff);
-            //         break;
-            //     }
-            // }catch (e) {
-            //     console.log(e)
-            // }
+            let soundOff = function () {
+                opt.settings.sound_playing = false;
+            };
+            try{
+                switch(type){
+                    case 'message':
+                        opt.sounds.message_sound_file.volume = 0.2;
+                        if(!opt.settings.message_sound || opt.settings.sound_playing) return;
+                        opt.settings.sound_playing = true;
+                        opt.sounds.message_sound_file.play().then(soundOff).catch(soundOff);
+                    break;
+                    case 'notify':
+                        if(!opt.settings.notify_sound || opt.settings.sound_playing) return;
+                        opt.settings.sound_playing = true;
+                        opt.sounds.notify_sound_file.play().then(soundOff).catch(soundOff);
+                    break;
+                    case 'call':
+                        if(!opt.settings.call_ringtone_sound || opt.settings.sound_playing) return;
+                        opt.settings.sound_playing = true;
+                        opt.sounds.call_sound_file.play().then(soundOff).catch(soundOff);
+                    break;
+                    case 'knok':
+                        if(opt.settings.sound_playing) return;
+                        opt.settings.sound_playing = true;
+                        opt.sounds.knok_sound_file.play().then(soundOff).catch(soundOff);
+                    break;
+                }
+            }catch (e) {
+                console.log(e)
+            }
         },
         callAction : function (id) {
             if(!opt.storage.active_calls || !opt.storage.active_calls.length) return;

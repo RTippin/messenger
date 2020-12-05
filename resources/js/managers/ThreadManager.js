@@ -463,7 +463,7 @@ window.ThreadManager = (function () {
                         opt.states.messenger_search_term = opt.elements.messenger_search_input.val().trim();
                         opt.elements.messenger_search_results.html(ThreadTemplates.render().loader());
                         Messenger.xhr().request({
-                            route : opt.API + 'search/'+opt.states.messenger_search_term,
+                            route : Messenger.common().API + 'search/'+opt.states.messenger_search_term,
                             success : methods.manageMessengerSearch,
                             fail_alert : true
                         })
@@ -702,7 +702,7 @@ window.ThreadManager = (function () {
             let checkTotalUnread = function () {
                 if(CallManager.state().initialized) return;
                 Messenger.xhr().request({
-                    route : opt.API+'unread-threads-count',
+                    route : Messenger.common().API+'unread-threads-count',
                     success : function(data){
                         if(NotifyManager.counts().threads !== data.unread_threads_count){
                             NotifyManager.updateMessageCount({total_unread : data.unread_threads_count});
@@ -714,7 +714,7 @@ window.ThreadManager = (function () {
             };
             if(opt.thread.id){
                 Messenger.xhr().request({
-                    route : opt.API+'threads/'+opt.thread.id+'/is-unread',
+                    route : Messenger.common().API+'threads/'+opt.thread.id+'/is-unread',
                     success : function(data){
                         if(data.unread){
                             opt.storage.participants = [];
@@ -995,7 +995,7 @@ window.ThreadManager = (function () {
             methods.updateThread({thread_id : opt.thread.id}, false, true, false);
             if(opt.storage.messages.length) methods.seenMessage(opt.storage.messages[0].id);
             Messenger.xhr().request({
-                route : opt.API+'threads/'+opt.thread.id+'/mark-read',
+                route : Messenger.common().API+'threads/'+opt.thread.id+'/mark-read',
                 fail : null
             })
         },
@@ -1327,7 +1327,7 @@ window.ThreadManager = (function () {
             else{
                 opt.states.lock = true;
                 Messenger.xhr().request({
-                    route : opt.API+'threads/'+opt.thread.id+'/messages',
+                    route : Messenger.common().API+'threads/'+opt.thread.id+'/messages',
                     success : onLoad,
                     fail : function(){
                         opt.states.load_in_retries++;
@@ -1455,7 +1455,7 @@ window.ThreadManager = (function () {
                 let pending = methods.makePendingMessage(0, message_contents);
                 methods.managePendingMessage('add', pending);
                 Messenger.xhr().payload({
-                    route : opt.API + 'threads/' + opt.thread.id + '/messages',
+                    route : Messenger.common().API + 'threads/' + opt.thread.id + '/messages',
                     data : {
                         message : message_contents,
                         temporary_id : pending.id
@@ -1512,7 +1512,7 @@ window.ThreadManager = (function () {
             form.append(type === 1 ? 'image' : 'document', file);
             form.append('temporary_id', pending.id);
             Messenger.xhr().payload({
-                route : opt.API + 'threads/' + opt.thread.id + (type === 1 ? '/images' : '/documents'),
+                route : Messenger.common().API + 'threads/' + opt.thread.id + (type === 1 ? '/images' : '/documents'),
                 data : form,
                 success : function(x){
                     methods.managePendingMessage('completed', pending, x)
@@ -1892,7 +1892,7 @@ window.ThreadManager = (function () {
                 cb_close : true,
                 callback : function(){
                     Messenger.xhr().payload({
-                        route : opt.API + 'threads/' + opt.thread.id + '/messages/' + arg.id,
+                        route : Messenger.common().API + 'threads/' + opt.thread.id + '/messages/' + arg.id,
                         data : {},
                         success : function(){
                             Messenger.alert().Alert({
@@ -1925,7 +1925,7 @@ window.ThreadManager = (function () {
                 cb_btn_theme : 'danger',
                 onReady : function(){
                     Messenger.xhr().request({
-                        route : opt.API + 'threads/' + opt.thread.id + '/check-archive',
+                        route : Messenger.common().API + 'threads/' + opt.thread.id + '/check-archive',
                         success : function(data){
                             Messenger.alert().fillModal({body : ThreadTemplates.render().archive_thread_warning(data), title : ' Delete Conversation?'});
                         },
@@ -1941,7 +1941,7 @@ window.ThreadManager = (function () {
             if(opt.states.lock) return;
             opt.states.lock = true;
             Messenger.xhr().payload({
-                route : opt.API + 'threads/' + opt.thread.id,
+                route : Messenger.common().API + 'threads/' + opt.thread.id,
                 shared : {
                     thread_id : opt.thread.id,
                     name : opt.thread.name,
@@ -1970,7 +1970,7 @@ window.ThreadManager = (function () {
         viewParticipants : function(reload){
             let gather = () => {
                 Messenger.xhr().request({
-                    route : opt.API + 'threads/' + opt.thread.id + '/participants',
+                    route : Messenger.common().API + 'threads/' + opt.thread.id + '/participants',
                     success : function(data){
                         Messenger.alert().fillModal({
                             body : ThreadTemplates.render().group_participants(data.data, opt.thread.admin),
@@ -2007,7 +2007,7 @@ window.ThreadManager = (function () {
                 h4 : false,
                 onReady : function(){
                     Messenger.xhr().request({
-                        route : opt.API+'threads/'+opt.thread.id+'/invites',
+                        route : Messenger.common().API+'threads/'+opt.thread.id+'/invites',
                         success : groups.manageInviteGenPage,
                         fail_alert : true
                     })
@@ -2051,7 +2051,7 @@ window.ThreadManager = (function () {
                 title : 'Generating...'
             });
             Messenger.xhr().payload({
-                route : opt.API + 'threads/' + thread + '/invites',
+                route : Messenger.common().API + 'threads/' + thread + '/invites',
                 data : {
                     expires : expire,
                     uses : uses
@@ -2066,7 +2066,7 @@ window.ThreadManager = (function () {
             let thread = (CallManager.state().initialized ? CallManager.state().thread_id : opt.thread.id);
             Messenger.button().addLoader({id : '#inv_remove_btn_' + id});
             Messenger.xhr().payload({
-                route : opt.API + 'threads/' + thread + '/invites/' + id,
+                route : Messenger.common().API + 'threads/' + thread + '/invites/' + id,
                 data : {},
                 success : groups.viewInviteGenerator,
                 fail : groups.viewInviteGenerator,
@@ -2092,7 +2092,7 @@ window.ThreadManager = (function () {
                 unlock_buttons : false,
                 onReady : function(){
                     Messenger.xhr().request({
-                        route : opt.API + 'threads/'+thread+'/add-participants',
+                        route : Messenger.common().API + 'threads/'+thread+'/add-participants',
                         success : function(data){
                             Messenger.alert().fillModal({
                                 body : ThreadTemplates.render().group_add_participants(data),
@@ -2111,7 +2111,7 @@ window.ThreadManager = (function () {
                         })
                     }
                     Messenger.xhr().payload({
-                        route : opt.API + 'threads/' + thread + '/participants',
+                        route : Messenger.common().API + 'threads/' + thread + '/participants',
                         data : {
                             providers : providers.length ? providers : null,
                         },
@@ -2152,7 +2152,7 @@ window.ThreadManager = (function () {
                 cb_btn_theme : 'success',
                 onReady: function () {
                     Messenger.xhr().request({
-                        route : opt.API + 'threads/' + opt.thread.id + '/settings',
+                        route : Messenger.common().API + 'threads/' + opt.thread.id + '/settings',
                         success : function(data){
                             Messenger.alert().fillModal({
                                 title : opt.thread.name+' Settings',
@@ -2171,7 +2171,7 @@ window.ThreadManager = (function () {
         },
         saveSettings : function(){
             Messenger.xhr().payload({
-                route : opt.API + 'threads/' + opt.thread.id + '/settings',
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/settings',
                 data : {
                     subject : $('#g_s_group_subject').val(),
                     add_participants : $("#g_s_add_participants").is(":checked"),
@@ -2209,7 +2209,7 @@ window.ThreadManager = (function () {
                 data.append('image', $('#avatar_image_file')[0].files[0]);
                 Messenger.button().addLoader({id : '#group_avatar_upload_btn'});
                 Messenger.xhr().payload({
-                    route : opt.API + 'threads/' + opt.thread.id + '/avatar',
+                    route : Messenger.common().API + 'threads/' + opt.thread.id + '/avatar',
                     data : data,
                     success : function(data){
                         Messenger.alert().Alert({
@@ -2224,7 +2224,7 @@ window.ThreadManager = (function () {
             }
             Messenger.button().addLoader({id : '#avatar_default_btn'});
             Messenger.xhr().payload({
-                route : opt.API + 'threads/' + opt.thread.id + '/avatar',
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/avatar',
                 data : {
                     default : $('#default_avatar input[type="radio"]:checked').val()
                 },
@@ -2242,7 +2242,7 @@ window.ThreadManager = (function () {
             if(opt.states.lock) return;
             opt.states.lock = true;
             Messenger.xhr().payload({
-                route : opt.API + 'threads/' + opt.thread.id + '/participants/' + x,
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/participants/' + x,
                 data : {},
                 success : function(data){
                     Messenger.alert().Alert({
@@ -2260,7 +2260,7 @@ window.ThreadManager = (function () {
             opt.states.lock = true;
             Messenger.alert().fillModal({loader : true});
             Messenger.xhr().payload({
-                route : opt.API + 'threads/' + opt.thread.id + '/participants/' + participant + '/promote',
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/participants/' + participant + '/promote',
                 data : {},
                 success : function (data) {
                     groups.viewParticipants(true);
@@ -2273,7 +2273,7 @@ window.ThreadManager = (function () {
             opt.states.lock = true;
             Messenger.alert().fillModal({loader : true});
             Messenger.xhr().payload({
-                route : opt.API + 'threads/' + opt.thread.id + '/participants/' + participant + '/demote',
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/participants/' + participant + '/demote',
                 data : {},
                 success : function (data) {
                     groups.viewParticipants(true);
@@ -2297,7 +2297,7 @@ window.ThreadManager = (function () {
                 cb_btn_theme : 'success',
                 onReady: function () {
                     Messenger.xhr().request({
-                        route : opt.API + 'threads/' + opt.thread.id + '/participants/' + participant_id,
+                        route : Messenger.common().API + 'threads/' + opt.thread.id + '/participants/' + participant_id,
                         success : function(participant){
                             Messenger.alert().fillModal({
                                 title : participant.owner.name+' Permissions',
@@ -2318,7 +2318,7 @@ window.ThreadManager = (function () {
         },
         participantPermissionSave : function(participant_id){
             Messenger.xhr().payload({
-                route : opt.API + 'threads/' + opt.thread.id + '/participants/' + participant_id,
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/participants/' + participant_id,
                 data : {
                     add_participants : $("#p_add_participants").is(":checked"),
                     manage_invites : $("#p_manage_invites").is(":checked"),
@@ -2351,7 +2351,7 @@ window.ThreadManager = (function () {
                 cb_btn_theme : 'danger',
                 callback : function(){
                     Messenger.xhr().payload({
-                        route : opt.API + 'threads/' + opt.thread.id + '/leave',
+                        route : Messenger.common().API + 'threads/' + opt.thread.id + '/leave',
                         shared : {
                             thread_id : opt.thread.id,
                             name : opt.thread.name
@@ -2385,7 +2385,7 @@ window.ThreadManager = (function () {
                 })
             }
             Messenger.xhr().payload({
-                route : opt.API + 'groups',
+                route : Messenger.common().API + 'groups',
                 data : {
                     providers : providers.length ? providers : null,
                     subject :  subject
@@ -2423,7 +2423,7 @@ window.ThreadManager = (function () {
             opt.states.lock = true;
             opt.elements.message_container.html(ThreadTemplates.render().loading_thread_base());
             Messenger.xhr().payload({
-                route : opt.API + 'privates',
+                route : Messenger.common().API + 'privates',
                 data : form,
                 success : function(x){
                     mounted.reset(true);
@@ -2439,7 +2439,7 @@ window.ThreadManager = (function () {
             opt.states.lock = true;
             Messenger.button().addLoader({id : approve ? '#thread_approval_accept_btn' : '#thread_approval_deny_btn'});
             Messenger.xhr().payload({
-                route : opt.API + 'threads/' + opt.thread.id + '/approval',
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/approval',
                 data : {
                     approve : approve
                 },
@@ -2482,7 +2482,7 @@ window.ThreadManager = (function () {
             Messenger.button().addLoader({id : '.video_btn'});
             Calls.showCreateModal(false);
             Messenger.xhr().payload({
-                route : opt.API + 'threads/' + opt.thread.id + '/calls',
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/calls',
                 data : {},
                 success : function(data){
                     CallManager.join(data, false);
@@ -2497,7 +2497,7 @@ window.ThreadManager = (function () {
             if(opt.states.lock || !NotifyManager.sockets().status) return;
             Messenger.button().addLoader({id : '#knok_btn'});
             Messenger.xhr().payload({
-                route : opt.API + 'threads/' + opt.thread.id + '/knock-knock',
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/knock-knock',
                 data : {},
                 success : function(data){
                     NotifyManager.sound('knok');
@@ -2516,7 +2516,7 @@ window.ThreadManager = (function () {
         mute : function(){
             let payload = function(){
                 Messenger.xhr().payload({
-                    route : opt.API + 'threads/' + opt.thread.id + '/mute',
+                    route : Messenger.common().API + 'threads/' + opt.thread.id + '/mute',
                     data : {},
                     success : function(){
                         Messenger.alert().Alert({
@@ -2547,7 +2547,7 @@ window.ThreadManager = (function () {
         },
         unmute : function(){
             Messenger.xhr().payload({
-                route : opt.API + 'threads/' + opt.thread.id + '/unmute',
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/unmute',
                 data : {},
                 success : function(){
                     Messenger.alert().Alert({
@@ -2576,7 +2576,7 @@ window.ThreadManager = (function () {
         },
         threads : function(){
             Messenger.xhr().request({
-                route : opt.API + 'threads',
+                route : Messenger.common().API + 'threads',
                 success : function(data){
                     opt.storage.threads = data.data;
                     if(opt.elements.thread_area.length){
@@ -2608,7 +2608,7 @@ window.ThreadManager = (function () {
             if(paginate){
                 $("#log_paginate_btn").html(Messenger.alert().loader(true));
                 Messenger.xhr().request({
-                    route : opt.API+'threads/'+opt.thread.id+'/logs/page/' + page,
+                    route : Messenger.common().API+'threads/'+opt.thread.id+'/logs/page/' + page,
                     success : function(data){
                         $("#log_paginate_btn").remove();
                         $("#body_modal").append(ThreadTemplates.render().thread_logs(data))
@@ -2627,7 +2627,7 @@ window.ThreadManager = (function () {
                 h4: false,
                 onReady: function () {
                     Messenger.xhr().request({
-                        route : opt.API+'threads/'+opt.thread.id+'/logs',
+                        route : Messenger.common().API+'threads/'+opt.thread.id+'/logs',
                         success : function(data){
                             Messenger.alert().fillModal({
                                 title : opt.thread.name+' Logs',
@@ -2643,7 +2643,7 @@ window.ThreadManager = (function () {
             if(paginate){
                 $("#image_paginate_btn").html(Messenger.alert().loader(true));
                 Messenger.xhr().request({
-                    route : opt.API+'threads/'+opt.thread.id+'/images/page/' + page,
+                    route : Messenger.common().API+'threads/'+opt.thread.id+'/images/page/' + page,
                     success : function(data){
                         $("#image_paginate_btn").remove();
                         $("#body_modal").append(ThreadTemplates.render().thread_images(data))
@@ -2663,7 +2663,7 @@ window.ThreadManager = (function () {
                 h4: false,
                 onReady: function () {
                     Messenger.xhr().request({
-                        route : opt.API+'threads/'+opt.thread.id+'/images',
+                        route : Messenger.common().API+'threads/'+opt.thread.id+'/images',
                         success : function(data){
                             Messenger.alert().fillModal({
                                 title : opt.thread.name+' Shared Images',
@@ -2680,7 +2680,7 @@ window.ThreadManager = (function () {
             if(paginate){
                 $("#document_paginate_btn").html(Messenger.alert().loader(true));
                 Messenger.xhr().request({
-                    route : opt.API+'threads/'+opt.thread.id+'/documents/page/' + page,
+                    route : Messenger.common().API+'threads/'+opt.thread.id+'/documents/page/' + page,
                     success : function(data){
                         $("#document_paginate_btn").remove();
                         $("#documents_history").append(ThreadTemplates.render().thread_documents(false, data))
@@ -2699,7 +2699,7 @@ window.ThreadManager = (function () {
                 h4: false,
                 onReady: function () {
                     Messenger.xhr().request({
-                        route : opt.API+'threads/'+opt.thread.id+'/documents',
+                        route : Messenger.common().API+'threads/'+opt.thread.id+'/documents',
                         success : function(data){
                             Messenger.alert().fillModal({
                                 title : opt.thread.name+' Shared Documents',
@@ -2712,7 +2712,7 @@ window.ThreadManager = (function () {
         },
         thread : function(thread_id, success){
             Messenger.xhr().request({
-                route : opt.API+'threads/' + thread_id,
+                route : Messenger.common().API+'threads/' + thread_id,
                 success : function(data){
                     let thread = methods.locateStorageItem({type : 'thread', id : thread_id});
                     if(!thread.found){
@@ -2731,7 +2731,7 @@ window.ThreadManager = (function () {
         bobbleHeads : function(){
             if(!opt.thread.id) return;
             Messenger.xhr().request({
-                route : opt.API+'threads/'+opt.thread.id+'/participants',
+                route : Messenger.common().API+'threads/'+opt.thread.id+'/participants',
                 success : function(data){
                     opt.storage.participants = data.data;
                     $(".bobble-head-item").remove();
@@ -2769,7 +2769,7 @@ window.ThreadManager = (function () {
             mounted.reset(false);
             opt.thread.type = 6;
             Messenger.xhr().request({
-                route : opt.API + 'friends',
+                route : Messenger.common().API + 'friends',
                 success : function(data){
                     $("#messenger_contacts_ctnr").html(ThreadTemplates.render().contacts(data));
                     if(!noHistory) window.history.pushState({type : 6}, null, Messenger.common().WEB + '?contacts');
@@ -2790,7 +2790,7 @@ window.ThreadManager = (function () {
             if(Messenger.common().mobile) ThreadTemplates.mobile(true);
             $(".modal").modal('hide');
             Messenger.xhr().request({
-                route : opt.API + 'privates/recipient/'+arg.alias+'/'+arg.id,
+                route : Messenger.common().API + 'privates/recipient/'+arg.alias+'/'+arg.id,
                 success : function(data){
                     if(data.thread_id){
                         LoadIn.initiate_thread({thread_id : data.thread_id});
@@ -2821,7 +2821,7 @@ window.ThreadManager = (function () {
                 type : 4
             });
             Messenger.xhr().request({
-                route : opt.API + 'friends',
+                route : Messenger.common().API + 'friends',
                 success : function(data){
                     if(opt.thread.type === 4){
                         $("#messages_container_new_group").html(ThreadTemplates.render().new_group_friends(data));
@@ -2843,7 +2843,7 @@ window.ThreadManager = (function () {
                 params += '|mark-read';
             }
             Messenger.xhr().request({
-                route : opt.API + 'threads/' + arg.thread_id + params,
+                route : Messenger.common().API + 'threads/' + arg.thread_id + params,
                 success : function(data){
                     data.group
                         ? methods.initiateGroup(arg, data, noHistory)
