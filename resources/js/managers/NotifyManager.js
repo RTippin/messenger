@@ -12,10 +12,10 @@ window.io = require('socket.io-client');
 window.NotifyManager = (function () {
     var opt = {
         sounds : {
-            notify_sound_file : new Audio(window.location.hostname+'/vendor/messenger/sounds/notify_tone.mp3'),
-            message_sound_file : new Audio(window.location.hostname+'/vendor/messenger/sounds/message_tone.mp3'),
-            call_sound_file : new Audio(window.location.hostname+'/vendor/messenger/sounds/call_tone.mp3'),
-            knok_sound_file : new Audio(window.location.hostname+'/vendor/messenger/sounds/knok.mp3')
+            notify_sound_file : new Audio([window.location.protocol, '//', window.location.host].join('')+'/vendor/messenger/sounds/notify_tone.mp3'),
+            message_sound_file : new Audio([window.location.protocol, '//', window.location.host].join('')+'/vendor/messenger/sounds/message_tone.mp3'),
+            call_sound_file : new Audio([window.location.protocol, '//', window.location.host].join('')+'/vendor/messenger/sounds/call_tone.mp3'),
+            knok_sound_file : new Audio([window.location.protocol, '//', window.location.host].join('')+'/vendor/messenger/sounds/knok.mp3')
         },
         elements : {
             notify_count_area : $("#nav_notify_count"),
