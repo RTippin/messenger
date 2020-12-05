@@ -27,6 +27,8 @@ class MessengerServiceProvider extends ServiceProvider
 {
     use ChannelMap;
 
+    use EventMap;
+
     use PolicyMap;
 
     use RouteMap;
@@ -51,8 +53,9 @@ class MessengerServiceProvider extends ServiceProvider
     {
         $this->registerHelpers();
         $this->registerMiddleware();
-        $this->registerRoutes();
         $this->registerPolicies();
+        $this->registerEvents();
+        $this->registerRoutes();
         $this->registerChannels();
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'messenger');
 
@@ -129,7 +132,6 @@ class MessengerServiceProvider extends ServiceProvider
             VideoDriver::class,
             $this->getVideoImplementation()
         );
-        $this->app->register(MessengerEventServiceProvider::class);
     }
 
     /**
