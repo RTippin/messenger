@@ -227,12 +227,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Queue names for our dispatched events / listeners / jobs
+    | Queue names for our dispatched events / listeners / jobs, etc
     |--------------------------------------------------------------------------
     |
     */
     'queues' => [
-        //TODO
+        'listeners' => 'messenger',
+        'jobs' => 'messenger-jobs',
+        'push_notifications' => 'messenger-push-notify'
     ],
 
     /*
