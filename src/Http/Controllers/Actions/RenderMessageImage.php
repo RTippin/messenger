@@ -7,7 +7,7 @@ use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Services\Messenger\ImageRenderService;
+use RTippin\Messenger\ImageRenderService;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class RenderMessageImage

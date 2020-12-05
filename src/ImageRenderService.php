@@ -1,14 +1,12 @@
 <?php
 
-namespace RTippin\Messenger\Services\Messenger;
+namespace RTippin\Messenger;
 
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Routing\ResponseFactory;
 use Exception;
 use Intervention\Image\ImageManager;
-use RTippin\Messenger\Definitions;
-use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;

@@ -3,7 +3,7 @@
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use RTippin\Messenger\Services\Messenger\ImageRenderService;
+use RTippin\Messenger\ImageRenderService;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class RenderProviderAvatar
