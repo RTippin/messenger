@@ -371,15 +371,15 @@ class JanusServer
         try{
             $this->trackServerLatency();
 
-            $response = $post ? $client->post($uri, [
-                'json' => $data
-            ]) : $client->get($uri);
+            $response = $post
+                ? $client->post($uri, $data)
+                : $client->get($uri);
 
             $this->reportServerLatency();
 
             if($this->debug) dump($response->headers());
 
-            $this->api_response = json_decode($response->body(),true);
+            $this->api_response = $response->json();
 
         }catch (Exception $e){
             report($e);
