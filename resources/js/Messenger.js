@@ -3,6 +3,7 @@ window.Messenger = (function () {
         initialized : false,
         API : null,
         WEB : null,
+        SOCKET : null,
         env : 'production',
         websockets : true,
         lockout : false,
@@ -31,6 +32,7 @@ window.Messenger = (function () {
             if("common" in arg){
                 opt.API = arg.common.api_endpoint + '/';
                 opt.WEB = arg.common.web_endpoint;
+                opt.SOCKET = arg.common.socket_endpoint;
                 opt.model = arg.common.model;
                 opt.auth = true;
                 opt.id = arg.common.id;
@@ -656,6 +658,7 @@ window.Messenger = (function () {
             return {
                 API : opt.API,
                 WEB : opt.WEB,
+                SOCKET : opt.SOCKET,
                 model : opt.model,
                 id : opt.id,
                 name : opt.name,

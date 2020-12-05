@@ -39,6 +39,11 @@ trait ConfigInterface
     /**
      * @var string
      */
+    private string $socketEndpoint;
+
+    /**
+     * @var string
+     */
     private string $broadcastDriver;
 
     /**
@@ -784,12 +789,21 @@ trait ConfigInterface
     }
 
     /**
+     * @return string
+     */
+    public function getSocketEndpoint(): string
+    {
+        return $this->socketEndpoint;
+    }
+
+    /**
      * Set all configs from the config file
      */
     private function setMessengerConfig(): void
     {
         $this->apiEndpoint = '/' . $this->configRepo->get('messenger.routing.api.prefix');
         $this->webEndpoint = '/' . $this->configRepo->get('messenger.routing.web.prefix');
+        $this->socketEndpoint = $this->configRepo->get('messenger.socket_endpoint');
         $this->avatarStorage = $this->configRepo->get('messenger.storage.avatars');
         $this->threadStorage = $this->configRepo->get('messenger.storage.threads');
         $this->broadcastDriver = $this->configRepo->get('messenger.broadcasting.driver') ?? 'null';

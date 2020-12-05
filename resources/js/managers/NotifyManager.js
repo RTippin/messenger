@@ -142,12 +142,10 @@ window.NotifyManager = (function () {
     broadcaster = {
         Echo : function(reconnected){
             if(!Messenger.common().websockets) return;
-            let host_prod = window.location.hostname;
-                // host_other = process.env.MIX_SOCKET_APP_HOST + ":" + process.env.MIX_SOCKET_APP_PORT;
             opt.socket.forced_disconnect = false;
             opt.socket.Echo = new Echo({
                 broadcaster : 'socket.io',
-                host : host_prod,
+                host : Messenger.common().SOCKET,
             });
             opt.socket.Echo.connector.socket.on('connect', function(){
                 opt.socket.socket_status = true;

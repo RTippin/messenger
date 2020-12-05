@@ -373,6 +373,11 @@ interface MessengerInterface
     /**
      * @return string
      */
+    public function getSocketEndpoint(): string;
+
+    /**
+     * @return string
+     */
     public function getPushNotificationDriver(): string;
 
     /**

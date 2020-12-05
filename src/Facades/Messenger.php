@@ -94,6 +94,7 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static passesReflectionInterface(string $abstract, string $contract)
  * @method static getApiEndpoint()
  * @method static getWebEndpoint()
+ * @method static getSocketEndpoint()
  *
  * @mixin \RTippin\Messenger\Messenger
  * @see MessengerInterface
