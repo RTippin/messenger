@@ -211,7 +211,7 @@ window.ThreadTemplates = (function () {
                 '<div class="media"><div class="media-left media-middle"><img data-src="'+profile.avatar.sm+'" class="lazy media-object rounded-circle thread-list-avatar avatar-is-'+(profile.options.online_status === 1
                     ? "online" : profile.options.online_status === 2 ? "away" : "offline")+'" /></div>' +
                 '<div class="media-body thread_body_li"><div class="header d-inline"><small><div class="d-none d-sm-block float-right">' +
-                '<span class="badge badge-light"><i class="fas fa-restroom"></i>'+profile.provider_alias.toUpperCase()+'</span></div></small>' +
+                '<span class="badge badge-light text-capitalize"><i class="fas fa-restroom"></i> '+profile.provider_alias+'</span></div></small>' +
                 '<div class="from h5 font-weight-bold">'+profile.name+'</div></div><div class="description mt-n2">' +
                 templates.messenger_search_friend(profile) +
                 '</div></div></div></a></li>'
