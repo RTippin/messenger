@@ -206,13 +206,12 @@ window.ThreadTemplates = (function () {
             return ''
         },
         messenger_search : function(profile){
-            let type = '<span class="badge badge-light"><i class="fas fa-restroom"></i> User</span>';
-            if(profile.provider_alias === 'company') type = '<span class="badge badge-light"><i class="fas fa-building"></i> Company</span>';
             return '<li title="'+Messenger.format().escapeHtml(profile.name)+'" class="thread_list_item">' +
                 '<a onclick="ThreadManager.load().createPrivate({id : \''+profile.provider_id+'\', alias : \''+profile.provider_alias+'\'}); return false;" href="#">' +
                 '<div class="media"><div class="media-left media-middle"><img data-src="'+profile.avatar.sm+'" class="lazy media-object rounded-circle thread-list-avatar avatar-is-'+(profile.options.online_status === 1
                     ? "online" : profile.options.online_status === 2 ? "away" : "offline")+'" /></div>' +
-                '<div class="media-body thread_body_li"><div class="header d-inline"><small><div class="d-none d-sm-block float-right">'+type+'</div></small>' +
+                '<div class="media-body thread_body_li"><div class="header d-inline"><small><div class="d-none d-sm-block float-right">' +
+                '<span class="badge badge-light"><i class="fas fa-restroom"></i>'+profile.provider_alias.toUpperCase()+'</span></div></small>' +
                 '<div class="from h5 font-weight-bold">'+profile.name+'</div></div><div class="description mt-n2">' +
                 templates.messenger_search_friend(profile) +
                 '</div></div></div></a></li>'
@@ -508,7 +507,7 @@ window.ThreadTemplates = (function () {
                 '</div>'
         },
         thread_empty_search : function(more, none){
-            let msg = 'Search above for other profiles on Messenger!';
+            let msg = 'Search above for other profiles on '+Messenger.common().APP_NAME+'!';
             if(more) msg = none ? 'No matching profiles were found' : 'Use at least 3 characters in your query';
             return '<div class="col-12 text-center text-info font-weight-bold h4 mt-5">\n' +
                 '<i class="fas fa-search"></i> '+msg+

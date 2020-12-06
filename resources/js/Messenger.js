@@ -1,6 +1,7 @@
 window.Messenger = (function () {
     var opt = {
         initialized : false,
+        APP_NAME : 'Messenger',
         API : null,
         WEB : null,
         SOCKET : null,
@@ -28,16 +29,19 @@ window.Messenger = (function () {
         Initialize : function(arg, environment){
             if(opt.initialized) return;
             opt.initialized = true;
+            if("provider" in arg){
+                opt.model = arg.provider.model;
+                opt.auth = true;
+                opt.id = arg.provider.id;
+                opt.name = arg.provider.name;
+                opt.slug = arg.provider.slug;
+                opt.avatar_md = arg.provider.avatar_md;
+            }
             if("common" in arg){
                 opt.API = arg.common.api_endpoint + '/';
                 opt.WEB = arg.common.web_endpoint;
                 opt.SOCKET = arg.common.socket_endpoint;
-                opt.model = arg.common.model;
-                opt.auth = true;
-                opt.id = arg.common.id;
-                opt.name = arg.common.name;
-                opt.slug = arg.common.slug;
-                opt.avatar_md = arg.common.avatar_md;
+                opt.APP_NAME = arg.common.app_name;
                 opt.mobile = arg.common.mobile;
                 if('base_css' in arg.common) opt.css.base = arg.common.base_css;
                 if('dark_css' in arg.common) opt.css.dark = arg.common.dark_css;
@@ -656,6 +660,7 @@ window.Messenger = (function () {
         init : methods.Initialize,
         common : function(){
             return {
+                APP_NAME : opt.APP_NAME,
                 API : opt.API,
                 WEB : opt.WEB,
                 SOCKET : opt.SOCKET,

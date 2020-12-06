@@ -10,6 +10,26 @@ use RTippin\Messenger\Brokers\NullVideoBroker;
 use RTippin\Messenger\Brokers\PushNotificationBroker;
 
 return [
+    /*
+    |--------------------------------------------------------------------------
+    | The name of your application
+    |--------------------------------------------------------------------------
+    |
+    */
+    'site_name' => env('MESSENGER_SITE_NAME', config('app.name')),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Provider UUIDs
+    |--------------------------------------------------------------------------
+    |
+    | All of our tables that have relations to one of your providers will use
+    | a morph. If your providers use UUIDs (char 36) as their primary keys,
+    | then set this to true. Please note that if you use multiple providers,
+    | they all must have matching primary key types (int / char).
+    |
+    */
+    'provider_uuids' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -24,10 +44,16 @@ return [
     | unless you plan to move the uploads/directory names around yourself
     |
     | *Each provider you list must implement our MessengerProvider contract
-    | RTippin\Messenger\Contracts\MessengerProvider
+    | We also provide a Messagable trait you can use on your model that has
+    | the basic methods this messenger needs (name / avatar / etc).
+    | -RTippin\Messenger\Traits\Messageable
+    | -RTippin\Messenger\Contracts\MessengerProvider
     |
-    | *Searchable expects provider to implement the matching contract. see:
-    | RTippin\Messenger\Contracts\Searchable
+    | *To enable a provider to be searchable, you must implement our contract
+    | listed below, and implement the static method for query builder. We
+    | include a trait you can use or reference to jump right in!
+    | -RTippin\Messenger\Traits\Search
+    | -RTippin\Messenger\Contracts\Searchable
     |
     | *Provider interactions give fine grain control over how your provider can interact with other providers, should you have
     | multiple. A provider always has full permission for interactions between itself, e.g : User to User. To allow full
@@ -35,19 +61,17 @@ return [
     | To specify which and how each provider can interact with one another, declare each providers alias string, multiple
     | separated by the PIPE, e.g : 'company', 'company|teacher', etc.
     |
-    |   'providers' => [                                    //List all providers in your app
-    |       'user' => [                                     //alias given to your provider
-    |           'model' => App\Models\Company::class,       //Path to the provider's model
-    |           'searchable' => true,                       //Provider implements/is searchable - true|false
-    |           'friendable' => true,                       //Provider is friendable - true|false
-    |           'devices' => true,                          //Provider has tokens for push notifications - true|false
-    |           'provider_interactions' => [                //What your provider can do with other providers
-    |               'can_message' => 'user|company',        //Able to start new threads with other listed providers - true|false|null|string
-    |               'can_search' => 'user|company',         //Able to search other listed providers - true|false|null|string
-    |               'can_friend' => false,                  //Able to send friend request to  other listed providers - true|false|null|string
-    |           ]
-    |       ],
-    |   ],
+    | 'user' => [                                     //alias given to your provider
+    |     'model' => App\Models\Company::class,       //Path to the provider's model
+    |     'searchable' => true,                       //Provider implements/is searchable - true|false
+    |     'friendable' => true,                       //Provider is friendable - true|false
+    |     'devices' => true,                          //Provider has tokens for push notifications - true|false
+    |     'provider_interactions' => [                //What your provider can do with other providers
+    |         'can_message' => 'user|company',        //Able to start new threads with other listed providers - true|false|null|string
+    |         'can_search' => 'user|company',         //Able to search other listed providers - true|false|null|string
+    |         'can_friend' => false,                  //Able to send friend request to  other listed providers - true|false|null|string
+    |     ]
+    | ],
     */
     'providers' => [
         'user' => [
@@ -227,7 +251,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | General file toggles to enable / disable features
+    | File toggles to enable / disable features and default image paths
     |--------------------------------------------------------------------------
     |
     */
@@ -243,6 +267,7 @@ return [
             'upload' => env('MESSENGER_THREAD_AVATAR_UPLOAD', true)
         ],
         'provider_avatars' => [
+            'default' => public_path('vendor/messenger/images/users.png'),
             'upload' => env('MESSENGER_PROVIDER_AVATAR_UPLOAD', true),
             'removal' => env('MESSENGER_PROVIDER_AVATAR_REMOVAL', true)
         ]

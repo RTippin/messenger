@@ -17,19 +17,21 @@
 @stack('Messenger-load')
 
         },
-        common : {
-            api_endpoint : '{{messenger()->getApiEndpoint()}}',
-            web_endpoint : '{{messenger()->getWebEndpoint()}}',
-            socket_endpoint : '{{messenger()->getSocketEndpoint()}}',
+        provider : {
             model : '{{messenger()->getProviderAlias()}}',
             id : '{{messenger()->getProviderId()}}',
             name : '{{ messenger()->getProvider()->name()}}',
             slug : '{{ messenger()->getProvider()->getAvatarRoute('sm')}}',
             avatar_md : '{{ messenger()->getProvider()->getAvatarRoute('md')}}',
+        },
+        common : {
+            app_name : 'name',
+            api_endpoint : '{{messenger()->getApiEndpoint()}}',
+            web_endpoint : '{{messenger()->getWebEndpoint()}}',
+            socket_endpoint : '{{messenger()->getSocketEndpoint()}}',
             mobile : false,
             base_css : '{{ asset(mix('app.css', 'vendor/messenger')) }}',
             dark_css : '{{ asset(mix('dark.css', 'vendor/messenger')) }}',
-            {{-- websockets : false--}}
         },
         modules : {
 @stack('Messenger-modules')
@@ -41,6 +43,15 @@
     Messenger.init({
         load : {
         @stack('Messenger-load')
+        },
+        common : {
+            app_name : 'name',
+            api_endpoint : '{{messenger()->getApiEndpoint()}}',
+            web_endpoint : '{{messenger()->getWebEndpoint()}}',
+            socket_endpoint : '{{messenger()->getSocketEndpoint()}}',
+            mobile : false,
+            base_css : '{{ asset(mix('app.css', 'vendor/messenger')) }}',
+            dark_css : '{{ asset(mix('dark.css', 'vendor/messenger')) }}',
         },
         modules : {
         @stack('Messenger-modules')
