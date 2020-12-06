@@ -16,7 +16,7 @@ return [
     |--------------------------------------------------------------------------
     |
     */
-    'site_name' => env('MESSENGER_SITE_NAME', config('app.name')),
+    'site_name' => env('MESSENGER_SITE_NAME', 'Messenger'),
 
     /*
     |--------------------------------------------------------------------------
@@ -61,7 +61,7 @@ return [
     | To specify which and how each provider can interact with one another, declare each providers alias string, multiple
     | separated by the PIPE, e.g : 'company', 'company|teacher', etc.
     |
-    | 'user' => [                                     //alias given to your provider
+    | 'company' => [                                  //alias given to your provider
     |     'model' => App\Models\Company::class,       //Path to the provider's model
     |     'searchable' => true,                       //Provider implements/is searchable - true|false
     |     'friendable' => true,                       //Provider is friendable - true|false

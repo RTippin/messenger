@@ -17,6 +17,11 @@ use Illuminate\Support\Collection;
 trait ConfigInterface
 {
     /**
+     * @var string
+     */
+    private string $siteName;
+
+    /**
      * @var Collection
      */
     private Collection $providers;
@@ -797,10 +802,19 @@ trait ConfigInterface
     }
 
     /**
+     * @return string
+     */
+    public function getSiteName(): string
+    {
+        return $this->siteName;
+    }
+
+    /**
      * Set all configs from the config file
      */
     private function setMessengerConfig(): void
     {
+        $this->siteName = $this->configRepo->get('messenger.site_name');
         $this->apiEndpoint = '/' . $this->configRepo->get('messenger.routing.api.prefix');
         $this->webEndpoint = '/' . $this->configRepo->get('messenger.routing.web.prefix');
         $this->socketEndpoint = $this->configRepo->get('messenger.socket_endpoint');

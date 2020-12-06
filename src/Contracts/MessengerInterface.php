@@ -381,6 +381,11 @@ interface MessengerInterface
     public function getPushNotificationDriver(): string;
 
     /**
+     * @return string
+     */
+    public function getSiteName(): string;
+
+    /**
      * Put the given or loaded model into cache as online
      *
      * @param null|MessengerProvider $provider

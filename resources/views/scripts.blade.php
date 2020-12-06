@@ -25,7 +25,7 @@
             avatar_md : '{{ messenger()->getProvider()->getAvatarRoute('md')}}',
         },
         common : {
-            app_name : 'name',
+            app_name : '{{messenger()->getSiteName()}}',
             api_endpoint : '{{messenger()->getApiEndpoint()}}',
             web_endpoint : '{{messenger()->getWebEndpoint()}}',
             socket_endpoint : '{{messenger()->getSocketEndpoint()}}',
@@ -45,7 +45,7 @@
         @stack('Messenger-load')
         },
         common : {
-            app_name : 'name',
+            app_name : '{{messenger()->getSiteName()}}',
             api_endpoint : '{{messenger()->getApiEndpoint()}}',
             web_endpoint : '{{messenger()->getWebEndpoint()}}',
             socket_endpoint : '{{messenger()->getSocketEndpoint()}}',

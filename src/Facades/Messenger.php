@@ -95,6 +95,7 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static getApiEndpoint()
  * @method static getWebEndpoint()
  * @method static getSocketEndpoint()
+ * @method static getSiteName()
  *
  * @mixin \RTippin\Messenger\Messenger
  * @see MessengerInterface
