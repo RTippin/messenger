@@ -316,7 +316,8 @@ window.ThreadTemplates = (function () {
                 '</div></div></div>'+templates.my_message_archive(data, true)+'<div class="clearfix"></div></div>'
         },
         message : function(data){
-            return '<div id="message_'+data.id+'" class="message info"><a href="'+data.owner.route+'" target="_blank"><img title="'+Messenger.format().escapeHtml(data.owner.name)+'" class="rounded-circle message-avatar" src="'+data.owner.avatar.sm+'"></a>' +
+            return '<div id="message_'+data.id+'" class="message info"><a '+(data.owner.route ? '' : 'onclick="return false;"')+' ' +
+                'href="'+(data.owner.route ? data.owner.route : '#')+'" target="_blank"><img title="'+Messenger.format().escapeHtml(data.owner.name)+'" class="rounded-circle message-avatar" src="'+data.owner.avatar.sm+'"></a>' +
                 '<div class="message-body"><div class="message-body-inner"><div class="message-info">' +
                 '<h4>'+data.owner.name+'</h4><h5> <i class="far fa-clock"></i><time title="'+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="timeago" datetime="'+data.created_at+'">'+Messenger.format().makeTimeAgo(data.created_at)+'</time></h5></div><hr><div class="message-text">' +
                 templates.message_body(data, false) +
@@ -475,7 +476,7 @@ window.ThreadTemplates = (function () {
                     : '')+
                 '<button class="btn btn-lg text-secondary btn-light dropdown-toggle pt-1 pb-0 px-2" type="button" data-toggle="dropdown"><i class="fas fa-cog fa-2x"></i></button>\n' +
                 '<div class="dropdown-menu dropdown-menu-right">\n' +
-                '    <div onclick="window.open(\''+data.resources.recipient.route+'\')" class="pointer_area dropdown-header py-0 h6 text-dark"><img alt="Profile Image" class="rounded-circle small_img" src="'+data.resources.recipient.avatar.sm+'"/> '+data.name+'</div>\n' +
+                '    <div '+(data.resources.recipient.route ? 'onclick="window.open(\''+data.resources.recipient.route+'\')"' : '')+' class="pointer_area dropdown-header py-0 h6 text-dark"><img alt="Profile Image" class="rounded-circle small_img" src="'+data.resources.recipient.avatar.sm+'"/> '+data.name+'</div>\n' +
                 templates.thread_resource_dropdown() +
                 '    <div id="network_for_'+data.resources.recipient.provider_id+'" class="profile_network_options">'+templates.thread_network_opt(data.resources.recipient)+'</div>'+
                 (data.pending && data.options.awaiting_my_approval
@@ -488,7 +489,7 @@ window.ThreadTemplates = (function () {
             return '<div id="thread_header_area"><div class="dropdown float-right">\n' +
                 '<button class="btn btn-lg text-secondary btn-light dropdown-toggle pt-1 pb-0 px-2" type="button" data-toggle="dropdown"><i class="fas fa-cog fa-2x"></i></button>\n' +
                 '<div class="dropdown-menu dropdown-menu-right">\n' +
-                '    <div onclick="window.open(\''+party.route+'\')" class="pointer_area dropdown-header py-0 h6 text-dark"><img alt="Profile Image" class="rounded-circle small_img" src="'+party.avatar.sm+'"/> '+party.name+'</div>\n' +
+                '    <div '+(party.route ? 'onclick="window.open(\''+party.route+'\')"' : '')+' class="pointer_area dropdown-header py-0 h6 text-dark"><img alt="Profile Image" class="rounded-circle small_img" src="'+party.avatar.sm+'"/> '+party.name+'</div>\n' +
                 '    <div class="dropdown-divider"></div>\n' +
                 '    <div id="network_for_'+party.provider_id+'" class="profile_network_options">'+templates.thread_network_opt(party)+'</div>'+
                 '</div>'+

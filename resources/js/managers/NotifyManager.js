@@ -701,12 +701,12 @@ window.NotifyManager = (function () {
         pending_friend : function (friend) {
             return '<a onclick="return false;" href="#" class="list-group-item list-group-item-action p-2 text-dark bg-light">\n' +
                 '    <div class="media">\n' +
-                '        <div class="media-left media-top" onclick="window.location.href=\''+friend.sender.route+'\'">\n' +
+                '        <div class="media-left media-top" '+(friend.sender.route ? 'onclick="window.location.href=\''+friend.sender.route+'\'"' : '')+'>\n' +
                 '            <img class="rounded media-object" height="50" width="50" src="'+friend.sender.avatar.sm+'">\n' +
                 '        </div>\n' +
                 '        <div class="media-body">\n' +
                 '        <span class="mt-n1 float-right small">'+Messenger.format().makeTimeAgo(friend.created_at)+' <i class="far fa-clock"></i></span>'+
-                '            <h6 onclick="window.location.href=\''+friend.sender.route+'\'" class="ml-2 mb-1 font-weight-bold">'+friend.sender.name+'</h6>\n' +
+                '            <h6 '+(friend.sender.route ? 'onclick="window.location.href=\''+friend.sender.route+'\'"' : '')+' class="ml-2 mb-1 font-weight-bold">'+friend.sender.name+'</h6>\n' +
                 '            <div id="friend_actions_'+friend.id+'" class="mt-2 col-12 px-0">' +
                 '               <span class="float-right">' +
                 '                   <button title="Accept friend request" onclick="NotifyManager.pendingFriends(\''+friend.id+'\', \'accept\')" class="btn btn-sm btn-success pt-1 pb-0 px-1"><i class="h5 far fa-check-circle"></i></button>' +
@@ -720,12 +720,12 @@ window.NotifyManager = (function () {
         sent_friend : function (friend) {
             return '<a onclick="return false;" href="#" class="list-group-item list-group-item-action p-2 text-dark bg-light">\n' +
                 '    <div class="media">\n' +
-                '        <div class="media-left media-top" onclick="window.location.href=\''+friend.recipient.route+'\'">\n' +
+                '        <div class="media-left media-top" '+(friend.recipient.route ? 'onclick="window.location.href=\''+friend.recipient.route+'\'"' : '')+'>\n' +
                 '            <img class="rounded media-object" height="50" width="50" src="'+friend.recipient.avatar.sm+'">\n' +
                 '        </div>\n' +
                 '        <div class="media-body">\n' +
                 '        <span class="mt-n1 float-right small">'+Messenger.format().makeTimeAgo(friend.created_at)+' <i class="far fa-clock"></i></span>'+
-                '            <h6 onclick="window.location.href=\''+friend.recipient.route+'\'" class="ml-2 mb-1 font-weight-bold">'+friend.recipient.name+'</h6>\n' +
+                '            <h6 '+(friend.recipient.route ? 'onclick="window.location.href=\''+friend.recipient.route+'\'"' : '')+' class="ml-2 mb-1 font-weight-bold">'+friend.recipient.name+'</h6>\n' +
                 '            <div id="friend_actions_'+friend.id+'" class="mt-2 col-12 px-0">' +
                 '               <span class="float-right">' +
                 '                   <button title="Cancel friend request" onclick="NotifyManager.cancelFriend(\''+friend.id+'\')" class="btn btn-sm btn-danger mx-1 pt-1 pb-0 px-1"><i class="h5 fas fa-ban"></i></button>' +
