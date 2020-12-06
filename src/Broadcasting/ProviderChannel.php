@@ -35,6 +35,7 @@ class ProviderChannel
         return ! is_null($alias)
             && ! is_null($id)
             && $this->messenger->getProviderAlias() === $alias
-            && $this->messenger->getProviderId() === $id;
+            && $this->messenger->getProviderId() == $id;
+        //loose comparison since we allow INT or Char as provider key
     }
 }
