@@ -75,11 +75,11 @@ class GhostUser extends Eloquent
 
     /**
      * @param bool $full
-     * @return string
+     * @return string|null
      */
-    public function slug($full = false)
+    public function getRoute($full = false)
     {
-        return 'ghost';
+        return null;
     }
 
     /**

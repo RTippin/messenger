@@ -69,8 +69,7 @@ class ProviderResource extends JsonResource
     {
         return [
             'name' => $this->provider->name(),
-            'slug' => $this->provider->slug(false),
-            'route' => $this->provider->slug(true),
+            'route' => $this->provider->getRoute(),
             'provider_id' => $this->provider->getKey(),
             'provider_alias' => messenger()->findProviderAlias($this->provider) ?: 'ghost',
             'base' => $this->when($this->addBaseModel,

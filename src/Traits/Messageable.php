@@ -26,12 +26,11 @@ trait Messageable
     public ?string $onlineStatusCache = null;
 
     /**
-     * @param bool $full
-     * @return string
+     * @return string|null
      */
-    public function slug($full = false): string
+    public function getRoute(): ?string
     {
-        return '#';
+        return null;
     }
 
     /**
