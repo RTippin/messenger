@@ -19,7 +19,7 @@
         },
         provider : {
             model : '{{messenger()->getProviderAlias()}}',
-            id : {{config('messenger.provider_uuids') ? messenger()->getProviderId() : "'" . messenger()->getProviderId() . "'"}},
+            id : {{config('messenger.provider_uuids') ? "'" . messenger()->getProviderId() . "'" : messenger()->getProviderId()}},
             name : '{{ messenger()->getProvider()->name()}}',
             slug : '{{ messenger()->getProvider()->getAvatarRoute('sm')}}',
             avatar_md : '{{ messenger()->getProvider()->getAvatarRoute('md')}}',
