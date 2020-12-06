@@ -16,7 +16,7 @@ class CreateMessagesTable extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('thread_id');
-            $table->uuidMorphs('owner');
+            messengerMorphType('owner', $table);
             $table->integer('type')->index();
             $table->text('body');
             $table->timestamps();

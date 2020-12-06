@@ -16,7 +16,7 @@ class CreateParticipantsTable extends Migration
         Schema::create('participants', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('thread_id');
-            $table->uuidMorphs('owner');
+            messengerMorphType('owner', $table);
             $table->boolean('admin')->default(0);
             $table->boolean('muted')->default(0);
             $table->boolean('pending')->default(0);

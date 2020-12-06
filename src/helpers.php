@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Database\Schema\Blueprint;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Messenger;
 
@@ -7,6 +8,7 @@ if ( ! function_exists('messenger'))
 {
     /**
      * @return Messenger;
+     *
      * Return the active instance of the messenger system
      */
     function messenger()
@@ -19,11 +21,32 @@ if ( ! function_exists('messengerFriends'))
 {
     /**
      * @return FriendDriver;
+     *
      * Return the active instance of the messenger system
      */
     function messengerFriends()
     {
         return resolve(FriendDriver::class);
+    }
+}
+
+if ( ! function_exists('messengerMorphType'))
+{
+    /**
+     * Helper to set morph key type in migrations
+     * @param string $column
+     * @param Blueprint $table
+     */
+    function messengerMorphType(string $column, Blueprint $table)
+    {
+        if(config('messenger.provider_uuids'))
+        {
+            $table->uuidMorphs($column);
+        }
+        else
+        {
+            $table->numericMorphs($column);
+        }
     }
 }
 

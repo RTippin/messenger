@@ -16,7 +16,7 @@ class CreateCallParticipantsTable extends Migration
         Schema::create('call_participants', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('call_id');
-            $table->uuidMorphs('owner');
+            messengerMorphType('owner', $table);
             $table->boolean('kicked')->default(0);
             $table->timestamp('left_call')->nullable();
             $table->timestamps();

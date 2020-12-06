@@ -15,8 +15,8 @@ class CreateFriendsTable extends Migration
     {
         Schema::create('friends', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuidMorphs('owner');
-            $table->uuidMorphs('party');
+            messengerMorphType('owner', $table);
+            messengerMorphType('party', $table);
             $table->timestamps();
         });
     }

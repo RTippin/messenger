@@ -16,7 +16,7 @@ class CreateCallsTable extends Migration
         Schema::create('calls', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('thread_id');
-            $table->uuidMorphs('owner');
+            messengerMorphType('owner', $table);
             $table->integer('type')->default(1);
             $table->boolean('setup_complete')->default(0);
             $table->string('room_id')->nullable();
