@@ -41,7 +41,7 @@ class ParticipantResource extends JsonResource
      * @return array
      * @noinspection PhpMissingParamTypeInspection
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'id' => $this->participant->id,
@@ -67,7 +67,7 @@ class ParticipantResource extends JsonResource
     /**
      * @return Message|null
      */
-    private function lastSeenMessageId()
+    private function lastSeenMessageId(): ?Message
     {
         if(is_null($this->participant->last_read))
         {

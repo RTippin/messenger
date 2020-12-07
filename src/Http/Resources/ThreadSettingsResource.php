@@ -15,7 +15,7 @@ class ThreadSettingsResource extends JsonResource
      * @return array
      * @noinspection PhpMissingParamTypeInspection
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         /** @var Thread $thread */
 

@@ -33,7 +33,7 @@ class FriendApprovedBroadcastResource extends JsonResource
      * @return array
      * @noinspection PhpMissingParamTypeInspection
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'sender' => new ProviderResource($this->friend->party),

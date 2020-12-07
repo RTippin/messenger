@@ -32,7 +32,7 @@ class InviteResource extends JsonResource
      * @return array
      * @noinspection PhpMissingParamTypeInspection
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         /** @var Invite $invite */
 
@@ -70,7 +70,7 @@ class InviteResource extends JsonResource
      * @param Invite $invite
      * @return bool
      */
-    private function isAlreadyInThread(Invite $invite)
+    private function isAlreadyInThread(Invite $invite): bool
     {
         return messenger()->isProviderSet()
             ? $invite->thread->hasCurrentProvider()

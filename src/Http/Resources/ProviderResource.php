@@ -65,7 +65,7 @@ class ProviderResource extends JsonResource
      * @return array
      * @noinspection PhpMissingParamTypeInspection
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'name' => $this->provider->name(),
@@ -83,7 +83,7 @@ class ProviderResource extends JsonResource
     }
 
     /**
-     * @return array[]
+     * @return array
      */
     private function addAvatar(): array
     {
@@ -215,9 +215,9 @@ class ProviderResource extends JsonResource
 
     /**
      * @param int $friendStatus
-     * @return mixed|string|null
+     * @return string|null
      */
-    private function getFriendResourceId(int $friendStatus)
+    private function getFriendResourceId(int $friendStatus): ?string
     {
         return optional(
             messengerFriends()->getFriendResource(

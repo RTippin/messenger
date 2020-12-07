@@ -50,7 +50,7 @@ class CallResource extends JsonResource
      * @return array
      * @noinspection PhpMissingParamTypeInspection
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'id' => $this->call->id,
@@ -83,7 +83,7 @@ class CallResource extends JsonResource
     /**
      * @return array
      */
-    private function addOptions()
+    private function addOptions(): array
     {
         return [
             'admin' => $this->call->isCallAdmin($this->thread),
@@ -103,7 +103,7 @@ class CallResource extends JsonResource
     /**
      * @return CallParticipantCollection
      */
-    private function addParticipants()
+    private function addParticipants(): CallParticipantCollection
     {
         return new CallParticipantCollection(
             $this->call->participants->load('owner')

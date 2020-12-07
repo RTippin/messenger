@@ -15,7 +15,7 @@ class CallParticipantResource extends JsonResource
      * @return array
      * @noinspection PhpMissingParamTypeInspection
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         /** @var CallParticipant $participant */
 

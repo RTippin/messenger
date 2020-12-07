@@ -51,7 +51,7 @@ class MessageResource extends JsonResource
      * @return array
      * @noinspection PhpMissingParamTypeInspection
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'id' => $this->message->id,
@@ -92,7 +92,7 @@ class MessageResource extends JsonResource
     /**
      * @return string
      */
-    public function formatMessageBody()
+    public function formatMessageBody(): string
     {
         if(! $this->message->isSystemMessage())
         {
@@ -132,7 +132,7 @@ class MessageResource extends JsonResource
     /**
      * @return string
      */
-    public function sanitizedBody()
+    public function sanitizedBody(): string
     {
         return htmlspecialchars($this->message->body);
     }
@@ -149,7 +149,7 @@ class MessageResource extends JsonResource
      * @param array $bodyJson
      * @return string
      */
-    public function formatParticipantsAdded(array $bodyJson)
+    public function formatParticipantsAdded(array $bodyJson): string
     {
         $names = 'added ';
 
@@ -175,7 +175,7 @@ class MessageResource extends JsonResource
      * @param array $bodyJson
      * @return string
      */
-    public function formatAdminAdded(array $bodyJson)
+    public function formatAdminAdded(array $bodyJson): string
     {
         return "promoted {$this->locateContentOwner($bodyJson)->name()} to administrator";
     }
@@ -184,7 +184,7 @@ class MessageResource extends JsonResource
      * @param array $bodyJson
      * @return string
      */
-    public function formatAdminRemoved(array $bodyJson)
+    public function formatAdminRemoved(array $bodyJson): string
     {
         return "demoted {$this->locateContentOwner($bodyJson)->name()} from administrator";
     }
@@ -193,7 +193,7 @@ class MessageResource extends JsonResource
      * @param array $bodyJson
      * @return string
      */
-    public function formatParticipantRemoved(array $bodyJson)
+    public function formatParticipantRemoved(array $bodyJson): string
     {
         return "removed {$this->locateContentOwner($bodyJson)->name()}";
     }
@@ -202,7 +202,7 @@ class MessageResource extends JsonResource
      * @param array $bodyJson
      * @return string
      */
-    public function formatVideoCall(array $bodyJson)
+    public function formatVideoCall(array $bodyJson): string
     {
         /** @var Call $call */
 
@@ -282,7 +282,7 @@ class MessageResource extends JsonResource
     /**
      * @return array
      */
-    public function linksForImage()
+    public function linksForImage(): array
     {
         return [
             'api_image' => [
@@ -301,7 +301,7 @@ class MessageResource extends JsonResource
     /**
      * @return array
      */
-    public function linksForDocument()
+    public function linksForDocument(): array
     {
         return [
             'api_document' => $this->message->getDocumentDownloadRoute(true),

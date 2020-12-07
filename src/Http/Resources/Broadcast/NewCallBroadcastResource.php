@@ -41,7 +41,7 @@ class NewCallBroadcastResource extends JsonResource
      * @return array
      * @noinspection PhpMissingParamTypeInspection
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'call' => [

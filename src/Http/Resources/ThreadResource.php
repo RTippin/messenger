@@ -60,7 +60,7 @@ class ThreadResource extends JsonResource
      * @return array
      * @noinspection PhpMissingParamTypeInspection
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'id' => $this->thread->id,
@@ -113,7 +113,7 @@ class ThreadResource extends JsonResource
     /**
      * @return MessageResource|null
      */
-    private function addRecentMessage()
+    private function addRecentMessage(): ?MessageResource
     {
         if( ! is_null($this->thread->recentMessage))
         {
@@ -129,7 +129,7 @@ class ThreadResource extends JsonResource
     /**
      * @return ProviderResource
      */
-    private function addRecipient()
+    private function addRecipient(): ProviderResource
     {
         return new ProviderResource(
             $this->thread->recipient()->owner,
@@ -140,15 +140,15 @@ class ThreadResource extends JsonResource
     /**
      * @return CallResource
      */
-    private function addActiveCall()
+    private function addActiveCall(): CallResource
     {
         return new CallResource($this->thread->activeCall, $this->thread);
     }
 
     /**
-     * @return MessageCollection|array
+     * @return MessageCollection
      */
-    private function addMessages()
+    private function addMessages(): MessageCollection
     {
         return new MessageCollection(
             app(MessageRepository::class)
@@ -158,9 +158,9 @@ class ThreadResource extends JsonResource
     }
 
     /**
-     * @return ParticipantCollection|array
+     * @return ParticipantCollection
      */
-    private function addParticipants()
+    private function addParticipants(): ParticipantCollection
     {
         return new ParticipantCollection(
             $this->thread->participants,
@@ -169,9 +169,9 @@ class ThreadResource extends JsonResource
     }
 
     /**
-     * @return CallCollection|array
+     * @return CallCollection
      */
-    private function addCalls()
+    private function addCalls(): CallCollection
     {
         return new CallCollection(
             app(CallRepository::class)

@@ -26,16 +26,6 @@ class ProviderStatusResource extends JsonResource
     protected bool $addOptions;
 
     /**
-     * @var null|int
-     */
-    protected ?int $forceFriendStatus;
-
-    /**
-     * @var bool
-     */
-    protected bool $addBaseModel;
-
-    /**
      * ProviderStatusResource constructor.
      *
      * @param mixed $provider
@@ -54,7 +44,7 @@ class ProviderStatusResource extends JsonResource
      * @return array
      * @noinspection PhpMissingParamTypeInspection
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'provider' => new ProviderResource($this->provider),
