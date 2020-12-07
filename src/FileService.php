@@ -143,7 +143,7 @@ class FileService
      * @return string
      * @throws HttpException
      */
-    private function fileUpload(UploadedFile $file)
+    private function fileUpload(UploadedFile $file): ?string
     {
         $this->name = $this->nameFile($file);
 
