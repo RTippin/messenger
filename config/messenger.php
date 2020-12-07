@@ -59,16 +59,17 @@ return [
     | multiple. A provider always has full permission for interactions between itself, e.g : User to User. To allow full
     | interactions between other providers, simply mark each value as TRUE. For no other interactions, mark NULL or FALSE.
     | To specify which and how each provider can interact with one another, declare each providers alias string, multiple
-    | separated by the PIPE, e.g : 'company', 'company|teacher', etc.
+    | separated by the PIPE, e.g : 'company', 'company|teacher|user', etc.
     |
     | 'company' => [                                  //alias given to your provider
     |     'model' => App\Models\Company::class,       //Path to the provider's model
     |     'searchable' => true,                       //Provider implements/is searchable - true|false
     |     'friendable' => true,                       //Provider is friendable - true|false
     |     'devices' => true,                          //Provider has tokens for push notifications - true|false
+    |     'default_avatar' => public_path('pic.png')  //Default avatar path used when provider has no upload avatar
     |     'provider_interactions' => [                //What your provider can do with other providers
-    |         'can_message' => 'user|company',        //Able to start new threads with other listed providers - true|false|null|string
-    |         'can_search' => 'user|company',         //Able to search other listed providers - true|false|null|string
+    |         'can_message' => 'user',                //Able to start new threads with other listed providers - true|false|null|string
+    |         'can_search' => 'user|teacher',         //Able to search other listed providers - true|false|null|string
     |         'can_friend' => false,                  //Able to send friend request to  other listed providers - true|false|null|string
     |     ]
     | ],
@@ -79,6 +80,7 @@ return [
             'searchable' => true,
             'friendable' => true,
             'mobile_devices' => false,
+            'default_avatar' => public_path('vendor/messenger/images/users.png'),
             'provider_interactions' => [
                 'can_message' => true,
                 'can_search' => true,
@@ -267,7 +269,6 @@ return [
             'upload' => env('MESSENGER_THREAD_AVATAR_UPLOAD', true)
         ],
         'provider_avatars' => [
-            'default' => public_path('vendor/messenger/images/users.png'),
             'upload' => env('MESSENGER_PROVIDER_AVATAR_UPLOAD', true),
             'removal' => env('MESSENGER_PROVIDER_AVATAR_REMOVAL', true)
         ]
