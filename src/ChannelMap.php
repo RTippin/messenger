@@ -2,8 +2,10 @@
 
 namespace RTippin\Messenger;
 
+use Illuminate\Broadcasting\BroadcastManager;
+use Illuminate\Contracts\Broadcasting\Broadcaster;
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Support\Facades\Broadcast;
 use RTippin\Messenger\Broadcasting\CallChannel;
 use RTippin\Messenger\Broadcasting\ProviderChannel;
 use RTippin\Messenger\Broadcasting\ThreadChannel;
@@ -15,15 +17,20 @@ trait ChannelMap
 {
     /**
      * Register all broadcast channels used by messenger
+     * @throws BindingResolutionException
      */
     protected function registerChannels()
     {
         if($this->app['config']->get('messenger.routing.channels.enabled'))
         {
-            Broadcast::routes($this->channelRouteConfiguration());
-            Broadcast::channel('{alias}.{id}', ProviderChannel::class);
-            Broadcast::channel('call.{call}.thread.{thread}', CallChannel::class);
-            Broadcast::channel('thread.{thread}', ThreadChannel::class);
+            $this->app->make(BroadcastManager::class)
+                ->routes($this->channelRouteConfiguration());
+
+            $broadcaster = $this->app->make(Broadcaster::class);
+
+            $broadcaster->channel('{alias}.{id}', ProviderChannel::class);
+            $broadcaster->channel('call.{call}.thread.{thread}', CallChannel::class);
+            $broadcaster->channel('thread.{thread}', ThreadChannel::class);
         }
     }
 

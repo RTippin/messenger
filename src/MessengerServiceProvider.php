@@ -156,11 +156,10 @@ class MessengerServiceProvider extends ServiceProvider
      */
     protected function registerMiddleware(): void
     {
+        $this->app->make(Kernel::class)
+            ->prependToMiddlewarePriority(MessengerApi::class);
+
         $router = $this->app->make(Router::class);
-
-        $kernel = $this->app->make(Kernel::class);
-
-        $kernel->prependToMiddlewarePriority(MessengerApi::class);
 
         $router->aliasMiddleware(
             'messenger.api',
