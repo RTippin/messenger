@@ -147,7 +147,7 @@ class ImageRenderService
         if(in_array($thread->image, Definitions::DefaultGroupAvatars))
         {
             return $this->responseFactory->file(
-                public_path("vendor/messenger/images/{$thread->image}")
+                $this->messenger->getDefaultThreadAvatars($thread->image)
             );
         }
 
@@ -175,19 +175,21 @@ class ImageRenderService
     }
 
     /**
-     * @param string $alias
+     * @param string|null $alias
      * @return BinaryFileResponse|Response
      */
-    private function renderDefaultImage(string $alias = '404')
+    private function renderDefaultImage($alias = null)
     {
-        $default = $this->messenger->getProviderDefaultAvatarPath($alias);
+        $default = $alias
+            ? $this->messenger->getProviderDefaultAvatarPath($alias)
+            : null;
 
         if($default && file_exists($default))
         {
             return $this->responseFactory->file($default);
         }
 
-        return $this->responseFactory->file(public_path('vendor/messenger/images/image404.png'));
+        return $this->responseFactory->file($this->messenger->getDefaultNotFoundImage());
     }
 
     /**

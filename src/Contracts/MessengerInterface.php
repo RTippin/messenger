@@ -87,9 +87,10 @@ interface MessengerInterface
     public function getDefaultNotFoundImage(): string;
 
     /**
-     * @return array
+     * @param string|null $image
+     * @return array|string
      */
-    public function getDefaultThreadAvatars(): array;
+    public function getDefaultThreadAvatars(string $image = null);
 
     /**
      * @return array

@@ -853,10 +853,16 @@ trait ConfigInterface
     }
 
     /**
-     * @return array
+     * @param string|null $image
+     * @return array|string
      */
-    public function getDefaultThreadAvatars(): array
+    public function getDefaultThreadAvatars(string $image = null)
     {
+        if( ! is_null($image))
+        {
+            return $this->defaultThreadAvatars[$image];
+        }
+
         return $this->defaultThreadAvatars;
     }
 

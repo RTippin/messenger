@@ -98,7 +98,7 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static getSiteName()
  * @method static getProviderDefaultAvatarPath(string $alias)
  * @method static getDefaultNotFoundImage()
- * @method static getDefaultThreadAvatars()
+ * @method static getDefaultThreadAvatars(string $image = null)
  *
  * @mixin \RTippin\Messenger\Messenger
  * @see MessengerInterface
