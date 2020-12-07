@@ -47,7 +47,7 @@ class PrivateThreadRepository
      * @param MessengerProvider|null $recipient
      * @return Thread|null
      */
-    public function getProviderPrivateThreadWithRecipient(MessengerProvider $recipient = null)
+    public function getProviderPrivateThreadWithRecipient(MessengerProvider $recipient = null): ?Thread
     {
         if($this->messenger->isValidMessengerProvider($recipient))
         {
@@ -62,9 +62,9 @@ class PrivateThreadRepository
     }
 
     /**
-     * @return Collection|mixed
+     * @return Collection
      */
-    public function getProviderPrivateThreadsIndex()
+    public function getProviderPrivateThreadsIndex(): Collection
     {
         return $this->getProviderPrivateThreadsBuilder()
             ->latest('updated_at')
@@ -81,7 +81,7 @@ class PrivateThreadRepository
      * @param Thread $thread
      * @return Collection
      */
-    public function getProviderPrivateThreadsPage(Thread $thread)
+    public function getProviderPrivateThreadsPage(Thread $thread): Collection
     {
         return $this->getProviderPrivateThreadsBuilder()
             ->latest('updated_at')
@@ -99,7 +99,7 @@ class PrivateThreadRepository
     /**
      * @return Thread|null
      */
-    public function getProviderOldestPrivateThread()
+    public function getProviderOldestPrivateThread(): ?Thread
     {
         return $this->getProviderPrivateThreadsBuilder()
             ->oldest('updated_at')

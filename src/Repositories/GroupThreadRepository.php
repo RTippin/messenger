@@ -43,9 +43,9 @@ class GroupThreadRepository
     }
 
     /**
-     * @return Collection|mixed
+     * @return Collection
      */
-    public function getProviderGroupThreadsIndex()
+    public function getProviderGroupThreadsIndex(): Collection
     {
         return $this->getProviderGroupThreadsBuilder()
             ->latest('updated_at')
@@ -62,7 +62,7 @@ class GroupThreadRepository
      * @param Thread $thread
      * @return Collection
      */
-    public function getProviderGroupThreadsPage(Thread $thread)
+    public function getProviderGroupThreadsPage(Thread $thread): Collection
     {
         return $this->getProviderGroupThreadsBuilder()
             ->latest('updated_at')
@@ -80,7 +80,7 @@ class GroupThreadRepository
     /**
      * @return Thread|null
      */
-    public function getProviderOldestGroupThread()
+    public function getProviderOldestGroupThread(): ?Thread
     {
         return $this->getProviderGroupThreadsBuilder()
             ->oldest('updated_at')

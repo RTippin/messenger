@@ -28,10 +28,10 @@ class ParticipantRepository
      * Get all participants who pass our requirements for broadcasting
      *
      * @param Thread $thread
-     * @return Participant[]|Collection
+     * @return Collection
      * @noinspection SpellCheckingInspection
      */
-    public function getThreadBroadcastableParticipants(Thread $thread)
+    public function getThreadBroadcastableParticipants(Thread $thread): Collection
     {
         return $thread->participants()
             ->validProviders()
@@ -41,9 +41,9 @@ class ParticipantRepository
 
     /**
      * @param Thread $thread
-     * @return Participant[]|Collection
+     * @return Collection
      */
-    public function getThreadParticipantsIndex(Thread $thread)
+    public function getThreadParticipantsIndex(Thread $thread): Collection
     {
         return $thread->participants()
             ->with('owner')
@@ -55,9 +55,9 @@ class ParticipantRepository
     /**
      * @param Thread $thread
      * @param Participant $participant
-     * @return Participant[]|Collection
+     * @return Collection
      */
-    public function getThreadParticipantsPage(Thread $thread, Participant $participant)
+    public function getThreadParticipantsPage(Thread $thread, Participant $participant): Collection
     {
         return $thread->participants()
             ->with('owner')

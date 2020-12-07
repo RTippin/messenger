@@ -39,7 +39,7 @@ class MessageRepository
      * @param Thread $thread
      * @return Collection
      */
-    public function getThreadMessagesIndex(Thread $thread)
+    public function getThreadMessagesIndex(Thread $thread): Collection
     {
         return $thread->messages()
             ->latest()
@@ -53,7 +53,7 @@ class MessageRepository
      * @param Message $message
      * @return Collection
      */
-    public function getThreadMessagesPage(Thread $thread, Message $message)
+    public function getThreadMessagesPage(Thread $thread, Message $message): Collection
     {
         return $thread->messages()
             ->latest()

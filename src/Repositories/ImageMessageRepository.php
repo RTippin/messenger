@@ -28,7 +28,7 @@ class ImageMessageRepository
      * @param Thread $thread
      * @return Collection
      */
-    public function getThreadImagesIndex(Thread $thread)
+    public function getThreadImagesIndex(Thread $thread): Collection
     {
         return $thread->messages()
             ->image()
@@ -43,7 +43,7 @@ class ImageMessageRepository
      * @param Message $message
      * @return Collection
      */
-    public function getThreadImagesPage(Thread $thread, Message $message)
+    public function getThreadImagesPage(Thread $thread, Message $message): Collection
     {
         return $thread->messages()
             ->image()

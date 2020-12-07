@@ -28,7 +28,7 @@ class SystemMessageRepository
      * @param Thread $thread
      * @return Collection
      */
-    public function getThreadSystemMessagesIndex(Thread $thread)
+    public function getThreadSystemMessagesIndex(Thread $thread): Collection
     {
         return $thread->messages()
             ->system()
@@ -43,7 +43,7 @@ class SystemMessageRepository
      * @param Message $message
      * @return Collection
      */
-    public function getThreadSystemMessagesPage(Thread $thread, Message $message)
+    public function getThreadSystemMessagesPage(Thread $thread, Message $message): Collection
     {
         return $thread->messages()
             ->system()

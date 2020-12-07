@@ -45,9 +45,9 @@ class CallRepository
     }
 
     /**
-     * @return Call[]|Collection
+     * @return Collection
      */
-    public function getProviderAllActiveCalls()
+    public function getProviderAllActiveCalls(): Collection
     {
         return Call::active()->whereIn('thread_id',
             $this->threadRepository->getProviderThreadsBuilder()
@@ -62,7 +62,7 @@ class CallRepository
      * @param Thread $thread
      * @return Collection
      */
-    public function getThreadCallsIndex(Thread $thread)
+    public function getThreadCallsIndex(Thread $thread): Collection
     {
         return $thread->calls()
             ->videoCall()
@@ -77,7 +77,7 @@ class CallRepository
      * @param Call $call
      * @return Collection
      */
-    public function getThreadCallsPage(Thread $thread, Call $call)
+    public function getThreadCallsPage(Thread $thread, Call $call): Collection
     {
         return $thread->calls()
             ->videoCall()

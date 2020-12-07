@@ -36,9 +36,9 @@ class ThreadRepository
     }
 
     /**
-     * @return Collection|mixed
+     * @return Collection
      */
-    public function getProviderThreadsIndex()
+    public function getProviderThreadsIndex(): Collection
     {
         return $this->getProviderThreadsBuilder()
             ->latest('updated_at')
@@ -55,7 +55,7 @@ class ThreadRepository
      * @param Thread $thread
      * @return Collection
      */
-    public function getProviderThreadsPage(Thread $thread)
+    public function getProviderThreadsPage(Thread $thread): Collection
     {
         return $this->getProviderThreadsBuilder()
             ->latest('updated_at')
@@ -80,9 +80,9 @@ class ThreadRepository
     }
 
     /**
-     * @return Collection|mixed
+     * @return Collection
      */
-    public function getProviderThreadsWithActiveCalls()
+    public function getProviderThreadsWithActiveCalls(): Collection
     {
         return $this->getProviderThreadsWithActiveCallsBuilder()
             ->get();

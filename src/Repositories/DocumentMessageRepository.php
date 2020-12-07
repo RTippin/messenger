@@ -28,7 +28,7 @@ class DocumentMessageRepository
      * @param Thread $thread
      * @return Collection
      */
-    public function getThreadDocumentsIndex(Thread $thread)
+    public function getThreadDocumentsIndex(Thread $thread): Collection
     {
         return $thread->messages()
             ->document()
@@ -43,7 +43,7 @@ class DocumentMessageRepository
      * @param Message $message
      * @return Collection
      */
-    public function getThreadDocumentsPage(Thread $thread, Message $message)
+    public function getThreadDocumentsPage(Thread $thread, Message $message): Collection
     {
         return $thread->messages()
             ->document()
