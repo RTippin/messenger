@@ -16,16 +16,25 @@ use RTippin\Messenger\Definitions;
 trait Messageable
 {
     /**
+     * When calling for isOnline, we cache on the model as it is common
+     * for the method to be called multiple times in collections.
+     *
      * @var null|int
      */
     public ?int $isOnlineCache = null;
 
     /**
+     * When calling for onlineStatus, we cache on the model as it is common
+     * for the method to be called multiple times in collections.
+     *
      * @var null|string
      */
     public ?string $onlineStatusCache = null;
 
     /**
+     * If your provider has a route/slug for a profile page,
+     * return that route here.
+     *
      * @return string|null
      */
     public function getRoute(): ?string
@@ -34,6 +43,9 @@ trait Messageable
     }
 
     /**
+     * Format and return your provider name here.
+     * ex: $this->first . ' ' . $this->last
+     *
      * @return string
      */
     public function name(): string
@@ -42,6 +54,19 @@ trait Messageable
     }
 
     /**
+     * The column name your providers avatar is stored in the database as.
+     *
+     * @return string
+     */
+    public function getAvatarColumn(): string
+    {
+        return 'picture';
+    }
+
+    /**
+     * Get the route of the avatar for your provider. We will call this
+     * from our resource classes using sm/md/lg .
+     *
      * @param string $size
      * @param bool $api
      * @return string|null
@@ -53,12 +78,15 @@ trait Messageable
                 'alias' => messenger()->findProviderAlias($this),
                 'id' => $this->getKey(),
                 'size' => $size,
-                'image' => $this->picture ? $this->picture : 'default.png'
+                'image' => $this->{$this->getAvatarColumn()} ? $this->{$this->getAvatarColumn()} : 'default.png'
             ]
         );
     }
 
     /**
+     * Returns online status of your provider.
+     * 0 - offline, 1 - online, 2 - away
+     *
      * @return int
      */
     public function onlineStatus(): int
@@ -74,6 +102,8 @@ trait Messageable
     }
 
     /**
+     * Verbose meaning of the online status number
+     *
      * @return string
      */
     public function onlineStatusVerbose(): string
@@ -82,6 +112,9 @@ trait Messageable
     }
 
     /**
+     * Return a last active time from your model. We usually use updated_at
+     * as we touch your provider model when the heartbeat endpoint is hit.
+     *
      * @return mixed
      */
     public function lastActiveDateTime()

@@ -76,12 +76,12 @@ class StoreMessengerAvatar extends BaseMessengerAction
      */
     private function removeOldIfExist(): self
     {
-        if( ! is_null($this->messenger->getProvider()->picture))
+        if( ! is_null($this->messenger->getProvider()->{$this->messenger->getProvider()->getAvatarColumn()}))
         {
             $this->fileService
                 ->setDisk($this->messenger->getAvatarStorage('disk'))
                 ->destroy(
-                "{$this->getDirectory()}/{$this->messenger->getProvider()->picture}"
+                    "{$this->getDirectory()}/{$this->messenger->getProvider()->{$this->messenger->getProvider()->getAvatarColumn()}}"
                 );
         }
 
@@ -94,7 +94,7 @@ class StoreMessengerAvatar extends BaseMessengerAction
     private function updateProviderAvatar(string $file): void
     {
         $this->messenger->getProvider()->update([
-            'picture' => $file
+            $this->messenger->getProvider()->getAvatarColumn() => $file
         ]);
     }
 }
