@@ -96,6 +96,7 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static getWebEndpoint()
  * @method static getSocketEndpoint()
  * @method static getSiteName()
+ * @method static getProviderDefaultAvatarPath(string $alias)
  *
  * @mixin \RTippin\Messenger\Messenger
  * @see MessengerInterface

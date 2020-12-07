@@ -72,6 +72,7 @@ trait ProviderVerification
             'searchable' => $this->passesSearchable($provider),
             'friendable' => $this->passesFriendable($provider),
             'mobile_devices' => $this->passesHasDevices($provider),
+            'default_avatar' => $provider['default_avatar'],
             'provider_interactions' => $provider['provider_interactions']
         ]);
     }
@@ -110,6 +111,7 @@ trait ProviderVerification
             && array_key_exists('mobile_devices', $provider)
             && array_key_exists('provider_interactions', $provider)
             && is_array($provider['provider_interactions'])
+            && array_key_exists('default_avatar', $provider)
             && array_key_exists('can_message', $provider['provider_interactions'])
             && array_key_exists('can_search', $provider['provider_interactions'])
             && array_key_exists('can_friend', $provider['provider_interactions'])

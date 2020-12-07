@@ -174,20 +174,19 @@ class ImageRenderService
     }
 
     /**
-     * @param string $type
+     * @param string $alias
      * @return BinaryFileResponse
      */
-    private function renderDefaultImage($type = '404')
+    private function renderDefaultImage(string $alias = '404'): BinaryFileResponse
     {
-        switch($type)
+        $default = $this->messenger->getProviderDefaultAvatarPath($alias);
+
+        if($default && file_exists($default))
         {
-            case 'user':
-                return $this->responseFactory->file(public_path('vendor/messenger/images/users.png'));
-            case 'company':
-                return $this->responseFactory->file(public_path('vendor/messenger/images/company.png'));
-            default:
-                return $this->responseFactory->file(public_path('vendor/messenger/images/image404.png'));
+            return $this->responseFactory->file($default);
         }
+
+        return $this->responseFactory->file(public_path('vendor/messenger/images/image404.png'));
     }
 
     /**
@@ -195,7 +194,7 @@ class ImageRenderService
      * @param string $size
      * @return BinaryFileResponse
      */
-    private function renderImageSize(string $file, string $size)
+    private function renderImageSize(string $file, string $size): BinaryFileResponse
     {
         try{
             $width = 150;

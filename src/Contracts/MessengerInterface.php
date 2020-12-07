@@ -76,6 +76,12 @@ interface MessengerInterface
     public function getConfig(): array;
 
     /**
+     * @param string $alias
+     * @return string|null
+     */
+    public function getProviderDefaultAvatarPath(string $alias): ?string;
+
+    /**
      * @return array
      */
     public function getAllSearchableProviders(): array;
