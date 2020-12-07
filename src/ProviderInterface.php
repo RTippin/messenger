@@ -15,9 +15,9 @@ use RTippin\Messenger\Models\Participant;
 trait ProviderInterface
 {
     /**
-     * @var string
+     * @var string|null
      */
-    private string $alias = 'guest';
+    private ?string $alias = null;
 
     /**
      * @var null|MessengerProvider
@@ -157,7 +157,7 @@ trait ProviderInterface
      */
     public function unsetProvider(): self
     {
-        $this->alias = 'guest';
+        $this->alias = null;
         $this->provider = null;
         $this->providerClass = null;
         $this->providerHasFriends = false;
