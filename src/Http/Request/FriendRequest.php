@@ -11,7 +11,7 @@ class FriendRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'recipient_id' => 'required|string',

@@ -13,7 +13,7 @@ class GroupAvatarRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'image' => 'required_without:default|file|max:5120|image',

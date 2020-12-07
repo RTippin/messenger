@@ -11,7 +11,7 @@ class ImageMessageRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'image' => 'required|max:5120|file|image',

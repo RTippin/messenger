@@ -11,7 +11,7 @@ class AddParticipantsRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'providers' => 'required|array|min:1',

@@ -12,7 +12,7 @@ class MessengerSettingsRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'call_ringtone_sound' => 'required|boolean',

@@ -11,7 +11,7 @@ class ParticipantPermissionsRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'start_calls' => 'required|boolean',

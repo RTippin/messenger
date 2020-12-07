@@ -11,7 +11,7 @@ class InviteRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'expires' => 'required|integer|between:0,8',

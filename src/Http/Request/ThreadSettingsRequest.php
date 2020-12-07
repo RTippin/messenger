@@ -11,7 +11,7 @@ class ThreadSettingsRequest extends FormRequest
      *
      * @return array
      */
-    public function rules()
+    public function rules(): array
     {
         return [
             'subject' => 'required|string|min:3',
