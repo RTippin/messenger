@@ -43,7 +43,7 @@ class MarkParticipantRead extends BaseMessengerAction
      * @var Thread|null $thread $parameters[1]
      * @return $this
      */
-    public function execute(...$parameters)
+    public function execute(...$parameters): self
     {
         $this->setParticipant($parameters[0] ?? null);
 
