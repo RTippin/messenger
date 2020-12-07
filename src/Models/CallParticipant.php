@@ -86,7 +86,7 @@ class CallParticipant extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopeInCall(Builder $query)
+    public function scopeInCall(Builder $query): Builder
     {
         return $query->whereNull('left_call');
     }

@@ -175,7 +175,7 @@ class Participant extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopeAdmins(Builder $query)
+    public function scopeAdmins(Builder $query): Builder
     {
         return $query->where('admin', '=', 1);
     }
@@ -186,7 +186,7 @@ class Participant extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopeNotMuted(Builder $query)
+    public function scopeNotMuted(Builder $query): Builder
     {
         return $query->where('muted', '=', 0);
     }
@@ -197,7 +197,7 @@ class Participant extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopeNotPending(Builder $query)
+    public function scopeNotPending(Builder $query): Builder
     {
         return $query->where('pending', '=', 0);
     }
@@ -208,7 +208,7 @@ class Participant extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopeValidProviders(Builder $query)
+    public function scopeValidProviders(Builder $query): Builder
     {
         return $query->whereIn(
             'owner_type',

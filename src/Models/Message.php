@@ -125,7 +125,7 @@ class Message extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopeText(Builder $query)
+    public function scopeText(Builder $query): Builder
     {
         return $query->where('type', '=', 0);
     }
@@ -136,7 +136,7 @@ class Message extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopeNonSystem(Builder $query)
+    public function scopeNonSystem(Builder $query): Builder
     {
         return $query->whereIn('type', [0,1,2]);
     }
@@ -147,7 +147,7 @@ class Message extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopeSystem(Builder $query)
+    public function scopeSystem(Builder $query): Builder
     {
         return $query->whereNotIn('type', [0,1,2]);
     }
@@ -158,7 +158,7 @@ class Message extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopeImage(Builder $query)
+    public function scopeImage(Builder $query): Builder
     {
         return $query->where('type', '=', 1);
     }
@@ -169,7 +169,7 @@ class Message extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopeDocument(Builder $query)
+    public function scopeDocument(Builder $query): Builder
     {
         return $query->where('type', '=', 2);
     }
@@ -219,7 +219,7 @@ class Message extends Model
      * @param bool $api
      * @return string|null
      */
-    public function getImageViewRoute(string $size = 'sm', $api = false)
+    public function getImageViewRoute(string $size = 'sm', $api = false): ?string
     {
         if( ! $this->isImage())
         {
@@ -240,7 +240,7 @@ class Message extends Model
      * @param bool $api
      * @return string|null
      */
-    public function getDocumentDownloadRoute($api = false)
+    public function getDocumentDownloadRoute($api = false): ?string
     {
         if(! $this->isDocument())
         {
@@ -259,7 +259,7 @@ class Message extends Model
     /**
      * @return bool
      */
-    public function isSystemMessage()
+    public function isSystemMessage(): bool
     {
         return ! in_array($this->type, [0,1,2]);
     }
@@ -267,7 +267,7 @@ class Message extends Model
     /**
      * @return bool
      */
-    public function isImage()
+    public function isImage(): bool
     {
         return $this->type === 1;
     }
@@ -275,7 +275,7 @@ class Message extends Model
     /**
      * @return bool
      */
-    public function isDocument()
+    public function isDocument(): bool
     {
         return $this->type === 2;
     }
@@ -283,7 +283,7 @@ class Message extends Model
     /**
      * @return bool
      */
-    public function hasTemporaryId()
+    public function hasTemporaryId(): bool
     {
         return ! is_null($this->temporaryId);
     }
@@ -291,7 +291,7 @@ class Message extends Model
     /**
      * @return string|null
      */
-    public function temporaryId()
+    public function temporaryId(): ?string
     {
         return $this->temporaryId;
     }

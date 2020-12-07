@@ -108,7 +108,7 @@ class Invite extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopeValid(Builder $query)
+    public function scopeValid(Builder $query): Builder
     {
         return $query->where(fn(Builder $q) => $q->where('max_use', '=', 0)
             ->orWhere('thread_invites.uses', '<', $q->raw('thread_invites.max_use'))
@@ -122,7 +122,7 @@ class Invite extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopeInvalid(Builder $query)
+    public function scopeInvalid(Builder $query): Builder
     {
         return $query->where('expires_at', '<=', now())
             ->orWhere(fn(Builder $q) => $q->where('max_use', '!=', 0)
@@ -147,7 +147,7 @@ class Invite extends Model
     /**
      * @return string
      */
-    public function getInvitationRoute()
+    public function getInvitationRoute(): string
     {
         return route(
             'messenger.invites.join',

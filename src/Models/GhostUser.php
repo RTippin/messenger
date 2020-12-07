@@ -45,7 +45,7 @@ class GhostUser extends Eloquent
      * @param bool $api
      * @return string|null
      */
-    public function getAvatarRoute(string $size = 'sm', $api = false)
+    public function getAvatarRoute(string $size = 'sm', $api = false): ?string
     {
         return messengerRoute(($api ? 'api.' : '') . 'avatar.render',
             [
@@ -60,7 +60,7 @@ class GhostUser extends Eloquent
     /**
      * @return int
      */
-    public function onlineStatus()
+    public function onlineStatus(): int
     {
         return 0;
     }
@@ -68,7 +68,7 @@ class GhostUser extends Eloquent
     /**
      * @return string
      */
-    public function onlineStatusVerbose()
+    public function onlineStatusVerbose(): string
     {
         return 'offline';
     }
@@ -77,7 +77,7 @@ class GhostUser extends Eloquent
      * @param bool $full
      * @return string|null
      */
-    public function getRoute($full = false)
+    public function getRoute($full = false): ?string
     {
         return null;
     }
@@ -85,7 +85,7 @@ class GhostUser extends Eloquent
     /**
      * @return string
      */
-    public function name()
+    public function name(): string
     {
         return "Ghost Profile";
     }

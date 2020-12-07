@@ -87,7 +87,7 @@ class Call extends Model
     /**
      * @var null|CallParticipant
      */
-    private $currentParticipantCache = null;
+    private ?CallParticipant $currentParticipantCache = null;
 
     /**
      * The attributes that should be mutated to dates.
@@ -139,7 +139,7 @@ class Call extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopeVideoCall(Builder $query)
+    public function scopeVideoCall(Builder $query): Builder
     {
         return $query->where('type', '=', 1);
     }
@@ -150,7 +150,7 @@ class Call extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopeActive(Builder $query)
+    public function scopeActive(Builder $query): Builder
     {
         return $query->whereNull('call_ended');
     }
@@ -158,7 +158,7 @@ class Call extends Model
     /**
      * @return bool
      */
-    public function isActive()
+    public function isActive(): bool
     {
         return is_null($this->call_ended);
     }
@@ -174,7 +174,7 @@ class Call extends Model
     /**
      * @return bool
      */
-    public function hasEnded()
+    public function hasEnded(): bool
     {
         return ! is_null($this->call_ended);
     }
@@ -182,7 +182,7 @@ class Call extends Model
     /**
      * @return bool
      */
-    public function isVideoCall()
+    public function isVideoCall(): bool
     {
         return $this->type === 1;
     }
@@ -191,7 +191,7 @@ class Call extends Model
      * @param Thread|null $thread
      * @return bool
      */
-    public function isGroupCall(Thread $thread = null)
+    public function isGroupCall(Thread $thread = null): bool
     {
         return $thread
             ? $thread->isGroup()
@@ -202,7 +202,7 @@ class Call extends Model
      * @param Thread|null $thread
      * @return string|null
      */
-    public function name(Thread $thread = null)
+    public function name(Thread $thread = null): ?string
     {
         return $thread
             ? $thread->name()
@@ -212,7 +212,7 @@ class Call extends Model
     /**
      * @return CallParticipant|mixed|null
      */
-    public function currentCallParticipant()
+    public function currentCallParticipant(): ?CallParticipant
     {
         if( ! messenger()->isProviderSet()
             || $this->currentParticipantCache)
@@ -230,7 +230,7 @@ class Call extends Model
      * @param Thread|null $thread
      * @return bool
      */
-    public function isCallAdmin(Thread $thread = null)
+    public function isCallAdmin(Thread $thread = null): bool
     {
         if($this->hasEnded()
             || ! $this->currentCallParticipant())
@@ -252,7 +252,7 @@ class Call extends Model
     /**
      * @return bool
      */
-    public function hasJoinedCall()
+    public function hasJoinedCall(): bool
     {
         return $this->currentCallParticipant()
             ? true
@@ -262,7 +262,7 @@ class Call extends Model
     /**
      * @return bool
      */
-    public function wasKicked()
+    public function wasKicked(): bool
     {
         return $this->currentCallParticipant()
             && $this->currentCallParticipant()->kicked;
@@ -271,7 +271,7 @@ class Call extends Model
     /**
      * @return bool
      */
-    public function isInCall()
+    public function isInCall(): bool
     {
         if($this->hasEnded()
             || ! $this->currentCallParticipant())
@@ -285,7 +285,7 @@ class Call extends Model
     /**
      * @return bool
      */
-    public function hasLeftCall()
+    public function hasLeftCall(): bool
     {
         if($this->hasEnded()
             || ! $this->currentCallParticipant())

@@ -122,22 +122,22 @@ class Thread extends Model
     /**
      * @var Participant
      */
-    private $recipientCache;
+    private Participant $recipientCache;
 
     /**
      * @var string
      */
-    private $nameCache;
+    private string $nameCache;
 
     /**
      * @var Participant|null
      */
-    private $currentParticipantCache = null;
+    private ?Participant $currentParticipantCache = null;
 
     /**
      * @var int
      */
-    private $unreadCountCache = 0;
+    private int $unreadCountCache = 0;
 
     /**
      * @return HasMany|Message|Collection
@@ -195,7 +195,7 @@ class Thread extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopeGroup(Builder $query)
+    public function scopeGroup(Builder $query): Builder
     {
         return $query->where('type', '=', 2);
     }
@@ -206,7 +206,7 @@ class Thread extends Model
      * @param Builder $query
      * @return Builder
      */
-    public function scopePrivate(Builder $query)
+    public function scopePrivate(Builder $query): Builder
     {
         return $query->where('type', '=', 1);
     }
