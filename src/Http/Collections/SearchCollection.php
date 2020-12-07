@@ -52,7 +52,7 @@ class SearchCollection extends MessengerCollection
      * @return array
      * @noinspection PhpMissingParamTypeInspection
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return $this->safeTransformer();
     }
@@ -64,7 +64,7 @@ class SearchCollection extends MessengerCollection
      * @return array
      * @noinspection PhpMissingParamTypeInspection
      */
-    public function with($request)
+    public function with($request): array
     {
         return [
             'meta' => [

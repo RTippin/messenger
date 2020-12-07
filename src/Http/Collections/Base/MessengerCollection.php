@@ -37,7 +37,7 @@ abstract class MessengerCollection extends ResourceCollection
      *
      * @return array
      */
-    protected function safeTransformer()
+    protected function safeTransformer(): array
     {
         return $this->collection
             ->map(
@@ -111,7 +111,7 @@ abstract class MessengerCollection extends ResourceCollection
      *
      * @return int
      */
-    protected function perPageConfig()
+    protected function perPageConfig(): int
     {
         if($this->paginate === true)
         {
@@ -158,7 +158,7 @@ abstract class MessengerCollection extends ResourceCollection
     /**
      * @return bool
      */
-    protected function isIndex()
+    protected function isIndex(): bool
     {
         return $this->paginate === false;
     }
@@ -176,7 +176,7 @@ abstract class MessengerCollection extends ResourceCollection
     /**
      * @return string|null
      */
-    protected function nextPageLink()
+    protected function nextPageLink(): ?string
     {
         if($this->nextPageId())
         {
@@ -239,7 +239,7 @@ abstract class MessengerCollection extends ResourceCollection
     /**
      * @return bool
      */
-    protected function isFinalPage()
+    protected function isFinalPage(): bool
     {
         if($this->isIndex())
         {

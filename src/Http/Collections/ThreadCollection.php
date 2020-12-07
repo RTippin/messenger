@@ -35,7 +35,7 @@ class ThreadCollection extends MessengerCollection
      * @return array
      * @noinspection PhpMissingParamTypeInspection
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return [
             'data' => $this->safeTransformer(),

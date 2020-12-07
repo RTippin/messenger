@@ -17,7 +17,7 @@ class SentFriendCollection extends MessengerCollection
      * @return array
      * @noinspection PhpMissingParamTypeInspection
      */
-    public function toArray($request)
+    public function toArray($request): array
     {
         return $this->safeTransformer();
     }
