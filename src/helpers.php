@@ -7,11 +7,11 @@ use RTippin\Messenger\Messenger;
 if ( ! function_exists('messenger'))
 {
     /**
-     * @return Messenger;
+     * @return Messenger
      *
      * Return the active instance of the messenger system
      */
-    function messenger()
+    function messenger(): Messenger
     {
         return resolve(Messenger::class);
     }
@@ -20,11 +20,11 @@ if ( ! function_exists('messenger'))
 if ( ! function_exists('messengerFriends'))
 {
     /**
-     * @return FriendDriver;
+     * @return FriendDriver
      *
-     * Return the active instance of the messenger system
+     * Return the active instance of the friend broker
      */
-    function messengerFriends()
+    function messengerFriends(): FriendDriver
     {
         return resolve(FriendDriver::class);
     }
@@ -34,6 +34,7 @@ if ( ! function_exists('messengerMorphType'))
 {
     /**
      * Helper to set morph key type in migrations
+     *
      * @param string $column
      * @param Blueprint $table
      */
@@ -60,17 +61,21 @@ if ( ! function_exists('messengerRoute'))
      * @param  bool  $absolute
      * @return string|null
      */
-    function messengerRoute(string $name, $parameters = null, bool $absolute = false)
+    function messengerRoute(string $name, $parameters = null, bool $absolute = false): ?string
     {
-        try{
-            return app('url')->route(
-                $name,
-                $parameters ? $parameters : [],
-                $absolute
-            );
-        }catch (Exception $e){
-            report($e);
+        if(app('router')->has($name))
+        {
+            try{
+                return app('url')->route(
+                    $name,
+                    $parameters ? $parameters : [],
+                    $absolute
+                );
+            }catch (Exception $e){
+                report($e);
+            }
         }
+
         return null;
     }
 }
