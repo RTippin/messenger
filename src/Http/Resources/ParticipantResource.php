@@ -65,9 +65,9 @@ class ParticipantResource extends JsonResource
     }
 
     /**
-     * @return Message|null
+     * @return string|null
      */
-    private function lastSeenMessageId(): ?Message
+    private function lastSeenMessageId(): ?string
     {
         if(is_null($this->participant->last_read))
         {
