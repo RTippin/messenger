@@ -4,6 +4,7 @@ namespace RTippin\Messenger;
 
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\FilesystemManager;
+use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
 use Exception;
 use Intervention\Image\ImageManager;
@@ -175,9 +176,9 @@ class ImageRenderService
 
     /**
      * @param string $alias
-     * @return BinaryFileResponse
+     * @return BinaryFileResponse|Response
      */
-    private function renderDefaultImage(string $alias = '404'): BinaryFileResponse
+    private function renderDefaultImage(string $alias = '404')
     {
         $default = $this->messenger->getProviderDefaultAvatarPath($alias);
 
@@ -192,9 +193,9 @@ class ImageRenderService
     /**
      * @param string $file
      * @param string $size
-     * @return BinaryFileResponse
+     * @return BinaryFileResponse|Response
      */
-    private function renderImageSize(string $file, string $size): BinaryFileResponse
+    private function renderImageSize(string $file, string $size)
     {
         try{
             $width = 150;
