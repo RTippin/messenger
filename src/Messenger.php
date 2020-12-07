@@ -12,7 +12,6 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * Class Messenger
  * @package Messenger by Richard Tippin
  */
-
 final class Messenger implements MessengerInterface
 {
     /**
