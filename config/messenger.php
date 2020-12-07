@@ -256,6 +256,9 @@ return [
     | File toggles to enable / disable features and default image paths
     |--------------------------------------------------------------------------
     |
+    | *Default thread avatars can be any file type, but the
+    | array keys must be left as they are (1 - 5 .png)
+    |
     */
     'files' => [
         'message_documents' => [
@@ -271,7 +274,15 @@ return [
         'provider_avatars' => [
             'upload' => env('MESSENGER_PROVIDER_AVATAR_UPLOAD', true),
             'removal' => env('MESSENGER_PROVIDER_AVATAR_REMOVAL', true)
-        ]
+        ],
+        'default_thread_avatars' => [
+            '1.png' => public_path("vendor/messenger/images/1.png"),
+            '2.png' => public_path("vendor/messenger/images/2.png"),
+            '3.png' => public_path("vendor/messenger/images/3.png"),
+            '4.png' => public_path("vendor/messenger/images/4.png"),
+            '5.png' => public_path("vendor/messenger/images/5.png")
+        ],
+        'default_not_found_image' => public_path('vendor/messenger/images/image404.png')
     ],
 
     /*

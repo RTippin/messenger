@@ -82,6 +82,16 @@ interface MessengerInterface
     public function getProviderDefaultAvatarPath(string $alias): ?string;
 
     /**
+     * @return string
+     */
+    public function getDefaultNotFoundImage(): string;
+
+    /**
+     * @return array
+     */
+    public function getDefaultThreadAvatars(): array;
+
+    /**
      * @return array
      */
     public function getAllSearchableProviders(): array;

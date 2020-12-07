@@ -72,6 +72,16 @@ trait ConfigInterface
     private array $threadStorage;
 
     /**
+     * @var string
+     */
+    private string $defaultNotFoundImage;
+
+    /**
+     * @var array
+     */
+    private array $defaultThreadAvatars;
+
+    /**
      * @var bool
      */
     private bool $knockKnock;
@@ -203,6 +213,8 @@ trait ConfigInterface
         'providerCanFriend',
         'providerCanMessageFirst',
         'providerHasMobileDevices',
+        'defaultNotFoundImage',
+        'defaultThreadAvatars',
         'avatarStorage',
         'threadStorage'
     ];
@@ -833,6 +845,22 @@ trait ConfigInterface
     }
 
     /**
+     * @return string
+     */
+    public function getDefaultNotFoundImage(): string
+    {
+        return $this->defaultNotFoundImage;
+    }
+
+    /**
+     * @return array
+     */
+    public function getDefaultThreadAvatars(): array
+    {
+        return $this->defaultThreadAvatars;
+    }
+
+    /**
      * Set all configs from the config file
      */
     private function setMessengerConfig(): void
@@ -843,6 +871,8 @@ trait ConfigInterface
         $this->socketEndpoint = $this->configRepo->get('messenger.socket_endpoint');
         $this->avatarStorage = $this->configRepo->get('messenger.storage.avatars');
         $this->threadStorage = $this->configRepo->get('messenger.storage.threads');
+        $this->defaultNotFoundImage = $this->configRepo->get('messenger.files.default_not_found_image');
+        $this->defaultThreadAvatars = $this->configRepo->get('messenger.files.default_thread_avatars');
         $this->broadcastDriver = $this->configRepo->get('messenger.broadcasting.driver') ?? 'null';
         $this->pushNotificationDriver = $this->configRepo->get('messenger.push_notifications.driver') ?? 'null';
         $this->videoDriver = $this->configRepo->get('messenger.calling.driver') ?? 'null';
