@@ -251,7 +251,7 @@ trait ConfigInterface
     }
 
     /**
-     * Format the config for get a response safe to return to a frontend
+     * Format the config for a response to the frontend
      *
      * @return array
      * @noinspection SpellCheckingInspection
@@ -272,74 +272,6 @@ trait ConfigInterface
                 ];
             })
         ])->toArray();
-    }
-
-    /**
-     * @param string $alias
-     * @return string|null
-     */
-    public function getProviderDefaultAvatarPath(string $alias): ?string
-    {
-        return $this->providers->has($alias)
-            ? $this->providers->get($alias)['default_avatar']
-            : null;
-    }
-
-    /**
-     * @return array
-     */
-    public function getAllSearchableProviders(): array
-    {
-        return $this->providers->filter(
-            fn($provider) => $provider['searchable'] === true
-        )->map(
-            fn($provider) => $provider['model']
-        )
-        ->flatten()
-        ->toArray();
-    }
-
-    /**
-     * @return array
-     * @noinspection SpellCheckingInspection
-     */
-    public function getAllFriendableProviders(): array
-    {
-        return $this->providers->filter(
-            fn($provider) => $provider['friendable'] === true
-        )
-        ->map(
-            fn($provider) => $provider['model']
-        )
-        ->flatten()
-        ->toArray();
-    }
-
-    /**
-     * @return array
-     */
-    public function getAllMessengerProviders(): array
-    {
-        return $this->providers->map(
-            fn($provider) => $provider['model']
-        )
-        ->flatten()
-        ->toArray();
-    }
-
-    /**
-     * @return array
-     */
-    public function getAllProvidersWithDevices(): array
-    {
-        return $this->providers->filter(
-            fn($provider) => $provider['mobile_devices'] === true
-        )
-            ->map(
-                fn($provider) => $provider['model']
-            )
-            ->flatten()
-            ->toArray();
     }
 
     /**

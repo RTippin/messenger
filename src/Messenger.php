@@ -155,4 +155,72 @@ final class Messenger implements MessengerInterface
             && $item['friendable'] === true
         ) ? true : false;
     }
+
+    /**
+     * @param string $alias
+     * @return string|null
+     */
+    public function getProviderDefaultAvatarPath(string $alias): ?string
+    {
+        return $this->providers->has($alias)
+            ? $this->providers->get($alias)['default_avatar']
+            : null;
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllSearchableProviders(): array
+    {
+        return $this->providers->filter(
+            fn($provider) => $provider['searchable'] === true
+        )->map(
+            fn($provider) => $provider['model']
+        )
+            ->flatten()
+            ->toArray();
+    }
+
+    /**
+     * @return array
+     * @noinspection SpellCheckingInspection
+     */
+    public function getAllFriendableProviders(): array
+    {
+        return $this->providers->filter(
+            fn($provider) => $provider['friendable'] === true
+        )
+            ->map(
+                fn($provider) => $provider['model']
+            )
+            ->flatten()
+            ->toArray();
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllMessengerProviders(): array
+    {
+        return $this->providers->map(
+            fn($provider) => $provider['model']
+        )
+            ->flatten()
+            ->toArray();
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllProvidersWithDevices(): array
+    {
+        return $this->providers->filter(
+            fn($provider) => $provider['mobile_devices'] === true
+        )
+            ->map(
+                fn($provider) => $provider['model']
+            )
+            ->flatten()
+            ->toArray();
+    }
 }
