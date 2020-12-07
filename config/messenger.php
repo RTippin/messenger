@@ -243,7 +243,7 @@ return [
     ],
 
     'push_notifications' => [
-        'driver' => env('MESSENGER_PUSH_NOTIFICATION_DRIVER', 'null'),
+        'driver' => env('MESSENGER_PUSH_NOTIFICATION_DRIVER', 'default'),
     ],
 
     'calling' => [
@@ -347,8 +347,8 @@ return [
             'page_count' => 50
         ],
         'messages' => [
-            'index_count' => 40,
-            'page_count' => 25
+            'index_count' => 50,
+            'page_count' => 50
         ],
         'calls' => [
             'index_count' => 25,
