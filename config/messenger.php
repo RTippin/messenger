@@ -153,7 +153,7 @@ return [
         'api' => [
             'enabled' => true,
             'domain' => null,
-            'prefix' => 'api/v1/messenger',
+            'prefix' => 'api/messenger',
             'middleware' => [
                 'web',
                 'auth',
