@@ -59,7 +59,7 @@ class NullBroadcastBroker implements BroadcastDriver
     /**
      * @inheritDoc
      */
-    public function with(array $resource): self
+    public function with(array $with): self
     {
         return $this;
     }

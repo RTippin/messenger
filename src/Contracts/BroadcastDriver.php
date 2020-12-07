@@ -70,10 +70,10 @@ interface BroadcastDriver
     /**
      * Set the resource we will use to broadcast out
      *
-     * @param array $resource
+     * @param array $with
      * @return $this
      */
-    public function with(array $resource): self;
+    public function with(array $with): self;
 
     /**
      * Check the abstract event class implements our contract so that we may
