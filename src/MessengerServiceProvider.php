@@ -57,7 +57,6 @@ class MessengerServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->registerHelpers();
         $this->registerMiddleware();
         $this->registerPolicies();
         $this->registerEvents();
@@ -175,18 +174,6 @@ class MessengerServiceProvider extends ServiceProvider
             'auth.optional',
             AuthenticateOptional::class
         );
-    }
-
-    /**
-     * Register helpers file
-     * @noinspection PhpIncludeInspection
-     */
-    protected function registerHelpers(): void
-    {
-        if (file_exists($file = __DIR__.'/helpers.php'))
-        {
-            require_once $file;
-        }
     }
 
     /**
