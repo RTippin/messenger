@@ -1,6 +1,6 @@
 window.InviteJoin = (function () {
     var opt = {
-        API : Messenger.common().API + 'join/',
+        API : null,
         lock : true,
         invite : null,
         elements : {
@@ -14,7 +14,7 @@ window.InviteJoin = (function () {
     mounted = {
         Initialize : function (arg) {
             opt.lock = false;
-            opt.API += arg.code;
+            opt.API = Messenger.common().API + 'join/' + arg.code;
             methods.load()
         }
     },
@@ -102,7 +102,7 @@ window.InviteJoin = (function () {
         },
         failed : function(){
             return '<div class="float-right d-none d-sm-block pl-2">\n' +
-                ' <img class="pl-2" id="FSlog" height="95" src="/images/navFS.png">\n' +
+                ' <img class="pl-2" id="FSlog" height="95" src="'+[window.location.protocol, '//', window.location.host].join('')+'/vendor/messenger/images/messenger.png">\n' +
                 ' </div>' +
                 '<h1 class="display-4"><i class="fas fa-exclamation-triangle"></i> Invalid Invite</h1>\n' +
                 ' <p class="h3 mt-4">\n' +
@@ -112,7 +112,7 @@ window.InviteJoin = (function () {
         },
         header : function(){
             return '<div class="float-right d-none d-sm-block pl-2">\n' +
-                ' <img class="pl-2" id="FSlog" height="95" src="/images/navFS.png">\n' +
+                ' <img class="pl-2" id="FSlog" height="95" src="'+[window.location.protocol, '//', window.location.host].join('')+'/vendor/messenger/images/messenger.png">\n' +
                 ' </div>' +
                 '<h1 class="display-4"><i class="fas fa-users"></i>'+opt.invite.options.thread_name+'</h1>\n' +
                 ' <p class="h3 mt-4">\n' +
