@@ -57,11 +57,11 @@ Route::name('api.messenger.')->group(function(){
     //Messenger view service settings
     Route::get( '/', [MessengerController::class, 'index'])->name('info');
     //Invitation join
-    Route::post('join/{invite:code}', JoinGroupInvite::class);
+    Route::post('join/{invite:code}', JoinGroupInvite::class)->name('invites.join.store');
     //Search
-    Route::get('search/{query?}', Search::class)->middleware('throttle:45,1');
+    Route::get('search/{query?}', Search::class)->name('search')->middleware('throttle:45,1');
     //Friends routes
-    Route::prefix('friends')->group(function(){
+    Route::prefix('friends')->name('friends.')->group(function(){
         Route::apiResource('pending', PendingFriendController::class)->except('store');
         Route::apiResource('sent', SentFriendController::class)->except('update');
     });
@@ -91,7 +91,7 @@ Route::name('api.messenger.')->group(function(){
         //Common
         Route::get('gallery/{message}/{size}/{image}', RenderMessageImage::class)->name('gallery.render');
         Route::get('files/{message}/{file}', DownloadMessageFile::class)->name('files.download');
-        Route::get('load/{relations?}', ThreadLoader::class);
+        Route::get('load/{relations?}', ThreadLoader::class)->name('loader');
         Route::get('logs', [SystemMessageController::class, 'index'])->name('logs');
         Route::get( 'mark-read', MarkThreadRead::class)->name('mark.read');
         Route::get( 'is-unread', IsThreadUnread::class)->name('is.unread');
