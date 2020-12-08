@@ -15,7 +15,7 @@ class FriendRequest extends FormRequest
     {
         return [
             'recipient_id' => 'required|string',
-            'recipient_alias' => 'required|string'
+            'recipient_alias' => 'required|string',
         ];
     }
 }

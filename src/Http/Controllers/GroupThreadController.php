@@ -41,7 +41,7 @@ class GroupThreadController
     }
 
     /**
-     * Display group threads history pagination
+     * Display group threads history pagination.
      *
      * @param GroupThreadRepository $repository
      * @param Thread $group
@@ -60,7 +60,7 @@ class GroupThreadController
     }
 
     /**
-     * Display group thread settings
+     * Display group thread settings.
      *
      * @param Thread $thread
      * @return ThreadSettingsResource
@@ -131,7 +131,7 @@ class GroupThreadController
     }
 
     /**
-     * Leave a group thread
+     * Leave a group thread.
      *
      * @param LeaveThread $leaveThread
      * @param Thread $thread

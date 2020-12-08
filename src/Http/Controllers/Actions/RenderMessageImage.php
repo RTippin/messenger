@@ -5,9 +5,9 @@ namespace RTippin\Messenger\Http\Controllers\Actions;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use RTippin\Messenger\ImageRenderService;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\ImageRenderService;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class RenderMessageImage
@@ -15,7 +15,7 @@ class RenderMessageImage
     use AuthorizesRequests;
 
     /**
-     * Render message image
+     * Render message image.
      *
      * @param ImageRenderService $service
      * @param Thread $thread
@@ -33,7 +33,7 @@ class RenderMessageImage
     {
         $this->authorize('view', [
             Message::class,
-            $thread
+            $thread,
         ]);
 
         return $service->renderMessageImage(

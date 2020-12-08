@@ -25,7 +25,7 @@ class UpdateMessengerSettings extends BaseMessengerAction
 
     /**
      * @param mixed ...$parameters
-     * @var array|MessengerSettingsRequest $attributes $parameters[0]
+     * @var array|MessengerSettingsRequest $parameters[0]
      * @return $this
      */
     public function execute(...$parameters): self

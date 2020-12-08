@@ -20,8 +20,8 @@ trait Search
                                                         string $search,
                                                         array $searchItems): Builder
     {
-        return $query->where(function(Builder $query) use ($search, $searchItems){
-            foreach($searchItems as $item){
+        return $query->where(function (Builder $query) use ($searchItems) {
+            foreach ($searchItems as $item) {
                 $query->orWhere('name', 'LIKE', "%{$item}%");
             }
         })->orWhere('email', '=', $search);

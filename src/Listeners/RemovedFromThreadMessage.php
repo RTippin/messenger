@@ -53,7 +53,7 @@ class RemovedFromThreadMessage implements ShouldQueue
             $event->thread,
             $event->provider,
             $this->messageBody($event),
-            'PARTICIPANT_REMOVED'
+            'PARTICIPANT_REMOVED',
         ];
     }
 
@@ -64,8 +64,8 @@ class RemovedFromThreadMessage implements ShouldQueue
     private function messageBody(RemovedFromThreadEvent $event): string
     {
         return collect([
-            "owner_id" => $event->participant->owner_id,
-            "owner_type" => $event->participant->owner_type
+            'owner_id' => $event->participant->owner_id,
+            'owner_type' => $event->participant->owner_type,
         ])->toJson();
     }
 }

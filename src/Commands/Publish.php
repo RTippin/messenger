@@ -31,21 +31,21 @@ class Publish extends Command
 
         $this->callSilent('vendor:publish', [
             '--tag' => 'messenger.config',
-            '--force' => $this->option('force')
+            '--force' => $this->option('force'),
         ]);
 
         $this->comment('Publishing Messenger Assets...');
 
         $this->callSilent('vendor:publish', [
             '--tag' => 'messenger.assets',
-            '--force' => $this->option('force')
+            '--force' => $this->option('force'),
         ]);
 
         $this->comment('Publishing Messenger Views...');
 
         $this->callSilent('vendor:publish', [
             '--tag' => 'messenger.views',
-            '--force' => $this->option('force')
+            '--force' => $this->option('force'),
         ]);
 
         $this->info('Messenger files published successfully!');

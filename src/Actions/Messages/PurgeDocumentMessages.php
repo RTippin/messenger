@@ -4,8 +4,8 @@ namespace RTippin\Messenger\Actions\Messages;
 
 use Illuminate\Database\Eloquent\Collection;
 use RTippin\Messenger\Actions\Base\BaseMessengerAction;
-use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\FileService;
+use RTippin\Messenger\Models\Message;
 
 class PurgeDocumentMessages extends BaseMessengerAction
 {
@@ -27,20 +27,19 @@ class PurgeDocumentMessages extends BaseMessengerAction
     /**
      * Loop through the collection of document messages and remove
      * the file from storage, then force delete message itself
-     * from database
+     * from database.
      *
      * @param mixed ...$parameters
-     * @var Collection $documents $parameters[0]
+     * @var Collection $parameters[0]
      * @return $this
      */
     public function execute(...$parameters): self
     {
         /** @var Collection $documents */
-
         $documents = $parameters[0];
 
         $documents->each(
-            fn(Message $documents) => $this->purge($documents)
+            fn (Message $documents) => $this->purge($documents)
         );
 
         return $this;

@@ -2,18 +2,18 @@
 
 namespace RTippin\Messenger\Models;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Definitions;
-use RTippin\Messenger\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Definitions;
+use RTippin\Messenger\Traits\Uuids;
 
 /**
- * App\Models\Messages\Call
+ * App\Models\Messages\Call.
  *
  * @property string $id
  * @property string $thread_id
@@ -81,7 +81,7 @@ class Call extends Model
     protected $casts = [
         'room_id' => 'integer',
         'setup_complete' => 'boolean',
-        'kicked' => 'boolean'
+        'kicked' => 'boolean',
     ];
 
     /**
@@ -101,7 +101,7 @@ class Call extends Model
      */
     public function owner()
     {
-        return $this->morphTo()->withDefault(function(){
+        return $this->morphTo()->withDefault(function () {
             return messenger()->getGhostProvider();
         });
     }
@@ -214,9 +214,8 @@ class Call extends Model
      */
     public function currentCallParticipant(): ?CallParticipant
     {
-        if( ! messenger()->isProviderSet()
-            || $this->currentParticipantCache)
-        {
+        if (! messenger()->isProviderSet()
+            || $this->currentParticipantCache) {
             return $this->currentParticipantCache;
         }
 
@@ -232,15 +231,13 @@ class Call extends Model
      */
     public function isCallAdmin(Thread $thread = null): bool
     {
-        if($this->hasEnded()
-            || ! $this->currentCallParticipant())
-        {
+        if ($this->hasEnded()
+            || ! $this->currentCallParticipant()) {
             return false;
         }
 
-        if(messenger()->getProviderId() === $this->owner_id
-            && messenger()->getProviderClass() === $this->owner_type)
-        {
+        if (messenger()->getProviderId() === $this->owner_id
+            && messenger()->getProviderClass() === $this->owner_type) {
             return true;
         }
 
@@ -273,9 +270,8 @@ class Call extends Model
      */
     public function isInCall(): bool
     {
-        if($this->hasEnded()
-            || ! $this->currentCallParticipant())
-        {
+        if ($this->hasEnded()
+            || ! $this->currentCallParticipant()) {
             return false;
         }
 
@@ -287,9 +283,8 @@ class Call extends Model
      */
     public function hasLeftCall(): bool
     {
-        if($this->hasEnded()
-            || ! $this->currentCallParticipant())
-        {
+        if ($this->hasEnded()
+            || ! $this->currentCallParticipant()) {
             return false;
         }
 

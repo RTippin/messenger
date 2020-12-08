@@ -18,7 +18,6 @@ class ThreadSettingsResource extends JsonResource
     public function toArray($request): array
     {
         /** @var Thread $thread */
-
         $thread = $this->resource;
 
         return [
@@ -29,7 +28,7 @@ class ThreadSettingsResource extends JsonResource
             'invitations' => $thread->invitations,
             'calling' => $thread->calling,
             'messaging' => $thread->messaging,
-            'knocks' => $thread->knocks
+            'knocks' => $thread->knocks,
         ];
     }
 }

@@ -2,20 +2,20 @@
 
 namespace RTippin\Messenger\Contracts;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
+use LogicException;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\JsonResource;
-use LogicException;
 
 interface Action
 {
     /**
-     * Executes the action, allowing variable number of params
+     * Executes the action, allowing variable number of params.
      *
      * @param mixed ...$parameters
      * @return $this
@@ -46,7 +46,7 @@ interface Action
 
     /**
      * Chain many actions together! Defaults to disabling DB
-     * transactions and added events per Action class
+     * transactions and added events per Action class.
      *
      * @param string|Action $abstractAction
      * @return Action
@@ -55,14 +55,14 @@ interface Action
     public function chain(string $abstractAction): Action;
 
     /**
-     * Let action know it is being chained
+     * Let action know it is being chained.
      *
      * @return $this
      */
     public function continuesChain();
 
     /**
-     * Returns a json resource the action may be holding, if any
+     * Returns a json resource the action may be holding, if any.
      *
      * @return JsonResource|JsonResponse|mixed
      */
@@ -85,7 +85,7 @@ interface Action
     public function setMessageResponse($messageResponse);
 
     /**
-     * Get the raw data response from what the action is working with
+     * Get the raw data response from what the action is working with.
      *
      * @param bool $withoutRelations
      * @return Model|mixed
@@ -99,7 +99,7 @@ interface Action
     public function setData($data);
 
     /**
-     * Get the thread model the action may be holding
+     * Get the thread model the action may be holding.
      *
      * @param bool $withoutRelations
      * @return Thread|null
@@ -113,7 +113,7 @@ interface Action
     public function setThread(Thread $thread = null);
 
     /**
-     * Get the participant model the action may be holding
+     * Get the participant model the action may be holding.
      *
      * @param false $withoutRelations
      * @return Participant|null
@@ -121,14 +121,13 @@ interface Action
     public function getParticipant($withoutRelations = false): ?Participant;
 
     /**
-     *
      * @param Participant|null $participant
      * @return $this
      */
     public function setParticipant(Participant $participant = null): self;
 
     /**
-     * Get the call participant model the action may be holding
+     * Get the call participant model the action may be holding.
      *
      * @param false $withoutRelations
      * @return CallParticipant|null
@@ -142,7 +141,7 @@ interface Action
     public function setCallParticipant(CallParticipant $participant = null): self;
 
     /**
-     * Get the message model the action may be holding
+     * Get the message model the action may be holding.
      *
      * @param false $withoutRelations
      * @return Message|null
@@ -156,7 +155,7 @@ interface Action
     public function setMessage(Message $message = null): self;
 
     /**
-     * Get the call model the action may be holding
+     * Get the call model the action may be holding.
      *
      * @param bool $withoutRelations
      * @return Call|null
@@ -170,56 +169,56 @@ interface Action
     public function setCall(Call $call = null);
 
     /**
-     * Disable any event dispatches that the action may hold
+     * Disable any event dispatches that the action may hold.
      *
      * @return $this
      */
     public function withoutEvents();
 
     /**
-     * Enable any events dispatches that the action may hold (default)
+     * Enable any events dispatches that the action may hold (default).
      *
      * @return $this
      */
     public function withEvents();
 
     /**
-     * Disable any broadcast dispatches that the action may hold
+     * Disable any broadcast dispatches that the action may hold.
      *
      * @return $this
      */
     public function withoutBroadcast(): self;
 
     /**
-     * Enable any broadcast dispatches that the action may hold (default)
+     * Enable any broadcast dispatches that the action may hold (default).
      *
      * @return $this
      */
     public function withBroadcast(): self;
 
     /**
-     * Disable all event/broadcast dispatches that the action may hold
+     * Disable all event/broadcast dispatches that the action may hold.
      *
      * @return $this
      */
     public function withoutDispatches(): self;
 
     /**
-     * Enable any event/broadcast dispatches that the action may hold
+     * Enable any event/broadcast dispatches that the action may hold.
      *
      * @return $this
      */
     public function withDispatches(): self;
 
     /**
-     * Disable any chained actions from executing in current action
+     * Disable any chained actions from executing in current action.
      *
      * @return $this
      */
     public function withoutChains();
 
     /**
-     * Enable all chained actions, if any (default)
+     * Enable all chained actions, if any (default).
      *
      * @return $this
      */

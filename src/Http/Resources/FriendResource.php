@@ -18,13 +18,12 @@ class FriendResource extends JsonResource
     public function toArray($request): array
     {
         /** @var Friend $friend */
-
         $friend = $this->resource;
 
         return [
             'party' => new ProviderResource($friend->party, true, 1),
             'type_verbose' => 'FRIEND',
-            $this->merge($friend->withoutRelations())
+            $this->merge($friend->withoutRelations()),
         ];
     }
 }

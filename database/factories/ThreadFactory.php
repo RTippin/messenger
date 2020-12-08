@@ -2,8 +2,8 @@
 
 namespace RTippin\Messenger\Database\Factories;
 
-use RTippin\Messenger\Models\Thread;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use RTippin\Messenger\Models\Thread;
 
 class ThreadFactory extends Factory
 {
@@ -24,12 +24,12 @@ class ThreadFactory extends Factory
         return [
             'type' => 2,
             'subject' => $this->faker->company,
-            'image' => rand(1,5).'.png',
+            'image' => rand(1, 5).'.png',
             'add_participants' => 1,
             'invitations' => 1,
             'calling' => 1,
             'knocks' => 1,
-            'lockout' => 0
+            'lockout' => 0,
         ];
     }
 }

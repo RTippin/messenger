@@ -38,7 +38,7 @@ class PurgeImages extends Command
         Message::image()
             ->onlyTrashed()
             ->where('deleted_at', '<=', now()->subDays($this->option('days')))
-            ->chunk(100, fn(Collection $images) => $this->dispatchJob($images));
+            ->chunk(100, fn (Collection $images) => $this->dispatchJob($images));
 
         $this->info('Purge image messages dispatched.');
     }

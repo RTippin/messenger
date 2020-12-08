@@ -12,15 +12,14 @@ use Illuminate\Routing\Router;
 trait RouteMap
 {
     /**
-     * Register all routes used by messenger
+     * Register all routes used by messenger.
      * @throws BindingResolutionException
      */
     protected function registerRoutes(): void
     {
         $router = $this->app->make(Router::class);
 
-        if($this->app['config']->get('messenger.routing.api.enabled'))
-        {
+        if ($this->app['config']->get('messenger.routing.api.enabled')) {
             $router->group($this->apiRouteConfiguration(), function () {
                 $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
             });
@@ -29,8 +28,7 @@ trait RouteMap
             });
         }
 
-        if($this->app['config']->get('messenger.routing.web.enabled'))
-        {
+        if ($this->app['config']->get('messenger.routing.web.enabled')) {
             $router->group($this->webRouteConfiguration(), function () {
                 $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
             });
@@ -39,8 +37,7 @@ trait RouteMap
             });
         }
 
-        if($this->app['config']->get('messenger.routing.provider_avatar.enabled'))
-        {
+        if ($this->app['config']->get('messenger.routing.provider_avatar.enabled')) {
             $router->group($this->providerAvatarRouteConfiguration(), function () {
                 $this->loadRoutesFrom(__DIR__.'/../routes/avatar.php');
             });

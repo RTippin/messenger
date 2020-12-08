@@ -18,7 +18,7 @@ class ImageMessageController
     use AuthorizesRequests;
 
     /**
-     * Display a listing of the most recent images
+     * Display a listing of the most recent images.
      *
      * @param ImageMessageRepository $repository
      * @param Thread $thread
@@ -29,7 +29,7 @@ class ImageMessageController
     {
         $this->authorize('viewAny', [
             Message::class,
-            $thread
+            $thread,
         ]);
 
         return new ImageMessageCollection(
@@ -39,7 +39,7 @@ class ImageMessageController
     }
 
     /**
-     * Display log history pagination
+     * Display log history pagination.
      *
      * @param ImageMessageRepository $repository
      * @param Thread $thread
@@ -53,7 +53,7 @@ class ImageMessageController
     {
         $this->authorize('viewAny', [
             Message::class,
-            $thread
+            $thread,
         ]);
 
         return new ImageMessageCollection(
@@ -79,7 +79,7 @@ class ImageMessageController
     {
         $this->authorize('createImage', [
             Message::class,
-            $thread
+            $thread,
         ]);
 
         return $storeImageMessage->execute(

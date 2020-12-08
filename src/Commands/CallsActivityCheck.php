@@ -33,16 +33,13 @@ class CallsActivityCheck extends Command
      */
     public function handle(Messenger $messenger): void
     {
-        if($messenger->isCallingEnabled() && Call::active()->count())
-        {
+        if ($messenger->isCallingEnabled() && Call::active()->count()) {
             Call::active()
                 ->where('created_at', '<', now()->subMinute())
-                ->chunk(100, fn(Collection $calls) => $this->dispatchJob($calls));
+                ->chunk(100, fn (Collection $calls) => $this->dispatchJob($calls));
 
             $this->info('Activity checks dispatched!');
-        }
-        else
-        {
+        } else {
             $this->info('No active calls.');
         }
     }

@@ -45,7 +45,7 @@ class RecipientThreadResource extends JsonResource
             'recipient' => new ProviderResource($this->provider, true),
             'thread_id' => $this->thread
                 ? $this->thread->id
-                : null
+                : null,
         ];
     }
 }

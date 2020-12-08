@@ -26,12 +26,12 @@ class CallBrokerSetup extends BaseMessengerAction
     }
 
     /**
-     * Setup the call with the driver specified in our config
+     * Setup the call with the driver specified in our config.
      *
      * @param mixed ...$parameters
      * @return $this
-     * @var Thread $thread $parameters[0]
-     * @var Call $call $parameters[1]
+     * @var Thread $parameters[0]
+     * @var Call $parameters[1]
      * @throws Exception
      */
     public function execute(...$parameters): self
@@ -50,8 +50,7 @@ class CallBrokerSetup extends BaseMessengerAction
      */
     private function setupCallWithProvider(): self
     {
-        if( ! $this->videoDriver->create($this->getThread(), $this->getCall()))
-        {
+        if (! $this->videoDriver->create($this->getThread(), $this->getCall())) {
             $this->throwSetupFailed();
         }
 
@@ -67,7 +66,7 @@ class CallBrokerSetup extends BaseMessengerAction
     }
 
     /**
-     * Update the call with the information we received from our video provider
+     * Update the call with the information we received from our video provider.
      */
     private function updateCall(): void
     {
@@ -78,7 +77,7 @@ class CallBrokerSetup extends BaseMessengerAction
                     'room_id' => $this->videoDriver->getRoomId(),
                     'room_pin' => $this->videoDriver->getRoomPin(),
                     'room_secret' => $this->videoDriver->getRoomSecret(),
-                    'payload' => $this->videoDriver->getExtraPayload()
+                    'payload' => $this->videoDriver->getExtraPayload(),
                 ])
         );
     }

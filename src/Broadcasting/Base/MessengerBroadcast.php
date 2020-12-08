@@ -10,7 +10,6 @@ use RTippin\Messenger\Contracts\BroadcastEvent;
 abstract class MessengerBroadcast implements BroadcastEvent, ShouldBroadcastNow
 {
     use InteractsWithSockets;
-
     use SerializesModels;
 
     /**

@@ -10,12 +10,12 @@ use RTippin\Messenger\Broadcasting\ThreadAvatarBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\ThreadAvatarEvent;
+use RTippin\Messenger\FileService;
 use RTippin\Messenger\Http\Request\GroupAvatarRequest;
 use RTippin\Messenger\Http\Resources\Broadcast\ThreadSettingsBroadcastResource;
 use RTippin\Messenger\Http\Resources\ThreadSettingsResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\FileService;
 
 class UpdateGroupAvatar extends BaseMessengerAction
 {
@@ -83,8 +83,8 @@ class UpdateGroupAvatar extends BaseMessengerAction
      * picking a default or uploading a new avatar!
      *
      * @param mixed ...$parameters
-     * @var Thread $thread $parameters[0]
-     * @var GroupAvatarRequest $validated $parameters[1]
+     * @var Thread $parameters[0]
+     * @var GroupAvatarRequest $parameters[1]
      * @return $this
      * @throws AuthorizationException
      */
@@ -121,8 +121,7 @@ class UpdateGroupAvatar extends BaseMessengerAction
     {
         $this->usingDefault = array_key_exists('default', $params);
 
-        if($this->usingDefault)
-        {
+        if ($this->usingDefault) {
             $this->theDefaultImage = $params['default'];
         }
 
@@ -134,10 +133,9 @@ class UpdateGroupAvatar extends BaseMessengerAction
      */
     private function determineIfAvatarChanged(): self
     {
-        if( ! $this->usingDefault
+        if (! $this->usingDefault
             || ($this->usingDefault
-                && $this->getThread()->image !== $this->theDefaultImage))
-        {
+                && $this->getThread()->image !== $this->theDefaultImage)) {
             $this->avatarChanged = true;
         }
 
@@ -151,21 +149,15 @@ class UpdateGroupAvatar extends BaseMessengerAction
      */
     private function handleAction(array $params): self
     {
-        if($this->avatarChanged)
-        {
-            if($this->usingDefault)
-            {
+        if ($this->avatarChanged) {
+            if ($this->usingDefault) {
                 $this->updateThread($this->theDefaultImage);
-            }
-            else
-            {
+            } else {
                 $this->updateThread(
                     $this->uploadAvatar($params['image'])
                 );
             }
-        }
-        else
-        {
+        } else {
             $this->withoutDispatches();
         }
 
@@ -202,9 +194,8 @@ class UpdateGroupAvatar extends BaseMessengerAction
      */
     private function removeOldAvatar(): self
     {
-        if($this->avatarChanged
-            && ! in_array($this->originalAvatar, Definitions::DefaultGroupAvatars))
-        {
+        if ($this->avatarChanged
+            && ! in_array($this->originalAvatar, Definitions::DefaultGroupAvatars)) {
             $this->fileService
                 ->setDisk($this->getThread()->getStorageDisk())
                 ->destroy(
@@ -224,14 +215,14 @@ class UpdateGroupAvatar extends BaseMessengerAction
         $this->getThread()->timestamps = false;
 
         $this->getThread()->update([
-            'image' => $image
+            'image' => $image,
         ]);
 
         return $this;
     }
 
     /**
-     * Generate the thread settings resource
+     * Generate the thread settings resource.
      *
      * @return $this
      */
@@ -260,8 +251,7 @@ class UpdateGroupAvatar extends BaseMessengerAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->toPresence($this->getThread())
                 ->with($this->generateBroadcastResource())
@@ -276,8 +266,7 @@ class UpdateGroupAvatar extends BaseMessengerAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ThreadAvatarEvent(
                 $this->messenger->getProvider()->withoutRelations(),
                 $this->getThread(true)
@@ -293,9 +282,8 @@ class UpdateGroupAvatar extends BaseMessengerAction
      */
     private function isThreadAvatarUploadEnabled(): self
     {
-        if( ! $this->messenger->isThreadAvatarUploadEnabled())
-        {
-            throw new AuthorizationException("Thread avatar uploads are currently disabled.");
+        if (! $this->messenger->isThreadAvatarUploadEnabled()) {
+            throw new AuthorizationException('Thread avatar uploads are currently disabled.');
         }
 
         return $this;

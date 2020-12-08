@@ -50,26 +50,25 @@ class KickCallParticipant extends CallParticipantAction
 
     /**
      * Kick or un-kick the call participant!
-     * 
+     *
      * @param mixed ...$parameters
-     * @var Call $call $parameters[0]
-     * @var CallParticipant $participant $parameters[1]
-     * @var bool $kick $parameters[2]
+     * @var Call $parameters[0]
+     * @var CallParticipant $parameters[1]
+     * @var bool $parameters[2]
      * @return $this
      */
     public function execute(...$parameters): self
     {
         $this->setCall($parameters[0])
             ->updateParticipant(
-                $parameters[1], 
+                $parameters[1],
                 $this->participantState($parameters[2])
             );
 
-        if($this->getCallParticipant()->wasChanged())
-        {
+        if ($this->getCallParticipant()->wasChanged()) {
             $this->fireBroadcast()->fireEvents();
         }
-        
+
         return $this;
     }
 
@@ -82,10 +81,10 @@ class KickCallParticipant extends CallParticipantAction
         return $kicked
             ? [
                 'kicked' => true,
-                'left_call' => now()
+                'left_call' => now(),
             ]
             : [
-                'kicked' => false
+                'kicked' => false,
             ];
     }
 
@@ -97,7 +96,7 @@ class KickCallParticipant extends CallParticipantAction
         return [
             'thread_id' => $this->getCall()->thread_id,
             'call_id' => $this->getCall()->id,
-            'kicked' => $this->getCallParticipant()->kicked
+            'kicked' => $this->getCallParticipant()->kicked,
         ];
     }
 
@@ -106,8 +105,7 @@ class KickCallParticipant extends CallParticipantAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->to($this->getCallParticipant())
                 ->with($this->generateBroadcastResource())
@@ -122,8 +120,7 @@ class KickCallParticipant extends CallParticipantAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new KickedFromCallEvent(
                 $this->messenger->getProvider()->withoutRelations(),
                 $this->getCall(true),

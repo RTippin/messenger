@@ -46,11 +46,11 @@ class RemoveParticipant extends BaseMessengerAction
     }
 
     /**
-     * Remove the participant from the group
+     * Remove the participant from the group.
      *
      * @param mixed ...$parameters
-     * @var Thread $thread $parameters[0]
-     * @var Participant $participant $parameters[1]
+     * @var Thread $parameters[0]
+     * @var Participant $parameters[1]
      * @return $this
      * @throws Exception
      */
@@ -81,8 +81,7 @@ class RemoveParticipant extends BaseMessengerAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->to($this->getParticipant())
                 ->with($this->generateBroadcastResource())
@@ -97,8 +96,7 @@ class RemoveParticipant extends BaseMessengerAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new RemovedFromThreadEvent(
                 $this->messenger->getProvider()->withoutRelations(),
                 $this->getThread(true),
@@ -115,7 +113,7 @@ class RemoveParticipant extends BaseMessengerAction
     private function generateBroadcastResource(): array
     {
         return [
-            'thread_id' => $this->getThread()->id
+            'thread_id' => $this->getThread()->id,
         ];
     }
 }

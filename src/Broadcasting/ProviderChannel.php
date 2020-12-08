@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Broadcasting;
 
-
 use RTippin\Messenger\Messenger;
 
 class ProviderChannel

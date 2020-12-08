@@ -4,8 +4,7 @@ use Illuminate\Database\Schema\Blueprint;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Messenger;
 
-if ( ! function_exists('messenger'))
-{
+if (! function_exists('messenger')) {
     /**
      * @return Messenger
      *
@@ -17,8 +16,7 @@ if ( ! function_exists('messenger'))
     }
 }
 
-if ( ! function_exists('messengerFriends'))
-{
+if (! function_exists('messengerFriends')) {
     /**
      * @return FriendDriver
      *
@@ -30,29 +28,24 @@ if ( ! function_exists('messengerFriends'))
     }
 }
 
-if ( ! function_exists('messengerMorphType'))
-{
+if (! function_exists('messengerMorphType')) {
     /**
-     * Helper to set morph key type in migrations
+     * Helper to set morph key type in migrations.
      *
      * @param string $column
      * @param Blueprint $table
      */
     function messengerMorphType(string $column, Blueprint $table)
     {
-        if(config('messenger.provider_uuids'))
-        {
+        if (config('messenger.provider_uuids')) {
             $table->uuidMorphs($column);
-        }
-        else
-        {
+        } else {
             $table->numericMorphs($column);
         }
     }
 }
 
-if ( ! function_exists('messengerRoute'))
-{
+if (! function_exists('messengerRoute')) {
     /**
      * Generate the URL to a named route.
      *
@@ -63,15 +56,14 @@ if ( ! function_exists('messengerRoute'))
      */
     function messengerRoute(string $name, $parameters = null, bool $absolute = false): ?string
     {
-        if(app('router')->has($name))
-        {
-            try{
+        if (app('router')->has($name)) {
+            try {
                 return app('url')->route(
                     $name,
                     $parameters ? $parameters : [],
                     $absolute
                 );
-            }catch (Exception $e){
+            } catch (Exception $e) {
                 report($e);
             }
         }

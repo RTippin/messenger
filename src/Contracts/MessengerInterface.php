@@ -2,20 +2,19 @@
 
 namespace RTippin\Messenger\Contracts;
 
+use Illuminate\Support\Collection;
 use RTippin\Messenger\Exceptions\InvalidMessengerProvider;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Messenger as MessengerModel;
 use RTippin\Messenger\Models\Participant;
-use Illuminate\Support\Collection;
 
 /**
- * Class MessengerService
- * @package App\Services\MessengerSystem
+ * Class MessengerService.
  */
 interface MessengerInterface
 {
     /**
-     * Check if provider is valid by seeing if alias exist
+     * Check if provider is valid by seeing if alias exist.
      *
      * @param mixed $provider
      * @return bool
@@ -23,7 +22,7 @@ interface MessengerInterface
     public function isValidMessengerProvider($provider = null): bool;
 
     /**
-     * Get the defined alias of the provider class defined in config
+     * Get the defined alias of the provider class defined in config.
      *
      * @param mixed $provider
      * @return string|null
@@ -31,7 +30,7 @@ interface MessengerInterface
     public function findProviderAlias($provider = null): ?string;
 
     /**
-     * Get the provider class of the alias defined in the config
+     * Get the provider class of the alias defined in the config.
      *
      * @param string $alias
      * @return string|null
@@ -39,7 +38,7 @@ interface MessengerInterface
     public function findAliasProvider(string $alias): ?string;
 
     /**
-     * Determine if the provider is searchable
+     * Determine if the provider is searchable.
      *
      * @param mixed $provider
      * @return bool
@@ -47,7 +46,7 @@ interface MessengerInterface
     public function isProviderSearchable($provider = null): bool;
 
     /**
-     * Determine if the provider is friendable
+     * Determine if the provider is friendable.
      *
      * @param mixed $provider
      * @return bool
@@ -403,7 +402,7 @@ interface MessengerInterface
     public function getSiteName(): string;
 
     /**
-     * Put the given or loaded model into cache as online
+     * Put the given or loaded model into cache as online.
      *
      * @param null|MessengerProvider $provider
      * @return $this
@@ -411,7 +410,7 @@ interface MessengerInterface
     public function setProviderToOnline($provider = null);
 
     /**
-     * Remove the given or loaded model from online cache
+     * Remove the given or loaded model from online cache.
      *
      * @param null|MessengerProvider $provider
      * @return $this
@@ -419,7 +418,7 @@ interface MessengerInterface
     public function setProviderToOffline($provider = null);
 
     /**
-     * Put the given or loaded model into cache as away
+     * Put the given or loaded model into cache as away.
      *
      * @param null|MessengerProvider $provider
      * @return $this
@@ -427,7 +426,7 @@ interface MessengerInterface
     public function setProviderToAway($provider = null);
 
     /**
-     * Check if cache has online key for given or loaded model
+     * Check if cache has online key for given or loaded model.
      *
      * @param null|MessengerProvider $provider
      * @return bool
@@ -435,7 +434,7 @@ interface MessengerInterface
     public function isProviderOnline($provider = null): bool;
 
     /**
-     * Check if cache has away key for given or loaded model
+     * Check if cache has away key for given or loaded model.
      *
      * @param null|MessengerProvider $provider
      * @return bool
@@ -444,7 +443,7 @@ interface MessengerInterface
 
     /**
      * Get the status number representing online status of given or loaded model
-     * 0 = offline, 1 = online, 2 = away
+     * 0 = offline, 1 = online, 2 = away.
      *
      * @param null|MessengerProvider $provider
      * @return int
@@ -456,7 +455,7 @@ interface MessengerInterface
      * It is recommended to set this in a middleware, after you have acquired your authenticated
      * user/provider. Most actions and methods require a provider being set before being used.
      * You may even choose to set many different providers in a row during a single cycle,
-     * such as in a custom job or action
+     * such as in a custom job or action.
      *
      * @param MessengerProvider|mixed|null $provider
      * @return $this
@@ -466,7 +465,7 @@ interface MessengerInterface
 
     /**
      * This will firstOrCreate a messenger model instance
-     * for the given or currently set provider
+     * for the given or currently set provider.
      *
      * @param MessengerProvider|mixed|null $provider
      * @return MessengerModel|null
@@ -474,35 +473,35 @@ interface MessengerInterface
     public function getProviderMessenger($provider = null): ?MessengerModel;
 
     /**
-     * Unset the active provider
+     * Unset the active provider.
      *
      * @return $this
      */
     public function unsetProvider();
 
     /**
-     * Get the current Messenger Provider
+     * Get the current Messenger Provider.
      *
      * @return MessengerProvider|null
      */
     public function getProvider(): ?MessengerProvider;
 
     /**
-     * Get the current alias of the set Messenger Provider
+     * Get the current alias of the set Messenger Provider.
      *
      * @return string
      */
     public function getProviderAlias(): string;
 
     /**
-     * Get the current primary key of the set Messenger Provider
+     * Get the current primary key of the set Messenger Provider.
      *
      * @return int|string|null
      */
     public function getProviderId();
 
     /**
-     * Get the current base class of set Messenger Provider
+     * Get the current base class of set Messenger Provider.
      *
      * @return string|null
      */
@@ -548,14 +547,14 @@ interface MessengerInterface
     public function canSearchProvider($provider = null): bool;
 
     /**
-     * Get the ghost model
+     * Get the ghost model.
      *
      * @return GhostUser
      */
     public function getGhostProvider(): GhostUser;
 
     /**
-     * Get a ghost participant model
+     * Get a ghost participant model.
      *
      * @param $threadId
      * @return Participant
@@ -569,7 +568,7 @@ interface MessengerInterface
 
     /**
      * Get all base classes of valid providers the current
-     * Messenger Provider can search
+     * Messenger Provider can search.
      *
      * @return array
      */
@@ -577,7 +576,7 @@ interface MessengerInterface
 
     /**
      * Get all base classes of valid providers the current
-     * Messenger Provider can initiate a friend request with
+     * Messenger Provider can initiate a friend request with.
      *
      * @return array
      * @noinspection SpellCheckingInspection
@@ -591,7 +590,7 @@ interface MessengerInterface
 
     /**
      * On boot, we set the services allowed provider classes.
-     * We pass them through some validations
+     * We pass them through some validations.
      *
      * @param array $providers
      * @return Collection

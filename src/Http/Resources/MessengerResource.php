@@ -18,12 +18,11 @@ class MessengerResource extends JsonResource
     public function toArray($request): array
     {
         /** @var Messenger $messenger */
-
         $messenger = $this->resource;
 
         return [
             'owner' => new ProviderResource(messenger()->getProvider()),
-            $this->merge($messenger)
+            $this->merge($messenger),
         ];
     }
 }

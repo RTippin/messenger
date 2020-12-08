@@ -38,7 +38,7 @@ class PurgeDocuments extends Command
         Message::document()
             ->onlyTrashed()
             ->where('deleted_at', '<=', now()->subDays($this->option('days')))
-            ->chunk(100, fn(Collection $images) => $this->dispatchJob($images));
+            ->chunk(100, fn (Collection $images) => $this->dispatchJob($images));
 
         $this->info('Purge document messages dispatched.');
     }

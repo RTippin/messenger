@@ -4,8 +4,8 @@ namespace RTippin\Messenger\Actions\Messages;
 
 use Illuminate\Database\Eloquent\Collection;
 use RTippin\Messenger\Actions\Base\BaseMessengerAction;
-use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\FileService;
+use RTippin\Messenger\Models\Message;
 
 class PurgeImageMessages extends BaseMessengerAction
 {
@@ -27,20 +27,19 @@ class PurgeImageMessages extends BaseMessengerAction
     /**
      * Loop through the collection of image messages and remove
      * the image from storage, then force delete message itself
-     * from database
+     * from database.
      *
      * @param mixed ...$parameters
-     * @var Collection $images $parameters[0]
+     * @var Collection $parameters[0]
      * @return $this
      */
     public function execute(...$parameters): self
     {
         /** @var Collection $images */
-
         $images = $parameters[0];
 
         $images->each(
-            fn(Message $image) => $this->purge($image)
+            fn (Message $image) => $this->purge($image)
         );
 
         return $this;

@@ -2,10 +2,6 @@
 
 namespace RTippin\Messenger\Models;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Database\Factories\MessageFactory;
-use RTippin\Messenger\Definitions;
-use RTippin\Messenger\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,10 +9,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Database\Factories\MessageFactory;
+use RTippin\Messenger\Definitions;
+use RTippin\Messenger\Traits\Uuids;
 use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
 
 /**
- * App\Models\Messages\Message
+ * App\Models\Messages\Message.
  *
  * @property string $id
  * @property string $thread_id
@@ -54,11 +54,8 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
 class Message extends Model
 {
     use HasFactory;
-
     use SoftDeletes;
-
     use HasEagerLimit;
-
     use Uuids;
 
     /**
@@ -114,7 +111,7 @@ class Message extends Model
      */
     public function owner()
     {
-        return $this->morphTo()->withDefault(function(){
+        return $this->morphTo()->withDefault(function () {
             return messenger()->getGhostProvider();
         });
     }
@@ -138,7 +135,7 @@ class Message extends Model
      */
     public function scopeNonSystem(Builder $query): Builder
     {
-        return $query->whereIn('type', [0,1,2]);
+        return $query->whereIn('type', [0, 1, 2]);
     }
 
     /**
@@ -149,7 +146,7 @@ class Message extends Model
      */
     public function scopeSystem(Builder $query): Builder
     {
-        return $query->whereNotIn('type', [0,1,2]);
+        return $query->whereNotIn('type', [0, 1, 2]);
     }
 
     /**
@@ -187,7 +184,7 @@ class Message extends Model
      */
     public function getStorageDirectory(): string
     {
-        return messenger()->getThreadStorage('directory') . "/{$this->thread_id}";
+        return messenger()->getThreadStorage('directory')."/{$this->thread_id}";
     }
 
     /**
@@ -221,17 +218,16 @@ class Message extends Model
      */
     public function getImageViewRoute(string $size = 'sm', $api = false): ?string
     {
-        if( ! $this->isImage())
-        {
+        if (! $this->isImage()) {
             return null;
         }
 
-        return messengerRoute(($api ? 'api.' : '') . 'messenger.threads.gallery.render',
+        return messengerRoute(($api ? 'api.' : '').'messenger.threads.gallery.render',
             [
                 'thread' => $this->thread_id,
                 'message' => $this->id,
                 'size' => $size,
-                'image' => $this->body
+                'image' => $this->body,
             ]
         );
     }
@@ -242,16 +238,15 @@ class Message extends Model
      */
     public function getDocumentDownloadRoute($api = false): ?string
     {
-        if(! $this->isDocument())
-        {
+        if (! $this->isDocument()) {
             return null;
         }
 
-        return messengerRoute(($api ? 'api.' : '') . 'messenger.threads.files.download',
+        return messengerRoute(($api ? 'api.' : '').'messenger.threads.files.download',
             [
                 'thread' => $this->thread_id,
                 'message' => $this->id,
-                'file' => $this->body
+                'file' => $this->body,
             ]
         );
     }
@@ -261,7 +256,7 @@ class Message extends Model
      */
     public function isSystemMessage(): bool
     {
-        return ! in_array($this->type, [0,1,2]);
+        return ! in_array($this->type, [0, 1, 2]);
     }
 
     /**

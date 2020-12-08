@@ -29,7 +29,7 @@ class CallParticipantController
     {
         $this->authorize('viewAny', [
             CallParticipant::class,
-            $thread
+            $thread,
         ]);
 
         return new CallParticipantCollection(
@@ -52,7 +52,7 @@ class CallParticipantController
     {
         $this->authorize('view', [
             CallParticipant::class,
-            $thread
+            $thread,
         ]);
 
         return new CallParticipantResource(
@@ -61,7 +61,7 @@ class CallParticipantController
     }
 
     /**
-     * Kick or un-kick call participant
+     * Kick or un-kick call participant.
      *
      * @param KickCallParticipantRequest $request
      * @param KickCallParticipant $kickCallParticipant
@@ -80,7 +80,7 @@ class CallParticipantController
         $this->authorize('update', [
             CallParticipant::class,
             $thread,
-            $call
+            $call,
         ]);
 
         return $kickCallParticipant->execute(

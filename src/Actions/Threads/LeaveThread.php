@@ -45,10 +45,10 @@ class LeaveThread extends BaseMessengerAction
     }
 
     /**
-     * Leave the group thread
+     * Leave the group thread.
      *
      * @param mixed ...$parameters
-     * @var Thread $thread $parameters[0]
+     * @var Thread $parameters[0]
      * @return $this
      * @throws Exception
      */
@@ -80,8 +80,7 @@ class LeaveThread extends BaseMessengerAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->to($this->getThread()->currentParticipant())
                 ->with($this->generateBroadcastResource())
@@ -96,8 +95,7 @@ class LeaveThread extends BaseMessengerAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ThreadLeftEvent(
                 $this->messenger->getProvider()->withoutRelations(),
                 $this->getThread(true),
@@ -114,7 +112,7 @@ class LeaveThread extends BaseMessengerAction
     private function generateBroadcastResource(): array
     {
         return [
-            'thread_id' => $this->getThread()->id
+            'thread_id' => $this->getThread()->id,
         ];
     }
 }

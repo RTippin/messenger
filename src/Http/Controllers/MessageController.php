@@ -32,7 +32,7 @@ class MessageController
     {
         $this->authorize('viewAny', [
             Message::class,
-            $thread
+            $thread,
         ]);
 
         return new MessageCollection(
@@ -42,7 +42,7 @@ class MessageController
     }
 
     /**
-     * Display message pagination
+     * Display message pagination.
      *
      * @param MessageRepository $repository
      * @param Thread $thread
@@ -56,7 +56,7 @@ class MessageController
     {
         $this->authorize('viewAny', [
             Message::class,
-            $thread
+            $thread,
         ]);
 
         return new MessageCollection(
@@ -82,7 +82,7 @@ class MessageController
     {
         $this->authorize('create', [
             Message::class,
-            $thread
+            $thread,
         ]);
 
         return $storeMessage->execute(
@@ -104,7 +104,7 @@ class MessageController
     {
         $this->authorize('view', [
             Message::class,
-            $thread
+            $thread,
         ]);
 
         return new MessageResource($message, $thread);
@@ -125,7 +125,7 @@ class MessageController
     {
         $this->authorize('delete', [
             $message,
-            $thread
+            $thread,
         ]);
 
         return $archiveMessage->execute(

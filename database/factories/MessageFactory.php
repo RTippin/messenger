@@ -2,8 +2,8 @@
 
 namespace RTippin\Messenger\Database\Factories;
 
-use RTippin\Messenger\Models\Message;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use RTippin\Messenger\Models\Message;
 
 class MessageFactory extends Factory
 {
@@ -23,7 +23,7 @@ class MessageFactory extends Factory
     {
         return [
             'type' => 0,
-            'body' => $this->faker->realText(rand(10, 200), rand(1,4))
+            'body' => $this->faker->realText(rand(10, 200), rand(1, 4)),
         ];
     }
 }

@@ -85,8 +85,7 @@ abstract class NewCallAction extends BaseMessengerAction
      */
     protected function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->toOthersInThread($this->getThread())
                 ->with($this->generateBroadcastResource())
@@ -101,8 +100,7 @@ abstract class NewCallAction extends BaseMessengerAction
      */
     protected function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new CallStartedEvent(
                 $this->getCall(true),
                 $this->getThread(true)
@@ -118,8 +116,7 @@ abstract class NewCallAction extends BaseMessengerAction
      */
     protected function hasNoActiveCall(): self
     {
-        if($this->getThread()->hasActiveCall())
-        {
+        if ($this->getThread()->hasActiveCall()) {
             throw new AuthorizationException("{$this->getThread()->name()} already has an active call.");
         }
 
@@ -133,8 +130,7 @@ abstract class NewCallAction extends BaseMessengerAction
      */
     protected function hasNoCallLockout(): self
     {
-        if($this->cacheDriver->get("call:{$this->getThread()->id}:starting"))
-        {
+        if ($this->cacheDriver->get("call:{$this->getThread()->id}:starting")) {
             throw new AuthorizationException("{$this->getThread()->name()} has a call awaiting creation.");
         }
 
@@ -162,14 +158,14 @@ abstract class NewCallAction extends BaseMessengerAction
             $this->getThread()
                 ->calls()
                 ->create([
-                    'type' => array_search($type,Definitions::Call),
+                    'type' => array_search($type, Definitions::Call),
                     'owner_id' => $this->messenger->getProviderId(),
                     'owner_type' => $this->messenger->getProviderClass(),
-                    'setup_complete' => $isSetupComplete
+                    'setup_complete' => $isSetupComplete,
                 ])
                 ->setRelations([
                     'owner' => $this->messenger->getProvider(),
-                    'thread' => $this->getThread()
+                    'thread' => $this->getThread(),
                 ])
         );
 

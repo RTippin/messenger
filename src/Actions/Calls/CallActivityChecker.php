@@ -46,21 +46,20 @@ class CallActivityChecker extends BaseMessengerAction
     /**
      * Loop through the collection of active calls we got and
      * end empty calls or remove participants who are not in
-     * cache and have not officially left the call
+     * cache and have not officially left the call.
      *
      * @param mixed ...$parameters
-     * @var Collection $calls $parameters[0]
+     * @var Collection $parameters[0]
      * @return $this
      * @throws Throwable
      */
     public function execute(...$parameters): self
     {
         /** @var Collection $calls */
-
         $calls = $parameters[0];
 
         $calls->each(
-            fn(Call $call) => $this->performActivityChecks($call)
+            fn (Call $call) => $this->performActivityChecks($call)
         );
 
         return $this;
@@ -72,8 +71,7 @@ class CallActivityChecker extends BaseMessengerAction
      */
     private function performActivityChecks(Call $call): void
     {
-        if( ! $this->endIfEmpty($call))
-        {
+        if (! $this->endIfEmpty($call)) {
             $this->removeInactiveParticipants($call);
         }
     }
@@ -85,8 +83,7 @@ class CallActivityChecker extends BaseMessengerAction
      */
     private function endIfEmpty(Call $call): bool
     {
-        if( ! $call->participants()->inCall()->count())
-        {
+        if (! $call->participants()->inCall()->count()) {
             $this->endCall->execute($call);
 
             return true;
@@ -101,7 +98,7 @@ class CallActivityChecker extends BaseMessengerAction
     private function removeInactiveParticipants(Call $call): void
     {
         $call->participants()->inCall()->each(
-            fn(CallParticipant $participant) => $this->removeIfNotInCache($call, $participant)
+            fn (CallParticipant $participant) => $this->removeIfNotInCache($call, $participant)
         );
     }
 
@@ -112,8 +109,7 @@ class CallActivityChecker extends BaseMessengerAction
      */
     private function removeIfNotInCache(Call $call, CallParticipant $participant): void
     {
-        if( ! $this->cacheDriver->has("call:{$call->id}:{$participant->id}"))
-        {
+        if (! $this->cacheDriver->has("call:{$call->id}:{$participant->id}")) {
             $this->leaveCall->execute($call, $participant);
         }
     }

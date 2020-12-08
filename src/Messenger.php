@@ -2,35 +2,31 @@
 
 namespace RTippin\Messenger;
 
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Filesystem\Filesystem;
 use RTippin\Messenger\Contracts\MessengerInterface;
 
 /**
- * Class Messenger
- * @package Messenger by Richard Tippin
+ * Class Messenger.
  */
 final class Messenger implements MessengerInterface
 {
     /**
-     * MessengerService Provider Verifications
+     * MessengerService Provider Verifications.
      */
     use ProviderVerification;
-
     /**
-     * MessengerService Provider Actions
+     * MessengerService Provider Actions.
      */
     use ProviderInterface;
-
     /**
-     * MessengerService Config Actions
+     * MessengerService Config Actions.
      */
     use ConfigInterface;
-
     /**
-     * MessengerService Provider Online Actions
+     * MessengerService Provider Online Actions.
      */
     use OnlineInterface;
 
@@ -56,7 +52,7 @@ final class Messenger implements MessengerInterface
 
     /**
      * Messenger constructor.
-     * Load config values to use at runtime
+     * Load config values to use at runtime.
      *
      * @param Application $app
      * @param CacheRepository $cacheDriver
@@ -77,7 +73,7 @@ final class Messenger implements MessengerInterface
     }
 
     /**
-     * Boot up our configs
+     * Boot up our configs.
      */
     private function boot(): void
     {
@@ -89,7 +85,7 @@ final class Messenger implements MessengerInterface
     }
 
     /**
-     * Check if provider is valid by seeing if alias exist
+     * Check if provider is valid by seeing if alias exist.
      *
      * @param mixed $provider
      * @return bool
@@ -102,7 +98,7 @@ final class Messenger implements MessengerInterface
     }
 
     /**
-     * Get the defined alias of the provider class defined in config
+     * Get the defined alias of the provider class defined in config.
      *
      * @param mixed $provider
      * @return string|null
@@ -110,12 +106,12 @@ final class Messenger implements MessengerInterface
     public function findProviderAlias($provider = null): ?string
     {
         return $this->providers->search(
-            fn($item) => $item['model'] === $this->getClassNameString($provider)
+            fn ($item) => $item['model'] === $this->getClassNameString($provider)
         ) ?: null;
     }
 
     /**
-     * Get the provider class of the alias defined in the config
+     * Get the provider class of the alias defined in the config.
      *
      * @param string $alias
      * @return string|null
@@ -128,21 +124,20 @@ final class Messenger implements MessengerInterface
     }
 
     /**
-     * Determine if the provider is searchable
+     * Determine if the provider is searchable.
      *
      * @param mixed $provider
      * @return bool
      */
     public function isProviderSearchable($provider = null): bool
     {
-        return $this->providers->search(fn ($item) =>
-            $item['model'] === $this->getClassNameString($provider)
+        return $this->providers->search(fn ($item) => $item['model'] === $this->getClassNameString($provider)
             && $item['searchable'] === true
         ) ? true : false;
     }
 
     /**
-     * Determine if the provider is friendable
+     * Determine if the provider is friendable.
      *
      * @param mixed $provider
      * @return bool
@@ -150,8 +145,7 @@ final class Messenger implements MessengerInterface
      */
     public function isProviderFriendable($provider = null): bool
     {
-        return $this->providers->search(fn ($item) =>
-            $item['model'] === $this->getClassNameString($provider)
+        return $this->providers->search(fn ($item) => $item['model'] === $this->getClassNameString($provider)
             && $item['friendable'] === true
         ) ? true : false;
     }
@@ -173,9 +167,9 @@ final class Messenger implements MessengerInterface
     public function getAllSearchableProviders(): array
     {
         return $this->providers->filter(
-            fn($provider) => $provider['searchable'] === true
+            fn ($provider) => $provider['searchable'] === true
         )->map(
-            fn($provider) => $provider['model']
+            fn ($provider) => $provider['model']
         )
             ->flatten()
             ->toArray();
@@ -188,10 +182,10 @@ final class Messenger implements MessengerInterface
     public function getAllFriendableProviders(): array
     {
         return $this->providers->filter(
-            fn($provider) => $provider['friendable'] === true
+            fn ($provider) => $provider['friendable'] === true
         )
             ->map(
-                fn($provider) => $provider['model']
+                fn ($provider) => $provider['model']
             )
             ->flatten()
             ->toArray();
@@ -203,7 +197,7 @@ final class Messenger implements MessengerInterface
     public function getAllMessengerProviders(): array
     {
         return $this->providers->map(
-            fn($provider) => $provider['model']
+            fn ($provider) => $provider['model']
         )
             ->flatten()
             ->toArray();
@@ -215,10 +209,10 @@ final class Messenger implements MessengerInterface
     public function getAllProvidersWithDevices(): array
     {
         return $this->providers->filter(
-            fn($provider) => $provider['mobile_devices'] === true
+            fn ($provider) => $provider['mobile_devices'] === true
         )
             ->map(
-                fn($provider) => $provider['model']
+                fn ($provider) => $provider['model']
             )
             ->flatten()
             ->toArray();

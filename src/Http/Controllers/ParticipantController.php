@@ -36,7 +36,7 @@ class ParticipantController
     {
         $this->authorize('viewAny', [
             Participant::class,
-            $thread
+            $thread,
         ]);
 
         return new ParticipantCollection(
@@ -46,7 +46,7 @@ class ParticipantController
     }
 
     /**
-     * Display participant history pagination
+     * Display participant history pagination.
      *
      * @param ParticipantRepository $repository
      * @param Thread $thread
@@ -60,7 +60,7 @@ class ParticipantController
     {
         $this->authorize('viewAny', [
             Participant::class,
-            $thread
+            $thread,
         ]);
 
         return new ParticipantCollection(
@@ -86,7 +86,7 @@ class ParticipantController
     {
         $this->authorize('create', [
             Participant::class,
-            $thread
+            $thread,
         ]);
 
         return $storeManyParticipants->execute(
@@ -107,7 +107,7 @@ class ParticipantController
     {
         $this->authorize('view', [
             Participant::class,
-            $thread
+            $thread,
         ]);
 
         return new ParticipantResource(
@@ -133,7 +133,7 @@ class ParticipantController
     {
         $this->authorize('update', [
             $participant,
-            $thread
+            $thread,
         ]);
 
         return $permissions->execute(
@@ -158,7 +158,7 @@ class ParticipantController
     {
         $this->authorize('delete', [
             $participant,
-            $thread
+            $thread,
         ]);
 
         return $removeParticipant->execute(

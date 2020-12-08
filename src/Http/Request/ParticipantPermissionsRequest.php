@@ -18,7 +18,7 @@ class ParticipantPermissionsRequest extends FormRequest
             'send_knocks' => 'required|boolean',
             'send_messages' => 'required|boolean',
             'add_participants' => 'required|boolean',
-            'manage_invites' => 'required|boolean'
+            'manage_invites' => 'required|boolean',
         ];
     }
 }

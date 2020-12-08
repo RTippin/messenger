@@ -36,19 +36,18 @@ class MarkParticipantRead extends BaseMessengerAction
     }
 
     /**
-     * Update participants last_read
+     * Update participants last_read.
      *
      * @param mixed ...$parameters
-     * @var Participant $participant $parameters[0]
-     * @var Thread|null $thread $parameters[1]
+     * @var Participant $parameters[0]
+     * @var Thread|null $parameters[1]
      * @return $this
      */
     public function execute(...$parameters): self
     {
         $this->setParticipant($parameters[0] ?? null);
 
-        if($this->shouldUpdateTimestamp($parameters[1] ?? null))
-        {
+        if ($this->shouldUpdateTimestamp($parameters[1] ?? null)) {
             $this->markParticipantRead();
         }
 
@@ -63,22 +62,21 @@ class MarkParticipantRead extends BaseMessengerAction
     {
         return ! is_null($this->getParticipant())
             && ! $this->getParticipant()->pending
-            && ( ! $thread
+            && (! $thread
                 || is_null($this->getParticipant()->last_read)
                 || $thread->updated_at > $this->getParticipant()->last_read);
     }
 
     /**
-     * Update participant last_read. If changed, dispatch events
+     * Update participant last_read. If changed, dispatch events.
      */
     private function markParticipantRead(): void
     {
         $this->getParticipant()->update([
-            'last_read' => now()
+            'last_read' => now(),
         ]);
 
-        if($this->getParticipant()->wasChanged())
-        {
+        if ($this->getParticipant()->wasChanged()) {
             $this->fireBroadcast()->fireEvents();
         }
     }
@@ -90,7 +88,7 @@ class MarkParticipantRead extends BaseMessengerAction
     {
         return [
             'thread_id' => $this->getParticipant()->thread_id,
-            'last_read' => $this->getParticipant()->last_read
+            'last_read' => $this->getParticipant()->last_read,
         ];
     }
 
@@ -99,8 +97,7 @@ class MarkParticipantRead extends BaseMessengerAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->to($this->getParticipant())
                 ->with($this->generateBroadcastResource())
@@ -115,8 +112,7 @@ class MarkParticipantRead extends BaseMessengerAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ParticipantsReadEvent(
                 $this->getParticipant(true)
             ));

@@ -18,13 +18,12 @@ class PendingFriendResource extends JsonResource
     public function toArray($request): array
     {
         /** @var PendingFriend $friend */
-
         $friend = $this->resource;
 
         return [
             'sender' => new ProviderResource($friend->sender, true, 3),
             'type_verbose' => 'PENDING_FRIEND_REQUEST',
-            $this->merge($friend->withoutRelations())
+            $this->merge($friend->withoutRelations()),
         ];
     }
 }

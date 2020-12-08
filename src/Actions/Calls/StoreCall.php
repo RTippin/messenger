@@ -51,8 +51,8 @@ class StoreCall extends NewCallAction
      * video room using our desired video call service.
      *
      * @param mixed ...$parameters
-     * @var bool|null $setupComplete $parameters[1]
-     * @var Thread $thread $parameters[0]
+     * @var bool|null $parameters[1]
+     * @var Thread $parameters[0]
      * @return $this
      * @throws AuthorizationException|Throwable|InvalidArgumentException
      */
@@ -81,16 +81,12 @@ class StoreCall extends NewCallAction
      */
     private function handleTransactions(string $type, bool $setupComplete): self
     {
-        if($this->isChained())
-        {
+        if ($this->isChained()) {
             $this->executeTransactions($type, $setupComplete);
-        }
-        else
-        {
+        } else {
             $this->database->transaction(
-                fn() => $this->executeTransactions($type, $setupComplete),
+                fn () => $this->executeTransactions($type, $setupComplete),
                 3);
-
         }
 
         return $this;

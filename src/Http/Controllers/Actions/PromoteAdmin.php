@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
-use RTippin\Messenger\Actions\Threads\PromoteAdmin as PromoteAdminAction;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use RTippin\Messenger\Actions\Threads\PromoteAdmin as PromoteAdminAction;
 use RTippin\Messenger\Http\Resources\ParticipantResource;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
@@ -14,7 +14,7 @@ class PromoteAdmin
     use AuthorizesRequests;
 
     /**
-     * Promote admin privilege from participant
+     * Promote admin privilege from participant.
      *
      * @param PromoteAdminAction $promoteAdmin
      * @param Thread $thread
@@ -28,7 +28,7 @@ class PromoteAdmin
     {
         $this->authorize('promote', [
             $participant,
-            $thread
+            $thread,
         ]);
 
         return $promoteAdmin->execute($thread, $participant)

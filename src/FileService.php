@@ -105,8 +105,7 @@ class FileService
      */
     public function destroy(string $file): bool
     {
-        if($this->filesystemManager->disk($this->disk)->exists($file))
-        {
+        if ($this->filesystemManager->disk($this->disk)->exists($file)) {
             return $this->filesystemManager
                 ->disk($this->disk)
                 ->delete($file);
@@ -120,8 +119,7 @@ class FileService
      */
     public function destroyDirectory(): bool
     {
-        if($this->filesystemManager->disk($this->disk)->exists($this->directory))
-        {
+        if ($this->filesystemManager->disk($this->disk)->exists($this->directory)) {
             return $this->filesystemManager
                 ->disk($this->disk)
                 ->deleteDirectory($this->directory);
@@ -147,8 +145,7 @@ class FileService
     {
         $this->name = $this->nameFile($file);
 
-        if( ! $this->storeFile($file))
-        {
+        if (! $this->storeFile($file)) {
             $this->uploadFailed();
         }
 
@@ -163,22 +160,19 @@ class FileService
     {
         $extension = $file->guessExtension();
 
-        if( ! $extension)
-        {
+        if (! $extension) {
             $this->uploadFailed();
         }
 
-        if( ! is_null($this->name))
-        {
+        if (! is_null($this->name)) {
             return "{$this->getName()}.{$extension}";
         }
 
-        switch($this->type)
-        {
+        switch ($this->type) {
             case 'image':
-                return uniqid('img_', true) . ".{$extension}";
+                return uniqid('img_', true).".{$extension}";
             case 'document':
-                return $this->getOriginalName($file) . "_" . now()->timestamp . ".{$extension}";
+                return $this->getOriginalName($file).'_'.now()->timestamp.".{$extension}";
         }
 
         return $this->getOriginalName($file);
@@ -203,18 +197,18 @@ class FileService
     private function storeFile(UploadedFile $file): bool
     {
         return $file->storeAs($this->directory, $this->name, [
-                'disk' => $this->disk
-            ]
+            'disk' => $this->disk,
+        ]
         );
     }
 
     /**
-     * Upload failed! :(
+     * Upload failed! :(.
      *
      * @throws HttpException
      */
     private function uploadFailed()
     {
-        throw new HttpException(422, "File was unable to upload. Please try again.");
+        throw new HttpException(422, 'File was unable to upload. Please try again.');
     }
 }

@@ -6,9 +6,9 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Contracts\BroadcastDriver;
+use RTippin\Messenger\FileService;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\FileService;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
@@ -51,12 +51,12 @@ class StoreDocumentMessage extends NewMessageAction
 
     /**
      * Store / upload new document message, update thread
-     * updated_at, mark read for participant, broadcast
+     * updated_at, mark read for participant, broadcast.
      *
      * @param mixed ...$parameters
-     * @var Thread $thread $parameters[0]
-     * @var UploadedFile $file $parameters[1]
-     * @var string|null $temporaryId $parameters[2]
+     * @var Thread $parameters[0]
+     * @var UploadedFile $parameters[1]
+     * @var string|null $parameters[2]
      * @return $this
      * @throws Throwable
      */

@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Routing\Router;
 use Illuminate\Support\ServiceProvider;
@@ -22,20 +23,16 @@ use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Http\Middleware\AuthenticateOptional;
 use RTippin\Messenger\Http\Middleware\MessengerApi;
 use RTippin\Messenger\Http\Middleware\SetMessengerProvider;
-use Illuminate\Contracts\Container\BindingResolutionException;
 
 class MessengerServiceProvider extends ServiceProvider
 {
     use ChannelMap;
-
     use EventMap;
-
     use PolicyMap;
-
     use RouteMap;
 
     /**
-     * Base middleware we apply to our API routes
+     * Base middleware we apply to our API routes.
      */
     protected array $apiMiddleware = ['messenger.api'];
 
@@ -64,8 +61,7 @@ class MessengerServiceProvider extends ServiceProvider
         $this->registerChannels();
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'messenger');
 
-        if ($this->app->runningInConsole())
-        {
+        if ($this->app->runningInConsole()) {
             $this->bootForConsole();
         }
     }
@@ -86,7 +82,7 @@ class MessengerServiceProvider extends ServiceProvider
             PurgeDocuments::class,
             PurgeImages::class,
             PurgeMessages::class,
-            PurgeThreads::class
+            PurgeThreads::class,
         ]);
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
@@ -107,8 +103,7 @@ class MessengerServiceProvider extends ServiceProvider
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'messenger.migrations');
 
-        if($this->app['config']->get('messenger.calling.driver') === 'janus')
-        {
+        if ($this->app['config']->get('messenger.calling.driver') === 'janus') {
             $this->publishes([
                 __DIR__.'/../config/janus.php' => config_path('janus.php'),
             ], 'messenger.janus.config');
@@ -177,7 +172,7 @@ class MessengerServiceProvider extends ServiceProvider
     }
 
     /**
-     * Get the driver set in config for our services broadcasting feature
+     * Get the driver set in config for our services broadcasting feature.
      *
      * @return string
      */
@@ -189,7 +184,7 @@ class MessengerServiceProvider extends ServiceProvider
     }
 
     /**
-     * Get the driver set in config for our services push notifications
+     * Get the driver set in config for our services push notifications.
      *
      * @return string
      */
@@ -201,7 +196,7 @@ class MessengerServiceProvider extends ServiceProvider
     }
 
     /**
-     * Get the driver set in config for our services video feature
+     * Get the driver set in config for our services video feature.
      *
      * @return string
      */
@@ -213,7 +208,7 @@ class MessengerServiceProvider extends ServiceProvider
     }
 
     /**
-     * Sanitize user defined middleware in case not array
+     * Sanitize user defined middleware in case not array.
      *
      * @param $middleware
      * @return array

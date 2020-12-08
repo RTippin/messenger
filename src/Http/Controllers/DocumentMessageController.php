@@ -18,7 +18,7 @@ class DocumentMessageController
     use AuthorizesRequests;
 
     /**
-     * Display a listing of the most recent documents
+     * Display a listing of the most recent documents.
      *
      * @param DocumentMessageRepository $repository
      * @param Thread $thread
@@ -29,7 +29,7 @@ class DocumentMessageController
     {
         $this->authorize('viewAny', [
             Message::class,
-            $thread
+            $thread,
         ]);
 
         return new DocumentMessageCollection(
@@ -39,7 +39,7 @@ class DocumentMessageController
     }
 
     /**
-     * Display document history pagination
+     * Display document history pagination.
      *
      * @param DocumentMessageRepository $repository
      * @param Thread $thread
@@ -53,7 +53,7 @@ class DocumentMessageController
     {
         $this->authorize('viewAny', [
             Message::class,
-            $thread
+            $thread,
         ]);
 
         return new DocumentMessageCollection(
@@ -79,7 +79,7 @@ class DocumentMessageController
     {
         $this->authorize('createDocument', [
             Message::class,
-            $thread
+            $thread,
         ]);
 
         return $storeDocumentMessage->execute(

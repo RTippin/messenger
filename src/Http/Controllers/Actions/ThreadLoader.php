@@ -13,17 +13,17 @@ class ThreadLoader
     use AuthorizesRequests;
 
     /**
-     * Default eager load relations on thread
+     * Default eager load relations on thread.
      */
     const LOAD = [
         'recentMessage.owner',
         'participants.owner',
-        'activeCall.participants.owner'
+        'activeCall.participants.owner',
     ];
 
     /**
      * Display the specified thread. Load relations / actions if specified in route.
-     * Available flags : (mark-read|participants|messages)
+     * Available flags : (mark-read|participants|messages).
      *
      * @param Thread $thread
      * @param null|string $relations
@@ -34,8 +34,7 @@ class ThreadLoader
     {
         $this->authorize('view', $thread);
 
-        if($relations)
-        {
+        if ($relations) {
             return $this->withRelations(
                 $thread, $relations
             );
@@ -57,8 +56,7 @@ class ThreadLoader
             explode('|', $relations)
         );
 
-        if(in_array('mark-read', $options))
-        {
+        if (in_array('mark-read', $options)) {
             $this->markRead($thread);
         }
 

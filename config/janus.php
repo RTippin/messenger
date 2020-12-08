@@ -28,10 +28,10 @@ return [
         //"https://example.com/janus",
     ],
     'ice_servers' => [
-//        [
-//            'urls' => 'stun:example.com:5349',
-//            'username' => 'user',
-//            'credential' => 'password'
-//        ],
-    ]
+        //        [
+        //            'urls' => 'stun:example.com:5349',
+        //            'username' => 'user',
+        //            'credential' => 'password'
+        //        ],
+    ],
 ];

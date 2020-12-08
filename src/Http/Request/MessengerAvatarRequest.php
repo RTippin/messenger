@@ -14,7 +14,7 @@ class MessengerAvatarRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'image' => 'required|max:5120|file|image'
+            'image' => 'required|max:5120|file|image',
         ];
     }
 }

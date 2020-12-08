@@ -33,7 +33,7 @@ abstract class MessengerCollection extends ResourceCollection
 
     /**
      * Transform the collection to resources, safe guarding against
-     * breaking the entire collection should one resource fail
+     * breaking the entire collection should one resource fail.
      *
      * @return array
      */
@@ -41,17 +41,17 @@ abstract class MessengerCollection extends ResourceCollection
     {
         return $this->collection
             ->map(
-                fn($resource) => $this->makeResource($resource)
+                fn ($resource) => $this->makeResource($resource)
             )
             ->reject(
-                fn($resource) => is_null($resource)
+                fn ($resource) => is_null($resource)
             )
             ->toArray();
     }
 
     /**
      * We go ahead and attempt to create and resolve each individual
-     * resource, returning null should one fail
+     * resource, returning null should one fail.
      *
      * @param mixed $resource
      * @return array|null
@@ -59,14 +59,13 @@ abstract class MessengerCollection extends ResourceCollection
     abstract protected function makeResource($resource): ?array;
 
     /**
-     * Total count we have in the database of each resource
+     * Total count we have in the database of each resource.
      *
      * @return int
      */
     protected function grandTotal(): int
     {
-        switch($this->collectionType)
-        {
+        switch ($this->collectionType) {
             case 'threads':
                 return app(ThreadRepository::class)
                     ->getProviderThreadsBuilder()
@@ -107,16 +106,14 @@ abstract class MessengerCollection extends ResourceCollection
     }
 
     /**
-     * Per page counts set in our config
+     * Per page counts set in our config.
      *
      * @return int
      */
     protected function perPageConfig(): int
     {
-        if($this->paginate === true)
-        {
-            switch($this->collectionType)
-            {
+        if ($this->paginate === true) {
+            switch ($this->collectionType) {
                 case 'threads':
                 case 'groups':
                 case 'privates':
@@ -135,8 +132,7 @@ abstract class MessengerCollection extends ResourceCollection
             }
         }
 
-        switch($this->collectionType)
-        {
+        switch ($this->collectionType) {
             case 'threads':
             case 'groups':
             case 'privates':
@@ -178,10 +174,8 @@ abstract class MessengerCollection extends ResourceCollection
      */
     protected function nextPageLink(): ?string
     {
-        if($this->nextPageId())
-        {
-            switch($this->collectionType)
-            {
+        if ($this->nextPageId()) {
+            switch ($this->collectionType) {
                 case 'threads':
                     return messengerRoute('api.messenger.threads.page', $this->nextPageId());
                 case 'groups':
@@ -192,42 +186,42 @@ abstract class MessengerCollection extends ResourceCollection
                     return messengerRoute('api.messenger.threads.participants.page',
                         [
                             'thread' => $this->thread->id,
-                            'participant' => $this->nextPageId()
+                            'participant' => $this->nextPageId(),
                         ]
                     );
                 case 'messages':
                     return messengerRoute('api.messenger.threads.messages.page',
                         [
                             'thread' => $this->thread->id,
-                            'message' => $this->nextPageId()
+                            'message' => $this->nextPageId(),
                         ]
                     );
                 case 'calls':
                     return messengerRoute('api.messenger.threads.calls.page',
                         [
                             'thread' => $this->thread->id,
-                            'call' => $this->nextPageId()
+                            'call' => $this->nextPageId(),
                         ]
                     );
                 case 'logs':
                     return messengerRoute('api.messenger.threads.logs.page',
                         [
                             'thread' => $this->thread->id,
-                            'log' => $this->nextPageId()
+                            'log' => $this->nextPageId(),
                         ]
                     );
                 case 'images':
                     return messengerRoute('api.messenger.threads.images.page',
                         [
                             'thread' => $this->thread->id,
-                            'image' => $this->nextPageId()
+                            'image' => $this->nextPageId(),
                         ]
                     );
                 case 'documents':
                     return messengerRoute('api.messenger.threads.documents.page',
                         [
                             'thread' => $this->thread->id,
-                            'document' => $this->nextPageId()
+                            'document' => $this->nextPageId(),
                         ]
                     );
             }
@@ -241,10 +235,8 @@ abstract class MessengerCollection extends ResourceCollection
      */
     protected function isFinalPage(): bool
     {
-        if($this->isIndex())
-        {
-            switch($this->collectionType)
-            {
+        if ($this->isIndex()) {
+            switch ($this->collectionType) {
                 case 'threads':
                 case 'groups':
                 case 'privates':
@@ -261,18 +253,15 @@ abstract class MessengerCollection extends ResourceCollection
             }
         }
 
-        if(! $this->collection->count()
-            || $this->collection->count() < $this->perPageConfig())
-        {
+        if (! $this->collection->count()
+            || $this->collection->count() < $this->perPageConfig()) {
             return true;
         }
 
         /** @var Model|mixed|null $model */
-
         $model = null;
 
-        switch($this->collectionType)
-        {
+        switch ($this->collectionType) {
             case 'threads':
                 $model = app(ThreadRepository::class)->getProviderOldestThread();
             break;

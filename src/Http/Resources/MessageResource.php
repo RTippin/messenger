@@ -24,7 +24,7 @@ class MessageResource extends JsonResource
     protected Message $message;
 
     /**
-     * The Thread instance
+     * The Thread instance.
      *
      * @var Thread
      */
@@ -70,22 +70,22 @@ class MessageResource extends JsonResource
                 'thread_type' => $this->thread->type,
                 'thread_type_verbose' => $this->thread->getTypeVerbose(),
                 $this->mergeWhen($this->thread->isGroup(),
-                    fn() => [
+                    fn () => [
                         'thread_name' => $this->thread->name(),
                         'api_thread_avatar' => $this->thread->threadAvatar(true),
-                        'thread_avatar' => $this->thread->threadAvatar()
+                        'thread_avatar' => $this->thread->threadAvatar(),
                     ]
-                )
+                ),
             ],
             'temporary_id' => $this->when($this->message->hasTemporaryId(),
-                fn() => $this->message->temporaryId()
+                fn () => $this->message->temporaryId()
             ),
             $this->mergeWhen($this->message->isImage(),
-                fn() => $this->linksForImage()
+                fn () => $this->linksForImage()
             ),
             $this->mergeWhen($this->message->isDocument(),
-                fn() => $this->linksForDocument()
-            )
+                fn () => $this->linksForDocument()
+            ),
         ];
     }
 
@@ -94,16 +94,14 @@ class MessageResource extends JsonResource
      */
     public function formatMessageBody(): string
     {
-        if(! $this->message->isSystemMessage())
-        {
+        if (! $this->message->isSystemMessage()) {
             return $this->sanitizedBody();
         }
 
-        try{
+        try {
             $bodyJson = $this->decodeBodyJson();
 
-            switch($this->message->type)
-            {
+            switch ($this->message->type) {
                 case 90:
                     return $this->formatVideoCall($bodyJson);
                 case 88: //participant joined with invite link
@@ -122,7 +120,7 @@ class MessageResource extends JsonResource
                 case 99:
                     return $this->formatParticipantsAdded($bodyJson);
             }
-        }catch(Exception $e){
+        } catch (Exception $e) {
             report($e);
         }
 
@@ -153,21 +151,17 @@ class MessageResource extends JsonResource
     {
         $names = 'added ';
 
-        foreach($bodyJson as $key => $owner)
-        {
-            if(count($bodyJson) === 1)
-            {
+        foreach ($bodyJson as $key => $owner) {
+            if (count($bodyJson) === 1) {
                 $names .= "{$this->locateContentOwner($owner)->name()}";
-            }
-            else if(count($bodyJson) > 1
-                && $key === array_key_last($bodyJson))
-            {
+            } elseif (count($bodyJson) > 1
+                && $key === array_key_last($bodyJson)) {
                 $names .= "and {$this->locateContentOwner($owner)->name()}";
-            }
-            else{
+            } else {
                 $names .= "{$this->locateContentOwner($owner)->name()}, ";
             }
         }
+
         return "{$names} to the group";
     }
 
@@ -205,39 +199,30 @@ class MessageResource extends JsonResource
     public function formatVideoCall(array $bodyJson): string
     {
         /** @var Call $call */
-
         $call = $this->thread->calls()
             ->videoCall()
             ->with('participants.owner')
             ->firstWhere('id', $bodyJson['call_id']);
 
-        if($call)
-        {
+        if ($call) {
             $names = '';
 
             /** @var CallParticipant|Collection $participants */
-
-            $participants = $call->participants->reject(function($value){
+            $participants = $call->participants->reject(function ($value) {
                 return $value->owner_id === $this->message->owner_id
                     && $value->owner_type === $this->message->owner_type;
             });
 
-            if($participants->count())
-            {
-                foreach($participants as $participant)
-                {
-                    if($participants->count() === 1
+            if ($participants->count()) {
+                foreach ($participants as $participant) {
+                    if ($participants->count() === 1
                         || ($participants->count() === 2
-                            && $participants->first()->id === $participant->id))
-                    {
+                            && $participants->first()->id === $participant->id)) {
                         $names .= "{$participant->owner->name()}";
-                    }
-                    else if($participants->count() > 1
-                        && $participants->last()->id === $participant->id)
-                    {
+                    } elseif ($participants->count() > 1
+                        && $participants->last()->id === $participant->id) {
                         $names .= " and {$participant->owner->name()}";
-                    }
-                    else{
+                    } else {
                         $names .= " {$participant->owner->name()},";
                     }
                 }
@@ -256,23 +241,19 @@ class MessageResource extends JsonResource
     public function locateContentOwner(array $data)
     {
         /** @var Participant $participant */
-
         $participant = $this->thread->participants
             ->where('owner_id', '=', $data['owner_id'])
             ->where('owner_type', '=', $data['owner_type'])
             ->first();
 
-        if($participant && messenger()->isValidMessengerProvider($participant->owner))
-        {
+        if ($participant && messenger()->isValidMessengerProvider($participant->owner)) {
             return $participant->owner;
         }
 
         /** @var MessengerProvider|null $owner */
-
         $owner = null;
 
-        if(messenger()->isValidMessengerProvider($data['owner_type']))
-        {
+        if (messenger()->isValidMessengerProvider($data['owner_type'])) {
             $owner = $data['owner_type']::find($data['owner_id']);
         }
 
@@ -288,13 +269,13 @@ class MessageResource extends JsonResource
             'api_image' => [
                 'sm' => $this->message->getImageViewRoute('sm', true),
                 'md' => $this->message->getImageViewRoute('md', true),
-                'lg' => $this->message->getImageViewRoute('lg', true)
+                'lg' => $this->message->getImageViewRoute('lg', true),
             ],
             'image' => [
                 'sm' => $this->message->getImageViewRoute('sm'),
                 'md' => $this->message->getImageViewRoute('md'),
-                'lg' => $this->message->getImageViewRoute('lg')
-            ]
+                'lg' => $this->message->getImageViewRoute('lg'),
+            ],
         ];
     }
 
@@ -305,7 +286,7 @@ class MessageResource extends JsonResource
     {
         return [
             'api_document' => $this->message->getDocumentDownloadRoute(true),
-            'document' => $this->message->getDocumentDownloadRoute()
+            'document' => $this->message->getDocumentDownloadRoute(),
         ];
     }
 }

@@ -39,7 +39,7 @@ class DownloadMessageFile
     }
 
     /**
-     * Download message document
+     * Download message document.
      *
      * @param Thread $thread
      * @param Message $message
@@ -53,7 +53,7 @@ class DownloadMessageFile
     {
         $this->authorize('view', [
             Message::class,
-            $thread
+            $thread,
         ]);
 
         $this->checkDownloadsEnabled();
@@ -70,8 +70,7 @@ class DownloadMessageFile
      */
     private function checkDownloadsEnabled()
     {
-        if( ! $this->messenger->isMessageDocumentDownloadEnabled())
-        {
+        if (! $this->messenger->isMessageDocumentDownloadEnabled()) {
             throw new AuthorizationException('Document downloads are currently disabled.');
         }
     }
@@ -82,12 +81,11 @@ class DownloadMessageFile
      */
     private function checkFileExist(Message $message, string $fileNameChallenge)
     {
-        if( ! $message->isDocument()
+        if (! $message->isDocument()
             || $fileNameChallenge !== $message->body
             || ! $this->filesystemManager
                 ->disk($message->getStorageDisk())
-                ->exists($message->getDocumentPath()))
-        {
+                ->exists($message->getDocumentPath())) {
             throw new NotFoundHttpException("File not found: {$fileNameChallenge}");
         }
     }

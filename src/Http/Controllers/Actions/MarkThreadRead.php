@@ -13,7 +13,7 @@ class MarkThreadRead
     use AuthorizesRequests;
 
     /**
-     * Mark thread read for current participant
+     * Mark thread read for current participant.
      *
      * @param MarkParticipantRead $markParticipantRead
      * @param Thread $thread

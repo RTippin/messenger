@@ -47,7 +47,6 @@ class SendKnock extends BaseMessengerAction
                                 Dispatcher $dispatcher,
                                 Repository $cacheDriver)
     {
-
         $this->cacheDriver = $cacheDriver;
         $this->messenger = $messenger;
         $this->broadcaster = $broadcaster;
@@ -58,7 +57,7 @@ class SendKnock extends BaseMessengerAction
      * Send a nice KNOCK to the thread!
      *
      * @param mixed ...$parameters
-     * @var Thread $thread $parameters[0]
+     * @var Thread $parameters[0]
      * @return $this
      */
     public function execute(...$parameters): self
@@ -73,7 +72,7 @@ class SendKnock extends BaseMessengerAction
     }
 
     /**
-     * Generate the knock resource
+     * Generate the knock resource.
      *
      * @return $this
      */
@@ -92,8 +91,7 @@ class SendKnock extends BaseMessengerAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->toOthersInThread($this->getThread())
                 ->with($this->getJsonResource()->resolve())
@@ -108,8 +106,7 @@ class SendKnock extends BaseMessengerAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new KnockEvent(
                 $this->messenger->getProvider()->withoutRelations(),
                 $this->getThread(true)
@@ -120,14 +117,13 @@ class SendKnock extends BaseMessengerAction
     }
 
     /**
-     * If the timeout for knocks is not 0, then put the lock in cache
+     * If the timeout for knocks is not 0, then put the lock in cache.
      *
      * @return $this
      */
     private function storeCacheTimeout(): self
     {
-        if($this->messenger->getKnockTimeout() !== 0)
-        {
+        if ($this->messenger->getKnockTimeout() !== 0) {
             $this->cacheDriver->put(
                 $this->generateCacheKey(),
                 true,

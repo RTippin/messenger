@@ -30,7 +30,7 @@ class ThreadRepository
     public function getProviderThreadsBuilder(): Builder
     {
         return Thread::whereHas('participants',
-            fn(Builder $query) => $query->where('owner_id', '=', $this->messenger->getProviderId())
+            fn (Builder $query) => $query->where('owner_id', '=', $this->messenger->getProviderId())
                 ->where('owner_type', '=', $this->messenger->getProviderClass())
         );
     }
@@ -45,7 +45,7 @@ class ThreadRepository
             ->with([
                 'participants.owner',
                 'recentMessage.owner',
-                'activeCall.participants.owner'
+                'activeCall.participants.owner',
             ])
             ->limit($this->messenger->getThreadsIndexCount())
             ->get();
@@ -62,7 +62,7 @@ class ThreadRepository
             ->with([
                 'participants.owner',
                 'recentMessage.owner',
-                'activeCall.participants.owner'
+                'activeCall.participants.owner',
             ])
             ->where('threads.updated_at', '<=', $thread->updated_at)
             ->where('threads.id', '!=', $thread->id)
@@ -104,10 +104,10 @@ class ThreadRepository
     public function getProviderUnreadThreadsBuilder(): Builder
     {
         return Thread::whereHas('participants',
-            function(Builder $query) {
+            function (Builder $query) {
                 $query->where('owner_id', '=', $this->messenger->getProviderId())
                     ->where('owner_type', '=', $this->messenger->getProviderClass())
-                    ->where(function(Builder $query){
+                    ->where(function (Builder $query) {
                         $query->whereNull('participants.last_read');
                         $query->orWhere('threads.updated_at', '>', $query->raw('participants.last_read'));
                     });

@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
-use RTippin\Messenger\Actions\Calls\JoinCall as JoinCallAction;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use RTippin\Messenger\Actions\Calls\JoinCall as JoinCallAction;
 use RTippin\Messenger\Http\Resources\CallParticipantResource;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
@@ -28,7 +28,7 @@ class JoinCall
     {
         $this->authorize('join', [
             $call,
-            $thread
+            $thread,
         ]);
 
         return $joinCall->execute($call, false)

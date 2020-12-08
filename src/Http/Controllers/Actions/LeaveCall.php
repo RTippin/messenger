@@ -2,10 +2,10 @@
 
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
-use RTippin\Messenger\Actions\Calls\LeaveCall as LeaveCallAction;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
+use RTippin\Messenger\Actions\Calls\LeaveCall as LeaveCallAction;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
 
@@ -28,7 +28,7 @@ class LeaveCall
     {
         $this->authorize('leave', [
             $call,
-            $thread
+            $thread,
         ]);
 
         return $leaveCall->execute(

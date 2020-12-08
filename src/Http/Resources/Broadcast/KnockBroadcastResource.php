@@ -2,10 +2,10 @@
 
 namespace RTippin\Messenger\Http\Resources\Broadcast;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Http\Resources\ProviderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Models\Thread;
 
 class KnockBroadcastResource extends JsonResource
@@ -50,13 +50,13 @@ class KnockBroadcastResource extends JsonResource
                 'type' => $this->thread->type,
                 'type_verbose' => $this->thread->getTypeVerbose(),
                 'group' => $this->thread->isGroup(),
-                $this->mergeWhen($this->thread->isGroup(), fn() => [
+                $this->mergeWhen($this->thread->isGroup(), fn () => [
                     'name' => $this->thread->name(),
                     'api_avatar' => $this->thread->threadAvatar(true),
                     'avatar' => $this->thread->threadAvatar(),
-                ])
+                ]),
             ],
-            'sender' => new ProviderResource($this->provider)
+            'sender' => new ProviderResource($this->provider),
         ];
     }
 }

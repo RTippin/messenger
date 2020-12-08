@@ -120,15 +120,12 @@ abstract class BaseMessengerAction implements Action
      */
     public function chain(string $abstractAction): Action
     {
-        try{
-
-            if((new ReflectionClass($abstractAction))
-                ->isSubclassOf(Action::class))
-            {
+        try {
+            if ((new ReflectionClass($abstractAction))
+                ->isSubclassOf(Action::class)) {
                 return app($abstractAction)->continuesChain();
             }
-
-        }catch (ReflectionException $e) {
+        } catch (ReflectionException $e) {
             //skip
         }
 
@@ -171,13 +168,12 @@ abstract class BaseMessengerAction implements Action
      */
     public function getMessageResponse()
     {
-        if( ! is_null($this->messageResponse))
-        {
+        if (! is_null($this->messageResponse)) {
             return $this->messageResponse;
         }
 
         return new JsonResponse([
-            'message' => 'success'
+            'message' => 'success',
         ]);
     }
 
@@ -196,9 +192,8 @@ abstract class BaseMessengerAction implements Action
      */
     public function getData($withoutRelations = false)
     {
-        if($withoutRelations
-            && ! is_null($this->data))
-        {
+        if ($withoutRelations
+            && ! is_null($this->data)) {
             return $this->data->withoutRelations();
         }
 
@@ -220,9 +215,8 @@ abstract class BaseMessengerAction implements Action
      */
     public function getThread($withoutRelations = false): ?Thread
     {
-        if($withoutRelations
-            && ! is_null($this->thread))
-        {
+        if ($withoutRelations
+            && ! is_null($this->thread)) {
             return $this->thread->withoutRelations();
         }
 
@@ -234,8 +228,7 @@ abstract class BaseMessengerAction implements Action
      */
     public function setThread(Thread $thread = null): self
     {
-        if( ! is_null($thread))
-        {
+        if (! is_null($thread)) {
             $this->thread = $thread;
         }
 
@@ -247,9 +240,8 @@ abstract class BaseMessengerAction implements Action
      */
     public function getParticipant($withoutRelations = false): ?Participant
     {
-        if($withoutRelations
-            && ! is_null($this->participant))
-        {
+        if ($withoutRelations
+            && ! is_null($this->participant)) {
             return $this->participant->withoutRelations();
         }
 
@@ -261,8 +253,7 @@ abstract class BaseMessengerAction implements Action
      */
     public function setParticipant(Participant $participant = null): self
     {
-        if( ! is_null($participant))
-        {
+        if (! is_null($participant)) {
             $this->participant = $participant;
         }
 
@@ -274,9 +265,8 @@ abstract class BaseMessengerAction implements Action
      */
     public function getCallParticipant($withoutRelations = false): ?CallParticipant
     {
-        if($withoutRelations
-            && ! is_null($this->callParticipant))
-        {
+        if ($withoutRelations
+            && ! is_null($this->callParticipant)) {
             return $this->callParticipant->withoutRelations();
         }
 
@@ -288,8 +278,7 @@ abstract class BaseMessengerAction implements Action
      */
     public function setCallParticipant(CallParticipant $participant = null): self
     {
-        if( ! is_null($participant))
-        {
+        if (! is_null($participant)) {
             $this->callParticipant = $participant;
         }
 
@@ -301,9 +290,8 @@ abstract class BaseMessengerAction implements Action
      */
     public function getMessage($withoutRelations = false): ?Message
     {
-        if($withoutRelations
-            && ! is_null($this->message))
-        {
+        if ($withoutRelations
+            && ! is_null($this->message)) {
             return $this->message->withoutRelations();
         }
 
@@ -315,8 +303,7 @@ abstract class BaseMessengerAction implements Action
      */
     public function setMessage(Message $message = null): self
     {
-        if( ! is_null($message))
-        {
+        if (! is_null($message)) {
             $this->message = $message;
         }
 
@@ -328,9 +315,8 @@ abstract class BaseMessengerAction implements Action
      */
     public function getCall($withoutRelations = false): ?Call
     {
-        if($withoutRelations
-            && ! is_null($this->call))
-        {
+        if ($withoutRelations
+            && ! is_null($this->call)) {
             return $this->call->withoutRelations();
         }
 
@@ -342,8 +328,7 @@ abstract class BaseMessengerAction implements Action
      */
     public function setCall(Call $call = null): self
     {
-        if( ! is_null($call))
-        {
+        if (! is_null($call)) {
             $this->call = $call;
         }
 

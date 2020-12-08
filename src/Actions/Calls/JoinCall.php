@@ -50,23 +50,20 @@ class JoinCall extends CallParticipantAction
     }
 
     /**
-     * Join/Re-join the call and set the call participant in cache
+     * Join/Re-join the call and set the call participant in cache.
      *
      * @param mixed ...$parameters
-     * @var Call $call $parameters[0]
-     * @var bool $startup $parameters[1]
+     * @var Call $parameters[0]
+     * @var bool $parameters[1]
      * @return $this
      */
     public function execute(...$parameters): self
     {
         $this->setCall($parameters[0]);
 
-        if($parameters[1] || ! $this->getCall()->hasJoinedCall())
-        {
+        if ($parameters[1] || ! $this->getCall()->hasJoinedCall()) {
             $this->storeParticipant($this->messenger->getProvider());
-        }
-        else
-        {
+        } else {
             $this->updateParticipant(...$this->participantAttributes());
         }
 
@@ -86,8 +83,8 @@ class JoinCall extends CallParticipantAction
         return [
             $this->getCall()->currentCallParticipant(),
             [
-                'left_call' => null
-            ]
+                'left_call' => null,
+            ],
         ];
     }
 
@@ -118,8 +115,7 @@ class JoinCall extends CallParticipantAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->to($this->getCallParticipant())
                 ->with($this->generateBroadcastResource())
@@ -134,8 +130,7 @@ class JoinCall extends CallParticipantAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new CallJoinedEvent(
                 $this->getCall(true),
                 $this->getCallParticipant(true)

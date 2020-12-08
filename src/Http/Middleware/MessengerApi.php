@@ -9,7 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 class MessengerApi
 {
     /**
-     * Middleware applied to our API / DATA routes
+     * Middleware applied to our API / DATA routes.
      *
      * @param Request $request
      * @param Closure $next

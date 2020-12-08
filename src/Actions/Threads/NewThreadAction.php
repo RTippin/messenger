@@ -32,7 +32,7 @@ abstract class NewThreadAction extends BaseMessengerAction
     }
 
     /**
-     * Store a fresh new thread
+     * Store a fresh new thread.
      *
      * @param array $attributes
      * @return $this
@@ -51,7 +51,7 @@ abstract class NewThreadAction extends BaseMessengerAction
     }
 
     /**
-     * Generate the thread resource
+     * Generate the thread resource.
      *
      * @return $this
      */

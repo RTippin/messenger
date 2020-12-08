@@ -5,9 +5,9 @@ namespace RTippin\Messenger\Actions\Messages;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use RTippin\Messenger\Contracts\BroadcastDriver;
+use RTippin\Messenger\EmojiConverter;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\EmojiConverter;
 use Throwable;
 
 class StoreMessage extends NewMessageAction
@@ -49,12 +49,12 @@ class StoreMessage extends NewMessageAction
 
     /**
      * Store new message, update thread updated_at,
-     * mark read for participant, broadcast
+     * mark read for participant, broadcast.
      *
      * @param mixed ...$parameters
-     * @var Thread $thread $parameters[0]
-     * @var string $body $parameters[1]
-     * @var string|null $temporaryId $parameters[2]
+     * @var Thread $parameters[0]
+     * @var string $parameters[1]
+     * @var string|null $parameters[2]
      * @return $this
      * @throws Throwable
      */

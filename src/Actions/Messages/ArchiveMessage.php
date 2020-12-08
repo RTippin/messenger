@@ -40,19 +40,18 @@ class ArchiveMessage extends BaseMessengerAction
                                 BroadcastDriver $broadcaster,
                                 Dispatcher $dispatcher)
     {
-
         $this->broadcaster = $broadcaster;
         $this->dispatcher = $dispatcher;
         $this->messenger = $messenger;
     }
 
     /**
-     * Archive the message
+     * Archive the message.
      *
      * @param mixed ...$parameters
      * @return $this
-     * @var Thread $thread $parameters[0]
-     * @var Message $message $parameters[1]
+     * @var Thread $parameters[0]
+     * @var Message $parameters[1]
      * @throws Exception
      */
     public function execute(...$parameters): self
@@ -82,8 +81,7 @@ class ArchiveMessage extends BaseMessengerAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->toAllInThread($this->getThread())
                 ->with($this->generateBroadcastResource())
@@ -98,8 +96,7 @@ class ArchiveMessage extends BaseMessengerAction
      */
     protected function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new MessageArchivedEvent(
                 $this->messenger->getProvider()->withoutRelations(),
                 $this->getMessage(true)
@@ -116,7 +113,7 @@ class ArchiveMessage extends BaseMessengerAction
     {
         return [
             'message_id' => $this->getMessage()->id,
-            'thread_id' => $this->getMessage()->thread_id
+            'thread_id' => $this->getMessage()->thread_id,
         ];
     }
 }

@@ -20,8 +20,8 @@ class GroupAvatarRequest extends FormRequest
             'default' => [
                 'required_without:image',
                 'string',
-                Rule::in(Definitions::DefaultGroupAvatars)
-            ]
+                Rule::in(Definitions::DefaultGroupAvatars),
+            ],
         ];
     }
 }

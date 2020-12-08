@@ -8,7 +8,7 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
- * App\Models\Mobile\MobileDevice
+ * App\Models\Mobile\MobileDevice.
  *
  * @property-read Model|\Eloquent $owner
  * @method static \Illuminate\Database\Eloquent\Builder|MobileDevice newModelQuery()

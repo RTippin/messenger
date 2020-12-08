@@ -2,10 +2,10 @@
 
 namespace RTippin\Messenger\Http\Resources\Broadcast;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Http\Resources\ProviderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Models\Call;
 
 class NewCallBroadcastResource extends JsonResource
@@ -52,13 +52,13 @@ class NewCallBroadcastResource extends JsonResource
                 'thread_type' => $this->call->thread->type,
                 'created_at' => $this->call->created_at,
                 'updated_at' => $this->call->updated_at,
-                $this->mergeWhen($this->call->thread->isGroup(), fn() => [
+                $this->mergeWhen($this->call->thread->isGroup(), fn () => [
                     'thread_name' => $this->call->thread->name(),
                     'api_thread_avatar' => $this->call->thread->threadAvatar(true),
                     'thread_avatar' => $this->call->thread->threadAvatar(),
-                ])
+                ]),
             ],
-            'sender' => new ProviderResource($this->provider)
+            'sender' => new ProviderResource($this->provider),
         ];
     }
 }

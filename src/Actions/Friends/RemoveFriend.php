@@ -48,10 +48,10 @@ class RemoveFriend extends BaseMessengerAction
 
     /**
      * Remove and destroy our friend relationship. This will
-     * remove our friend model and its inverse/mirrored model
+     * remove our friend model and its inverse/mirrored model.
      *
      * @param mixed ...$parameters
-     * @var Friend $parameters[0]
+     * @var Friend[0]
      * @return $this
      * @throws Exception|Throwable
      */
@@ -73,14 +73,11 @@ class RemoveFriend extends BaseMessengerAction
      */
     private function handleTransactions(): self
     {
-        if($this->isChained())
-        {
+        if ($this->isChained()) {
             $this->executeTransactions();
-        }
-        else
-        {
+        } else {
             $this->database->transaction(
-                fn() => $this->executeTransactions()
+                fn () => $this->executeTransactions()
             );
         }
 
@@ -104,8 +101,7 @@ class RemoveFriend extends BaseMessengerAction
      */
     private function executeTransactions(): void
     {
-        if( ! is_null($this->inverseFriend))
-        {
+        if (! is_null($this->inverseFriend)) {
             $this->inverseFriend->delete();
         }
 
@@ -131,8 +127,7 @@ class RemoveFriend extends BaseMessengerAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new FriendRemovedEvent(
                 $this->friend->withoutRelations(),
                 $this->inverseFriend->withoutRelations()

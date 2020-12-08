@@ -53,7 +53,7 @@ class DemotedAdminMessage implements ShouldQueue
             $event->thread,
             $event->provider,
             $this->messageBody($event),
-            'DEMOTED_ADMIN'
+            'DEMOTED_ADMIN',
         ];
     }
 
@@ -64,8 +64,8 @@ class DemotedAdminMessage implements ShouldQueue
     private function messageBody(DemotedAdminEvent $event): string
     {
         return collect([
-            "owner_id" => $event->participant->owner_id,
-            "owner_type" => $event->participant->owner_type
+            'owner_id' => $event->participant->owner_id,
+            'owner_type' => $event->participant->owner_type,
         ])->toJson();
     }
 }

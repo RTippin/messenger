@@ -5,15 +5,15 @@ namespace RTippin\Messenger;
 class Definitions
 {
     /**
-     * All thread types and meanings
+     * All thread types and meanings.
      */
     const Thread = [
         1 => 'PRIVATE',
-        2 => 'GROUP'
+        2 => 'GROUP',
     ];
 
     /**
-     * All message types and meanings
+     * All message types and meanings.
      */
     const Message = [
         0 => 'MESSAGE',
@@ -29,37 +29,37 @@ class Definitions
         96 => 'PROMOTED_ADMIN',
         97 => 'PARTICIPANT_LEFT_GROUP',
         98 => 'PARTICIPANT_REMOVED',
-        99 => 'PARTICIPANTS_ADDED'
+        99 => 'PARTICIPANTS_ADDED',
     ];
 
     /**
-     * All call types and meanings
+     * All call types and meanings.
      */
-    const Call  = [
-        1 => 'VIDEO'
+    const Call = [
+        1 => 'VIDEO',
     ];
 
     /**
-     * All friend types and meanings
+     * All friend types and meanings.
      */
-    const FriendStatus  = [
+    const FriendStatus = [
         0 => 'NOT_FRIEND',
         1 => 'FRIEND',
         2 => 'SENT_FRIEND_REQUEST',
-        3 => 'PENDING_FRIEND_REQUEST'
+        3 => 'PENDING_FRIEND_REQUEST',
     ];
 
     /**
-     * All friend types and meanings
+     * All friend types and meanings.
      */
-    const OnlineStatus  = [
+    const OnlineStatus = [
         0 => 'OFFLINE',
         1 => 'ONLINE',
-        2 => 'AWAY'
+        2 => 'AWAY',
     ];
 
     /**
-     * All default group thread avatars
+     * All default group thread avatars.
      */
     const DefaultGroupAvatars = [
         '1.png',
@@ -70,7 +70,7 @@ class Definitions
     ];
 
     /**
-     * Default thread attributes
+     * Default thread attributes.
      */
     const DefaultThread = [
         'type' => 1,
@@ -81,11 +81,11 @@ class Definitions
         'add_participants' => false,
         'messaging' => true,
         'knocks' => true,
-        'lockout' => false
+        'lockout' => false,
     ];
 
     /**
-     * Default participant
+     * Default participant.
      */
     const DefaultParticipant = [
         'add_participants' => false,
@@ -95,11 +95,11 @@ class Definitions
         'pending' => false,
         'start_calls' => false,
         'send_knocks' => false,
-        'send_messages' => true
+        'send_messages' => true,
     ];
 
     /**
-     * Default admin participant
+     * Default admin participant.
      */
     const DefaultAdminParticipant = [
         'add_participants' => true,
@@ -109,11 +109,11 @@ class Definitions
         'pending' => false,
         'start_calls' => true,
         'send_knocks' => true,
-        'send_messages' => true
+        'send_messages' => true,
     ];
 
     /**
-     * Invite expires at post meanings
+     * Invite expires at post meanings.
      */
     const InviteExpires = [
         0 => 'NEVER',
@@ -124,6 +124,6 @@ class Definitions
         5 => 'ONE_DAY',
         6 => 'ONE_WEEK',
         7 => 'TWO_WEEKS',
-        8 => 'ONE_MONTH'
+        8 => 'ONE_MONTH',
     ];
 }

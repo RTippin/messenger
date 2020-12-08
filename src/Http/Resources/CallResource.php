@@ -69,14 +69,14 @@ class CallResource extends JsonResource
                 'thread_type_verbose' => $this->thread->getTypeVerbose(),
                 'thread_name' => $this->thread->name(),
                 'api_thread_avatar' => $this->thread->threadAvatar(true),
-                'thread_avatar' => $this->thread->threadAvatar()
+                'thread_avatar' => $this->thread->threadAvatar(),
             ],
             'options' => $this->when($this->call->isActive(),
-                fn() => $this->addOptions()
+                fn () => $this->addOptions()
             ),
             'participants' => $this->when($this->shouldAddParticipants(),
-                fn() => $this->addParticipants()
-            )
+                fn () => $this->addParticipants()
+            ),
         ];
     }
 
@@ -92,11 +92,11 @@ class CallResource extends JsonResource
             'left_call' => $this->call->hasLeftCall(),
             'joined' => $this->call->hasJoinedCall(),
             'kicked' => $this->call->wasKicked(),
-            $this->mergeWhen($this->shouldShowRoom(), fn() => [
+            $this->mergeWhen($this->shouldShowRoom(), fn () => [
                 'room_id' => $this->call->room_id,
                 'room_pin' => $this->call->room_pin,
                 'payload' => $this->call->payload,
-            ])
+            ]),
         ];
     }
 

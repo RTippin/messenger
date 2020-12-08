@@ -49,11 +49,10 @@ class PrivateThreadRepository
      */
     public function getProviderPrivateThreadWithRecipient(MessengerProvider $recipient = null): ?Thread
     {
-        if($this->messenger->isValidMessengerProvider($recipient))
-        {
+        if ($this->messenger->isValidMessengerProvider($recipient)) {
             return $this->getProviderPrivateThreadsBuilder()
                 ->whereHas('participants',
-                fn(Builder $query) => $query->where('owner_id', '=', $recipient->getKey())
+                fn (Builder $query) => $query->where('owner_id', '=', $recipient->getKey())
                     ->where('owner_type', '=', get_class($recipient))
             )->first();
         }
@@ -71,7 +70,7 @@ class PrivateThreadRepository
             ->with([
                 'participants.owner',
                 'recentMessage.owner',
-                'activeCall.participants.owner'
+                'activeCall.participants.owner',
             ])
             ->limit($this->messenger->getThreadsIndexCount())
             ->get();
@@ -88,7 +87,7 @@ class PrivateThreadRepository
             ->with([
                 'participants.owner',
                 'recentMessage.owner',
-                'activeCall.participants.owner'
+                'activeCall.participants.owner',
             ])
             ->where('threads.updated_at', '<=', $thread->updated_at)
             ->where('threads.id', '!=', $thread->id)

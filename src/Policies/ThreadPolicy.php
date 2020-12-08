@@ -34,7 +34,7 @@ class ThreadPolicy
     }
 
     /**
-     * Determine whether the provider can join thread socket channel
+     * Determine whether the provider can join thread socket channel.
      *
      * @param $user
      * @param Thread $thread
@@ -48,7 +48,7 @@ class ThreadPolicy
     }
 
     /**
-     * Determine whether the provider can accept a pending thread request
+     * Determine whether the provider can accept a pending thread request.
      *
      * @param $user
      * @param Thread $thread
@@ -164,11 +164,9 @@ class ThreadPolicy
      */
     public function leave($user, Thread $thread)
     {
-        if($thread->isGroup() && $thread->hasCurrentProvider())
-        {
-            if( ! $thread->isAdmin()
-                || $thread->participants()->count() === 1)
-            {
+        if ($thread->isGroup() && $thread->hasCurrentProvider()) {
+            if (! $thread->isAdmin()
+                || $thread->participants()->count() === 1) {
                 return $this->allow();
             }
 
@@ -189,10 +187,8 @@ class ThreadPolicy
      */
     public function delete($user, Thread $thread)
     {
-        if($thread->hasCurrentProvider())
-        {
-            if($thread->hasActiveCall())
-            {
+        if ($thread->hasCurrentProvider()) {
+            if ($thread->hasActiveCall()) {
                 return $this->deny('Not authorized to archive thread while there is an ongoing call.');
             }
 

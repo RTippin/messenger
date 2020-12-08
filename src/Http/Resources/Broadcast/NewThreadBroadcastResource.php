@@ -2,10 +2,10 @@
 
 namespace RTippin\Messenger\Http\Resources\Broadcast;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Http\Resources\ProviderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Models\Thread;
 
 class NewThreadBroadcastResource extends JsonResource
@@ -60,13 +60,13 @@ class NewThreadBroadcastResource extends JsonResource
                 'type' => $this->thread->type,
                 'type_verbose' => $this->thread->getTypeVerbose(),
                 'created_at' => $this->thread->created_at,
-                $this->mergeWhen($this->thread->isGroup(), fn() => [
+                $this->mergeWhen($this->thread->isGroup(), fn () => [
                     'name' => $this->thread->name(),
                     'api_avatar' => $this->thread->threadAvatar(true),
                     'avatar' => $this->thread->threadAvatar(),
-                ])
+                ]),
             ],
-            'sender' => new ProviderResource($this->provider)
+            'sender' => new ProviderResource($this->provider),
         ];
     }
 }

@@ -46,12 +46,12 @@ class UpdateParticipantPermissions extends ThreadParticipantAction
     }
 
     /**
-     * Update the participants permissions
+     * Update the participants permissions.
      *
      * @param mixed ...$parameters
-     * @var Thread $thread $parameters[0]
-     * @var Participant $participant $parameters[1]
-     * @var ParticipantPermissionsRequest $validated $parameters[2]
+     * @var Thread $parameters[0]
+     * @var Participant $parameters[1]
+     * @var ParticipantPermissionsRequest $parameters[2]
      * @return $this
      */
     public function execute(...$parameters): self
@@ -63,8 +63,7 @@ class UpdateParticipantPermissions extends ThreadParticipantAction
             )
             ->generateResource();
 
-        if($this->getParticipant()->wasChanged())
-        {
+        if ($this->getParticipant()->wasChanged()) {
             $this->fireBroadcast()->fireEvents();
         }
 
@@ -89,8 +88,7 @@ class UpdateParticipantPermissions extends ThreadParticipantAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->to($this->getParticipant())
                 ->with($this->generateBroadcastResource())
@@ -105,8 +103,7 @@ class UpdateParticipantPermissions extends ThreadParticipantAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ParticipantPermissionsEvent(
                 $this->messenger->getProvider()->withoutRelations(),
                 $this->getThread(true),
@@ -123,7 +120,7 @@ class UpdateParticipantPermissions extends ThreadParticipantAction
     private function generateBroadcastResource(): array
     {
         return [
-            'thread_id' => $this->getThread()->id
+            'thread_id' => $this->getThread()->id,
         ];
     }
 }

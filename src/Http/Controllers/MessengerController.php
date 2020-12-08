@@ -115,9 +115,8 @@ class MessengerController
      */
     private function allowedToUploadAvatar()
     {
-        if( ! $this->messenger->isProviderAvatarUploadEnabled())
-        {
-            throw new AuthorizationException("Avatar uploads are currently disabled.");
+        if (! $this->messenger->isProviderAvatarUploadEnabled()) {
+            throw new AuthorizationException('Avatar uploads are currently disabled.');
         }
     }
 
@@ -126,9 +125,8 @@ class MessengerController
      */
     private function allowedToRemoveAvatar()
     {
-        if( ! $this->messenger->isProviderAvatarRemovalEnabled())
-        {
-            throw new AuthorizationException("Avatar removal is currently disabled.");
+        if (! $this->messenger->isProviderAvatarRemovalEnabled()) {
+            throw new AuthorizationException('Avatar removal is currently disabled.');
         }
     }
 }

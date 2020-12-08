@@ -2,10 +2,10 @@
 
 namespace RTippin\Messenger\Http\Resources\Broadcast;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Http\Resources\ProviderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Models\Thread;
 
 class ThreadApprovalBroadcastResource extends JsonResource
@@ -55,9 +55,9 @@ class ThreadApprovalBroadcastResource extends JsonResource
         return [
             'thread' => [
                 'id' => $this->thread->id,
-                'approved' => $this->approved
+                'approved' => $this->approved,
             ],
-            'sender' => new ProviderResource($this->provider)
+            'sender' => new ProviderResource($this->provider),
         ];
     }
 }

@@ -2,16 +2,15 @@
 
 namespace RTippin\Messenger\Actions\Threads;
 
-
 use RTippin\Messenger\Models\Thread;
 
 class UnmuteThread extends ThreadParticipantAction
 {
     /**
-     * Unmute the thread for the current participant
+     * Unmute the thread for the current participant.
      *
      * @param mixed ...$parameters
-     * @var Thread $thread $parameters[0]
+     * @var Thread $parameters[0]
      * @return $this
      */
     public function execute(...$parameters): self

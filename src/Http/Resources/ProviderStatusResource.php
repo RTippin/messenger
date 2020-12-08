@@ -12,7 +12,6 @@ use RTippin\Messenger\Repositories\ThreadRepository;
 /**
  * @property-read Model|MessengerProvider $provider
  */
-
 class ProviderStatusResource extends JsonResource
 {
     /**
@@ -53,7 +52,7 @@ class ProviderStatusResource extends JsonResource
             'online_status_verbose' => Definitions::OnlineStatus[$this->provider->onlineStatus()],
             'unread_threads_count' => $this->unreadThreadsCount(),
             'pending_friends_count' => $this->pendingFriendsCount(),
-            'settings' => messenger()->getProviderMessenger($this->provider)
+            'settings' => messenger()->getProviderMessenger($this->provider),
         ];
     }
 

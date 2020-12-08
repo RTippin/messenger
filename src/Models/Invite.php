@@ -2,16 +2,16 @@
 
 namespace RTippin\Messenger\Models;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Traits\Uuids;
 
 /**
- * App\Models\Messages\Invite
+ * App\Models\Messages\Invite.
  *
  * @property string $id
  * @property string $thread_id
@@ -50,7 +50,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Invite extends Model
 {
     use Uuids;
-
     use SoftDeletes;
 
     /**
@@ -85,7 +84,7 @@ class Invite extends Model
      */
     public function owner()
     {
-        return $this->morphTo()->withDefault(function(){
+        return $this->morphTo()->withDefault(function () {
             return messenger()->getGhostProvider();
         });
     }
@@ -103,21 +102,21 @@ class Invite extends Model
     }
 
     /**
-     * Scope valid invites that have not expired or reached max use
+     * Scope valid invites that have not expired or reached max use.
      *
      * @param Builder $query
      * @return Builder
      */
     public function scopeValid(Builder $query): Builder
     {
-        return $query->where(fn(Builder $q) => $q->where('max_use', '=', 0)
+        return $query->where(fn (Builder $q) => $q->where('max_use', '=', 0)
             ->orWhere('thread_invites.uses', '<', $q->raw('thread_invites.max_use'))
-        )->where(fn(Builder $q) => $q->whereNull('expires_at')
+        )->where(fn (Builder $q) => $q->whereNull('expires_at')
             ->orWhere('expires_at', '>', now()));
     }
 
     /**
-     * Scope invalid invites that are not yet deleted but are expired / past max use
+     * Scope invalid invites that are not yet deleted but are expired / past max use.
      *
      * @param Builder $query
      * @return Builder
@@ -125,7 +124,7 @@ class Invite extends Model
     public function scopeInvalid(Builder $query): Builder
     {
         return $query->where('expires_at', '<=', now())
-            ->orWhere(fn(Builder $q) => $q->where('max_use', '!=', 0)
+            ->orWhere(fn (Builder $q) => $q->where('max_use', '!=', 0)
                 ->where('thread_invites.uses', '>=', $q->raw('thread_invites.max_use'))
             );
     }

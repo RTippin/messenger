@@ -16,13 +16,12 @@ use RTippin\Messenger\Broadcasting\ThreadChannel;
 trait ChannelMap
 {
     /**
-     * Register all broadcast channels used by messenger
+     * Register all broadcast channels used by messenger.
      * @throws BindingResolutionException
      */
     protected function registerChannels()
     {
-        if($this->app['config']->get('messenger.routing.channels.enabled'))
-        {
+        if ($this->app['config']->get('messenger.routing.channels.enabled')) {
             $this->app->make(BroadcastManager::class)
                 ->routes($this->channelRouteConfiguration());
 

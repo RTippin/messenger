@@ -45,11 +45,11 @@ class ArchiveThread extends BaseMessengerAction
     }
 
     /**
-     * Archive the thread :(
+     * Archive the thread :(.
      *
      * @param mixed ...$parameters
      * @return $this
-     * @var Thread $thread $parameters[0]
+     * @var Thread $parameters[0]
      * @throws Exception
      */
     public function execute(...$parameters): self
@@ -78,8 +78,7 @@ class ArchiveThread extends BaseMessengerAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->toAllInThread($this->getThread())
                 ->with($this->generateBroadcastResource())
@@ -94,8 +93,7 @@ class ArchiveThread extends BaseMessengerAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ThreadArchivedEvent(
                 $this->messenger->getProvider()->withoutRelations(),
                 $this->getThread(true)
@@ -111,7 +109,7 @@ class ArchiveThread extends BaseMessengerAction
     private function generateBroadcastResource(): array
     {
         return [
-            'thread_id' => $this->getThread()->id
+            'thread_id' => $this->getThread()->id,
         ];
     }
 }

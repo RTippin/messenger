@@ -81,34 +81,31 @@ class PushNotificationBroker implements PushNotificationDriver
      */
     public function notify(string $abstract): void
     {
-        if( ! is_null($this->recipients)
-            && $this->recipients->count())
-        {
+        if (! is_null($this->recipients)
+            && $this->recipients->count()) {
             $broadcastAs = $this->getBroadcastAs($abstract);
 
             $filteredRecipients = $this->extractValidProviders();
 
-            if($filteredRecipients->count())
-            {
+            if ($filteredRecipients->count()) {
                 $this->dispatchNotification($broadcastAs, $filteredRecipients);
             }
         }
     }
 
     /**
-     * Construct the broadcast event to get the name defined
+     * Construct the broadcast event to get the name defined.
      *
      * @param string $abstract
      * @return string
      */
     protected function getBroadcastAs(string $abstract): string
     {
-        try{
+        try {
             return $this->app
                 ->make($abstract)
                 ->broadcastAs();
-
-        }catch (BindingResolutionException $e) {
+        } catch (BindingResolutionException $e) {
             report($e);
             //continue on
         }
@@ -125,18 +122,17 @@ class PushNotificationBroker implements PushNotificationDriver
     protected function extractValidProviders(): Collection
     {
         return $this->recipients->map(
-            fn($recipient) => $this->extractProvider($recipient)
+            fn ($recipient) => $this->extractProvider($recipient)
         )
             ->reject(
-                fn($recipient) => ! count($recipient)
+                fn ($recipient) => ! count($recipient)
             )->reject(
-                fn($recipient) => ! in_array($recipient['owner_type'], $this->messenger->getAllProvidersWithDevices())
+                fn ($recipient) => ! in_array($recipient['owner_type'], $this->messenger->getAllProvidersWithDevices())
             )
             ->uniqueStrict('owner_id');
     }
 
     /**
-     *
      * @param mixed $recipient
      * @return array
      */
@@ -148,30 +144,28 @@ class PushNotificationBroker implements PushNotificationDriver
 
         $participants = [
             Participant::class,
-            CallParticipant::class
+            CallParticipant::class,
         ];
 
-        if(in_array($abstract, $participants)
+        if (in_array($abstract, $participants)
             && $this->messenger
-                ->isValidMessengerProvider($recipient->owner_type))
-        {
+                ->isValidMessengerProvider($recipient->owner_type)) {
             /** @var Participant|CallParticipant $recipient */
 
             return [
                 'owner_type' => $recipient->owner_type,
-                'owner_id' => $recipient->owner_id
+                'owner_id' => $recipient->owner_id,
             ];
         }
 
-        if( ! in_array($abstract, $participants)
+        if (! in_array($abstract, $participants)
             && $this->messenger
-                ->isValidMessengerProvider($recipient))
-        {
+                ->isValidMessengerProvider($recipient)) {
             /** @var MessengerProvider $recipient */
 
             return [
                 'owner_type' => get_class($recipient),
-                'owner_id' => $recipient->getKey()
+                'owner_id' => $recipient->getKey(),
             ];
         }
 

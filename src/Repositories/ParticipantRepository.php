@@ -25,7 +25,7 @@ class ParticipantRepository
     }
 
     /**
-     * Get all participants who pass our requirements for broadcasting
+     * Get all participants who pass our requirements for broadcasting.
      *
      * @param Thread $thread
      * @return Collection

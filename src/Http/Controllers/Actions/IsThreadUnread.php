@@ -23,7 +23,7 @@ class IsThreadUnread
         $this->authorize('view', $thread);
 
         return new JsonResponse([
-            'unread' => $thread->isUnread()
+            'unread' => $thread->isUnread(),
         ], 200);
     }
 }

@@ -53,7 +53,7 @@ class ThreadLeftMessage implements ShouldQueue
             $event->thread,
             $event->provider,
             'left the group',
-            'PARTICIPANT_LEFT_GROUP'
+            'PARTICIPANT_LEFT_GROUP',
         ];
     }
 }

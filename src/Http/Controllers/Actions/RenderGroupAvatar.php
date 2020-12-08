@@ -5,8 +5,8 @@ namespace RTippin\Messenger\Http\Controllers\Actions;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\ImageRenderService;
+use RTippin\Messenger\Models\Thread;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 
 class RenderGroupAvatar
@@ -14,7 +14,7 @@ class RenderGroupAvatar
     use AuthorizesRequests;
 
     /**
-     * Render group avatar
+     * Render group avatar.
      *
      * @param ImageRenderService $service
      * @param Thread $thread

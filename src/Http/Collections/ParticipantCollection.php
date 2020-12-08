@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Http\Collections;
 
-use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use Exception;
 use Illuminate\Http\Request;
+use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use RTippin\Messenger\Http\Resources\ParticipantResource;
 use RTippin\Messenger\Models\Thread;
 use Throwable;
@@ -51,7 +51,7 @@ class ParticipantCollection extends MessengerCollection
                 'final_page' => $this->isFinalPage(),
                 'per_page' => $this->perPageConfig(),
                 'results' => $this->collection->count(),
-                'total' => $this->grandTotal()
+                'total' => $this->grandTotal(),
             ],
         ];
     }
@@ -61,11 +61,11 @@ class ParticipantCollection extends MessengerCollection
      */
     protected function makeResource($participant): ?array
     {
-        try{
+        try {
             return (new ParticipantResource($participant, $this->thread))->resolve();
-        }catch (Exception $e){
+        } catch (Exception $e) {
             report($e);
-        }catch(Throwable $t){
+        } catch (Throwable $t) {
             report($t);
         }
 

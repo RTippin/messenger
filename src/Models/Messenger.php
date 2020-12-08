@@ -6,9 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
 
-
 /**
- * App\Models\Messages\Messenger
+ * App\Models\Messages\Messenger.
  *
  * @property string $owner_type
  * @property string $owner_id
@@ -55,7 +54,7 @@ class Messenger extends Model
         'online_status' => 1,
         'dark_mode' => 1,
         'ip' => null,
-        'timezone' => null
+        'timezone' => null,
     ];
 
     /**
@@ -82,7 +81,7 @@ class Messenger extends Model
      */
     protected $hidden = [
         'ip',
-        'timezone'
+        'timezone',
     ];
 
     /**
@@ -95,7 +94,7 @@ class Messenger extends Model
         'message_sound' => 'boolean',
         'call_ringtone_sound' => 'boolean',
         'notify_sound' => 'boolean',
-        'dark_mode' => 'boolean'
+        'dark_mode' => 'boolean',
     ];
 
     /**

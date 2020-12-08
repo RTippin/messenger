@@ -2,18 +2,18 @@
 
 namespace RTippin\Messenger;
 
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use ReflectionClass;
+use ReflectionException;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Searchable;
-use ReflectionClass;
-use Illuminate\Support\Collection;
-use ReflectionException;
-use Illuminate\Support\Str;
 
 trait ProviderVerification
 {
     /**
      * On boot, we set the services allowed provider classes.
-     * We pass them through some validations
+     * We pass them through some validations.
      *
      * @param array $providers
      * @return Collection
@@ -32,7 +32,7 @@ trait ProviderVerification
     }
 
     /**
-     * Collect and return valid classes that implement MessengerProvider
+     * Collect and return valid classes that implement MessengerProvider.
      *
      * @param array $providers
      * @return Collection
@@ -40,26 +40,26 @@ trait ProviderVerification
     private function collectAndFilterProviders(array $providers): Collection
     {
         return collect($providers)->filter(
-            fn($provider) => $this->passesProviderValidation($provider)
+            fn ($provider) => $this->passesProviderValidation($provider)
         );
     }
 
     /**
-     * Force all provider aliases to be lowercase and remove underscores
+     * Force all provider aliases to be lowercase and remove underscores.
      *
      * @param Collection $providers
      * @return Collection
      */
     private function sanitizeAliasKey(Collection $providers): Collection
     {
-        return $providers->mapWithKeys(fn($provider, $alias) => [
-                $this->sanitizeAlias($alias) => $provider
-            ]
+        return $providers->mapWithKeys(fn ($provider, $alias) => [
+            $this->sanitizeAlias($alias) => $provider,
+        ]
         );
     }
 
     /**
-     * Pass valid providers through config checker for traits
+     * Pass valid providers through config checker for traits.
      *
      * @param Collection $providers
      * @return Collection
@@ -67,32 +67,31 @@ trait ProviderVerification
      */
     private function verifyProviderConfigs(Collection $providers): Collection
     {
-        return $providers->map(fn($provider) => [
+        return $providers->map(fn ($provider) => [
             'model' => $provider['model'],
             'searchable' => $this->passesSearchable($provider),
             'friendable' => $this->passesFriendable($provider),
             'mobile_devices' => $this->passesHasDevices($provider),
             'default_avatar' => $provider['default_avatar'],
-            'provider_interactions' => $provider['provider_interactions']
+            'provider_interactions' => $provider['provider_interactions'],
         ]);
     }
 
     /**
-     * Verify all provider interactions listed
+     * Verify all provider interactions listed.
      *
      * @param Collection $providers
      * @return Collection
      */
     private function verifyProviderInteractions(Collection $providers): Collection
     {
-        return $providers->map(fn($provider, $alias) =>
-             array_merge($provider, [
-                'provider_interactions' => [
-                    'can_message' => $this->validatesCanMessage($alias, $provider, $providers),
-                    'can_search' => $this->validatesCanSearch($alias, $provider, $providers),
-                    'can_friend' => $this->validatesCanFriend($alias, $provider, $providers),
-                ]
-            ])
+        return $providers->map(fn ($provider, $alias) => array_merge($provider, [
+            'provider_interactions' => [
+                'can_message' => $this->validatesCanMessage($alias, $provider, $providers),
+                'can_search' => $this->validatesCanSearch($alias, $provider, $providers),
+                'can_friend' => $this->validatesCanFriend($alias, $provider, $providers),
+            ],
+        ])
         );
     }
 
@@ -163,17 +162,14 @@ trait ProviderVerification
     {
         $canMessage = $provider['provider_interactions']['can_message'];
 
-        if($canMessage !== true)
-        {
-            if(is_null($canMessage)
+        if ($canMessage !== true) {
+            if (is_null($canMessage)
                 || empty($canMessage)
-                || $canMessage === false)
-            {
+                || $canMessage === false) {
                 return [$alias];
             }
 
-            return $this->explodeAndCollect($canMessage)->reject(fn($value) =>
-                $value === $alias || ! $providers->has($value)
+            return $this->explodeAndCollect($canMessage)->reject(fn ($value) => $value === $alias || ! $providers->has($value)
             )
             ->push($alias)
             ->values()
@@ -195,19 +191,16 @@ trait ProviderVerification
     {
         $canSearch = $provider['provider_interactions']['can_search'];
 
-        if($canSearch !== true)
-        {
-            if(is_null($canSearch)
+        if ($canSearch !== true) {
+            if (is_null($canSearch)
                 || empty($canSearch)
-                || $canSearch === false)
-            {
+                || $canSearch === false) {
                 return $provider['searchable'] === true
                     ? [$alias]
                     : [];
             }
 
-            $filtered = $this->explodeAndCollect($canSearch)->reject(fn($value) =>
-                $value === $alias
+            $filtered = $this->explodeAndCollect($canSearch)->reject(fn ($value) => $value === $alias
                 || ! $providers->has($value)
                 || $providers->get($value)['searchable'] === false
             );
@@ -218,7 +211,7 @@ trait ProviderVerification
         }
 
         return $providers->filter(
-            fn($provider) => $provider['searchable'] === true
+            fn ($provider) => $provider['searchable'] === true
         )
         ->keys()
         ->toArray();
@@ -235,24 +228,20 @@ trait ProviderVerification
                                         array $provider,
                                         Collection $providers): array
     {
-        if($provider['friendable'] === false)
-        {
+        if ($provider['friendable'] === false) {
             return [];
         }
 
         $canFriend = $provider['provider_interactions']['can_friend'];
 
-        if($canFriend !== true)
-        {
-            if(is_null($canFriend)
+        if ($canFriend !== true) {
+            if (is_null($canFriend)
                 || empty($canFriend)
-                || $canFriend === false)
-            {
+                || $canFriend === false) {
                 return [$alias];
             }
 
-            $filtered = $this->explodeAndCollect($canFriend)->reject(fn($value) =>
-                $value === $alias
+            $filtered = $this->explodeAndCollect($canFriend)->reject(fn ($value) => $value === $alias
                 || ! $providers->has($value)
                 || $providers->get($value)['friendable'] === false
             );
@@ -263,7 +252,7 @@ trait ProviderVerification
         }
 
         return $providers->filter(
-            fn($provider) => $provider['friendable'] === true
+            fn ($provider) => $provider['friendable'] === true
         )
         ->keys()
         ->toArray();
@@ -316,12 +305,10 @@ trait ProviderVerification
      */
     public function passesReflectionInterface(string $abstract, string $contract): bool
     {
-        try{
-
+        try {
             return (new ReflectionClass($abstract))
                 ->implementsInterface($contract);
-
-        }catch (ReflectionException $e){
+        } catch (ReflectionException $e) {
             //skip
         }
 

@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 
@@ -59,8 +58,8 @@ class ParticipantResource extends JsonResource
             'updated_at' => $this->participant->updated_at,
             'last_read' => [
                 'time' => $this->participant->last_read,
-                'message_id' => $this->lastSeenMessageId()
-            ]
+                'message_id' => $this->lastSeenMessageId(),
+            ],
         ];
     }
 
@@ -69,13 +68,11 @@ class ParticipantResource extends JsonResource
      */
     private function lastSeenMessageId(): ?string
     {
-        if(is_null($this->participant->last_read))
-        {
+        if (is_null($this->participant->last_read)) {
             return null;
         }
 
-        if($this->thread->updated_at <= $this->participant->last_read)
-        {
+        if ($this->thread->updated_at <= $this->participant->last_read) {
             return optional($this->thread->recentMessage)->id;
         }
 

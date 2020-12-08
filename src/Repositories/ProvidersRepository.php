@@ -30,7 +30,6 @@ class ProvidersRepository
     public function getProviderUsingAliasAndId(string $alias, string $id): ?MessengerProvider
     {
         /** @var MessengerProvider $provider */
-
         $provider = $this->messenger->findAliasProvider($alias);
 
         return $provider

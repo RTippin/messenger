@@ -42,7 +42,6 @@ abstract class NewMessageAction extends BaseMessengerAction
                                 DatabaseManager $database,
                                 Dispatcher $dispatcher)
     {
-
         $this->broadcaster = $broadcaster;
         $this->dispatcher = $dispatcher;
         $this->database = $database;
@@ -61,15 +60,12 @@ abstract class NewMessageAction extends BaseMessengerAction
                                           string $body,
                                           string $temporaryId = null): self
     {
-        if($this->isChained())
-        {
+        if ($this->isChained()) {
             $this->executeTransactions(
                 $owner, $type, $body, $temporaryId
             );
-        }
-        else
-        {
-            $this->database->transaction(fn() => $this->executeTransactions(
+        } else {
+            $this->database->transaction(fn () => $this->executeTransactions(
                     $owner, $type, $body, $temporaryId
             ), 5);
         }
@@ -78,7 +74,7 @@ abstract class NewMessageAction extends BaseMessengerAction
     }
 
     /**
-     * Generate the message resource
+     * Generate the message resource.
      *
      * @return $this
      */
@@ -97,8 +93,7 @@ abstract class NewMessageAction extends BaseMessengerAction
      */
     protected function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->toAllInThread($this->getThread())
                 ->with($this->getJsonResource()->resolve())
@@ -113,8 +108,7 @@ abstract class NewMessageAction extends BaseMessengerAction
      */
     protected function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new NewMessageEvent(
                 $this->getData(true)
             ));
@@ -138,8 +132,7 @@ abstract class NewMessageAction extends BaseMessengerAction
             $owner, $type, $body, $temporaryId
         );
 
-        if($this->shouldExecuteChains())
-        {
+        if ($this->shouldExecuteChains()) {
             $this->getThread()->touch();
 
             $this->chain(MarkParticipantRead::class)
@@ -152,7 +145,7 @@ abstract class NewMessageAction extends BaseMessengerAction
 
     /**
      * Store message, attach owner relation from
-     * provider in memory, add temp ID
+     * provider in memory, add temp ID.
      *
      * @param MessengerProvider $owner
      * @param string $type
@@ -169,14 +162,14 @@ abstract class NewMessageAction extends BaseMessengerAction
             $this->getThread()
                 ->messages()
                 ->create([
-                    'type' => array_search($type,Definitions::Message),
+                    'type' => array_search($type, Definitions::Message),
                     'owner_id' => $owner->getKey(),
                     'owner_type' => get_class($owner),
-                    'body' => $body
+                    'body' => $body,
                 ])
                 ->setRelations([
                     'owner' => $owner,
-                    'thread' => $this->getThread()
+                    'thread' => $this->getThread(),
                 ])
                 ->setTemporaryId($temporaryId)
         );

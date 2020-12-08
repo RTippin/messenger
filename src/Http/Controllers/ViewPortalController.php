@@ -24,7 +24,7 @@ class ViewPortalController
     {
         return view('messenger::portal')->with([
             'mode' => 0,
-            'thread_id' => $thread
+            'thread_id' => $thread,
         ]);
     }
 
@@ -38,7 +38,7 @@ class ViewPortalController
         return view('messenger::portal')->with([
             'mode' => 3,
             'alias' => $alias,
-            'id' => $id
+            'id' => $id,
         ]);
     }
 
@@ -51,7 +51,7 @@ class ViewPortalController
     {
         return view('messenger::video')->with([
             'threadId' => $thread,
-            'callId' => $call
+            'callId' => $call,
         ]);
     }
 
@@ -63,7 +63,7 @@ class ViewPortalController
     {
         return view('messenger::invitation')->with([
             'code' => $invite,
-            'special_flow' => true
+            'special_flow' => true,
         ]);
     }
 }

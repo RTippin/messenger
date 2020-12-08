@@ -9,7 +9,7 @@ interface PushNotificationDriver
     /**
      * Set recipients to the provided collection. Collection may
      * contain a mix of messenger providers, thread participants,
-     * or call participants
+     * or call participants.
      *
      * @param Collection $recipients
      * @return $this
@@ -17,7 +17,7 @@ interface PushNotificationDriver
     public function to(Collection $recipients): self;
 
     /**
-     * Set the resource we will use to broadcast out
+     * Set the resource we will use to broadcast out.
      *
      * @param array $resource
      * @return $this

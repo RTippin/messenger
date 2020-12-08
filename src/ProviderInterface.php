@@ -2,11 +2,11 @@
 
 namespace RTippin\Messenger;
 
+use Illuminate\Contracts\Foundation\Application;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Exceptions\InvalidMessengerProvider;
-use RTippin\Messenger\Models\Messenger as MessengerModel;
-use Illuminate\Contracts\Foundation\Application;
 use RTippin\Messenger\Models\GhostUser;
+use RTippin\Messenger\Models\Messenger as MessengerModel;
 use RTippin\Messenger\Models\Participant;
 
 /**
@@ -84,7 +84,7 @@ trait ProviderInterface
      * It is recommended to set this in a middleware, after you have acquired your authenticated
      * user/provider. Most actions and methods require a provider being set before being used.
      * You may even choose to set many different providers in a row during a single cycle,
-     * such as in a custom job or action
+     * such as in a custom job or action.
      *
      * @param MessengerProvider|mixed|null $provider
      * @return $this
@@ -92,8 +92,7 @@ trait ProviderInterface
      */
     public function setProvider($provider = null): self
     {
-        if( ! $this->isValidMessengerProvider($provider))
-        {
+        if (! $this->isValidMessengerProvider($provider)) {
             $this->unsetProvider()->throwProviderError();
         }
 
@@ -116,33 +115,29 @@ trait ProviderInterface
 
     /**
      * This will firstOrCreate a messenger model instance
-     * for the given or currently set provider
+     * for the given or currently set provider.
      *
      * @param MessengerProvider|mixed|null $provider
      * @return MessengerModel|null
      */
     public function getProviderMessenger($provider = null): ?MessengerModel
     {
-        if($this->isProviderSet()
+        if ($this->isProviderSet()
             && (is_null($provider)
-                || $this->getProvider()->is($provider)))
-        {
-            if(is_null($this->providerMessengerModel))
-            {
+                || $this->getProvider()->is($provider))) {
+            if (is_null($this->providerMessengerModel)) {
                 $this->providerMessengerModel = MessengerModel::firstOrCreate([
                     'owner_id' => $this->getProviderId(),
-                    'owner_type' => $this->getProviderClass()
+                    'owner_type' => $this->getProviderClass(),
                 ]);
             }
 
             return $this->providerMessengerModel;
-        }
-        else if( ! is_null($provider)
-            && $this->isValidMessengerProvider($provider))
-        {
+        } elseif (! is_null($provider)
+            && $this->isValidMessengerProvider($provider)) {
             return MessengerModel::firstOrCreate([
                 'owner_id' => $provider->getKey(),
-                'owner_type' => get_class($provider)
+                'owner_type' => get_class($provider),
             ]);
         }
 
@@ -150,7 +145,7 @@ trait ProviderInterface
     }
 
     /**
-     * Unset the active provider
+     * Unset the active provider.
      *
      * @return $this
      * @noinspection PhpUndefinedMethodInspection
@@ -174,7 +169,7 @@ trait ProviderInterface
     }
 
     /**
-     * Get the current Messenger Provider
+     * Get the current Messenger Provider.
      *
      * @return MessengerProvider|null
      */
@@ -184,7 +179,7 @@ trait ProviderInterface
     }
 
     /**
-     * Get the current alias of the set Messenger Provider
+     * Get the current alias of the set Messenger Provider.
      *
      * @return string
      */
@@ -194,7 +189,7 @@ trait ProviderInterface
     }
 
     /**
-     * Get the current primary key of the set Messenger Provider
+     * Get the current primary key of the set Messenger Provider.
      *
      * @return int|string|null
      */
@@ -204,7 +199,7 @@ trait ProviderInterface
     }
 
     /**
-     * Get the current base class of set Messenger Provider
+     * Get the current base class of set Messenger Provider.
      *
      * @return string|null
      */
@@ -274,14 +269,13 @@ trait ProviderInterface
     }
 
     /**
-     * Get the ghost model
+     * Get the ghost model.
      *
      * @return GhostUser
      */
     public function getGhostProvider(): GhostUser
     {
-        if($this->ghost)
-        {
+        if ($this->ghost) {
             return $this->ghost;
         }
 
@@ -289,16 +283,15 @@ trait ProviderInterface
     }
 
     /**
-     * Get a ghost participant model
+     * Get a ghost participant model.
      *
      * @param $threadId
      * @return Participant
      */
     public function getGhostParticipant($threadId): Participant
     {
-        if($this->ghostParticipant
-            && $this->ghostParticipant->thread_id === $threadId)
-        {
+        if ($this->ghostParticipant
+            && $this->ghostParticipant->thread_id === $threadId) {
             return $this->ghostParticipant;
         }
 
@@ -307,7 +300,7 @@ trait ProviderInterface
             'admin' => 0,
             'muted' => 1,
             'pending' => 1,
-            'last_read' => null
+            'last_read' => null,
         ]);
 
         return $this->ghostParticipant;
@@ -323,18 +316,17 @@ trait ProviderInterface
 
     /**
      * Get all base classes of valid providers the current
-     * Messenger Provider can search
+     * Messenger Provider can search.
      *
      * @return array
      */
     public function getSearchableForCurrentProvider(): array
     {
-        return $this->providers->filter(fn($provider, $alias) =>
-            $provider['searchable'] === true
+        return $this->providers->filter(fn ($provider, $alias) => $provider['searchable'] === true
             && in_array($alias, $this->providerCanSearch)
         )
         ->map(
-            fn($provider) => $provider['model']
+            fn ($provider) => $provider['model']
         )
         ->flatten()
         ->toArray();
@@ -342,19 +334,18 @@ trait ProviderInterface
 
     /**
      * Get all base classes of valid providers the current
-     * Messenger Provider can initiate a friend request with
+     * Messenger Provider can initiate a friend request with.
      *
      * @return array
      * @noinspection SpellCheckingInspection
      */
     public function getFriendableForCurrentProvider(): array
     {
-        return $this->providers->filter(fn($provider, $alias) =>
-            $provider['friendable'] === true
+        return $this->providers->filter(fn ($provider, $alias) => $provider['friendable'] === true
             && in_array($alias, $this->providerCanFriend)
         )
         ->map(
-            fn($provider) => $provider['model']
+            fn ($provider) => $provider['model']
         )
         ->flatten()
         ->toArray();

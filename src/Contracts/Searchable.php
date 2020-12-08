@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Contracts\Searchable
+ * App\Contracts\Searchable.
  *
  * @mixin Model
  */
