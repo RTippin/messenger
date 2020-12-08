@@ -49,16 +49,15 @@ If you discover any security related issues, please email author email instead o
 
 ## License
 
-license. Please see the [license file](license.md) for more information.
+license. Please see the [license file](LICENSE.md) for more information.
 
 [ico-version]: https://img.shields.io/packagist/v/rtippin/messenger.svg?style=flat-square
 [ico-downloads]: https://img.shields.io/packagist/dt/rtippin/messenger.svg?style=flat-square
 [ico-travis]: https://img.shields.io/travis/rtippin/messenger/master.svg?style=flat-square
-[ico-styleci]: https://styleci.io/repos/12345678/shield
+[ico-styleci]: https://styleci.io/repos/309521487/shield
 
 [link-packagist]: https://packagist.org/packages/rtippin/messenger
 [link-downloads]: https://packagist.org/packages/rtippin/messenger
 [link-travis]: https://travis-ci.org/rtippin/messenger
-[link-styleci]: https://styleci.io/repos/12345678
+[link-styleci]: https://styleci.io/repos/309521487
 [link-author]: https://github.com/rtippin
-[link-contributors]: ../../contributors
