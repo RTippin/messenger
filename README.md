@@ -5,7 +5,11 @@
 [![Build Status][ico-travis]][link-travis]
 [![StyleCI][ico-styleci]][link-styleci]
 
-This is where your description should go. Take a look at [contributing.md](contributing.md) to see a to do list.
+# Laravel 8 Messenger suite
+
+### Prerequisites
+- PHP >= 7.4
+- Laravel >= 8.x
 
 ## Installation
 
@@ -15,21 +19,25 @@ Via Composer
 $ composer require rtippin/messenger
 ```
 
-## Usage
+Publish package assets / configs / views
+
+```bash
+$ php artisan messenger:publish
+```
+
+Check out the published `messenger.php` config file in your config/ directory. You are going to want to first specify if you plan to use UUIDs on your provider models before running the migrations.
+
+```bash
+$ php artisan migrate
+```
+
+Add every provider model you wish to use within the providers array in our config. Each provider will need to implement our `MessengerProvider` contract. We include a Messageable trait you can use on your providers that will usually suffice for your needs.
+
+If you want your provider to be searchable, you must implement our `Searchable` contract on those providers. We also include a Search trait that works out of the box with the default laravel User model.
 
 ## Change log
 
 Please see the [changelog](changelog.md) for more information on what has changed recently.
-
-## Testing
-
-``` bash
-$ composer test
-```
-
-## Contributing
-
-Please see [contributing.md](contributing.md) for details and a todolist.
 
 ## Security
 
@@ -37,8 +45,7 @@ If you discover any security related issues, please email author email instead o
 
 ## Credits
 
-- [author name][link-author]
-- [All Contributors][link-contributors]
+- [Richard Tippin][link-author]
 
 ## License
 
