@@ -654,7 +654,33 @@ window.Messenger = (function () {
     forms = {
         updateSlug : function(slug){
             opt.slug = slug;
-        }
+        },
+        Logout : function(){
+            if(opt.model === 'guest') return;
+            Messenger.alert().Modal({
+                size : 'sm',
+                icon : 'sign-out-alt',
+                pre_loader : true,
+                centered : true,
+                unlock_buttons : false,
+                allow_close : false,
+                backdrop_ctrl : false,
+                title: 'Logging out',
+                theme: 'primary'
+            });
+            if(opt.modules.includes('NotifyManager')) NotifyManager.sockets().disconnect();
+            XHR.payload({
+                route : '/logout',
+                data : {},
+                lockout : true,
+                success : function () {
+                    location.replace('/')
+                },
+                fail : function () {
+                    location.reload()
+                }
+            })
+        },
     };
     return {
         init : methods.Initialize,

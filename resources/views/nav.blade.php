@@ -20,8 +20,8 @@
             </div>
         </div>
     </li>
-    <li class="nav-item mx-1 active">
-        <a class="nav-link pt-1 pb-0" href="{{ route('messenger.portal') }}">
+    <li class="nav-item mx-1 {{request()->route()->getName() === 'messenger.portal' ? 'active' : ''}}">
+        <a class="nav-link pt-1 pb-0" href="{{ url('/') }}">
             <i class="fas fa-comment fa-2x"></i>
             <span id="nav_thread_count" class="badge badge-pill badge-danger badge-notify"></span>
         </a>
@@ -54,7 +54,7 @@
             </div>
             <div class="col-12 text-center mt-2 pb-4 pb-lg-3">
                 <hr class="mb-1 mt-0">
-                <span class="float-right"><a class="nav-search-link text-dark" href="/search"><i class="fas fa-search"></i> Find Friends</a></span>
+                <span class="float-right"><a class="nav-search-link text-dark" href="#"><i class="fas fa-search"></i> Find Friends</a></span>
             </div>
         </div>
     </li>
@@ -64,7 +64,7 @@
             <i class="h5 fas fa-caret-down"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="user_nav_dp">
-            <a onclick="return false;" class="dropdown-item"  href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
+            <a onclick="Messenger.forms().Logout(); return false;" class="dropdown-item"  href="#"><i class="fas fa-sign-out-alt"></i> Logout</a>
         </div>
     </li>
 </ul>
