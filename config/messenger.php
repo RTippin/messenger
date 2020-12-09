@@ -33,6 +33,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Included Queued Event Listeners
+    |--------------------------------------------------------------------------
+    |
+    | This package includes several event listeners out of the box, to handle
+    | system messages to setting up a call. All listeners are queued on the
+    | 'messenger' channel, so you will need to setup a queue worker to monitor
+    | that channel. You may also disable out listeners and setup your own! Feel
+    | free to check ours out to see how we do things :)
+    |
+    */
+    'queued_event_listeners' => true,
+
+    /*
+    |--------------------------------------------------------------------------
     | MessengerSystem Providers Configuration
     |--------------------------------------------------------------------------
     |

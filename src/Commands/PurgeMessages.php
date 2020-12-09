@@ -13,7 +13,6 @@ class PurgeMessages extends Command
      * @var string
      */
     protected $signature = 'messenger:purge:messages 
-                                            {--now : Perform requested checks now instead of dispatching job}
                                             {--days=30 : Purge messages soft deleted X days ago or greater}';
 
     /**

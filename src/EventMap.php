@@ -96,11 +96,14 @@ trait EventMap
      */
     protected function registerEvents()
     {
-        $events = $this->app->make(Dispatcher::class);
+        if($this->app['config']->get('messenger.queued_event_listeners'))
+        {
+            $events = $this->app->make(Dispatcher::class);
 
-        foreach ($this->events as $event => $listeners) {
-            foreach ($listeners as $listener) {
-                $events->listen($event, $listener);
+            foreach ($this->events as $event => $listeners) {
+                foreach ($listeners as $listener) {
+                    $events->listen($event, $listener);
+                }
             }
         }
     }
