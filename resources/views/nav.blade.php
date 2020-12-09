@@ -21,7 +21,7 @@
         </div>
     </li>
     <li class="nav-item mx-1 {{request()->route()->getName() === 'messenger.portal' ? 'active' : ''}}">
-        <a class="nav-link pt-1 pb-0" href="{{ url('/') }}">
+        <a class="nav-link pt-1 pb-0" href="{{ route('messenger.portal') }}">
             <i class="fas fa-comment fa-2x"></i>
             <span id="nav_thread_count" class="badge badge-pill badge-danger badge-notify"></span>
         </a>
