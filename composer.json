@@ -32,13 +32,13 @@
             "src/helpers.php"
         ],
         "psr-4": {
-            "RTippin\\Messenger\\": "src/"
+            "RTippin\\Messenger\\": "src/",
+            "RTippin\\Messenger\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "RTippin\\Messenger\\Tests\\": "tests",
-            "RTippin\\Messenger\\Database\\Factories\\": "database/factories/"
+            "RTippin\\Messenger\\Tests\\": "tests"
         }
     },
     "extra": {
