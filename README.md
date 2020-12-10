@@ -22,7 +22,11 @@
 - Our included commands that push a job also use the `messenger` queue channel.
 - Read through our config file before migrating!
 
-### [View the LIVE Demo app](https://github.com/RTippin/messenger-demo)
+---
+
+## [View the LIVE Demo app](https://github.com/RTippin/messenger-demo)
+
+<img src="https://i.imgur.com/lnsRJfV.png" style="width:100%;"  alt="Demo"/>
 
 ---
 
