@@ -35,6 +35,7 @@
             socket_endpoint : '{{messenger()->getSocketEndpoint()}}',
             base_css : '{{ asset(mix('app.css', 'vendor/messenger')) }}',
             dark_css : '{{ asset(mix('dark.css', 'vendor/messenger')) }}',
+            mobile : false,
         },
         modules : {
 @stack('Messenger-modules')
@@ -54,6 +55,7 @@
             socket_endpoint : '{{messenger()->getSocketEndpoint()}}',
             base_css : '{{ asset(mix('app.css', 'vendor/messenger')) }}',
             dark_css : '{{ asset(mix('dark.css', 'vendor/messenger')) }}',
+            mobile : false,
         },
         modules : {
         @stack('Messenger-modules')
