@@ -164,7 +164,7 @@ class StoreFriendRequest extends BaseMessengerAction
     /**
      * @return array
      */
-    private function generateBroadcastResource()
+    private function generateBroadcastResource(): array
     {
         return (new FriendRequestBroadcastResource(
             $this->getData()

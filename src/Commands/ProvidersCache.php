@@ -32,7 +32,7 @@ class ProvidersCache extends Command
      *
      * @var Filesystem
      */
-    protected $files;
+    protected Filesystem $files;
 
     /**
      * Create a new config cache command instance.
@@ -84,7 +84,7 @@ class ProvidersCache extends Command
      * @return array
      * @noinspection PhpIncludeInspection
      */
-    protected function getFreshConfiguration()
+    protected function getFreshConfiguration(): array
     {
         $app = require $this->laravel->bootstrapPath().'/app.php';
 

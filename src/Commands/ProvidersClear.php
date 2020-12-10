@@ -26,7 +26,7 @@ class ProvidersClear extends Command
      *
      * @var Filesystem
      */
-    protected $files;
+    protected Filesystem $files;
 
     /**
      * Create a new config cache command instance.

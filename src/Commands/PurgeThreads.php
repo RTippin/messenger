@@ -44,8 +44,9 @@ class PurgeThreads extends Command
 
     /**
      * @param Collection $threads
+     * @return void
      */
-    private function dispatchJob(Collection $threads)
+    private function dispatchJob(Collection $threads): void
     {
         $this->option('now')
             ? PurgeThreadsJob::dispatchSync($threads)

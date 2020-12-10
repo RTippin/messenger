@@ -45,8 +45,9 @@ class PurgeDocuments extends Command
 
     /**
      * @param Collection $images
+     * @return void
      */
-    private function dispatchJob(Collection $images)
+    private function dispatchJob(Collection $images): void
     {
         $this->option('now')
             ? PurgeDocumentMessages::dispatchSync($images)

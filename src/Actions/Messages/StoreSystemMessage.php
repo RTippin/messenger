@@ -26,8 +26,7 @@ class StoreSystemMessage extends NewMessageAction
         $this->handleTransactions(
             $parameters[1],
             $parameters[3],
-            $parameters[2],
-            null
+            $parameters[2]
         )
             ->generateResource()
             ->fireBroadcast()
