@@ -49,8 +49,8 @@ class DemoteAdmin extends ThreadParticipantAction
      * Demote the admin back to a default participant.
      *
      * @param mixed ...$parameters
-     * @var Thread $parameters[0]
-     * @var Participant $parameters[1]
+     * @var Thread[0]
+     * @var Participant[1]
      * @return $this
      */
     public function execute(...$parameters): self

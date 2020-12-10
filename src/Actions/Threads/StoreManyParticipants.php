@@ -79,9 +79,9 @@ class StoreManyParticipants extends ThreadParticipantAction
      * soft_deleted participants if already existed in trash.
      *
      * @param mixed ...$parameters
-     * @var Thread $parameters[0]
-     * @var array $parameters[1]
-     * @var bool|null $parameters[2]
+     * @var Thread[0]
+     * @var array[1]
+     * @var bool|null[2]
      * @return $this
      * @throws Throwable
      */

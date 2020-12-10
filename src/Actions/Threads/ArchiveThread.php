@@ -49,7 +49,7 @@ class ArchiveThread extends BaseMessengerAction
      *
      * @param mixed ...$parameters
      * @return $this
-     * @var Thread $parameters[0]
+     * @var Thread[0]
      * @throws Exception
      */
     public function execute(...$parameters): self

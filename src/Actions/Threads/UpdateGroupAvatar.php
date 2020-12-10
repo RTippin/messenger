@@ -83,8 +83,8 @@ class UpdateGroupAvatar extends BaseMessengerAction
      * picking a default or uploading a new avatar!
      *
      * @param mixed ...$parameters
-     * @var Thread $parameters[0]
-     * @var GroupAvatarRequest $parameters[1]
+     * @var Thread[0]
+     * @var GroupAvatarRequest[1]
      * @return $this
      * @throws AuthorizationException
      */

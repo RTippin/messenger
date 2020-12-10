@@ -27,7 +27,7 @@ class ArchiveInvite extends BaseMessengerAction
 
     /**
      * @param mixed ...$parameters
-     * @var Invite $parameters[0]
+     * @var Invite[0]
      * @return $this
      * @throws Exception
      */

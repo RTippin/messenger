@@ -50,8 +50,8 @@ class ArchiveMessage extends BaseMessengerAction
      *
      * @param mixed ...$parameters
      * @return $this
-     * @var Thread $parameters[0]
-     * @var Message $parameters[1]
+     * @var Thread[0]
+     * @var Message[1]
      * @throws Exception
      */
     public function execute(...$parameters): self

@@ -39,8 +39,8 @@ class MarkParticipantRead extends BaseMessengerAction
      * Update participants last_read.
      *
      * @param mixed ...$parameters
-     * @var Participant $parameters[0]
-     * @var Thread|null $parameters[1]
+     * @var Participant[0]
+     * @var Thread|null[1]
      * @return $this
      */
     public function execute(...$parameters): self

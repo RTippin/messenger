@@ -54,9 +54,9 @@ class StoreDocumentMessage extends NewMessageAction
      * updated_at, mark read for participant, broadcast.
      *
      * @param mixed ...$parameters
-     * @var Thread $parameters[0]
-     * @var UploadedFile $parameters[1]
-     * @var string|null $parameters[2]
+     * @var Thread[0]
+     * @var UploadedFile[1]
+     * @var string|null[2]
      * @return $this
      * @throws Throwable
      */

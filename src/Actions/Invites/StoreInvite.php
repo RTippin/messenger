@@ -41,8 +41,8 @@ class StoreInvite extends BaseMessengerAction
      * Create a new thread invite!
      *
      * @param mixed ...$parameters
-     * @var Thread $parameters[0]
-     * @var InviteRequest $parameters[1]
+     * @var Thread[0]
+     * @var InviteRequest[1]
      * @return $this
      */
     public function execute(...$parameters): self

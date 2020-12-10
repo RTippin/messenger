@@ -30,7 +30,7 @@ class PurgeImageMessages extends BaseMessengerAction
      * from database.
      *
      * @param mixed ...$parameters
-     * @var Collection $parameters[0]
+     * @var Collection[0]
      * @return $this
      */
     public function execute(...$parameters): self

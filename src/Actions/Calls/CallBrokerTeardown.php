@@ -28,7 +28,7 @@ class CallBrokerTeardown extends BaseMessengerAction
      * Teardown the call with the specified driver in our config.
      *
      * @param mixed ...$parameters
-     * @var Call $parameters[0]
+     * @var Call[0]
      * @return $this
      * @throws Exception
      */

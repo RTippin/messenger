@@ -49,7 +49,7 @@ class CallActivityChecker extends BaseMessengerAction
      * cache and have not officially left the call.
      *
      * @param mixed ...$parameters
-     * @var Collection $parameters[0]
+     * @var Collection[0]
      * @return $this
      * @throws Throwable
      */

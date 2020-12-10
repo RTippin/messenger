@@ -57,7 +57,7 @@ class SendKnock extends BaseMessengerAction
      * Send a nice KNOCK to the thread!
      *
      * @param mixed ...$parameters
-     * @var Thread $parameters[0]
+     * @var Thread[0]
      * @return $this
      */
     public function execute(...$parameters): self

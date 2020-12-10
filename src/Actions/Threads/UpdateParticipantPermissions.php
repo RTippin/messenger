@@ -49,9 +49,9 @@ class UpdateParticipantPermissions extends ThreadParticipantAction
      * Update the participants permissions.
      *
      * @param mixed ...$parameters
-     * @var Thread $parameters[0]
-     * @var Participant $parameters[1]
-     * @var ParticipantPermissionsRequest $parameters[2]
+     * @var Thread[0]
+     * @var Participant[1]
+     * @var ParticipantPermissionsRequest[2]
      * @return $this
      */
     public function execute(...$parameters): self

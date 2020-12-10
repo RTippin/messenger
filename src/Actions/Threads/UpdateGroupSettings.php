@@ -57,8 +57,8 @@ class UpdateGroupSettings extends BaseMessengerAction
      * the group name changes.
      *
      * @param mixed ...$parameters
-     * @var Thread $parameters[0]
-     * @var ThreadSettingsRequest $parameters[1]
+     * @var Thread[0]
+     * @var ThreadSettingsRequest[1]
      * @return $this
      */
     public function execute(...$parameters): self

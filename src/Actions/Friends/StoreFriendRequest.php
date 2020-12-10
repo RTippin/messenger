@@ -76,7 +76,7 @@ class StoreFriendRequest extends BaseMessengerAction
      * Store our new sent friend request and notify the recipient!
      *
      * @param mixed ...$parameters
-     * @var FriendRequest $parameters[0]
+     * @var FriendRequest[0]
      * @return $this
      * @throws AuthorizationException|ModelNotFoundException
      */

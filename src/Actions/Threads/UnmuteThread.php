@@ -10,7 +10,7 @@ class UnmuteThread extends ThreadParticipantAction
      * Unmute the thread for the current participant.
      *
      * @param mixed ...$parameters
-     * @var Thread $parameters[0]
+     * @var Thread[0]
      * @return $this
      */
     public function execute(...$parameters): self

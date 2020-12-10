@@ -55,7 +55,7 @@ class StoreGroupThread extends NewThreadAction
      * we will also add the first batch of participants in this cycle.
      *
      * @param array ...$parameters
-     * @var GroupThreadRequest $parameters[0]
+     * @var GroupThreadRequest[0]
      * @return $this
      * @throws Throwable
      */

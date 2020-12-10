@@ -43,7 +43,7 @@ class OnlineStatus extends BaseMessengerAction
 
     /**
      * @param mixed ...$parameters
-     * @var bool $parameters[0]
+     * @var bool[0]
      * @return $this
      */
     public function execute(...$parameters): self

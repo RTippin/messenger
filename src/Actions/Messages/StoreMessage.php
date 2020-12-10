@@ -52,9 +52,9 @@ class StoreMessage extends NewMessageAction
      * mark read for participant, broadcast.
      *
      * @param mixed ...$parameters
-     * @var Thread $parameters[0]
-     * @var string $parameters[1]
-     * @var string|null $parameters[2]
+     * @var Thread[0]
+     * @var string[1]
+     * @var string|null[2]
      * @return $this
      * @throws Throwable
      */

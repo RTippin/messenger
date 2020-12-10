@@ -52,9 +52,9 @@ class KickCallParticipant extends CallParticipantAction
      * Kick or un-kick the call participant!
      *
      * @param mixed ...$parameters
-     * @var Call $parameters[0]
-     * @var CallParticipant $parameters[1]
-     * @var bool $parameters[2]
+     * @var Call[0]
+     * @var CallParticipant[1]
+     * @var bool[2]
      * @return $this
      */
     public function execute(...$parameters): self

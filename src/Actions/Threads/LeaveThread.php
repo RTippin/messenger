@@ -48,7 +48,7 @@ class LeaveThread extends BaseMessengerAction
      * Leave the group thread.
      *
      * @param mixed ...$parameters
-     * @var Thread $parameters[0]
+     * @var Thread[0]
      * @return $this
      * @throws Exception
      */

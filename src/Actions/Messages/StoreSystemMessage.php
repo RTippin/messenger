@@ -12,10 +12,10 @@ class StoreSystemMessage extends NewMessageAction
      * Store new system message, update thread updated_at.
      *
      * @param mixed ...$parameters
-     * @var Thread $parameters[0]
-     * @var MessengerProvider $parameters[1]
-     * @var string $parameters[2]
-     * @var string $parameters[3]
+     * @var Thread[0]
+     * @var MessengerProvider[1]
+     * @var string[2]
+     * @var string[3]
      * @return $this
      * @throws Throwable
      */

@@ -52,8 +52,8 @@ class ThreadApproval extends ThreadParticipantAction
 
     /**
      * @param mixed ...$parameters
-     * @var Thread $parameters[0]
-     * @var bool $parameters[1]
+     * @var Thread[0]
+     * @var bool[1]
      * @return $this
      * @throws AuthorizationException|Exception
      */

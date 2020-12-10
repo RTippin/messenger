@@ -49,8 +49,8 @@ class PromoteAdmin extends ThreadParticipantAction
      * Promote the participant to admin!
      *
      * @param mixed ...$parameters
-     * @var Thread $parameters[0]
-     * @var Participant $parameters[1]
+     * @var Thread[0]
+     * @var Participant[1]
      * @return $this
      */
     public function execute(...$parameters): self

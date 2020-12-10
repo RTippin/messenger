@@ -99,7 +99,7 @@ class StorePrivateThread extends NewThreadAction
      * two providers, and that they are allowed to initiate a conversation.
      *
      * @param mixed ...$parameters
-     * @var PrivateThreadRequest $parameters[0]
+     * @var PrivateThreadRequest[0]
      * @return $this
      * @throws AuthorizationException|Throwable
      */

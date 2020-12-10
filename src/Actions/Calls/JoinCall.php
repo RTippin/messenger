@@ -53,8 +53,8 @@ class JoinCall extends CallParticipantAction
      * Join/Re-join the call and set the call participant in cache.
      *
      * @param mixed ...$parameters
-     * @var Call $parameters[0]
-     * @var bool $parameters[1]
+     * @var Call[0]
+     * @var bool[1]
      * @return $this
      */
     public function execute(...$parameters): self

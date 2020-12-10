@@ -44,8 +44,8 @@ class LeaveCall extends CallParticipantAction
      * Leave the call!
      *
      * @param mixed ...$parameters
-     * @var Call $parameters[0]
-     * @var CallParticipant $parameters[1]
+     * @var Call[0]
+     * @var CallParticipant[1]
      * @return $this
      */
     public function execute(...$parameters): self

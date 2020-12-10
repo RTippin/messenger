@@ -35,7 +35,7 @@ class StoreMessengerAvatar extends BaseMessengerAction
 
     /**
      * @param mixed ...$parameters
-     * @var UploadedFile $parameters[0]['image']
+     * @var UploadedFile[0]['image']
      * @return $this
      */
     public function execute(...$parameters): self

@@ -51,7 +51,7 @@ class EndCall extends BaseMessengerAction
      *
      * @param mixed ...$parameters
      * @return $this
-     * @var Call $parameters[0]
+     * @var Call[0]
      * @throws Throwable
      */
     public function execute(...$parameters): self

@@ -30,8 +30,8 @@ class CallBrokerSetup extends BaseMessengerAction
      *
      * @param mixed ...$parameters
      * @return $this
-     * @var Thread $parameters[0]
-     * @var Call $parameters[1]
+     * @var Thread[0]
+     * @var Call[1]
      * @throws Exception
      */
     public function execute(...$parameters): self
