@@ -2,8 +2,9 @@
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
-[![Build Status][ico-travis]][link-travis]
 [![StyleCI][ico-styleci]][link-styleci]
+[![License][ico-license]][link-license]
+[![Build Status][ico-travis]][link-travis]
 
 # Laravel 8 Messenger suite
 
@@ -107,12 +108,14 @@ If you discover any security related issues, please email author email instead o
 
 license. Please see the [license file](LICENSE.md) for more information.
 
-[ico-version]: https://img.shields.io/packagist/v/rtippin/messenger.svg?style=plastic
-[ico-downloads]: https://img.shields.io/packagist/dt/rtippin/messenger.svg?style=plastic
-[ico-travis]: https://img.shields.io/travis/rtippin/messenger/master.svg?style=plastic
-[ico-styleci]: https://styleci.io/repos/309521487/shield?style=plastic
+[ico-version]: https://img.shields.io/packagist/v/rtippin/messenger.svg?style=plastic&cacheSeconds=3600
+[ico-downloads]: https://img.shields.io/packagist/dt/rtippin/messenger.svg?style=plastic&cacheSeconds=3600
+[ico-travis]: https://img.shields.io/travis/rtippin/messenger/master.svg?style=plastic&cacheSeconds=3600
+[ico-styleci]: https://styleci.io/repos/309521487/shield?style=plastic&cacheSeconds=3600
+[ico-license]: https://img.shields.io/github/license/RTippin/messenger?style=plastic
 [link-packagist]: https://packagist.org/packages/rtippin/messenger
 [link-downloads]: https://packagist.org/packages/rtippin/messenger
+[link-license]: https://packagist.org/packages/rtippin/messenger
 [link-travis]: https://travis-ci.org/rtippin/messenger
 [link-styleci]: https://styleci.io/repos/309521487
 [link-author]: https://github.com/rtippin
