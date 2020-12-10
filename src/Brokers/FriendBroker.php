@@ -50,7 +50,7 @@ class FriendBroker implements FriendDriver
     {
         return Friend::where('owner_id', '=', $this->messenger->getProviderId())
             ->where('owner_type', '=', $this->messenger->getProviderClass())
-            ->whereIn('party_type',  $this->messenger->getAllFriendableProviders());
+            ->whereIn('party_type', $this->messenger->getAllFriendableProviders());
     }
 
     /**
@@ -60,7 +60,7 @@ class FriendBroker implements FriendDriver
     {
         return PendingFriend::where('recipient_id', '=', $this->messenger->getProviderId())
             ->where('recipient_type', '=', $this->messenger->getProviderClass())
-            ->whereIn('sender_type',  $this->messenger->getAllFriendableProviders());
+            ->whereIn('sender_type', $this->messenger->getAllFriendableProviders());
     }
 
     /**
@@ -70,7 +70,7 @@ class FriendBroker implements FriendDriver
     {
         return SentFriend::where('sender_id', '=', $this->messenger->getProviderId())
             ->where('sender_type', '=', $this->messenger->getProviderClass())
-            ->whereIn('recipient_type',  $this->messenger->getAllFriendableProviders());
+            ->whereIn('recipient_type', $this->messenger->getAllFriendableProviders());
     }
 
     /**
@@ -78,8 +78,7 @@ class FriendBroker implements FriendDriver
      */
     public function getProviderFriends($withRelations = false)
     {
-        if( ! $this->messenger->providerHasFriends())
-        {
+        if (! $this->messenger->providerHasFriends()) {
             return $this->sendEmptyCollection();
         }
 
@@ -95,8 +94,7 @@ class FriendBroker implements FriendDriver
      */
     public function getProviderPendingFriends($withRelations = false)
     {
-        if( ! $this->messenger->providerHasFriends())
-        {
+        if (! $this->messenger->providerHasFriends()) {
             return $this->sendEmptyCollection();
         }
 
@@ -113,8 +111,7 @@ class FriendBroker implements FriendDriver
      */
     public function getProviderSentFriends($withRelations = false)
     {
-        if( ! $this->messenger->providerHasFriends())
-        {
+        if (! $this->messenger->providerHasFriends()) {
             return $this->sendEmptyCollection();
         }
 
@@ -167,18 +164,16 @@ class FriendBroker implements FriendDriver
      */
     public function friendStatus($provider = null): int
     {
-        if($this->isFriend($provider))
-        {
+        if ($this->isFriend($provider)) {
             return 1;
         }
-        if($this->isSentFriendRequest($provider))
-        {
+        if ($this->isSentFriendRequest($provider)) {
             return 2;
         }
-        if($this->isPendingFriendRequest($provider))
-        {
+        if ($this->isPendingFriendRequest($provider)) {
             return 3;
         }
+
         return 0;
     }
 
@@ -187,8 +182,7 @@ class FriendBroker implements FriendDriver
      */
     public function getFriendResource(int $friendStatus, $provider = null)
     {
-        switch($friendStatus)
-        {
+        switch ($friendStatus) {
             case 1:
                 return $this->getFriend($provider);
             case 2:
@@ -205,8 +199,7 @@ class FriendBroker implements FriendDriver
      */
     public function getProviderFriendsNotInThread(Thread $thread)
     {
-        if( ! $this->messenger->providerHasFriends())
-        {
+        if (! $this->messenger->providerHasFriends()) {
             return $this->sendEmptyCollection();
         }
 
@@ -215,7 +208,7 @@ class FriendBroker implements FriendDriver
         return $this->getProviderFriendsBuilder()
             ->get()
             ->reject(
-                fn(Friend $friend) => $participants->where('owner_id', '=', $friend->party_id)
+                fn (Friend $friend) => $participants->where('owner_id', '=', $friend->party_id)
                     ->where('owner_type', '=', $friend->party_type)
                     ->first()
             )

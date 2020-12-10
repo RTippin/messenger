@@ -46,7 +46,7 @@ class DenyFriendRequest extends BaseMessengerAction
      * @param mixed ...$parameters
      * @return $this
      * @throws Exception
-     * @var PendingFriend $parameters [0]
+     * @var PendingFriend [0]
      */
     public function execute(...$parameters): self
     {
@@ -89,7 +89,7 @@ class DenyFriendRequest extends BaseMessengerAction
     private function generateBroadcastResource(): array
     {
         return [
-            'sent_friend_id' => $this->pendingFriend->id
+            'sent_friend_id' => $this->pendingFriend->id,
         ];
     }
 
@@ -98,8 +98,7 @@ class DenyFriendRequest extends BaseMessengerAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->to($this->pendingFriend->sender)
                 ->with($this->generateBroadcastResource())
@@ -114,8 +113,7 @@ class DenyFriendRequest extends BaseMessengerAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new FriendDeniedEvent(
                 $this->pendingFriend->withoutRelations()
             ));

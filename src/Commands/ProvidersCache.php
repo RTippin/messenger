@@ -5,9 +5,9 @@ namespace RTippin\Messenger\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Filesystem\Filesystem;
+use LogicException;
 use RTippin\Messenger\ProviderVerification;
 use Throwable;
-use LogicException;
 
 class ProvidersCache extends Command
 {
@@ -69,7 +69,6 @@ class ProvidersCache extends Command
 
         try {
             require $configPath;
-
         } catch (Throwable $e) {
             $this->files->delete($configPath);
 

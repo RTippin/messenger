@@ -47,7 +47,7 @@ class SearchProvidersService
 
     /**
      * Enable searching all providers, not just allowed
-     * interactions for current provider
+     * interactions for current provider.
      *
      * @return $this
      */
@@ -60,7 +60,7 @@ class SearchProvidersService
 
     /**
      * Disable searching all providers, only allowed
-     * interactions for current provider (default)
+     * interactions for current provider (default).
      *
      * @return $this
      */
@@ -73,7 +73,7 @@ class SearchProvidersService
 
     /**
      * Set the query string, sanitize it, and break into array
-     * Form the messenger whereHasMorph query
+     * Form the messenger whereHasMorph query.
      *
      * @param string|null $searchQuery
      * @return $this
@@ -86,15 +86,14 @@ class SearchProvidersService
     }
 
     /**
-     * Execute query using paginator
+     * Execute query using paginator.
      *
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|LengthAwarePaginator
      */
     public function paginate()
     {
-        if(! $this->passesQueryLength()
-            || is_null($this->messengerQuery))
-        {
+        if (! $this->passesQueryLength()
+            || is_null($this->messengerQuery)) {
             return $this->sendEmptyPaginator();
         }
 
@@ -104,7 +103,7 @@ class SearchProvidersService
     }
 
     /**
-     * Execute query and return query collection results
+     * Execute query and return query collection results.
      *
      * @return Collection|null
      */
@@ -163,7 +162,7 @@ class SearchProvidersService
             '<',
             '>',
             '`',
-            '"'
+            '"',
         ], '', $query);
 
         return $this;
@@ -188,7 +187,7 @@ class SearchProvidersService
     }
 
     /**
-     * Set the reverse provider search builder based on allowed providers
+     * Set the reverse provider search builder based on allowed providers.
      *
      * @return SearchProvidersService
      */
@@ -196,18 +195,14 @@ class SearchProvidersService
     {
         $searchable = $this->getAllowedSearchable();
 
-        if(is_null($searchable)
-            || ! count($searchable))
-        {
+        if (is_null($searchable)
+            || ! count($searchable)) {
             $this->messengerQuery = null;
-        }
-        else
-        {
+        } else {
             $this->messengerQuery = MessengerModel::whereHasMorph('owner', $searchable,
-                function (Builder $query, $provider){
+                function (Builder $query, $provider) {
 
                     /** @var Searchable $provider */
-
                     $provider::getProviderSearchableBuilder(
                         $query,
                         $this->searchQuery,

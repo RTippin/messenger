@@ -99,7 +99,7 @@ return [
                 'can_message' => true,
                 'can_search' => true,
                 'can_friend' => true,
-            ]
+            ],
         ],
     ],
 
@@ -129,12 +129,12 @@ return [
     'storage' => [
         'avatars' => [
             'disk' => 'public',
-            'directory' => 'images'
+            'directory' => 'images',
         ],
         'threads' => [
             'disk' => 'messenger',
-            'directory' => 'threads'
-        ]
+            'directory' => 'threads',
+        ],
     ],
 
     /*
@@ -171,12 +171,12 @@ return [
             'middleware' => [
                 'web',
                 'auth',
-                'messenger.provider:required'
+                'messenger.provider:required',
             ],
             'invite_api_middleware' => [
                 'web',
                 'auth.optional',
-                'messenger.provider'
+                'messenger.provider',
             ],
         ],
         'web' => [
@@ -186,12 +186,12 @@ return [
             'middleware' => [
                 'web',
                 'auth',
-                'messenger.provider'
+                'messenger.provider',
             ],
             'invite_web_middleware' => [
                 'web',
                 'auth.optional',
-                'messenger.provider'
+                'messenger.provider',
             ],
         ],
         'provider_avatar' => [
@@ -200,8 +200,8 @@ return [
             'prefix' => 'images',
             'middleware' => [
                 'web',
-                'cache.headers:public, max-age=86400;'
-            ]
+                'cache.headers:public, max-age=86400;',
+            ],
         ],
         'channels' => [
             'enabled' => true,
@@ -210,9 +210,9 @@ return [
             'middleware' => [
                 'web',
                 'auth',
-                'messenger.provider:required'
+                'messenger.provider:required',
             ],
-        ]
+        ],
     ],
 
     /*
@@ -240,16 +240,16 @@ return [
     'drivers' => [
         'broadcasting' => [
             'default' => BroadcastBroker::class,
-            'null' => NullBroadcastBroker::class
+            'null' => NullBroadcastBroker::class,
         ],
         'push_notifications' => [
             'default' => PushNotificationBroker::class,
-            'null' => NullPushNotificationBroker::class
+            'null' => NullPushNotificationBroker::class,
         ],
         'calling' => [
             'janus' => JanusBroker::class,
-            'null' => NullVideoBroker::class
-        ]
+            'null' => NullVideoBroker::class,
+        ],
     ],
 
     'broadcasting' => [
@@ -262,7 +262,7 @@ return [
 
     'calling' => [
         'enabled' => env('MESSENGER_CALLING_ENABLED', false),
-        'driver' => env('MESSENGER_CALLING_DRIVER', 'null')
+        'driver' => env('MESSENGER_CALLING_DRIVER', 'null'),
     ],
 
     /*
@@ -277,26 +277,26 @@ return [
     'files' => [
         'message_documents' => [
             'upload' => env('MESSENGER_MESSAGE_DOCUMENT_UPLOAD', true),
-            'download' => env('MESSENGER_MESSAGE_DOCUMENT_DOWNLOAD', true)
+            'download' => env('MESSENGER_MESSAGE_DOCUMENT_DOWNLOAD', true),
         ],
         'message_images' => [
-            'upload' => env('MESSENGER_MESSAGE_IMAGE_UPLOAD', true)
+            'upload' => env('MESSENGER_MESSAGE_IMAGE_UPLOAD', true),
         ],
         'thread_avatars' => [
-            'upload' => env('MESSENGER_THREAD_AVATAR_UPLOAD', true)
+            'upload' => env('MESSENGER_THREAD_AVATAR_UPLOAD', true),
         ],
         'provider_avatars' => [
             'upload' => env('MESSENGER_PROVIDER_AVATAR_UPLOAD', true),
-            'removal' => env('MESSENGER_PROVIDER_AVATAR_REMOVAL', true)
+            'removal' => env('MESSENGER_PROVIDER_AVATAR_REMOVAL', true),
         ],
         'default_thread_avatars' => [
-            '1.png' => public_path("vendor/messenger/images/1.png"),
-            '2.png' => public_path("vendor/messenger/images/2.png"),
-            '3.png' => public_path("vendor/messenger/images/3.png"),
-            '4.png' => public_path("vendor/messenger/images/4.png"),
-            '5.png' => public_path("vendor/messenger/images/5.png")
+            '1.png' => public_path('vendor/messenger/images/1.png'),
+            '2.png' => public_path('vendor/messenger/images/2.png'),
+            '3.png' => public_path('vendor/messenger/images/3.png'),
+            '4.png' => public_path('vendor/messenger/images/4.png'),
+            '5.png' => public_path('vendor/messenger/images/5.png'),
         ],
-        'default_not_found_image' => public_path('vendor/messenger/images/image404.png')
+        'default_not_found_image' => public_path('vendor/messenger/images/image404.png'),
     ],
 
     /*
@@ -310,7 +310,7 @@ return [
     */
     'invites' => [
         'enabled' => env('MESSENGER_INVITES_ENABLED', true),
-        'max_per_thread' => env('MESSENGER_INVITES_THREAD_MAX', 3)
+        'max_per_thread' => env('MESSENGER_INVITES_THREAD_MAX', 3),
     ],
 
     /*
@@ -323,7 +323,7 @@ return [
     */
     'knocks' => [
         'enabled' => env('MESSENGER_KNOCKS_ENABLED', true),
-        'timeout' => env('MESSENGER_KNOCKS_TIMEOUT', 5)
+        'timeout' => env('MESSENGER_KNOCKS_TIMEOUT', 5),
     ],
 
     /*
@@ -337,7 +337,7 @@ return [
     */
     'online_status' => [
         'enabled' => env('MESSENGER_ONLINE_STATUS_ENABLED', true),
-        'lifetime' => env('MESSENGER_ONLINE_STATUS_LIFETIME', 4)
+        'lifetime' => env('MESSENGER_ONLINE_STATUS_LIFETIME', 4),
     ],
 
     /*
@@ -350,23 +350,23 @@ return [
     */
     'collections' => [
         'search' => [
-            'page_count' => 25
+            'page_count' => 25,
         ],
         'threads' => [
             'index_count' => 100,
-            'page_count' => 25
+            'page_count' => 25,
         ],
         'participants' => [
             'index_count' => 500,
-            'page_count' => 50
+            'page_count' => 50,
         ],
         'messages' => [
             'index_count' => 50,
-            'page_count' => 50
+            'page_count' => 50,
         ],
         'calls' => [
             'index_count' => 25,
-            'page_count' => 25
-        ]
-    ]
+            'page_count' => 25,
+        ],
+    ],
 ];

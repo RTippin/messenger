@@ -33,7 +33,7 @@ class PrivateThreadController
     }
 
     /**
-     * Display private threads history pagination
+     * Display private threads history pagination.
      *
      * @param PrivateThreadRepository $repository
      * @param Thread $private
@@ -50,7 +50,6 @@ class PrivateThreadController
             $private->id
         );
     }
-
 
     /**
      * @param PrivateThreadRequest $request

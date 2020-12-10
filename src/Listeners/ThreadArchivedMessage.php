@@ -55,7 +55,7 @@ class ThreadArchivedMessage implements ShouldQueue
             $event->thread,
             $event->provider,
             $this->messageBody($event),
-            'THREAD_ARCHIVED'
+            'THREAD_ARCHIVED',
         ];
     }
 

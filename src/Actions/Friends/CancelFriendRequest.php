@@ -44,7 +44,7 @@ class CancelFriendRequest extends BaseMessengerAction
      * Cancel and destroy our sent friend request.
      *
      * @param mixed ...$parameters
-     * @var SentFriend $parameters [0]
+     * @var SentFriend [0]
      * @return $this
      * @throws Exception
      */
@@ -89,7 +89,7 @@ class CancelFriendRequest extends BaseMessengerAction
     private function generateBroadcastResource(): array
     {
         return [
-            'pending_friend_id' => $this->sentFriend->id
+            'pending_friend_id' => $this->sentFriend->id,
         ];
     }
 
@@ -98,8 +98,7 @@ class CancelFriendRequest extends BaseMessengerAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->to($this->sentFriend->recipient)
                 ->with($this->generateBroadcastResource())
@@ -114,8 +113,7 @@ class CancelFriendRequest extends BaseMessengerAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new FriendCancelledEvent(
                 $this->sentFriend->withoutRelations()
             ));

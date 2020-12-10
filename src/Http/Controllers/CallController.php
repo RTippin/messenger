@@ -29,7 +29,7 @@ class CallController
     {
         $this->authorize('viewAny', [
             Call::class,
-            $thread
+            $thread,
         ]);
 
         return new CallCollection(
@@ -39,7 +39,7 @@ class CallController
     }
 
     /**
-     * Display call history pagination
+     * Display call history pagination.
      *
      * @param CallRepository $repository
      * @param Thread $thread
@@ -53,7 +53,7 @@ class CallController
     {
         $this->authorize('viewAny', [
             Call::class,
-            $thread
+            $thread,
         ]);
 
         return new CallCollection(
@@ -76,7 +76,7 @@ class CallController
     {
         $this->authorize('create', [
             Call::class,
-            $thread
+            $thread,
         ]);
 
         return $storeCall->execute($thread)
@@ -95,7 +95,7 @@ class CallController
     {
         $this->authorize('view', [
             $call,
-            $thread
+            $thread,
         ]);
 
         return new CallResource(

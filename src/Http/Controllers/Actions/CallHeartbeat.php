@@ -2,10 +2,10 @@
 
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
-use RTippin\Messenger\Actions\Calls\CallHeartbeat as Heartbeat;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
+use RTippin\Messenger\Actions\Calls\CallHeartbeat as Heartbeat;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
 
@@ -26,7 +26,7 @@ class CallHeartbeat
     {
         $this->authorize('heartbeat', [
             $call,
-            $thread
+            $thread,
         ]);
 
         return $heartbeat->execute($call)

@@ -76,12 +76,12 @@ class StoreManyParticipants extends ThreadParticipantAction
 
     /**
      * Store a collection of participants to a group, or restore
-     * soft_deleted participants if already existed in trash
+     * soft_deleted participants if already existed in trash.
      *
      * @param mixed ...$parameters
-     * @var Thread $thread $parameters[0]
-     * @var array $providers $parameters[1]
-     * @var bool|null $isNewGroup $parameters[2]
+     * @var Thread $parameters[0]
+     * @var array $parameters[1]
+     * @var bool|null $parameters[2]
      * @return $this
      * @throws Throwable
      */
@@ -108,14 +108,11 @@ class StoreManyParticipants extends ThreadParticipantAction
      */
     private function handleTransactions(Collection $providers, bool $isNewGroup): self
     {
-        if($this->isChained())
-        {
+        if ($this->isChained()) {
             $this->executeTransactions($providers, $isNewGroup);
-        }
-        else
-        {
+        } else {
             $this->database->transaction(
-                fn() => $this->executeTransactions($providers, $isNewGroup)
+                fn () => $this->executeTransactions($providers, $isNewGroup)
             );
         }
 
@@ -124,7 +121,7 @@ class StoreManyParticipants extends ThreadParticipantAction
 
     /**
      * Execute all actions that must occur for
-     * adding multiple participants to group
+     * adding multiple participants to group.
      *
      * @param Collection $providers
      * @param bool $isNewGroup
@@ -139,14 +136,10 @@ class StoreManyParticipants extends ThreadParticipantAction
 
         //If we created any new participants, dispatch events / broadcast
 
-        if($this->getData()->count())
-        {
-            if($this->shouldExecuteChains())
-            {
+        if ($this->getData()->count()) {
+            if ($this->shouldExecuteChains()) {
                 $this->fireBroadcast()->fireEvents();
-            }
-            else
-            {
+            } else {
                 $this->fireEvents();
             }
         }
@@ -154,7 +147,7 @@ class StoreManyParticipants extends ThreadParticipantAction
 
     /**
      * Locate valid providers given alias/id key value pairs, if any. Remove null
-     * results and providers who are not friends with the master set provider
+     * results and providers who are not friends with the master set provider.
      *
      * @param array|null $providers
      * @param bool $isNewGroup
@@ -162,17 +155,16 @@ class StoreManyParticipants extends ThreadParticipantAction
      */
     private function locateValidProviders(array $providers, bool $isNewGroup): Collection
     {
-        if($this->messenger->providerHasFriends() && count($providers))
-        {
+        if ($this->messenger->providerHasFriends() && count($providers)) {
             $providers = collect($providers)
                 ->transform(
-                    fn(array $provider) => $this->getProvider($provider['alias'], $provider['id'])
+                    fn (array $provider) => $this->getProvider($provider['alias'], $provider['id'])
                 )
                 ->filter(
-                    fn($provider) => ! is_null($provider)
+                    fn ($provider) => ! is_null($provider)
                 )
                 ->reject(
-                    fn(MessengerProvider $provider) => $this->friends->friendStatus($provider) !== 1
+                    fn (MessengerProvider $provider) => $this->friends->friendStatus($provider) !== 1
                 );
 
             return $isNewGroup
@@ -192,7 +184,7 @@ class StoreManyParticipants extends ThreadParticipantAction
         $existing = $this->getThread()->participants()->get();
 
         return $providers->reject(
-            fn(MessengerProvider $provider) => $existing
+            fn (MessengerProvider $provider) => $existing
                 ->where('owner_id', '=', $provider->getKey())
                 ->where('owner_type', '=', get_class($provider))
                 ->first()
@@ -217,16 +209,15 @@ class StoreManyParticipants extends ThreadParticipantAction
      */
     private function storeManyParticipants(Collection $providers, bool $isNewGroup): Collection
     {
-        if($isNewGroup)
-        {
+        if ($isNewGroup) {
             return $providers->transform(
-                fn(MessengerProvider $provider) => $this->storeParticipant($provider, Definitions::DefaultParticipant)
+                fn (MessengerProvider $provider) => $this->storeParticipant($provider, Definitions::DefaultParticipant)
                     ->getParticipant(true)
             );
         }
 
         return $providers->transform(
-            fn(MessengerProvider $provider) => $this->storeOrRestoreParticipant($provider)
+            fn (MessengerProvider $provider) => $this->storeOrRestoreParticipant($provider)
                 ->getParticipant(true)
         );
     }
@@ -248,8 +239,7 @@ class StoreManyParticipants extends ThreadParticipantAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->toSelected($this->getData())
                 ->with($this->generateBroadcastResource())
@@ -264,8 +254,7 @@ class StoreManyParticipants extends ThreadParticipantAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ParticipantsAddedEvent(
                 $this->messenger->getProvider()->withoutRelations(),
                 $this->getThread(true),

@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Actions;
 
-use RTippin\Messenger\Actions\Base\BaseMessengerAction;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Http\Request;
+use RTippin\Messenger\Actions\Base\BaseMessengerAction;
 use RTippin\Messenger\Events\StatusHeartbeatEvent;
 use RTippin\Messenger\Messenger;
 
@@ -36,7 +36,6 @@ class OnlineStatus extends BaseMessengerAction
                                 Request $request,
                                 Messenger $messenger)
     {
-
         $this->request = $request;
         $this->dispatcher = $dispatcher;
         $this->messenger = $messenger;
@@ -44,7 +43,7 @@ class OnlineStatus extends BaseMessengerAction
 
     /**
      * @param mixed ...$parameters
-     * @var bool $away $parameters[0]
+     * @var bool $parameters[0]
      * @return $this
      */
     public function execute(...$parameters): self
@@ -62,8 +61,7 @@ class OnlineStatus extends BaseMessengerAction
      */
     private function setOnlineStatus(bool $away): self
     {
-        if($this->messenger->isOnlineStatusEnabled())
-        {
+        if ($this->messenger->isOnlineStatusEnabled()) {
             $away
                 ? $this->messenger->setProviderToAway()
                 : $this->messenger->setProviderToOnline();
@@ -77,8 +75,7 @@ class OnlineStatus extends BaseMessengerAction
      */
     private function touchProvider(): self
     {
-        if($this->messenger->isOnlineStatusEnabled())
-        {
+        if ($this->messenger->isOnlineStatusEnabled()) {
             $this->messenger->getProvider()->touch();
         }
 
@@ -90,8 +87,7 @@ class OnlineStatus extends BaseMessengerAction
      */
     private function fireEvents(bool $away): void
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(
                 new StatusHeartbeatEvent(
                     $this->messenger->getProvider(),

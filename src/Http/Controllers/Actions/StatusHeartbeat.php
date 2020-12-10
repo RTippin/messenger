@@ -10,7 +10,7 @@ use RTippin\Messenger\Messenger;
 class StatusHeartbeat
 {
     /**
-     * Update providers online cache state
+     * Update providers online cache state.
      *
      * @param StatusHeartbeatRequest $request
      * @param Messenger $messenger
@@ -30,7 +30,7 @@ class StatusHeartbeat
                 ->setHidden([
                     'password',
                     'deleted_at',
-                    'remember_token'
+                    'remember_token',
                 ])
         );
     }

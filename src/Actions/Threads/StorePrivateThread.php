@@ -99,7 +99,7 @@ class StorePrivateThread extends NewThreadAction
      * two providers, and that they are allowed to initiate a conversation.
      *
      * @param mixed ...$parameters
-     * @var PrivateThreadRequest $validated $parameters[0]
+     * @var PrivateThreadRequest $parameters[0]
      * @return $this
      * @throws AuthorizationException|Throwable
      */
@@ -131,14 +131,11 @@ class StorePrivateThread extends NewThreadAction
      */
     private function handleTransactions(array $inputs): self
     {
-        if($this->isChained())
-        {
+        if ($this->isChained()) {
             $this->executeTransactions($inputs);
-        }
-        else
-        {
+        } else {
             $this->database->transaction(
-                fn() => $this->executeTransactions($inputs)
+                fn () => $this->executeTransactions($inputs)
             );
         }
 
@@ -147,7 +144,7 @@ class StorePrivateThread extends NewThreadAction
 
     /**
      * Execute all actions that must occur for
-     * a successful private thread creation
+     * a successful private thread creation.
      *
      * @param array $inputs
      */
@@ -167,8 +164,7 @@ class StorePrivateThread extends NewThreadAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->to($this->recipient)
                 ->with($this->generateBroadcastResource())
@@ -183,8 +179,7 @@ class StorePrivateThread extends NewThreadAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new NewThreadEvent(
                 $this->messenger->getProvider()->withoutRelations(),
                 $this->getThread(true),
@@ -195,7 +190,7 @@ class StorePrivateThread extends NewThreadAction
     }
 
     /**
-     * Execute params for self participant
+     * Execute params for self participant.
      *
      * @mixin StoreParticipant
      * @return array
@@ -204,12 +199,12 @@ class StorePrivateThread extends NewThreadAction
     {
         return [
             $this->getThread(),
-            $this->messenger->getProvider()
+            $this->messenger->getProvider(),
         ];
     }
 
     /**
-     * Execute params for recipient participant
+     * Execute params for recipient participant.
      *
      * @mixin StoreParticipant
      * @return array
@@ -219,12 +214,12 @@ class StorePrivateThread extends NewThreadAction
         return [
             $this->getThread(),
             $this->recipient,
-            ['pending' => $this->pending]
+            ['pending' => $this->pending],
         ];
     }
 
     /**
-     * Execute params for store message
+     * Execute params for store message.
      *
      * @mixin NewMessageAction
      * @param array $inputs
@@ -234,25 +229,22 @@ class StorePrivateThread extends NewThreadAction
     {
         return [
             $this->getThread(),
-            $inputs[$this->messageActionKey]
+            $inputs[$this->messageActionKey],
         ];
     }
 
     /**
-     * Determine if the recipient participant should be marked pending
+     * Determine if the recipient participant should be marked pending.
      *
      * @return $this
      */
     private function determineIfPending(): self
     {
-        if($this->messenger->providerHasFriends()
+        if ($this->messenger->providerHasFriends()
             && $this->messenger->isProviderFriendable($this->recipient)
-            && $this->friends->friendStatus($this->recipient) === 1)
-        {
+            && $this->friends->friendStatus($this->recipient) === 1) {
             $this->pending = false;
-        }
-        else
-        {
+        } else {
             $this->pending = true;
         }
 
@@ -279,25 +271,20 @@ class StorePrivateThread extends NewThreadAction
 
     /**
      * Determine which type of message was sent
-     * to initiate this thread
+     * to initiate this thread.
      *
      * @param array $inputs
      * @return $this
      */
     private function setMessageActions(array $inputs): self
     {
-        if(array_key_exists('message', $inputs))
-        {
+        if (array_key_exists('message', $inputs)) {
             $this->messageActionType = StoreMessage::class;
             $this->messageActionKey = 'message';
-        }
-        else if(array_key_exists('image', $inputs))
-        {
+        } elseif (array_key_exists('image', $inputs)) {
             $this->messageActionType = StoreImageMessage::class;
             $this->messageActionKey = 'image';
-        }
-        else if(array_key_exists('document', $inputs))
-        {
+        } elseif (array_key_exists('document', $inputs)) {
             $this->messageActionType = StoreDocumentMessage::class;
             $this->messageActionKey = 'document';
         }
@@ -311,8 +298,7 @@ class StorePrivateThread extends NewThreadAction
      */
     private function recipientWasFound(): self
     {
-        if(is_null($this->recipient))
-        {
+        if (is_null($this->recipient)) {
             $this->locator->throwNotFoundError();
         }
 
@@ -325,8 +311,7 @@ class StorePrivateThread extends NewThreadAction
      */
     private function existingThreadNotFound(): self
     {
-        if( ! is_null($this->existingThread))
-        {
+        if (! is_null($this->existingThread)) {
             throw new AuthorizationException("You already have an existing conversation with {$this->recipient->name()}");
         }
 
@@ -339,8 +324,7 @@ class StorePrivateThread extends NewThreadAction
      */
     private function canMessageProviderFirst(): self
     {
-        if( ! $this->messenger->canMessageProviderFirst($this->recipient))
-        {
+        if (! $this->messenger->canMessageProviderFirst($this->recipient)) {
             throw new AuthorizationException("Not authorized to start conversations with {$this->recipient->name()}");
         }
 

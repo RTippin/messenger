@@ -11,5 +11,4 @@ class RouteTest extends FeatureTestCase
     {
         $this->assertTrue(app('router')->has('api.messenger.threads.show'));
     }
-
 }

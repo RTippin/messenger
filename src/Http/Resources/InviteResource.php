@@ -35,18 +35,17 @@ class InviteResource extends JsonResource
     public function toArray($request): array
     {
         /** @var Invite $invite */
-
         $invite = $this->resource;
 
         return [
-            'owner' => $this->when( ! $this->joining,
-                fn() => new ProviderResource($invite->owner)
+            'owner' => $this->when(! $this->joining,
+                fn () => new ProviderResource($invite->owner)
             ),
             'options' => $this->when($this->joining,
-                fn() => $this->joinOptions($invite)
+                fn () => $this->joinOptions($invite)
             ),
             'route' => $invite->getInvitationRoute(),
-            $this->merge($invite->withoutRelations())
+            $this->merge($invite->withoutRelations()),
         ];
     }
 
@@ -62,7 +61,7 @@ class InviteResource extends JsonResource
             'messenger_auth' => messenger()->isProviderSet(),
             'in_thread' => $isValid ? $this->isAlreadyInThread($invite) : false,
             'thread_name' => $isValid ? $invite->thread->name() : null,
-            'is_valid' => $isValid
+            'is_valid' => $isValid,
         ];
     }
 

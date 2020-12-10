@@ -8,7 +8,7 @@ use Illuminate\Support\Str;
 trait Uuids
 {
     /**
-     * On model creating, set the primary key to UUID
+     * On model creating, set the primary key to UUID.
      */
     public static function bootUuids()
     {

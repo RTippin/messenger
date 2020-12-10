@@ -2,10 +2,10 @@
 
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
-use RTippin\Messenger\Actions\Calls\EndCall as EndCallAction;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
+use RTippin\Messenger\Actions\Calls\EndCall as EndCallAction;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
 use Throwable;
@@ -29,7 +29,7 @@ class EndCall
     {
         $this->authorize('end', [
             $call,
-            $thread
+            $thread,
         ]);
 
         return $endCall->execute($call)

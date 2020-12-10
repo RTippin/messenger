@@ -47,11 +47,11 @@ class EndCall extends BaseMessengerAction
 
     /**
      * End the call immediately if it is still active. Teardown with
-     * our video provider will be picked up by the event listener
+     * our video provider will be picked up by the event listener.
      *
      * @param mixed ...$parameters
      * @return $this
-     * @var Call $call $parameters[0]
+     * @var Call $parameters[0]
      * @throws Throwable
      */
     public function execute(...$parameters): self
@@ -60,8 +60,7 @@ class EndCall extends BaseMessengerAction
 
         $this->getCall()->refresh();
 
-        if($this->getCall()->isActive())
-        {
+        if ($this->getCall()->isActive()) {
             $this->handleTransactions()
                 ->fireBroadcast()
                 ->fireEvents();
@@ -76,27 +75,24 @@ class EndCall extends BaseMessengerAction
      */
     private function handleTransactions(): self
     {
-        if($this->isChained())
-        {
+        if ($this->isChained()) {
             $this->endCall();
-        }
-        else
-        {
-            $this->database->transaction(fn() => $this->endCall(), 3);
+        } else {
+            $this->database->transaction(fn () => $this->endCall(), 3);
         }
 
         return $this;
     }
 
     /**
-     * Update the call with the information we received from our video provider
+     * Update the call with the information we received from our video provider.
      */
     private function endCall(): void
     {
         $this->setData(
             $this->getCall()
                 ->update([
-                    'call_ended' => now()
+                    'call_ended' => now(),
                 ])
         );
 
@@ -104,7 +100,7 @@ class EndCall extends BaseMessengerAction
             ->participants()
             ->inCall()
             ->update([
-                'left_call' => now()
+                'left_call' => now(),
             ]);
     }
 
@@ -123,8 +119,7 @@ class EndCall extends BaseMessengerAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->toAllInThread($this->getCall()->thread)
                 ->with($this->generateBroadcastResource())
@@ -139,8 +134,7 @@ class EndCall extends BaseMessengerAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new CallEndedEvent(
                 $this->getCall(true)
             ));

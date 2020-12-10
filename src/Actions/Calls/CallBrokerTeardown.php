@@ -25,10 +25,10 @@ class CallBrokerTeardown extends BaseMessengerAction
     }
 
     /**
-     * Teardown the call with the specified driver in our config
+     * Teardown the call with the specified driver in our config.
      *
      * @param mixed ...$parameters
-     * @var Call $call $parameters[0]
+     * @var Call $parameters[0]
      * @return $this
      * @throws Exception
      */
@@ -45,8 +45,7 @@ class CallBrokerTeardown extends BaseMessengerAction
      */
     private function teardownCallWithProvider(): void
     {
-        if( ! $this->videoDriver->destroy($this->getCall()))
-        {
+        if (! $this->videoDriver->destroy($this->getCall())) {
             $this->throwTeardownError();
         }
     }

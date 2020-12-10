@@ -2,10 +2,6 @@
 
 namespace RTippin\Messenger\Models;
 
-use RTippin\Messenger\Database\Factories\ThreadFactory;
-use RTippin\Messenger\Definitions;
-use RTippin\Messenger\Traits\Uuids;
-use Illuminate\Support\Facades\Cache;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -14,10 +10,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
+use RTippin\Messenger\Database\Factories\ThreadFactory;
+use RTippin\Messenger\Definitions;
+use RTippin\Messenger\Traits\Uuids;
 use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
 
 /**
- * App\Models\Messages\Thread
+ * App\Models\Messages\Thread.
  *
  * @property string $id
  * @property int $type
@@ -68,11 +68,8 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
 class Thread extends Model
 {
     use HasFactory;
-
     use SoftDeletes;
-
     use Uuids;
-
     use HasEagerLimit;
 
     /**
@@ -116,7 +113,7 @@ class Thread extends Model
         'invitations' => 'boolean',
         'calling' => 'boolean',
         'messaging' => 'boolean',
-        'knocks' => 'boolean'
+        'knocks' => 'boolean',
     ];
 
     /**
@@ -245,7 +242,7 @@ class Thread extends Model
      */
     public function getStorageDirectory(): string
     {
-        return messenger()->getThreadStorage('directory') . "/{$this->id}";
+        return messenger()->getThreadStorage('directory')."/{$this->id}";
     }
 
     /**
@@ -269,29 +266,23 @@ class Thread extends Model
      */
     public function recipient(): Participant
     {
-        if(isset($this->recipientCache))
-        {
+        if (isset($this->recipientCache)) {
             return $this->recipientCache;
         }
 
-        if(! $this->hasCurrentProvider())
-        {
+        if (! $this->hasCurrentProvider()) {
             return $this->recipientCache = messenger()->getGhostParticipant($this->id);
         }
 
         /** @var Participant $recipient */
-
         $recipient = null;
 
-        if($this->isPrivate())
-        {
-            if($this->relationLoaded('participants'))
-            {
+        if ($this->isPrivate()) {
+            if ($this->relationLoaded('participants')) {
                 $recipient = $this->participants
                     ->where('id', '!=', $this->currentParticipant()->id)
                     ->first();
-            }
-            else{
+            } else {
                 $recipient = $this->participants()
                     ->where('id', '!=', $this->currentParticipant()->id)
                     ->first();
@@ -309,22 +300,19 @@ class Thread extends Model
      */
     public function currentParticipant(): ?Participant
     {
-        if($this->currentParticipantCache
-            || ! messenger()->isProviderSet())
-        {
+        if ($this->currentParticipantCache
+            || ! messenger()->isProviderSet()) {
             return $this->currentParticipantCache;
         }
 
-        if($this->relationLoaded('participants'))
-        {
+        if ($this->relationLoaded('participants')) {
             $this->currentParticipantCache = $this->participants
-                ->where('owner_id',messenger()->getProviderId())
+                ->where('owner_id', messenger()->getProviderId())
                 ->where('owner_type', messenger()->getProviderClass())
                 ->first();
-        }
-        else{
+        } else {
             $this->currentParticipantCache = $this->participants()
-                ->where('owner_id',messenger()->getProviderId())
+                ->where('owner_id', messenger()->getProviderId())
                 ->where('owner_type', messenger()->getProviderClass())
                 ->first();
         }
@@ -347,19 +335,15 @@ class Thread extends Model
      */
     public function name(): string
     {
-        if(isset($this->nameCache))
-        {
+        if (isset($this->nameCache)) {
             return $this->nameCache;
         }
 
         $name = 'Conversation';
 
-        if($this->isPrivate())
-        {
+        if ($this->isPrivate()) {
             $name = $this->recipient()->owner->name();
-        }
-        else if($this->isGroup())
-        {
+        } elseif ($this->isGroup()) {
             $name = $this->subject;
         }
 
@@ -383,11 +367,11 @@ class Thread extends Model
      */
     public function getThreadAvatarRoute(string $size = 'sm', $api = false): string
     {
-        return messengerRoute(($api ? 'api.' : '') . 'messenger.threads.avatar.render',
+        return messengerRoute(($api ? 'api.' : '').'messenger.threads.avatar.render',
             [
                 'thread' => $this->id,
                 'size' => $size,
-                'image' => $this->image
+                'image' => $this->image,
             ]
         );
     }
@@ -398,19 +382,18 @@ class Thread extends Model
      */
     public function threadAvatar($api = false): array
     {
-        if($this->isPrivate())
-        {
+        if ($this->isPrivate()) {
             return [
                 'sm' => $this->recipient()->owner->getAvatarRoute('sm', $api),
                 'md' => $this->recipient()->owner->getAvatarRoute('md', $api),
-                'lg' => $this->recipient()->owner->getAvatarRoute('lg', $api)
+                'lg' => $this->recipient()->owner->getAvatarRoute('lg', $api),
             ];
         }
 
         return [
             'sm' => $this->getThreadAvatarRoute('sm', $api),
             'md' => $this->getThreadAvatarRoute('md', $api),
-            'lg' => $this->getThreadAvatarRoute('lg', $api)
+            'lg' => $this->getThreadAvatarRoute('lg', $api),
         ];
     }
 
@@ -419,9 +402,8 @@ class Thread extends Model
      */
     public function isAdmin(): bool
     {
-        if($this->isGroup()
-            && $this->hasCurrentProvider())
-        {
+        if ($this->isGroup()
+            && $this->hasCurrentProvider()) {
             return $this->currentParticipant()->admin
                 ? true
                 : false;
@@ -435,15 +417,12 @@ class Thread extends Model
      */
     public function isLocked(): bool
     {
-        if(! $this->hasCurrentProvider()
+        if (! $this->hasCurrentProvider()
             || ($this->isPrivate()
                 && ($this->lockout
-                    || $this->recipient()->owner instanceof GhostUser)))
-        {
+                    || $this->recipient()->owner instanceof GhostUser))) {
             return true;
-        }
-        else if($this->isGroup() && $this->lockout)
-        {
+        } elseif ($this->isGroup() && $this->lockout) {
             return true;
         }
 
@@ -455,10 +434,9 @@ class Thread extends Model
      */
     public function isMuted(): bool
     {
-        if(! $this->hasCurrentProvider()
+        if (! $this->hasCurrentProvider()
             || $this->isLocked()
-            || $this->currentParticipant()->muted)
-        {
+            || $this->currentParticipant()->muted) {
             return true;
         }
 
@@ -470,8 +448,7 @@ class Thread extends Model
      */
     public function isPending(): bool
     {
-        if($this->hasCurrentProvider() && $this->isPrivate())
-        {
+        if ($this->hasCurrentProvider() && $this->isPrivate()) {
             return $this->currentParticipant()->pending
                 || $this->recipient()->pending;
         }
@@ -493,13 +470,12 @@ class Thread extends Model
      */
     public function canMessage(): bool
     {
-        if($this->isLocked()
+        if ($this->isLocked()
             || $this->currentParticipant()->pending
             || ($this->isGroup()
                 && (! $this->messaging
                     || (! $this->isAdmin()
-                        && ! $this->currentParticipant()->send_messages))))
-        {
+                        && ! $this->currentParticipant()->send_messages)))) {
             return false;
         }
 
@@ -511,9 +487,8 @@ class Thread extends Model
      */
     public function canAddParticipants(): bool
     {
-        if($this->isLocked()
-            || $this->isPrivate())
-        {
+        if ($this->isLocked()
+            || $this->isPrivate()) {
             return false;
         }
 
@@ -540,14 +515,13 @@ class Thread extends Model
      */
     public function canCall(): bool
     {
-        if( ! messenger()->isCallingEnabled()
+        if (! messenger()->isCallingEnabled()
             || $this->isLocked()
             || $this->isPending()
             || ($this->isGroup()
                 && (! $this->calling
                     || (! $this->isAdmin()
-                        && ! $this->currentParticipant()->start_calls))))
-        {
+                        && ! $this->currentParticipant()->start_calls)))) {
             return false;
         }
 
@@ -559,14 +533,13 @@ class Thread extends Model
      */
     public function canKnock(): bool
     {
-        if( ! messenger()->isKnockKnockEnabled()
+        if (! messenger()->isKnockKnockEnabled()
             || $this->isLocked()
             || $this->isPending()
             || ($this->isGroup()
                 && (! $this->knocks
                     || (! $this->isAdmin()
-                        && ! $this->currentParticipant()->send_knocks))))
-        {
+                        && ! $this->currentParticipant()->send_knocks)))) {
             return false;
         }
 
@@ -578,8 +551,7 @@ class Thread extends Model
      */
     public function hasKnockTimeout(): bool
     {
-        if($this->hasCurrentProvider())
-        {
+        if ($this->hasCurrentProvider()) {
             return $this->isGroup()
                 ? Cache::has("knock.knock.{$this->id}")
                 : Cache::has("knock.knock.{$this->id}.{$this->currentParticipant()->owner_id}");
@@ -593,14 +565,12 @@ class Thread extends Model
      */
     public function isUnread(): bool
     {
-        if(! $this->hasCurrentProvider())
-        {
+        if (! $this->hasCurrentProvider()) {
             return false;
         }
 
         if ($this->currentParticipant()->last_read === null
-            || $this->updated_at->gt($this->currentParticipant()->last_read))
-        {
+            || $this->updated_at->gt($this->currentParticipant()->last_read)) {
             return true;
         }
 
@@ -612,10 +582,9 @@ class Thread extends Model
      */
     public function unreadCount(): int
     {
-        if(! $this->hasCurrentProvider()
+        if (! $this->hasCurrentProvider()
             || $this->unreadCountCache !== 0
-            || ! $this->isUnread())
-        {
+            || ! $this->isUnread()) {
             return $this->unreadCountCache;
         }
 

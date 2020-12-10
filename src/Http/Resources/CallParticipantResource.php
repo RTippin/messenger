@@ -18,7 +18,6 @@ class CallParticipantResource extends JsonResource
     public function toArray($request): array
     {
         /** @var CallParticipant $participant */
-
         $participant = $this->resource;
 
         return [
@@ -29,7 +28,7 @@ class CallParticipantResource extends JsonResource
             'owner' => new ProviderResource($participant->owner, true),
             'created_at' => $participant->created_at,
             'updated_at' => $participant->updated_at,
-            'left_call' => $participant->left_call
+            'left_call' => $participant->left_call,
         ];
     }
 }

@@ -2,15 +2,15 @@
 
 namespace RTippin\Messenger\Models;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Traits\Uuids;
 
 /**
- * App\Models\Messages\CallParticipant
+ * App\Models\Messages\CallParticipant.
  *
  * @property string $id
  * @property string $call_id
@@ -67,7 +67,7 @@ class CallParticipant extends Model
      */
     public function owner()
     {
-        return $this->morphTo()->withDefault(function(){
+        return $this->morphTo()->withDefault(function () {
             return messenger()->getGhostProvider();
         });
     }

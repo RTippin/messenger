@@ -52,7 +52,7 @@ class GroupThreadRepository
             ->with([
                 'participants.owner',
                 'recentMessage.owner',
-                'activeCall.participants.owner'
+                'activeCall.participants.owner',
             ])
             ->limit($this->messenger->getThreadsIndexCount())
             ->get();
@@ -69,7 +69,7 @@ class GroupThreadRepository
             ->with([
                 'participants.owner',
                 'recentMessage.owner',
-                'activeCall.participants.owner'
+                'activeCall.participants.owner',
             ])
             ->where('threads.updated_at', '<=', $thread->updated_at)
             ->where('threads.id', '!=', $thread->id)

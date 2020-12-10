@@ -9,13 +9,13 @@ use Throwable;
 class StoreSystemMessage extends NewMessageAction
 {
     /**
-     * Store new system message, update thread updated_at
+     * Store new system message, update thread updated_at.
      *
      * @param mixed ...$parameters
-     * @var Thread $thread $parameters[0]
-     * @var MessengerProvider $provider $parameters[1]
-     * @var string $body $parameters[2]
-     * @var string $type $parameters[3]
+     * @var Thread $parameters[0]
+     * @var MessengerProvider $parameters[1]
+     * @var string $parameters[2]
+     * @var string $parameters[3]
      * @return $this
      * @throws Throwable
      */

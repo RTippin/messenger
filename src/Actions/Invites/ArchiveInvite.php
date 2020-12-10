@@ -27,7 +27,7 @@ class ArchiveInvite extends BaseMessengerAction
 
     /**
      * @param mixed ...$parameters
-     * @var Invite $invite $parameters[0]
+     * @var Invite $parameters[0]
      * @return $this
      * @throws Exception
      */
@@ -52,14 +52,13 @@ class ArchiveInvite extends BaseMessengerAction
     }
 
     /**
-     * Broadcast / fire events
+     * Broadcast / fire events.
      *
      * @return $this
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new InviteArchivedEvent(
                 $this->getData(true)
             ));

@@ -216,7 +216,7 @@ trait ConfigInterface
         'defaultNotFoundImage',
         'defaultThreadAvatars',
         'avatarStorage',
-        'threadStorage'
+        'threadStorage',
     ];
 
     /**
@@ -238,11 +238,9 @@ trait ConfigInterface
      */
     public function setConfig(array $params): self
     {
-        foreach ($params as $key => $value)
-        {
-            if(property_exists($this, $key)
-                && ! in_array($key, self::$guarded))
-            {
+        foreach ($params as $key => $value) {
+            if (property_exists($this, $key)
+                && ! in_array($key, self::$guarded)) {
                 $this->{$key} = $value;
             }
         }
@@ -251,26 +249,25 @@ trait ConfigInterface
     }
 
     /**
-     * Format the config for a response to the frontend
+     * Format the config for a response to the frontend.
      *
      * @return array
      * @noinspection SpellCheckingInspection
      */
     public function getConfig(): array
     {
-        return collect(get_object_vars($this))->reject(fn($value, $key) =>
-            in_array($key, self::$guarded)
+        return collect(get_object_vars($this))->reject(fn ($value, $key) => in_array($key, self::$guarded)
             && ! in_array($key, ['isProvidersCached'])
         )->merge([
-            'providers' => $this->providers->map(function($provider){
+            'providers' => $this->providers->map(function ($provider) {
                 return [
                     'default_avatar' => basename($provider['default_avatar']),
                     'searchable' => $provider['searchable'],
                     'friendable' => $provider['friendable'],
                     'mobile_devices' => $provider['mobile_devices'],
-                    'provider_interactions' => $provider['provider_interactions']
+                    'provider_interactions' => $provider['provider_interactions'],
                 ];
-            })
+            }),
         ])->toArray();
     }
 
@@ -698,8 +695,7 @@ trait ConfigInterface
      */
     public function getAvatarStorage(string $config = null)
     {
-        if( ! is_null($config))
-        {
+        if (! is_null($config)) {
             return trim($this->avatarStorage[$config], '/');
         }
 
@@ -712,8 +708,7 @@ trait ConfigInterface
      */
     public function getThreadStorage(string $config = null)
     {
-        if( ! is_null($config))
-        {
+        if (! is_null($config)) {
             return trim($this->threadStorage[$config], '/');
         }
 
@@ -790,8 +785,7 @@ trait ConfigInterface
      */
     public function getDefaultThreadAvatars(string $image = null)
     {
-        if( ! is_null($image))
-        {
+        if (! is_null($image)) {
             return $this->defaultThreadAvatars[$image];
         }
 
@@ -799,13 +793,13 @@ trait ConfigInterface
     }
 
     /**
-     * Set all configs from the config file
+     * Set all configs from the config file.
      */
     private function setMessengerConfig(): void
     {
         $this->siteName = $this->configRepo->get('messenger.site_name');
-        $this->apiEndpoint = '/' . $this->configRepo->get('messenger.routing.api.prefix');
-        $this->webEndpoint = '/' . $this->configRepo->get('messenger.routing.web.prefix');
+        $this->apiEndpoint = '/'.$this->configRepo->get('messenger.routing.api.prefix');
+        $this->webEndpoint = '/'.$this->configRepo->get('messenger.routing.web.prefix');
         $this->socketEndpoint = $this->configRepo->get('messenger.socket_endpoint');
         $this->avatarStorage = $this->configRepo->get('messenger.storage.avatars');
         $this->threadStorage = $this->configRepo->get('messenger.storage.threads');
@@ -839,33 +833,27 @@ trait ConfigInterface
     }
 
     /**
-     * Set providers from cache if exist, otherwise set from config
+     * Set providers from cache if exist, otherwise set from config.
      */
     private function setMessengerProviders(): void
     {
-        if($this->isProvidersCached)
-        {
+        if ($this->isProvidersCached) {
             $providersFile = $this->loadCachedProvidersFile();
 
-            if($providersFile)
-            {
+            if ($providersFile) {
                 $this->providers = collect(
                     $providersFile
                 );
-            }
-            else
-            {
+            } else {
                 $this->setProvidersFromConfig();
             }
-        }
-        else
-        {
+        } else {
             $this->setProvidersFromConfig();
         }
     }
 
     /**
-     * Set providers from config
+     * Set providers from config.
      */
     private function setProvidersFromConfig(): void
     {
@@ -880,10 +868,11 @@ trait ConfigInterface
      */
     private function loadCachedProvidersFile()
     {
-        try{
+        try {
             return require $this->app->bootstrapPath('cache/messenger.php');
-        }catch (Exception $e){
+        } catch (Exception $e) {
             report($e);
+
             return null;
         }
     }

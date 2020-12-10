@@ -26,7 +26,7 @@ class ThreadArchiveState
             'created_at' => $thread->created_at,
             'messages_count' => $thread->messages()->count(),
             'participants_count' => $thread->participants()->count(),
-            'calls_count' => $thread->calls()->videoCall()->count()
+            'calls_count' => $thread->calls()->videoCall()->count(),
         ]);
     }
 }

@@ -15,7 +15,7 @@ class ImageMessageRequest extends FormRequest
     {
         return [
             'image' => 'required|max:5120|file|image',
-            'temporary_id' => 'required|string'
+            'temporary_id' => 'required|string',
         ];
     }
 }

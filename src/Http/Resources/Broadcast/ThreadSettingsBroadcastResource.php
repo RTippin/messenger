@@ -2,11 +2,11 @@
 
 namespace RTippin\Messenger\Http\Resources\Broadcast;
 
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Http\Resources\ThreadSettingsResource;
-use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\JsonResource;
 use RTippin\Messenger\Models\Thread;
 
 class ThreadSettingsBroadcastResource extends JsonResource
@@ -46,7 +46,7 @@ class ThreadSettingsBroadcastResource extends JsonResource
     {
         return [
             'sender' => new ProviderResource($this->provider),
-            $this->merge(new ThreadSettingsResource($this->thread))
+            $this->merge(new ThreadSettingsResource($this->thread)),
         ];
     }
 }

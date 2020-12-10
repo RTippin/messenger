@@ -53,7 +53,7 @@ class PromotedAdminMessage implements ShouldQueue
             $event->thread,
             $event->provider,
             $this->messageBody($event),
-            'PROMOTED_ADMIN'
+            'PROMOTED_ADMIN',
         ];
     }
 
@@ -64,8 +64,8 @@ class PromotedAdminMessage implements ShouldQueue
     private function messageBody(PromotedAdminEvent $event): string
     {
         return collect([
-            "owner_id" => $event->participant->owner_id,
-            "owner_type" => $event->participant->owner_type
+            'owner_id' => $event->participant->owner_id,
+            'owner_type' => $event->participant->owner_type,
         ])->toJson();
     }
 }

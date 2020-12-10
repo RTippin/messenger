@@ -63,7 +63,7 @@ class AcceptFriendRequest extends BaseMessengerAction
      * and create two mirrored friend models to link our friendship!
      *
      * @param mixed ...$parameters
-     * @var PendingFriend $parameters[0]
+     * @var PendingFriend[0]
      * @return $this
      * @throws Throwable
      */
@@ -85,20 +85,17 @@ class AcceptFriendRequest extends BaseMessengerAction
      */
     private function handleTransactions(): self
     {
-        if($this->isChained())
-        {
+        if ($this->isChained()) {
             $this->executeTransactions();
-        }
-        else
-        {
-            $this->database->transaction(fn() => $this->executeTransactions());
+        } else {
+            $this->database->transaction(fn () => $this->executeTransactions());
         }
 
         return $this;
     }
 
     /**
-     * Execute transactions
+     * Execute transactions.
      * @throws Exception
      */
     private function executeTransactions(): void
@@ -111,7 +108,7 @@ class AcceptFriendRequest extends BaseMessengerAction
     }
 
     /**
-     * Store friend relationship
+     * Store friend relationship.
      */
     private function storeMyFriend(): void
     {
@@ -120,17 +117,17 @@ class AcceptFriendRequest extends BaseMessengerAction
                 'owner_id' => $this->pending->recipient_id,
                 'owner_type' => $this->pending->recipient_type,
                 'party_id' => $this->pending->sender_id,
-                'party_type' => $this->pending->sender_type
+                'party_type' => $this->pending->sender_type,
             ])
                 ->setRelations([
                     'owner' => $this->pending->recipient,
-                    'party' => $this->pending->sender
+                    'party' => $this->pending->sender,
                 ])
         );
     }
 
     /**
-     * Store inverse friend relationship
+     * Store inverse friend relationship.
      */
     private function storeInverseFriend(): void
     {
@@ -138,11 +135,11 @@ class AcceptFriendRequest extends BaseMessengerAction
             'owner_id' => $this->pending->sender_id,
             'owner_type' => $this->pending->sender_type,
             'party_id' => $this->pending->recipient_id,
-            'party_type' => $this->pending->recipient_type
+            'party_type' => $this->pending->recipient_type,
         ])
             ->setRelations([
                 'owner' => $this->pending->sender,
-                'party' => $this->pending->recipient
+                'party' => $this->pending->recipient,
             ]);
     }
 
@@ -181,8 +178,7 @@ class AcceptFriendRequest extends BaseMessengerAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->to($this->pending->sender)
                 ->with($this->generateBroadcastResource())
@@ -197,8 +193,7 @@ class AcceptFriendRequest extends BaseMessengerAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new FriendApprovedEvent(
                 $this->getData(true),
                 $this->inverseFriend->withoutRelations()
@@ -208,4 +203,3 @@ class AcceptFriendRequest extends BaseMessengerAction
         return $this;
     }
 }
-

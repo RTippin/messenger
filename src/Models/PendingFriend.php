@@ -8,7 +8,7 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
- * App\Models\Friend\PendingFriend
+ * App\Models\Friend\PendingFriend.
  *
  * @property string $id
  * @property string $sender_id
@@ -60,7 +60,7 @@ class PendingFriend extends Model
      */
     public function sender()
     {
-        return $this->morphTo()->withDefault(function(){
+        return $this->morphTo()->withDefault(function () {
             return messenger()->getGhostProvider();
         });
     }
@@ -70,7 +70,7 @@ class PendingFriend extends Model
      */
     public function recipient()
     {
-        return $this->morphTo()->withDefault(function(){
+        return $this->morphTo()->withDefault(function () {
             return messenger()->getGhostProvider();
         });
     }

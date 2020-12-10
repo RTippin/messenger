@@ -21,9 +21,9 @@ class AuthenticateOptional extends Middleware
      */
     public function handle($request, Closure $next, ...$guards)
     {
-        try{
+        try {
             $this->authenticate($request, $guards);
-        }catch (AuthenticationException $e){
+        } catch (AuthenticationException $e) {
             //Not authenticated, continue on
         }
 
@@ -39,8 +39,7 @@ class AuthenticateOptional extends Middleware
      */
     protected function redirectTo($request)
     {
-        if ( ! $request->expectsJson())
-        {
+        if (! $request->expectsJson()) {
             return redirect('/');
         }
     }

@@ -2,10 +2,10 @@
 
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
-use RTippin\Messenger\Actions\Threads\UnmuteThread as UnmuteThreadAction;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
+use RTippin\Messenger\Actions\Threads\UnmuteThread as UnmuteThreadAction;
 use RTippin\Messenger\Models\Thread;
 
 class UnmuteThread

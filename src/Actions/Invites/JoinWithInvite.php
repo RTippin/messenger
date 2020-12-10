@@ -48,14 +48,13 @@ class JoinWithInvite extends BaseMessengerAction
 
     /**
      * @param mixed ...$parameters
-     * @var Invite $invite $parameters[0]
+     * @var Invite $parameters[0]
      * @return $this
      * @throws Exception|Throwable
      */
     public function execute(...$parameters): self
     {
         /** @var Invite $invite */
-
         $invite = $parameters[0];
 
         $this->setThread($invite->thread)
@@ -72,14 +71,11 @@ class JoinWithInvite extends BaseMessengerAction
      */
     private function handleTransactions(Invite $invite): self
     {
-        if($this->isChained())
-        {
+        if ($this->isChained()) {
             $this->executeTransactions($invite);
-        }
-        else
-        {
+        } else {
             $this->database->transaction(
-                fn() => $this->executeTransactions($invite), 3
+                fn () => $this->executeTransactions($invite), 3
             );
         }
 
@@ -88,7 +84,7 @@ class JoinWithInvite extends BaseMessengerAction
 
     /**
      * Execute all actions that must occur for
-     * a successful private thread creation
+     * a successful private thread creation.
      *
      * @param Invite $invite
      */
@@ -110,14 +106,14 @@ class JoinWithInvite extends BaseMessengerAction
     private function incrementInviteUses(Invite $invite): self
     {
         $invite->update([
-            'uses' => $invite->uses + 1
+            'uses' => $invite->uses + 1,
         ]);
 
         return $this;
     }
 
     /**
-     * Execute params for self participant
+     * Execute params for self participant.
      *
      * @mixin StoreParticipant
      * @return array
@@ -127,20 +123,19 @@ class JoinWithInvite extends BaseMessengerAction
         return [
             $this->getThread(),
             $this->messenger->getProvider(),
-            Definitions::DefaultParticipant
+            Definitions::DefaultParticipant,
         ];
     }
 
     /**
-     * Broadcast / fire events
+     * Broadcast / fire events.
      *
      * @param Invite $invite
      * @return $this
      */
     private function fireEvents(Invite $invite): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new InviteUsedEvent(
                 $this->messenger->getProvider()->withoutRelations(),
                 $this->getThread(true),

@@ -76,7 +76,7 @@ class StoreFriendRequest extends BaseMessengerAction
      * Store our new sent friend request and notify the recipient!
      *
      * @param mixed ...$parameters
-     * @var FriendRequest $validated $parameters[0]
+     * @var FriendRequest $parameters[0]
      * @return $this
      * @throws AuthorizationException|ModelNotFoundException
      */
@@ -115,15 +115,13 @@ class StoreFriendRequest extends BaseMessengerAction
      */
     private function recipientIsValid(): self
     {
-        if(is_null($this->recipient)
-            || $this->messenger->getProvider()->is($this->recipient))
-        {
+        if (is_null($this->recipient)
+            || $this->messenger->getProvider()->is($this->recipient)) {
             $this->throwProviderNotFoundError();
         }
 
-        if( ! $this->messenger->canFriendProvider($this->recipient)
-            || $this->friends->friendStatus($this->recipient) !== 0)
-        {
+        if (! $this->messenger->canFriendProvider($this->recipient)
+            || $this->friends->friendStatus($this->recipient) !== 0) {
             $this->throwAuthorizationError();
         }
 
@@ -140,11 +138,11 @@ class StoreFriendRequest extends BaseMessengerAction
                 'sender_id' => $this->messenger->getProviderId(),
                 'sender_type' => $this->messenger->getProviderClass(),
                 'recipient_id' => $this->recipient->getKey(),
-                'recipient_type' => get_class($this->recipient)
+                'recipient_type' => get_class($this->recipient),
             ])
                 ->setRelations([
                     'recipient' => $this->recipient,
-                    'sender' => $this->messenger->getProvider()
+                    'sender' => $this->messenger->getProvider(),
                 ])
         );
 
@@ -178,8 +176,7 @@ class StoreFriendRequest extends BaseMessengerAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->to($this->recipient)
                 ->with($this->generateBroadcastResource())
@@ -194,8 +191,7 @@ class StoreFriendRequest extends BaseMessengerAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new FriendRequestEvent(
                 $this->getData(true)
             ));
@@ -217,6 +213,6 @@ class StoreFriendRequest extends BaseMessengerAction
      */
     private function throwAuthorizationError()
     {
-        throw new AuthorizationException("Not authorized to add friend.");
+        throw new AuthorizationException('Not authorized to add friend.');
     }
 }

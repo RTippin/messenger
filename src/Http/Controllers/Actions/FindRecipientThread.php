@@ -9,7 +9,7 @@ class FindRecipientThread
 {
     /**
      * Attempt to locate an existing private thread given
-     * the alias and id given of another provider
+     * the alias and id given of another provider.
      *
      * @param RecipientThreadLocator $locator
      * @param string $alias
@@ -24,8 +24,7 @@ class FindRecipientThread
             ->setId($id)
             ->locate();
 
-        if( ! $locator->getRecipient())
-        {
+        if (! $locator->getRecipient()) {
             $locator->throwNotFoundError();
         }
 

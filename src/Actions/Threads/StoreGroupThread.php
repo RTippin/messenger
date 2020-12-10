@@ -52,10 +52,10 @@ class StoreGroupThread extends NewThreadAction
 
     /**
      * Create a new group thread! If an array of provider alias/id is present,
-     * we will also add the first batch of participants in this cycle
+     * we will also add the first batch of participants in this cycle.
      *
      * @param array ...$parameters
-     * @var GroupThreadRequest $validated $parameters[0]
+     * @var GroupThreadRequest $parameters[0]
      * @return $this
      * @throws Throwable
      */
@@ -80,14 +80,11 @@ class StoreGroupThread extends NewThreadAction
      */
     private function handleTransactions(string $subject, array $providers): self
     {
-        if($this->isChained())
-        {
+        if ($this->isChained()) {
             $this->executeTransactions($subject, $providers);
-        }
-        else
-        {
+        } else {
             $this->database->transaction(
-                fn() => $this->executeTransactions($subject, $providers)
+                fn () => $this->executeTransactions($subject, $providers)
             );
         }
 
@@ -96,7 +93,7 @@ class StoreGroupThread extends NewThreadAction
 
     /**
      * Execute all actions that must occur for
-     * a successful private thread creation
+     * a successful private thread creation.
      *
      * @param string $subject
      * @param array $providers
@@ -122,14 +119,14 @@ class StoreGroupThread extends NewThreadAction
         return [
             'type' => 2,
             'subject' => $subject,
-            'image' => rand(1,5) . '.png',
+            'image' => rand(1, 5).'.png',
             'add_participants' => true,
-            'invitations' => true
+            'invitations' => true,
         ];
     }
 
     /**
-     * Execute params for created system message
+     * Execute params for created system message.
      *
      * @mixin StoreSystemMessage
      * @param string $subject
@@ -140,13 +137,13 @@ class StoreGroupThread extends NewThreadAction
         return [
             $this->getThread(),
             $this->messenger->getProvider(),
-            'created ' . $subject,
-            'GROUP_CREATED'
+            'created '.$subject,
+            'GROUP_CREATED',
         ];
     }
 
     /**
-     * Execute params for admin participant
+     * Execute params for admin participant.
      *
      * @mixin StoreParticipant
      * @return array
@@ -156,12 +153,12 @@ class StoreGroupThread extends NewThreadAction
         return [
             $this->getThread(),
             $this->messenger->getProvider(),
-            Definitions::DefaultAdminParticipant
+            Definitions::DefaultAdminParticipant,
         ];
     }
 
     /**
-     * Execute params for many participants
+     * Execute params for many participants.
      *
      * @param array $providers
      * @mixin StoreManyParticipants
@@ -172,7 +169,7 @@ class StoreGroupThread extends NewThreadAction
         return [
             $this->getThread(),
             $providers,
-            true
+            true,
         ];
     }
 
@@ -181,8 +178,7 @@ class StoreGroupThread extends NewThreadAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->toOthersInThread($this->getThread())
                 ->with($this->generateBroadcastResource())
@@ -197,8 +193,7 @@ class StoreGroupThread extends NewThreadAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new NewThreadEvent(
                 $this->messenger->getProvider()->withoutRelations(),
                 $this->getThread(true),

@@ -52,8 +52,8 @@ class ThreadApproval extends ThreadParticipantAction
 
     /**
      * @param mixed ...$parameters
-     * @var Thread $thread $parameters[0]
-     * @var bool $approve $parameters[1]
+     * @var Thread $parameters[0]
+     * @var bool $parameters[1]
      * @return $this
      * @throws AuthorizationException|Exception
      */
@@ -76,15 +76,12 @@ class ThreadApproval extends ThreadParticipantAction
      */
     private function handleTransactions(): self
     {
-        if($this->approved)
-        {
+        if ($this->approved) {
             $this->updateParticipant(
                 $this->getThread()->currentParticipant(),
                 ['pending' => false]
             );
-        }
-        else
-        {
+        } else {
             $this->getThread()->delete();
         }
 
@@ -96,8 +93,7 @@ class ThreadApproval extends ThreadParticipantAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->to($this->getThread()->recipient())
                 ->with($this->generateBroadcastResource())
@@ -112,8 +108,7 @@ class ThreadApproval extends ThreadParticipantAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ThreadApprovalEvent(
                 $this->messenger->getProvider()->withoutRelations(),
                 $this->getThread(true),
@@ -142,9 +137,8 @@ class ThreadApproval extends ThreadParticipantAction
      */
     private function checkThreadNeedsApproval(): self
     {
-        if( ! $this->getThread()->isAwaitingMyApproval())
-        {
-            throw new AuthorizationException("This conversation is not pending approval.");
+        if (! $this->getThread()->isAwaitingMyApproval()) {
+            throw new AuthorizationException('This conversation is not pending approval.');
         }
 
         return $this;

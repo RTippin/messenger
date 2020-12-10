@@ -29,7 +29,7 @@ class InviteController
     {
         $this->authorize('viewAny', [
             Invite::class,
-            $thread
+            $thread,
         ]);
 
         return new InviteCollection(
@@ -40,7 +40,6 @@ class InviteController
                 ->get(),
             $thread
         );
-
     }
 
     /**
@@ -58,7 +57,7 @@ class InviteController
     {
         $this->authorize('create', [
             Invite::class,
-            $thread
+            $thread,
         ]);
 
         return $storeInvite->execute(
@@ -68,7 +67,7 @@ class InviteController
     }
 
     /**
-     * Show the invite without owner. This is for public consumption
+     * Show the invite without owner. This is for public consumption.
      *
      * @param Invite $invite
      * @return InviteResource
@@ -93,7 +92,7 @@ class InviteController
     {
         $this->authorize('delete', [
             Invite::class,
-            $thread
+            $thread,
         ]);
 
         return $archiveInvite->execute($invite)

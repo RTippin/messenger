@@ -8,7 +8,7 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
- * App\Models\Friend\Friend
+ * App\Models\Friend\Friend.
  *
  * @property string $id
  * @property string $owner_id
@@ -60,7 +60,7 @@ class Friend extends Model
      */
     public function owner()
     {
-        return $this->morphTo()->withDefault(function(){
+        return $this->morphTo()->withDefault(function () {
             return messenger()->getGhostProvider();
         });
     }
@@ -70,7 +70,7 @@ class Friend extends Model
      */
     public function party()
     {
-        return $this->morphTo()->withDefault(function(){
+        return $this->morphTo()->withDefault(function () {
             return messenger()->getGhostProvider();
         });
     }

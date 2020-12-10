@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Http\Resources\Broadcast;
 
-use RTippin\Messenger\Http\Resources\ProviderResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Models\SentFriend;
 
 class FriendRequestBroadcastResource extends JsonResource
@@ -37,7 +37,7 @@ class FriendRequestBroadcastResource extends JsonResource
     {
         return [
             'sender' => new ProviderResource($this->friend->sender),
-            $this->merge($this->friend->withoutRelations())
+            $this->merge($this->friend->withoutRelations()),
         ];
     }
 }

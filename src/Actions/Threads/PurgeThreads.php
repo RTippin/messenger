@@ -4,8 +4,8 @@ namespace RTippin\Messenger\Actions\Threads;
 
 use Illuminate\Database\Eloquent\Collection;
 use RTippin\Messenger\Actions\Base\BaseMessengerAction;
-use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\FileService;
+use RTippin\Messenger\Models\Thread;
 
 class PurgeThreads extends BaseMessengerAction
 {
@@ -27,20 +27,19 @@ class PurgeThreads extends BaseMessengerAction
     /**
      * Loop through the collection of image messages and remove
      * the image from storage, then force delete message itself
-     * from database
+     * from database.
      *
      * @param mixed ...$parameters
-     * @var Collection $threads $parameters[0]
+     * @var Collection $parameters[0]
      * @return $this
      */
     public function execute(...$parameters): self
     {
         /** @var Collection $threads */
-
         $threads = $parameters[0];
 
         $threads->each(
-            fn(Thread $thread) => $this->purge($thread)
+            fn (Thread $thread) => $this->purge($thread)
         );
 
         return $this;

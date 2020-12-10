@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Http\Collections;
 
-use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use Exception;
 use Illuminate\Http\Request;
+use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use RTippin\Messenger\Http\Resources\ThreadResource;
 use Throwable;
 
@@ -47,7 +47,7 @@ class PrivateThreadCollection extends MessengerCollection
                 'final_page' => $this->isFinalPage(),
                 'per_page' => $this->perPageConfig(),
                 'results' => $this->collection->count(),
-                'total' => $this->grandTotal()
+                'total' => $this->grandTotal(),
             ],
         ];
     }
@@ -57,11 +57,11 @@ class PrivateThreadCollection extends MessengerCollection
      */
     protected function makeResource($thread): ?array
     {
-        try{
+        try {
             return (new ThreadResource($thread))->resolve();
-        }catch (Exception $e){
+        } catch (Exception $e) {
             report($e);
-        }catch(Throwable $t){
+        } catch (Throwable $t) {
             report($t);
         }
 

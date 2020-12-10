@@ -86,27 +86,27 @@ class ThreadResource extends JsonResource
                 'message' => $this->thread->canMessage(),
                 'knock' => $this->thread->canKnock(),
                 'awaiting_my_approval' => $this->when($this->thread->isPending(),
-                    fn() => $this->thread->isAwaitingMyApproval()
+                    fn () => $this->thread->isAwaitingMyApproval()
                 ),
             ],
             'resources' => [
                 'recipient' => $this->when($this->thread->isPrivate(),
-                    fn() => $this->addRecipient()
+                    fn () => $this->addRecipient()
                 ),
                 'active_call' => $this->when($this->thread->hasActiveCall(),
-                    fn() => $this->addActiveCall()
+                    fn () => $this->addActiveCall()
                 ),
                 'participants' => $this->when($this->addParticipants,
-                    fn() => $this->addParticipants()
+                    fn () => $this->addParticipants()
                 ),
                 'messages' => $this->when($this->addMessages,
-                    fn() => $this->addMessages()
+                    fn () => $this->addMessages()
                 ),
                 'calls' => $this->when($this->addCalls,
-                    fn() => $this->addCalls()
+                    fn () => $this->addCalls()
                 ),
-                'latest_message' => $this->addRecentMessage()
-            ]
+                'latest_message' => $this->addRecentMessage(),
+            ],
         ];
     }
 
@@ -115,8 +115,7 @@ class ThreadResource extends JsonResource
      */
     private function addRecentMessage(): ?MessageResource
     {
-        if( ! is_null($this->thread->recentMessage))
-        {
+        if (! is_null($this->thread->recentMessage)) {
             return new MessageResource(
                 $this->thread->recentMessage,
                 $this->thread

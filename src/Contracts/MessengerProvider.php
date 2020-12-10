@@ -6,7 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Contracts\MessengerProvider
+ * App\Contracts\MessengerProvider.
  *
  * @mixin Model|\Eloquent
  */
@@ -22,7 +22,7 @@ interface MessengerProvider
 
     /**
      * Format and return your provider name here.
-     * ex: $this->first . ' ' . $this->last
+     * ex: $this->first . ' ' . $this->last.
      *
      * @return string
      */
@@ -55,14 +55,14 @@ interface MessengerProvider
 
     /**
      * Returns online status of your provider.
-     * 0 - offline, 1 - online, 2 - away
+     * 0 - offline, 1 - online, 2 - away.
      *
      * @return int
      */
     public function onlineStatus();
 
     /**
-     * Verbose meaning of the online status number
+     * Verbose meaning of the online status number.
      *
      * @return string
      */

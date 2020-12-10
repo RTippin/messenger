@@ -2,21 +2,21 @@
 
 namespace RTippin\Messenger\Contracts;
 
+use Illuminate\Support\Collection;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use Illuminate\Support\Collection;
 
 /**
  * Select a single TO method, set the resource to broadcast, then trigger
- * broadcast given the abstract string of the BroadcastEvent
+ * broadcast given the abstract string of the BroadcastEvent.
  */
 interface BroadcastDriver
 {
     /**
      * Generate all available participants for the current
-     * thread to broadcast to
+     * thread to broadcast to.
      *
      * @param Thread $thread
      * @return $this
@@ -25,7 +25,7 @@ interface BroadcastDriver
 
     /**
      * Generate all available participants for the current thread,
-     * excluding current provider
+     * excluding current provider.
      *
      * @param Thread $thread
      * @return $this
@@ -35,7 +35,7 @@ interface BroadcastDriver
     /**
      * Set recipients to the provided collection. Collection may
      * contain a mix of messenger providers, thread participants,
-     * or call participants
+     * or call participants.
      *
      * @param Collection $recipients
      * @return $this
@@ -43,7 +43,7 @@ interface BroadcastDriver
     public function toSelected(Collection $recipients): self;
 
     /**
-     * Set recipient to a single instance of the types listed below
+     * Set recipient to a single instance of the types listed below.
      *
      * @param MessengerProvider|Participant|CallParticipant $recipient
      * @return $this
@@ -51,7 +51,7 @@ interface BroadcastDriver
     public function to($recipient): self;
 
     /**
-     * Set single presence channel to broadcast on. Accepts Call or Thread
+     * Set single presence channel to broadcast on. Accepts Call or Thread.
      *
      * @param Call|Thread $entity
      * @return $this
@@ -60,7 +60,7 @@ interface BroadcastDriver
 
     /**
      * Set many presence channels to broadcast on. Collection may
-     * contain a mix of Call and Thread models
+     * contain a mix of Call and Thread models.
      *
      * @param Collection $presence
      * @return $this
@@ -68,7 +68,7 @@ interface BroadcastDriver
     public function toManyPresence(Collection $presence): self;
 
     /**
-     * Set the resource we will use to broadcast out
+     * Set the resource we will use to broadcast out.
      *
      * @param array $with
      * @return $this

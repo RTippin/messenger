@@ -2,10 +2,10 @@
 
 namespace RTippin\Messenger\Actions;
 
-use RTippin\Messenger\Actions\Base\BaseMessengerAction;
 use Illuminate\Http\UploadedFile;
-use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Actions\Base\BaseMessengerAction;
 use RTippin\Messenger\FileService;
+use RTippin\Messenger\Messenger;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class StoreMessengerAvatar extends BaseMessengerAction
@@ -35,7 +35,7 @@ class StoreMessengerAvatar extends BaseMessengerAction
 
     /**
      * @param mixed ...$parameters
-     * @var UploadedFile $file $parameters[0]['image']
+     * @var UploadedFile $parameters[0]['image']
      * @return $this
      */
     public function execute(...$parameters): self
@@ -76,8 +76,7 @@ class StoreMessengerAvatar extends BaseMessengerAction
      */
     private function removeOldIfExist(): self
     {
-        if( ! is_null($this->messenger->getProvider()->{$this->messenger->getProvider()->getAvatarColumn()}))
-        {
+        if (! is_null($this->messenger->getProvider()->{$this->messenger->getProvider()->getAvatarColumn()})) {
             $this->fileService
                 ->setDisk($this->messenger->getAvatarStorage('disk'))
                 ->destroy(
@@ -94,7 +93,7 @@ class StoreMessengerAvatar extends BaseMessengerAction
     private function updateProviderAvatar(string $file): void
     {
         $this->messenger->getProvider()->update([
-            $this->messenger->getProvider()->getAvatarColumn() => $file
+            $this->messenger->getProvider()->getAvatarColumn() => $file,
         ]);
     }
 }

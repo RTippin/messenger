@@ -2,13 +2,13 @@
 
 namespace RTippin\Messenger\Jobs;
 
-use RTippin\Messenger\Actions\Threads\PurgeThreads as PurgeThreadsAction;
 use Illuminate\Bus\Queueable;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Queue\SerializesModels;
-use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
+use Illuminate\Queue\InteractsWithQueue;
+use Illuminate\Queue\SerializesModels;
+use RTippin\Messenger\Actions\Threads\PurgeThreads as PurgeThreadsAction;
 
 class PurgeThreads implements ShouldQueue
 {

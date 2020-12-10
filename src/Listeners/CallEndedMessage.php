@@ -53,8 +53,8 @@ class CallEndedMessage implements ShouldQueue
         return [
             $event->call->thread,
             $event->call->owner,
-            collect(["call_id" => $event->call->id])->toJson(),
-            Definitions::Call[$event->call->type] . '_CALL'
+            collect(['call_id' => $event->call->id])->toJson(),
+            Definitions::Call[$event->call->type].'_CALL',
         ];
     }
 }

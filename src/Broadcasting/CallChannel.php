@@ -41,7 +41,7 @@ class CallChannel
     {
         $this->authorize('socket', [
             $call,
-            $thread
+            $thread,
         ]);
 
         return new ProviderResource(

@@ -30,7 +30,7 @@ class KnockKnock
 
     /**
      * Check if provider can knock in thread and
-     * no timeout exist, then knock! 👊✊
+     * no timeout exist, then knock! 👊✊.
      *
      * @param SendKnock $sendKnock
      * @param Thread $thread
@@ -45,7 +45,6 @@ class KnockKnock
 
         return $sendKnock->execute($thread)
             ->getMessageResponse();
-
     }
 
     /**
@@ -54,8 +53,7 @@ class KnockKnock
      */
     private function checkKnockTimeout(Thread $thread)
     {
-        if($thread->hasKnockTimeout())
-        {
+        if ($thread->hasKnockTimeout()) {
             throw new AuthorizationException("You may only knock at {$thread->name()} once every {$this->messenger->getKnockTimeout()} minutes.");
         }
     }

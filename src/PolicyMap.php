@@ -43,7 +43,7 @@ trait PolicyMap
         Invite::class => InvitePolicy::class,
         Friend::class => FriendPolicy::class,
         PendingFriend::class => PendingFriendPolicy::class,
-        SentFriend::class => SentFriendPolicy::class
+        SentFriend::class => SentFriendPolicy::class,
     ];
 
     /**
@@ -54,8 +54,7 @@ trait PolicyMap
      */
     protected function registerPolicies(): void
     {
-        if($this->app['config']->get('messenger.routing.api.enabled'))
-        {
+        if ($this->app['config']->get('messenger.routing.api.enabled')) {
             $gate = $this->app->make(Gate::class);
 
             foreach ($this->policies as $key => $value) {

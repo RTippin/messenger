@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Commands;
 
-use RTippin\Messenger\Jobs\PurgeThreads as PurgeThreadsJob;
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
+use RTippin\Messenger\Jobs\PurgeThreads as PurgeThreadsJob;
 use RTippin\Messenger\Models\Thread;
 
 class PurgeThreads extends Command
@@ -37,7 +37,7 @@ class PurgeThreads extends Command
     {
         Thread::onlyTrashed()
             ->where('deleted_at', '<=', now()->subDays($this->option('days')))
-            ->chunk(100, fn(Collection $threads) => $this->dispatchJob($threads));
+            ->chunk(100, fn (Collection $threads) => $this->dispatchJob($threads));
 
         $this->info('Purge threads dispatched.');
     }

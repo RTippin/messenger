@@ -20,7 +20,7 @@ class MessengerSettingsRequest extends FormRequest
             'message_sound' => 'required|boolean',
             'notify_sound' => 'required|boolean',
             'dark_mode' => 'required|boolean',
-            'online_status' => ['required', 'integer', Rule::in([0,1,2])]
+            'online_status' => ['required', 'integer', Rule::in([0, 1, 2])],
         ];
     }
 }

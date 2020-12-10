@@ -53,7 +53,7 @@ class ThreadNameMessage implements ShouldQueue
             $event->thread,
             $event->provider,
             "renamed the group to {$event->thread->subject}",
-            'GROUP_RENAMED'
+            'GROUP_RENAMED',
         ];
     }
 

@@ -33,7 +33,7 @@ class ThreadController
     }
 
     /**
-     * Display threads history pagination
+     * Display threads history pagination.
      *
      * @param ThreadRepository $repository
      * @param Thread $thread
@@ -65,7 +65,7 @@ class ThreadController
         return new ThreadResource($thread->load([
             'participants.owner',
             'recentMessage.owner',
-            'activeCall.participants.owner'
+            'activeCall.participants.owner',
         ]));
     }
 

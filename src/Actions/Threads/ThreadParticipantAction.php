@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Actions\Threads;
 
-
 use RTippin\Messenger\Actions\Base\BaseMessengerAction;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Definitions;
@@ -11,7 +10,7 @@ use RTippin\Messenger\Models\Participant;
 abstract class ThreadParticipantAction extends BaseMessengerAction
 {
     /**
-     * Store a fresh new participant
+     * Store a fresh new participant.
      *
      * @param MessengerProvider $provider
      * @param array $attributes
@@ -24,7 +23,7 @@ abstract class ThreadParticipantAction extends BaseMessengerAction
                 ->participants()
                 ->create(array_merge($attributes, [
                     'owner_id' => $provider->getKey(),
-                    'owner_type' => get_class($provider)
+                    'owner_type' => get_class($provider),
                 ]))
                 ->setRelation('owner', $provider)
         );
@@ -33,7 +32,7 @@ abstract class ThreadParticipantAction extends BaseMessengerAction
     }
 
     /**
-     * Store or restore a group participant
+     * Store or restore a group participant.
      *
      * @param MessengerProvider $provider
      * @return $this
@@ -41,18 +40,16 @@ abstract class ThreadParticipantAction extends BaseMessengerAction
     protected function storeOrRestoreParticipant(MessengerProvider $provider): self
     {
         /** @var Participant $participant */
-
         $participant = $this->getThread()
             ->participants()
             ->withTrashed()
             ->firstOrCreate([
                 'owner_id' => $provider->getKey(),
-                'owner_type' => get_class($provider)
+                'owner_type' => get_class($provider),
             ])
             ->setRelation('owner', $provider);
 
-        if($participant->trashed())
-        {
+        if ($participant->trashed()) {
             $participant->update(Definitions::DefaultParticipant);
         }
 

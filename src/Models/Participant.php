@@ -2,8 +2,6 @@
 
 namespace RTippin\Messenger\Models;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Traits\Uuids;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -12,9 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Traits\Uuids;
 
 /**
- * App\Models\Messages\Participant
+ * App\Models\Messages\Participant.
  *
  * @property string $id
  * @property string $thread_id
@@ -68,7 +68,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Participant extends Model
 {
     use SoftDeletes;
-
     use Uuids;
 
     /**
@@ -102,7 +101,7 @@ class Participant extends Model
      */
     protected $dates = [
         'deleted_at',
-        'last_read'
+        'last_read',
     ];
 
     /**
@@ -151,7 +150,7 @@ class Participant extends Model
      */
     public function owner()
     {
-        return $this->morphTo()->withDefault(function(){
+        return $this->morphTo()->withDefault(function () {
             return messenger()->getGhostProvider();
         });
     }
@@ -170,7 +169,7 @@ class Participant extends Model
     }
 
     /**
-     * Scope for participants that are admins
+     * Scope for participants that are admins.
      *
      * @param Builder $query
      * @return Builder
@@ -181,7 +180,7 @@ class Participant extends Model
     }
 
     /**
-     * Scope for participants that are not muted
+     * Scope for participants that are not muted.
      *
      * @param Builder $query
      * @return Builder
@@ -192,7 +191,7 @@ class Participant extends Model
     }
 
     /**
-     * Scope for participants that are not pending
+     * Scope for participants that are not pending.
      *
      * @param Builder $query
      * @return Builder
@@ -203,7 +202,7 @@ class Participant extends Model
     }
 
     /**
-     * Scope for participants that are valid providers
+     * Scope for participants that are valid providers.
      *
      * @param Builder $query
      * @return Builder

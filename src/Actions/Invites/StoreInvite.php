@@ -41,8 +41,8 @@ class StoreInvite extends BaseMessengerAction
      * Create a new thread invite!
      *
      * @param mixed ...$parameters
-     * @var Thread $thread $parameters[0]
-     * @var InviteRequest $validated $parameters[1]
+     * @var Thread $parameters[0]
+     * @var InviteRequest $parameters[1]
      * @return $this
      */
     public function execute(...$parameters): self
@@ -70,11 +70,11 @@ class StoreInvite extends BaseMessengerAction
                     'code' => $this->generateInviteCode(),
                     'max_use' => $params['uses'],
                     'uses' => 0,
-                    'expires_at' => $this->setExpiresAt($params['expires'])
+                    'expires_at' => $this->setExpiresAt($params['expires']),
                 ])
                 ->setRelations([
                     'owner' => $this->messenger->getProvider(),
-                    'thread' => $this->getThread()
+                    'thread' => $this->getThread(),
                 ])
         );
 
@@ -87,8 +87,7 @@ class StoreInvite extends BaseMessengerAction
      */
     private function setExpiresAt(int $option): ?Carbon
     {
-        switch($option)
-        {
+        switch ($option) {
             case 1:
                 return now()->addMinutes(30);
             case 2:
@@ -131,14 +130,13 @@ class StoreInvite extends BaseMessengerAction
     }
 
     /**
-     * Broadcast / fire events
+     * Broadcast / fire events.
      *
      * @return $this
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new NewInviteEvent(
                 $this->getData(true)
             ));

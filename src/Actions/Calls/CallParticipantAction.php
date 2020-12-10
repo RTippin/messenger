@@ -25,7 +25,7 @@ abstract class CallParticipantAction extends BaseMessengerAction
     }
 
     /**
-     * Store a fresh new participant
+     * Store a fresh new participant.
      *
      * @param MessengerProvider $provider
      * @return $this
@@ -37,7 +37,7 @@ abstract class CallParticipantAction extends BaseMessengerAction
             ->participants()
             ->create([
                 'owner_id' => $provider->getKey(),
-                'owner_type' => get_class($provider)
+                'owner_type' => get_class($provider),
             ])
             ->setRelation('owner', $provider)
         );
@@ -61,7 +61,7 @@ abstract class CallParticipantAction extends BaseMessengerAction
 
     /**
      * Put the participant in cache so that we may tell if a participant
-     * left without a proper post to the backend (left_call null)
+     * left without a proper post to the backend (left_call null).
      *
      * @param CallParticipant $participant
      * @return $this
@@ -74,7 +74,7 @@ abstract class CallParticipantAction extends BaseMessengerAction
     }
 
     /**
-     * Remove the participant from cache
+     * Remove the participant from cache.
      *
      * @param CallParticipant $participant
      * @return $this

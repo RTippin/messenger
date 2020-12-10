@@ -41,7 +41,7 @@ class ArchiveInvalidInvites implements ShouldQueue
     public function handle(ArchiveInvite $archiveInvite)
     {
         $this->invites
-            ->reject(fn(Invite $invite) => $invite->isValid())
-            ->each(fn(Invite $invite) => $archiveInvite->execute($invite));
+            ->reject(fn (Invite $invite) => $invite->isValid())
+            ->each(fn (Invite $invite) => $archiveInvite->execute($invite));
     }
 }

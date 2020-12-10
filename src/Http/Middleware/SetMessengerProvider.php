@@ -28,7 +28,7 @@ class SetMessengerProvider
      * Handle an incoming request.
      * Perform your logic here to determine which model you
      * want to be used throughout the application,
-     * as this messenger supports multiple models
+     * as this messenger supports multiple models.
      *
      * @param Request $request
      * @param Closure $next
@@ -40,8 +40,7 @@ class SetMessengerProvider
     {
         $this->setProvider($request);
 
-        if($required === 'required' && ! $this->messenger->isProviderSet())
-        {
+        if ($required === 'required' && ! $this->messenger->isProviderSet()) {
             $this->messenger->throwProviderError();
         }
 
@@ -50,15 +49,14 @@ class SetMessengerProvider
 
     /**
      * Set the provider! You may override this however
-     * you need to grab the model that is authed
+     * you need to grab the model that is authed.
      *
      * @param Request $request
      * @throws InvalidMessengerProvider
      */
     protected function setProvider(Request $request): void
     {
-        if($request->user())
-        {
+        if ($request->user()) {
             $this->messenger->setProvider(
                 $request->user()
             );

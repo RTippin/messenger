@@ -40,8 +40,7 @@ class EndCallIfEmpty implements ShouldQueue
      */
     public function handle(CallLeftEvent $event): void
     {
-        if( ! $event->call->participants()->inCall()->count())
-        {
+        if (! $event->call->participants()->inCall()->count()) {
             $this->endCall->execute($event->call);
         }
     }

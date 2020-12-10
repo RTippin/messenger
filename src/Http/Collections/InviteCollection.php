@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Http\Collections;
 
-use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use Exception;
 use Illuminate\Http\Request;
+use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use RTippin\Messenger\Http\Resources\InviteResource;
 use RTippin\Messenger\Models\Thread;
 use Throwable;
@@ -37,8 +37,8 @@ class InviteCollection extends MessengerCollection
             'data' => $this->safeTransformer(),
             'meta' => [
                 'total' => $this->thread->invites()->valid()->count(),
-                'max_allowed' => messenger()->getThreadMaxInvitesCount() ?: null
-            ]
+                'max_allowed' => messenger()->getThreadMaxInvitesCount() ?: null,
+            ],
         ];
     }
 
@@ -47,11 +47,11 @@ class InviteCollection extends MessengerCollection
      */
     protected function makeResource($invite): ?array
     {
-        try{
+        try {
             return (new InviteResource($invite))->resolve();
-        }catch (Exception $e){
+        } catch (Exception $e) {
             report($e);
-        }catch(Throwable $t){
+        } catch (Throwable $t) {
             report($t);
         }
 

@@ -2,11 +2,11 @@
 
 namespace RTippin\Messenger;
 
+use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
-use Exception;
 use Intervention\Image\ImageManager;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
@@ -33,7 +33,6 @@ class ImageRenderService
     /**
      * @var ImageManager
      */
-
     private ImageManager $imageManager;
 
     /**
@@ -72,14 +71,12 @@ class ImageRenderService
 
         $disk = $this->messenger->getAvatarStorage()['disk'];
 
-        if( ! $this->filesystemManager->disk($disk)->exists($avatar))
-        {
+        if (! $this->filesystemManager->disk($disk)->exists($avatar)) {
             return $this->renderDefaultImage($alias);
         }
 
-        if(pathinfo($this->filesystemManager->disk($disk)->path($avatar), PATHINFO_EXTENSION) !== 'gif'
-            && $size !== 'lg')
-        {
+        if (pathinfo($this->filesystemManager->disk($disk)->path($avatar), PATHINFO_EXTENSION) !== 'gif'
+            && $size !== 'lg') {
             return $this->renderImageSize(
                 $this->filesystemManager->disk($disk)->get($avatar),
                 $size
@@ -102,18 +99,16 @@ class ImageRenderService
                                        string $size,
                                        string $fileNameChallenge)
     {
-        if( ! $message->isImage()
+        if (! $message->isImage()
             || $fileNameChallenge !== $message->body
             || ! $this->filesystemManager
                 ->disk($message->getStorageDisk())
-                ->exists($message->getImagePath()))
-        {
+                ->exists($message->getImagePath())) {
             return $this->renderDefaultImage();
         }
 
-        if(pathinfo($this->filesystemManager->disk($message->getStorageDisk())->path($message->getImagePath()), PATHINFO_EXTENSION) !== 'gif'
-            && $size !== 'lg')
-        {
+        if (pathinfo($this->filesystemManager->disk($message->getStorageDisk())->path($message->getImagePath()), PATHINFO_EXTENSION) !== 'gif'
+            && $size !== 'lg') {
             return $this->renderImageSize(
                 $this->filesystemManager
                     ->disk($message->getStorageDisk())
@@ -138,29 +133,25 @@ class ImageRenderService
                                       string $size,
                                       string $fileNameChallenge)
     {
-        if( ! $thread->isGroup()
-            || $fileNameChallenge !== $thread->image)
-        {
+        if (! $thread->isGroup()
+            || $fileNameChallenge !== $thread->image) {
             return $this->renderDefaultImage();
         }
 
-        if(in_array($thread->image, Definitions::DefaultGroupAvatars))
-        {
+        if (in_array($thread->image, Definitions::DefaultGroupAvatars)) {
             return $this->responseFactory->file(
                 $this->messenger->getDefaultThreadAvatars($thread->image)
             );
         }
 
-        if( ! $this->filesystemManager
+        if (! $this->filesystemManager
             ->disk($thread->getStorageDisk())
-            ->exists($thread->getAvatarPath()))
-        {
+            ->exists($thread->getAvatarPath())) {
             return $this->renderDefaultImage();
         }
 
-        if(pathinfo($this->filesystemManager->disk($thread->getStorageDisk())->path($thread->getAvatarPath()), PATHINFO_EXTENSION) !== 'gif'
-            && $size !== 'lg')
-        {
+        if (pathinfo($this->filesystemManager->disk($thread->getStorageDisk())->path($thread->getAvatarPath()), PATHINFO_EXTENSION) !== 'gif'
+            && $size !== 'lg') {
             return $this->renderImageSize(
                 $this->filesystemManager
                     ->disk($thread->getStorageDisk())
@@ -184,8 +175,7 @@ class ImageRenderService
             ? $this->messenger->getProviderDefaultAvatarPath($alias)
             : null;
 
-        if($default && file_exists($default))
-        {
+        if ($default && file_exists($default)) {
             return $this->responseFactory->file($default);
         }
 
@@ -199,12 +189,11 @@ class ImageRenderService
      */
     private function renderImageSize(string $file, string $size)
     {
-        try{
+        try {
             $width = 150;
             $height = 150;
 
-            if($size === 'md')
-            {
+            if ($size === 'md') {
                 $width = 300;
                 $height = 300;
             }
@@ -213,15 +202,14 @@ class ImageRenderService
                 ? $width = null
                 : $height = null;
 
-            $resize = $this->imageManager->cache(function($image) use($file, $width, $height){
-                return $image->make($file)->resize($width, $height, function ($constraint){
+            $resize = $this->imageManager->cache(function ($image) use ($file, $width, $height) {
+                return $image->make($file)->resize($width, $height, function ($constraint) {
                     $constraint->aspectRatio();
                 });
-            },120);
+            }, 120);
 
             return $this->imageManager->make($resize)->response();
-
-        }catch (Exception $e){
+        } catch (Exception $e) {
             report($e);
         }
 

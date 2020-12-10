@@ -74,7 +74,7 @@ class CallPolicy
     }
 
     /**
-     * Determine whether the provider join the call
+     * Determine whether the provider join the call.
      *
      * @param $user
      * @param Call $call

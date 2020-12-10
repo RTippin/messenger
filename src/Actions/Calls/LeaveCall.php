@@ -44,8 +44,8 @@ class LeaveCall extends CallParticipantAction
      * Leave the call!
      *
      * @param mixed ...$parameters
-     * @var Call $call $parameters[0]
-     * @var CallParticipant $participant $parameters[1]
+     * @var Call $parameters[0]
+     * @var CallParticipant $parameters[1]
      * @return $this
      */
     public function execute(...$parameters): self
@@ -68,8 +68,8 @@ class LeaveCall extends CallParticipantAction
         return [
             $participant,
             [
-                'left_call' => now()
-            ]
+                'left_call' => now(),
+            ],
         ];
     }
 
@@ -88,8 +88,7 @@ class LeaveCall extends CallParticipantAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->to($this->getCallParticipant())
                 ->with($this->generateBroadcastResource())
@@ -104,8 +103,7 @@ class LeaveCall extends CallParticipantAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new CallLeftEvent(
                 $this->getCall(true),
                 $this->getCallParticipant(true)

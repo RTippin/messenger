@@ -3,8 +3,8 @@
 namespace RTippin\Messenger\Actions;
 
 use RTippin\Messenger\Actions\Base\BaseMessengerAction;
-use RTippin\Messenger\Messenger;
 use RTippin\Messenger\FileService;
+use RTippin\Messenger\Messenger;
 
 class DestroyMessengerAvatar extends BaseMessengerAction
 {
@@ -47,8 +47,7 @@ class DestroyMessengerAvatar extends BaseMessengerAction
      */
     private function removeOldIfExist(): self
     {
-        if( ! is_null($this->messenger->getProvider()->{$this->messenger->getProvider()->getAvatarColumn()}))
-        {
+        if (! is_null($this->messenger->getProvider()->{$this->messenger->getProvider()->getAvatarColumn()})) {
             $this->fileService
                 ->setDisk($this->messenger->getAvatarStorage('disk'))
                 ->destroy(
@@ -56,7 +55,7 @@ class DestroyMessengerAvatar extends BaseMessengerAction
                 );
 
             $this->messenger->getProvider()->update([
-                $this->messenger->getProvider()->getAvatarColumn() => null
+                $this->messenger->getProvider()->getAvatarColumn() => null,
             ]);
         }
 

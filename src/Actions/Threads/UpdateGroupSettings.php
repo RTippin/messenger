@@ -57,8 +57,8 @@ class UpdateGroupSettings extends BaseMessengerAction
      * the group name changes.
      *
      * @param mixed ...$parameters
-     * @var Thread $thread $parameters[0]
-     * @var ThreadSettingsRequest $validated $parameters[1]
+     * @var Thread $parameters[0]
+     * @var ThreadSettingsRequest $parameters[1]
      * @return $this
      */
     public function execute(...$parameters): self
@@ -83,8 +83,7 @@ class UpdateGroupSettings extends BaseMessengerAction
 
         $this->getThread()->update($attributes);
 
-        if( ! $this->getThread()->wasChanged())
-        {
+        if (! $this->getThread()->wasChanged()) {
             $this->withoutDispatches();
         }
 
@@ -103,7 +102,7 @@ class UpdateGroupSettings extends BaseMessengerAction
     }
 
     /**
-     * Generate the thread settings resource
+     * Generate the thread settings resource.
      *
      * @return $this
      */
@@ -132,8 +131,7 @@ class UpdateGroupSettings extends BaseMessengerAction
      */
     private function fireBroadcast(): self
     {
-        if($this->shouldFireBroadcast())
-        {
+        if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->toPresence($this->getThread())
                 ->with($this->generateBroadcastResource())
@@ -148,8 +146,7 @@ class UpdateGroupSettings extends BaseMessengerAction
      */
     private function fireEvents(): self
     {
-        if($this->shouldFireEvents())
-        {
+        if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ThreadSettingsEvent(
                 $this->messenger->getProvider()->withoutRelations(),
                 $this->getThread(true),

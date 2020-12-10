@@ -7,12 +7,11 @@ use Illuminate\Support\Str;
 use RTippin\Messenger\Definitions;
 
 /**
- * App\Traits\Messageable
+ * App\Traits\Messageable.
  *
  * @mixin Model
  * @noinspection SpellCheckingInspection
  */
-
 trait Messageable
 {
     /**
@@ -44,7 +43,7 @@ trait Messageable
 
     /**
      * Format and return your provider name here.
-     * ex: $this->first . ' ' . $this->last
+     * ex: $this->first . ' ' . $this->last.
      *
      * @return string
      */
@@ -73,26 +72,25 @@ trait Messageable
      */
     public function getAvatarRoute(string $size = 'sm', $api = false): ?string
     {
-        return messengerRoute(($api ? 'api.' : '') . 'avatar.render',
+        return messengerRoute(($api ? 'api.' : '').'avatar.render',
             [
                 'alias' => messenger()->findProviderAlias($this),
                 'id' => $this->getKey(),
                 'size' => $size,
-                'image' => $this->{$this->getAvatarColumn()} ? $this->{$this->getAvatarColumn()} : 'default.png'
+                'image' => $this->{$this->getAvatarColumn()} ? $this->{$this->getAvatarColumn()} : 'default.png',
             ]
         );
     }
 
     /**
      * Returns online status of your provider.
-     * 0 - offline, 1 - online, 2 - away
+     * 0 - offline, 1 - online, 2 - away.
      *
      * @return int
      */
     public function onlineStatus(): int
     {
-        if( ! is_null($this->isOnlineCache))
-        {
+        if (! is_null($this->isOnlineCache)) {
             return $this->isOnlineCache;
         }
 
@@ -102,7 +100,7 @@ trait Messageable
     }
 
     /**
-     * Verbose meaning of the online status number
+     * Verbose meaning of the online status number.
      *
      * @return string
      */

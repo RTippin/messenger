@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Models;
 use Illuminate\Database\Eloquent\Model as Eloquent;
 
 /**
- * App\GhostUser
+ * App\GhostUser.
  * @mixin \Eloquent
  */
 class GhostUser extends Eloquent
@@ -29,7 +29,7 @@ class GhostUser extends Eloquent
         'last' => 'Profile',
         'slug' => 'ghost',
         'picture' => null,
-        'email' => 'ghost@example.org'
+        'email' => 'ghost@example.org',
     ];
 
     /**
@@ -47,12 +47,12 @@ class GhostUser extends Eloquent
      */
     public function getAvatarRoute(string $size = 'sm', $api = false): ?string
     {
-        return messengerRoute(($api ? 'api.' : '') . 'avatar.render',
+        return messengerRoute(($api ? 'api.' : '').'avatar.render',
             [
                 'alias' => 'ghost',
                 'id' => 'ghost',
                 'size' => $size,
-                'image' => 'default.png'
+                'image' => 'default.png',
             ]
         );
     }
@@ -87,6 +87,6 @@ class GhostUser extends Eloquent
      */
     public function name(): string
     {
-        return "Ghost Profile";
+        return 'Ghost Profile';
     }
 }

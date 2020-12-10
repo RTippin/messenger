@@ -15,7 +15,7 @@ class MessageRequest extends FormRequest
     {
         return [
             'message' => 'required|string',
-            'temporary_id' => 'required|string'
+            'temporary_id' => 'required|string',
         ];
     }
 }

@@ -44,7 +44,7 @@ class StoreMessengerIp implements ShouldQueue
         $this->messenger
             ->getProviderMessenger($event->provider)
             ->update([
-                'ip' => $event->IP
+                'ip' => $event->IP,
             ]);
     }
 

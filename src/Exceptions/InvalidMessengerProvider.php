@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 
 class InvalidMessengerProvider extends Exception
 {
-    const Message = "Messenger provider not set or compatible";
+    const Message = 'Messenger provider not set or compatible';
 
     /**
      * Render the exception into an HTTP response.

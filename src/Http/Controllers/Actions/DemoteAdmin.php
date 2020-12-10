@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
-use RTippin\Messenger\Actions\Threads\DemoteAdmin as DemoteAdminAction;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use RTippin\Messenger\Actions\Threads\DemoteAdmin as DemoteAdminAction;
 use RTippin\Messenger\Http\Resources\ParticipantResource;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
@@ -14,7 +14,7 @@ class DemoteAdmin
     use AuthorizesRequests;
 
     /**
-     * Demote admin privilege from participant
+     * Demote admin privilege from participant.
      *
      * @param DemoteAdminAction $demoteAdmin
      * @param Thread $thread
@@ -28,7 +28,7 @@ class DemoteAdmin
     {
         $this->authorize('demote', [
             $participant,
-            $thread
+            $thread,
         ]);
 
         return $demoteAdmin->execute($thread, $participant)

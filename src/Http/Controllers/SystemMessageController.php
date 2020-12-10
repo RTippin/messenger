@@ -14,7 +14,7 @@ class SystemMessageController
     use AuthorizesRequests;
 
     /**
-     * Display a listing of the most recent system messages
+     * Display a listing of the most recent system messages.
      *
      * @param SystemMessageRepository $repository
      * @param Thread $thread
@@ -25,7 +25,7 @@ class SystemMessageController
     {
         $this->authorize('viewAny', [
             Message::class,
-            $thread
+            $thread,
         ]);
 
         return new SystemMessageCollection(
@@ -35,7 +35,7 @@ class SystemMessageController
     }
 
     /**
-     * Display system message pagination
+     * Display system message pagination.
      *
      * @param SystemMessageRepository $repository
      * @param Thread $thread
@@ -49,7 +49,7 @@ class SystemMessageController
     {
         $this->authorize('viewAny', [
             Message::class,
-            $thread
+            $thread,
         ]);
 
         return new SystemMessageCollection(

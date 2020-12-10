@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Http\Collections;
 
-use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use Exception;
 use Illuminate\Http\Request;
+use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use RTippin\Messenger\Http\Resources\PendingFriendResource;
 use Throwable;
 
@@ -27,11 +27,11 @@ class PendingFriendCollection extends MessengerCollection
      */
     protected function makeResource($pending): ?array
     {
-        try{
+        try {
             return (new PendingFriendResource($pending))->resolve();
-        }catch (Exception $e){
+        } catch (Exception $e) {
             report($e);
-        }catch(Throwable $t){
+        } catch (Throwable $t) {
             report($t);
         }
 

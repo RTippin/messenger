@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Http\Collections;
 
-use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use Exception;
 use Illuminate\Http\Request;
+use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use RTippin\Messenger\Http\Resources\ProviderResource;
 use Throwable;
 
@@ -69,24 +69,24 @@ class SearchCollection extends MessengerCollection
         return [
             'meta' => [
                 'search' => $this->searchQuery,
-                'search_items' => $this->searchQueryItems
-            ]
+                'search_items' => $this->searchQueryItems,
+            ],
         ];
     }
+
     /**
      * @inheritDoc
      */
     protected function makeResource($messenger): ?array
     {
-        try{
+        try {
             return (new ProviderResource($messenger->owner, $this->addOptions))->resolve();
-        }catch (Exception $e){
+        } catch (Exception $e) {
             report($e);
-        }catch(Throwable $t){
+        } catch (Throwable $t) {
             report($t);
         }
 
         return null;
     }
-
 }

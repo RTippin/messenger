@@ -53,7 +53,7 @@ class ParticipantsAddedMessage implements ShouldQueue
             $event->thread,
             $event->provider,
             $this->messageBody($event),
-            'PARTICIPANTS_ADDED'
+            'PARTICIPANTS_ADDED',
         ];
     }
 
@@ -64,9 +64,9 @@ class ParticipantsAddedMessage implements ShouldQueue
     private function messageBody(ParticipantsAddedEvent $event): string
     {
         return $event->participants->map(
-            fn($item) => [
+            fn ($item) => [
                 'owner_id' => $item['owner_id'],
-                'owner_type' => $item['owner_type']
+                'owner_type' => $item['owner_type'],
             ])
             ->toJson();
     }

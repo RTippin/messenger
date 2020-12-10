@@ -9,6 +9,6 @@ use RTippin\Messenger\Http\Controllers\InviteController;
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('join/{invite:code}')->name('api.messenger.')->group(function(){
+Route::prefix('join/{invite:code}')->name('api.messenger.')->group(function () {
     Route::get('/', [InviteController::class, 'show'])->name('invites.join');
 });

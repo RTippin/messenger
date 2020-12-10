@@ -84,7 +84,7 @@ class RecipientThreadLocator
     }
 
     /**
-     * Perform the lookup and set recipient/thread
+     * Perform the lookup and set recipient/thread.
      */
     public function locate(): self
     {
@@ -124,16 +124,14 @@ class RecipientThreadLocator
     private function locateRecipient(): self
     {
         /** @var MessengerProvider|null $recipient */
-
         $recipient = $this->providersRepository
             ->getProviderUsingAliasAndId(
                 $this->alias,
                 $this->id
             );
 
-        if($recipient
-            && $recipient->isNot($this->messenger->getProvider()))
-        {
+        if ($recipient
+            && $recipient->isNot($this->messenger->getProvider())) {
             $this->recipient = $recipient;
         }
 
@@ -141,7 +139,7 @@ class RecipientThreadLocator
     }
 
     /**
-     * Locate private thread current provider has with recipient
+     * Locate private thread current provider has with recipient.
      *
      * @return $this
      */

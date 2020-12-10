@@ -12,7 +12,6 @@ use RTippin\Messenger\Definitions;
 /**
  * @property-read Model|MessengerProvider $provider
  */
-
 class ProviderResource extends JsonResource
 {
     /**
@@ -73,12 +72,12 @@ class ProviderResource extends JsonResource
             'provider_id' => $this->provider->getKey(),
             'provider_alias' => messenger()->findProviderAlias($this->provider) ?: 'ghost',
             'base' => $this->when($this->addBaseModel,
-                fn() => $this->provider->withoutRelations()->toArray()
+                fn () => $this->provider->withoutRelations()->toArray()
             ),
             'options' => $this->when($this->addOptions,
-                fn() => $this->addOptions()
+                fn () => $this->addOptions()
             ),
-            $this->merge($this->addAvatar())
+            $this->merge($this->addAvatar()),
         ];
     }
 
@@ -91,12 +90,12 @@ class ProviderResource extends JsonResource
             'api_avatar' => [
                 'sm' => $this->provider->getAvatarRoute('sm', true),
                 'md' => $this->provider->getAvatarRoute('md', true),
-                'lg' => $this->provider->getAvatarRoute('lg', true)
+                'lg' => $this->provider->getAvatarRoute('lg', true),
             ],
             'avatar' => [
                 'sm' => $this->provider->getAvatarRoute('sm'),
                 'md' => $this->provider->getAvatarRoute('md'),
-                'lg' => $this->provider->getAvatarRoute('lg')
+                'lg' => $this->provider->getAvatarRoute('lg'),
             ],
         ];
     }
@@ -122,14 +121,14 @@ class ProviderResource extends JsonResource
             'friend_status' => $friendStatus,
             'friend_status_verbose' => Definitions::FriendStatus[$friendStatus],
             'last_active' => $this->getLastActive($friendStatus),
-            $this->mergeWhen($friendStatus === 1, fn() => [
-                'friend_id' => $this->getFriendResourceId($friendStatus)
+            $this->mergeWhen($friendStatus === 1, fn () => [
+                'friend_id' => $this->getFriendResourceId($friendStatus),
             ]),
-            $this->mergeWhen($friendStatus === 2, fn() => [
-                'sent_friend_id' => $this->getFriendResourceId($friendStatus)
+            $this->mergeWhen($friendStatus === 2, fn () => [
+                'sent_friend_id' => $this->getFriendResourceId($friendStatus),
             ]),
-            $this->mergeWhen($friendStatus === 3, fn() => [
-                'pending_friend_id' => $this->getFriendResourceId($friendStatus)
+            $this->mergeWhen($friendStatus === 3, fn () => [
+                'pending_friend_id' => $this->getFriendResourceId($friendStatus),
             ]),
         ];
     }
@@ -190,8 +189,7 @@ class ProviderResource extends JsonResource
      */
     private function getLastActive(int $friendStatus)
     {
-        if(messenger()->isOnlineStatusEnabled())
-        {
+        if (messenger()->isOnlineStatusEnabled()) {
             return $friendStatus === 1
                 ? $this->provider->lastActiveDateTime()
                 : null;
@@ -205,8 +203,7 @@ class ProviderResource extends JsonResource
      */
     private function getFriendStatus(): int
     {
-        if(is_null($this->forceFriendStatus))
-        {
+        if (is_null($this->forceFriendStatus)) {
             return messengerFriends()->friendStatus($this->provider);
         }
 

@@ -49,8 +49,7 @@ class InvitePolicy
      */
     public function create($user, Thread $thread)
     {
-        if( ! $thread->canInviteParticipants())
-        {
+        if (! $thread->canInviteParticipants()) {
             return $this->deny('Not authorized to create thread invite.');
         }
 
