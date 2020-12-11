@@ -26,7 +26,7 @@ class SentFriendController
      * @return SentFriendCollection
      * @throws AuthorizationException
      */
-    public function index(FriendDriver $repository)
+    public function index(FriendDriver $repository): SentFriendCollection
     {
         $this->authorize('viewAny', SentFriend::class);
 
@@ -43,7 +43,7 @@ class SentFriendController
      * @throws AuthorizationException|ModelNotFoundException
      */
     public function store(FriendRequest $request,
-                          StoreFriendRequest $storeFriendRequest)
+                          StoreFriendRequest $storeFriendRequest): SentFriendResource
     {
         $this->authorize('create', SentFriend::class);
 
@@ -59,7 +59,7 @@ class SentFriendController
      * @return SentFriendResource
      * @throws AuthorizationException
      */
-    public function show(SentFriend $sent)
+    public function show(SentFriend $sent): SentFriendResource
     {
         $this->authorize('view', $sent);
 
@@ -75,7 +75,7 @@ class SentFriendController
      * @throws Exception|AuthorizationException
      */
     public function destroy(CancelFriendRequest $cancelFriendRequest,
-                            SentFriend $sent)
+                            SentFriend $sent): ProviderResource
     {
         $this->authorize('delete', $sent);
 

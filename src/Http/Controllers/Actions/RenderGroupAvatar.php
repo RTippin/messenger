@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use RTippin\Messenger\ImageRenderService;
 use RTippin\Messenger\Models\Thread;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class RenderGroupAvatar
 {
@@ -20,7 +21,7 @@ class RenderGroupAvatar
      * @param Thread $thread
      * @param string $size
      * @param string $image
-     * @return BinaryFileResponse
+     * @return StreamedResponse|BinaryFileResponse
      * @throws AuthorizationException|FileNotFoundException
      * @throws FileNotFoundException
      */

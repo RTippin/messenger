@@ -23,7 +23,7 @@ class ThreadController
      * @return ThreadCollection
      * @throws AuthorizationException
      */
-    public function index(ThreadRepository $repository)
+    public function index(ThreadRepository $repository): ThreadCollection
     {
         $this->authorize('viewAny', Thread::class);
 
@@ -40,7 +40,7 @@ class ThreadController
      * @return ThreadCollection
      * @throws AuthorizationException
      */
-    public function paginate(ThreadRepository $repository, Thread $thread)
+    public function paginate(ThreadRepository $repository, Thread $thread): ThreadCollection
     {
         $this->authorize('view', $thread);
 
@@ -58,7 +58,7 @@ class ThreadController
      * @return ThreadResource
      * @throws AuthorizationException
      */
-    public function show(Thread $thread)
+    public function show(Thread $thread): ThreadResource
     {
         $this->authorize('view', $thread);
 
@@ -77,7 +77,7 @@ class ThreadController
      * @return JsonResponse
      * @throws Exception|AuthorizationException
      */
-    public function destroy(ArchiveThread $archiveThread, Thread $thread)
+    public function destroy(ArchiveThread $archiveThread, Thread $thread): JsonResponse
     {
         $this->authorize('delete', $thread);
 

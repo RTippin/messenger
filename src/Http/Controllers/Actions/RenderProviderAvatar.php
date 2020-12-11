@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Http\Controllers\Actions;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use RTippin\Messenger\ImageRenderService;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class RenderProviderAvatar
 {
@@ -16,7 +17,7 @@ class RenderProviderAvatar
      * @param string $id
      * @param string $size
      * @param string $image
-     * @return BinaryFileResponse
+     * @return StreamedResponse|BinaryFileResponse
      * @throws FileNotFoundException
      */
     public function __invoke(ImageRenderService $service,

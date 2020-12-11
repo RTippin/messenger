@@ -18,7 +18,7 @@ class FindRecipientThread
      */
     public function __invoke(RecipientThreadLocator $locator,
                              string $alias,
-                             string $id)
+                             string $id): RecipientThreadResource
     {
         $locator->setAlias($alias)
             ->setId($id)

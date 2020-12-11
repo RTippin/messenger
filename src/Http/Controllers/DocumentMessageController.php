@@ -25,7 +25,8 @@ class DocumentMessageController
      * @return DocumentMessageCollection
      * @throws AuthorizationException
      */
-    public function index(DocumentMessageRepository $repository, Thread $thread)
+    public function index(DocumentMessageRepository $repository,
+                          Thread $thread): DocumentMessageCollection
     {
         $this->authorize('viewAny', [
             Message::class,
@@ -49,7 +50,7 @@ class DocumentMessageController
      */
     public function paginate(DocumentMessageRepository $repository,
                                    Thread $thread,
-                                   Message $document)
+                                   Message $document): DocumentMessageCollection
     {
         $this->authorize('viewAny', [
             Message::class,

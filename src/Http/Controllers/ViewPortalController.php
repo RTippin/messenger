@@ -9,7 +9,7 @@ use Illuminate\View\View;
 class ViewPortalController
 {
     /**
-     * @return Application|Factory|\Illuminate\Contracts\View\View|View
+     * @return Application|Factory|View
      */
     public function index()
     {
@@ -18,7 +18,7 @@ class ViewPortalController
 
     /**
      * @param string $thread
-     * @return Application|Factory|\Illuminate\Contracts\View\View|View
+     * @return Application|Factory|View
      */
     public function showThread(string $thread)
     {
@@ -31,7 +31,7 @@ class ViewPortalController
     /**
      * @param string $alias
      * @param string $id
-     * @return Application|Factory|\Illuminate\Contracts\View\View|View
+     * @return Application|Factory|View
      */
     public function showCreatePrivate(string $alias, string $id)
     {
@@ -45,7 +45,7 @@ class ViewPortalController
     /**
      * @param string $thread
      * @param string $call
-     * @return Application|Factory|\Illuminate\Contracts\View\View|View
+     * @return Application|Factory|View
      */
     public function showVideoCall(string $thread, string $call)
     {
@@ -57,7 +57,7 @@ class ViewPortalController
 
     /**
      * @param string $invite
-     * @return Application|Factory|\Illuminate\Contracts\View\View|View
+     * @return Application|Factory|View
      */
     public function showJoinWithInvite(string $invite)
     {

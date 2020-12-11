@@ -24,7 +24,7 @@ class DemoteAdmin
      */
     public function __invoke(DemoteAdminAction $demoteAdmin,
                              Thread $thread,
-                             Participant $participant)
+                             Participant $participant): ParticipantResource
     {
         $this->authorize('demote', [
             $participant,

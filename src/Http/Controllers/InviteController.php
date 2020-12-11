@@ -25,7 +25,7 @@ class InviteController
      * @return InviteCollection
      * @throws AuthorizationException
      */
-    public function index(Thread $thread)
+    public function index(Thread $thread): InviteCollection
     {
         $this->authorize('viewAny', [
             Invite::class,
@@ -53,7 +53,7 @@ class InviteController
      */
     public function store(InviteRequest $request,
                           StoreInvite $storeInvite,
-                          Thread $thread)
+                          Thread $thread): InviteResource
     {
         $this->authorize('create', [
             Invite::class,
@@ -72,7 +72,7 @@ class InviteController
      * @param Invite $invite
      * @return InviteResource
      */
-    public function show(Invite $invite)
+    public function show(Invite $invite): InviteResource
     {
         return new InviteResource($invite, true);
     }
@@ -88,7 +88,7 @@ class InviteController
      */
     public function destroy(ArchiveInvite $archiveInvite,
                             Thread $thread,
-                            Invite $invite)
+                            Invite $invite): JsonResponse
     {
         $this->authorize('delete', [
             Invite::class,

@@ -16,7 +16,7 @@ class ThreadArchiveState
      * @return JsonResponse
      * @throws AuthorizationException
      */
-    public function __invoke(Thread $thread)
+    public function __invoke(Thread $thread): JsonResponse
     {
         $this->authorize('delete', $thread);
 

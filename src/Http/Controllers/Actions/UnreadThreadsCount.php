@@ -13,7 +13,7 @@ class UnreadThreadsCount
      * @param ThreadRepository $repository
      * @return JsonResponse
      */
-    public function __invoke(ThreadRepository $repository)
+    public function __invoke(ThreadRepository $repository): JsonResponse
     {
         return new JsonResponse([
             'unread_threads_count' => $repository->getProviderUnreadThreadsBuilder()->count(),

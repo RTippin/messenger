@@ -33,7 +33,7 @@ class MessengerController
     /**
      * @return array
      */
-    public function index()
+    public function index(): array
     {
         return $this->messenger->getConfig();
     }
@@ -41,7 +41,7 @@ class MessengerController
     /**
      * @return MessengerResource
      */
-    public function settings()
+    public function settings(): MessengerResource
     {
         return new MessengerResource(
             $this->messenger->getProviderMessenger()
@@ -52,7 +52,7 @@ class MessengerController
      * @param ThreadRepository $threadRepository
      * @return ActiveCallCollection
      */
-    public function activeCalls(ThreadRepository $threadRepository)
+    public function activeCalls(ThreadRepository $threadRepository): ActiveCallCollection
     {
         return new ActiveCallCollection(
             $threadRepository->getProviderThreadsWithActiveCalls()
@@ -65,7 +65,7 @@ class MessengerController
      * @return MessengerResource
      */
     public function updateSettings(MessengerSettingsRequest $request,
-                                   UpdateMessengerSettings $updateMessengerSettings)
+                                   UpdateMessengerSettings $updateMessengerSettings): MessengerResource
     {
         $updateMessengerSettings->execute(
             $request->validated()
@@ -83,7 +83,7 @@ class MessengerController
      * @throws AuthorizationException
      */
     public function updateAvatar(MessengerAvatarRequest $request,
-                                 StoreMessengerAvatar $storeMessengerAvatar)
+                                 StoreMessengerAvatar $storeMessengerAvatar): MessengerResource
     {
         $this->allowedToUploadAvatar();
 
@@ -99,7 +99,7 @@ class MessengerController
      * @return MessengerResource
      * @throws AuthorizationException
      */
-    public function destroyAvatar(DestroyMessengerAvatar $destroyMessengerAvatar)
+    public function destroyAvatar(DestroyMessengerAvatar $destroyMessengerAvatar): MessengerResource
     {
         $this->allowedToRemoveAvatar();
 

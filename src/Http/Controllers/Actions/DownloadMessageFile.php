@@ -49,7 +49,7 @@ class DownloadMessageFile
      */
     public function __invoke(Thread $thread,
                              Message $message,
-                             string $file)
+                             string $file): StreamedResponse
     {
         $this->authorize('view', [
             Message::class,

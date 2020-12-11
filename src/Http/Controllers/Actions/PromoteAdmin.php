@@ -24,7 +24,7 @@ class PromoteAdmin
      */
     public function __invoke(PromoteAdminAction $promoteAdmin,
                              Thread $thread,
-                             Participant $participant)
+                             Participant $participant): ParticipantResource
     {
         $this->authorize('promote', [
             $participant,

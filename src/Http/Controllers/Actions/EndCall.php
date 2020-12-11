@@ -25,7 +25,7 @@ class EndCall
      */
     public function __invoke(EndCallAction $endCall,
                           Thread $thread,
-                          Call $call)
+                          Call $call): JsonResponse
     {
         $this->authorize('end', [
             $call,

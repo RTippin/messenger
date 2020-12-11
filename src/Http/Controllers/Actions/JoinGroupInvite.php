@@ -7,6 +7,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use RTippin\Messenger\Actions\Invites\JoinWithInvite;
 use RTippin\Messenger\Models\Invite;
+use RTippin\Messenger\Models\Participant;
 use Throwable;
 
 class JoinGroupInvite
@@ -16,10 +17,11 @@ class JoinGroupInvite
     /**
      * @param JoinWithInvite $joinWithInvite
      * @param Invite $invite
-     * @return array
+     * @return Participant
      * @throws AuthorizationException|Exception|Throwable
      */
-    public function __invoke(JoinWithInvite $joinWithInvite, Invite $invite)
+    public function __invoke(JoinWithInvite $joinWithInvite,
+                             Invite $invite): Participant
     {
         $this->authorize('join', $invite);
 

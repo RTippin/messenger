@@ -24,7 +24,7 @@ class JoinCall
      */
     public function __invoke(JoinCallAction $joinCall,
                           Thread $thread,
-                          Call $call)
+                          Call $call): CallParticipantResource
     {
         $this->authorize('join', [
             $call,

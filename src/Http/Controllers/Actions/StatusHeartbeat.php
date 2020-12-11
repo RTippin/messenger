@@ -19,7 +19,7 @@ class StatusHeartbeat
      */
     public function __invoke(StatusHeartbeatRequest $request,
                              Messenger $messenger,
-                             OnlineStatus $onlineStatus)
+                             OnlineStatus $onlineStatus): ProviderStatusResource
     {
         $onlineStatus->execute(
             $request->input('away') ?? false

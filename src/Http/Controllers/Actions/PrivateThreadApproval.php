@@ -22,7 +22,7 @@ class PrivateThreadApproval
      */
     public function __invoke(ThreadApprovalRequest $request,
                              ThreadApproval $threadApproval,
-                             Thread $thread)
+                             Thread $thread): JsonResponse
     {
         $this->authorize('approval', $thread);
 

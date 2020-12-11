@@ -12,7 +12,8 @@ class Search
      * @param string|null $query
      * @return SearchCollection
      */
-    public function __invoke(SearchProvidersService $search, string $query = null)
+    public function __invoke(SearchProvidersService $search,
+                             string $query = null): SearchCollection
     {
         return new SearchCollection(
             $search->search($query)->paginate(),

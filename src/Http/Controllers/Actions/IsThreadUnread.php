@@ -18,7 +18,7 @@ class IsThreadUnread
      * @return JsonResponse
      * @throws AuthorizationException
      */
-    public function __invoke(Thread $thread)
+    public function __invoke(Thread $thread): JsonResponse
     {
         $this->authorize('view', $thread);
 

@@ -9,6 +9,7 @@ use RTippin\Messenger\ImageRenderService;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class RenderMessageImage
 {
@@ -22,7 +23,7 @@ class RenderMessageImage
      * @param Message $message
      * @param string $size
      * @param string $image
-     * @return BinaryFileResponse
+     * @return StreamedResponse|BinaryFileResponse
      * @throws AuthorizationException|FileNotFoundException
      */
     public function __invoke(ImageRenderService $service,

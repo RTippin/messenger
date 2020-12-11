@@ -24,7 +24,7 @@ class LeaveCall
      */
     public function __invoke(LeaveCallAction $leaveCall,
                              Thread $thread,
-                             Call $call)
+                             Call $call): JsonResponse
     {
         $this->authorize('leave', [
             $call,

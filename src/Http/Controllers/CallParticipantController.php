@@ -25,7 +25,8 @@ class CallParticipantController
      * @return CallParticipantCollection
      * @throws AuthorizationException
      */
-    public function index(Thread $thread, Call $call)
+    public function index(Thread $thread,
+                          Call $call): CallParticipantCollection
     {
         $this->authorize('viewAny', [
             CallParticipant::class,
@@ -48,7 +49,7 @@ class CallParticipantController
      */
     public function show(Thread $thread,
                          Call $call,
-                         CallParticipant $participant)
+                         CallParticipant $participant): CallParticipantResource
     {
         $this->authorize('view', [
             CallParticipant::class,
@@ -75,7 +76,7 @@ class CallParticipantController
                            KickCallParticipant $kickCallParticipant,
                            Thread $thread,
                            Call $call,
-                           CallParticipant $participant)
+                           CallParticipant $participant): JsonResponse
     {
         $this->authorize('update', [
             CallParticipant::class,

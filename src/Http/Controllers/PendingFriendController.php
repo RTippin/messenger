@@ -26,7 +26,7 @@ class PendingFriendController
      * @return PendingFriendCollection
      * @throws AuthorizationException
      */
-    public function index(FriendDriver $repository)
+    public function index(FriendDriver $repository): PendingFriendCollection
     {
         $this->authorize('viewAny', PendingFriend::class);
 
@@ -42,7 +42,7 @@ class PendingFriendController
      * @return PendingFriendResource
      * @throws AuthorizationException
      */
-    public function show(PendingFriend $pending)
+    public function show(PendingFriend $pending): PendingFriendResource
     {
         $this->authorize('view', $pending);
 
@@ -58,7 +58,7 @@ class PendingFriendController
      * @throws Throwable|AuthorizationException
      */
     public function update(AcceptFriendRequest $acceptFriendRequest,
-                           PendingFriend $pending)
+                           PendingFriend $pending): FriendResource
     {
         $this->authorize('update', $pending);
 
@@ -75,7 +75,7 @@ class PendingFriendController
      * @throws Exception|AuthorizationException
      */
     public function destroy(DenyFriendRequest $denyFriendRequest,
-                            PendingFriend $pending)
+                            PendingFriend $pending): ProviderResource
     {
         $this->authorize('delete', $pending);
 

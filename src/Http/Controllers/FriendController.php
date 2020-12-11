@@ -21,10 +21,10 @@ class FriendController
      * Display a listing of the resource.
      *
      * @param FriendDriver $repository
-     * @return FriendCollection|JsonResponse
+     * @return FriendCollection
      * @throws AuthorizationException
      */
-    public function index(FriendDriver $repository)
+    public function index(FriendDriver $repository): FriendCollection
     {
         $this->authorize('viewAny', Friend::class);
 
@@ -40,7 +40,7 @@ class FriendController
      * @return FriendResource
      * @throws AuthorizationException
      */
-    public function show(Friend $friend)
+    public function show(Friend $friend): FriendResource
     {
         $this->authorize('view', $friend);
 
@@ -56,7 +56,7 @@ class FriendController
      * @throws Throwable|AuthorizationException
      */
     public function destroy(RemoveFriend $removeFriend,
-                            Friend $friend)
+                            Friend $friend): ProviderResource
     {
         $this->authorize('delete', $friend);
 

@@ -22,7 +22,7 @@ class CallHeartbeat
      */
     public function __invoke(Heartbeat $heartbeat,
                              Thread $thread,
-                             Call $call)
+                             Call $call): JsonResponse
     {
         $this->authorize('heartbeat', [
             $call,

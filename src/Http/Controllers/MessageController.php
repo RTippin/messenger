@@ -28,7 +28,8 @@ class MessageController
      * @return MessageCollection
      * @throws AuthorizationException
      */
-    public function index(MessageRepository $repository, Thread $thread)
+    public function index(MessageRepository $repository,
+                          Thread $thread): MessageCollection
     {
         $this->authorize('viewAny', [
             Message::class,
@@ -52,7 +53,7 @@ class MessageController
      */
     public function paginate(MessageRepository $repository,
                             Thread $thread,
-                            Message $message)
+                            Message $message): MessageCollection
     {
         $this->authorize('viewAny', [
             Message::class,
@@ -78,7 +79,7 @@ class MessageController
      */
     public function store(MessageRequest $request,
                           StoreMessage $storeMessage,
-                          Thread $thread)
+                          Thread $thread): MessageResource
     {
         $this->authorize('create', [
             Message::class,
@@ -100,7 +101,8 @@ class MessageController
      * @return MessageResource
      * @throws AuthorizationException
      */
-    public function show(Thread $thread, Message $message)
+    public function show(Thread $thread,
+                         Message $message): MessageResource
     {
         $this->authorize('view', [
             Message::class,
@@ -121,7 +123,7 @@ class MessageController
      */
     public function destroy(ArchiveMessage $archiveMessage,
                             Thread $thread,
-                            Message $message)
+                            Message $message): JsonResponse
     {
         $this->authorize('delete', [
             $message,

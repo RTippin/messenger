@@ -23,7 +23,7 @@ class PrivateThreadController
      * @return PrivateThreadCollection
      * @throws AuthorizationException
      */
-    public function index(PrivateThreadRepository $repository)
+    public function index(PrivateThreadRepository $repository): PrivateThreadCollection
     {
         $this->authorize('viewAny', Thread::class);
 
@@ -40,7 +40,8 @@ class PrivateThreadController
      * @return PrivateThreadCollection
      * @throws AuthorizationException
      */
-    public function paginate(PrivateThreadRepository $repository, Thread $private)
+    public function paginate(PrivateThreadRepository $repository,
+                             Thread $private): PrivateThreadCollection
     {
         $this->authorize('privateMethod', $private);
 
@@ -59,7 +60,7 @@ class PrivateThreadController
      * @throws Throwable
      */
     public function store(PrivateThreadRequest $request,
-                          StorePrivateThread $storePrivateThread)
+                          StorePrivateThread $storePrivateThread): ThreadResource
     {
         $this->authorize('create', Thread::class);
 

@@ -6,8 +6,7 @@ use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Collection;
 use RTippin\Messenger\Actions\Threads\RemoveParticipant;
 use RTippin\Messenger\Actions\Threads\StoreManyParticipants;
 use RTippin\Messenger\Actions\Threads\UpdateParticipantPermissions;
@@ -32,7 +31,8 @@ class ParticipantController
      * @return ParticipantCollection
      * @throws AuthorizationException
      */
-    public function index(ParticipantRepository $repository, Thread $thread)
+    public function index(ParticipantRepository $repository,
+                          Thread $thread): ParticipantCollection
     {
         $this->authorize('viewAny', [
             Participant::class,
@@ -56,7 +56,7 @@ class ParticipantController
      */
     public function paginate(ParticipantRepository $repository,
                                         Thread $thread,
-                                        Participant $participant)
+                                        Participant $participant): ParticipantCollection
     {
         $this->authorize('viewAny', [
             Participant::class,
@@ -77,12 +77,12 @@ class ParticipantController
      * @param AddParticipantsRequest $request
      * @param StoreManyParticipants $storeManyParticipants
      * @param Thread $thread
-     * @return JsonResponse|JsonResource|ResourceCollection
+     * @return Collection
      * @throws AuthorizationException|Throwable
      */
     public function store(AddParticipantsRequest $request,
                           StoreManyParticipants $storeManyParticipants,
-                          Thread $thread)
+                          Thread $thread): Collection
     {
         $this->authorize('create', [
             Participant::class,
@@ -103,7 +103,7 @@ class ParticipantController
      * @return ParticipantResource
      * @throws AuthorizationException
      */
-    public function show(Thread $thread, Participant $participant)
+    public function show(Thread $thread, Participant $participant): ParticipantResource
     {
         $this->authorize('view', [
             Participant::class,
@@ -129,7 +129,7 @@ class ParticipantController
     public function update(ParticipantPermissionsRequest $request,
                            UpdateParticipantPermissions $permissions,
                            Thread $thread,
-                           Participant $participant)
+                           Participant $participant): ParticipantResource
     {
         $this->authorize('update', [
             $participant,
@@ -154,7 +154,7 @@ class ParticipantController
      */
     public function destroy(RemoveParticipant $removeParticipant,
                             Thread $thread,
-                            Participant $participant)
+                            Participant $participant): ?JsonResponse
     {
         $this->authorize('delete', [
             $participant,

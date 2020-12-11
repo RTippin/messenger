@@ -25,7 +25,8 @@ class ImageMessageController
      * @return ImageMessageCollection
      * @throws AuthorizationException
      */
-    public function index(ImageMessageRepository $repository, Thread $thread)
+    public function index(ImageMessageRepository $repository,
+                          Thread $thread): ImageMessageCollection
     {
         $this->authorize('viewAny', [
             Message::class,
@@ -49,7 +50,7 @@ class ImageMessageController
      */
     public function paginate(ImageMessageRepository $repository,
                                  Thread $thread,
-                                 Message $image)
+                                 Message $image): ImageMessageCollection
     {
         $this->authorize('viewAny', [
             Message::class,
@@ -75,7 +76,7 @@ class ImageMessageController
      */
     public function store(ImageMessageRequest $request,
                           StoreImageMessage $storeImageMessage,
-                          Thread $thread)
+                          Thread $thread): MessageResource
     {
         $this->authorize('createImage', [
             Message::class,

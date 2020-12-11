@@ -18,7 +18,8 @@ class FilterAddParticipants
      * @return FriendCollection
      * @throws AuthorizationException
      */
-    public function __invoke(FriendDriver $repository, Thread $thread)
+    public function __invoke(FriendDriver $repository,
+                             Thread $thread): FriendCollection
     {
         $this->authorize('addParticipants', $thread);
 
