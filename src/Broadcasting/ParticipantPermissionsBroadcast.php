@@ -11,7 +11,7 @@ class ParticipantPermissionsBroadcast extends MessengerBroadcast
      *
      * @return string
      */
-    public function broadcastAs()
+    public function broadcastAs(): string
     {
         return 'permissions.updated';
     }

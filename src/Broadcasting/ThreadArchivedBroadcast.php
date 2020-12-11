@@ -11,7 +11,7 @@ class ThreadArchivedBroadcast extends MessengerBroadcast
      *
      * @return string
      */
-    public function broadcastAs()
+    public function broadcastAs(): string
     {
         return 'thread.archived';
     }

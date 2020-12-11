@@ -9,21 +9,21 @@ interface BroadcastEvent
      *
      * @return string
      */
-    public function broadcastAs();
+    public function broadcastAs(): string;
 
     /**
      * Get the channels the event should broadcast on.
      *
      * @return array
      */
-    public function broadcastOn();
+    public function broadcastOn(): array;
 
     /**
      * Get the data to broadcast.
      *
      * @return array
      */
-    public function broadcastWith();
+    public function broadcastWith(): array;
 
     /**
      * Set the data we will use to broadcast out.
@@ -31,7 +31,7 @@ interface BroadcastEvent
      * @param array $resource
      * @return self
      */
-    public function setResource(array $resource);
+    public function setResource(array $resource): self;
 
     /**
      * Set the channels we will use to broadcast on.
@@ -39,5 +39,5 @@ interface BroadcastEvent
      * @param array $channels
      * @return self
      */
-    public function setChannels(array $channels);
+    public function setChannels(array $channels): self;
 }

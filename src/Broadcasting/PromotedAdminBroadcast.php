@@ -11,7 +11,7 @@ class PromotedAdminBroadcast extends MessengerBroadcast
      *
      * @return string
      */
-    public function broadcastAs()
+    public function broadcastAs(): string
     {
         return 'promoted.admin';
     }

@@ -37,7 +37,7 @@ class CallChannel
      * @return ProviderResource
      * @throws AuthorizationException
      */
-    public function join($user, Call $call, Thread $thread)
+    public function join($user, Call $call, Thread $thread): ProviderResource
     {
         $this->authorize('socket', [
             $call,

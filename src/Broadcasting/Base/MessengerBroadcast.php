@@ -25,7 +25,7 @@ abstract class MessengerBroadcast implements BroadcastEvent, ShouldBroadcastNow
     /**
      * @inheritDoc
      */
-    abstract public function broadcastAs();
+    abstract public function broadcastAs(): string;
 
     /**
      * @inheritDoc
@@ -38,7 +38,7 @@ abstract class MessengerBroadcast implements BroadcastEvent, ShouldBroadcastNow
     /**
      * @inheritDoc
      */
-    public function broadcastWith()
+    public function broadcastWith(): array
     {
         return $this->resource;
     }

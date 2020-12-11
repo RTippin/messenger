@@ -27,9 +27,9 @@ class ProviderChannel
      * @param $user
      * @param $alias
      * @param $id
-     * @return array|bool
+     * @return bool
      */
-    public function join($user, $alias = null, $id = null)
+    public function join($user, $alias = null, $id = null): bool
     {
         return ! is_null($alias)
             && ! is_null($id)

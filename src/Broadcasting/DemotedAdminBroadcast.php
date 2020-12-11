@@ -11,7 +11,7 @@ class DemotedAdminBroadcast extends MessengerBroadcast
      *
      * @return string
      */
-    public function broadcastAs()
+    public function broadcastAs(): string
     {
         return 'demoted.admin';
     }

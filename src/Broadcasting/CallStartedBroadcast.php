@@ -11,7 +11,7 @@ class CallStartedBroadcast extends MessengerBroadcast
      *
      * @return string
      */
-    public function broadcastAs()
+    public function broadcastAs(): string
     {
         return 'incoming.call';
     }
