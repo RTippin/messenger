@@ -15,34 +15,34 @@ class JanusServer
      */
 
     /**
-     * @var mixed
+     * @var string
      */
-    private $janus_server;
+    private string $janus_server;
 
     /**
-     * @var mixed
+     * @var string
      */
-    private $janus_admin_server;
+    private string $janus_admin_server;
 
     /**
-     * @var mixed
+     * @var string
      */
-    private $api_secret;
+    private string $api_secret;
 
     /**
-     * @var mixed
+     * @var bool
      */
-    protected $log_errors;
+    protected bool $log_errors;
 
     /**
-     * @var mixed
+     * @var bool
      */
-    private $self_signed;
+    private bool $self_signed;
 
     /**
-     * @var mixed
+     * @var bool
      */
-    protected $debug;
+    protected bool $debug;
 
     /**
      * @var null|int|float
@@ -57,32 +57,32 @@ class JanusServer
     /**
      * @var null|string
      */
-    private $session_id = null;
+    private ?string $session_id = null;
 
     /**
      * @var null|string
      */
-    private $handle_id = null;
+    private ?string $handle_id = null;
 
     /**
      * @var null|string
      */
-    protected $plugin = null;
+    protected ?string $plugin = null;
 
     /**
      * @var array
      */
-    protected $api_response = [];
+    protected array $api_response = [];
 
     /**
      * @var array
      */
-    protected $plugin_payload = [];
+    protected array $plugin_payload = [];
 
     /**
      * @var array
      */
-    protected $plugin_response = [];
+    protected array $plugin_response = [];
 
     /**
      * JanusServer constructor.
@@ -101,8 +101,9 @@ class JanusServer
      * Log an API error if logging enabled.
      * @param null $data
      * @param null $route
+     * @return void
      */
-    private function logApiError($data = null, $route = null)
+    private function logApiError($data = null, $route = null): void
     {
         if ($this->log_errors) {
             Log::warning('janus.api', [
@@ -116,9 +117,10 @@ class JanusServer
     /**
      * Log error from the loaded plugin method if logging enabled.
      * @param string $action
-     * @param null|array|string $extra
+     * @param array $extra
+     * @return void
      */
-    protected function logPluginError($action = '', $extra = null)
+    protected function logPluginError(string $action = '', array $extra = []): void
     {
         if ($this->log_errors) {
             Log::warning($this->plugin.' - '.$action, [
@@ -142,16 +144,17 @@ class JanusServer
 
     /**
      * Ping janus to see if it is alive.
-     * @return array|bool
+     * @return array
      */
-    public function serverPing()
+    public function serverPing(): array
     {
         $this->janusAPI([
             'janus' => 'ping',
             'transaction' => Str::random(12),
         ], null, true);
 
-        if (isset($this->api_response['janus']) && $this->api_response['janus'] === 'pong') {
+        if (isset($this->api_response['janus'])
+            && $this->api_response['janus'] === 'pong') {
             return [
                 'pong' => true,
                 'latency' => $this->last_latency,
@@ -159,7 +162,9 @@ class JanusServer
             ];
         }
 
-        return false;
+        return [
+            'pong' => false,
+        ];
     }
 
     /**
@@ -168,7 +173,7 @@ class JanusServer
      * @param array|null $config
      * @return $this
      */
-    public function setConfig(array $config = null)
+    public function setConfig(array $config = null): self
     {
         if ($config && count($config)) {
             foreach ($config as $key => $value) {
@@ -185,7 +190,7 @@ class JanusServer
      * Set the configs in the constructor back to defaults.
      * @return $this
      */
-    public function resetConfig()
+    public function resetConfig(): self
     {
         $this->api_secret = config('janus.api_secret');
         $this->log_errors = config('janus.log_failures');
@@ -202,7 +207,7 @@ class JanusServer
      * @param bool $debug
      * @return $this
      */
-    public function debug($debug = true)
+    public function debug(bool $debug = true): self
     {
         $this->debug = $debug;
 
@@ -213,7 +218,7 @@ class JanusServer
      * Connect with janus to set the session ID for this cycle.
      * @return $this
      */
-    public function connect()
+    public function connect(): self
     {
         $this->janusAPI([
             'janus' => 'create',
@@ -231,10 +236,10 @@ class JanusServer
     /**
      * Attach to the janus plugin to get a handle ID. All request
      * in this cycle will go to this plugin unless you call detach.
-     * @param $plugin
+     * @param string $plugin
      * @return $this
      */
-    public function attach($plugin)
+    public function attach(string $plugin): self
     {
         $this->plugin = $plugin;
 
@@ -262,7 +267,7 @@ class JanusServer
      * Detach from the current plugin/handle.
      * @return $this
      */
-    public function detach()
+    public function detach(): self
     {
         if (! $this->handle_id) {
             return $this;
@@ -283,7 +288,7 @@ class JanusServer
      * Disconnect from janus, destroying our session and handle/plugin.
      * @return $this
      */
-    public function disconnect()
+    public function disconnect(): self
     {
         $this->handle_id = null;
 
@@ -304,11 +309,11 @@ class JanusServer
 
     /**
      * Send janus our message to the plugin.
-     * @param $message
-     * @param null $jsep
+     * @param array $message
+     * @param string|null $jsep
      * @return $this
      */
-    public function sendMessage($message, $jsep = null)
+    public function sendMessage(array $message, string $jsep = null): self
     {
         $this->plugin_payload = [
             'janus' => 'message',
@@ -321,23 +326,26 @@ class JanusServer
             array_push($this->plugin_payload, ['jsep' => $jsep]);
         }
 
-        if (! $this->session_id || ! $this->handle_id || ! $this->plugin) {
+        if (! $this->session_id
+            || ! $this->handle_id
+            || ! $this->plugin) {
             $this->plugin_response = [];
 
             return $this;
         }
 
-        $this->janusAPI($this->plugin_payload)->setPluginResponse();
+        $this->janusAPI($this->plugin_payload)
+            ->setPluginResponse();
 
         return $this;
     }
 
     /**
      * Send janus our trickle.
-     * @param $candidate
+     * @param string $candidate
      * @return $this
      */
-    public function sendTrickleCandidate($candidate)
+    public function sendTrickleCandidate(string $candidate): self
     {
         if (! $this->session_id || ! $this->handle_id) {
             $this->plugin_response = [];
@@ -353,20 +361,24 @@ class JanusServer
             'apisecret' => $this->api_secret,
         ];
 
-        $this->janusAPI($this->plugin_payload)->setPluginResponse();
+        $this->janusAPI($this->plugin_payload)
+            ->setPluginResponse();
 
         return $this;
     }
 
     /**
      * Make POST/GET to janus, append session or handle ID if they exist.
-     * @param bool $post
      * @param array $data
-     * @param null $route
+     * @param string|null $route
      * @param bool $admin
+     * @param bool $post
      * @return $this
      */
-    private function janusAPI($data = null, $route = null, $admin = false, $post = true)
+    private function janusAPI(array $data = [],
+                              string $route = null,
+                              bool $admin = false,
+                              bool $post = true): self
     {
         if (! $this->janus_server) {
             return $this;
@@ -412,7 +424,8 @@ class JanusServer
             dump($this->api_response);
         }
 
-        if (! isset($this->api_response['janus']) || $this->api_response['janus'] === 'error') {
+        if (! isset($this->api_response['janus'])
+            || $this->api_response['janus'] === 'error') {
             $this->logApiError($data, $uri);
         }
 
@@ -421,9 +434,9 @@ class JanusServer
 
     /**
      * Called after plugin message to extract plugin data response.
-     * @return array|mixed
+     * @return array
      */
-    private function setPluginResponse()
+    private function setPluginResponse(): array
     {
         if (isset($this->api_response['plugindata']['plugin'])
             && $this->api_response['plugindata']['plugin'] === $this->plugin
@@ -438,16 +451,18 @@ class JanusServer
 
     /**
      * Start micro timer for API interaction.
+     * @return void
      */
-    private function trackServerLatency()
+    private function trackServerLatency(): void
     {
         $this->ping_pong = microtime(true);
     }
 
     /**
      * Finish and calculate milliseconds for API call.
+     * @return void
      */
-    private function reportServerLatency()
+    private function reportServerLatency(): void
     {
         if ($this->ping_pong) {
             $this->last_latency = round((microtime(true) - $this->ping_pong) * 1000);

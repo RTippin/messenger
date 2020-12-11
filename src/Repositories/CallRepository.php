@@ -34,9 +34,9 @@ class CallRepository
     }
 
     /**
-     * @return Call|Builder
+     * @return Builder
      */
-    public function getProviderCallsBuilder()
+    public function getProviderCallsBuilder(): Builder
     {
         return Call::videoCall()->whereHas('participants',
             fn (Builder $query) => $query->where('owner_id', '=', $this->messenger->getProviderId())

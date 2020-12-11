@@ -14,9 +14,9 @@ class VideoRoomService extends JanusServer
     const PLUGIN = 'janus.plugin.videoroom';
 
     /**
-     * @var mixed
+     * @var string
      */
-    private $PLUGIN_ADMIN_KEY;
+    private string $PLUGIN_ADMIN_KEY;
 
     /**
      * VideoRoomService constructor.
@@ -32,7 +32,7 @@ class VideoRoomService extends JanusServer
      * Create our initial session and handle for this plugin.
      * @return $this
      */
-    private function setup()
+    private function setup(): self
     {
         $this->connect()->attach(self::PLUGIN);
 
@@ -44,16 +44,17 @@ class VideoRoomService extends JanusServer
      * @param string $success
      * @return bool
      */
-    private function isValidPluginResponse($success = 'success')
+    private function isValidPluginResponse(string $success = 'success'): bool
     {
-        return isset($this->plugin_response['videoroom']) && $this->plugin_response['videoroom'] === $success;
+        return isset($this->plugin_response['videoroom'])
+            && $this->plugin_response['videoroom'] === $success;
     }
 
     /**
      * List all Video Rooms we have in this janus server.
-     * @return bool|array
+     * @return array
      */
-    public function list()
+    public function list(): array
     {
         $this->setup()->sendMessage([
             'request' => 'list',
@@ -65,15 +66,15 @@ class VideoRoomService extends JanusServer
 
         $this->logPluginError('list');
 
-        return false;
+        return [];
     }
 
     /**
      * Check if janus has a video room with ID.
-     * @param $room
+     * @param int $room
      * @return bool
      */
-    public function exists($room)
+    public function exists(int $room): bool
     {
         $this->setup()->sendMessage([
             'request' => 'exists',
@@ -92,12 +93,14 @@ class VideoRoomService extends JanusServer
     /**
      * Create a new video room, set flags to override defaults
      * ex: ['publishers' => 10, 'bitrate' => 1024000].
-     * @param array|null $params
+     * @param array $params
      * @param bool $pin
      * @param bool $secret
-     * @return array|bool
+     * @return array
      */
-    public function create(array $params = null, $pin = true, $secret = true)
+    public function create(array $params = [],
+                           bool $pin = true,
+                           bool $secret = true): array
     {
         $make_pin = $pin ? Str::random(6) : '';
 
@@ -118,13 +121,15 @@ class VideoRoomService extends JanusServer
             'admin_key' => $this->PLUGIN_ADMIN_KEY,
         ];
 
-        if ($params && count($params)) {
+        if (count($params)) {
             foreach ($params as $key => $value) {
                 $create[$key] = $value;
             }
         }
 
-        $this->setup()->sendMessage($create)->disconnect();
+        $this->setup()
+            ->sendMessage($create)
+            ->disconnect();
 
         if ($this->isValidPluginResponse('created')) {
             return [
@@ -136,16 +141,16 @@ class VideoRoomService extends JanusServer
 
         $this->logPluginError('create');
 
-        return false;
+        return [];
     }
 
     /**
      * Edit params of a given video room.
-     * @param $room
-     * @param array|null $params
+     * @param int $room
+     * @param array $params
      * @return bool
      */
-    public function edit($room, array $params = null)
+    public function edit(int $room, array $params = []): bool
     {
         $edit = [
             'request' => 'edit',
@@ -153,13 +158,15 @@ class VideoRoomService extends JanusServer
             'secret' => '',
         ];
 
-        if ($params && count($params)) {
+        if (count($params)) {
             foreach ($params as $key => $value) {
                 $edit[$key] = $value;
             }
         }
 
-        $this->setup()->sendMessage($edit)->disconnect();
+        $this->setup()
+            ->sendMessage($edit)
+            ->disconnect();
 
         if ($this->isValidPluginResponse('edited')) {
             return true;
@@ -172,21 +179,26 @@ class VideoRoomService extends JanusServer
 
     /**
      * Configure whether to check tokens or add/remove people who can join a room.
-     * @param $room
-     * @param $action
+     * @param int $room
+     * @param string $action
      * @param array $allowed
-     * @param null $secret
-     * @return array|bool
+     * @param string|null $secret
+     * @return array
      */
-    public function allowed($room, $action, array $allowed = [], $secret = null)
+    public function allowed(int $room,
+                            string $action,
+                            array $allowed = [],
+                            string $secret = null): array
     {
-        $this->setup()->sendMessage([
-            'request' => 'allowed',
-            'room' => $room,
-            'action' => $action,
-            'secret' => isset($secret) ? $secret : '',
-            'allowed' => $allowed,
-        ])->disconnect();
+        $this->setup()
+            ->sendMessage([
+                'request' => 'allowed',
+                'room' => $room,
+                'action' => $action,
+                'secret' => isset($secret) ? $secret : '',
+                'allowed' => $allowed,
+            ])
+            ->disconnect();
 
         if ($this->isValidPluginResponse()) {
             return $this->plugin_response;
@@ -194,17 +206,19 @@ class VideoRoomService extends JanusServer
 
         $this->logPluginError('allowed');
 
-        return false;
+        return [];
     }
 
     /**
      * Kick a participant from a room using their private janus participant ID.
-     * @param $room
-     * @param $participantID
-     * @param null $secret
+     * @param int $room
+     * @param int $participantID
+     * @param string|null $secret
      * @return bool
      */
-    public function kick($room, $participantID, $secret = null)
+    public function kick(int $room,
+                         int $participantID,
+                         string $secret = null): bool
     {
         $this->setup()->sendMessage([
             'request' => 'kick',
@@ -225,9 +239,9 @@ class VideoRoomService extends JanusServer
     /**
      * Get a list of the participants in a specific room.
      * @param $room
-     * @return bool|mixed
+     * @return array
      */
-    public function listParticipants($room)
+    public function listParticipants(int $room): array
     {
         $this->setup()->sendMessage([
             'request' => 'listparticipants',
@@ -240,16 +254,16 @@ class VideoRoomService extends JanusServer
 
         $this->logPluginError('listparticipants');
 
-        return false;
+        return [];
     }
 
     /**
      * Tell janus to destroy a room given the room ID and secret.
-     * @param null $room
-     * @param null $secret
+     * @param int|null $room
+     * @param string|null $secret
      * @return bool
      */
-    public function destroy($room = null, $secret = null)
+    public function destroy(int $room = null, string $secret = null): bool
     {
         $this->setup()->sendMessage([
             'request' => 'destroy',
@@ -275,9 +289,9 @@ class VideoRoomService extends JanusServer
      * @param Collection|null $bulk
      * @return bool
      */
-    public function destroyBulk(Collection $bulk = null)
+    public function destroyBulk(Collection $bulk): bool
     {
-        if (! $bulk || $bulk && ! $bulk->count()) {
+        if (! $bulk->count()) {
             return false;
         }
 
