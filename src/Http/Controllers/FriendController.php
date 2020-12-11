@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Http\Controllers;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\JsonResponse;
 use RTippin\Messenger\Actions\Friends\RemoveFriend;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Http\Collections\FriendCollection;
