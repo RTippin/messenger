@@ -53,7 +53,7 @@ class JanusBroker implements VideoDriver
             $this->settings($thread)
         );
 
-        if ($janus) {
+        if (count($janus)) {
             $this->roomId = $janus['room'];
             $this->roomPin = $janus['pin'];
             $this->roomSecret = $janus['secret'];
