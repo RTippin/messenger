@@ -30,7 +30,7 @@ abstract class MessengerBroadcast implements BroadcastEvent, ShouldBroadcastNow
     /**
      * @inheritDoc
      */
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
         return $this->channels;
     }
