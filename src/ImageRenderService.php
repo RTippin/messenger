@@ -67,9 +67,9 @@ class ImageRenderService
                                          string $size,
                                          string $image)
     {
-        $avatar = "{$this->messenger->getAvatarStorage()['directory']}/{$alias}/{$id}/{$image}";
+        $avatar = "{$this->messenger->getAvatarStorage('directory')}/{$alias}/{$id}/{$image}";
 
-        $disk = $this->messenger->getAvatarStorage()['disk'];
+        $disk = $this->messenger->getAvatarStorage('disk');
 
         if (! $this->filesystemManager->disk($disk)->exists($avatar)) {
             return $this->renderDefaultImage($alias);

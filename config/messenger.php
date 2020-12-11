@@ -47,7 +47,7 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | MessengerSystem Providers Configuration
+    | Messenger Providers Configuration
     |--------------------------------------------------------------------------
     |
     | List every model you wish to use within this messenger system
