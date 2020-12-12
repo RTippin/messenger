@@ -245,7 +245,6 @@ class JanusServer
         return $this;
     }
 
-
     /**
      * Return the response from a plugin.
      * @return array|string
