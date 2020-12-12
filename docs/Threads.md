@@ -1298,3 +1298,15 @@ Renders Group Avatar
     }
 }
 ```
+---
+### POST `/api/messenger/threads/{thread}/mute` | *api.messenger.threads.mute*
+#### Payload:
+```json
+{}
+```
+#### Response:
+```json
+{
+  "message": "success"
+}
+```
