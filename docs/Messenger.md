@@ -37,7 +37,7 @@
       "default_avatar": "users.png",
       "searchable": true,
       "friendable": true,
-      "mobile_devices": false,
+      "devices": false,
       "provider_interactions": {
         "can_message": [
           "user"

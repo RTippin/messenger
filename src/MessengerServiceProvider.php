@@ -159,12 +159,10 @@ class MessengerServiceProvider extends ServiceProvider
             'messenger.api',
             MessengerApi::class
         );
-
         $router->aliasMiddleware(
             'messenger.provider',
             SetMessengerProvider::class
         );
-
         $router->aliasMiddleware(
             'auth.optional',
             AuthenticateOptional::class

@@ -81,7 +81,7 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static getProviderId()
  * @method static getProviderClass()
  * @method static providerHasFriends()
- * @method static providerHasMobileDevices()
+ * @method static providerHasDevices()
  * @method static canMessageProviderFirst($provider = null)
  * @method static canFriendProvider($provider = null)
  * @method static canSearchProvider($provider = null)

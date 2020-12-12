@@ -519,7 +519,7 @@ interface MessengerInterface
      *
      * @return bool
      */
-    public function providerHasMobileDevices(): bool;
+    public function providerHasDevices(): bool;
 
     /**
      * Can the current Messenger Provider message given provider first?

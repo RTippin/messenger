@@ -209,7 +209,7 @@ final class Messenger implements MessengerInterface
     public function getAllProvidersWithDevices(): array
     {
         return $this->providers->filter(
-            fn ($provider) => $provider['mobile_devices'] === true
+            fn ($provider) => $provider['devices'] === true
         )
             ->map(
                 fn ($provider) => $provider['model']

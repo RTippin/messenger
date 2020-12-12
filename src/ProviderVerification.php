@@ -71,7 +71,7 @@ trait ProviderVerification
             'model' => $provider['model'],
             'searchable' => $this->passesSearchable($provider),
             'friendable' => $this->passesFriendable($provider),
-            'mobile_devices' => $this->passesHasDevices($provider),
+            'devices' => $this->passesHasDevices($provider),
             'default_avatar' => $provider['default_avatar'],
             'provider_interactions' => $provider['provider_interactions'],
         ]);
@@ -107,7 +107,7 @@ trait ProviderVerification
             && class_exists($provider['model'])
             && array_key_exists('searchable', $provider)
             && array_key_exists('friendable', $provider)
-            && array_key_exists('mobile_devices', $provider)
+            && array_key_exists('devices', $provider)
             && array_key_exists('provider_interactions', $provider)
             && is_array($provider['provider_interactions'])
             && array_key_exists('default_avatar', $provider)
@@ -147,7 +147,7 @@ trait ProviderVerification
      */
     private function passesHasDevices(array $provider): bool
     {
-        return $provider['mobile_devices'] === true;
+        return $provider['devices'] === true;
     }
 
     /**

@@ -212,7 +212,7 @@ trait ConfigInterface
         'providerCanSearch',
         'providerCanFriend',
         'providerCanMessageFirst',
-        'providerHasMobileDevices',
+        'providerHasDevices',
         'defaultNotFoundImage',
         'defaultThreadAvatars',
         'avatarStorage',
@@ -264,7 +264,7 @@ trait ConfigInterface
                     'default_avatar' => basename($provider['default_avatar']),
                     'searchable' => $provider['searchable'],
                     'friendable' => $provider['friendable'],
-                    'mobile_devices' => $provider['mobile_devices'],
+                    'devices' => $provider['devices'],
                     'provider_interactions' => $provider['provider_interactions'],
                 ];
             }),

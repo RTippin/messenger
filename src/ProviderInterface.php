@@ -47,7 +47,7 @@ trait ProviderInterface
     /**
      * @var bool
      */
-    private bool $providerHasMobileDevices = false;
+    private bool $providerHasDevices = false;
 
     /**
      * @var array
@@ -101,7 +101,7 @@ trait ProviderInterface
         $this->provider = $provider;
         $this->providerClass = get_class($provider);
         $this->providerHasFriends = $this->isProviderFriendable($provider);
-        $this->providerHasMobileDevices = $this->providers->get($this->alias)['mobile_devices'];
+        $this->providerHasDevices = $this->providers->get($this->alias)['devices'];
         $this->providerCanMessageFirst = $interactions['can_message'];
         $this->providerCanFriend = $interactions['can_friend'];
         $this->providerCanSearch = $interactions['can_search'];
@@ -156,7 +156,7 @@ trait ProviderInterface
         $this->provider = null;
         $this->providerClass = null;
         $this->providerHasFriends = false;
-        $this->providerHasMobileDevices = false;
+        $this->providerHasDevices = false;
         $this->providerCanMessageFirst = [];
         $this->providerCanFriend = [];
         $this->providerCanSearch = [];
@@ -223,9 +223,9 @@ trait ProviderInterface
      *
      * @return bool
      */
-    public function providerHasMobileDevices(): bool
+    public function providerHasDevices(): bool
     {
-        return $this->providerHasMobileDevices;
+        return $this->providerHasDevices;
     }
 
     /**
