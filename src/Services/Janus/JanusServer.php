@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Services\Janus;
 
+use Exception;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Http\Client\Factory as HttpClient;
-use Exception;
 use Illuminate\Log\Logger;
 use Illuminate\Support\Str;
 
