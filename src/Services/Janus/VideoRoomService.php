@@ -2,10 +2,10 @@
 
 namespace RTippin\Messenger\Services\Janus;
 
-use Illuminate\Support\Collection;
+use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Support\Str;
 
-class VideoRoomService extends JanusServer
+class VideoRoomService
 {
     /**
      * String name of janus plugin we attach to
@@ -19,24 +19,44 @@ class VideoRoomService extends JanusServer
     private string $PLUGIN_ADMIN_KEY;
 
     /**
-     * VideoRoomService constructor.
+     * @var JanusServer
      */
-    public function __construct()
-    {
-        parent::__construct();
+    private JanusServer $janus;
 
-        $this->PLUGIN_ADMIN_KEY = config('janus.video_room_secret');
+    /**
+     * @var ConfigRepository
+     */
+    private ConfigRepository $configRepo;
+
+    /**
+     * VideoRoomService constructor.
+     * @param ConfigRepository $configRepo
+     * @param JanusServer $janus
+     */
+    public function __construct(ConfigRepository $configRepo, JanusServer $janus)
+    {
+        $this->janus = $janus;
+        $this->configRepo = $configRepo;
+        $this->boot();
+    }
+
+    /**
+     * Boot up the plugin.
+     */
+    private function boot(): void
+    {
+        $this->PLUGIN_ADMIN_KEY = $this->configRepo->get('janus.video_room_secret');
     }
 
     /**
      * Create our initial session and handle for this plugin.
-     * @return $this
+     * @return JanusServer
      */
-    private function setup(): self
+    private function setup(): JanusServer
     {
-        $this->connect()->attach(self::PLUGIN);
-
-        return $this;
+        return $this->janus
+            ->connect()
+            ->attach(self::PLUGIN);
     }
 
     /**
@@ -46,8 +66,8 @@ class VideoRoomService extends JanusServer
      */
     private function isValidPluginResponse(string $success = 'success'): bool
     {
-        return isset($this->plugin_response['videoroom'])
-            && $this->plugin_response['videoroom'] === $success;
+        return isset($this->janus->getPluginResponse()['videoroom'])
+            && $this->janus->getPluginResponse()['videoroom'] === $success;
     }
 
     /**
@@ -61,10 +81,10 @@ class VideoRoomService extends JanusServer
         ])->disconnect();
 
         if ($this->isValidPluginResponse()) {
-            return $this->plugin_response['list'];
+            return $this->janus->getPluginResponse()['list'];
         }
 
-        $this->logPluginError('list');
+        $this->janus->logPluginError('list');
 
         return [];
     }
@@ -82,10 +102,10 @@ class VideoRoomService extends JanusServer
         ])->disconnect();
 
         if ($this->isValidPluginResponse()) {
-            return $this->plugin_response['exists'];
+            return $this->janus->getPluginResponse()['exists'];
         }
 
-        $this->logPluginError('exists');
+        $this->janus->logPluginError('exists');
 
         return false;
     }
@@ -133,13 +153,13 @@ class VideoRoomService extends JanusServer
 
         if ($this->isValidPluginResponse('created')) {
             return [
-                'room' => $this->plugin_response['room'],
+                'room' => $this->janus->getPluginResponse()['room'],
                 'pin' => $pin ? $make_pin : null,
                 'secret' => $secret ? $make_secret : null,
             ];
         }
 
-        $this->logPluginError('create');
+        $this->janus->logPluginError('create');
 
         return [];
     }
@@ -172,7 +192,7 @@ class VideoRoomService extends JanusServer
             return true;
         }
 
-        $this->logPluginError('edit');
+        $this->janus->logPluginError('edit');
 
         return false;
     }
@@ -190,21 +210,20 @@ class VideoRoomService extends JanusServer
                             array $allowed = [],
                             string $secret = null): array
     {
-        $this->setup()
-            ->sendMessage([
-                'request' => 'allowed',
-                'room' => $room,
-                'action' => $action,
-                'secret' => isset($secret) ? $secret : '',
-                'allowed' => $allowed,
-            ])
-            ->disconnect();
+        $this->setup()->sendMessage([
+            'request' => 'allowed',
+            'room' => $room,
+            'action' => $action,
+            'secret' => isset($secret) ? $secret : '',
+            'allowed' => $allowed,
+        ])
+        ->disconnect();
 
         if ($this->isValidPluginResponse()) {
-            return $this->plugin_response;
+            return $this->janus->getPluginResponse();
         }
 
-        $this->logPluginError('allowed');
+        $this->janus->logPluginError('allowed');
 
         return [];
     }
@@ -231,7 +250,7 @@ class VideoRoomService extends JanusServer
             return true;
         }
 
-        $this->logPluginError('kick');
+        $this->janus->logPluginError('kick');
 
         return false;
     }
@@ -249,10 +268,10 @@ class VideoRoomService extends JanusServer
         ])->disconnect();
 
         if ($this->isValidPluginResponse('participants')) {
-            return $this->plugin_response['participants'];
+            return $this->janus->getPluginResponse()['participants'];
         }
 
-        $this->logPluginError('listparticipants');
+        $this->janus->logPluginError('listparticipants');
 
         return [];
     }
@@ -275,45 +294,11 @@ class VideoRoomService extends JanusServer
             return true;
         }
 
-        $this->logPluginError('destroy', [
+        $this->janus->logPluginError('destroy', [
             'room' => $room,
             'secret' => $secret,
         ]);
 
         return false;
-    }
-
-    /**
-     * Tell janus to destroy a collection of rooms in sequence within one session
-     * Example: collect([['room' => 12345,'secret' => 'secret'],['room' => 67891,'secret' => 'secret2']]);.
-     * @param Collection|null $bulk
-     * @return bool
-     */
-    public function destroyBulk(Collection $bulk): bool
-    {
-        if (! $bulk->count()) {
-            return false;
-        }
-
-        $this->setup();
-
-        $bulk->each(function ($destroy) {
-            $this->sendMessage([
-                'request' => 'destroy',
-                'room' => $destroy['room'],
-                'secret' => isset($destroy['secret']) ? $destroy['secret'] : '',
-            ]);
-
-            if (! $this->isValidPluginResponse('destroyed')) {
-                $this->logPluginError('destroyBulk', [
-                    'room' => $destroy['room'],
-                    'secret' => $destroy['secret'],
-                ]);
-            }
-        });
-
-        $this->disconnect();
-
-        return true;
     }
 }

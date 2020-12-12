@@ -2,99 +2,130 @@
 
 namespace RTippin\Messenger\Services\Janus;
 
+use Illuminate\Contracts\Config\Repository as ConfigRepository;
+use Illuminate\Http\Client\Factory as HttpClient;
 use Exception;
-use Illuminate\Support\Facades\Http;
-use Illuminate\Support\Facades\Log;
+use Illuminate\Log\Logger;
 use Illuminate\Support\Str;
 
+/**
+ * Janus Media Server REST interface
+ * https://janus.conf.meetecho.com/docs/rest.html.
+ */
 class JanusServer
 {
     /**
-     * Janus Media Server REST interface
-     * https://janus.conf.meetecho.com/docs/rest.html.
+     * @var string
      */
+    private string $janusServer;
 
     /**
      * @var string
      */
-    private string $janus_server;
+    private string $janusAdminServer;
 
     /**
      * @var string
      */
-    private string $janus_admin_server;
-
-    /**
-     * @var string
-     */
-    private string $api_secret;
+    private string $apiSecret;
 
     /**
      * @var bool
      */
-    protected bool $log_errors;
+    private bool $logErrors;
 
     /**
      * @var bool
      */
-    private bool $self_signed;
+    private bool $selfSigned;
 
     /**
      * @var bool
      */
-    protected bool $debug;
+    private bool $debug;
 
     /**
      * @var null|int|float
      */
-    protected $ping_pong = null;
+    private $pingPong = null;
 
     /**
      * @var null|int|float
      */
-    protected $last_latency = null;
+    private $lastLatency = null;
 
     /**
      * @var null|string
      */
-    private ?string $session_id = null;
+    private ?string $sessionId = null;
 
     /**
      * @var null|string
      */
-    private ?string $handle_id = null;
+    private ?string $handleId = null;
 
     /**
      * @var null|string
      */
-    protected ?string $plugin = null;
+    private ?string $plugin = null;
 
     /**
      * @var array
      */
-    protected array $api_response = [];
+    private array $apiResponse = [];
 
     /**
      * @var array
      */
-    protected array $plugin_payload = [];
+    private array $pluginPayload = [];
 
     /**
      * @var array
      */
-    protected array $plugin_response = [];
+    private array $pluginResponse = [];
+
+    /**
+     * @var ConfigRepository
+     */
+    private ConfigRepository $configRepo;
+
+    /**
+     * @var HttpClient
+     */
+    private HttpClient $httpClient;
+
+    /**
+     * @var Logger
+     */
+    private Logger $logger;
 
     /**
      * JanusServer constructor.
+     * @param ConfigRepository $configRepo
+     * @param HttpClient $httpClient
+     * @param Logger $logger
      */
-    public function __construct()
+    public function __construct(ConfigRepository $configRepo,
+                                HttpClient $httpClient,
+                                Logger $logger)
     {
-        $this->api_secret = config('janus.api_secret');
-        $this->log_errors = config('janus.log_failures');
-        $this->janus_server = config('janus.server_endpoint');
-        $this->janus_admin_server = config('janus.server_admin_endpoint');
-        $this->debug = config('janus.backend_debug');
-        $this->self_signed = config('janus.backend_ssl');
+        $this->configRepo = $configRepo;
+        $this->httpClient = $httpClient;
+        $this->logger = $logger;
+        $this->boot();
+    }
+
+    /**
+     * Setup our config.
+     */
+    private function boot(): void
+    {
+        $this->apiSecret = $this->configRepo->get('janus.api_secret');
+        $this->logErrors = $this->configRepo->get('janus.log_failures');
+        $this->janusServer = $this->configRepo->get('janus.server_endpoint');
+        $this->janusAdminServer = $this->configRepo->get('janus.server_admin_endpoint');
+        $this->debug = $this->configRepo->get('janus.backend_debug');
+        $this->selfSigned = $this->configRepo->get('janus.backend_ssl');
     }
 
     /**
@@ -105,11 +136,11 @@ class JanusServer
      */
     private function logApiError($data = null, $route = null): void
     {
-        if ($this->log_errors) {
-            Log::warning('janus.api', [
+        if ($this->logErrors) {
+            $this->logger->warning('janus.api', [
                 'payload' => $data,
                 'route' => $route,
-                'response' => $this->api_response,
+                'response' => $this->apiResponse,
             ]);
         }
     }
@@ -120,12 +151,12 @@ class JanusServer
      * @param array $extra
      * @return void
      */
-    protected function logPluginError(string $action = '', array $extra = []): void
+    public function logPluginError(string $action = '', array $extra = []): void
     {
-        if ($this->log_errors) {
-            Log::warning($this->plugin.' - '.$action, [
-                'payload' => $this->plugin_payload,
-                'response' => $this->api_response,
+        if ($this->logErrors) {
+            $this->logger->warning($this->plugin.' - '.$action, [
+                'payload' => $this->pluginPayload,
+                'response' => $this->apiResponse,
                 'extra' => $extra,
             ]);
         }
@@ -139,7 +170,7 @@ class JanusServer
     {
         $this->janusAPI(null, 'info', false, false);
 
-        return $this->api_response;
+        return $this->apiResponse;
     }
 
     /**
@@ -153,12 +184,12 @@ class JanusServer
             'transaction' => Str::random(12),
         ], null, true);
 
-        if (isset($this->api_response['janus'])
-            && $this->api_response['janus'] === 'pong') {
+        if (isset($this->apiResponse['janus'])
+            && $this->apiResponse['janus'] === 'pong') {
             return [
                 'pong' => true,
-                'latency' => $this->last_latency,
-                'message' => $this->last_latency.' milliseconds',
+                'latency' => $this->lastLatency,
+                'message' => $this->lastLatency.' milliseconds',
             ];
         }
 
@@ -192,12 +223,12 @@ class JanusServer
      */
     public function resetConfig(): self
     {
-        $this->api_secret = config('janus.api_secret');
-        $this->log_errors = config('janus.log_failures');
-        $this->janus_server = config('janus.server_endpoint');
-        $this->janus_admin_server = config('janus.server_admin_endpoint');
-        $this->debug = config('janus.backend_debug');
-        $this->self_signed = config('janus.backend_ssl');
+        $this->apiSecret = $this->configRepo->get('janus.api_secret');
+        $this->logErrors = $this->configRepo->get('janus.log_failures');
+        $this->janusServer = $this->configRepo->get('janus.server_endpoint');
+        $this->janusAdminServer = $this->configRepo->get('janus.server_admin_endpoint');
+        $this->debug = $this->configRepo->get('janus.backend_debug');
+        $this->selfSigned = $this->configRepo->get('janus.backend_ssl');
 
         return $this;
     }
@@ -214,6 +245,16 @@ class JanusServer
         return $this;
     }
 
+
+    /**
+     * Return the response from a plugin.
+     * @return array|string
+     */
+    public function getPluginResponse()
+    {
+        return $this->pluginResponse;
+    }
+
     /**
      * Connect with janus to set the session ID for this cycle.
      * @return $this
@@ -223,11 +264,11 @@ class JanusServer
         $this->janusAPI([
             'janus' => 'create',
             'transaction' => Str::random(12),
-            'apisecret' => $this->api_secret,
+            'apisecret' => $this->apiSecret,
         ]);
 
-        $this->session_id = isset($this->api_response['data']['id'])
-            ? $this->api_response['data']['id']
+        $this->sessionId = isset($this->apiResponse['data']['id'])
+            ? $this->apiResponse['data']['id']
             : null;
 
         return $this;
@@ -243,7 +284,7 @@ class JanusServer
     {
         $this->plugin = $plugin;
 
-        if (! $this->session_id || $this->handle_id) {
+        if (! $this->sessionId || $this->handleId) {
             return $this;
         }
 
@@ -251,13 +292,13 @@ class JanusServer
             'janus' => 'attach',
             'plugin' => $plugin,
             'transaction' => Str::random(12),
-            'apisecret' => $this->api_secret,
+            'apisecret' => $this->apiSecret,
         ]);
 
-        if (isset($this->api_response['data']['id'])) {
-            $this->handle_id = $this->api_response['data']['id'];
+        if (isset($this->apiResponse['data']['id'])) {
+            $this->handleId = $this->apiResponse['data']['id'];
         } else {
-            $this->handle_id = null;
+            $this->handleId = null;
         }
 
         return $this;
@@ -269,17 +310,17 @@ class JanusServer
      */
     public function detach(): self
     {
-        if (! $this->handle_id) {
+        if (! $this->handleId) {
             return $this;
         }
 
         $this->janusAPI([
             'janus' => 'detach',
             'transaction' => Str::random(12),
-            'apisecret' => $this->api_secret,
+            'apisecret' => $this->apiSecret,
         ]);
 
-        $this->handle_id = null;
+        $this->handleId = null;
 
         return $this;
     }
@@ -290,19 +331,19 @@ class JanusServer
      */
     public function disconnect(): self
     {
-        $this->handle_id = null;
+        $this->handleId = null;
 
-        if (! $this->session_id) {
+        if (! $this->sessionId) {
             return $this;
         }
 
         $this->janusAPI([
             'janus' => 'destroy',
             'transaction' => Str::random(12),
-            'apisecret' => $this->api_secret,
+            'apisecret' => $this->apiSecret,
         ]);
 
-        $this->session_id = null;
+        $this->sessionId = null;
 
         return $this;
     }
@@ -315,26 +356,26 @@ class JanusServer
      */
     public function sendMessage(array $message, string $jsep = null): self
     {
-        $this->plugin_payload = [
+        $this->pluginPayload = [
             'janus' => 'message',
             'body' => $message,
             'transaction' => Str::random(12),
-            'apisecret' => $this->api_secret,
+            'apisecret' => $this->apiSecret,
         ];
 
         if ($jsep) {
-            array_push($this->plugin_payload, ['jsep' => $jsep]);
+            array_push($this->pluginPayload, ['jsep' => $jsep]);
         }
 
-        if (! $this->session_id
-            || ! $this->handle_id
+        if (! $this->sessionId
+            || ! $this->handleId
             || ! $this->plugin) {
-            $this->plugin_response = [];
+            $this->pluginResponse = [];
 
             return $this;
         }
 
-        $this->janusAPI($this->plugin_payload)
+        $this->janusAPI($this->pluginPayload)
             ->setPluginResponse();
 
         return $this;
@@ -347,21 +388,21 @@ class JanusServer
      */
     public function sendTrickleCandidate(string $candidate): self
     {
-        if (! $this->session_id || ! $this->handle_id) {
-            $this->plugin_response = [];
-            $this->plugin_payload = [];
+        if (! $this->sessionId || ! $this->handleId) {
+            $this->pluginResponse = [];
+            $this->pluginPayload = [];
 
             return $this;
         }
 
-        $this->plugin_payload = [
+        $this->pluginPayload = [
             'janus' => 'trickle',
             'candidate' => $candidate,
             'transaction' => Str::random(12),
-            'apisecret' => $this->api_secret,
+            'apisecret' => $this->apiSecret,
         ];
 
-        $this->janusAPI($this->plugin_payload)
+        $this->janusAPI($this->pluginPayload)
             ->setPluginResponse();
 
         return $this;
@@ -380,18 +421,18 @@ class JanusServer
                               bool $admin = false,
                               bool $post = true): self
     {
-        if (! $this->janus_server) {
+        if (! $this->janusServer) {
             return $this;
         }
 
-        $client = Http::withOptions([
-            'verify' => $this->self_signed,
+        $client = $this->httpClient->withOptions([
+            'verify' => $this->selfSigned,
         ]);
 
-        $server = $admin ? $this->janus_admin_server : $this->janus_server;
+        $server = $admin ? $this->janusAdminServer : $this->janusServer;
         $route = $route ? '/'.$route : '';
-        $session = $this->session_id ? '/'.$this->session_id : '';
-        $handle = $this->handle_id ? '/'.$this->handle_id : '';
+        $session = $this->sessionId ? '/'.$this->sessionId : '';
+        $handle = $this->handleId ? '/'.$this->handleId : '';
         $uri = $server.$route.$session.$handle;
 
         if ($this->debug) {
@@ -411,21 +452,21 @@ class JanusServer
                 dump($response->headers());
             }
 
-            $this->api_response = $response->json();
+            $this->apiResponse = $response->json();
         } catch (Exception $e) {
             report($e);
             if ($this->debug) {
                 dump($e);
             }
-            $this->api_response = [];
+            $this->apiResponse = [];
         }
 
         if ($this->debug) {
-            dump($this->api_response);
+            dump($this->apiResponse);
         }
 
-        if (! isset($this->api_response['janus'])
-            || $this->api_response['janus'] === 'error') {
+        if (! isset($this->apiResponse['janus'])
+            || $this->apiResponse['janus'] === 'error') {
             $this->logApiError($data, $uri);
         }
 
@@ -438,15 +479,15 @@ class JanusServer
      */
     private function setPluginResponse(): array
     {
-        if (isset($this->api_response['plugindata']['plugin'])
-            && $this->api_response['plugindata']['plugin'] === $this->plugin
-            && isset($this->api_response['plugindata']['data'])) {
-            $this->plugin_response = $this->api_response['plugindata']['data'];
+        if (isset($this->apiResponse['plugindata']['plugin'])
+            && $this->apiResponse['plugindata']['plugin'] === $this->plugin
+            && isset($this->apiResponse['plugindata']['data'])) {
+            $this->pluginResponse = $this->apiResponse['plugindata']['data'];
         } else {
-            $this->plugin_response = [];
+            $this->pluginResponse = [];
         }
 
-        return $this->plugin_response;
+        return $this->pluginResponse;
     }
 
     /**
@@ -455,7 +496,7 @@ class JanusServer
      */
     private function trackServerLatency(): void
     {
-        $this->ping_pong = microtime(true);
+        $this->pingPong = microtime(true);
     }
 
     /**
@@ -464,9 +505,9 @@ class JanusServer
      */
     private function reportServerLatency(): void
     {
-        if ($this->ping_pong) {
-            $this->last_latency = round((microtime(true) - $this->ping_pong) * 1000);
-            $this->ping_pong = null;
+        if ($this->pingPong) {
+            $this->lastLatency = round((microtime(true) - $this->pingPong) * 1000);
+            $this->pingPong = null;
         }
     }
 }
