@@ -43,7 +43,7 @@ class UpdateMessengerSettings extends BaseMessengerAction
      */
     private function setOnlineCacheStatus(int $onlineStatus): void
     {
-        switch($onlineStatus){
+        switch ($onlineStatus) {
             case 0:
                 $this->messenger->setProviderToOffline();
             break;
