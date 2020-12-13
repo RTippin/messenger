@@ -8,10 +8,10 @@
     Messenger.init({
         load : {
             NotifyManager : {
-                notify_sound : {{messenger()->getProviderMessenger()->notify_sound}},
-                message_popups : {{messenger()->getProviderMessenger()->message_popups}},
-                message_sound : {{messenger()->getProviderMessenger()->message_sound}},
-                call_ringtone_sound : {{messenger()->getProviderMessenger()->call_ringtone_sound}},
+                notify_sound : {{messenger()->getProviderMessenger()->notify_sound ? 'true' : 'false'}},
+                message_popups : {{messenger()->getProviderMessenger()->message_popups ? 'true' : 'false'}},
+                message_sound : {{messenger()->getProviderMessenger()->message_sound ? 'true' : 'false'}},
+                call_ringtone_sound : {{messenger()->getProviderMessenger()->call_ringtone_sound ? 'true' : 'false'}},
                 src : 'NotifyManager.js'
             },
 @stack('Messenger-load')

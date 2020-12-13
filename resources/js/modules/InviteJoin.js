@@ -90,11 +90,11 @@ window.InviteJoin = (function () {
     },
     templates = {
         join : function(){
-            return '<button onclick="window.location.href = \'/'+Messenger.common().WEB+'\';" type="button" data-toggle="tooltip" data-placement="left" title="Cancel" class="mx-3 mb-4 shadow-lg btn btn-circle btn-circle-xl btn-danger">No <i class="fas fa-times"></i></button>\n' +
+            return '<button onclick="window.location.href = \''+Messenger.common().WEB+'\';" type="button" data-toggle="tooltip" data-placement="left" title="Cancel" class="mx-3 mb-4 shadow-lg btn btn-circle btn-circle-xl btn-danger">No <i class="fas fa-times"></i></button>\n' +
                 '<button onclick="InviteJoin.join()" type="button" data-toggle="tooltip" data-placement="right" title="Join Group!" class="mx-3 mb-4 shadow-lg btn btn-circle btn-circle-xl btn-success">Join <i class="fas fa-users"></i></button>';
         },
         enter : function(){
-            return '<button onclick="window.location.href=\'/'+Messenger.common().WEB+'/'+opt.invite.thread_id+'\'" type="button" data-toggle="tooltip"\n' +
+            return '<button onclick="window.location.href=\''+Messenger.common().WEB+'/'+opt.invite.thread_id+'\'" type="button" data-toggle="tooltip"\n' +
                 ' data-placement="bottom" title="View Group" class="shadow-lg btn btn-circle btn-circle-xl btn-success">Enter <i class="fas fa-users"></i></button>';
         },
         exit : function(){

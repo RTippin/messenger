@@ -587,7 +587,7 @@ window.ThreadManager = (function () {
             })
         },
         startPresence : function(full){
-            if(opt.thread.awaiting_my_approval) return;
+            if(opt.thread.awaiting_my_approval || opt.thread.muted) return;
             if(full) opt.socket.chat = null;
             if(opt.socket.chat){
                 opt.socket.chat.subscribe();
