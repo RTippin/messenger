@@ -206,7 +206,7 @@ return [
         'channels' => [
             'enabled' => true,
             'domain' => null,
-            'prefix' => 'messenger',
+            'prefix' => 'api',
             'middleware' => [
                 'web',
                 'auth',

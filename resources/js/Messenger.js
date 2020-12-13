@@ -617,7 +617,6 @@ window.Messenger = (function () {
             if(typeof arg.response.data.errors !== 'undefined'
                 && typeof arg.response.data.errors === 'object'){
                 let theStack = '<ul class="'+(arg.type === 2 ? 'p-0 ml-3' : '')+'">';
-                theStack += '<li>' + arg.response.data.message + '</li>';
                 for(let field in arg.response.data.errors) {
                     if (!arg.response.data.errors.hasOwnProperty(field)) continue;
                     arg.response.data.errors[field].forEach((error) => {

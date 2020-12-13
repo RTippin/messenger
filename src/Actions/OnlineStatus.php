@@ -75,7 +75,8 @@ class OnlineStatus extends BaseMessengerAction
      */
     private function touchProvider(): self
     {
-        if ($this->messenger->isOnlineStatusEnabled()) {
+        if ($this->messenger->isOnlineStatusEnabled()
+            && $this->messenger->getProviderMessenger()->online_status !== 0) {
             $this->messenger->getProvider()->touch();
         }
 

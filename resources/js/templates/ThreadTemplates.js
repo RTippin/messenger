@@ -583,8 +583,8 @@ window.ThreadTemplates = (function () {
                 '                </td>\n' +
                 '                <td>\n' +
                 '                    <div class="mt-1 float-right"><span class="switch switch-sm mt-1">\n' +
-                '                        <input class="switch switch_input m_setting_toggle" id="g_s_invitations" name="g_s_add_invitations" type="checkbox" '+(settings.invitations ? 'checked' : '')+'>\n' +
-                '                        <label for="g_s_add_invitations"></label>\n' +
+                '                        <input class="switch switch_input m_setting_toggle" id="g_s_invitations" name="g_s_invitations" type="checkbox" '+(settings.invitations ? 'checked' : '')+'>\n' +
+                '                        <label for="g_s_invitations"></label>\n' +
                 '                    </span></div>\n' +
                 '                </td>\n' +
                 '            </tr>\n' +
@@ -970,11 +970,11 @@ window.ThreadTemplates = (function () {
                 '                        <form class="form-inline w-100 needs-validation" action="javascript:ThreadManager.newForms().newGroup()" id="new_group_form" novalidate>\n' +
                 '                            <div class="col-12">\n' +
                 '                            <div class="input-group">\n' +
-                '                                <input maxlength="50" class="form-control" id="subject" placeholder="Name the group conversation" name="subject" autocomplete="off" required>\n' +
+                '                                <input minlength="3" maxlength="50" class="form-control" id="subject" placeholder="Name the group conversation" name="subject" autocomplete="off" required>\n' +
                 '                                <div class="input-group-append">\n' +
                 '                                    <button id="make_thread_btn" class="btn btn-primary"><i class="fas fa-edit"></i> Create</button>\n' +
                 '                                </div>\n' +
-                '                                <div class="invalid-feedback mb-n4">Required / 50 characters or less</div>'+
+                '                                <div class="invalid-feedback mb-n4">Required / 3 - 50 characters</div>'+
                 '                            </div>'+
                 '                            </div>\n' +
                 '                            <div class="col-12 my-3"></div>\n' +

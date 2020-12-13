@@ -25,9 +25,9 @@ class PurgeThreads extends BaseMessengerAction
     }
 
     /**
-     * Loop through the collection of image messages and remove
-     * the image from storage, then force delete message itself
-     * from database.
+     * Loop through the collection of threads and remove all files
+     * from storage under the thread, then force delete thread
+     * itself from database.
      *
      * @param mixed ...$parameters
      * @var Collection[0]
