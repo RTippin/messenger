@@ -109,7 +109,7 @@ class MessagePolicy
         return $thread->hasCurrentProvider()
         && ! $thread->isLocked()
         && ! $message->isSystemMessage()
-        && (($this->messenger->getProviderId() === $message->owner_id
+        && (($this->messenger->getProviderId() == $message->owner_id
                 && $this->messenger->getProviderClass() === $message->owner_type)
             || $thread->isAdmin())
             ? $this->allow()

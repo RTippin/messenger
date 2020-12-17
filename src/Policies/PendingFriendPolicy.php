@@ -48,7 +48,7 @@ class PendingFriendPolicy
     public function view($user, PendingFriend $pending)
     {
         return ($this->service->providerHasFriends()
-            && $this->service->getProviderId() === $pending->recipient_id
+            && $this->service->getProviderId() == $pending->recipient_id
             && $this->service->getProviderClass() === $pending->recipient_type)
             ? $this->allow()
             : $this->deny('Not authorized to view pending friend request');
@@ -64,7 +64,7 @@ class PendingFriendPolicy
     public function update($user, PendingFriend $pending)
     {
         return ($this->service->providerHasFriends()
-            && $this->service->getProviderId() === $pending->recipient_id
+            && $this->service->getProviderId() == $pending->recipient_id
             && $this->service->getProviderClass() === $pending->recipient_type)
             ? $this->allow()
             : $this->deny('Not authorized to accept pending friend request');
@@ -80,7 +80,7 @@ class PendingFriendPolicy
     public function delete($user, PendingFriend $pending)
     {
         return ($this->service->providerHasFriends()
-            && $this->service->getProviderId() === $pending->recipient_id
+            && $this->service->getProviderId() == $pending->recipient_id
             && $this->service->getProviderClass() === $pending->recipient_type)
             ? $this->allow()
             : $this->deny('Not authorized to deny pending friend request');
