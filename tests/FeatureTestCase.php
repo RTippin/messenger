@@ -17,11 +17,11 @@ class FeatureTestCase extends TestCase
         parent::setUp();
 
         $this->loadLaravelMigrations([
-            '--database' => 'testbench'
+            '--database' => 'testbench',
         ]);
 
         $this->artisan('migrate', [
-            '--database' => 'testbench'
+            '--database' => 'testbench',
         ])->run();
 
         $this->storeBaseUsers();
@@ -67,13 +67,13 @@ class FeatureTestCase extends TestCase
         UserModel::create([
             'name' => 'Richard Tippin',
             'email' => 'richard.tippin@gmail.com',
-            'password' => 'secret'
+            'password' => 'secret',
         ]);
 
         UserModel::create([
             'name' => 'John Doe',
             'email' => 'doe@example.net',
-            'password' => 'secret'
+            'password' => 'secret',
         ]);
     }
 }
@@ -91,4 +91,5 @@ class UserModel extends User implements MessengerProvider, Searchable
 class OtherModel extends User
 {
     //random model that is not a valid provider for our package
+
 }

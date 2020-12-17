@@ -17,7 +17,7 @@ class ThreadsTest extends FeatureTestCase
         $this->post(route('api.messenger.privates.store'), [
             'recipient_id' => 2,
             'recipient_alias' => 'user',
-            'message' => 'Hello!'
+            'message' => 'Hello!',
         ])
             ->assertUnauthorized();
     }
@@ -34,7 +34,7 @@ class ThreadsTest extends FeatureTestCase
         $response->assertStatus(200);
 
         $response->assertJsonFragment([
-            'data' => []
+            'data' => [],
         ]);
 
         $response->assertJsonFragment([
@@ -47,7 +47,8 @@ class ThreadsTest extends FeatureTestCase
                 'per_page' => Messenger::getThreadsIndexCount(),
                 'results' => 0,
                 'total' => 0,
-            ]
+            ],
         ]);
     }
+
 }

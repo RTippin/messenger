@@ -13,19 +13,19 @@ use RTippin\Messenger\Tests\UserModel;
 class MessengerProviderMiddlewareTest extends FeatureTestCase
 {
     /** @test */
-    function test_guest_will_not_be_set_or_throw_provider_error()
+    public function test_guest_will_not_be_set_or_throw_provider_error()
     {
         $middleware = app(SetMessengerProvider::class);
 
         $request = new Request;
 
-        $middleware->handle($request, function($request){
+        $middleware->handle($request, function ($request) {
             $this->assertTrue(Messenger::isProviderSet() === false);
         });
     }
 
     /** @test */
-    function test_required_provider_throws_error_when_invalid_or_none()
+    public function test_required_provider_throws_error_when_invalid_or_none()
     {
         $this->expectException(InvalidMessengerProvider::class);
 
@@ -33,7 +33,7 @@ class MessengerProviderMiddlewareTest extends FeatureTestCase
 
         $request = new Request;
 
-        $middleware->handle($request, function($request){
+        $middleware->handle($request, function ($request) {
             $this->assertTrue(Messenger::isProviderSet() === false);
         }, 'required');
     }
@@ -45,13 +45,13 @@ class MessengerProviderMiddlewareTest extends FeatureTestCase
 
         $request = new Request;
 
-        $request->setUserResolver(function(){
+        $request->setUserResolver(function () {
             return new OtherModel;
         });
 
         $middleware = app(SetMessengerProvider::class);
 
-        $middleware->handle($request, function($request){
+        $middleware->handle($request, function ($request) {
             $this->assertTrue(Messenger::isProviderSet() === false);
         }, 'required');
     }
@@ -61,17 +61,17 @@ class MessengerProviderMiddlewareTest extends FeatureTestCase
     {
         $request = new Request;
 
-        $request->setUserResolver(function(){
+        $request->setUserResolver(function () {
             return UserModel::first();
         });
 
-        $this->assertEquals('richard.tippin@gmail.com', $request->user()->email);
-
         $middleware = app(SetMessengerProvider::class);
 
-        $middleware->handle($request, function($request){
+        $middleware->handle($request, function (Request $request) {
+            $this->assertEquals('richard.tippin@gmail.com', $request->user()->email);
             $this->assertTrue(Messenger::isProviderSet() === true);
             $this->assertEquals('richard.tippin@gmail.com', Messenger::getProvider()->email);
         }, 'required');
     }
+
 }
