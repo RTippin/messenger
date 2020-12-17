@@ -9,7 +9,7 @@ use RTippin\Messenger\Tests\UserModel;
 class ThreadsTest extends FeatureTestCase
 {
     /** @test */
-    public function test_unauthenticated_was_denied()
+    public function test_guest_was_denied()
     {
         $this->get(route('api.messenger.threads.index'))
             ->assertUnauthorized();
@@ -50,5 +50,4 @@ class ThreadsTest extends FeatureTestCase
             ],
         ]);
     }
-
 }

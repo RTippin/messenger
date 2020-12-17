@@ -10,7 +10,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\OtherModel;
 use RTippin\Messenger\Tests\UserModel;
 
-class MessengerProviderMiddlewareTest extends FeatureTestCase
+class SetMessengerProviderTest extends FeatureTestCase
 {
     /** @test */
     public function test_guest_will_not_be_set_or_throw_provider_error()
@@ -73,5 +73,4 @@ class MessengerProviderMiddlewareTest extends FeatureTestCase
             $this->assertEquals('richard.tippin@gmail.com', Messenger::getProvider()->email);
         }, 'required');
     }
-
 }
