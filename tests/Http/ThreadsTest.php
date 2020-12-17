@@ -25,9 +25,7 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function test_new_user_has_no_threads()
     {
-        $user = UserModel::first();
-
-        $this->actingAs($user);
+        $this->actingAs(UserModel::first());
 
         $response = $this->get(route('api.messenger.threads.index'));
 

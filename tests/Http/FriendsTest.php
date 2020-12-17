@@ -13,7 +13,7 @@ class FriendsTest extends FeatureTestCase
         $this->get(route('api.messenger.friends.index'))
             ->assertUnauthorized();
 
-        $this->post(route('api.messenger.friends.sent.store'), [
+        $this->postJson(route('api.messenger.friends.sent.store'), [
             'recipient_id' => 2,
             'recipient_alias' => 'user',
         ])
@@ -23,9 +23,7 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function test_new_user_has_no_friends()
     {
-        $user = UserModel::first();
-
-        $this->actingAs($user);
+        $this->actingAs(UserModel::first());
 
         $this->get(route('api.messenger.friends.index'))
             ->assertStatus(200)
@@ -38,5 +36,21 @@ class FriendsTest extends FeatureTestCase
         $this->get(route('api.messenger.friends.pending.index'))
             ->assertStatus(200)
             ->assertJsonCount(0);
+    }
+
+    /** @test */
+    public function test_user_can_friend_another()
+    {
+        $this->actingAs(UserModel::first());
+
+        $response = $this->postJson(route('api.messenger.friends.sent.store'), [
+            'recipient_id' => 2,
+            'recipient_alias' => 'user',
+        ]);
+
+        $response->assertStatus(201)
+            ->assertSimilarJson([
+                'sender_type' => 'RTippin\Messenger\Tests\UserModel'
+            ]);
     }
 }
