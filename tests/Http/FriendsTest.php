@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use RTippin\Messenger\Models\SentFriend;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\UserModel;
 
@@ -41,16 +42,72 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function test_user_can_friend_another()
     {
-        $this->actingAs(UserModel::first());
+        $users = UserModel::all();
+
+        $this->actingAs($users->first());
 
         $response = $this->postJson(route('api.messenger.friends.sent.store'), [
-            'recipient_id' => 2,
+            'recipient_id' => $users->last()->id,
             'recipient_alias' => 'user',
         ]);
 
         $response->assertStatus(201)
-            ->assertSimilarJson([
-                'sender_type' => 'RTippin\Messenger\Tests\UserModel'
+            ->assertJson([
+                'sender_type' => 'RTippin\Messenger\Tests\UserModel',
             ]);
+
+        $this->assertDatabaseHas('pending_friends', [
+            'sender_id' => $users->first()->id,
+            'recipient_id' => $users->last()->id,
+        ]);
+    }
+
+    /** @test */
+    public function test_user_cannot_friend_user_already_sent()
+    {
+        $users = UserModel::all();
+
+        $this->actingAs($users->first());
+
+        SentFriend::create([
+            'sender_id' => $users->first()->id,
+            'sender_type' => 'RTippin\Messenger\Tests\UserModel',
+            'recipient_id' => $users->last()->id,
+            'recipient_type' => 'RTippin\Messenger\Tests\UserModel',
+        ]);
+
+        $this->postJson(route('api.messenger.friends.sent.store'), [
+            'recipient_id' => $users->last()->id,
+            'recipient_alias' => 'user',
+        ])->assertForbidden();
+    }
+
+    /** @test */
+    public function test_user_can_cancel_sent_request()
+    {
+        $users = UserModel::all();
+
+        $sent = SentFriend::create([
+            'sender_id' => $users->first()->id,
+            'sender_type' => 'RTippin\Messenger\Tests\UserModel',
+            'recipient_id' => $users->last()->id,
+            'recipient_type' => 'RTippin\Messenger\Tests\UserModel',
+        ]);
+
+        $this->assertDatabaseHas('pending_friends', [
+            'sender_id' => $users->first()->id,
+            'recipient_id' => $users->last()->id,
+        ]);
+
+        $this->actingAs($users->first());
+
+        $this->deleteJson(route('api.messenger.friends.sent.destroy', [
+            'sent' => $sent->id
+        ]))->assertSuccessful();
+
+        $this->assertDatabaseMissing('pending_friends', [
+            'sender_id' => $users->first()->id,
+            'recipient_id' => $users->last()->id,
+        ]);
     }
 }
