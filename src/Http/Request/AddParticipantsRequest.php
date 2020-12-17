@@ -16,7 +16,7 @@ class AddParticipantsRequest extends FormRequest
         return [
             'providers' => 'required|array|min:1',
             'providers.*.alias' => 'required|string',
-            'providers.*.id' => 'required|string',
+            'providers.*.id' => 'required',
         ];
     }
 }
