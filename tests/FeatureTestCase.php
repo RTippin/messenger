@@ -60,6 +60,8 @@ class FeatureTestCase extends TestCase
                 ],
             ],
         ]);
+
+        $config->set('messenger.site_name', 'Messenger-Testbench');
     }
 
     private function storeBaseUsers(): void
