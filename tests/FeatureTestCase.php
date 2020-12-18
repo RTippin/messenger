@@ -34,7 +34,7 @@ class FeatureTestCase extends TestCase
         ];
     }
 
-    protected function getEnvironmentSetUp($app)
+    protected function getEnvironmentSetUp($app): void
     {
         $config = $app->get('config');
 
@@ -62,7 +62,7 @@ class FeatureTestCase extends TestCase
         ]);
     }
 
-    private function storeBaseUsers()
+    private function storeBaseUsers(): void
     {
         UserModel::create([
             'name' => 'Richard Tippin',

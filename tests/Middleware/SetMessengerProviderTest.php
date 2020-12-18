@@ -13,19 +13,19 @@ use RTippin\Messenger\Tests\UserModel;
 class SetMessengerProviderTest extends FeatureTestCase
 {
     /** @test */
-    public function test_guest_will_not_be_set_or_throw_provider_error()
+    public function test_guest_will_not_be_set()
     {
         $middleware = app(SetMessengerProvider::class);
 
         $request = new Request;
 
         $middleware->handle($request, function ($request) {
-            $this->assertTrue(Messenger::isProviderSet() === false);
+            $this->assertFalse(Messenger::isProviderSet());
         });
     }
 
     /** @test */
-    public function test_required_provider_throws_error_when_invalid_or_none()
+    public function test_required_provider_throws_error_when_none()
     {
         $this->expectException(InvalidMessengerProvider::class);
 
@@ -34,7 +34,7 @@ class SetMessengerProviderTest extends FeatureTestCase
         $request = new Request;
 
         $middleware->handle($request, function ($request) {
-            $this->assertTrue(Messenger::isProviderSet() === false);
+            $this->assertFalse(Messenger::isProviderSet());
         }, 'required');
     }
 
@@ -52,7 +52,7 @@ class SetMessengerProviderTest extends FeatureTestCase
         $middleware = app(SetMessengerProvider::class);
 
         $middleware->handle($request, function ($request) {
-            $this->assertTrue(Messenger::isProviderSet() === false);
+            $this->assertFalse(Messenger::isProviderSet());
         }, 'required');
     }
 
@@ -69,7 +69,7 @@ class SetMessengerProviderTest extends FeatureTestCase
 
         $middleware->handle($request, function (Request $request) {
             $this->assertEquals('richard.tippin@gmail.com', $request->user()->email);
-            $this->assertTrue(Messenger::isProviderSet() === true);
+            $this->assertTrue(Messenger::isProviderSet());
             $this->assertEquals('richard.tippin@gmail.com', Messenger::getProvider()->email);
         }, 'required');
     }

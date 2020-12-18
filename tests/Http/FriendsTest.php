@@ -3,10 +3,16 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\FriendApprovedBroadcast;
+use RTippin\Messenger\Broadcasting\FriendCancelledBroadcast;
+use RTippin\Messenger\Broadcasting\FriendDeniedBroadcast;
 use RTippin\Messenger\Broadcasting\FriendRequestBroadcast;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Events\FriendApprovedEvent;
+use RTippin\Messenger\Events\FriendCancelledEvent;
+use RTippin\Messenger\Events\FriendDeniedEvent;
+use RTippin\Messenger\Events\FriendRemovedEvent;
 use RTippin\Messenger\Events\FriendRequestEvent;
+use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Models\PendingFriend;
 use RTippin\Messenger\Models\SentFriend;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -46,25 +52,24 @@ class FriendsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_can_friend_another()
+    public function test_user_can_friend_another_and_events_fire()
     {
-        $users = UserModel::all();
-
-        $this->actingAs($users->first());
-
         $this->expectsEvents([
             FriendRequestBroadcast::class,
             FriendRequestEvent::class,
         ]);
 
-        $response = $this->postJson(route('api.messenger.friends.sent.store'), [
+        $users = UserModel::all();
+
+        $this->actingAs($users->first());
+
+        $this->postJson(route('api.messenger.friends.sent.store'), [
             'recipient_id' => $users->last()->id,
             'recipient_alias' => 'user',
-        ]);
-
-        $response->assertStatus(201)
+        ])
+            ->assertStatus(201)
             ->assertJson([
-                'sender_type' => 'RTippin\Messenger\Tests\UserModel',
+                'sender_id' => $users->first()->id,
             ]);
 
         $this->assertDatabaseHas('pending_friends', [
@@ -74,8 +79,13 @@ class FriendsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_cannot_friend_user_already_sent()
+    public function test_user_cannot_friend_user_while_having_pending_sent()
     {
+        $this->doesntExpectEvents([
+            FriendRequestBroadcast::class,
+            FriendRequestEvent::class,
+        ]);
+
         $users = UserModel::all();
 
         $this->actingAs($users->first());
@@ -90,12 +100,18 @@ class FriendsTest extends FeatureTestCase
         $this->postJson(route('api.messenger.friends.sent.store'), [
             'recipient_id' => $users->last()->id,
             'recipient_alias' => 'user',
-        ])->assertForbidden();
+        ])
+            ->assertForbidden();
     }
 
     /** @test */
-    public function test_user_can_cancel_sent_request()
+    public function test_user_can_cancel_sent_request_and_events_fire()
     {
+        $this->expectsEvents([
+            FriendCancelledBroadcast::class,
+            FriendCancelledEvent::class,
+        ]);
+
         $users = UserModel::all();
 
         $sent = SentFriend::create([
@@ -105,16 +121,12 @@ class FriendsTest extends FeatureTestCase
             'recipient_type' => 'RTippin\Messenger\Tests\UserModel',
         ]);
 
-        $this->assertDatabaseHas('pending_friends', [
-            'sender_id' => $users->first()->id,
-            'recipient_id' => $users->last()->id,
-        ]);
-
         $this->actingAs($users->first());
 
         $this->deleteJson(route('api.messenger.friends.sent.destroy', [
             'sent' => $sent->id,
-        ]))->assertSuccessful();
+        ]))
+            ->assertSuccessful();
 
         $this->assertDatabaseMissing('pending_friends', [
             'sender_id' => $users->first()->id,
@@ -123,8 +135,13 @@ class FriendsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_can_deny_pending_request()
+    public function test_user_can_deny_pending_request_and_events_fire()
     {
+        $this->expectsEvents([
+            FriendDeniedBroadcast::class,
+            FriendDeniedEvent::class,
+        ]);
+
         $users = UserModel::all();
 
         $pending = PendingFriend::create([
@@ -134,22 +151,12 @@ class FriendsTest extends FeatureTestCase
             'recipient_type' => 'RTippin\Messenger\Tests\UserModel',
         ]);
 
-        $this->assertDatabaseHas('pending_friends', [
-            'sender_id' => $users->first()->id,
-            'recipient_id' => $users->last()->id,
-        ]);
-
-        $this->actingAs($users->first());
-
-        $this->deleteJson(route('api.messenger.friends.pending.destroy', [
-            'pending' => $pending->id,
-        ]))->assertForbidden();
-
         $this->actingAs($users->last());
 
         $this->deleteJson(route('api.messenger.friends.pending.destroy', [
             'pending' => $pending->id,
-        ]))->assertSuccessful();
+        ]))
+            ->assertSuccessful();
 
         $this->assertDatabaseMissing('pending_friends', [
             'sender_id' => $users->first()->id,
@@ -158,16 +165,16 @@ class FriendsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_can_accept_pending_request()
+    public function test_user_can_accept_pending_request_and_events_fire()
     {
-        $users = UserModel::all();
-
-        $friends = resolve(FriendDriver::class);
-
         $this->expectsEvents([
             FriendApprovedBroadcast::class,
             FriendApprovedEvent::class,
         ]);
+
+        $users = UserModel::all();
+
+        $friends = resolve(FriendDriver::class);
 
         $pending = SentFriend::create([
             'sender_id' => $users->first()->id,
@@ -176,17 +183,12 @@ class FriendsTest extends FeatureTestCase
             'recipient_type' => 'RTippin\Messenger\Tests\UserModel',
         ]);
 
-        $this->actingAs($users->first());
-
-        $this->putJson(route('api.messenger.friends.pending.update', [
-            'pending' => $pending->id,
-        ]))->assertForbidden();
-
         $this->actingAs($users->last());
 
         $this->putJson(route('api.messenger.friends.pending.update', [
             'pending' => $pending->id,
-        ]))->assertSuccessful();
+        ]))
+            ->assertSuccessful();
 
         $this->assertDatabaseMissing('pending_friends', [
             'sender_id' => $users->first()->id,
@@ -204,5 +206,83 @@ class FriendsTest extends FeatureTestCase
         ]);
 
         $this->assertEquals($friends->friendStatus($users->first()), 1);
+    }
+
+    /** @test */
+    public function test_user_can_remove_friend_and_events_fire()
+    {
+        $this->expectsEvents([
+            FriendRemovedEvent::class,
+        ]);
+
+        $users = UserModel::all();
+
+        $friends = resolve(FriendDriver::class);
+
+        $friend = Friend::create([
+            'owner_id' => $users->first()->id,
+            'owner_type' => 'RTippin\Messenger\Tests\UserModel',
+            'party_id' => $users->last()->id,
+            'party_type' => 'RTippin\Messenger\Tests\UserModel',
+        ]);
+
+        Friend::create([
+            'owner_id' => $users->last()->id,
+            'owner_type' => 'RTippin\Messenger\Tests\UserModel',
+            'party_id' => $users->first()->id,
+            'party_type' => 'RTippin\Messenger\Tests\UserModel',
+        ]);
+
+        $this->actingAs($users->first());
+
+        $this->deleteJson(route('api.messenger.friends.destroy', [
+            'friend' => $friend->id,
+        ]))
+            ->assertSuccessful();
+
+        $this->assertDatabaseMissing('friends', [
+            'owner_id' => $users->first()->id,
+            'party_id' => $users->last()->id,
+        ]);
+
+        $this->assertDatabaseMissing('friends', [
+            'owner_id' => $users->last()->id,
+            'party_id' => $users->first()->id,
+        ]);
+
+        $this->assertEquals($friends->friendStatus($users->first()), 0);
+    }
+
+    /** @test */
+    public function test_user_cannot_friend_when_already_friends()
+    {
+        $this->doesntExpectEvents([
+            FriendRequestBroadcast::class,
+            FriendRequestEvent::class,
+        ]);
+
+        $users = UserModel::all();
+
+        $this->actingAs($users->first());
+
+        Friend::create([
+            'owner_id' => $users->first()->id,
+            'owner_type' => 'RTippin\Messenger\Tests\UserModel',
+            'party_id' => $users->last()->id,
+            'party_type' => 'RTippin\Messenger\Tests\UserModel',
+        ]);
+
+        Friend::create([
+            'owner_id' => $users->last()->id,
+            'owner_type' => 'RTippin\Messenger\Tests\UserModel',
+            'party_id' => $users->first()->id,
+            'party_type' => 'RTippin\Messenger\Tests\UserModel',
+        ]);
+
+        $this->postJson(route('api.messenger.friends.sent.store'), [
+            'recipient_id' => $users->last()->id,
+            'recipient_alias' => 'user',
+        ])
+            ->assertForbidden();
     }
 }
