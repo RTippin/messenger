@@ -2,7 +2,9 @@
 
 namespace RTippin\Messenger\Tests;
 
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Foundation\Auth\User;
+use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Searchable;
@@ -23,6 +25,10 @@ class FeatureTestCase extends TestCase
         $this->artisan('migrate', [
             '--database' => 'testbench',
         ])->run();
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->string('picture')->nullable();
+        });
 
         $this->storeBaseUsers();
     }
