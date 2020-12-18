@@ -57,4 +57,27 @@ class MessengerTest extends FeatureTestCase
                 'threadsIndexCount' => 50,
             ]);
     }
+
+    /** @test */
+    public function test_messenger_created_when_called_from_user_without_messenger()
+    {
+        $user = UserModel::first();
+
+        $this->assertDatabaseMissing('messengers', [
+            'owner_id' => $user->getKey(),
+        ]);
+
+        $this->actingAs($user);
+
+        $this->get(route('api.messenger.settings'))
+            ->assertSuccessful()
+            ->assertJson([
+                'owner_id' => $user->getKey(),
+                'dark_mode' => true,
+            ]);
+
+        $this->assertDatabaseHas('messengers', [
+            'owner_id' => $user->getKey(),
+        ]);
+    }
 }
