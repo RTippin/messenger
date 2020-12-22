@@ -49,7 +49,7 @@ class SearchTest extends FeatureTestCase
                 'data' => [
                     [
                         'name' => $user->name(),
-                    ]
+                    ],
                 ],
                 'meta' => [
                     'total' => 1,
@@ -81,7 +81,7 @@ class SearchTest extends FeatureTestCase
                 'meta' => [
                     'total' => 0,
                     'search_items' => [
-                        'jane'
+                        'jane',
                     ],
                     'per_page' => Messenger::getSearchPageCount(),
                     'search' => 'jane',
@@ -147,7 +147,7 @@ class SearchTest extends FeatureTestCase
                 'data' => [
                     [
                         'name' => $user->name(),
-                    ]
+                    ],
                 ],
                 'meta' => [
                     'total' => 1,

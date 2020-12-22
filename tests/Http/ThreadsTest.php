@@ -101,10 +101,116 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function test_user_belongs_to_two_threads()
     {
-        $this->actingAs(UserModel::first());
+        $users = UserModel::all();
+
+        $this->actingAs($users->first());
 
         $this->get(route('api.messenger.threads.index'))
             ->assertStatus(200)
-            ->assertJsonCount(2, 'data');
+            ->assertJsonCount(2, 'data')
+            ->assertJson([
+                'data' => [
+                    [
+                        'type_verbose' => 'GROUP',
+                        'name' => 'Test Group',
+                    ],
+                    [
+                        'type_verbose' => 'PRIVATE',
+                        'name' => $users->last()->name(),
+                    ],
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function test_invalid_thread_id_not_found()
+    {
+        $this->actingAs(UserModel::first());
+
+        $this->get(route('api.messenger.threads.show', [
+            'thread' => '123456-789',
+        ]))
+            ->assertNotFound();
+    }
+
+    /** @test */
+    public function test_user_forbidden_to_view_thread_they_do_not_belong_to()
+    {
+        $group = Thread::create([
+            'type' => 2,
+            'subject' => 'Empty Group',
+            'image' => '2.png',
+            'add_participants' => true,
+            'invitations' => true,
+        ]);
+
+        $this->actingAs(UserModel::first());
+
+        $this->get(route('api.messenger.threads.show', [
+            'thread' => $group->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function test_view_individual_private_thread()
+    {
+        $users = UserModel::all();
+
+        $thread = Thread::private()->first();
+
+        $this->actingAs($users->first());
+
+        $this->get(route('api.messenger.threads.show', [
+            'thread' => $thread->id,
+        ]))
+            ->assertStatus(200)
+            ->assertJson([
+                'id' => $thread->id,
+                'type' => 1,
+                'type_verbose' => 'PRIVATE',
+                'group' => false,
+                'unread' => true,
+                'name' => $users->last()->name(),
+                'options' => [
+                    'add_participants' => false,
+                    'admin' => false,
+                    'invitations' => false,
+                ],
+                'resources' => [
+                    'recipient' => [
+                        'provider_id' => $users->last()->getKey(),
+                        'name' => $users->last()->name(),
+                    ],
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function test_view_individual_group_thread()
+    {
+        $users = UserModel::all();
+
+        $thread = Thread::group()->first();
+
+        $this->actingAs($users->first());
+
+        $this->get(route('api.messenger.threads.show', [
+            'thread' => $thread->id,
+        ]))
+            ->assertStatus(200)
+            ->assertJson([
+                'id' => $thread->id,
+                'type' => 2,
+                'type_verbose' => 'GROUP',
+                'group' => true,
+                'unread' => true,
+                'name' => 'Test Group',
+                'options' => [
+                    'add_participants' => true,
+                    'admin' => true,
+                    'invitations' => true,
+                ],
+            ]);
     }
 }
