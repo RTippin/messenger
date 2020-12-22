@@ -63,6 +63,14 @@ class CallParticipant extends Model
     protected $dates = ['left_call'];
 
     /**
+     * @var array
+     */
+    protected $casts = [
+        'kicked' => 'boolean',
+    ];
+
+
+    /**
      * @return MorphTo|MessengerProvider
      */
     public function owner()

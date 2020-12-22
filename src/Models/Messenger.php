@@ -95,6 +95,7 @@ class Messenger extends Model
         'call_ringtone_sound' => 'boolean',
         'notify_sound' => 'boolean',
         'dark_mode' => 'boolean',
+        'online_status' => 'integer',
     ];
 
     /**

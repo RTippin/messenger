@@ -95,6 +95,13 @@ class Message extends Model
     protected $dates = ['deleted_at'];
 
     /**
+     * @var array
+     */
+    protected $casts = [
+        'type' => 'integer',
+    ];
+
+    /**
      * @return BelongsTo|Thread
      */
     public function thread()

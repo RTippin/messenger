@@ -48,7 +48,7 @@ class FeatureTestCase extends TestCase
         $config->set('database.default', 'testbench');
 
         $config->set('database.connections.testbench', [
-            'driver' => 'mysql',
+            'driver' => 'sqlite',
             'database' => ':memory:',
             'prefix' => '',
         ]);

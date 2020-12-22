@@ -80,6 +80,14 @@ class Invite extends Model
     protected $dates = ['expires_at'];
 
     /**
+     * @var array
+     */
+    protected $casts = [
+        'max_use' => 'integer',
+        'uses' => 'integer',
+    ];
+
+    /**
      * @return MorphTo|MessengerProvider
      */
     public function owner()
