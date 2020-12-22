@@ -64,7 +64,11 @@ class MessengerTest extends FeatureTestCase
     /** @test */
     public function test_messenger_created_when_called_from_user_without_messenger()
     {
-        $user = UserModel::where('email', '=', 'smith@example.net')->first();
+        $user = UserModel::create([
+            'name' => 'Jane Smith',
+            'email' => 'smith@example.net',
+            'password' => 'secret',
+        ]);
 
         $this->assertDatabaseMissing('messengers', [
             'owner_id' => $user->getKey(),

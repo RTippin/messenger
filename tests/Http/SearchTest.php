@@ -12,7 +12,7 @@ class SearchTest extends FeatureTestCase
     public function test_guest_is_unauthorized()
     {
         $this->get(route('api.messenger.search', [
-            'query' => 'John'
+            'query' => 'john',
         ]))
             ->assertUnauthorized();
     }
@@ -42,7 +42,7 @@ class SearchTest extends FeatureTestCase
         $this->actingAs(UserModel::first());
 
         $this->get(route('api.messenger.search', [
-            'query' => 'tippin'
+            'query' => 'tippin',
         ]))
             ->assertJsonCount(1, 'data')
             ->assertJson([
@@ -65,10 +65,16 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function test_search_for_user_without_messenger_returns_no_results()
     {
+        UserModel::create([
+            'name' => 'Jane Smith',
+            'email' => 'smith@example.net',
+            'password' => 'secret',
+        ]);
+
         $this->actingAs(UserModel::first());
 
         $this->get(route('api.messenger.search', [
-            'query' => 'jane'
+            'query' => 'jane',
         ]))
             ->assertJsonCount(0, 'data')
             ->assertJson([
@@ -89,7 +95,7 @@ class SearchTest extends FeatureTestCase
         $this->actingAs(UserModel::first());
 
         $this->get(route('api.messenger.search', [
-            'query' => 'tippin john'
+            'query' => 'tippin john',
         ]))
             ->assertJsonCount(2, 'data')
             ->assertJson([
@@ -111,7 +117,7 @@ class SearchTest extends FeatureTestCase
         $this->actingAs(UserModel::first());
 
         $this->get(route('api.messenger.search', [
-            'query' => '%`tippin"><'
+            'query' => '%`tippin"><',
         ]))
             ->assertJsonCount(1, 'data')
             ->assertJson([
@@ -134,7 +140,7 @@ class SearchTest extends FeatureTestCase
         $this->actingAs($user);
 
         $this->get(route('api.messenger.search', [
-            'query' => 'richard.tippin@gmail.com'
+            'query' => 'richard.tippin@gmail.com',
         ]))
             ->assertJsonCount(1, 'data')
             ->assertJson([
@@ -160,7 +166,7 @@ class SearchTest extends FeatureTestCase
         $this->actingAs(UserModel::first());
 
         $this->get(route('api.messenger.search', [
-            'query' => 'richard.tippin'
+            'query' => 'richard.tippin',
         ]))
             ->assertJsonCount(0, 'data')
             ->assertJson([

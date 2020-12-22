@@ -15,7 +15,7 @@ use RTippin\Messenger\Traits\Search;
 
 class FeatureTestCase extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -48,7 +48,7 @@ class FeatureTestCase extends TestCase
         $config->set('database.default', 'testbench');
 
         $config->set('database.connections.testbench', [
-            'driver' => 'sqlite',
+            'driver' => 'mysql',
             'database' => ':memory:',
             'prefix' => '',
         ]);
@@ -93,13 +93,6 @@ class FeatureTestCase extends TestCase
         Messenger::create([
             'owner_id' => $userTwo->getKey(),
             'owner_type' => get_class($userTwo),
-        ]);
-
-        // No messenger for 3rd user
-        UserModel::create([
-            'name' => 'Jane Smith',
-            'email' => 'smith@example.net',
-            'password' => 'secret',
         ]);
     }
 }
