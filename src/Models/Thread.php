@@ -114,7 +114,7 @@ class Thread extends Model
         'calling' => 'boolean',
         'messaging' => 'boolean',
         'knocks' => 'boolean',
-        'type' => 'integer'
+        'type' => 'integer',
     ];
 
     /**

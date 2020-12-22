@@ -69,7 +69,6 @@ class CallParticipant extends Model
         'kicked' => 'boolean',
     ];
 
-
     /**
      * @return MorphTo|MessengerProvider
      */
