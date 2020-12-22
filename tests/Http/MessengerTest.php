@@ -12,7 +12,7 @@ use RTippin\Messenger\Tests\UserModel;
 class MessengerTest extends FeatureTestCase
 {
     /** @test */
-    public function test_guest_was_denied()
+    public function test_guest_is_unauthorized()
     {
         $this->get(route('api.messenger.info'))
             ->assertUnauthorized();
@@ -64,7 +64,7 @@ class MessengerTest extends FeatureTestCase
     /** @test */
     public function test_messenger_created_when_called_from_user_without_messenger()
     {
-        $user = UserModel::first();
+        $user = UserModel::where('email', '=', 'smith@example.net')->first();
 
         $this->assertDatabaseMissing('messengers', [
             'owner_id' => $user->getKey(),
@@ -89,8 +89,6 @@ class MessengerTest extends FeatureTestCase
     {
         $user = UserModel::first();
 
-        Messenger::getProviderMessenger($user);
-
         $this->actingAs($user);
 
         $this->putJson(route('api.messenger.settings'), [
@@ -112,8 +110,6 @@ class MessengerTest extends FeatureTestCase
     public function test_updating_messenger_settings()
     {
         $user = UserModel::first();
-
-        Messenger::getProviderMessenger($user);
 
         $this->actingAs($user);
 

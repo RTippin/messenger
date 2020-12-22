@@ -21,7 +21,7 @@ use RTippin\Messenger\Tests\UserModel;
 class FriendsTest extends FeatureTestCase
 {
     /** @test */
-    public function test_guest_was_denied()
+    public function test_guest_is_unauthorized()
     {
         $this->get(route('api.messenger.friends.index'))
             ->assertUnauthorized();
@@ -52,7 +52,7 @@ class FriendsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_can_friend_another_and_events_fire()
+    public function test_user_can_friend_another()
     {
         $this->expectsEvents([
             FriendRequestBroadcast::class,
@@ -105,7 +105,7 @@ class FriendsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_can_cancel_sent_request_and_events_fire()
+    public function test_user_can_cancel_sent_request()
     {
         $this->expectsEvents([
             FriendCancelledBroadcast::class,
@@ -135,7 +135,7 @@ class FriendsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_can_deny_pending_request_and_events_fire()
+    public function test_user_can_deny_pending_request()
     {
         $this->expectsEvents([
             FriendDeniedBroadcast::class,
@@ -165,7 +165,7 @@ class FriendsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_can_accept_pending_request_and_events_fire()
+    public function test_user_can_accept_pending_request()
     {
         $this->expectsEvents([
             FriendApprovedBroadcast::class,
@@ -209,7 +209,7 @@ class FriendsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_can_remove_friend_and_events_fire()
+    public function test_user_can_remove_friend()
     {
         $this->expectsEvents([
             FriendRemovedEvent::class,

@@ -9,6 +9,7 @@ use Orchestra\Testbench\TestCase;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Searchable;
 use RTippin\Messenger\MessengerServiceProvider;
+use RTippin\Messenger\Models\Messenger;
 use RTippin\Messenger\Traits\Messageable;
 use RTippin\Messenger\Traits\Search;
 
@@ -72,15 +73,32 @@ class FeatureTestCase extends TestCase
 
     private function storeBaseUsers(): void
     {
-        UserModel::create([
+        $userOne = UserModel::create([
             'name' => 'Richard Tippin',
             'email' => 'richard.tippin@gmail.com',
             'password' => 'secret',
         ]);
 
-        UserModel::create([
+        Messenger::create([
+            'owner_id' => $userOne->getKey(),
+            'owner_type' => get_class($userOne),
+        ]);
+
+        $userTwo = UserModel::create([
             'name' => 'John Doe',
             'email' => 'doe@example.net',
+            'password' => 'secret',
+        ]);
+
+        Messenger::create([
+            'owner_id' => $userTwo->getKey(),
+            'owner_type' => get_class($userTwo),
+        ]);
+
+        // No messenger for 3rd user
+        UserModel::create([
+            'name' => 'Jane Smith',
+            'email' => 'smith@example.net',
             'password' => 'secret',
         ]);
     }

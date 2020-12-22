@@ -9,7 +9,7 @@ use RTippin\Messenger\Tests\UserModel;
 class ThreadsTest extends FeatureTestCase
 {
     /** @test */
-    public function test_guest_was_denied()
+    public function test_guest_is_unauthorized()
     {
         $this->get(route('api.messenger.threads.index'))
             ->assertUnauthorized();
@@ -27,25 +27,20 @@ class ThreadsTest extends FeatureTestCase
     {
         $this->actingAs(UserModel::first());
 
-        $response = $this->get(route('api.messenger.threads.index'));
-
-        $response->assertStatus(200);
-
-        $response->assertJsonFragment([
-            'data' => [],
-        ]);
-
-        $response->assertJsonFragment([
-            'meta' => [
-                'final_page' => true,
-                'index' => true,
-                'next_page_id' => null,
-                'next_page_route' => null,
-                'page_id' => null,
-                'per_page' => Messenger::getThreadsIndexCount(),
-                'results' => 0,
-                'total' => 0,
-            ],
-        ]);
+        $this->get(route('api.messenger.threads.index'))
+            ->assertStatus(200)
+            ->assertJsonCount(0, 'data')
+            ->assertJsonFragment([
+                'meta' => [
+                    'final_page' => true,
+                    'index' => true,
+                    'next_page_id' => null,
+                    'next_page_route' => null,
+                    'page_id' => null,
+                    'per_page' => Messenger::getThreadsIndexCount(),
+                    'results' => 0,
+                    'total' => 0,
+                ],
+            ]);
     }
 }
