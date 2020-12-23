@@ -59,10 +59,10 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function test_guest_is_unauthorized()
     {
-        $this->get(route('api.messenger.threads.index'))
+        $this->getJson(route('api.messenger.threads.index'))
             ->assertUnauthorized();
 
-        $this->post(route('api.messenger.privates.store'), [
+        $this->postJson(route('api.messenger.privates.store'), [
             'recipient_id' => 2,
             'recipient_alias' => 'user',
             'message' => 'Hello!',
@@ -81,7 +81,7 @@ class ThreadsTest extends FeatureTestCase
 
         $this->actingAs($user);
 
-        $this->get(route('api.messenger.threads.index'))
+        $this->getJson(route('api.messenger.threads.index'))
             ->assertStatus(200)
             ->assertJsonCount(0, 'data')
             ->assertJsonFragment([
@@ -105,7 +105,7 @@ class ThreadsTest extends FeatureTestCase
 
         $this->actingAs($users->first());
 
-        $this->get(route('api.messenger.threads.index'))
+        $this->getJson(route('api.messenger.threads.index'))
             ->assertStatus(200)
             ->assertJsonCount(2, 'data')
             ->assertJson([
@@ -127,7 +127,7 @@ class ThreadsTest extends FeatureTestCase
     {
         $this->actingAs(UserModel::first());
 
-        $this->get(route('api.messenger.threads.show', [
+        $this->getJson(route('api.messenger.threads.show', [
             'thread' => '123456-789',
         ]))
             ->assertNotFound();
@@ -146,7 +146,7 @@ class ThreadsTest extends FeatureTestCase
 
         $this->actingAs(UserModel::first());
 
-        $this->get(route('api.messenger.threads.show', [
+        $this->getJson(route('api.messenger.threads.show', [
             'thread' => $group->id,
         ]))
             ->assertForbidden();
@@ -161,7 +161,7 @@ class ThreadsTest extends FeatureTestCase
 
         $this->actingAs($users->first());
 
-        $this->get(route('api.messenger.threads.show', [
+        $this->getJson(route('api.messenger.threads.show', [
             'thread' => $thread->id,
         ]))
             ->assertStatus(200)
@@ -195,7 +195,7 @@ class ThreadsTest extends FeatureTestCase
 
         $this->actingAs($users->first());
 
-        $this->get(route('api.messenger.threads.show', [
+        $this->getJson(route('api.messenger.threads.show', [
             'thread' => $thread->id,
         ]))
             ->assertStatus(200)

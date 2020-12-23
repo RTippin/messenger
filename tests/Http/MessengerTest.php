@@ -14,7 +14,7 @@ class MessengerTest extends FeatureTestCase
     /** @test */
     public function test_guest_is_unauthorized()
     {
-        $this->get(route('api.messenger.info'))
+        $this->getJson(route('api.messenger.info'))
             ->assertUnauthorized();
     }
 
@@ -23,7 +23,7 @@ class MessengerTest extends FeatureTestCase
     {
         $this->actingAs(UserModel::first());
 
-        $this->get(route('api.messenger.info'))
+        $this->getJson(route('api.messenger.info'))
             ->assertSuccessful()
             ->assertJson([
                 'siteName' => 'Messenger-Testbench',
@@ -38,7 +38,7 @@ class MessengerTest extends FeatureTestCase
     {
         $this->actingAs(UserModel::first());
 
-        $this->get(route('api.messenger.info'))
+        $this->getJson(route('api.messenger.info'))
             ->assertSuccessful()
             ->assertJson([
                 'siteName' => 'Messenger-Testbench',
@@ -51,7 +51,7 @@ class MessengerTest extends FeatureTestCase
         Messenger::setMessageImageUpload(false);
         Messenger::setThreadsIndexCount(50);
 
-        $this->get(route('api.messenger.info'))
+        $this->getJson(route('api.messenger.info'))
             ->assertSuccessful()
             ->assertJson([
                 'siteName' => 'Messenger-Testbench',
@@ -76,7 +76,7 @@ class MessengerTest extends FeatureTestCase
 
         $this->actingAs($user);
 
-        $this->get(route('api.messenger.settings'))
+        $this->getJson(route('api.messenger.settings'))
             ->assertSuccessful()
             ->assertJson([
                 'owner_id' => $user->getKey(),

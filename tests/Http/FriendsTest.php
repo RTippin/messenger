@@ -23,7 +23,7 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function test_guest_is_unauthorized()
     {
-        $this->get(route('api.messenger.friends.index'))
+        $this->getJson(route('api.messenger.friends.index'))
             ->assertUnauthorized();
 
         $this->postJson(route('api.messenger.friends.sent.store'), [
@@ -38,15 +38,15 @@ class FriendsTest extends FeatureTestCase
     {
         $this->actingAs(UserModel::first());
 
-        $this->get(route('api.messenger.friends.index'))
+        $this->getJson(route('api.messenger.friends.index'))
             ->assertStatus(200)
             ->assertJsonCount(0);
 
-        $this->get(route('api.messenger.friends.sent.index'))
+        $this->getJson(route('api.messenger.friends.sent.index'))
             ->assertStatus(200)
             ->assertJsonCount(0);
 
-        $this->get(route('api.messenger.friends.pending.index'))
+        $this->getJson(route('api.messenger.friends.pending.index'))
             ->assertStatus(200)
             ->assertJsonCount(0);
     }
@@ -92,9 +92,9 @@ class FriendsTest extends FeatureTestCase
 
         SentFriend::create([
             'sender_id' => $users->first()->getKey(),
-            'sender_type' => 'RTippin\Messenger\Tests\UserModel',
+            'sender_type' => get_class($users->first()),
             'recipient_id' => $users->last()->getKey(),
-            'recipient_type' => 'RTippin\Messenger\Tests\UserModel',
+            'recipient_type' => get_class($users->last()),
         ]);
 
         $this->postJson(route('api.messenger.friends.sent.store'), [
@@ -116,9 +116,9 @@ class FriendsTest extends FeatureTestCase
 
         $sent = SentFriend::create([
             'sender_id' => $users->first()->getKey(),
-            'sender_type' => 'RTippin\Messenger\Tests\UserModel',
+            'sender_type' => get_class($users->first()),
             'recipient_id' => $users->last()->getKey(),
-            'recipient_type' => 'RTippin\Messenger\Tests\UserModel',
+            'recipient_type' => get_class($users->last()),
         ]);
 
         $this->actingAs($users->first());
@@ -146,9 +146,9 @@ class FriendsTest extends FeatureTestCase
 
         $pending = PendingFriend::create([
             'sender_id' => $users->first()->getKey(),
-            'sender_type' => 'RTippin\Messenger\Tests\UserModel',
+            'sender_type' => get_class($users->first()),
             'recipient_id' => $users->last()->getKey(),
-            'recipient_type' => 'RTippin\Messenger\Tests\UserModel',
+            'recipient_type' => get_class($users->last()),
         ]);
 
         $this->actingAs($users->last());
@@ -178,9 +178,9 @@ class FriendsTest extends FeatureTestCase
 
         $pending = SentFriend::create([
             'sender_id' => $users->first()->getKey(),
-            'sender_type' => 'RTippin\Messenger\Tests\UserModel',
+            'sender_type' => get_class($users->first()),
             'recipient_id' => $users->last()->getKey(),
-            'recipient_type' => 'RTippin\Messenger\Tests\UserModel',
+            'recipient_type' => get_class($users->last()),
         ]);
 
         $this->actingAs($users->last());
@@ -221,16 +221,16 @@ class FriendsTest extends FeatureTestCase
 
         $friend = Friend::create([
             'owner_id' => $users->first()->getKey(),
-            'owner_type' => 'RTippin\Messenger\Tests\UserModel',
+            'owner_type' => get_class($users->first()),
             'party_id' => $users->last()->getKey(),
-            'party_type' => 'RTippin\Messenger\Tests\UserModel',
+            'party_type' => get_class($users->last()),
         ]);
 
         Friend::create([
             'owner_id' => $users->last()->getKey(),
-            'owner_type' => 'RTippin\Messenger\Tests\UserModel',
+            'owner_type' => get_class($users->last()),
             'party_id' => $users->first()->getKey(),
-            'party_type' => 'RTippin\Messenger\Tests\UserModel',
+            'party_type' => get_class($users->first()),
         ]);
 
         $this->actingAs($users->first());
@@ -267,16 +267,16 @@ class FriendsTest extends FeatureTestCase
 
         Friend::create([
             'owner_id' => $users->first()->getKey(),
-            'owner_type' => 'RTippin\Messenger\Tests\UserModel',
+            'owner_type' => get_class($users->first()),
             'party_id' => $users->last()->getKey(),
-            'party_type' => 'RTippin\Messenger\Tests\UserModel',
+            'party_type' => get_class($users->last()),
         ]);
 
         Friend::create([
             'owner_id' => $users->last()->getKey(),
-            'owner_type' => 'RTippin\Messenger\Tests\UserModel',
+            'owner_type' => get_class($users->last()),
             'party_id' => $users->first()->getKey(),
-            'party_type' => 'RTippin\Messenger\Tests\UserModel',
+            'party_type' => get_class($users->first()),
         ]);
 
         $this->postJson(route('api.messenger.friends.sent.store'), [
