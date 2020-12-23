@@ -8,7 +8,6 @@ use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Events\ThreadApprovalEvent;
 use RTippin\Messenger\Models\Friend;
-use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\UserModel;
@@ -205,7 +204,7 @@ class PrivateThreadsTest extends FeatureTestCase
                         'name' => $otherUser->name(),
                         'options' => [
                             'friend_status' => 1,
-                            'friend_status_verbose' => 'FRIEND'
+                            'friend_status_verbose' => 'FRIEND',
                         ],
                     ],
                 ],
@@ -271,9 +270,9 @@ class PrivateThreadsTest extends FeatureTestCase
 
         $this->postJson(route('api.messenger.threads.approval', [
             'thread' => $thread->id,
-            ]), [
-                'approve' => true,
-            ])
+        ]), [
+            'approve' => true,
+        ])
             ->assertSuccessful();
 
         $this->assertDatabaseHas('participants', [
