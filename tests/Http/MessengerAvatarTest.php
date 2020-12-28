@@ -17,7 +17,7 @@ class MessengerAvatarTest extends FeatureTestCase
 
         $user = UserModel::find(1);
 
-        $directory = Messenger::getAvatarStorage('directory')."/user/1";
+        $directory = Messenger::getAvatarStorage('directory').'/user/1';
 
         $this->actingAs($user);
 
@@ -41,7 +41,7 @@ class MessengerAvatarTest extends FeatureTestCase
 
         $user->save();
 
-        $directory = Messenger::getAvatarStorage('directory')."/user/1";
+        $directory = Messenger::getAvatarStorage('directory').'/user/1';
 
         UploadedFile::fake()
             ->image('avatar.jpg')

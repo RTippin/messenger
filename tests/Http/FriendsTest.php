@@ -107,4 +107,30 @@ class FriendsTest extends FeatureTestCase
                 ],
             ]);
     }
+
+    /** @test */
+    public function user_cannot_remove_inverse_friend()
+    {
+        $this->doesntExpectEvents([
+            FriendRemovedEvent::class,
+        ]);
+
+        $this->actingAs(UserModel::find(1));
+
+        $this->deleteJson(route('api.messenger.friends.destroy', [
+            'friend' => $this->inverseFriend->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function user_cannot_view_inverse_friend()
+    {
+        $this->actingAs(UserModel::find(1));
+
+        $this->getJson(route('api.messenger.friends.show', [
+            'friend' => $this->inverseFriend->id,
+        ]))
+            ->assertForbidden();
+    }
 }
