@@ -3,9 +3,11 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Broadcasting\ThreadAvatarBroadcast;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\ThreadAvatarEvent;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\UserModel;
@@ -46,6 +48,24 @@ class GroupThreadAvatarTest extends FeatureTestCase
                 'owner_id' => $users->last()->getKey(),
                 'owner_type' => get_class($users->last()),
             ]));
+    }
+
+    private function setupGroupAvatar(): void
+    {
+        Storage::fake(Messenger::getThreadStorage('disk'));
+
+        $this->group->image = 'avatar.jpg';
+
+        $this->group->save();
+
+        UploadedFile::fake()
+            ->image('avatar.jpg')
+            ->storeAs($this->group->getStorageDirectory().'/avatar', 'avatar.jpg', [
+                'disk' => Messenger::getThreadStorage('disk'),
+            ]);
+
+        Storage::disk(Messenger::getThreadStorage('disk'))
+            ->assertExists($this->group->getAvatarPath());
     }
 
     /** @test */
@@ -154,5 +174,81 @@ class GroupThreadAvatarTest extends FeatureTestCase
             'image' => UploadedFile::fake()->create('image.jpg', 5000000, 'image/jpeg'),
         ])
             ->assertJsonValidationErrors('image');
+    }
+
+    /** @test */
+    public function group_avatar_upload_stores_photo_when_previously_default()
+    {
+        $this->expectsEvents([
+            ThreadAvatarBroadcast::class,
+            ThreadAvatarEvent::class,
+        ]);
+
+        Storage::fake(Messenger::getThreadStorage('disk'));
+
+        $this->actingAs(UserModel::first());
+
+        $this->postJson(route('api.messenger.threads.avatar.update', [
+            'thread' => $this->group->id,
+        ]), [
+            'image' => UploadedFile::fake()->image('avatar.jpg'),
+        ])
+            ->assertSuccessful();
+
+        Storage::disk(Messenger::getThreadStorage('disk'))
+            ->assertExists($this->group->fresh()->getAvatarPath());
+    }
+
+    /** @test */
+    public function group_avatar_upload_stores_photo_and_removes_old()
+    {
+        $this->expectsEvents([
+            ThreadAvatarBroadcast::class,
+            ThreadAvatarEvent::class,
+        ]);
+
+        $this->setupGroupAvatar();
+
+        $this->actingAs(UserModel::first());
+
+        $this->postJson(route('api.messenger.threads.avatar.update', [
+            'thread' => $this->group->id,
+        ]), [
+            'image' => UploadedFile::fake()->image('avatar2.jpg'),
+        ])
+            ->assertSuccessful();
+
+        Storage::disk(Messenger::getThreadStorage('disk'))
+            ->assertExists($this->group->fresh()->getAvatarPath());
+
+        Storage::disk(Messenger::getAvatarStorage('disk'))
+            ->assertMissing($this->group->getStorageDirectory().'/avatar/avatar.jpg');
+
+        $this->assertNotEquals('avatar.jpg', $this->group->fresh()->image);
+    }
+
+    /** @test */
+    public function update_group_avatar_to_default_removes_old()
+    {
+        $this->expectsEvents([
+            ThreadAvatarBroadcast::class,
+            ThreadAvatarEvent::class,
+        ]);
+
+        $this->setupGroupAvatar();
+
+        $this->actingAs(UserModel::first());
+
+        $this->postJson(route('api.messenger.threads.avatar.update', [
+            'thread' => $this->group->id,
+        ]), [
+            'default' => '2.png',
+        ])
+            ->assertSuccessful();
+
+        Storage::disk(Messenger::getAvatarStorage('disk'))
+            ->assertMissing($this->group->getStorageDirectory().'/avatar/avatar.jpg');
+
+        $this->assertEquals('2.png', $this->group->fresh()->image);
     }
 }
