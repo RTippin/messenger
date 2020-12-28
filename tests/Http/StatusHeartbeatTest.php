@@ -15,9 +15,7 @@ class StatusHeartbeatTest extends FeatureTestCase
             StatusHeartbeatEvent::class,
         ]);
 
-        $user = UserModel::first();
-
-        $this->actingAs($user);
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.heartbeat'))
             ->assertStatus(405);
@@ -30,9 +28,7 @@ class StatusHeartbeatTest extends FeatureTestCase
             StatusHeartbeatEvent::class,
         ]);
 
-        $user = UserModel::first();
-
-        $this->actingAs($user);
+        $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.heartbeat'), [
             'away' => 'string',
@@ -50,7 +46,7 @@ class StatusHeartbeatTest extends FeatureTestCase
             StatusHeartbeatEvent::class,
         ]);
 
-        $user = UserModel::first();
+        $user = UserModel::find(1);
 
         $this->actingAs($user);
 
@@ -69,7 +65,7 @@ class StatusHeartbeatTest extends FeatureTestCase
             StatusHeartbeatEvent::class,
         ]);
 
-        $user = UserModel::first();
+        $user = UserModel::find(1);
 
         $this->actingAs($user);
 

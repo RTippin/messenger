@@ -24,7 +24,7 @@ class PendingFriendsTest extends FeatureTestCase
     /** @test */
     public function new_user_has_no_pending_friends()
     {
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.friends.pending.index'))
             ->assertStatus(200)
@@ -39,25 +39,23 @@ class PendingFriendsTest extends FeatureTestCase
             FriendDeniedEvent::class,
         ]);
 
-        $users = UserModel::all();
-
         $pending = PendingFriend::create([
-            'sender_id' => $users->first()->getKey(),
-            'sender_type' => get_class($users->first()),
-            'recipient_id' => $users->last()->getKey(),
-            'recipient_type' => get_class($users->last()),
+            'sender_id' => 1,
+            'sender_type' => self::UserModelType,
+            'recipient_id' => 2,
+            'recipient_type' => self::UserModelType,
         ]);
 
-        $this->actingAs($users->last());
+        $this->actingAs(UserModel::find(2));
 
         $this->deleteJson(route('api.messenger.friends.pending.destroy', [
-            'pending' => $pending->getKey(),
+            'pending' => $pending->id,
         ]))
             ->assertSuccessful();
 
         $this->assertDatabaseMissing('pending_friends', [
-            'sender_id' => $users->first()->getKey(),
-            'recipient_id' => $users->last()->getKey(),
+            'sender_id' => 1,
+            'recipient_id' => 2,
         ]);
     }
 
@@ -69,39 +67,35 @@ class PendingFriendsTest extends FeatureTestCase
             FriendApprovedEvent::class,
         ]);
 
-        $users = UserModel::all();
-
-        $friends = resolve(FriendDriver::class);
-
         $pending = SentFriend::create([
-            'sender_id' => $users->first()->getKey(),
-            'sender_type' => get_class($users->first()),
-            'recipient_id' => $users->last()->getKey(),
-            'recipient_type' => get_class($users->last()),
+            'sender_id' => 1,
+            'sender_type' => self::UserModelType,
+            'recipient_id' => 2,
+            'recipient_type' => self::UserModelType,
         ]);
 
-        $this->actingAs($users->last());
+        $this->actingAs(UserModel::find(2));
 
         $this->putJson(route('api.messenger.friends.pending.update', [
-            'pending' => $pending->getKey(),
+            'pending' => $pending->id,
         ]))
             ->assertSuccessful();
 
         $this->assertDatabaseMissing('pending_friends', [
-            'sender_id' => $users->first()->getKey(),
-            'recipient_id' => $users->last()->getKey(),
+            'sender_id' => 1,
+            'recipient_id' => 2,
         ]);
 
         $this->assertDatabaseHas('friends', [
-            'owner_id' => $users->first()->getKey(),
-            'party_id' => $users->last()->getKey(),
+            'owner_id' => 1,
+            'party_id' => 2,
         ]);
 
         $this->assertDatabaseHas('friends', [
-            'owner_id' => $users->last()->getKey(),
-            'party_id' => $users->first()->getKey(),
+            'owner_id' => 2,
+            'party_id' => 1,
         ]);
 
-        $this->assertEquals(1, $friends->friendStatus($users->first()));
+        $this->assertEquals(1, resolve(FriendDriver::class)->friendStatus(UserModel::find(1)));
     }
 }

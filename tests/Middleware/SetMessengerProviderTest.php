@@ -62,7 +62,7 @@ class SetMessengerProviderTest extends FeatureTestCase
         $request = new Request;
 
         $request->setUserResolver(function () {
-            return UserModel::first();
+            return UserModel::find(1);
         });
 
         $middleware = app(SetMessengerProvider::class);

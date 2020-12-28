@@ -19,29 +19,23 @@ class PrivateThreadApprovalTest extends FeatureTestCase
             ThreadApprovalEvent::class,
         ]);
 
-        $myself = UserModel::first();
-
         $thread = Thread::create(Definitions::DefaultThread);
 
-        $otherUser = UserModel::create([
-            'name' => 'Jane Smith',
-            'email' => 'smith@example.net',
-            'password' => 'secret',
-        ]);
+        $otherUser = $this->generateJaneSmith();
 
         $thread->participants()->create(array_merge(Definitions::DefaultParticipant, [
-            'owner_id' => $myself->getKey(),
-            'owner_type' => get_class($myself),
+            'owner_id' => 1,
+            'owner_type' => self::UserModelType,
             'pending' => true,
         ]));
 
         $thread->participants()->create(array_merge(Definitions::DefaultParticipant, [
             'owner_id' => $otherUser->getKey(),
-            'owner_type' => get_class($otherUser),
+            'owner_type' => self::UserModelType,
             'pending' => false,
         ]));
 
-        $this->actingAs($myself);
+        $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.threads.approval', [
             'thread' => $thread->id,
@@ -51,7 +45,7 @@ class PrivateThreadApprovalTest extends FeatureTestCase
             ->assertSuccessful();
 
         $this->assertDatabaseHas('participants', [
-            'owner_id' => $myself->getKey(),
+            'owner_id' => 1,
             'pending' => false,
         ]);
     }
@@ -64,29 +58,23 @@ class PrivateThreadApprovalTest extends FeatureTestCase
             ThreadApprovalEvent::class,
         ]);
 
-        $myself = UserModel::first();
-
         $thread = Thread::create(Definitions::DefaultThread);
 
-        $otherUser = UserModel::create([
-            'name' => 'Jane Smith',
-            'email' => 'smith@example.net',
-            'password' => 'secret',
-        ]);
+        $otherUser = $this->generateJaneSmith();
 
         $thread->participants()->create(array_merge(Definitions::DefaultParticipant, [
-            'owner_id' => $myself->getKey(),
-            'owner_type' => get_class($myself),
+            'owner_id' => 1,
+            'owner_type' => self::UserModelType,
             'pending' => true,
         ]));
 
         $thread->participants()->create(array_merge(Definitions::DefaultParticipant, [
             'owner_id' => $otherUser->getKey(),
-            'owner_type' => get_class($otherUser),
+            'owner_type' => self::UserModelType,
             'pending' => false,
         ]));
 
-        $this->actingAs($myself);
+        $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.threads.approval', [
             'thread' => $thread->id,

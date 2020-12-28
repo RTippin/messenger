@@ -20,7 +20,7 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function empty_search_returns_no_results()
     {
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.search'))
             ->assertJsonCount(0, 'data')
@@ -37,9 +37,7 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function search_finds_user()
     {
-        $user = UserModel::first();
-
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.search', [
             'query' => 'tippin',
@@ -48,7 +46,7 @@ class SearchTest extends FeatureTestCase
             ->assertJson([
                 'data' => [
                     [
-                        'name' => $user->name(),
+                        'name' => 'Richard Tippin',
                     ],
                 ],
                 'meta' => [
@@ -65,13 +63,9 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function search_for_user_without_messenger_returns_no_results()
     {
-        UserModel::create([
-            'name' => 'Jane Smith',
-            'email' => 'smith@example.net',
-            'password' => 'secret',
-        ]);
+        $this->generateJaneSmith();
 
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.search', [
             'query' => 'jane',
@@ -92,7 +86,7 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function multiple_search_queries_separated_by_space_returns_multiple_results()
     {
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.search', [
             'query' => 'tippin john',
@@ -114,7 +108,7 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function search_strips_special_characters()
     {
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.search', [
             'query' => '%`tippin"><',
@@ -135,9 +129,7 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function exact_email_returns_user_result()
     {
-        $user = UserModel::first();
-
-        $this->actingAs($user);
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.search', [
             'query' => 'richard.tippin@gmail.com',
@@ -146,7 +138,7 @@ class SearchTest extends FeatureTestCase
             ->assertJson([
                 'data' => [
                     [
-                        'name' => $user->name(),
+                        'name' => 'Richard Tippin',
                     ],
                 ],
                 'meta' => [
@@ -163,7 +155,7 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function incomplete_email_returns_no_results()
     {
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.search', [
             'query' => 'richard.tippin',

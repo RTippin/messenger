@@ -65,7 +65,7 @@ class FindRecipientThreadTest extends FeatureTestCase
                 'thread_id' => Thread::private()->first()->id,
                 'recipient' => [
                     'provider_id' => 2,
-                    'name' => UserModel::find(2)->name(),
+                    'name' => 'John Doe',
                 ],
             ]);
     }
@@ -73,11 +73,7 @@ class FindRecipientThreadTest extends FeatureTestCase
     /** @test */
     public function private_thread_locator_returns_user_without_existing_thread_id()
     {
-        $otherUser = UserModel::create([
-            'name' => 'Jane Smith',
-            'email' => 'smith@example.net',
-            'password' => 'secret',
-        ]);
+        $otherUser = $this->generateJaneSmith();
 
         $this->actingAs(UserModel::find(1));
 
@@ -90,7 +86,7 @@ class FindRecipientThreadTest extends FeatureTestCase
                 'thread_id' => null,
                 'recipient' => [
                     'provider_id' => $otherUser->getKey(),
-                    'name' => $otherUser->name(),
+                    'name' => 'Jane Smith',
                 ],
             ]);
     }

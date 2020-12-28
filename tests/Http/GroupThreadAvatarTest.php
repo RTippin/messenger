@@ -39,14 +39,14 @@ class GroupThreadAvatarTest extends FeatureTestCase
 
         $this->group->participants()
             ->create(array_merge(Definitions::DefaultAdminParticipant, [
-                'owner_id' => $users->first()->getKey(),
-                'owner_type' => get_class($users->first()),
+                'owner_id' => 1,
+                'owner_type' => self::UserModelType,
             ]));
 
         $this->group->participants()
             ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => $users->last()->getKey(),
-                'owner_type' => get_class($users->last()),
+                'owner_id' => 2,
+                'owner_type' => self::UserModelType,
             ]));
     }
 
@@ -89,7 +89,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function update_group_avatar_validates_invalid_defaults()
     {
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
             'thread' => $this->group->id,
@@ -122,7 +122,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
             ThreadAvatarEvent::class,
         ]);
 
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->assertEquals('5.png', $this->group->image);
 
@@ -142,7 +142,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
             ThreadAvatarEvent::class,
         ]);
 
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->assertEquals('5.png', $this->group->image);
 
@@ -159,7 +159,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function group_avatar_upload_validation_checks_size_and_mime()
     {
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
             'thread' => $this->group->id,
@@ -186,7 +186,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
 
         Storage::fake(Messenger::getThreadStorage('disk'));
 
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
             'thread' => $this->group->id,
@@ -209,7 +209,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
 
         $this->setupGroupAvatar();
 
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
             'thread' => $this->group->id,
@@ -237,7 +237,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
 
         $this->setupGroupAvatar();
 
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
             'thread' => $this->group->id,

@@ -18,7 +18,7 @@ class MessengerTest extends FeatureTestCase
     /** @test */
     public function messenger_info_was_successful()
     {
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.info'))
             ->assertSuccessful()
@@ -33,7 +33,7 @@ class MessengerTest extends FeatureTestCase
     /** @test */
     public function messenger_info_changes_when_set_dynamically()
     {
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.info'))
             ->assertSuccessful()

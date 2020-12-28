@@ -43,6 +43,11 @@ class FriendsTest extends FeatureTestCase
     {
         $this->getJson(route('api.messenger.friends.index'))
             ->assertUnauthorized();
+
+        $this->getJson(route('api.messenger.friends.show', [
+            'friend' => $this->friend->id,
+        ]))
+            ->assertUnauthorized();
     }
 
     /** @test */
@@ -64,12 +69,10 @@ class FriendsTest extends FeatureTestCase
             FriendRemovedEvent::class,
         ]);
 
-        $friends = resolve(FriendDriver::class);
-
         $this->actingAs(UserModel::find(1));
 
         $this->deleteJson(route('api.messenger.friends.destroy', [
-            'friend' => $this->friend->getKey(),
+            'friend' => $this->friend->id,
         ]))
             ->assertSuccessful();
 
@@ -83,6 +86,25 @@ class FriendsTest extends FeatureTestCase
             'party_id' => 1,
         ]);
 
-        $this->assertEquals(0, $friends->friendStatus(UserModel::find(2)));
+        $this->assertEquals(0, resolve(FriendDriver::class)->friendStatus(UserModel::find(2)));
+    }
+
+    /** @test */
+    public function user_can_view_friend()
+    {
+        $this->actingAs(UserModel::find(1));
+
+        $this->getJson(route('api.messenger.friends.show', [
+            'friend' => $this->friend->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJson([
+                'id' => $this->friend->id,
+                'owner_id' => 1,
+                'party_id' => 2,
+                'party' => [
+                    'name' => 'John Doe',
+                ],
+            ]);
     }
 }

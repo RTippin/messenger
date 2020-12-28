@@ -37,14 +37,14 @@ class GroupThreadSettingsTest extends FeatureTestCase
 
         $this->group->participants()
             ->create(array_merge(Definitions::DefaultAdminParticipant, [
-                'owner_id' => $users->first()->getKey(),
-                'owner_type' => get_class($users->first()),
+                'owner_id' => 1,
+                'owner_type' => self::UserModelType,
             ]));
 
         $this->group->participants()
             ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => $users->last()->getKey(),
-                'owner_type' => get_class($users->last()),
+                'owner_id' => 2,
+                'owner_type' => self::UserModelType,
             ]));
     }
 
@@ -60,7 +60,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
     /** @test */
     public function admin_can_view_group_settings()
     {
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
@@ -90,7 +90,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
     /** @test */
     public function group_settings_validates_request()
     {
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->putJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
@@ -116,7 +116,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
             ThreadSettingsEvent::class,
         ]);
 
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->putJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
@@ -136,7 +136,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
     {
         Event::fake();
 
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->putJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
@@ -167,7 +167,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
     {
         Event::fake();
 
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->putJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,

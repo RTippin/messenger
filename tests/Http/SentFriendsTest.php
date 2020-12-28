@@ -23,7 +23,7 @@ class SentFriendsTest extends FeatureTestCase
     /** @test */
     public function new_user_has_no_sent_friends()
     {
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.friends.sent.index'))
             ->assertStatus(200)
@@ -38,22 +38,20 @@ class SentFriendsTest extends FeatureTestCase
             FriendRequestEvent::class,
         ]);
 
-        $users = UserModel::all();
-
-        $this->actingAs($users->first());
+        $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.friends.sent.store'), [
-            'recipient_id' => $users->last()->getKey(),
+            'recipient_id' => 2,
             'recipient_alias' => 'user',
         ])
             ->assertStatus(201)
             ->assertJson([
-                'sender_id' => $users->first()->getKey(),
+                'sender_id' => 1,
             ]);
 
         $this->assertDatabaseHas('pending_friends', [
-            'sender_id' => $users->first()->getKey(),
-            'recipient_id' => $users->last()->getKey(),
+            'sender_id' => 1,
+            'recipient_id' => 2,
         ]);
     }
 
@@ -65,19 +63,17 @@ class SentFriendsTest extends FeatureTestCase
             FriendRequestEvent::class,
         ]);
 
-        $users = UserModel::all();
-
-        $this->actingAs($users->first());
+        $this->actingAs(UserModel::find(1));
 
         SentFriend::create([
-            'sender_id' => $users->first()->getKey(),
-            'sender_type' => get_class($users->first()),
-            'recipient_id' => $users->last()->getKey(),
-            'recipient_type' => get_class($users->last()),
+            'sender_id' => 1,
+            'sender_type' => self::UserModelType,
+            'recipient_id' => 2,
+            'recipient_type' => self::UserModelType,
         ]);
 
         $this->postJson(route('api.messenger.friends.sent.store'), [
-            'recipient_id' => $users->last()->getKey(),
+            'recipient_id' => 2,
             'recipient_alias' => 'user',
         ])
             ->assertForbidden();
@@ -91,16 +87,14 @@ class SentFriendsTest extends FeatureTestCase
             FriendCancelledEvent::class,
         ]);
 
-        $users = UserModel::all();
-
         $sent = SentFriend::create([
-            'sender_id' => $users->first()->getKey(),
-            'sender_type' => get_class($users->first()),
-            'recipient_id' => $users->last()->getKey(),
-            'recipient_type' => get_class($users->last()),
+            'sender_id' => 1,
+            'sender_type' => self::UserModelType,
+            'recipient_id' => 2,
+            'recipient_type' => self::UserModelType,
         ]);
 
-        $this->actingAs($users->first());
+        $this->actingAs(UserModel::find(1));
 
         $this->deleteJson(route('api.messenger.friends.sent.destroy', [
             'sent' => $sent->getKey(),
@@ -108,8 +102,8 @@ class SentFriendsTest extends FeatureTestCase
             ->assertSuccessful();
 
         $this->assertDatabaseMissing('pending_friends', [
-            'sender_id' => $users->first()->getKey(),
-            'recipient_id' => $users->last()->getKey(),
+            'sender_id' => 1,
+            'recipient_id' => 2,
         ]);
     }
 
@@ -121,26 +115,24 @@ class SentFriendsTest extends FeatureTestCase
             FriendRequestEvent::class,
         ]);
 
-        $users = UserModel::all();
-
-        $this->actingAs($users->first());
+        $this->actingAs(UserModel::find(1));
 
         Friend::create([
-            'owner_id' => $users->first()->getKey(),
-            'owner_type' => get_class($users->first()),
-            'party_id' => $users->last()->getKey(),
-            'party_type' => get_class($users->last()),
+            'owner_id' => 1,
+            'owner_type' => self::UserModelType,
+            'party_id' => 2,
+            'party_type' => self::UserModelType,
         ]);
 
         Friend::create([
-            'owner_id' => $users->last()->getKey(),
-            'owner_type' => get_class($users->last()),
-            'party_id' => $users->first()->getKey(),
-            'party_type' => get_class($users->first()),
+            'owner_id' => 2,
+            'owner_type' => self::UserModelType,
+            'party_id' => 1,
+            'party_type' => self::UserModelType,
         ]);
 
         $this->postJson(route('api.messenger.friends.sent.store'), [
-            'recipient_id' => $users->last()->getKey(),
+            'recipient_id' => 2,
             'recipient_alias' => 'user',
         ])
             ->assertForbidden();

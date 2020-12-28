@@ -15,9 +15,9 @@ class MessengerAvatarTest extends FeatureTestCase
     {
         Storage::fake(Messenger::getAvatarStorage('disk'));
 
-        $user = UserModel::first();
+        $user = UserModel::find(1);
 
-        $directory = Messenger::getAvatarStorage('directory')."/user/{$user->getKey()}";
+        $directory = Messenger::getAvatarStorage('directory')."/user/1";
 
         $this->actingAs($user);
 
@@ -35,13 +35,13 @@ class MessengerAvatarTest extends FeatureTestCase
     {
         Storage::fake(Messenger::getAvatarStorage('disk'));
 
-        $user = UserModel::first();
+        $user = UserModel::find(1);
 
         $user->picture = 'avatar.jpg';
 
         $user->save();
 
-        $directory = Messenger::getAvatarStorage('directory')."/user/{$user->getKey()}";
+        $directory = Messenger::getAvatarStorage('directory')."/user/1";
 
         UploadedFile::fake()
             ->image('avatar.jpg')
@@ -66,7 +66,7 @@ class MessengerAvatarTest extends FeatureTestCase
     /** @test */
     public function avatar_upload_validation_checks_size_and_mime()
     {
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.avatar.update'), [
             'image' => UploadedFile::fake()->create('movie.mov', 5000000, 'video/quicktime'),

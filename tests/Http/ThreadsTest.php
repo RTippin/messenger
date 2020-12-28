@@ -19,8 +19,6 @@ class ThreadsTest extends FeatureTestCase
 
     private function setupInitialThreads(): void
     {
-        $users = UserModel::all();
-
         $group = Thread::create([
             'type' => 2,
             'subject' => 'Test Group',
@@ -31,28 +29,28 @@ class ThreadsTest extends FeatureTestCase
 
         $group->participants()
             ->create(array_merge(Definitions::DefaultAdminParticipant, [
-                'owner_id' => $users->first()->getKey(),
-                'owner_type' => get_class($users->first()),
+                'owner_id' => 1,
+                'owner_type' => self::UserModelType,
             ]));
 
         $group->participants()
             ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => $users->last()->getKey(),
-                'owner_type' => get_class($users->last()),
+                'owner_id' => 2,
+                'owner_type' => self::UserModelType,
             ]));
 
         $private = Thread::create(Definitions::DefaultThread);
 
         $private->participants()
             ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => $users->first()->getKey(),
-                'owner_type' => get_class($users->first()),
+                'owner_id' => 1,
+                'owner_type' => self::UserModelType,
             ]));
 
         $private->participants()
             ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => $users->last()->getKey(),
-                'owner_type' => get_class($users->last()),
+                'owner_id' => 2,
+                'owner_type' => self::UserModelType,
             ]));
     }
 
@@ -66,13 +64,7 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function new_user_has_no_threads()
     {
-        $user = UserModel::create([
-            'name' => 'Jane Smith',
-            'email' => 'smith@example.net',
-            'password' => 'secret',
-        ]);
-
-        $this->actingAs($user);
+        $this->actingAs($this->generateJaneSmith());
 
         $this->getJson(route('api.messenger.threads.index'))
             ->assertStatus(200)
@@ -94,9 +86,7 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function user_belongs_to_two_threads()
     {
-        $users = UserModel::all();
-
-        $this->actingAs($users->first());
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.threads.index'))
             ->assertStatus(200)
@@ -109,7 +99,7 @@ class ThreadsTest extends FeatureTestCase
                     ],
                     [
                         'type_verbose' => 'PRIVATE',
-                        'name' => $users->last()->name(),
+                        'name' => 'John Doe',
                     ],
                 ],
             ]);
@@ -118,7 +108,7 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function invalid_thread_id_not_found()
     {
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => '123456-789',
@@ -137,7 +127,7 @@ class ThreadsTest extends FeatureTestCase
             'invitations' => true,
         ]);
 
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $group->id,
@@ -148,11 +138,9 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function view_individual_private_thread()
     {
-        $users = UserModel::all();
-
         $thread = Thread::private()->first();
 
-        $this->actingAs($users->first());
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $thread->id,
@@ -164,7 +152,7 @@ class ThreadsTest extends FeatureTestCase
                 'type_verbose' => 'PRIVATE',
                 'group' => false,
                 'unread' => true,
-                'name' => $users->last()->name(),
+                'name' => 'John Doe',
                 'options' => [
                     'add_participants' => false,
                     'admin' => false,
@@ -172,8 +160,8 @@ class ThreadsTest extends FeatureTestCase
                 ],
                 'resources' => [
                     'recipient' => [
-                        'provider_id' => $users->last()->getKey(),
-                        'name' => $users->last()->name(),
+                        'provider_id' => 2,
+                        'name' => 'John Doe',
                     ],
                 ],
             ]);
@@ -182,11 +170,9 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function view_individual_group_thread()
     {
-        $users = UserModel::all();
-
         $thread = Thread::group()->first();
 
-        $this->actingAs($users->first());
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $thread->id,

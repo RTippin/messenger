@@ -21,20 +21,18 @@ class PrivateThreadsTest extends FeatureTestCase
 
     private function setupInitialThreads(): void
     {
-        $users = UserModel::all();
-
         $private = Thread::create(Definitions::DefaultThread);
 
         $private->participants()
             ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => $users->first()->getKey(),
-                'owner_type' => get_class($users->first()),
+                'owner_id' => 1,
+                'owner_type' => self::UserModelType,
             ]));
 
         $private->participants()
             ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => $users->last()->getKey(),
-                'owner_type' => get_class($users->last()),
+                'owner_id' => 2,
+                'owner_type' => self::UserModelType,
             ]));
     }
 
@@ -60,15 +58,9 @@ class PrivateThreadsTest extends FeatureTestCase
             NewThreadEvent::class,
         ]);
 
-        $myself = UserModel::first();
+        $otherUser = $this->generateJaneSmith();
 
-        $otherUser = UserModel::create([
-            'name' => 'Jane Smith',
-            'email' => 'smith@example.net',
-            'password' => 'secret',
-        ]);
-
-        $this->actingAs($myself);
+        $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
@@ -82,7 +74,7 @@ class PrivateThreadsTest extends FeatureTestCase
                 'pending' => true,
                 'group' => false,
                 'unread' => true,
-                'name' => $otherUser->name(),
+                'name' => 'Jane Smith',
                 'options' => [
                     'awaiting_my_approval' => false,
                 ],
@@ -107,29 +99,23 @@ class PrivateThreadsTest extends FeatureTestCase
             NewThreadEvent::class,
         ]);
 
-        $myself = UserModel::first();
-
-        $otherUser = UserModel::create([
-            'name' => 'Jane Smith',
-            'email' => 'smith@example.net',
-            'password' => 'secret',
-        ]);
+        $otherUser = $this->generateJaneSmith();
 
         Friend::create([
-            'owner_id' => $myself->getKey(),
-            'owner_type' => get_class($myself),
+            'owner_id' => 1,
+            'owner_type' => self::UserModelType,
             'party_id' => $otherUser->getKey(),
-            'party_type' => get_class($otherUser),
+            'party_type' => self::UserModelType,
         ]);
 
         Friend::create([
             'owner_id' => $otherUser->getKey(),
-            'owner_type' => get_class($otherUser),
-            'party_id' => $myself->getKey(),
-            'party_type' => get_class($myself),
+            'owner_type' => self::UserModelType,
+            'party_id' => 1,
+            'party_type' => self::UserModelType,
         ]);
 
-        $this->actingAs($myself);
+        $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
@@ -143,13 +129,13 @@ class PrivateThreadsTest extends FeatureTestCase
                 'pending' => false,
                 'group' => false,
                 'unread' => true,
-                'name' => $otherUser->name(),
+                'name' => 'Jane Smith',
                 'resources' => [
                     'latest_message' => [
                         'body' => 'Hello World!',
                     ],
                     'recipient' => [
-                        'name' => $otherUser->name(),
+                        'name' => 'Jane Smith',
                         'options' => [
                             'friend_status' => 1,
                             'friend_status_verbose' => 'FRIEND',
@@ -172,14 +158,12 @@ class PrivateThreadsTest extends FeatureTestCase
             NewThreadEvent::class,
         ]);
 
-        $users = UserModel::all();
-
-        $this->actingAs($users->first());
+        $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
             'recipient_alias' => 'user',
-            'recipient_id' => $users->last()->getKey(),
+            'recipient_id' => 2,
         ])
             ->assertForbidden();
     }

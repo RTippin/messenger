@@ -29,8 +29,6 @@ class GroupThreadsTest extends FeatureTestCase
     /** @test */
     public function user_has_one_group()
     {
-        $myself = UserModel::first();
-
         $group = Thread::create([
             'type' => 2,
             'subject' => 'First Test Group',
@@ -41,11 +39,11 @@ class GroupThreadsTest extends FeatureTestCase
 
         $group->participants()
             ->create(array_merge(Definitions::DefaultAdminParticipant, [
-                'owner_id' => $myself->getKey(),
-                'owner_type' => get_class($myself),
+                'owner_id' => 1,
+                'owner_type' => self::UserModelType,
             ]));
 
-        $this->actingAs($myself);
+        $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.groups.index'))
             ->assertSuccessful()
@@ -76,7 +74,7 @@ class GroupThreadsTest extends FeatureTestCase
     /** @test */
     public function store_new_group_validates_request()
     {
-        $this->actingAs(UserModel::firstOr());
+        $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.groups.store'), [
             'subject' => null,
@@ -124,7 +122,7 @@ class GroupThreadsTest extends FeatureTestCase
             NewThreadBroadcast::class,
         ]);
 
-        $this->actingAs(UserModel::first());
+        $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.groups.store'), [
             'subject' => 'Test Group',
@@ -165,15 +163,13 @@ class GroupThreadsTest extends FeatureTestCase
             ParticipantsAddedEvent::class,
         ]);
 
-        $users = UserModel::all();
-
-        $this->actingAs($users->first());
+        $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.groups.store'), [
             'subject' => 'Test Group',
             'providers' => [
                 [
-                    'id' => $users->last()->getKey(),
+                    'id' => 2,
                     'alias' => 'user',
                 ],
             ],
@@ -211,29 +207,27 @@ class GroupThreadsTest extends FeatureTestCase
             ParticipantsAddedEvent::class,
         ]);
 
-        $users = UserModel::all();
-
         Friend::create([
-            'owner_id' => $users->first()->getKey(),
-            'owner_type' => get_class($users->first()),
-            'party_id' => $users->last()->getKey(),
-            'party_type' => get_class($users->last()),
+            'owner_id' => 1,
+            'owner_type' => self::UserModelType,
+            'party_id' => 2,
+            'party_type' => self::UserModelType,
         ]);
 
         Friend::create([
-            'owner_id' => $users->last()->getKey(),
-            'owner_type' => get_class($users->last()),
-            'party_id' => $users->first()->getKey(),
-            'party_type' => get_class($users->first()),
+            'owner_id' => 2,
+            'owner_type' => self::UserModelType,
+            'party_id' => 1,
+            'party_type' => self::UserModelType,
         ]);
 
-        $this->actingAs($users->first());
+        $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.groups.store'), [
             'subject' => 'Test Group',
             'providers' => [
                 [
-                    'id' => $users->last()->getKey(),
+                    'id' => 2,
                     'alias' => 'user',
                 ],
             ],

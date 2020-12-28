@@ -10,36 +10,30 @@ class MessengerSettingsTest extends FeatureTestCase
     /** @test */
     public function messenger_created_when_called_from_user_without_messenger()
     {
-        $user = UserModel::create([
-            'name' => 'Jane Smith',
-            'email' => 'smith@example.net',
-            'password' => 'secret',
-        ]);
+        $newUser = $this->generateJaneSmith();
 
         $this->assertDatabaseMissing('messengers', [
-            'owner_id' => $user->getKey(),
+            'owner_id' => $newUser->getKey(),
         ]);
 
-        $this->actingAs($user);
+        $this->actingAs($newUser);
 
         $this->getJson(route('api.messenger.settings'))
             ->assertSuccessful()
             ->assertJson([
-                'owner_id' => $user->getKey(),
+                'owner_id' => $newUser->getKey(),
                 'dark_mode' => true,
             ]);
 
         $this->assertDatabaseHas('messengers', [
-            'owner_id' => $user->getKey(),
+            'owner_id' => $newUser->getKey(),
         ]);
     }
 
     /** @test */
     public function updating_messenger_settings_validations()
     {
-        $user = UserModel::first();
-
-        $this->actingAs($user);
+        $this->actingAs(UserModel::find(1));
 
         $this->putJson(route('api.messenger.settings'), [
             'message_popups' => 'invalid',
@@ -59,7 +53,7 @@ class MessengerSettingsTest extends FeatureTestCase
     /** @test */
     public function updating_messenger_settings_and_set_status_to_away()
     {
-        $user = UserModel::first();
+        $user = UserModel::find(1);
 
         $this->actingAs($user);
 
@@ -87,7 +81,7 @@ class MessengerSettingsTest extends FeatureTestCase
     /** @test */
     public function updating_messenger_settings_and_set_status_to_online()
     {
-        $user = UserModel::first();
+        $user = UserModel::find(1);
 
         $this->actingAs($user);
 
@@ -115,7 +109,7 @@ class MessengerSettingsTest extends FeatureTestCase
     /** @test */
     public function updating_messenger_settings_and_set_status_to_offline()
     {
-        $user = UserModel::first();
+        $user = UserModel::find(1);
 
         $this->actingAs($user);
 
