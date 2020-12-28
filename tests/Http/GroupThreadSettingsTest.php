@@ -157,7 +157,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
 
         Event::assertDispatched(ThreadSettingsBroadcast::class);
 
-        Event::assertDispatched(function (ThreadSettingsEvent $event){
+        Event::assertDispatched(function (ThreadSettingsEvent $event) {
             return $event->nameChanged === false;
         });
     }
@@ -188,7 +188,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
 
         Event::assertDispatched(ThreadSettingsBroadcast::class);
 
-        Event::assertDispatched(function (ThreadSettingsEvent $event){
+        Event::assertDispatched(function (ThreadSettingsEvent $event) {
             return $event->nameChanged === true;
         });
     }

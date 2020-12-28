@@ -66,9 +66,7 @@ class MessengerAvatarTest extends FeatureTestCase
     /** @test */
     public function avatar_upload_validation_checks_size_and_mime()
     {
-        $user = UserModel::first();
-
-        $this->actingAs($user);
+        $this->actingAs(UserModel::first());
 
         $this->postJson(route('api.messenger.avatar.update'), [
             'image' => UploadedFile::fake()->create('movie.mov', 5000000, 'video/quicktime'),
