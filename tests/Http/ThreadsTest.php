@@ -57,21 +57,14 @@ class ThreadsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_guest_is_unauthorized()
+    public function guest_is_unauthorized()
     {
         $this->getJson(route('api.messenger.threads.index'))
-            ->assertUnauthorized();
-
-        $this->postJson(route('api.messenger.privates.store'), [
-            'recipient_id' => 2,
-            'recipient_alias' => 'user',
-            'message' => 'Hello!',
-        ])
             ->assertUnauthorized();
     }
 
     /** @test */
-    public function test_new_user_has_no_threads()
+    public function new_user_has_no_threads()
     {
         $user = UserModel::create([
             'name' => 'Jane Smith',
@@ -99,7 +92,7 @@ class ThreadsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_belongs_to_two_threads()
+    public function user_belongs_to_two_threads()
     {
         $users = UserModel::all();
 
@@ -123,7 +116,7 @@ class ThreadsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_invalid_thread_id_not_found()
+    public function invalid_thread_id_not_found()
     {
         $this->actingAs(UserModel::first());
 
@@ -134,7 +127,7 @@ class ThreadsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_forbidden_to_view_thread_they_do_not_belong_to()
+    public function user_forbidden_to_view_thread_they_do_not_belong_to()
     {
         $group = Thread::create([
             'type' => 2,
@@ -153,7 +146,7 @@ class ThreadsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_view_individual_private_thread()
+    public function view_individual_private_thread()
     {
         $users = UserModel::all();
 
@@ -187,7 +180,7 @@ class ThreadsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_view_individual_group_thread()
+    public function view_individual_group_thread()
     {
         $users = UserModel::all();
 

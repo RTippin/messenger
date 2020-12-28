@@ -21,7 +21,7 @@ use RTippin\Messenger\Tests\UserModel;
 class FriendsTest extends FeatureTestCase
 {
     /** @test */
-    public function test_guest_is_unauthorized()
+    public function guest_is_unauthorized()
     {
         $this->getJson(route('api.messenger.friends.index'))
             ->assertUnauthorized();
@@ -34,7 +34,7 @@ class FriendsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_new_user_has_no_friends()
+    public function new_user_has_no_friends()
     {
         $this->actingAs(UserModel::first());
 
@@ -52,7 +52,7 @@ class FriendsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_can_friend_another()
+    public function user_can_friend_another()
     {
         $this->expectsEvents([
             FriendRequestBroadcast::class,
@@ -79,7 +79,7 @@ class FriendsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_cannot_friend_user_while_having_pending_sent()
+    public function user_cannot_friend_user_while_having_pending_sent()
     {
         $this->doesntExpectEvents([
             FriendRequestBroadcast::class,
@@ -105,7 +105,7 @@ class FriendsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_can_cancel_sent_request()
+    public function user_can_cancel_sent_request()
     {
         $this->expectsEvents([
             FriendCancelledBroadcast::class,
@@ -135,7 +135,7 @@ class FriendsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_can_deny_pending_request()
+    public function user_can_deny_pending_request()
     {
         $this->expectsEvents([
             FriendDeniedBroadcast::class,
@@ -165,7 +165,7 @@ class FriendsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_can_accept_pending_request()
+    public function user_can_accept_pending_request()
     {
         $this->expectsEvents([
             FriendApprovedBroadcast::class,
@@ -205,11 +205,11 @@ class FriendsTest extends FeatureTestCase
             'party_id' => $users->first()->getKey(),
         ]);
 
-        $this->assertEquals($friends->friendStatus($users->first()), 1);
+        $this->assertEquals(1, $friends->friendStatus($users->first()));
     }
 
     /** @test */
-    public function test_user_can_remove_friend()
+    public function user_can_remove_friend()
     {
         $this->expectsEvents([
             FriendRemovedEvent::class,
@@ -250,11 +250,11 @@ class FriendsTest extends FeatureTestCase
             'party_id' => $users->first()->getKey(),
         ]);
 
-        $this->assertEquals($friends->friendStatus($users->first()), 0);
+        $this->assertEquals(0, $friends->friendStatus($users->first()));
     }
 
     /** @test */
-    public function test_user_cannot_friend_when_already_friends()
+    public function user_cannot_friend_when_already_friends()
     {
         $this->doesntExpectEvents([
             FriendRequestBroadcast::class,

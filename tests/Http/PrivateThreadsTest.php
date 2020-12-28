@@ -41,7 +41,21 @@ class PrivateThreadsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_private_thread_locator_returns_not_found_on_invalid_user()
+    public function guest_is_unauthorized()
+    {
+        $this->getJson(route('api.messenger.privates.index'))
+            ->assertUnauthorized();
+
+        $this->postJson(route('api.messenger.privates.store'), [
+            'recipient_id' => 2,
+            'recipient_alias' => 'user',
+            'message' => 'Hello!',
+        ])
+            ->assertUnauthorized();
+    }
+
+    /** @test */
+    public function private_thread_locator_returns_not_found_on_invalid_user()
     {
         $this->actingAs(UserModel::first());
 
@@ -59,7 +73,7 @@ class PrivateThreadsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_private_thread_locator_returns_user_with_existing_thread_id()
+    public function private_thread_locator_returns_user_with_existing_thread_id()
     {
         $users = UserModel::all();
 
@@ -80,7 +94,7 @@ class PrivateThreadsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_private_thread_locator_returns_user_without_existing_thread_id()
+    public function private_thread_locator_returns_user_without_existing_thread_id()
     {
         $otherUser = UserModel::create([
             'name' => 'Jane Smith',
@@ -105,7 +119,7 @@ class PrivateThreadsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_creating_new_private_thread_with_non_friend_is_pending()
+    public function creating_new_private_thread_with_non_friend_is_pending()
     {
         $this->expectsEvents([
             NewThreadBroadcast::class,
@@ -152,7 +166,7 @@ class PrivateThreadsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_creating_new_private_thread_with_friend_is_not_pending()
+    public function creating_new_private_thread_with_friend_is_not_pending()
     {
         $this->expectsEvents([
             NewThreadBroadcast::class,
@@ -217,7 +231,7 @@ class PrivateThreadsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_creating_new_private_forbidden_when_one_exist()
+    public function creating_new_private_forbidden_when_one_exist()
     {
         $this->doesntExpectEvents([
             NewThreadBroadcast::class,
@@ -237,7 +251,7 @@ class PrivateThreadsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_recipient_can_approve_pending_thread()
+    public function recipient_can_approve_pending_thread()
     {
         $this->expectsEvents([
             ThreadApprovalBroadcast::class,
@@ -282,7 +296,7 @@ class PrivateThreadsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_recipient_can_deny_pending_thread()
+    public function recipient_can_deny_pending_thread()
     {
         $this->expectsEvents([
             ThreadApprovalBroadcast::class,

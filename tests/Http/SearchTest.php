@@ -9,7 +9,7 @@ use RTippin\Messenger\Tests\UserModel;
 class SearchTest extends FeatureTestCase
 {
     /** @test */
-    public function test_guest_is_unauthorized()
+    public function guest_is_unauthorized()
     {
         $this->getJson(route('api.messenger.search', [
             'query' => 'john',
@@ -18,7 +18,7 @@ class SearchTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_empty_search_returns_no_results()
+    public function empty_search_returns_no_results()
     {
         $this->actingAs(UserModel::first());
 
@@ -35,7 +35,7 @@ class SearchTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_search_finds_user()
+    public function search_finds_user()
     {
         $user = UserModel::first();
 
@@ -63,7 +63,7 @@ class SearchTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_search_for_user_without_messenger_returns_no_results()
+    public function search_for_user_without_messenger_returns_no_results()
     {
         UserModel::create([
             'name' => 'Jane Smith',
@@ -90,7 +90,7 @@ class SearchTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_multiple_search_queries_separated_by_space_returns_multiple_results()
+    public function multiple_search_queries_separated_by_space_returns_multiple_results()
     {
         $this->actingAs(UserModel::first());
 
@@ -112,7 +112,7 @@ class SearchTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_search_strips_special_characters()
+    public function search_strips_special_characters()
     {
         $this->actingAs(UserModel::first());
 
@@ -133,7 +133,7 @@ class SearchTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_exact_email_returns_user_result()
+    public function exact_email_returns_user_result()
     {
         $user = UserModel::first();
 
@@ -161,7 +161,7 @@ class SearchTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_incomplete_email_returns_no_results()
+    public function incomplete_email_returns_no_results()
     {
         $this->actingAs(UserModel::first());
 

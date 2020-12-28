@@ -12,14 +12,14 @@ use RTippin\Messenger\Tests\UserModel;
 class MessengerTest extends FeatureTestCase
 {
     /** @test */
-    public function test_guest_is_unauthorized()
+    public function guest_is_unauthorized()
     {
         $this->getJson(route('api.messenger.info'))
             ->assertUnauthorized();
     }
 
     /** @test */
-    public function test_messenger_info_was_successful()
+    public function messenger_info_was_successful()
     {
         $this->actingAs(UserModel::first());
 
@@ -34,7 +34,7 @@ class MessengerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_messenger_info_changes_when_set_dynamically()
+    public function messenger_info_changes_when_set_dynamically()
     {
         $this->actingAs(UserModel::first());
 
@@ -62,7 +62,7 @@ class MessengerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_messenger_created_when_called_from_user_without_messenger()
+    public function messenger_created_when_called_from_user_without_messenger()
     {
         $user = UserModel::create([
             'name' => 'Jane Smith',
@@ -89,7 +89,7 @@ class MessengerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_updating_messenger_settings_validations()
+    public function updating_messenger_settings_validations()
     {
         $user = UserModel::first();
 
@@ -111,7 +111,7 @@ class MessengerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_updating_messenger_settings()
+    public function updating_messenger_settings()
     {
         $user = UserModel::first();
 
@@ -139,7 +139,7 @@ class MessengerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_can_upload_avatar()
+    public function user_can_upload_avatar()
     {
         Storage::fake(Messenger::getAvatarStorage('disk'));
 
@@ -159,7 +159,7 @@ class MessengerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_user_can_remove_avatar()
+    public function user_can_remove_avatar()
     {
         Storage::fake(Messenger::getAvatarStorage('disk'));
 
@@ -192,7 +192,7 @@ class MessengerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_avatar_upload_validation_checks_size_and_mime()
+    public function avatar_upload_validation_checks_size_and_mime()
     {
         $user = UserModel::first();
 
@@ -210,7 +210,7 @@ class MessengerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_messenger_heartbeat_online()
+    public function messenger_heartbeat_online()
     {
         $this->expectsEvents([
             StatusHeartbeatEvent::class,
@@ -229,7 +229,7 @@ class MessengerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_messenger_heartbeat_away()
+    public function messenger_heartbeat_away()
     {
         $this->expectsEvents([
             StatusHeartbeatEvent::class,
