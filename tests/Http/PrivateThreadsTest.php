@@ -3,10 +3,8 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
-use RTippin\Messenger\Broadcasting\ThreadApprovalBroadcast;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\NewThreadEvent;
-use RTippin\Messenger\Events\ThreadApprovalEvent;
 use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -52,70 +50,6 @@ class PrivateThreadsTest extends FeatureTestCase
             'message' => 'Hello!',
         ])
             ->assertUnauthorized();
-    }
-
-    /** @test */
-    public function private_thread_locator_returns_not_found_on_invalid_user()
-    {
-        $this->actingAs(UserModel::first());
-
-        $this->getJson(route('api.messenger.privates.locate', [
-            'alias' => 'user',
-            'id' => 404,
-        ]))
-            ->assertNotFound();
-
-        $this->getJson(route('api.messenger.privates.locate', [
-            'alias' => 'unknown',
-            'id' => 2,
-        ]))
-            ->assertNotFound();
-    }
-
-    /** @test */
-    public function private_thread_locator_returns_user_with_existing_thread_id()
-    {
-        $users = UserModel::all();
-
-        $this->actingAs($users->first());
-
-        $this->getJson(route('api.messenger.privates.locate', [
-            'alias' => 'user',
-            'id' => $users->last()->getKey(),
-        ]))
-            ->assertStatus(200)
-            ->assertJson([
-                'thread_id' => Thread::private()->first()->id,
-                'recipient' => [
-                    'provider_id' => $users->last()->getKey(),
-                    'name' => $users->last()->name(),
-                ],
-            ]);
-    }
-
-    /** @test */
-    public function private_thread_locator_returns_user_without_existing_thread_id()
-    {
-        $otherUser = UserModel::create([
-            'name' => 'Jane Smith',
-            'email' => 'smith@example.net',
-            'password' => 'secret',
-        ]);
-
-        $this->actingAs(UserModel::first());
-
-        $this->getJson(route('api.messenger.privates.locate', [
-            'alias' => 'user',
-            'id' => $otherUser->getKey(),
-        ]))
-            ->assertStatus(200)
-            ->assertJson([
-                'thread_id' => null,
-                'recipient' => [
-                    'provider_id' => $otherUser->getKey(),
-                    'name' => $otherUser->name(),
-                ],
-            ]);
     }
 
     /** @test */
@@ -248,94 +182,5 @@ class PrivateThreadsTest extends FeatureTestCase
             'recipient_id' => $users->last()->getKey(),
         ])
             ->assertForbidden();
-    }
-
-    /** @test */
-    public function recipient_can_approve_pending_thread()
-    {
-        $this->expectsEvents([
-            ThreadApprovalBroadcast::class,
-            ThreadApprovalEvent::class,
-        ]);
-
-        $myself = UserModel::first();
-
-        $thread = Thread::create(Definitions::DefaultThread);
-
-        $otherUser = UserModel::create([
-            'name' => 'Jane Smith',
-            'email' => 'smith@example.net',
-            'password' => 'secret',
-        ]);
-
-        $thread->participants()->create(array_merge(Definitions::DefaultParticipant, [
-            'owner_id' => $myself->getKey(),
-            'owner_type' => get_class($myself),
-            'pending' => true,
-        ]));
-
-        $thread->participants()->create(array_merge(Definitions::DefaultParticipant, [
-            'owner_id' => $otherUser->getKey(),
-            'owner_type' => get_class($otherUser),
-            'pending' => false,
-        ]));
-
-        $this->actingAs($myself);
-
-        $this->postJson(route('api.messenger.threads.approval', [
-            'thread' => $thread->id,
-        ]), [
-            'approve' => true,
-        ])
-            ->assertSuccessful();
-
-        $this->assertDatabaseHas('participants', [
-            'owner_id' => $myself->getKey(),
-            'pending' => false,
-        ]);
-    }
-
-    /** @test */
-    public function recipient_can_deny_pending_thread()
-    {
-        $this->expectsEvents([
-            ThreadApprovalBroadcast::class,
-            ThreadApprovalEvent::class,
-        ]);
-
-        $myself = UserModel::first();
-
-        $thread = Thread::create(Definitions::DefaultThread);
-
-        $otherUser = UserModel::create([
-            'name' => 'Jane Smith',
-            'email' => 'smith@example.net',
-            'password' => 'secret',
-        ]);
-
-        $thread->participants()->create(array_merge(Definitions::DefaultParticipant, [
-            'owner_id' => $myself->getKey(),
-            'owner_type' => get_class($myself),
-            'pending' => true,
-        ]));
-
-        $thread->participants()->create(array_merge(Definitions::DefaultParticipant, [
-            'owner_id' => $otherUser->getKey(),
-            'owner_type' => get_class($otherUser),
-            'pending' => false,
-        ]));
-
-        $this->actingAs($myself);
-
-        $this->postJson(route('api.messenger.threads.approval', [
-            'thread' => $thread->id,
-        ]), [
-            'approve' => false,
-        ])
-            ->assertSuccessful();
-
-        $this->assertSoftDeleted('threads', [
-            'id' => $thread->id,
-        ]);
     }
 }

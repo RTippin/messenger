@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger\Tests\Http;
+namespace RTippin\Messenger\Tests\Http\Actions;
 
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;

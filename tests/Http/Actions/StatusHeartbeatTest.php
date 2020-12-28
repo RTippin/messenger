@@ -9,6 +9,41 @@ use RTippin\Messenger\Tests\UserModel;
 class StatusHeartbeatTest extends FeatureTestCase
 {
     /** @test */
+    public function messenger_heartbeat_must_be_a_post()
+    {
+        $this->doesntExpectEvents([
+            StatusHeartbeatEvent::class,
+        ]);
+
+        $user = UserModel::first();
+
+        $this->actingAs($user);
+
+        $this->getJson(route('api.messenger.heartbeat'))
+            ->assertStatus(405);
+    }
+
+    /** @test */
+    public function messenger_heartbeat_validates_input()
+    {
+        $this->doesntExpectEvents([
+            StatusHeartbeatEvent::class,
+        ]);
+
+        $user = UserModel::first();
+
+        $this->actingAs($user);
+
+        $this->postJson(route('api.messenger.heartbeat'), [
+            'away' => 'string',
+        ])
+            ->assertJsonValidationErrors('away');
+
+        $this->postJson(route('api.messenger.heartbeat'))
+            ->assertJsonValidationErrors('away');
+    }
+
+    /** @test */
     public function messenger_heartbeat_online()
     {
         $this->expectsEvents([
