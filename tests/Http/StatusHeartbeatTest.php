@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger\Tests\Http\Actions;
+namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Events\StatusHeartbeatEvent;
 use RTippin\Messenger\Tests\FeatureTestCase;

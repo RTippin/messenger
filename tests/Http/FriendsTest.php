@@ -10,6 +10,34 @@ use RTippin\Messenger\Tests\UserModel;
 
 class FriendsTest extends FeatureTestCase
 {
+    private Friend $friend;
+
+    private Friend $inverseFriend;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->setupFriendship();
+    }
+
+    private function setupFriendship()
+    {
+        $this->friend = Friend::create([
+            'owner_id' => 1,
+            'owner_type' => self::UserModelType,
+            'party_id' => 2,
+            'party_type' => self::UserModelType,
+        ]);
+
+        $this->inverseFriend = Friend::create([
+            'owner_id' => 2,
+            'owner_type' => self::UserModelType,
+            'party_id' => 1,
+            'party_type' => self::UserModelType,
+        ]);
+    }
+
     /** @test */
     public function guest_is_unauthorized()
     {
@@ -20,7 +48,9 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function new_user_has_no_friends()
     {
-        $this->actingAs(UserModel::first());
+        $newUser = $this->generateJaneSmith();
+
+        $this->actingAs($newUser);
 
         $this->getJson(route('api.messenger.friends.index'))
             ->assertStatus(200)
@@ -34,41 +64,25 @@ class FriendsTest extends FeatureTestCase
             FriendRemovedEvent::class,
         ]);
 
-        $users = UserModel::all();
-
         $friends = resolve(FriendDriver::class);
 
-        $friend = Friend::create([
-            'owner_id' => $users->first()->getKey(),
-            'owner_type' => get_class($users->first()),
-            'party_id' => $users->last()->getKey(),
-            'party_type' => get_class($users->last()),
-        ]);
-
-        Friend::create([
-            'owner_id' => $users->last()->getKey(),
-            'owner_type' => get_class($users->last()),
-            'party_id' => $users->first()->getKey(),
-            'party_type' => get_class($users->first()),
-        ]);
-
-        $this->actingAs($users->first());
+        $this->actingAs(UserModel::find(1));
 
         $this->deleteJson(route('api.messenger.friends.destroy', [
-            'friend' => $friend->getKey(),
+            'friend' => $this->friend->getKey(),
         ]))
             ->assertSuccessful();
 
         $this->assertDatabaseMissing('friends', [
-            'owner_id' => $users->first()->getKey(),
-            'party_id' => $users->last()->getKey(),
+            'owner_id' => 1,
+            'party_id' => 2,
         ]);
 
         $this->assertDatabaseMissing('friends', [
-            'owner_id' => $users->last()->getKey(),
-            'party_id' => $users->first()->getKey(),
+            'owner_id' => 2,
+            'party_id' => 1,
         ]);
 
-        $this->assertEquals(0, $friends->friendStatus($users->first()));
+        $this->assertEquals(0, $friends->friendStatus(UserModel::find(2)));
     }
 }

@@ -15,6 +15,8 @@ use RTippin\Messenger\Traits\Search;
 
 class FeatureTestCase extends TestCase
 {
+    const UserModelType = 'RTippin\Messenger\Tests\UserModel';
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -81,7 +83,7 @@ class FeatureTestCase extends TestCase
 
         Messenger::create([
             'owner_id' => $userOne->getKey(),
-            'owner_type' => get_class($userOne),
+            'owner_type' => self::UserModelType,
         ]);
 
         $userTwo = UserModel::create([
@@ -92,7 +94,16 @@ class FeatureTestCase extends TestCase
 
         Messenger::create([
             'owner_id' => $userTwo->getKey(),
-            'owner_type' => get_class($userTwo),
+            'owner_type' => self::UserModelType,
+        ]);
+    }
+
+    protected function generateJaneSmith(): UserModel
+    {
+        return UserModel::create([
+            'name' => 'Jane Smith',
+            'email' => 'smith@example.net',
+            'password' => 'secret',
         ]);
     }
 }
