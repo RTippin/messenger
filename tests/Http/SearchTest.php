@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\stubs\CompanyModel;
 use RTippin\Messenger\Tests\stubs\UserModel;
 
 class SearchTest extends FeatureTestCase
@@ -47,6 +48,8 @@ class SearchTest extends FeatureTestCase
                 'data' => [
                     [
                         'name' => 'Richard Tippin',
+                        'provider_alias' => 'user',
+                        'provider_id' => 1,
                     ],
                 ],
                 'meta' => [
@@ -56,6 +59,34 @@ class SearchTest extends FeatureTestCase
                     ],
                     'per_page' => Messenger::getSearchPageCount(),
                     'search' => 'tippin',
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function search_finds_company()
+    {
+        $this->actingAs(CompanyModel::find(1));
+
+        $this->getJson(route('api.messenger.search', [
+            'query' => 'developers',
+        ]))
+            ->assertJsonCount(1, 'data')
+            ->assertJson([
+                'data' => [
+                    [
+                        'name' => 'Developers',
+                        'provider_alias' => 'company',
+                        'provider_id' => 1,
+                    ],
+                ],
+                'meta' => [
+                    'total' => 1,
+                    'search_items' => [
+                        'developers',
+                    ],
+                    'per_page' => Messenger::getSearchPageCount(),
+                    'search' => 'developers',
                 ],
             ]);
     }
@@ -84,7 +115,7 @@ class SearchTest extends FeatureTestCase
     }
 
     /** @test */
-    public function multiple_search_queries_separated_by_space_returns_multiple_results()
+    public function multiple_search_queries_separated_by_space_returns_multiple_user_results()
     {
         $this->actingAs(UserModel::find(1));
 
@@ -93,6 +124,18 @@ class SearchTest extends FeatureTestCase
         ]))
             ->assertJsonCount(2, 'data')
             ->assertJson([
+                'data' => [
+                    [
+                        'name' => 'Richard Tippin',
+                        'provider_alias' => 'user',
+                        'provider_id' => 1,
+                    ],
+                    [
+                        'name' => 'John Doe',
+                        'provider_alias' => 'user',
+                        'provider_id' => 2,
+                    ],
+                ],
                 'meta' => [
                     'total' => 2,
                     'search_items' => [
@@ -101,6 +144,40 @@ class SearchTest extends FeatureTestCase
                     ],
                     'per_page' => Messenger::getSearchPageCount(),
                     'search' => 'tippin john',
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function multiple_providers_search_queries_separated_by_space_returns_multiple_results()
+    {
+        $this->actingAs(UserModel::find(1));
+
+        $this->getJson(route('api.messenger.search', [
+            'query' => 'tippin laravel',
+        ]))
+            ->assertJsonCount(2, 'data')
+            ->assertJson([
+                'data' => [
+                    [
+                        'name' => 'Richard Tippin',
+                        'provider_alias' => 'user',
+                        'provider_id' => 1,
+                    ],
+                    [
+                        'name' => 'Laravel',
+                        'provider_alias' => 'company',
+                        'provider_id' => 2,
+                    ],
+                ],
+                'meta' => [
+                    'total' => 2,
+                    'search_items' => [
+                        'tippin',
+                        'laravel',
+                    ],
+                    'per_page' => Messenger::getSearchPageCount(),
+                    'search' => 'tippin laravel',
                 ],
             ]);
     }
@@ -139,6 +216,8 @@ class SearchTest extends FeatureTestCase
                 'data' => [
                     [
                         'name' => 'Richard Tippin',
+                        'provider_alias' => 'user',
+                        'provider_id' => 1,
                     ],
                 ],
                 'meta' => [
@@ -148,6 +227,34 @@ class SearchTest extends FeatureTestCase
                     ],
                     'per_page' => Messenger::getSearchPageCount(),
                     'search' => 'richard.tippin@gmail.com',
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function exact_email_returns_company_result()
+    {
+        $this->actingAs(UserModel::find(1));
+
+        $this->getJson(route('api.messenger.search', [
+            'query' => 'developers@example.net',
+        ]))
+            ->assertJsonCount(1, 'data')
+            ->assertJson([
+                'data' => [
+                    [
+                        'name' => 'Developers',
+                        'provider_alias' => 'company',
+                        'provider_id' => 1,
+                    ],
+                ],
+                'meta' => [
+                    'total' => 1,
+                    'search_items' => [
+                        'developers@example.net',
+                    ],
+                    'per_page' => Messenger::getSearchPageCount(),
+                    'search' => 'developers@example.net',
                 ],
             ]);
     }

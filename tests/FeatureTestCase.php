@@ -136,4 +136,13 @@ class FeatureTestCase extends TestCase
             'password' => 'secret',
         ]);
     }
+
+    protected function generateSomeCompany(): CompanyModel
+    {
+        return CompanyModel::create([
+            'company_name' => 'Some Company',
+            'company_email' => 'company@example.net',
+            'password' => 'secret',
+        ]);
+    }
 }

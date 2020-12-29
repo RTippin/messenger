@@ -7,6 +7,7 @@ use RTippin\Messenger\Exceptions\InvalidMessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Http\Middleware\SetMessengerProvider;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\stubs\CompanyModel;
 use RTippin\Messenger\Tests\stubs\OtherModel;
 use RTippin\Messenger\Tests\stubs\UserModel;
 
@@ -57,7 +58,7 @@ class SetMessengerProviderTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_valid_provider_was_set()
+    public function test_valid_user_provider_was_set()
     {
         $request = new Request;
 
@@ -71,6 +72,24 @@ class SetMessengerProviderTest extends FeatureTestCase
             $this->assertEquals('richard.tippin@gmail.com', $request->user()->email);
             $this->assertTrue(Messenger::isProviderSet());
             $this->assertEquals('richard.tippin@gmail.com', Messenger::getProvider()->email);
+        }, 'required');
+    }
+
+    /** @test */
+    public function test_valid_company_provider_was_set()
+    {
+        $request = new Request;
+
+        $request->setUserResolver(function () {
+            return CompanyModel::find(1);
+        });
+
+        $middleware = app(SetMessengerProvider::class);
+
+        $middleware->handle($request, function (Request $request) {
+            $this->assertEquals('developers@example.net', $request->user()->company_email);
+            $this->assertTrue(Messenger::isProviderSet());
+            $this->assertEquals('developers@example.net', Messenger::getProvider()->company_email);
         }, 'required');
     }
 }
