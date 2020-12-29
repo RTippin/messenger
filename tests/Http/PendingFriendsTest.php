@@ -61,7 +61,7 @@ class PendingFriendsTest extends FeatureTestCase
             'recipient_type' => self::UserModelType,
         ]);
 
-        Event::assertDispatched(function (FriendDeniedBroadcast $event) use($pending) {
+        Event::assertDispatched(function (FriendDeniedBroadcast $event) use ($pending) {
             $this->assertContains('private-user.1', $event->broadcastOn());
             $this->assertArrayHasKey('sent_friend_id', $event->broadcastWith());
             $this->assertEquals($pending->id, $event->broadcastWith()['sent_friend_id']);
@@ -69,7 +69,7 @@ class PendingFriendsTest extends FeatureTestCase
             return true;
         });
 
-        Event::assertDispatched(function (FriendDeniedEvent $event) use($pending) {
+        Event::assertDispatched(function (FriendDeniedEvent $event) use ($pending) {
             return $event->friend->id === $pending->id;
         });
     }
@@ -119,7 +119,7 @@ class PendingFriendsTest extends FeatureTestCase
 
         $this->assertEquals(1, resolve(FriendDriver::class)->friendStatus(UserModel::find(1)));
 
-        Event::assertDispatched(function (FriendApprovedBroadcast $event) use($pending) {
+        Event::assertDispatched(function (FriendApprovedBroadcast $event) use ($pending) {
             $this->assertContains('private-user.1', $event->broadcastOn());
             $this->assertArrayHasKey('sender', $event->broadcastWith());
             $this->assertEquals('John Doe', $event->broadcastWith()['sender']['name']);
