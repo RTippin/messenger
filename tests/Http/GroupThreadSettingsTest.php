@@ -132,7 +132,10 @@ class GroupThreadSettingsTest extends FeatureTestCase
     /** @test */
     public function update_group_settings_expects_events_and_name_not_changed()
     {
-        Event::fake();
+        Event::fake([
+            ThreadSettingsBroadcast::class,
+            ThreadSettingsEvent::class,
+        ]);
 
         $this->actingAs(UserModel::find(1));
 
@@ -156,6 +159,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
         Event::assertDispatched(function (ThreadSettingsBroadcast $event) {
             $this->assertContains('First Test Group', $event->broadcastWith());
             $this->assertContains('presence-thread.'.$this->group->id, $event->broadcastOn());
+
             return true;
         });
 
@@ -163,6 +167,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
             $this->assertEquals(1, $event->provider->getKey());
             $this->assertEquals($this->group->id, $event->thread->id);
             $this->assertFalse($event->nameChanged);
+
             return true;
         });
     }
@@ -170,7 +175,10 @@ class GroupThreadSettingsTest extends FeatureTestCase
     /** @test */
     public function update_group_settings_expects_events_and_name_did_change()
     {
-        Event::fake();
+        Event::fake([
+            ThreadSettingsBroadcast::class,
+            ThreadSettingsEvent::class,
+        ]);
 
         $this->actingAs(UserModel::find(1));
 
@@ -194,6 +202,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
         Event::assertDispatched(function (ThreadSettingsBroadcast $event) {
             $this->assertContains('Second Test Group', $event->broadcastWith());
             $this->assertContains('presence-thread.'.$this->group->id, $event->broadcastOn());
+
             return true;
         });
 
@@ -201,6 +210,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
             $this->assertEquals(1, $event->provider->getKey());
             $this->assertEquals($this->group->id, $event->thread->id);
             $this->assertTrue($event->nameChanged);
+
             return true;
         });
     }

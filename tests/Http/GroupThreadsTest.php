@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\NewThreadEvent;
@@ -114,11 +115,8 @@ class GroupThreadsTest extends FeatureTestCase
     /** @test */
     public function store_group_without_extra_participants()
     {
-        $this->expectsEvents([
+        Event::fake([
             NewThreadEvent::class,
-        ]);
-
-        $this->doesntExpectEvents([
             NewThreadBroadcast::class,
         ]);
 
@@ -145,6 +143,15 @@ class GroupThreadsTest extends FeatureTestCase
                     ],
                 ],
             ]);
+
+        Event::assertDispatched(function (NewThreadEvent $event) {
+            $this->assertEquals(1, $event->provider->getKey());
+            $this->assertEquals('Test Group', $event->thread->subject);
+
+            return true;
+        });
+
+        Event::assertNotDispatched(NewThreadBroadcast::class);
 
         $this->assertDatabaseHas('threads', [
             'subject' => 'Test Group',
@@ -154,11 +161,8 @@ class GroupThreadsTest extends FeatureTestCase
     /** @test */
     public function store_group_with_extra_participants_will_ignore_participant_if_not_friend()
     {
-        $this->expectsEvents([
+        Event::fake([
             NewThreadEvent::class,
-        ]);
-
-        $this->doesntExpectEvents([
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
@@ -192,6 +196,17 @@ class GroupThreadsTest extends FeatureTestCase
                     ],
                 ],
             ]);
+
+        Event::assertNotDispatched(NewThreadBroadcast::class);
+
+        Event::assertNotDispatched(ParticipantsAddedEvent::class);
+
+        Event::assertDispatched(function (NewThreadEvent $event) {
+            $this->assertEquals(1, $event->provider->getKey());
+            $this->assertEquals('Test Group', $event->thread->subject);
+
+            return true;
+        });
 
         $this->assertDatabaseHas('threads', [
             'subject' => 'Test Group',
@@ -201,30 +216,21 @@ class GroupThreadsTest extends FeatureTestCase
     /** @test */
     public function store_group_with_extra_participant_that_is_friend()
     {
-        $this->expectsEvents([
-            NewThreadBroadcast::class,
+        Event::fake([
             NewThreadEvent::class,
+            NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
 
-        Friend::create([
-            'owner_id' => 1,
-            'owner_type' => self::UserModelType,
-            'party_id' => 2,
-            'party_type' => self::UserModelType,
-        ]);
-
-        Friend::create([
-            'owner_id' => 2,
-            'owner_type' => self::UserModelType,
-            'party_id' => 1,
-            'party_type' => self::UserModelType,
-        ]);
+        $this->makeFriends(
+            UserModel::find(1),
+            UserModel::find(2)
+        );
 
         $this->actingAs(UserModel::find(1));
 
         $this->postJson(route('api.messenger.groups.store'), [
-            'subject' => 'Test Group',
+            'subject' => 'Test Group Participants',
             'providers' => [
                 [
                     'id' => 2,
@@ -246,13 +252,36 @@ class GroupThreadsTest extends FeatureTestCase
                     'latest_message' => [
                         'type' => 93,
                         'type_verbose' => 'GROUP_CREATED',
-                        'body' => 'created Test Group',
+                        'body' => 'created Test Group Participants',
                     ],
                 ],
             ]);
 
         $this->assertDatabaseHas('threads', [
-            'subject' => 'Test Group',
+            'subject' => 'Test Group Participants',
         ]);
+
+        Event::assertDispatched(function (NewThreadEvent $event) {
+            $this->assertEquals(1, $event->provider->getKey());
+            $this->assertEquals('Test Group Participants', $event->thread->subject);
+
+            return true;
+        });
+
+        Event::assertDispatched(function (NewThreadBroadcast $event) {
+            $this->assertContains('private-user.2', $event->broadcastOn());
+            $this->assertArrayHasKey('thread', $event->broadcastWith());
+            $this->assertContains('Test Group Participants', $event->broadcastWith()['thread']);
+
+            return true;
+        });
+
+        Event::assertDispatched(function (ParticipantsAddedEvent $event) {
+            $this->assertEquals(1, $event->provider->getKey());
+            $this->assertEquals('Test Group Participants', $event->thread->subject);
+            $this->assertCount(1, $event->participants);
+
+            return true;
+        });
     }
 }

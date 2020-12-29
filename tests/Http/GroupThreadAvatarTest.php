@@ -72,12 +72,14 @@ class GroupThreadAvatarTest extends FeatureTestCase
         Event::assertDispatched(function (ThreadAvatarBroadcast $event) {
             $this->assertContains('First Test Group', $event->broadcastWith());
             $this->assertContains('presence-thread.'.$this->group->id, $event->broadcastOn());
+
             return true;
         });
 
         Event::assertDispatched(function (ThreadAvatarEvent $event) {
             $this->assertEquals(1, $event->provider->getKey());
             $this->assertEquals($this->group->id, $event->thread->id);
+
             return true;
         });
     }
@@ -151,7 +153,10 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function update_group_avatar_with_new_default_expects_events()
     {
-        Event::fake();
+        Event::fake([
+            ThreadAvatarBroadcast::class,
+            ThreadAvatarEvent::class,
+        ]);
 
         $this->actingAs(UserModel::find(1));
 
@@ -192,7 +197,10 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function group_avatar_upload_stores_photo_when_previously_default()
     {
-        Event::fake();
+        Event::fake([
+            ThreadAvatarBroadcast::class,
+            ThreadAvatarEvent::class,
+        ]);
 
         Storage::fake(Messenger::getThreadStorage('disk'));
 
@@ -214,7 +222,10 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function group_avatar_upload_stores_photo_and_removes_old()
     {
-        Event::fake();
+        Event::fake([
+            ThreadAvatarBroadcast::class,
+            ThreadAvatarEvent::class,
+        ]);
 
         $this->setupGroupAvatar();
 
@@ -241,7 +252,10 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function update_group_avatar_to_default_removes_old()
     {
-        Event::fake();
+        Event::fake([
+            ThreadAvatarBroadcast::class,
+            ThreadAvatarEvent::class,
+        ]);
 
         $this->setupGroupAvatar();
 

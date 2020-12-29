@@ -81,7 +81,9 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_remove_friend()
     {
-        Event::fake();
+        Event::fake([
+            FriendRemovedEvent::class,
+        ]);
 
         $this->actingAs(UserModel::find(1));
 
@@ -93,6 +95,7 @@ class FriendsTest extends FeatureTestCase
         Event::assertDispatched(function (FriendRemovedEvent $event) {
             $this->assertEquals($this->inverseFriend->id, $event->inverseFriend->id);
             $this->assertEquals($this->friend->id, $event->friend->id);
+
             return true;
         });
 
@@ -116,7 +119,9 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_remove_company_friend()
     {
-        Event::fake();
+        Event::fake([
+            FriendRemovedEvent::class,
+        ]);
 
         $this->actingAs(UserModel::find(1));
 
@@ -128,6 +133,7 @@ class FriendsTest extends FeatureTestCase
         Event::assertDispatched(function (FriendRemovedEvent $event) {
             $this->assertEquals($this->inverseFriendCompany->id, $event->inverseFriend->id);
             $this->assertEquals($this->friendCompany->id, $event->friend->id);
+
             return true;
         });
 
