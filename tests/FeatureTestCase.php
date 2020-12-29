@@ -73,7 +73,7 @@ class FeatureTestCase extends TestCase
                     'can_message' => true,
                     'can_search' => true,
                     'can_friend' => true,
-                ]
+                ],
             ],
         ]);
 

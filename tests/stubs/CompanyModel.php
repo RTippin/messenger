@@ -39,7 +39,6 @@ class CompanyModel extends User implements MessengerProvider, Searchable
 
     /**
      * Search for companies
-     *
      * @param Builder $query
      * @param string $search
      * @param array $searchItems
