@@ -118,7 +118,7 @@ class PendingFriendsTest extends FeatureTestCase
 
         $this->assertEquals(1, resolve(FriendDriver::class)->friendStatus(UserModel::find(1)));
 
-        Event::assertDispatched(function (FriendApprovedBroadcast $event) use ($pending) {
+        Event::assertDispatched(function (FriendApprovedBroadcast $event) {
             $this->assertContains('private-user.1', $event->broadcastOn());
             $this->assertEquals('John Doe', $event->broadcastWith()['sender']['name']);
 

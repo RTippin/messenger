@@ -10,6 +10,10 @@ use RTippin\Messenger\Tests\stubs\UserModel;
 
 class ThreadsTest extends FeatureTestCase
 {
+    private Thread $private;
+
+    private Thread $group;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -19,7 +23,7 @@ class ThreadsTest extends FeatureTestCase
 
     private function setupInitialThreads(): void
     {
-        $group = Thread::create([
+        $this->group = Thread::create([
             'type' => 2,
             'subject' => 'Test Group',
             'image' => '1.png',
@@ -27,31 +31,22 @@ class ThreadsTest extends FeatureTestCase
             'invitations' => true,
         ]);
 
-        $group->participants()
+        $this->group->participants()
             ->create(array_merge(Definitions::DefaultAdminParticipant, [
                 'owner_id' => 1,
                 'owner_type' => self::UserModelType,
             ]));
 
-        $group->participants()
+        $this->group->participants()
             ->create(array_merge(Definitions::DefaultParticipant, [
                 'owner_id' => 2,
                 'owner_type' => self::UserModelType,
             ]));
 
-        $private = Thread::create(Definitions::DefaultThread);
-
-        $private->participants()
-            ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => 1,
-                'owner_type' => self::UserModelType,
-            ]));
-
-        $private->participants()
-            ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => 2,
-                'owner_type' => self::UserModelType,
-            ]));
+        $this->private = $this->makePrivateThread(
+            UserModel::find(1),
+            UserModel::find(2)
+        );
     }
 
     /** @test */
@@ -65,6 +60,28 @@ class ThreadsTest extends FeatureTestCase
     public function new_user_has_no_threads()
     {
         $this->actingAs($this->generateJaneSmith());
+
+        $this->getJson(route('api.messenger.threads.index'))
+            ->assertStatus(200)
+            ->assertJsonCount(0, 'data')
+            ->assertJsonFragment([
+                'meta' => [
+                    'final_page' => true,
+                    'index' => true,
+                    'next_page_id' => null,
+                    'next_page_route' => null,
+                    'page_id' => null,
+                    'per_page' => Messenger::getThreadsIndexCount(),
+                    'results' => 0,
+                    'total' => 0,
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function new_company_has_no_threads()
+    {
+        $this->actingAs($this->generateSomeCompany());
 
         $this->getJson(route('api.messenger.threads.index'))
             ->assertStatus(200)
@@ -138,16 +155,14 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function view_individual_private_thread()
     {
-        $thread = Thread::private()->first();
-
         $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.threads.show', [
-            'thread' => $thread->id,
+            'thread' => $this->private->id,
         ]))
             ->assertStatus(200)
             ->assertJson([
-                'id' => $thread->id,
+                'id' => $this->private->id,
                 'type' => 1,
                 'type_verbose' => 'PRIVATE',
                 'group' => false,
@@ -170,16 +185,14 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function view_individual_group_thread()
     {
-        $thread = Thread::group()->first();
-
         $this->actingAs(UserModel::find(1));
 
         $this->getJson(route('api.messenger.threads.show', [
-            'thread' => $thread->id,
+            'thread' => $this->group->id,
         ]))
             ->assertStatus(200)
             ->assertJson([
-                'id' => $thread->id,
+                'id' => $this->group->id,
                 'type' => 2,
                 'type_verbose' => 'GROUP',
                 'group' => true,

@@ -7,7 +7,6 @@ use RTippin\Messenger\Broadcasting\FriendCancelledBroadcast;
 use RTippin\Messenger\Broadcasting\FriendRequestBroadcast;
 use RTippin\Messenger\Events\FriendCancelledEvent;
 use RTippin\Messenger\Events\FriendRequestEvent;
-use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Models\SentFriend;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\stubs\UserModel;
