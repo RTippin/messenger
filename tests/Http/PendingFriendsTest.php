@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\FriendApprovedBroadcast;
 use RTippin\Messenger\Broadcasting\FriendDeniedBroadcast;
 use RTippin\Messenger\Contracts\FriendDriver;
@@ -34,7 +35,7 @@ class PendingFriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_deny_pending_request()
     {
-        $this->expectsEvents([
+        Event::fake([
             FriendDeniedBroadcast::class,
             FriendDeniedEvent::class,
         ]);
@@ -55,14 +56,28 @@ class PendingFriendsTest extends FeatureTestCase
 
         $this->assertDatabaseMissing('pending_friends', [
             'sender_id' => 1,
+            'sender_type' => self::UserModelType,
             'recipient_id' => 2,
+            'recipient_type' => self::UserModelType,
         ]);
+
+        Event::assertDispatched(function (FriendDeniedBroadcast $event) use($pending) {
+            $this->assertContains('private-user.1', $event->broadcastOn());
+            $this->assertArrayHasKey('sent_friend_id', $event->broadcastWith());
+            $this->assertEquals($pending->id, $event->broadcastWith()['sent_friend_id']);
+
+            return true;
+        });
+
+        Event::assertDispatched(function (FriendDeniedEvent $event) use($pending) {
+            return $event->friend->id === $pending->id;
+        });
     }
 
     /** @test */
     public function user_can_accept_pending_request()
     {
-        $this->expectsEvents([
+        Event::fake([
             FriendApprovedBroadcast::class,
             FriendApprovedEvent::class,
         ]);
@@ -83,19 +98,33 @@ class PendingFriendsTest extends FeatureTestCase
 
         $this->assertDatabaseMissing('pending_friends', [
             'sender_id' => 1,
+            'sender_type' => self::UserModelType,
             'recipient_id' => 2,
+            'recipient_type' => self::UserModelType,
         ]);
 
         $this->assertDatabaseHas('friends', [
             'owner_id' => 1,
+            'owner_type' => self::UserModelType,
             'party_id' => 2,
+            'party_type' => self::UserModelType,
         ]);
 
         $this->assertDatabaseHas('friends', [
             'owner_id' => 2,
+            'owner_type' => self::UserModelType,
             'party_id' => 1,
+            'party_type' => self::UserModelType,
         ]);
 
         $this->assertEquals(1, resolve(FriendDriver::class)->friendStatus(UserModel::find(1)));
+
+        Event::assertDispatched(function (FriendApprovedBroadcast $event) use($pending) {
+            $this->assertContains('private-user.1', $event->broadcastOn());
+            $this->assertArrayHasKey('sender', $event->broadcastWith());
+            $this->assertEquals('John Doe', $event->broadcastWith()['sender']['name']);
+
+            return true;
+        });
     }
 }

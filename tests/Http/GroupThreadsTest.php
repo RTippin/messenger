@@ -8,7 +8,6 @@ use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\stubs\UserModel;
