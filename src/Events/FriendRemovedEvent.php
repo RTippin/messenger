@@ -17,7 +17,7 @@ class FriendRemovedEvent
     /**
      * @var Friend|null
      */
-    private ?Friend $inverseFriend;
+    public ?Friend $inverseFriend;
 
     /**
      * Create a new event instance.

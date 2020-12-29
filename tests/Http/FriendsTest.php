@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Events\FriendRemovedEvent;
 use RTippin\Messenger\Models\Friend;
@@ -80,9 +81,7 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_remove_friend()
     {
-        $this->expectsEvents([
-            FriendRemovedEvent::class,
-        ]);
+        Event::fake();
 
         $this->actingAs(UserModel::find(1));
 
@@ -90,6 +89,12 @@ class FriendsTest extends FeatureTestCase
             'friend' => $this->friend->id,
         ]))
             ->assertSuccessful();
+
+        Event::assertDispatched(function (FriendRemovedEvent $event) {
+            $this->assertEquals($this->inverseFriend->id, $event->inverseFriend->id);
+            $this->assertEquals($this->friend->id, $event->friend->id);
+            return true;
+        });
 
         $this->assertDatabaseMissing('friends', [
             'owner_id' => 1,
@@ -111,9 +116,7 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_remove_company_friend()
     {
-        $this->expectsEvents([
-            FriendRemovedEvent::class,
-        ]);
+        Event::fake();
 
         $this->actingAs(UserModel::find(1));
 
@@ -121,6 +124,12 @@ class FriendsTest extends FeatureTestCase
             'friend' => $this->friendCompany->id,
         ]))
             ->assertSuccessful();
+
+        Event::assertDispatched(function (FriendRemovedEvent $event) {
+            $this->assertEquals($this->inverseFriendCompany->id, $event->inverseFriend->id);
+            $this->assertEquals($this->friendCompany->id, $event->friend->id);
+            return true;
+        });
 
         $this->assertDatabaseMissing('friends', [
             'owner_id' => 1,
