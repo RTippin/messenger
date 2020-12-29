@@ -6,7 +6,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\UserModel;
+use RTippin\Messenger\Tests\stubs\UserModel;
 
 class MessengerAvatarTest extends FeatureTestCase
 {

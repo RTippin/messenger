@@ -6,7 +6,7 @@ use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\UserModel;
+use RTippin\Messenger\Tests\stubs\UserModel;
 
 class ThreadsTest extends FeatureTestCase
 {

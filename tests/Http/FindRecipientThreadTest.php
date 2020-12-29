@@ -5,10 +5,12 @@ namespace RTippin\Messenger\Tests\Http;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\UserModel;
+use RTippin\Messenger\Tests\stubs\UserModel;
 
 class FindRecipientThreadTest extends FeatureTestCase
 {
+    private Thread $private;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -18,15 +20,15 @@ class FindRecipientThreadTest extends FeatureTestCase
 
     private function setupInitialThreads(): void
     {
-        $private = Thread::create(Definitions::DefaultThread);
+        $this->private = Thread::create(Definitions::DefaultThread);
 
-        $private->participants()
+        $this->private->participants()
             ->create(array_merge(Definitions::DefaultParticipant, [
                 'owner_id' => 1,
                 'owner_type' => self::UserModelType,
             ]));
 
-        $private->participants()
+        $this->private->participants()
             ->create(array_merge(Definitions::DefaultParticipant, [
                 'owner_id' => 2,
                 'owner_type' => self::UserModelType,
@@ -62,7 +64,7 @@ class FindRecipientThreadTest extends FeatureTestCase
         ]))
             ->assertStatus(200)
             ->assertJson([
-                'thread_id' => Thread::private()->first()->id,
+                'thread_id' => $this->private->id,
                 'recipient' => [
                     'provider_id' => 2,
                     'name' => 'John Doe',

@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Events\StatusHeartbeatEvent;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\UserModel;
+use RTippin\Messenger\Tests\stubs\UserModel;
 
 class StatusHeartbeatTest extends FeatureTestCase
 {

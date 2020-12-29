@@ -2,38 +2,31 @@
 
 namespace RTippin\Messenger\Tests;
 
-use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Foundation\Auth\User;
-use Illuminate\Support\Facades\Schema;
 use Orchestra\Testbench\TestCase;
-use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Contracts\Searchable;
 use RTippin\Messenger\MessengerServiceProvider;
 use RTippin\Messenger\Models\Messenger;
-use RTippin\Messenger\Traits\Messageable;
-use RTippin\Messenger\Traits\Search;
+use RTippin\Messenger\Tests\stubs\CompanyModel;
+use RTippin\Messenger\Tests\stubs\UserModel;
 
 class FeatureTestCase extends TestCase
 {
-    const UserModelType = 'RTippin\Messenger\Tests\UserModel';
+    const UserModelType = 'RTippin\Messenger\Tests\stubs\UserModel';
+
+    const CompanyModelType = 'RTippin\Messenger\Tests\stubs\CompanyModel';
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->loadLaravelMigrations([
-            '--database' => 'testbench',
-        ]);
+        $this->loadMigrationsFrom(__DIR__.'/stubs/migrations');
 
         $this->artisan('migrate', [
             '--database' => 'testbench',
         ])->run();
 
-        Schema::table('users', function (Blueprint $table) {
-            $table->string('picture')->nullable();
-        });
-
         $this->storeBaseUsers();
+
+        $this->storeBaseCompanies();
     }
 
     protected function getPackageProviders($app): array
@@ -68,6 +61,18 @@ class FeatureTestCase extends TestCase
                     'can_friend' => true,
                 ],
             ],
+            'company' => [
+                'model' => CompanyModel::class,
+                'searchable' => true,
+                'friendable' => true,
+                'devices' => false,
+                'default_avatar' => public_path('vendor/messenger/images/company.png'),
+                'provider_interactions' => [
+                    'can_message' => true,
+                    'can_search' => true,
+                    'can_friend' => true,
+                ]
+            ],
         ]);
 
         $config->set('messenger.site_name', 'Messenger-Testbench');
@@ -98,6 +103,31 @@ class FeatureTestCase extends TestCase
         ]);
     }
 
+    private function storeBaseCompanies(): void
+    {
+        $companyOne = CompanyModel::create([
+            'company_name' => 'Developers',
+            'company_email' => 'developers@example.net',
+            'password' => 'secret',
+        ]);
+
+        Messenger::create([
+            'owner_id' => $companyOne->getKey(),
+            'owner_type' => self::CompanyModelType,
+        ]);
+
+        $companyTwo = CompanyModel::create([
+            'company_name' => 'Laravel',
+            'company_email' => 'laravel@example.net',
+            'password' => 'secret',
+        ]);
+
+        Messenger::create([
+            'owner_id' => $companyTwo->getKey(),
+            'owner_type' => self::CompanyModelType,
+        ]);
+    }
+
     protected function generateJaneSmith(): UserModel
     {
         return UserModel::create([
@@ -106,19 +136,4 @@ class FeatureTestCase extends TestCase
             'password' => 'secret',
         ]);
     }
-}
-
-class UserModel extends User implements MessengerProvider, Searchable
-{
-    use Messageable;
-    use Search;
-
-    protected $table = 'users';
-
-    protected $guarded = [];
-}
-
-class OtherModel extends User
-{
-    //random model that is not a valid provider for our package
 }

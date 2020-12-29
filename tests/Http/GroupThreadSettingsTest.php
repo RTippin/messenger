@@ -8,7 +8,7 @@ use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\ThreadSettingsEvent;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\UserModel;
+use RTippin\Messenger\Tests\stubs\UserModel;
 
 class GroupThreadSettingsTest extends FeatureTestCase
 {
@@ -23,8 +23,6 @@ class GroupThreadSettingsTest extends FeatureTestCase
 
     private function setupInitialGroup(): void
     {
-        $users = UserModel::all();
-
         $this->group = Thread::create([
             'type' => 2,
             'subject' => 'First Test Group',

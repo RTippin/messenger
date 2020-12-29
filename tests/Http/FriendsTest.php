@@ -6,7 +6,7 @@ use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Events\FriendRemovedEvent;
 use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\UserModel;
+use RTippin\Messenger\Tests\stubs\UserModel;
 
 class FriendsTest extends FeatureTestCase
 {

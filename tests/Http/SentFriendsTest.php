@@ -9,7 +9,7 @@ use RTippin\Messenger\Events\FriendRequestEvent;
 use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Models\SentFriend;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\UserModel;
+use RTippin\Messenger\Tests\stubs\UserModel;
 
 class SentFriendsTest extends FeatureTestCase
 {

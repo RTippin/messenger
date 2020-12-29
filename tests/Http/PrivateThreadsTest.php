@@ -8,7 +8,7 @@ use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\UserModel;
+use RTippin\Messenger\Tests\stubs\UserModel;
 
 class PrivateThreadsTest extends FeatureTestCase
 {

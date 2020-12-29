@@ -10,7 +10,7 @@ use RTippin\Messenger\Events\ThreadAvatarEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\UserModel;
+use RTippin\Messenger\Tests\stubs\UserModel;
 
 class GroupThreadAvatarTest extends FeatureTestCase
 {
@@ -25,8 +25,6 @@ class GroupThreadAvatarTest extends FeatureTestCase
 
     private function setupInitialGroup(): void
     {
-        $users = UserModel::all();
-
         $this->group = Thread::create([
             'type' => 2,
             'subject' => 'First Test Group',
