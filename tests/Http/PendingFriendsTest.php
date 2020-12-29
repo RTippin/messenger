@@ -63,7 +63,6 @@ class PendingFriendsTest extends FeatureTestCase
 
         Event::assertDispatched(function (FriendDeniedBroadcast $event) use ($pending) {
             $this->assertContains('private-user.1', $event->broadcastOn());
-            $this->assertArrayHasKey('sent_friend_id', $event->broadcastWith());
             $this->assertEquals($pending->id, $event->broadcastWith()['sent_friend_id']);
 
             return true;
@@ -121,8 +120,14 @@ class PendingFriendsTest extends FeatureTestCase
 
         Event::assertDispatched(function (FriendApprovedBroadcast $event) use ($pending) {
             $this->assertContains('private-user.1', $event->broadcastOn());
-            $this->assertArrayHasKey('sender', $event->broadcastWith());
             $this->assertEquals('John Doe', $event->broadcastWith()['sender']['name']);
+
+            return true;
+        });
+
+        Event::assertDispatched(function (FriendApprovedEvent $event) {
+            $this->assertEquals(2, $event->friend->owner_id);
+            $this->assertEquals(1, $event->inverseFriend->owner_id);
 
             return true;
         });

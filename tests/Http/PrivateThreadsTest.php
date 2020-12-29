@@ -2,11 +2,9 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\NewThreadEvent;
-use RTippin\Messenger\Models\Friend;
-use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\stubs\UserModel;
 
@@ -21,19 +19,10 @@ class PrivateThreadsTest extends FeatureTestCase
 
     private function setupInitialThreads(): void
     {
-        $private = Thread::create(Definitions::DefaultThread);
-
-        $private->participants()
-            ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => 1,
-                'owner_type' => self::UserModelType,
-            ]));
-
-        $private->participants()
-            ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => 2,
-                'owner_type' => self::UserModelType,
-            ]));
+        $this->makePrivateThread(
+            UserModel::find(1),
+            UserModel::find(2)
+        );
     }
 
     /** @test */
@@ -53,7 +42,7 @@ class PrivateThreadsTest extends FeatureTestCase
     /** @test */
     public function creating_new_private_thread_with_non_friend_is_pending()
     {
-        $this->expectsEvents([
+        Event::fake([
             NewThreadBroadcast::class,
             NewThreadEvent::class,
         ]);
@@ -87,33 +76,45 @@ class PrivateThreadsTest extends FeatureTestCase
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $otherUser->getKey(),
+            'owner_type' => self::UserModelType,
             'pending' => true,
         ]);
+
+        $this->assertDatabaseHas('participants', [
+            'owner_id' => 1,
+            'owner_type' => self::UserModelType,
+            'pending' => false,
+        ]);
+
+        Event::assertDispatched(function (NewThreadBroadcast $event) use ($otherUser) {
+            $this->assertContains('private-user.'.$otherUser->getKey(), $event->broadcastOn());
+            $this->assertTrue($event->broadcastWith()['thread']['pending']);
+
+            return true;
+        });
+
+        Event::assertDispatched(function (NewThreadEvent $event) {
+            $this->assertEquals(1, $event->provider->getKey());
+            $this->assertEquals(1, $event->thread->type);
+
+            return true;
+        });
     }
 
     /** @test */
     public function creating_new_private_thread_with_friend_is_not_pending()
     {
-        $this->expectsEvents([
+        Event::fake([
             NewThreadBroadcast::class,
             NewThreadEvent::class,
         ]);
 
         $otherUser = $this->generateJaneSmith();
 
-        Friend::create([
-            'owner_id' => 1,
-            'owner_type' => self::UserModelType,
-            'party_id' => $otherUser->getKey(),
-            'party_type' => self::UserModelType,
-        ]);
-
-        Friend::create([
-            'owner_id' => $otherUser->getKey(),
-            'owner_type' => self::UserModelType,
-            'party_id' => 1,
-            'party_type' => self::UserModelType,
-        ]);
+        $this->makeFriends(
+            UserModel::find(1),
+            $otherUser
+        );
 
         $this->actingAs(UserModel::find(1));
 
@@ -146,8 +147,89 @@ class PrivateThreadsTest extends FeatureTestCase
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $otherUser->getKey(),
+            'owner_type' => self::UserModelType,
             'pending' => false,
         ]);
+
+        $this->assertDatabaseHas('participants', [
+            'owner_id' => 1,
+            'owner_type' => self::UserModelType,
+            'pending' => false,
+        ]);
+
+        Event::assertDispatched(function (NewThreadBroadcast $event) use ($otherUser) {
+            $this->assertContains('private-user.'.$otherUser->getKey(), $event->broadcastOn());
+            $this->assertFalse($event->broadcastWith()['thread']['pending']);
+
+            return true;
+        });
+
+        Event::assertDispatched(function (NewThreadEvent $event) {
+            $this->assertEquals(1, $event->provider->getKey());
+            $this->assertEquals(1, $event->thread->type);
+
+            return true;
+        });
+    }
+
+    /** @test */
+    public function creating_new_private_thread_with_non_friend_company_is_pending()
+    {
+        Event::fake([
+            NewThreadBroadcast::class,
+            NewThreadEvent::class,
+        ]);
+
+        $this->actingAs(UserModel::find(1));
+
+        $this->postJson(route('api.messenger.privates.store'), [
+            'message' => 'Hello World!',
+            'recipient_alias' => 'company',
+            'recipient_id' => 1,
+        ])
+            ->assertSuccessful()
+            ->assertJson([
+                'type' => 1,
+                'type_verbose' => 'PRIVATE',
+                'pending' => true,
+                'group' => false,
+                'unread' => true,
+                'name' => 'Developers',
+                'options' => [
+                    'awaiting_my_approval' => false,
+                ],
+                'resources' => [
+                    'latest_message' => [
+                        'body' => 'Hello World!',
+                    ],
+                ],
+            ]);
+
+        $this->assertDatabaseHas('participants', [
+            'owner_id' => 1,
+            'owner_type' => self::CompanyModelType,
+            'pending' => true,
+        ]);
+
+        $this->assertDatabaseHas('participants', [
+            'owner_id' => 1,
+            'owner_type' => self::UserModelType,
+            'pending' => false,
+        ]);
+
+        Event::assertDispatched(function (NewThreadBroadcast $event) {
+            $this->assertContains('private-company.1', $event->broadcastOn());
+            $this->assertTrue($event->broadcastWith()['thread']['pending']);
+
+            return true;
+        });
+
+        Event::assertDispatched(function (NewThreadEvent $event) {
+            $this->assertEquals(1, $event->provider->getKey());
+            $this->assertEquals(1, $event->thread->type);
+
+            return true;
+        });
     }
 
     /** @test */

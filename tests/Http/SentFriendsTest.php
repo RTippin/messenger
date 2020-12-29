@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\FriendCancelledBroadcast;
 use RTippin\Messenger\Broadcasting\FriendRequestBroadcast;
 use RTippin\Messenger\Events\FriendCancelledEvent;
@@ -23,7 +24,7 @@ class SentFriendsTest extends FeatureTestCase
     /** @test */
     public function new_user_has_no_sent_friends()
     {
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->generateJaneSmith());
 
         $this->getJson(route('api.messenger.friends.sent.index'))
             ->assertStatus(200)
@@ -31,9 +32,9 @@ class SentFriendsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function user_can_friend_another()
+    public function user_can_friend_another_user()
     {
-        $this->expectsEvents([
+        Event::fake([
             FriendRequestBroadcast::class,
             FriendRequestEvent::class,
         ]);
@@ -47,12 +48,75 @@ class SentFriendsTest extends FeatureTestCase
             ->assertStatus(201)
             ->assertJson([
                 'sender_id' => 1,
+                'sender_type' => self::UserModelType,
             ]);
 
         $this->assertDatabaseHas('pending_friends', [
             'sender_id' => 1,
+            'sender_type' => self::UserModelType,
             'recipient_id' => 2,
+            'recipient_type' => self::UserModelType,
         ]);
+
+        Event::assertDispatched(function (FriendRequestBroadcast $event) {
+            $this->assertContains('private-user.2', $event->broadcastOn());
+            $this->assertEquals(1, $event->broadcastWith()['sender_id']);
+            $this->assertEquals('Richard Tippin', $event->broadcastWith()['sender']['name']);
+
+            return true;
+        });
+
+        Event::assertDispatched(function (FriendRequestEvent $event) {
+            $this->assertEquals(1, $event->friend->sender_id);
+            $this->assertEquals(2, $event->friend->recipient_id);
+            $this->assertEquals(self::UserModelType, $event->friend->recipient_type);
+
+            return true;
+        });
+    }
+
+    /** @test */
+    public function user_can_friend_another_company()
+    {
+        Event::fake([
+            FriendRequestBroadcast::class,
+            FriendRequestEvent::class,
+        ]);
+
+        $this->actingAs(UserModel::find(1));
+
+        $this->postJson(route('api.messenger.friends.sent.store'), [
+            'recipient_id' => 1,
+            'recipient_alias' => 'company',
+        ])
+            ->assertStatus(201)
+            ->assertJson([
+                'sender_id' => 1,
+                'sender_type' => self::UserModelType,
+            ]);
+
+        $this->assertDatabaseHas('pending_friends', [
+            'sender_id' => 1,
+            'sender_type' => self::UserModelType,
+            'recipient_id' => 1,
+            'recipient_type' => self::CompanyModelType,
+        ]);
+
+        Event::assertDispatched(function (FriendRequestBroadcast $event) {
+            $this->assertContains('private-company.1', $event->broadcastOn());
+            $this->assertEquals(1, $event->broadcastWith()['sender_id']);
+            $this->assertEquals('Richard Tippin', $event->broadcastWith()['sender']['name']);
+
+            return true;
+        });
+
+        Event::assertDispatched(function (FriendRequestEvent $event) {
+            $this->assertEquals(1, $event->friend->sender_id);
+            $this->assertEquals(1, $event->friend->recipient_id);
+            $this->assertEquals(self::CompanyModelType, $event->friend->recipient_type);
+
+            return true;
+        });
     }
 
     /** @test */
@@ -82,7 +146,7 @@ class SentFriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_cancel_sent_request()
     {
-        $this->expectsEvents([
+        Event::fake([
             FriendCancelledBroadcast::class,
             FriendCancelledEvent::class,
         ]);
@@ -97,14 +161,27 @@ class SentFriendsTest extends FeatureTestCase
         $this->actingAs(UserModel::find(1));
 
         $this->deleteJson(route('api.messenger.friends.sent.destroy', [
-            'sent' => $sent->getKey(),
+            'sent' => $sent->id,
         ]))
             ->assertSuccessful();
 
         $this->assertDatabaseMissing('pending_friends', [
             'sender_id' => 1,
+            'sender_type' => self::UserModelType,
             'recipient_id' => 2,
+            'recipient_type' => self::UserModelType,
         ]);
+
+        Event::assertDispatched(function (FriendCancelledBroadcast $event) use ($sent) {
+            $this->assertContains('private-user.2', $event->broadcastOn());
+            $this->assertEquals($sent->id, $event->broadcastWith()['pending_friend_id']);
+
+            return true;
+        });
+
+        Event::assertDispatched(function (FriendCancelledEvent $event) use ($sent) {
+            return $sent->id === $event->friend->id;
+        });
     }
 
     /** @test */
@@ -115,21 +192,12 @@ class SentFriendsTest extends FeatureTestCase
             FriendRequestEvent::class,
         ]);
 
+        $this->makeFriends(
+            UserModel::find(1),
+            UserModel::find(2)
+        );
+
         $this->actingAs(UserModel::find(1));
-
-        Friend::create([
-            'owner_id' => 1,
-            'owner_type' => self::UserModelType,
-            'party_id' => 2,
-            'party_type' => self::UserModelType,
-        ]);
-
-        Friend::create([
-            'owner_id' => 2,
-            'owner_type' => self::UserModelType,
-            'party_id' => 1,
-            'party_type' => self::UserModelType,
-        ]);
 
         $this->postJson(route('api.messenger.friends.sent.store'), [
             'recipient_id' => 2,

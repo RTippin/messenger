@@ -70,7 +70,6 @@ class LeaveGroupThreadTest extends FeatureTestCase
 
         Event::assertDispatched(function (ThreadLeftBroadcast $event) {
             $this->assertContains('private-user.2', $event->broadcastOn());
-            $this->assertArrayHasKey('thread_id', $event->broadcastWith());
             $this->assertEquals($this->group->id, $event->broadcastWith()['thread_id']);
 
             return true;
@@ -129,7 +128,6 @@ class LeaveGroupThreadTest extends FeatureTestCase
 
         Event::assertDispatched(function (ThreadLeftBroadcast $event) {
             $this->assertContains('private-user.1', $event->broadcastOn());
-            $this->assertArrayHasKey('thread_id', $event->broadcastWith());
             $this->assertEquals($this->group->id, $event->broadcastWith()['thread_id']);
 
             return true;
@@ -177,7 +175,6 @@ class LeaveGroupThreadTest extends FeatureTestCase
 
         Event::assertDispatched(function (ThreadLeftBroadcast $event) {
             $this->assertContains('private-user.1', $event->broadcastOn());
-            $this->assertArrayHasKey('thread_id', $event->broadcastWith());
             $this->assertEquals($this->group->id, $event->broadcastWith()['thread_id']);
 
             return true;

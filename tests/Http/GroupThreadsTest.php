@@ -269,7 +269,6 @@ class GroupThreadsTest extends FeatureTestCase
 
         Event::assertDispatched(function (NewThreadBroadcast $event) {
             $this->assertContains('private-user.2', $event->broadcastOn());
-            $this->assertArrayHasKey('thread', $event->broadcastWith());
             $this->assertContains('Test Group Participants', $event->broadcastWith()['thread']);
 
             return true;
