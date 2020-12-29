@@ -10,6 +10,8 @@ use RTippin\Messenger\Tests\stubs\UserModel;
 
 class FeatureTestCase extends TestCase
 {
+    use HelperTrait;
+
     const UserModelType = 'RTippin\Messenger\Tests\stubs\UserModel';
 
     const CompanyModelType = 'RTippin\Messenger\Tests\stubs\CompanyModel';
@@ -125,24 +127,6 @@ class FeatureTestCase extends TestCase
         Messenger::create([
             'owner_id' => $companyTwo->getKey(),
             'owner_type' => self::CompanyModelType,
-        ]);
-    }
-
-    protected function generateJaneSmith(): UserModel
-    {
-        return UserModel::create([
-            'name' => 'Jane Smith',
-            'email' => 'smith@example.net',
-            'password' => 'secret',
-        ]);
-    }
-
-    protected function generateSomeCompany(): CompanyModel
-    {
-        return CompanyModel::create([
-            'company_name' => 'Some Company',
-            'company_email' => 'company@example.net',
-            'password' => 'secret',
         ]);
     }
 }
