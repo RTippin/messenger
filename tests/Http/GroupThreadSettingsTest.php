@@ -153,10 +153,17 @@ class GroupThreadSettingsTest extends FeatureTestCase
                 'knocks' => false,
             ]);
 
-        Event::assertDispatched(ThreadSettingsBroadcast::class);
+        Event::assertDispatched(function (ThreadSettingsBroadcast $event) {
+            $this->assertContains('First Test Group', $event->broadcastWith());
+            $this->assertContains('presence-thread.'.$this->group->id, $event->broadcastOn());
+            return true;
+        });
 
         Event::assertDispatched(function (ThreadSettingsEvent $event) {
-            return $event->nameChanged === false;
+            $this->assertEquals(1, $event->provider->getKey());
+            $this->assertEquals($this->group->id, $event->thread->id);
+            $this->assertFalse($event->nameChanged);
+            return true;
         });
     }
 
@@ -184,10 +191,17 @@ class GroupThreadSettingsTest extends FeatureTestCase
                 'knocks' => false,
             ]);
 
-        Event::assertDispatched(ThreadSettingsBroadcast::class);
+        Event::assertDispatched(function (ThreadSettingsBroadcast $event) {
+            $this->assertContains('Second Test Group', $event->broadcastWith());
+            $this->assertContains('presence-thread.'.$this->group->id, $event->broadcastOn());
+            return true;
+        });
 
         Event::assertDispatched(function (ThreadSettingsEvent $event) {
-            return $event->nameChanged === true;
+            $this->assertEquals(1, $event->provider->getKey());
+            $this->assertEquals($this->group->id, $event->thread->id);
+            $this->assertTrue($event->nameChanged);
+            return true;
         });
     }
 }

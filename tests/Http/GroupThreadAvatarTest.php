@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Broadcasting\ThreadAvatarBroadcast;
 use RTippin\Messenger\Definitions;
@@ -64,6 +65,21 @@ class GroupThreadAvatarTest extends FeatureTestCase
 
         Storage::disk(Messenger::getThreadStorage('disk'))
             ->assertExists($this->group->getAvatarPath());
+    }
+
+    private function assertEventsDispatched(): void
+    {
+        Event::assertDispatched(function (ThreadAvatarBroadcast $event) {
+            $this->assertContains('First Test Group', $event->broadcastWith());
+            $this->assertContains('presence-thread.'.$this->group->id, $event->broadcastOn());
+            return true;
+        });
+
+        Event::assertDispatched(function (ThreadAvatarEvent $event) {
+            $this->assertEquals(1, $event->provider->getKey());
+            $this->assertEquals($this->group->id, $event->thread->id);
+            return true;
+        });
     }
 
     /** @test */
@@ -135,10 +151,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function update_group_avatar_with_new_default_expects_events()
     {
-        $this->expectsEvents([
-            ThreadAvatarBroadcast::class,
-            ThreadAvatarEvent::class,
-        ]);
+        Event::fake();
 
         $this->actingAs(UserModel::find(1));
 
@@ -150,6 +163,8 @@ class GroupThreadAvatarTest extends FeatureTestCase
             'default' => '1.png',
         ])
             ->assertSuccessful();
+
+        $this->assertEventsDispatched();
 
         $this->assertEquals('1.png', $this->group->fresh()->image);
     }
@@ -177,10 +192,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function group_avatar_upload_stores_photo_when_previously_default()
     {
-        $this->expectsEvents([
-            ThreadAvatarBroadcast::class,
-            ThreadAvatarEvent::class,
-        ]);
+        Event::fake();
 
         Storage::fake(Messenger::getThreadStorage('disk'));
 
@@ -193,6 +205,8 @@ class GroupThreadAvatarTest extends FeatureTestCase
         ])
             ->assertSuccessful();
 
+        $this->assertEventsDispatched();
+
         Storage::disk(Messenger::getThreadStorage('disk'))
             ->assertExists($this->group->fresh()->getAvatarPath());
     }
@@ -200,10 +214,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function group_avatar_upload_stores_photo_and_removes_old()
     {
-        $this->expectsEvents([
-            ThreadAvatarBroadcast::class,
-            ThreadAvatarEvent::class,
-        ]);
+        Event::fake();
 
         $this->setupGroupAvatar();
 
@@ -215,6 +226,8 @@ class GroupThreadAvatarTest extends FeatureTestCase
             'image' => UploadedFile::fake()->image('avatar2.jpg'),
         ])
             ->assertSuccessful();
+
+        $this->assertEventsDispatched();
 
         Storage::disk(Messenger::getThreadStorage('disk'))
             ->assertExists($this->group->fresh()->getAvatarPath());
@@ -228,10 +241,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function update_group_avatar_to_default_removes_old()
     {
-        $this->expectsEvents([
-            ThreadAvatarBroadcast::class,
-            ThreadAvatarEvent::class,
-        ]);
+        Event::fake();
 
         $this->setupGroupAvatar();
 
@@ -243,6 +253,8 @@ class GroupThreadAvatarTest extends FeatureTestCase
             'default' => '2.png',
         ])
             ->assertSuccessful();
+
+        $this->assertEventsDispatched();
 
         Storage::disk(Messenger::getAvatarStorage('disk'))
             ->assertMissing($this->group->getStorageDirectory().'/avatar/avatar.jpg');
