@@ -23,6 +23,39 @@ class ArchivePrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
+    public function user_can_check_archive_private_thread()
+    {
+        $this->actingAs($this->userTippin());
+
+        $this->getJson(route('api.messenger.threads.archive.check', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJson([
+                'name' => 'John Doe',
+                'group' => false,
+                'messages_count' => 0,
+                'participants_count' => 2,
+                'calls_count' => 0,
+            ]);
+    }
+
+    /** @test */
+    public function user_forbidden_to_check_archive_private_thread_with_active_call()
+    {
+        $tippin = $this->userTippin();
+
+        $this->makeActiveCallOnThread($this->private, $tippin);
+
+        $this->actingAs($tippin);
+
+        $this->getJson(route('api.messenger.threads.archive.check', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function user_one_can_archive_private_thread()
     {
         $tippin = $this->userTippin();
