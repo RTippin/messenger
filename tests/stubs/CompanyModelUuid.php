@@ -7,14 +7,20 @@ use Illuminate\Foundation\Auth\User;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Searchable;
 use RTippin\Messenger\Traits\Messageable;
+use RTippin\Messenger\Traits\Uuids;
 
-class CompanyModel extends User implements MessengerProvider, Searchable
+class CompanyModelUuid extends User implements MessengerProvider, Searchable
 {
     use Messageable;
+    use Uuids;
 
     protected $table = 'companies';
 
     protected $guarded = [];
+
+    public $incrementing = false;
+
+    public $keyType = 'string';
 
     public function name(): string
     {

@@ -7,8 +7,6 @@ use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Events\FriendRemovedEvent;
 use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\stubs\CompanyModel;
-use RTippin\Messenger\Tests\stubs\UserModel;
 
 class FriendsTest extends FeatureTestCase
 {
@@ -30,16 +28,16 @@ class FriendsTest extends FeatureTestCase
     private function setupFriendship()
     {
         $friends = $this->makeFriends(
-            UserModel::find(1),
-            UserModel::find(2)
+            $this->userTippin(),
+            $this->userDoe()
         );
 
         $this->friend = $friends[0];
         $this->inverseFriend = $friends[1];
 
         $friendsCompany = $this->makeFriends(
-            UserModel::find(1),
-            CompanyModel::find(1)
+            $this->userTippin(),
+            $this->companyDevelopers()
         );
 
         $this->friendCompany = $friendsCompany[0];
@@ -81,11 +79,15 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_remove_friend()
     {
+        $tippin = $this->userTippin();
+
+        $doe = $this->userDoe();
+
         Event::fake([
             FriendRemovedEvent::class,
         ]);
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($tippin);
 
         $this->deleteJson(route('api.messenger.friends.destroy', [
             'friend' => $this->friend->id,
@@ -100,30 +102,34 @@ class FriendsTest extends FeatureTestCase
         });
 
         $this->assertDatabaseMissing('friends', [
-            'owner_id' => 1,
-            'owner_type' => self::UserModelType,
-            'party_id' => 2,
-            'party_type' => self::UserModelType,
+            'owner_id' => $tippin->getKey(),
+            'owner_type' => get_class($tippin),
+            'party_id' => $doe->getKey(),
+            'party_type' => get_class($doe),
         ]);
 
         $this->assertDatabaseMissing('friends', [
-            'owner_id' => 2,
-            'owner_type' => self::UserModelType,
-            'party_id' => 1,
-            'party_type' => self::UserModelType,
+            'owner_id' => $doe->getKey(),
+            'owner_type' => get_class($doe),
+            'party_id' => $tippin->getKey(),
+            'party_type' => get_class($tippin),
         ]);
 
-        $this->assertEquals(0, resolve(FriendDriver::class)->friendStatus(UserModel::find(2)));
+        $this->assertEquals(0, resolve(FriendDriver::class)->friendStatus($doe));
     }
 
     /** @test */
     public function user_can_remove_company_friend()
     {
+        $tippin = $this->userTippin();
+
+        $developers = $this->companyDevelopers();
+
         Event::fake([
             FriendRemovedEvent::class,
         ]);
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($tippin);
 
         $this->deleteJson(route('api.messenger.friends.destroy', [
             'friend' => $this->friendCompany->id,
@@ -138,26 +144,30 @@ class FriendsTest extends FeatureTestCase
         });
 
         $this->assertDatabaseMissing('friends', [
-            'owner_id' => 1,
-            'owner_type' => self::UserModelType,
-            'party_id' => 1,
-            'party_type' => self::CompanyModelType,
+            'owner_id' => $tippin->getKey(),
+            'owner_type' => get_class($tippin),
+            'party_id' => $developers->getKey(),
+            'party_type' => get_class($developers),
         ]);
 
         $this->assertDatabaseMissing('friends', [
-            'owner_id' => 1,
-            'owner_type' => self::CompanyModelType,
-            'party_id' => 1,
-            'party_type' => self::UserModelType,
+            'owner_id' => $developers->getKey(),
+            'owner_type' => get_class($developers),
+            'party_id' => $tippin->getKey(),
+            'party_type' => get_class($tippin),
         ]);
 
-        $this->assertEquals(0, resolve(FriendDriver::class)->friendStatus(CompanyModel::find(1)));
+        $this->assertEquals(0, resolve(FriendDriver::class)->friendStatus($developers));
     }
 
     /** @test */
     public function user_can_view_friend()
     {
-        $this->actingAs(UserModel::find(1));
+        $tippin = $this->userTippin();
+
+        $doe = $this->userDoe();
+
+        $this->actingAs($tippin);
 
         $this->getJson(route('api.messenger.friends.show', [
             'friend' => $this->friend->id,
@@ -165,10 +175,10 @@ class FriendsTest extends FeatureTestCase
             ->assertSuccessful()
             ->assertJson([
                 'id' => $this->friend->id,
-                'owner_id' => 1,
-                'owner_type' => self::UserModelType,
-                'party_id' => 2,
-                'party_type' => self::UserModelType,
+                'owner_id' => $tippin->getKey(),
+                'owner_type' => get_class($tippin),
+                'party_id' => $doe->getKey(),
+                'party_type' => get_class($doe),
                 'party' => [
                     'provider_id' => 2,
                     'provider_alias' => 'user',
@@ -180,7 +190,11 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_view_company_friend()
     {
-        $this->actingAs(UserModel::find(1));
+        $tippin = $this->userTippin();
+
+        $developers = $this->companyDevelopers();
+
+        $this->actingAs($tippin);
 
         $this->getJson(route('api.messenger.friends.show', [
             'friend' => $this->friendCompany->id,
@@ -188,12 +202,12 @@ class FriendsTest extends FeatureTestCase
             ->assertSuccessful()
             ->assertJson([
                 'id' => $this->friendCompany->id,
-                'owner_id' => 1,
-                'owner_type' => self::UserModelType,
-                'party_id' => 1,
-                'party_type' => self::CompanyModelType,
+                'owner_id' => $tippin->getKey(),
+                'owner_type' => get_class($tippin),
+                'party_id' => $developers->getKey(),
+                'party_type' => get_class($developers),
                 'party' => [
-                    'provider_id' => 1,
+                    'provider_id' => $developers->getKey(),
                     'provider_alias' => 'company',
                     'name' => 'Developers',
                 ],
@@ -207,7 +221,7 @@ class FriendsTest extends FeatureTestCase
             FriendRemovedEvent::class,
         ]);
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->deleteJson(route('api.messenger.friends.destroy', [
             'friend' => $this->inverseFriend->id,
@@ -218,7 +232,7 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function user_cannot_view_inverse_friend()
     {
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.friends.show', [
             'friend' => $this->inverseFriend->id,
@@ -233,7 +247,7 @@ class FriendsTest extends FeatureTestCase
             FriendRemovedEvent::class,
         ]);
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->deleteJson(route('api.messenger.friends.destroy', [
             'friend' => $this->inverseFriendCompany->id,
@@ -244,7 +258,7 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function user_cannot_view_inverse_company_friend()
     {
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.friends.show', [
             'friend' => $this->inverseFriendCompany->id,

@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\stubs\CompanyModel;
 use RTippin\Messenger\Tests\stubs\UserModel;
 
 class FindRecipientThreadTest extends FeatureTestCase
@@ -23,20 +22,20 @@ class FindRecipientThreadTest extends FeatureTestCase
     private function setupInitialThreads(): void
     {
         $this->private = $this->makePrivateThread(
-            UserModel::find(1),
-            UserModel::find(2)
+            $this->userTippin(),
+            $this->userDoe()
         );
 
         $this->privateWithCompany = $this->makePrivateThread(
-            UserModel::find(1),
-            CompanyModel::find(1)
+            $this->userTippin(),
+            $this->companyDevelopers()
         );
     }
 
     /** @test */
     public function private_thread_locator_returns_not_found_on_invalid_user()
     {
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.privates.locate', [
             'alias' => 'user',
@@ -54,17 +53,19 @@ class FindRecipientThreadTest extends FeatureTestCase
     /** @test */
     public function private_thread_locator_returns_user_with_existing_thread_id()
     {
-        $this->actingAs(UserModel::find(1));
+        $doe = $this->userDoe();
+
+        $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.privates.locate', [
             'alias' => 'user',
-            'id' => 2,
+            'id' => $doe->getKey(),
         ]))
             ->assertStatus(200)
             ->assertJson([
                 'thread_id' => $this->private->id,
                 'recipient' => [
-                    'provider_id' => 2,
+                    'provider_id' => $doe->getKey(),
                     'provider_alias' => 'user',
                     'name' => 'John Doe',
                 ],
@@ -118,7 +119,7 @@ class FindRecipientThreadTest extends FeatureTestCase
     {
         $otherCompany = $this->generateSomeCompany();
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.privates.locate', [
             'alias' => 'company',
