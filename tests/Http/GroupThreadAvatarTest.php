@@ -80,34 +80,6 @@ class GroupThreadAvatarTest extends FeatureTestCase
     }
 
     /** @test */
-    public function update_group_avatar_validates_invalid_defaults()
-    {
-        $this->actingAs($this->userTippin());
-
-        $this->postJson(route('api.messenger.threads.avatar.update', [
-            'thread' => $this->group->id,
-        ]), [
-            'default' => '7.png',
-        ])
-            ->assertJsonValidationErrors('default');
-
-        $this->postJson(route('api.messenger.threads.avatar.update', [
-            'thread' => $this->group->id,
-        ]), [
-            'default' => null,
-        ])
-            ->assertJsonValidationErrors('default');
-
-        $this->postJson(route('api.messenger.threads.avatar.update', [
-            'thread' => $this->group->id,
-        ]))
-            ->assertJsonValidationErrors([
-                'default',
-                'image',
-            ]);
-    }
-
-    /** @test */
     public function update_group_avatar_without_changes_expects_no_events()
     {
         $this->doesntExpectEvents([
@@ -151,26 +123,6 @@ class GroupThreadAvatarTest extends FeatureTestCase
         $this->assertEventsDispatched($tippin);
 
         $this->assertEquals('1.png', $this->group->fresh()->image);
-    }
-
-    /** @test */
-    public function group_avatar_upload_validation_checks_size_and_mime()
-    {
-        $this->actingAs($this->userTippin());
-
-        $this->postJson(route('api.messenger.threads.avatar.update', [
-            'thread' => $this->group->id,
-        ]), [
-            'image' => UploadedFile::fake()->create('movie.mov', 5000000, 'video/quicktime'),
-        ])
-            ->assertJsonValidationErrors('image');
-
-        $this->postJson(route('api.messenger.threads.avatar.update', [
-            'thread' => $this->group->id,
-        ]), [
-            'image' => UploadedFile::fake()->create('image.jpg', 5000000, 'image/jpeg'),
-        ])
-            ->assertJsonValidationErrors('image');
     }
 
     /** @test */
@@ -259,5 +211,66 @@ class GroupThreadAvatarTest extends FeatureTestCase
             ->assertMissing($this->group->getStorageDirectory().'/avatar/avatar.jpg');
 
         $this->assertEquals('2.png', $this->group->fresh()->image);
+    }
+
+    /**
+     * @test
+     * @dataProvider avatarDefaultValidation
+     * @param $defaultValue
+     */
+    public function update_group_avatar_default_validates_request($defaultValue)
+    {
+        $this->actingAs($this->userTippin());
+
+        $this->postJson(route('api.messenger.threads.avatar.update', [
+            'thread' => $this->group->id,
+        ]), [
+            'default' => $defaultValue,
+        ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('default');
+    }
+
+    public function avatarDefaultValidation(): array
+    {
+        return [
+            'Default cannot be empty' => [''],
+            'Default cannot be integer' => [5],
+            'Default cannot be null' => [null],
+            'Default cannot be an array' => [[1, 2]],
+            'Default cannot be 0.png' => ['0.png'],
+            'Default must be between (1-5).png' => ['6.png'],
+        ];
+    }
+
+    /**
+     * @test
+     * @dataProvider avatarFileValidation
+     * @param $avatarValue
+     */
+    public function group_avatar_upload_validates_request($avatarValue)
+    {
+        $this->actingAs($this->userTippin());
+
+        $this->postJson(route('api.messenger.threads.avatar.update', [
+            'thread' => $this->group->id,
+        ]), [
+            'image' => $avatarValue,
+        ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('image');
+    }
+
+    public function avatarFileValidation(): array
+    {
+        return [
+            'Avatar cannot be empty' => [''],
+            'Avatar cannot be integer' => [5],
+            'Avatar cannot be null' => [null],
+            'Avatar cannot be an array' => [[1, 2]],
+            'Avatar must be image format' => [UploadedFile::fake()->create('movie.mov', 5000000, 'video/quicktime')],
+            'Avatar must be under 5mb' => [UploadedFile::fake()->create('image.jpg', 5000000, 'image/jpeg')],
+            'Avatar cannot be a pdf' => [UploadedFile::fake()->create('test.pdf', 5000, 'application/pdf')],
+        ];
     }
 }

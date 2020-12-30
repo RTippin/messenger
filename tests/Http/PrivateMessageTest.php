@@ -110,7 +110,7 @@ class PrivateMessageTest extends FeatureTestCase
             'Message cannot be empty' => ['message', ''],
             'Message cannot be integer' => ['message', 5],
             'Message cannot be null' => ['message', null],
-            'Message cannot be an array' => ['message', [1,2]],
+            'Message cannot be an array' => ['message', [1, 2]],
         ];
     }
 
@@ -120,7 +120,7 @@ class PrivateMessageTest extends FeatureTestCase
             'Temp ID cannot be empty' => ['temporary_id', ''],
             'Temp ID cannot be integer' => ['temporary_id', 5],
             'Temp ID cannot be null' => ['temporary_id', null],
-            'Temp ID cannot be an array' => ['temporary_id', [1,2]],
+            'Temp ID cannot be an array' => ['temporary_id', [1, 2]],
         ];
     }
 }
