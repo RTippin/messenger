@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -17,34 +16,15 @@ class ThreadsTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->setupInitialThreads();
-    }
-
-    private function setupInitialThreads(): void
-    {
         $tippin = $this->userTippin();
 
         $doe = $this->userDoe();
 
-        $this->group = Thread::create([
-            'type' => 2,
-            'subject' => 'Test Group',
-            'image' => '1.png',
-            'add_participants' => true,
-            'invitations' => true,
-        ]);
-
-        $this->group->participants()
-            ->create(array_merge(Definitions::DefaultAdminParticipant, [
-                'owner_id' => $tippin->getKey(),
-                'owner_type' => get_class($tippin),
-            ]));
-
-        $this->group->participants()
-            ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => $doe->getKey(),
-                'owner_type' => get_class($doe),
-            ]));
+        $this->group = $this->makeGroupThread(
+            $tippin,
+            $doe,
+            $this->companyDevelopers()
+        );
 
         $this->private = $this->makePrivateThread(
             $tippin,
@@ -115,11 +95,29 @@ class ThreadsTest extends FeatureTestCase
                 'data' => [
                     [
                         'type_verbose' => 'GROUP',
-                        'name' => 'Test Group',
+                        'name' => 'First Test Group',
                     ],
                     [
                         'type_verbose' => 'PRIVATE',
                         'name' => 'John Doe',
+                    ],
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function company_belongs_to_one_thread()
+    {
+        $this->actingAs($this->companyDevelopers());
+
+        $this->getJson(route('api.messenger.threads.index'))
+            ->assertStatus(200)
+            ->assertJsonCount(1, 'data')
+            ->assertJson([
+                'data' => [
+                    [
+                        'type_verbose' => 'GROUP',
+                        'name' => 'First Test Group',
                     ],
                 ],
             ]);
@@ -139,13 +137,7 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function user_forbidden_to_view_thread_they_do_not_belong_to()
     {
-        $group = Thread::create([
-            'type' => 2,
-            'subject' => 'Empty Group',
-            'image' => '2.png',
-            'add_participants' => true,
-            'invitations' => true,
-        ]);
+        $group = $this->makeGroupThread($this->userDoe());
 
         $this->actingAs($this->userTippin());
 
@@ -156,7 +148,7 @@ class ThreadsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function view_individual_private_thread()
+    public function user_can_view_individual_private_thread()
     {
         $this->actingAs($this->userTippin());
 
@@ -186,7 +178,7 @@ class ThreadsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function view_individual_group_thread()
+    public function user_can_view_individual_group_thread()
     {
         $this->actingAs($this->userTippin());
 
@@ -200,7 +192,7 @@ class ThreadsTest extends FeatureTestCase
                 'type_verbose' => 'GROUP',
                 'group' => true,
                 'unread' => true,
-                'name' => 'Test Group',
+                'name' => 'First Test Group',
                 'options' => [
                     'add_participants' => true,
                     'admin' => true,

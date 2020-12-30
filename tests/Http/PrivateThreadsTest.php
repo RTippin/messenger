@@ -9,21 +9,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PrivateThreadsTest extends FeatureTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->setupInitialThreads();
-    }
-
-    private function setupInitialThreads(): void
-    {
-        $this->makePrivateThread(
-            $this->userTippin(),
-            $this->userDoe()
-        );
-    }
-
     /** @test */
     public function guest_is_unauthorized()
     {
@@ -43,7 +28,7 @@ class PrivateThreadsTest extends FeatureTestCase
     {
         $tippin = $this->userTippin();
 
-        $smith = $this->generateJaneSmith();
+        $doe = $this->userDoe();
 
         Event::fake([
             NewThreadBroadcast::class,
@@ -55,7 +40,7 @@ class PrivateThreadsTest extends FeatureTestCase
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
             'recipient_alias' => 'user',
-            'recipient_id' => $smith->getKey(),
+            'recipient_id' => $doe->getKey(),
         ])
             ->assertSuccessful()
             ->assertJson([
@@ -64,7 +49,7 @@ class PrivateThreadsTest extends FeatureTestCase
                 'pending' => true,
                 'group' => false,
                 'unread' => true,
-                'name' => 'Jane Smith',
+                'name' => 'John Doe',
                 'options' => [
                     'awaiting_my_approval' => false,
                 ],
@@ -76,8 +61,8 @@ class PrivateThreadsTest extends FeatureTestCase
             ]);
 
         $this->assertDatabaseHas('participants', [
-            'owner_id' => $smith->getKey(),
-            'owner_type' => get_class($smith),
+            'owner_id' => $doe->getKey(),
+            'owner_type' => get_class($doe),
             'pending' => true,
         ]);
 
@@ -87,8 +72,8 @@ class PrivateThreadsTest extends FeatureTestCase
             'pending' => false,
         ]);
 
-        Event::assertDispatched(function (NewThreadBroadcast $event) use ($smith) {
-            $this->assertContains('private-user.'.$smith->getKey(), $event->broadcastOn());
+        Event::assertDispatched(function (NewThreadBroadcast $event) use ($doe) {
+            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
             $this->assertTrue($event->broadcastWith()['thread']['pending']);
 
             return true;
@@ -107,7 +92,7 @@ class PrivateThreadsTest extends FeatureTestCase
     {
         $tippin = $this->userTippin();
 
-        $smith = $this->generateJaneSmith();
+        $doe = $this->userDoe();
 
         Event::fake([
             NewThreadBroadcast::class,
@@ -116,7 +101,7 @@ class PrivateThreadsTest extends FeatureTestCase
 
         $this->makeFriends(
             $tippin,
-            $smith
+            $doe
         );
 
         $this->actingAs($tippin);
@@ -124,7 +109,7 @@ class PrivateThreadsTest extends FeatureTestCase
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
             'recipient_alias' => 'user',
-            'recipient_id' => $smith->getKey(),
+            'recipient_id' => $doe->getKey(),
         ])
             ->assertSuccessful()
             ->assertJson([
@@ -133,13 +118,13 @@ class PrivateThreadsTest extends FeatureTestCase
                 'pending' => false,
                 'group' => false,
                 'unread' => true,
-                'name' => 'Jane Smith',
+                'name' => 'John Doe',
                 'resources' => [
                     'latest_message' => [
                         'body' => 'Hello World!',
                     ],
                     'recipient' => [
-                        'name' => 'Jane Smith',
+                        'name' => 'John Doe',
                         'options' => [
                             'friend_status' => 1,
                             'friend_status_verbose' => 'FRIEND',
@@ -149,8 +134,8 @@ class PrivateThreadsTest extends FeatureTestCase
             ]);
 
         $this->assertDatabaseHas('participants', [
-            'owner_id' => $smith->getKey(),
-            'owner_type' => get_class($smith),
+            'owner_id' => $doe->getKey(),
+            'owner_type' => get_class($doe),
             'pending' => false,
         ]);
 
@@ -160,8 +145,8 @@ class PrivateThreadsTest extends FeatureTestCase
             'pending' => false,
         ]);
 
-        Event::assertDispatched(function (NewThreadBroadcast $event) use ($smith) {
-            $this->assertContains('private-user.'.$smith->getKey(), $event->broadcastOn());
+        Event::assertDispatched(function (NewThreadBroadcast $event) use ($doe) {
+            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
             $this->assertFalse($event->broadcastWith()['thread']['pending']);
 
             return true;
@@ -242,17 +227,26 @@ class PrivateThreadsTest extends FeatureTestCase
     /** @test */
     public function creating_new_private_forbidden_when_one_exist()
     {
+        $tippin = $this->userTippin();
+
+        $doe = $this->userDoe();
+
+        $this->makePrivateThread(
+            $tippin,
+            $doe
+        );
+
         $this->doesntExpectEvents([
             NewThreadBroadcast::class,
             NewThreadEvent::class,
         ]);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
             'recipient_alias' => 'user',
-            'recipient_id' => $this->userDoe()->getKey(),
+            'recipient_id' => $doe->getKey(),
         ])
             ->assertForbidden();
     }

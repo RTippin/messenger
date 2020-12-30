@@ -113,7 +113,7 @@ trait HelperTrait
         ];
     }
 
-    protected function makePrivateThread(MessengerProvider $one, MessengerProvider $two): Thread
+    protected function makePrivateThread(MessengerProvider $one, MessengerProvider $two, bool $pending = false): Thread
     {
         $private = Thread::create(Definitions::DefaultThread);
 
@@ -121,6 +121,7 @@ trait HelperTrait
             ->create(array_merge(Definitions::DefaultParticipant, [
                 'owner_id' => $one->getKey(),
                 'owner_type' => get_class($one),
+                'pending' => $pending,
             ]));
 
         $private->participants()

@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\ThreadApprovalBroadcast;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\ThreadApprovalEvent;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -17,28 +16,11 @@ class PrivateThreadApprovalTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->setupInitialThread();
-    }
-
-    private function setupInitialThread(): void
-    {
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
-        $this->private = Thread::create(Definitions::DefaultThread);
-
-        $this->private->participants()->create(array_merge(Definitions::DefaultParticipant, [
-            'owner_id' => $tippin->getKey(),
-            'owner_type' => get_class($tippin),
-            'pending' => true,
-        ]));
-
-        $this->private->participants()->create(array_merge(Definitions::DefaultParticipant, [
-            'owner_id' => $doe->getKey(),
-            'owner_type' => get_class($doe),
-            'pending' => false,
-        ]));
+        $this->private = $this->makePrivateThread(
+            $this->userTippin(),
+            $this->userDoe(),
+            true
+        );
     }
 
     /** @test */
@@ -125,5 +107,105 @@ class PrivateThreadApprovalTest extends FeatureTestCase
 
             return true;
         });
+    }
+
+    /** @test */
+    public function sender_cannot_deny_pending_thread()
+    {
+        $this->actingAs($this->userDoe());
+
+        $this->postJson(route('api.messenger.threads.approval', [
+            'thread' => $this->private->id,
+        ]), [
+            'approve' => false,
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function sender_cannot_approve_pending_thread()
+    {
+        $this->actingAs($this->userDoe());
+
+        $this->postJson(route('api.messenger.threads.approval', [
+            'thread' => $this->private->id,
+        ]), [
+            'approve' => true,
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function user_cannot_approve_non_pending_thread()
+    {
+        $this->makeNonPending();
+
+        $this->actingAs($this->userTippin());
+
+        $this->postJson(route('api.messenger.threads.approval', [
+            'thread' => $this->private->id,
+        ]), [
+            'approve' => true,
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function user_cannot_deny_non_pending_thread()
+    {
+        $this->makeNonPending();
+
+        $this->actingAs($this->userTippin());
+
+        $this->postJson(route('api.messenger.threads.approval', [
+            'thread' => $this->private->id,
+        ]), [
+            'approve' => false,
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function user_cannot_approve_group_thread()
+    {
+        $tippin = $this->userTippin();
+
+        $group = $this->makeGroupThread($tippin);
+
+        $this->actingAs($tippin);
+
+        $this->postJson(route('api.messenger.threads.approval', [
+            'thread' => $group->id,
+        ]), [
+            'approve' => true,
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function user_cannot_deny_group_thread()
+    {
+        $tippin = $this->userTippin();
+
+        $group = $this->makeGroupThread($tippin);
+
+        $this->actingAs($tippin);
+
+        $this->postJson(route('api.messenger.threads.approval', [
+            'thread' => $group->id,
+        ]), [
+            'approve' => false,
+        ])
+            ->assertForbidden();
+    }
+
+    private function makeNonPending(): void
+    {
+        $this->private->participants()
+            ->where('pending', '=', true)
+            ->first()
+            ->update([
+                'pending' => false,
+            ]);
     }
 }
