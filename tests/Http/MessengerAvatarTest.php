@@ -36,9 +36,9 @@ class MessengerAvatarTest extends FeatureTestCase
 
         $tippin = $this->userTippin();
 
-        $tippin->picture = 'avatar.jpg';
-
-        $tippin->save();
+        $tippin->update([
+            'picture' => 'avatar.jpg',
+        ]);
 
         $directory = Messenger::getAvatarStorage('directory').'/user/'.$tippin->getKey();
 

@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\KnockBroadcast;
 use RTippin\Messenger\Events\KnockEvent;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -24,7 +25,7 @@ class KnockPrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function user_can_knock_at_private_thread()
+    public function user_can_knock_at_thread()
     {
         $tippin = $this->userTippin();
 
@@ -44,8 +45,9 @@ class KnockPrivateThreadTest extends FeatureTestCase
 
         $this->assertTrue(Cache::has('knock.knock.'.$this->private->id.'.'.$tippin->getKey()));
 
-        Event::assertDispatched(function (KnockBroadcast $event) use ($tippin, $doe) {
+        Event::assertDispatched(function (KnockBroadcast $event) use ($doe, $tippin) {
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
+            $this->assertNotContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
             $this->assertEquals($this->private->id, $event->broadcastWith()['thread']['id']);
 
             return true;
@@ -60,7 +62,7 @@ class KnockPrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function user_forbidden_to_knock_at_private_thread_when_timeout_exist()
+    public function user_forbidden_to_knock_at_thread_when_timeout_exist()
     {
         $tippin = $this->userTippin();
 
@@ -75,7 +77,22 @@ class KnockPrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function non_participant_forbidden_to_knock_at_private_thread()
+    public function user_forbidden_to_knock_at_thread_when_disabled_from_config()
+    {
+        Messenger::setKnockKnock(false);
+
+        $tippin = $this->userTippin();
+
+        $this->actingAs($tippin);
+
+        $this->postJson(route('api.messenger.threads.knock', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function non_participant_forbidden_to_knock_at_thread()
     {
         $this->actingAs($this->companyDevelopers());
 

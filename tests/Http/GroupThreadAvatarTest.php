@@ -30,9 +30,9 @@ class GroupThreadAvatarTest extends FeatureTestCase
     {
         Storage::fake(Messenger::getThreadStorage('disk'));
 
-        $this->group->image = 'avatar.jpg';
-
-        $this->group->save();
+        $this->group->update([
+            'image' => 'avatar.jpg',
+        ]);
 
         UploadedFile::fake()
             ->image('avatar.jpg')

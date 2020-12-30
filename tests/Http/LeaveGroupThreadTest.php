@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Http;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
 use RTippin\Messenger\Events\ThreadLeftEvent;
-use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -87,7 +86,7 @@ class LeaveGroupThreadTest extends FeatureTestCase
             ThreadLeftEvent::class,
         ]);
 
-        Participant::where('thread_id', '=', $this->group->id)
+        $this->group->participants()
             ->where('owner_id', '=', $doe->getKey())
             ->where('owner_type', '=', get_class($doe))
             ->first()
@@ -136,7 +135,7 @@ class LeaveGroupThreadTest extends FeatureTestCase
             ThreadLeftEvent::class,
         ]);
 
-        Participant::where('thread_id', '=', $this->group->id)
+        $this->group->participants()
             ->where('owner_id', '=', $doe->getKey())
             ->where('owner_type', '=', get_class($doe))
             ->first()
