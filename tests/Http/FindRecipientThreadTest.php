@@ -15,11 +15,6 @@ class FindRecipientThreadTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->setupInitialThreads();
-    }
-
-    private function setupInitialThreads(): void
-    {
         $this->private = $this->makePrivateThread(
             $this->userTippin(),
             $this->userDoe()

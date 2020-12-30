@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\ThreadSettingsBroadcast;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\ThreadSettingsEvent;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -17,36 +16,10 @@ class GroupThreadSettingsTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->setupInitialGroup();
-    }
-
-    private function setupInitialGroup(): void
-    {
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
-        $this->group = Thread::create([
-            'type' => 2,
-            'subject' => 'First Test Group',
-            'image' => '5.png',
-            'add_participants' => true,
-            'invitations' => true,
-            'calling' => true,
-            'knocks' => true,
-        ]);
-
-        $this->group->participants()
-            ->create(array_merge(Definitions::DefaultAdminParticipant, [
-                'owner_id' => $tippin->getKey(),
-                'owner_type' => get_class($tippin),
-            ]));
-
-        $this->group->participants()
-            ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => $doe->getKey(),
-                'owner_type' => get_class($doe),
-            ]));
+        $this->group = $this->makeGroupThread(
+            $this->userTippin(),
+            $this->userDoe()
+        );
     }
 
     /** @test */

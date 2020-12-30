@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Broadcasting\ThreadAvatarBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\ThreadAvatarEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
@@ -21,36 +20,10 @@ class GroupThreadAvatarTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->setupInitialGroup();
-    }
-
-    private function setupInitialGroup(): void
-    {
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
-        $this->group = Thread::create([
-            'type' => 2,
-            'subject' => 'First Test Group',
-            'image' => '5.png',
-            'add_participants' => true,
-            'invitations' => true,
-            'calling' => true,
-            'knocks' => true,
-        ]);
-
-        $this->group->participants()
-            ->create(array_merge(Definitions::DefaultAdminParticipant, [
-                'owner_id' => $tippin->getKey(),
-                'owner_type' => get_class($tippin),
-            ]));
-
-        $this->group->participants()
-            ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => $doe->getKey(),
-                'owner_type' => get_class($doe),
-            ]));
+        $this->group = $this->makeGroupThread(
+            $this->userTippin(),
+            $this->userDoe()
+        );
     }
 
     private function setupGroupAvatar(): void

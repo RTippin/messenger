@@ -131,4 +131,33 @@ trait HelperTrait
 
         return $private;
     }
+
+    protected function makeGroupThread(MessengerProvider $admin, ...$participants): Thread
+    {
+        $group = Thread::create([
+            'type' => 2,
+            'subject' => 'First Test Group',
+            'image' => '5.png',
+            'add_participants' => true,
+            'invitations' => true,
+            'calling' => true,
+            'knocks' => true,
+        ]);
+
+        $group->participants()
+            ->create(array_merge(Definitions::DefaultAdminParticipant, [
+                'owner_id' => $admin->getKey(),
+                'owner_type' => get_class($admin),
+            ]));
+
+        foreach ($participants as $participant) {
+            $group->participants()
+                ->create(array_merge(Definitions::DefaultParticipant, [
+                    'owner_id' => $participant->getKey(),
+                    'owner_type' => get_class($participant),
+                ]));
+        }
+
+        return $group;
+    }
 }

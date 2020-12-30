@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\ThreadLeftEvent;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
@@ -18,36 +17,10 @@ class LeaveGroupThreadTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->setupInitialGroup();
-    }
-
-    private function setupInitialGroup(): void
-    {
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
-        $this->group = Thread::create([
-            'type' => 2,
-            'subject' => 'First Test Group',
-            'image' => '5.png',
-            'add_participants' => true,
-            'invitations' => true,
-            'calling' => true,
-            'knocks' => true,
-        ]);
-
-        $this->group->participants()
-            ->create(array_merge(Definitions::DefaultAdminParticipant, [
-                'owner_id' => $tippin->getKey(),
-                'owner_type' => get_class($tippin),
-            ]));
-
-        $this->group->participants()
-            ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => $doe->getKey(),
-                'owner_type' => get_class($doe),
-            ]));
+        $this->group = $this->makeGroupThread(
+            $this->userTippin(),
+            $this->userDoe()
+        );
     }
 
     /** @test */

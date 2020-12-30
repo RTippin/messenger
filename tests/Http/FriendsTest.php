@@ -22,11 +22,6 @@ class FriendsTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->setupFriendship();
-    }
-
-    private function setupFriendship()
-    {
         $friends = $this->makeFriends(
             $this->userTippin(),
             $this->userDoe()
