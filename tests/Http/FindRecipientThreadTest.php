@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\stubs\UserModel;
 
 class FindRecipientThreadTest extends FeatureTestCase
 {
@@ -75,17 +74,19 @@ class FindRecipientThreadTest extends FeatureTestCase
     /** @test */
     public function private_thread_locator_returns_company_with_existing_thread_id()
     {
-        $this->actingAs(UserModel::find(1));
+        $developers = $this->companyDevelopers();
+
+        $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.privates.locate', [
             'alias' => 'company',
-            'id' => 1,
+            'id' => $developers->getKey(),
         ]))
             ->assertStatus(200)
             ->assertJson([
                 'thread_id' => $this->privateWithCompany->id,
                 'recipient' => [
-                    'provider_id' => 1,
+                    'provider_id' => $developers->getKey(),
                     'provider_alias' => 'company',
                     'name' => 'Developers',
                 ],
@@ -97,7 +98,7 @@ class FindRecipientThreadTest extends FeatureTestCase
     {
         $otherUser = $this->generateJaneSmith();
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.privates.locate', [
             'alias' => 'user',

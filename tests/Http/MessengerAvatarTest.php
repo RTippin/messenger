@@ -6,7 +6,6 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\stubs\UserModel;
 
 class MessengerAvatarTest extends FeatureTestCase
 {
@@ -15,11 +14,11 @@ class MessengerAvatarTest extends FeatureTestCase
     {
         Storage::fake(Messenger::getAvatarStorage('disk'));
 
-        $user = UserModel::find(1);
+        $tippin = $this->userTippin();
 
-        $directory = Messenger::getAvatarStorage('directory').'/user/1';
+        $directory = Messenger::getAvatarStorage('directory').'/user/'.$tippin->getKey();
 
-        $this->actingAs($user);
+        $this->actingAs($tippin);
 
         $this->postJson(route('api.messenger.avatar.update'), [
             'image' => UploadedFile::fake()->image('avatar.jpg'),
@@ -27,7 +26,7 @@ class MessengerAvatarTest extends FeatureTestCase
             ->assertSuccessful();
 
         Storage::disk(Messenger::getAvatarStorage('disk'))
-            ->assertExists($directory.'/'.$user->picture);
+            ->assertExists($directory.'/'.$tippin->picture);
     }
 
     /** @test */
@@ -35,13 +34,13 @@ class MessengerAvatarTest extends FeatureTestCase
     {
         Storage::fake(Messenger::getAvatarStorage('disk'));
 
-        $user = UserModel::find(1);
+        $tippin = $this->userTippin();
 
-        $user->picture = 'avatar.jpg';
+        $tippin->picture = 'avatar.jpg';
 
-        $user->save();
+        $tippin->save();
 
-        $directory = Messenger::getAvatarStorage('directory').'/user/1';
+        $directory = Messenger::getAvatarStorage('directory').'/user/'.$tippin->getKey();
 
         UploadedFile::fake()
             ->image('avatar.jpg')
@@ -52,7 +51,7 @@ class MessengerAvatarTest extends FeatureTestCase
         Storage::disk(Messenger::getAvatarStorage('disk'))
             ->assertExists($directory.'/avatar.jpg');
 
-        $this->actingAs($user);
+        $this->actingAs($tippin);
 
         $this->deleteJson(route('api.messenger.avatar.destroy'))
             ->assertSuccessful();
@@ -60,13 +59,13 @@ class MessengerAvatarTest extends FeatureTestCase
         Storage::disk(Messenger::getAvatarStorage('disk'))
             ->assertMissing($directory.'/avatar.jpg');
 
-        $this->assertNull($user->picture);
+        $this->assertNull($tippin->picture);
     }
 
     /** @test */
     public function avatar_upload_validation_checks_size_and_mime()
     {
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->postJson(route('api.messenger.avatar.update'), [
             'image' => UploadedFile::fake()->create('movie.mov', 5000000, 'video/quicktime'),

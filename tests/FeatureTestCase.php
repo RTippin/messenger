@@ -14,10 +14,6 @@ class FeatureTestCase extends TestCase
 {
     use HelperTrait;
 
-    const UserModelType = 'RTippin\Messenger\Tests\stubs\UserModel';
-
-    const CompanyModelType = 'RTippin\Messenger\Tests\stubs\CompanyModel';
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -51,6 +47,8 @@ class FeatureTestCase extends TestCase
             'database' => ':memory:',
             'prefix' => '',
         ]);
+
+        $config->set('messenger.provider_uuids', false);
 
         $config->set('messenger.providers', [
             'user' => [

@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Http;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Events\StatusHeartbeatEvent;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\stubs\UserModel;
 
 class StatusHeartbeatTest extends FeatureTestCase
 {
@@ -16,7 +15,7 @@ class StatusHeartbeatTest extends FeatureTestCase
             StatusHeartbeatEvent::class,
         ]);
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.heartbeat'))
             ->assertStatus(405);
@@ -29,7 +28,7 @@ class StatusHeartbeatTest extends FeatureTestCase
             StatusHeartbeatEvent::class,
         ]);
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->postJson(route('api.messenger.heartbeat'), [
             'away' => 'string',
@@ -47,19 +46,19 @@ class StatusHeartbeatTest extends FeatureTestCase
             StatusHeartbeatEvent::class,
         ]);
 
-        $user = UserModel::find(1);
+        $tippin = $this->userTippin();
 
-        $this->actingAs($user);
+        $this->actingAs($tippin);
 
         $this->postJson(route('api.messenger.heartbeat'), [
             'away' => false,
         ])
             ->assertSuccessful();
 
-        $this->assertEquals(1, $user->onlineStatus());
+        $this->assertEquals(1, $tippin->onlineStatus());
 
-        Event::assertDispatched(function (StatusHeartbeatEvent $event) {
-            $this->assertEquals(1, $event->provider->getKey());
+        Event::assertDispatched(function (StatusHeartbeatEvent $event) use ($tippin) {
+            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
             $this->assertFalse($event->away);
             $this->assertNotNull($event->IP);
 
@@ -74,19 +73,19 @@ class StatusHeartbeatTest extends FeatureTestCase
             StatusHeartbeatEvent::class,
         ]);
 
-        $user = UserModel::find(1);
+        $tippin = $this->userTippin();
 
-        $this->actingAs($user);
+        $this->actingAs($tippin);
 
         $this->postJson(route('api.messenger.heartbeat'), [
             'away' => true,
         ])
             ->assertSuccessful();
 
-        $this->assertEquals(2, $user->onlineStatus());
+        $this->assertEquals(2, $tippin->onlineStatus());
 
-        Event::assertDispatched(function (StatusHeartbeatEvent $event) {
-            $this->assertEquals(1, $event->provider->getKey());
+        Event::assertDispatched(function (StatusHeartbeatEvent $event) use ($tippin) {
+            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
             $this->assertTrue($event->away);
             $this->assertNotNull($event->IP);
 

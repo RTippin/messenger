@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\stubs\UserModel;
 
 class MessengerSettingsTest extends FeatureTestCase
 {
@@ -33,7 +32,7 @@ class MessengerSettingsTest extends FeatureTestCase
     /** @test */
     public function updating_messenger_settings_validations()
     {
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->putJson(route('api.messenger.settings'), [
             'message_popups' => 'invalid',
@@ -53,7 +52,7 @@ class MessengerSettingsTest extends FeatureTestCase
     /** @test */
     public function updating_messenger_settings_and_set_status_to_away()
     {
-        $user = UserModel::find(1);
+        $user = $this->userTippin();
 
         $this->actingAs($user);
 
@@ -81,7 +80,7 @@ class MessengerSettingsTest extends FeatureTestCase
     /** @test */
     public function updating_messenger_settings_and_set_status_to_online()
     {
-        $user = UserModel::find(1);
+        $user = $this->userTippin();
 
         $this->actingAs($user);
 
@@ -109,7 +108,7 @@ class MessengerSettingsTest extends FeatureTestCase
     /** @test */
     public function updating_messenger_settings_and_set_status_to_offline()
     {
-        $user = UserModel::find(1);
+        $user = $this->userTippin();
 
         $this->actingAs($user);
 

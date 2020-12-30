@@ -6,7 +6,6 @@ use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\stubs\UserModel;
 
 class ThreadsTest extends FeatureTestCase
 {
@@ -23,6 +22,10 @@ class ThreadsTest extends FeatureTestCase
 
     private function setupInitialThreads(): void
     {
+        $tippin = $this->userTippin();
+
+        $doe = $this->userDoe();
+
         $this->group = Thread::create([
             'type' => 2,
             'subject' => 'Test Group',
@@ -33,19 +36,19 @@ class ThreadsTest extends FeatureTestCase
 
         $this->group->participants()
             ->create(array_merge(Definitions::DefaultAdminParticipant, [
-                'owner_id' => 1,
-                'owner_type' => self::UserModelType,
+                'owner_id' => $tippin->getKey(),
+                'owner_type' => get_class($tippin),
             ]));
 
         $this->group->participants()
             ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => 2,
-                'owner_type' => self::UserModelType,
+                'owner_id' => $doe->getKey(),
+                'owner_type' => get_class($doe),
             ]));
 
         $this->private = $this->makePrivateThread(
-            UserModel::find(1),
-            UserModel::find(2)
+            $tippin,
+            $doe
         );
     }
 
@@ -103,7 +106,7 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function user_belongs_to_two_threads()
     {
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.threads.index'))
             ->assertStatus(200)
@@ -125,7 +128,7 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function invalid_thread_id_not_found()
     {
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => '123456-789',
@@ -144,7 +147,7 @@ class ThreadsTest extends FeatureTestCase
             'invitations' => true,
         ]);
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $group->id,
@@ -155,7 +158,7 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function view_individual_private_thread()
     {
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $this->private->id,
@@ -175,7 +178,7 @@ class ThreadsTest extends FeatureTestCase
                 ],
                 'resources' => [
                     'recipient' => [
-                        'provider_id' => 2,
+                        'provider_id' => $this->userDoe()->getKey(),
                         'name' => 'John Doe',
                     ],
                 ],
@@ -185,7 +188,7 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function view_individual_group_thread()
     {
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $this->group->id,

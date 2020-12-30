@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\stubs\UserModel;
 
 class MessengerTest extends FeatureTestCase
 {
@@ -18,7 +17,7 @@ class MessengerTest extends FeatureTestCase
     /** @test */
     public function messenger_info_was_successful()
     {
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.info'))
             ->assertSuccessful()
@@ -33,7 +32,7 @@ class MessengerTest extends FeatureTestCase
     /** @test */
     public function messenger_info_changes_when_set_dynamically()
     {
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.info'))
             ->assertSuccessful()

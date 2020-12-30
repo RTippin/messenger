@@ -180,7 +180,7 @@ class FriendsTest extends FeatureTestCase
                 'party_id' => $doe->getKey(),
                 'party_type' => get_class($doe),
                 'party' => [
-                    'provider_id' => 2,
+                    'provider_id' => $doe->getKey(),
                     'provider_alias' => 'user',
                     'name' => 'John Doe',
                 ],

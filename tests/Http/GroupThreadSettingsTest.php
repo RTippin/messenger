@@ -8,7 +8,6 @@ use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\ThreadSettingsEvent;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\stubs\UserModel;
 
 class GroupThreadSettingsTest extends FeatureTestCase
 {
@@ -23,6 +22,10 @@ class GroupThreadSettingsTest extends FeatureTestCase
 
     private function setupInitialGroup(): void
     {
+        $tippin = $this->userTippin();
+
+        $doe = $this->userDoe();
+
         $this->group = Thread::create([
             'type' => 2,
             'subject' => 'First Test Group',
@@ -35,14 +38,14 @@ class GroupThreadSettingsTest extends FeatureTestCase
 
         $this->group->participants()
             ->create(array_merge(Definitions::DefaultAdminParticipant, [
-                'owner_id' => 1,
-                'owner_type' => self::UserModelType,
+                'owner_id' => $tippin->getKey(),
+                'owner_type' => get_class($tippin),
             ]));
 
         $this->group->participants()
             ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => 2,
-                'owner_type' => self::UserModelType,
+                'owner_id' => $doe->getKey(),
+                'owner_type' => get_class($doe),
             ]));
     }
 
@@ -58,7 +61,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
     /** @test */
     public function admin_can_view_group_settings()
     {
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
@@ -72,7 +75,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
     /** @test */
     public function non_admin_forbidden_to_view_group_settings()
     {
-        $this->actingAs(UserModel::find(2));
+        $this->actingAs($this->userDoe());
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $this->group->id,
@@ -88,7 +91,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
     /** @test */
     public function group_settings_validates_request()
     {
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->putJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
@@ -114,7 +117,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
             ThreadSettingsEvent::class,
         ]);
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->putJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
@@ -132,12 +135,14 @@ class GroupThreadSettingsTest extends FeatureTestCase
     /** @test */
     public function update_group_settings_expects_events_and_name_not_changed()
     {
+        $tippin = $this->userTippin();
+
         Event::fake([
             ThreadSettingsBroadcast::class,
             ThreadSettingsEvent::class,
         ]);
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($tippin);
 
         $this->putJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
@@ -163,8 +168,8 @@ class GroupThreadSettingsTest extends FeatureTestCase
             return true;
         });
 
-        Event::assertDispatched(function (ThreadSettingsEvent $event) {
-            $this->assertEquals(1, $event->provider->getKey());
+        Event::assertDispatched(function (ThreadSettingsEvent $event) use ($tippin) {
+            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
             $this->assertEquals($this->group->id, $event->thread->id);
             $this->assertFalse($event->nameChanged);
 
@@ -175,12 +180,14 @@ class GroupThreadSettingsTest extends FeatureTestCase
     /** @test */
     public function update_group_settings_expects_events_and_name_did_change()
     {
+        $tippin = $this->userTippin();
+
         Event::fake([
             ThreadSettingsBroadcast::class,
             ThreadSettingsEvent::class,
         ]);
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($tippin);
 
         $this->putJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
@@ -206,8 +213,8 @@ class GroupThreadSettingsTest extends FeatureTestCase
             return true;
         });
 
-        Event::assertDispatched(function (ThreadSettingsEvent $event) {
-            $this->assertEquals(1, $event->provider->getKey());
+        Event::assertDispatched(function (ThreadSettingsEvent $event) use ($tippin) {
+            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
             $this->assertEquals($this->group->id, $event->thread->id);
             $this->assertTrue($event->nameChanged);
 

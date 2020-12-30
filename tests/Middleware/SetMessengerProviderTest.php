@@ -7,9 +7,7 @@ use RTippin\Messenger\Exceptions\InvalidMessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Http\Middleware\SetMessengerProvider;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\stubs\CompanyModel;
 use RTippin\Messenger\Tests\stubs\OtherModel;
-use RTippin\Messenger\Tests\stubs\UserModel;
 
 class SetMessengerProviderTest extends FeatureTestCase
 {
@@ -63,7 +61,7 @@ class SetMessengerProviderTest extends FeatureTestCase
         $request = new Request;
 
         $request->setUserResolver(function () {
-            return UserModel::find(1);
+            return $this->userTippin();
         });
 
         $middleware = app(SetMessengerProvider::class);
@@ -81,7 +79,7 @@ class SetMessengerProviderTest extends FeatureTestCase
         $request = new Request;
 
         $request->setUserResolver(function () {
-            return CompanyModel::find(1);
+            return $this->companyDevelopers();
         });
 
         $middleware = app(SetMessengerProvider::class);

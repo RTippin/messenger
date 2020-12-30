@@ -14,7 +14,11 @@ class TestbenchCreateUsersTable extends Migration
     public function up()
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
+            if (config('messenger.provider_uuids')) {
+                $table->uuid('id')->primary();
+            } else {
+                $table->id();
+            }
             $table->string('name');
             $table->string('email')->unique();
             $table->string('picture')->nullable();

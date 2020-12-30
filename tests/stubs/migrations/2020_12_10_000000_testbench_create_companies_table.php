@@ -14,7 +14,11 @@ class TestbenchCreateCompaniesTable extends Migration
     public function up()
     {
         Schema::create('companies', function (Blueprint $table) {
-            $table->id();
+            if (config('messenger.provider_uuids')) {
+                $table->uuid('id')->primary();
+            } else {
+                $table->id();
+            }
             $table->string('company_name');
             $table->string('company_email')->unique();
             $table->string('avatar')->nullable();

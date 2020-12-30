@@ -11,7 +11,6 @@ use RTippin\Messenger\Events\FriendDeniedEvent;
 use RTippin\Messenger\Models\PendingFriend;
 use RTippin\Messenger\Models\SentFriend;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\stubs\UserModel;
 
 class PendingFriendsTest extends FeatureTestCase
 {
@@ -25,7 +24,7 @@ class PendingFriendsTest extends FeatureTestCase
     /** @test */
     public function new_user_has_no_pending_friends()
     {
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.friends.pending.index'))
             ->assertStatus(200)
@@ -35,19 +34,23 @@ class PendingFriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_deny_pending_request()
     {
+        $tippin = $this->userTippin();
+
+        $doe = $this->userDoe();
+
         Event::fake([
             FriendDeniedBroadcast::class,
             FriendDeniedEvent::class,
         ]);
 
         $pending = PendingFriend::create([
-            'sender_id' => 1,
-            'sender_type' => self::UserModelType,
-            'recipient_id' => 2,
-            'recipient_type' => self::UserModelType,
+            'sender_id' => $tippin->getKey(),
+            'sender_type' => get_class($tippin),
+            'recipient_id' => $doe->getKey(),
+            'recipient_type' => get_class($doe),
         ]);
 
-        $this->actingAs(UserModel::find(2));
+        $this->actingAs($doe);
 
         $this->deleteJson(route('api.messenger.friends.pending.destroy', [
             'pending' => $pending->id,
@@ -55,14 +58,14 @@ class PendingFriendsTest extends FeatureTestCase
             ->assertSuccessful();
 
         $this->assertDatabaseMissing('pending_friends', [
-            'sender_id' => 1,
-            'sender_type' => self::UserModelType,
-            'recipient_id' => 2,
-            'recipient_type' => self::UserModelType,
+            'sender_id' => $tippin->getKey(),
+            'sender_type' => get_class($tippin),
+            'recipient_id' => $doe->getKey(),
+            'recipient_type' => get_class($doe),
         ]);
 
-        Event::assertDispatched(function (FriendDeniedBroadcast $event) use ($pending) {
-            $this->assertContains('private-user.1', $event->broadcastOn());
+        Event::assertDispatched(function (FriendDeniedBroadcast $event) use ($pending, $tippin) {
+            $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
             $this->assertEquals($pending->id, $event->broadcastWith()['sent_friend_id']);
 
             return true;
@@ -76,19 +79,23 @@ class PendingFriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_accept_pending_request()
     {
+        $tippin = $this->userTippin();
+
+        $doe = $this->userDoe();
+
         Event::fake([
             FriendApprovedBroadcast::class,
             FriendApprovedEvent::class,
         ]);
 
         $pending = SentFriend::create([
-            'sender_id' => 1,
-            'sender_type' => self::UserModelType,
-            'recipient_id' => 2,
-            'recipient_type' => self::UserModelType,
+            'sender_id' => $tippin->getKey(),
+            'sender_type' => get_class($tippin),
+            'recipient_id' => $doe->getKey(),
+            'recipient_type' => get_class($doe),
         ]);
 
-        $this->actingAs(UserModel::find(2));
+        $this->actingAs($doe);
 
         $this->putJson(route('api.messenger.friends.pending.update', [
             'pending' => $pending->id,
@@ -96,38 +103,38 @@ class PendingFriendsTest extends FeatureTestCase
             ->assertSuccessful();
 
         $this->assertDatabaseMissing('pending_friends', [
-            'sender_id' => 1,
-            'sender_type' => self::UserModelType,
-            'recipient_id' => 2,
-            'recipient_type' => self::UserModelType,
+            'sender_id' => $tippin->getKey(),
+            'sender_type' => get_class($tippin),
+            'recipient_id' => $doe->getKey(),
+            'recipient_type' => get_class($doe),
         ]);
 
         $this->assertDatabaseHas('friends', [
-            'owner_id' => 1,
-            'owner_type' => self::UserModelType,
-            'party_id' => 2,
-            'party_type' => self::UserModelType,
+            'owner_id' => $tippin->getKey(),
+            'owner_type' => get_class($tippin),
+            'party_id' => $doe->getKey(),
+            'party_type' => get_class($doe),
         ]);
 
         $this->assertDatabaseHas('friends', [
-            'owner_id' => 2,
-            'owner_type' => self::UserModelType,
-            'party_id' => 1,
-            'party_type' => self::UserModelType,
+            'owner_id' => $doe->getKey(),
+            'owner_type' => get_class($doe),
+            'party_id' => $tippin->getKey(),
+            'party_type' => get_class($tippin),
         ]);
 
-        $this->assertEquals(1, resolve(FriendDriver::class)->friendStatus(UserModel::find(1)));
+        $this->assertEquals(1, resolve(FriendDriver::class)->friendStatus($tippin));
 
-        Event::assertDispatched(function (FriendApprovedBroadcast $event) {
-            $this->assertContains('private-user.1', $event->broadcastOn());
+        Event::assertDispatched(function (FriendApprovedBroadcast $event) use ($tippin) {
+            $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
             $this->assertEquals('John Doe', $event->broadcastWith()['sender']['name']);
 
             return true;
         });
 
-        Event::assertDispatched(function (FriendApprovedEvent $event) {
-            $this->assertEquals(2, $event->friend->owner_id);
-            $this->assertEquals(1, $event->inverseFriend->owner_id);
+        Event::assertDispatched(function (FriendApprovedEvent $event) use ($tippin, $doe) {
+            $this->assertEquals($doe->getKey(), $event->friend->owner_id);
+            $this->assertEquals($tippin->getKey(), $event->inverseFriend->owner_id);
 
             return true;
         });

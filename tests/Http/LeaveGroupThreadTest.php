@@ -9,7 +9,6 @@ use RTippin\Messenger\Events\ThreadLeftEvent;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\stubs\UserModel;
 
 class LeaveGroupThreadTest extends FeatureTestCase
 {
@@ -24,6 +23,10 @@ class LeaveGroupThreadTest extends FeatureTestCase
 
     private function setupInitialGroup(): void
     {
+        $tippin = $this->userTippin();
+
+        $doe = $this->userDoe();
+
         $this->group = Thread::create([
             'type' => 2,
             'subject' => 'First Test Group',
@@ -36,26 +39,28 @@ class LeaveGroupThreadTest extends FeatureTestCase
 
         $this->group->participants()
             ->create(array_merge(Definitions::DefaultAdminParticipant, [
-                'owner_id' => 1,
-                'owner_type' => self::UserModelType,
+                'owner_id' => $tippin->getKey(),
+                'owner_type' => get_class($tippin),
             ]));
 
         $this->group->participants()
             ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => 2,
-                'owner_type' => self::UserModelType,
+                'owner_id' => $doe->getKey(),
+                'owner_type' => get_class($doe),
             ]));
     }
 
     /** @test */
     public function non_admin_can_leave()
     {
+        $doe = $this->userDoe();
+
         Event::fake([
             ThreadLeftBroadcast::class,
             ThreadLeftEvent::class,
         ]);
 
-        $this->actingAs(UserModel::find(2));
+        $this->actingAs($doe);
 
         $this->postJson(route('api.messenger.threads.leave', [
             'thread' => $this->group->id,
@@ -64,21 +69,21 @@ class LeaveGroupThreadTest extends FeatureTestCase
 
         $this->assertSoftDeleted('participants', [
             'thread_id' => $this->group->id,
-            'owner_id' => 2,
-            'owner_type' => self::UserModelType,
+            'owner_id' => $doe->getKey(),
+            'owner_type' => get_class($doe),
         ]);
 
-        Event::assertDispatched(function (ThreadLeftBroadcast $event) {
-            $this->assertContains('private-user.2', $event->broadcastOn());
+        Event::assertDispatched(function (ThreadLeftBroadcast $event) use ($doe) {
+            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
             $this->assertEquals($this->group->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
 
-        Event::assertDispatched(function (ThreadLeftEvent $event) {
-            $this->assertEquals(2, $event->provider->getKey());
+        Event::assertDispatched(function (ThreadLeftEvent $event) use ($doe) {
+            $this->assertEquals($doe->getKey(), $event->provider->getKey());
             $this->assertEquals($this->group->id, $event->thread->id);
-            $this->assertEquals(2, $event->participant->owner_id);
+            $this->assertEquals($doe->getKey(), $event->participant->owner_id);
 
             return true;
         });
@@ -87,7 +92,7 @@ class LeaveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_cannot_leave_if_only_admin_and_not_only_participant()
     {
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->assertEquals(2, $this->group->participants()->count());
 
@@ -100,18 +105,22 @@ class LeaveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_can_leave_when_only_participant()
     {
+        $tippin = $this->userTippin();
+
+        $doe = $this->userDoe();
+
         Event::fake([
             ThreadLeftBroadcast::class,
             ThreadLeftEvent::class,
         ]);
 
         Participant::where('thread_id', '=', $this->group->id)
-            ->where('owner_id', '=', 2)
-            ->where('owner_type', '=', self::UserModelType)
+            ->where('owner_id', '=', $doe->getKey())
+            ->where('owner_type', '=', get_class($doe))
             ->first()
             ->forceDelete();
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($tippin);
 
         $this->assertEquals(1, $this->group->participants()->count());
 
@@ -122,21 +131,21 @@ class LeaveGroupThreadTest extends FeatureTestCase
 
         $this->assertSoftDeleted('participants', [
             'thread_id' => $this->group->id,
-            'owner_id' => 1,
-            'owner_type' => self::UserModelType,
+            'owner_id' => $tippin->getKey(),
+            'owner_type' => get_class($tippin),
         ]);
 
-        Event::assertDispatched(function (ThreadLeftBroadcast $event) {
-            $this->assertContains('private-user.1', $event->broadcastOn());
+        Event::assertDispatched(function (ThreadLeftBroadcast $event) use ($tippin) {
+            $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
             $this->assertEquals($this->group->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
 
-        Event::assertDispatched(function (ThreadLeftEvent $event) {
-            $this->assertEquals(1, $event->provider->getKey());
+        Event::assertDispatched(function (ThreadLeftEvent $event) use ($tippin) {
+            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
             $this->assertEquals($this->group->id, $event->thread->id);
-            $this->assertEquals(1, $event->participant->owner_id);
+            $this->assertEquals($tippin->getKey(), $event->participant->owner_id);
 
             return true;
         });
@@ -145,20 +154,24 @@ class LeaveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_can_leave_when_other_admins_exist()
     {
+        $tippin = $this->userTippin();
+
+        $doe = $this->userDoe();
+
         Event::fake([
             ThreadLeftBroadcast::class,
             ThreadLeftEvent::class,
         ]);
 
         Participant::where('thread_id', '=', $this->group->id)
-            ->where('owner_id', '=', 2)
-            ->where('owner_type', '=', self::UserModelType)
+            ->where('owner_id', '=', $doe->getKey())
+            ->where('owner_type', '=', get_class($doe))
             ->first()
             ->update([
                 'admin' => true,
             ]);
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($tippin);
 
         $this->assertEquals(2, $this->group->participants()->admins()->count());
 
@@ -169,21 +182,21 @@ class LeaveGroupThreadTest extends FeatureTestCase
 
         $this->assertSoftDeleted('participants', [
             'thread_id' => $this->group->id,
-            'owner_id' => 1,
-            'owner_type' => self::UserModelType,
+            'owner_id' => $tippin->getKey(),
+            'owner_type' => get_class($tippin),
         ]);
 
-        Event::assertDispatched(function (ThreadLeftBroadcast $event) {
-            $this->assertContains('private-user.1', $event->broadcastOn());
+        Event::assertDispatched(function (ThreadLeftBroadcast $event) use ($tippin) {
+            $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
             $this->assertEquals($this->group->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
 
-        Event::assertDispatched(function (ThreadLeftEvent $event) {
-            $this->assertEquals(1, $event->provider->getKey());
+        Event::assertDispatched(function (ThreadLeftEvent $event) use ($tippin) {
+            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
             $this->assertEquals($this->group->id, $event->thread->id);
-            $this->assertEquals(1, $event->participant->owner_id);
+            $this->assertEquals($tippin->getKey(), $event->participant->owner_id);
 
             return true;
         });
@@ -192,21 +205,14 @@ class LeaveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function cannot_leave_private_thread()
     {
-        $private = Thread::create(Definitions::DefaultThread);
+        $tippin = $this->userTippin();
 
-        $private->participants()
-            ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => 1,
-                'owner_type' => self::UserModelType,
-            ]));
+        $private = $this->makePrivateThread(
+            $tippin,
+            $this->userDoe()
+        );
 
-        $private->participants()
-            ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => 2,
-                'owner_type' => self::UserModelType,
-            ]));
-
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($tippin);
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $private->id,

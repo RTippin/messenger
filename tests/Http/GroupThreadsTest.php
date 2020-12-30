@@ -10,7 +10,6 @@ use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\stubs\UserModel;
 
 class GroupThreadsTest extends FeatureTestCase
 {
@@ -29,6 +28,8 @@ class GroupThreadsTest extends FeatureTestCase
     /** @test */
     public function user_has_one_group()
     {
+        $tippin = $this->userTippin();
+
         $group = Thread::create([
             'type' => 2,
             'subject' => 'First Test Group',
@@ -39,11 +40,11 @@ class GroupThreadsTest extends FeatureTestCase
 
         $group->participants()
             ->create(array_merge(Definitions::DefaultAdminParticipant, [
-                'owner_id' => 1,
-                'owner_type' => self::UserModelType,
+                'owner_id' => $tippin->getKey(),
+                'owner_type' => get_class($tippin),
             ]));
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($tippin);
 
         $this->getJson(route('api.messenger.groups.index'))
             ->assertSuccessful()
@@ -74,7 +75,7 @@ class GroupThreadsTest extends FeatureTestCase
     /** @test */
     public function store_new_group_validates_request()
     {
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($this->userTippin());
 
         $this->postJson(route('api.messenger.groups.store'), [
             'subject' => null,
@@ -114,12 +115,14 @@ class GroupThreadsTest extends FeatureTestCase
     /** @test */
     public function store_group_without_extra_participants()
     {
+        $tippin = $this->userTippin();
+
         Event::fake([
             NewThreadEvent::class,
             NewThreadBroadcast::class,
         ]);
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($tippin);
 
         $this->postJson(route('api.messenger.groups.store'), [
             'subject' => 'Test Group',
@@ -143,8 +146,8 @@ class GroupThreadsTest extends FeatureTestCase
                 ],
             ]);
 
-        Event::assertDispatched(function (NewThreadEvent $event) {
-            $this->assertEquals(1, $event->provider->getKey());
+        Event::assertDispatched(function (NewThreadEvent $event) use ($tippin) {
+            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
             $this->assertEquals('Test Group', $event->thread->subject);
 
             return true;
@@ -160,13 +163,15 @@ class GroupThreadsTest extends FeatureTestCase
     /** @test */
     public function store_group_with_extra_participants_will_ignore_participant_if_not_friend()
     {
+        $tippin = $this->userTippin();
+
         Event::fake([
             NewThreadEvent::class,
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($tippin);
 
         $this->postJson(route('api.messenger.groups.store'), [
             'subject' => 'Test Group',
@@ -200,8 +205,8 @@ class GroupThreadsTest extends FeatureTestCase
 
         Event::assertNotDispatched(ParticipantsAddedEvent::class);
 
-        Event::assertDispatched(function (NewThreadEvent $event) {
-            $this->assertEquals(1, $event->provider->getKey());
+        Event::assertDispatched(function (NewThreadEvent $event) use ($tippin) {
+            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
             $this->assertEquals('Test Group', $event->thread->subject);
 
             return true;
@@ -215,6 +220,10 @@ class GroupThreadsTest extends FeatureTestCase
     /** @test */
     public function store_group_with_extra_participant_that_is_friend()
     {
+        $tippin = $this->userTippin();
+
+        $doe = $this->userDoe();
+
         Event::fake([
             NewThreadEvent::class,
             NewThreadBroadcast::class,
@@ -222,17 +231,17 @@ class GroupThreadsTest extends FeatureTestCase
         ]);
 
         $this->makeFriends(
-            UserModel::find(1),
-            UserModel::find(2)
+            $tippin,
+            $doe
         );
 
-        $this->actingAs(UserModel::find(1));
+        $this->actingAs($tippin);
 
         $this->postJson(route('api.messenger.groups.store'), [
             'subject' => 'Test Group Participants',
             'providers' => [
                 [
-                    'id' => 2,
+                    'id' => $doe->getKey(),
                     'alias' => 'user',
                 ],
             ],
@@ -260,22 +269,22 @@ class GroupThreadsTest extends FeatureTestCase
             'subject' => 'Test Group Participants',
         ]);
 
-        Event::assertDispatched(function (NewThreadEvent $event) {
-            $this->assertEquals(1, $event->provider->getKey());
+        Event::assertDispatched(function (NewThreadEvent $event) use ($tippin) {
+            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
             $this->assertEquals('Test Group Participants', $event->thread->subject);
 
             return true;
         });
 
-        Event::assertDispatched(function (NewThreadBroadcast $event) {
-            $this->assertContains('private-user.2', $event->broadcastOn());
+        Event::assertDispatched(function (NewThreadBroadcast $event) use ($doe) {
+            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
             $this->assertContains('Test Group Participants', $event->broadcastWith()['thread']);
 
             return true;
         });
 
-        Event::assertDispatched(function (ParticipantsAddedEvent $event) {
-            $this->assertEquals(1, $event->provider->getKey());
+        Event::assertDispatched(function (ParticipantsAddedEvent $event) use ($tippin) {
+            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
             $this->assertEquals('Test Group Participants', $event->thread->subject);
             $this->assertCount(1, $event->participants);
 
