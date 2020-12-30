@@ -101,7 +101,7 @@ class ArchivePrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function non_participant_forbidden_to_archive_valid_private_thread()
+    public function non_participant_forbidden_to_archive_private_thread()
     {
         $this->actingAs($this->generateJaneSmith());
 
@@ -112,7 +112,7 @@ class ArchivePrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function forbidden_to_archive_valid_private_thread_with_active_call()
+    public function user_forbidden_to_archive_private_thread_with_active_call()
     {
         $tippin = $this->userTippin();
 
