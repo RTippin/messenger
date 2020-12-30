@@ -62,19 +62,32 @@ class MessengerAvatarTest extends FeatureTestCase
         $this->assertNull($tippin->picture);
     }
 
-    /** @test */
-    public function avatar_upload_validation_checks_size_and_mime()
+    /**
+     * @test
+     * @dataProvider avatarValidation
+     * @param $avatarValue
+     */
+    public function avatar_upload_validates_request($avatarValue)
     {
         $this->actingAs($this->userTippin());
 
         $this->postJson(route('api.messenger.avatar.update'), [
-            'image' => UploadedFile::fake()->create('movie.mov', 5000000, 'video/quicktime'),
+            'image' => $avatarValue,
         ])
+            ->assertStatus(422)
             ->assertJsonValidationErrors('image');
+    }
 
-        $this->postJson(route('api.messenger.avatar.update'), [
-            'image' => UploadedFile::fake()->create('image.jpg', 5000000, 'image/jpeg'),
-        ])
-            ->assertJsonValidationErrors('image');
+    public function avatarValidation(): array
+    {
+        return [
+            'Image cannot be empty' => [''],
+            'Image cannot be integer' => [5],
+            'Image cannot be null' => [null],
+            'Image cannot be an array' => [[1,2]],
+            'Image must be image format' => [UploadedFile::fake()->create('movie.mov', 5000000, 'video/quicktime')],
+            'Image must be under 5mb' => [UploadedFile::fake()->create('image.jpg', 5000000, 'image/jpeg')],
+            'Image cannot be a pdf' => [UploadedFile::fake()->create('test.pdf', 5000, 'application/pdf')],
+        ];
     }
 }

@@ -29,7 +29,7 @@ class GroupMessageTest extends FeatureTestCase
         $tippin = $this->userTippin();
 
         $doe = $this->userDoe();
-        
+
         $developers = $this->companyDevelopers();
 
         Event::fake([
@@ -73,5 +73,4 @@ class GroupMessageTest extends FeatureTestCase
             return $this->group->id === $event->message->thread_id;
         });
     }
-
 }
