@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests;
 
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Definitions;
+use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\stubs\CompanyModel;
@@ -160,5 +161,14 @@ trait HelperTrait
         }
 
         return $group;
+    }
+
+    protected function makeActiveCallOnThread(Thread $thread, MessengerProvider $owner): Call
+    {
+        return $thread->calls()->create([
+            'type' => 1,
+            'owner_id' => $owner->getKey(),
+            'owner_type' => get_class($owner),
+        ]);
     }
 }
