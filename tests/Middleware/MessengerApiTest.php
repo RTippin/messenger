@@ -10,7 +10,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class MessengerApiTest extends FeatureTestCase
 {
     /** @test */
-    public function test_wrapping_disabled_on_json_resource_and_json_header_is_set()
+    public function wrapping_disabled_on_json_resource_and_json_header_is_set()
     {
         $request = new Request;
 

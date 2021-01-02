@@ -12,7 +12,7 @@ use RTippin\Messenger\Tests\stubs\OtherModel;
 class SetMessengerProviderTest extends FeatureTestCase
 {
     /** @test */
-    public function test_guest_will_not_be_set()
+    public function guest_will_not_be_set()
     {
         $middleware = app(SetMessengerProvider::class);
 
@@ -24,7 +24,7 @@ class SetMessengerProviderTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_required_provider_throws_error_when_none()
+    public function required_provider_throws_error_when_none()
     {
         $this->expectException(InvalidMessengerProvider::class);
 
@@ -38,7 +38,7 @@ class SetMessengerProviderTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_invalid_provider_throws_error()
+    public function invalid_provider_throws_error()
     {
         $this->expectException(InvalidMessengerProvider::class);
 
@@ -56,7 +56,7 @@ class SetMessengerProviderTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_valid_user_provider_was_set()
+    public function valid_user_provider_was_set()
     {
         $request = new Request;
 
@@ -74,7 +74,7 @@ class SetMessengerProviderTest extends FeatureTestCase
     }
 
     /** @test */
-    public function test_valid_company_provider_was_set()
+    public function valid_company_provider_was_set()
     {
         $request = new Request;
 
