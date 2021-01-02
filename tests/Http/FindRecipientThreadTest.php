@@ -26,20 +26,19 @@ class FindRecipientThreadTest extends FeatureTestCase
         );
     }
 
-    /** @test */
-    public function private_thread_locator_returns_not_found_on_invalid_user()
+    /**
+     * @test
+     * @dataProvider locatorValidation
+     * @param $alias
+     * @param $id
+     */
+    public function private_thread_locator_returns_not_found_on_invalid_id_or_alias($alias, $id)
     {
         $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.privates.locate', [
-            'alias' => 'user',
-            'id' => 404,
-        ]))
-            ->assertNotFound();
-
-        $this->getJson(route('api.messenger.privates.locate', [
-            'alias' => 'unknown',
-            'id' => 2,
+            'alias' => $alias,
+            'id' => $id,
         ]))
             ->assertNotFound();
     }
@@ -130,5 +129,16 @@ class FindRecipientThreadTest extends FeatureTestCase
                     'name' => 'Some Company',
                 ],
             ]);
+    }
+
+    public function locatorValidation(): array
+    {
+        return [
+            'Not found user INT ID' => ['user', 404],
+            'Not found user UUID' => ['user', '123-456-789'],
+            'Not found company INT ID' => ['company', 404],
+            'Not found company UUID' => ['company', '123-456-789'],
+            'Invalid alias with valid ID' => ['unknown', 1],
+        ];
     }
 }

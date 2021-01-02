@@ -44,11 +44,6 @@ class FriendsTest extends FeatureTestCase
     {
         $this->getJson(route('api.messenger.friends.index'))
             ->assertUnauthorized();
-
-        $this->getJson(route('api.messenger.friends.show', [
-            'friend' => $this->friend->id,
-        ]))
-            ->assertUnauthorized();
     }
 
     /** @test */

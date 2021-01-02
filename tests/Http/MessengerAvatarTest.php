@@ -12,7 +12,9 @@ class MessengerAvatarTest extends FeatureTestCase
     /** @test */
     public function user_can_upload_avatar()
     {
-        Storage::fake(Messenger::getAvatarStorage('disk'));
+        $disk = Messenger::getAvatarStorage('disk');
+
+        Storage::fake($disk);
 
         $tippin = $this->userTippin();
 
@@ -25,14 +27,15 @@ class MessengerAvatarTest extends FeatureTestCase
         ])
             ->assertSuccessful();
 
-        Storage::disk(Messenger::getAvatarStorage('disk'))
-            ->assertExists($directory.'/'.$tippin->picture);
+        Storage::disk($disk)->assertExists($directory.'/'.$tippin->picture);
     }
 
     /** @test */
     public function user_can_remove_avatar()
     {
-        Storage::fake(Messenger::getAvatarStorage('disk'));
+        $disk = Messenger::getAvatarStorage('disk');
+
+        Storage::fake($disk);
 
         $tippin = $this->userTippin();
 
@@ -45,21 +48,19 @@ class MessengerAvatarTest extends FeatureTestCase
         UploadedFile::fake()
             ->image('avatar.jpg')
             ->storeAs($directory, 'avatar.jpg', [
-                'disk' => Messenger::getAvatarStorage('disk'),
+                'disk' => $disk,
             ]);
 
-        Storage::disk(Messenger::getAvatarStorage('disk'))
-            ->assertExists($directory.'/avatar.jpg');
+        Storage::disk($disk)->assertExists($directory.'/avatar.jpg');
 
         $this->actingAs($tippin);
 
         $this->deleteJson(route('api.messenger.avatar.destroy'))
             ->assertSuccessful();
 
-        Storage::disk(Messenger::getAvatarStorage('disk'))
-            ->assertMissing($directory.'/avatar.jpg');
+        Storage::disk($disk)->assertMissing($directory.'/avatar.jpg');
 
-        $this->assertNull($tippin->picture);
+        $this->assertNull($tippin->fresh()->picture);
     }
 
     /**
@@ -67,7 +68,7 @@ class MessengerAvatarTest extends FeatureTestCase
      * @dataProvider avatarFileValidation
      * @param $avatarValue
      */
-    public function avatar_upload_validates_request($avatarValue)
+    public function avatar_upload_checks_size_mime_and_inputs($avatarValue)
     {
         $this->actingAs($this->userTippin());
 
@@ -85,9 +86,9 @@ class MessengerAvatarTest extends FeatureTestCase
             'Image cannot be integer' => [5],
             'Image cannot be null' => [null],
             'Image cannot be an array' => [[1, 2]],
-            'Image must be image format' => [UploadedFile::fake()->create('movie.mov', 5000000, 'video/quicktime')],
-            'Image must be under 5mb' => [UploadedFile::fake()->create('image.jpg', 5000000, 'image/jpeg')],
-            'Image cannot be a pdf' => [UploadedFile::fake()->create('test.pdf', 5000, 'application/pdf')],
+            'Image must be image format' => [UploadedFile::fake()->create('movie.mov', 500, 'video/quicktime')],
+            'Image must be under 5mb' => [UploadedFile::fake()->create('image.jpg', 6000, 'image/jpeg')],
+            'Image cannot be a pdf' => [UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')],
         ];
     }
 }

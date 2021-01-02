@@ -29,22 +29,30 @@ class MessengerSettingsTest extends FeatureTestCase
         ]);
     }
 
-    /** @test */
-    public function updating_messenger_settings_validations()
+    /**
+     * @test
+     * @dataProvider settingsValidation
+     * @param $boolInput
+     * @param $intInput
+     */
+    public function updating_messenger_settings_checks_booleans_and_integer($boolInput, $intInput)
     {
         $this->actingAs($this->userTippin());
 
         $this->putJson(route('api.messenger.settings'), [
-            'message_popups' => 'invalid',
-            'message_sound' => false,
-            'call_ringtone_sound' => 66,
-            'notify_sound' => false,
-            'dark_mode' => false,
-            'online_status' => 5,
+            'message_popups' => $boolInput,
+            'message_sound' => $boolInput,
+            'call_ringtone_sound' => $boolInput,
+            'notify_sound' => $boolInput,
+            'dark_mode' => $boolInput,
+            'online_status' => $intInput,
         ])
             ->assertJsonValidationErrors([
                 'message_popups',
+                'message_sound',
                 'call_ringtone_sound',
+                'notify_sound',
+                'dark_mode',
                 'online_status',
             ]);
     }
@@ -131,5 +139,15 @@ class MessengerSettingsTest extends FeatureTestCase
             ]);
 
         $this->assertEquals(0, $user->onlineStatus());
+    }
+
+    public function settingsValidation(): array
+    {
+        return [
+            [2, null],
+            ['string', 3],
+            [[], 'string'],
+            [null, null],
+        ];
     }
 }

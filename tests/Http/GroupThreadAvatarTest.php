@@ -26,50 +26,10 @@ class GroupThreadAvatarTest extends FeatureTestCase
         );
     }
 
-    private function setupGroupAvatar(): void
-    {
-        Storage::fake(Messenger::getThreadStorage('disk'));
-
-        $this->group->update([
-            'image' => 'avatar.jpg',
-        ]);
-
-        UploadedFile::fake()
-            ->image('avatar.jpg')
-            ->storeAs($this->group->getStorageDirectory().'/avatar', 'avatar.jpg', [
-                'disk' => Messenger::getThreadStorage('disk'),
-            ]);
-
-        Storage::disk(Messenger::getThreadStorage('disk'))
-            ->assertExists($this->group->getAvatarPath());
-    }
-
-    private function assertEventsDispatched(MessengerProvider $provider): void
-    {
-        Event::assertDispatched(function (ThreadAvatarBroadcast $event) {
-            $this->assertContains('First Test Group', $event->broadcastWith());
-            $this->assertContains('presence-thread.'.$this->group->id, $event->broadcastOn());
-
-            return true;
-        });
-
-        Event::assertDispatched(function (ThreadAvatarEvent $event) use ($provider) {
-            $this->assertEquals($provider->getKey(), $event->provider->getKey());
-            $this->assertEquals($this->group->id, $event->thread->id);
-
-            return true;
-        });
-    }
-
     /** @test */
     public function non_admin_forbidden_to_update_group_avatar()
     {
         $this->actingAs($this->userDoe());
-
-        $this->getJson(route('api.messenger.threads.show', [
-            'thread' => $this->group->id,
-        ]))
-            ->assertSuccessful();
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
             'thread' => $this->group->id,
@@ -130,12 +90,14 @@ class GroupThreadAvatarTest extends FeatureTestCase
     {
         $tippin = $this->userTippin();
 
+        $disk = Messenger::getThreadStorage('disk');
+
         Event::fake([
             ThreadAvatarBroadcast::class,
             ThreadAvatarEvent::class,
         ]);
 
-        Storage::fake(Messenger::getThreadStorage('disk'));
+        Storage::fake($disk);
 
         $this->actingAs($tippin);
 
@@ -148,8 +110,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
 
         $this->assertEventsDispatched($tippin);
 
-        Storage::disk(Messenger::getThreadStorage('disk'))
-            ->assertExists($this->group->fresh()->getAvatarPath());
+        Storage::disk($disk)->assertExists($this->group->fresh()->getAvatarPath());
     }
 
     /** @test */
@@ -218,7 +179,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
      * @dataProvider avatarDefaultValidation
      * @param $defaultValue
      */
-    public function update_group_avatar_default_validates_request($defaultValue)
+    public function update_group_avatar_default_checks_values($defaultValue)
     {
         $this->actingAs($this->userTippin());
 
@@ -231,24 +192,12 @@ class GroupThreadAvatarTest extends FeatureTestCase
             ->assertJsonValidationErrors('default');
     }
 
-    public function avatarDefaultValidation(): array
-    {
-        return [
-            'Default cannot be empty' => [''],
-            'Default cannot be integer' => [5],
-            'Default cannot be null' => [null],
-            'Default cannot be an array' => [[1, 2]],
-            'Default cannot be 0.png' => ['0.png'],
-            'Default must be between (1-5).png' => ['6.png'],
-        ];
-    }
-
     /**
      * @test
      * @dataProvider avatarFileValidation
      * @param $avatarValue
      */
-    public function group_avatar_upload_validates_request($avatarValue)
+    public function group_avatar_upload_checks_size_and_mime($avatarValue)
     {
         $this->actingAs($this->userTippin());
 
@@ -261,6 +210,42 @@ class GroupThreadAvatarTest extends FeatureTestCase
             ->assertJsonValidationErrors('image');
     }
 
+    private function setupGroupAvatar(): void
+    {
+        $disk = Messenger::getThreadStorage('disk');
+
+        Storage::fake($disk);
+
+        $this->group->update([
+            'image' => 'avatar.jpg',
+        ]);
+
+        UploadedFile::fake()
+            ->image('avatar.jpg')
+            ->storeAs($this->group->getStorageDirectory().'/avatar', 'avatar.jpg', [
+                'disk' => $disk,
+            ]);
+
+        Storage::disk($disk)->assertExists($this->group->getAvatarPath());
+    }
+
+    private function assertEventsDispatched(MessengerProvider $provider): void
+    {
+        Event::assertDispatched(function (ThreadAvatarBroadcast $event) {
+            $this->assertContains('First Test Group', $event->broadcastWith());
+            $this->assertContains('presence-thread.'.$this->group->id, $event->broadcastOn());
+
+            return true;
+        });
+
+        Event::assertDispatched(function (ThreadAvatarEvent $event) use ($provider) {
+            $this->assertEquals($provider->getKey(), $event->provider->getKey());
+            $this->assertEquals($this->group->id, $event->thread->id);
+
+            return true;
+        });
+    }
+
     public function avatarFileValidation(): array
     {
         return [
@@ -268,9 +253,21 @@ class GroupThreadAvatarTest extends FeatureTestCase
             'Avatar cannot be integer' => [5],
             'Avatar cannot be null' => [null],
             'Avatar cannot be an array' => [[1, 2]],
-            'Avatar must be image format' => [UploadedFile::fake()->create('movie.mov', 5000000, 'video/quicktime')],
-            'Avatar must be under 5mb' => [UploadedFile::fake()->create('image.jpg', 5000000, 'image/jpeg')],
-            'Avatar cannot be a pdf' => [UploadedFile::fake()->create('test.pdf', 5000, 'application/pdf')],
+            'Avatar must be image format' => [UploadedFile::fake()->create('movie.mov', 500, 'video/quicktime')],
+            'Avatar must be under 5mb' => [UploadedFile::fake()->create('image.jpg', 6000, 'image/jpeg')],
+            'Avatar cannot be a pdf' => [UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')],
+        ];
+    }
+
+    public function avatarDefaultValidation(): array
+    {
+        return [
+            'Default cannot be empty' => [''],
+            'Default cannot be integer' => [5],
+            'Default cannot be null' => [null],
+            'Default cannot be an array' => [[1, 2]],
+            'Default cannot be 0.png' => ['0.png'],
+            'Default must be between (1-5).png' => ['6.png'],
         ];
     }
 }

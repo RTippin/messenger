@@ -16,11 +16,6 @@ class GroupThreadsTest extends FeatureTestCase
     {
         $this->getJson(route('api.messenger.groups.index'))
             ->assertUnauthorized();
-
-        $this->postJson(route('api.messenger.groups.store'), [
-            'subject' => 'Test Group',
-        ])
-            ->assertUnauthorized();
     }
 
     /** @test */
@@ -58,44 +53,37 @@ class GroupThreadsTest extends FeatureTestCase
             ]);
     }
 
-    /** @test */
-    public function store_new_group_validates_request()
+    /**
+     * @test
+     * @dataProvider subjectValidation
+     * @param $subject
+     */
+    public function store_new_group_checks_subject($subject)
     {
         $this->actingAs($this->userTippin());
 
         $this->postJson(route('api.messenger.groups.store'), [
-            'subject' => null,
+            'subject' => $subject,
         ])
             ->assertJsonValidationErrors('subject');
+    }
+
+    /**
+     * @test
+     * @dataProvider providersValidation
+     * @param $providers
+     * @param $errors
+     */
+    public function store_new_group_checks_providers($providers, $errors)
+    {
+        $this->actingAs($this->userTippin());
 
         $this->postJson(route('api.messenger.groups.store'), [
-            'subject' => '12',
-            'providers' => [],
+            'subject' => 'Passes',
+            'providers' => $providers,
         ])
-            ->assertJsonValidationErrors([
-                'subject',
-                'providers',
-            ]);
-
-        $this->postJson(route('api.messenger.groups.store'), [
-            'subject' => 'Test Group',
-            'providers' => [
-                [
-                    'id' => null,
-                    'alias' => null,
-                ],
-                [
-                    '404' => true,
-                    'missing' => false,
-                ],
-            ],
-        ])
-            ->assertJsonValidationErrors([
-                'providers.0.id',
-                'providers.0.alias',
-                'providers.1.id',
-                'providers.1.alias',
-            ]);
+            ->assertJsonMissingValidationErrors('subject')
+            ->assertJsonValidationErrors($errors);
     }
 
     /** @test */
@@ -357,5 +345,38 @@ class GroupThreadsTest extends FeatureTestCase
 
             return true;
         });
+    }
+
+    public function subjectValidation(): array
+    {
+        return [
+            [2],
+            ['1'],
+            ['12'],
+            [[1, 2]],
+            [null],
+        ];
+    }
+
+    public function providersValidation(): array
+    {
+        return [
+            [
+                [['alias' => null, 'id' => null]],
+                ['providers.0.alias', 'providers.0.id']
+            ],
+            [
+                [['alias' => 123, 'id' => 1]],
+                ['providers.0.alias']
+            ],
+            [
+                [[]],
+                ['providers.0.alias', 'providers.0.id']
+            ],
+            [
+                [['alias' => 'user', 'id' => 1], ['alias' => null, 'id' => null]],
+                ['providers.1.alias', 'providers.1.id']
+            ],
+        ];
     }
 }

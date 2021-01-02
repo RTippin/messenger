@@ -41,8 +41,6 @@ class KnockGroupThreadTest extends FeatureTestCase
 
         $this->actingAs($tippin);
 
-        $this->assertTrue($this->group->knocks);
-
         $this->postJson(route('api.messenger.threads.knock', [
             'thread' => $this->group->id,
         ]))
@@ -90,16 +88,6 @@ class KnockGroupThreadTest extends FeatureTestCase
         ]);
 
         $this->actingAs($developers);
-
-        $this->assertTrue($this->group->knocks);
-
-        $this->assertDatabaseHas('participants', [
-            'thread_id' => $this->group->id,
-            'owner_id' => $developers->getKey(),
-            'owner_type' => get_class($developers),
-            'admin' => false,
-            'send_knocks' => true,
-        ]);
 
         $this->postJson(route('api.messenger.threads.knock', [
             'thread' => $this->group->id,
@@ -149,8 +137,6 @@ class KnockGroupThreadTest extends FeatureTestCase
             'knocks' => false,
         ]);
 
-        $this->assertFalse($this->group->knocks);
-
         $this->actingAs($tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
@@ -180,14 +166,6 @@ class KnockGroupThreadTest extends FeatureTestCase
         $doe = $this->userDoe();
 
         $this->actingAs($doe);
-
-        $this->assertDatabaseHas('participants', [
-            'thread_id' => $this->group->id,
-            'owner_id' => $doe->getKey(),
-            'owner_type' => get_class($doe),
-            'admin' => false,
-            'send_knocks' => false,
-        ]);
 
         $this->postJson(route('api.messenger.threads.knock', [
             'thread' => $this->group->id,

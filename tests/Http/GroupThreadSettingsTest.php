@@ -50,36 +50,61 @@ class GroupThreadSettingsTest extends FeatureTestCase
     {
         $this->actingAs($this->userDoe());
 
-        $this->getJson(route('api.messenger.threads.show', [
-            'thread' => $this->group->id,
-        ]))
-            ->assertSuccessful();
-
         $this->getJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
         ]))
             ->assertForbidden();
     }
 
-    /** @test */
-    public function group_settings_validates_request()
+    /**
+     * @test
+     * @dataProvider settingsValidation
+     * @param $fieldValue
+     */
+    public function group_settings_checks_booleans($fieldValue)
     {
         $this->actingAs($this->userTippin());
 
         $this->putJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
         ]), [
-            'subject' => '12',
-            'messaging' => 'nope',
+            'subject' => 'Passing',
+            'messaging' => $fieldValue,
+            'add_participants' => $fieldValue,
+            'invitations' => $fieldValue,
+            'calling' => $fieldValue,
+            'knocks' => $fieldValue,
         ])
+            ->assertJsonMissingValidationErrors('subject')
             ->assertJsonValidationErrors([
-                'subject',
                 'add_participants',
                 'invitations',
                 'calling',
                 'messaging',
                 'knocks',
             ]);
+    }
+
+    /**
+     * @test
+     * @dataProvider subjectValidation
+     * @param $subject
+     */
+    public function group_settings_checks_subject($subject)
+    {
+        $this->actingAs($this->userTippin());
+
+        $this->putJson(route('api.messenger.threads.settings', [
+            'thread' => $this->group->id,
+        ]), [
+            'subject' => $subject,
+            'messaging' => true,
+            'add_participants' => true,
+            'invitations' => true,
+            'calling' => true,
+            'knocks' => true,
+        ])
+            ->assertJsonValidationErrors('subject');
     }
 
     /** @test */
@@ -193,5 +218,26 @@ class GroupThreadSettingsTest extends FeatureTestCase
 
             return true;
         });
+    }
+
+    public function settingsValidation(): array
+    {
+        return [
+            [2],
+            ['string'],
+            [[1, 2]],
+            [null],
+        ];
+    }
+
+    public function subjectValidation(): array
+    {
+        return [
+            [2],
+            ['1'],
+            ['12'],
+            [[1, 2]],
+            [null],
+        ];
     }
 }

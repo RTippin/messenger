@@ -186,11 +186,6 @@ class LeaveGroupThreadTest extends FeatureTestCase
 
         $this->actingAs($tippin);
 
-        $this->getJson(route('api.messenger.threads.show', [
-            'thread' => $private->id,
-        ]))
-            ->assertSuccessful();
-
         $this->postJson(route('api.messenger.threads.leave', [
             'thread' => $private->id,
         ]))
