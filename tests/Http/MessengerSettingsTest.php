@@ -9,7 +9,7 @@ class MessengerSettingsTest extends FeatureTestCase
     /** @test */
     public function messenger_created_when_called_from_user_without_messenger()
     {
-        $newUser = $this->generateJaneSmith();
+        $newUser = $this->createJaneSmith();
 
         $this->assertDatabaseMissing('messengers', [
             'owner_id' => $newUser->getKey(),

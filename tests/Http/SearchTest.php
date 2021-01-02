@@ -96,7 +96,7 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function search_for_user_without_messenger_returns_no_results()
     {
-        $this->generateJaneSmith();
+        $this->createJaneSmith();
 
         $this->actingAs($this->userTippin());
 

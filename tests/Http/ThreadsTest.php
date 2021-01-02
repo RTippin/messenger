@@ -20,13 +20,13 @@ class ThreadsTest extends FeatureTestCase
 
         $doe = $this->userDoe();
 
-        $this->group = $this->makeGroupThread(
+        $this->group = $this->createGroupThread(
             $tippin,
             $doe,
             $this->companyDevelopers()
         );
 
-        $this->private = $this->makePrivateThread(
+        $this->private = $this->createPrivateThread(
             $tippin,
             $doe
         );
@@ -42,7 +42,7 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function new_user_has_no_threads()
     {
-        $this->actingAs($this->generateJaneSmith());
+        $this->actingAs($this->createJaneSmith());
 
         $this->getJson(route('api.messenger.threads.index'))
             ->assertStatus(200)
@@ -64,7 +64,7 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function new_company_has_no_threads()
     {
-        $this->actingAs($this->generateSomeCompany());
+        $this->actingAs($this->createSomeCompany());
 
         $this->getJson(route('api.messenger.threads.index'))
             ->assertStatus(200)
@@ -137,7 +137,7 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function user_forbidden_to_view_thread_they_do_not_belong_to()
     {
-        $group = $this->makeGroupThread($this->userDoe());
+        $group = $this->createGroupThread($this->userDoe());
 
         $this->actingAs($this->userTippin());
 

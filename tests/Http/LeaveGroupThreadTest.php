@@ -16,7 +16,7 @@ class LeaveGroupThreadTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->group = $this->makeGroupThread(
+        $this->group = $this->createGroupThread(
             $this->userTippin(),
             $this->userDoe()
         );
@@ -179,7 +179,7 @@ class LeaveGroupThreadTest extends FeatureTestCase
     {
         $tippin = $this->userTippin();
 
-        $private = $this->makePrivateThread(
+        $private = $this->createPrivateThread(
             $tippin,
             $this->userDoe()
         );

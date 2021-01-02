@@ -18,7 +18,7 @@ class KnockGroupThreadTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->group = $this->makeGroupThread(
+        $this->group = $this->createGroupThread(
             $this->userTippin(),
             $this->userDoe(),
             $this->companyDevelopers()
@@ -176,7 +176,7 @@ class KnockGroupThreadTest extends FeatureTestCase
     /** @test */
     public function non_participant_forbidden_to_knock_at_thread()
     {
-        $this->actingAs($this->generateJaneSmith());
+        $this->actingAs($this->createJaneSmith());
 
         $this->postJson(route('api.messenger.threads.knock', [
             'thread' => $this->group->id,

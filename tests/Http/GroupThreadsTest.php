@@ -23,7 +23,7 @@ class GroupThreadsTest extends FeatureTestCase
     {
         $tippin = $this->userTippin();
 
-        $group = $this->makeGroupThread($tippin);
+        $group = $this->createGroupThread($tippin);
 
         $this->actingAs($tippin);
 
@@ -204,7 +204,7 @@ class GroupThreadsTest extends FeatureTestCase
             ParticipantsAddedEvent::class,
         ]);
 
-        $this->makeFriends(
+        $this->createFriends(
             $tippin,
             $doe
         );
@@ -281,9 +281,9 @@ class GroupThreadsTest extends FeatureTestCase
             ParticipantsAddedEvent::class,
         ]);
 
-        $this->makeFriends($tippin, $doe);
+        $this->createFriends($tippin, $doe);
 
-        $this->makeFriends($tippin, $developers);
+        $this->createFriends($tippin, $developers);
 
         $this->actingAs($tippin);
 

@@ -59,7 +59,7 @@ trait HelperTrait
             ->first();
     }
 
-    protected function generateJaneSmith()
+    protected function createJaneSmith()
     {
         if (config('messenger.provider_uuids')) {
             return UserModelUuid::create([
@@ -76,7 +76,7 @@ trait HelperTrait
         ]);
     }
 
-    protected function generateSomeCompany()
+    protected function createSomeCompany()
     {
         if (config('messenger.provider_uuids')) {
             return CompanyModelUuid::create([
@@ -93,29 +93,25 @@ trait HelperTrait
         ]);
     }
 
-    protected function makeFriends(MessengerProvider $one, MessengerProvider $two): array
+    protected function createFriends(MessengerProvider $one, MessengerProvider $two): array
     {
-        $friendOne = Friend::create([
-            'owner_id' => $one->getKey(),
-            'owner_type' => get_class($one),
-            'party_id' => $two->getKey(),
-            'party_type' => get_class($two),
-        ]);
-
-        $friendTwo = Friend::create([
-            'owner_id' => $two->getKey(),
-            'owner_type' => get_class($two),
-            'party_id' => $one->getKey(),
-            'party_type' => get_class($one),
-        ]);
-
         return [
-            $friendOne,
-            $friendTwo,
+            Friend::create([
+                'owner_id' => $one->getKey(),
+                'owner_type' => get_class($one),
+                'party_id' => $two->getKey(),
+                'party_type' => get_class($two),
+            ]),
+            Friend::create([
+                'owner_id' => $two->getKey(),
+                'owner_type' => get_class($two),
+                'party_id' => $one->getKey(),
+                'party_type' => get_class($one),
+            ]),
         ];
     }
 
-    protected function makePrivateThread(MessengerProvider $one, MessengerProvider $two, bool $pending = false): Thread
+    protected function createPrivateThread(MessengerProvider $one, MessengerProvider $two, bool $pending = false): Thread
     {
         $private = Thread::create(Definitions::DefaultThread);
 
@@ -135,7 +131,7 @@ trait HelperTrait
         return $private;
     }
 
-    protected function makeGroupThread(MessengerProvider $admin, ...$participants): Thread
+    protected function createGroupThread(MessengerProvider $admin, ...$participants): Thread
     {
         $group = Thread::create([
             'type' => 2,
@@ -164,7 +160,7 @@ trait HelperTrait
         return $group;
     }
 
-    protected function makeMessageOnThread(Thread $thread, MessengerProvider $owner): Message
+    protected function createMessage(Thread $thread, MessengerProvider $owner): Message
     {
         return $thread->messages()->create([
             'body' => 'First Test Message',
@@ -174,7 +170,7 @@ trait HelperTrait
         ]);
     }
 
-    protected function makeActiveCallOnThread(Thread $thread, MessengerProvider $owner): Call
+    protected function createCall(Thread $thread, MessengerProvider $owner): Call
     {
         return $thread->calls()->create([
             'type' => 1,

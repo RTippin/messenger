@@ -22,7 +22,7 @@ class SentFriendsTest extends FeatureTestCase
     /** @test */
     public function new_user_has_no_sent_friends()
     {
-        $this->actingAs($this->generateJaneSmith());
+        $this->actingAs($this->createJaneSmith());
 
         $this->getJson(route('api.messenger.friends.sent.index'))
             ->assertStatus(200)
@@ -210,7 +210,7 @@ class SentFriendsTest extends FeatureTestCase
             FriendRequestEvent::class,
         ]);
 
-        $this->makeFriends(
+        $this->createFriends(
             $tippin,
             $doe
         );

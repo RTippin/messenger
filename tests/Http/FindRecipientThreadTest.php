@@ -15,12 +15,12 @@ class FindRecipientThreadTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->private = $this->makePrivateThread(
+        $this->private = $this->createPrivateThread(
             $this->userTippin(),
             $this->userDoe()
         );
 
-        $this->privateWithCompany = $this->makePrivateThread(
+        $this->privateWithCompany = $this->createPrivateThread(
             $this->userTippin(),
             $this->companyDevelopers()
         );
@@ -90,7 +90,7 @@ class FindRecipientThreadTest extends FeatureTestCase
     /** @test */
     public function private_thread_locator_returns_user_without_existing_thread_id()
     {
-        $otherUser = $this->generateJaneSmith();
+        $otherUser = $this->createJaneSmith();
 
         $this->actingAs($this->userTippin());
 
@@ -112,7 +112,7 @@ class FindRecipientThreadTest extends FeatureTestCase
     /** @test */
     public function private_thread_locator_returns_company_without_existing_thread_id()
     {
-        $otherCompany = $this->generateSomeCompany();
+        $otherCompany = $this->createSomeCompany();
 
         $this->actingAs($this->userTippin());
 

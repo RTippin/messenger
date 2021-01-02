@@ -92,7 +92,7 @@ class PrivateThreadsTest extends FeatureTestCase
             NewThreadEvent::class,
         ]);
 
-        $this->makeFriends(
+        $this->createFriends(
             $tippin,
             $doe
         );
@@ -224,7 +224,7 @@ class PrivateThreadsTest extends FeatureTestCase
 
         $doe = $this->userDoe();
 
-        $this->makePrivateThread(
+        $this->createPrivateThread(
             $tippin,
             $doe
         );

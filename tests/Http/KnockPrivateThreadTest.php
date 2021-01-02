@@ -18,7 +18,7 @@ class KnockPrivateThreadTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->private = $this->makePrivateThread(
+        $this->private = $this->createPrivateThread(
             $this->userTippin(),
             $this->userDoe()
         );

@@ -16,7 +16,7 @@ class ArchivePrivateThreadTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->private = $this->makePrivateThread(
+        $this->private = $this->createPrivateThread(
             $this->userTippin(),
             $this->userDoe()
         );
@@ -45,7 +45,7 @@ class ArchivePrivateThreadTest extends FeatureTestCase
     {
         $tippin = $this->userTippin();
 
-        $this->makeActiveCallOnThread($this->private, $tippin);
+        $this->createCall($this->private, $tippin);
 
         $this->actingAs($tippin);
 
@@ -136,7 +136,7 @@ class ArchivePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function non_participant_forbidden_to_archive_private_thread()
     {
-        $this->actingAs($this->generateJaneSmith());
+        $this->actingAs($this->createJaneSmith());
 
         $this->deleteJson(route('api.messenger.threads.destroy', [
             'thread' => $this->private->id,
@@ -149,7 +149,7 @@ class ArchivePrivateThreadTest extends FeatureTestCase
     {
         $tippin = $this->userTippin();
 
-        $this->makeActiveCallOnThread($this->private, $tippin);
+        $this->createCall($this->private, $tippin);
 
         $this->actingAs($tippin);
 

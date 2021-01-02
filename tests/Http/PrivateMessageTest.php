@@ -23,12 +23,12 @@ class PrivateMessageTest extends FeatureTestCase
 
         $tippin = $this->userTippin();
 
-        $this->private = $this->makePrivateThread(
+        $this->private = $this->createPrivateThread(
             $tippin,
             $this->userDoe()
         );
 
-        $this->message = $this->makeMessageOnThread(
+        $this->message = $this->createMessage(
             $this->private,
             $tippin
         );

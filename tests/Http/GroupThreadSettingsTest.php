@@ -16,7 +16,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->group = $this->makeGroupThread(
+        $this->group = $this->createGroupThread(
             $this->userTippin(),
             $this->userDoe()
         );

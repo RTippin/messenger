@@ -16,7 +16,7 @@ class ArchiveGroupThreadTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->group = $this->makeGroupThread(
+        $this->group = $this->createGroupThread(
             $this->userTippin(),
             $this->userDoe(),
             $this->companyDevelopers()
@@ -57,7 +57,7 @@ class ArchiveGroupThreadTest extends FeatureTestCase
     {
         $tippin = $this->userTippin();
 
-        $this->makeActiveCallOnThread($this->group, $tippin);
+        $this->createCall($this->group, $tippin);
 
         $this->actingAs($tippin);
 
@@ -123,7 +123,7 @@ class ArchiveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function non_participant_forbidden_to_archive_group_thread()
     {
-        $this->actingAs($this->generateJaneSmith());
+        $this->actingAs($this->createJaneSmith());
 
         $this->deleteJson(route('api.messenger.threads.destroy', [
             'thread' => $this->group->id,
@@ -136,7 +136,7 @@ class ArchiveGroupThreadTest extends FeatureTestCase
     {
         $tippin = $this->userTippin();
 
-        $this->makeActiveCallOnThread($this->group, $tippin);
+        $this->createCall($this->group, $tippin);
 
         $this->actingAs($tippin);
 

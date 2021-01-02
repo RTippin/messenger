@@ -22,7 +22,7 @@ class FriendsTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $friends = $this->makeFriends(
+        $friends = $this->createFriends(
             $this->userTippin(),
             $this->userDoe()
         );
@@ -30,7 +30,7 @@ class FriendsTest extends FeatureTestCase
         $this->friend = $friends[0];
         $this->inverseFriend = $friends[1];
 
-        $friendsCompany = $this->makeFriends(
+        $friendsCompany = $this->createFriends(
             $this->userTippin(),
             $this->companyDevelopers()
         );
@@ -49,7 +49,7 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function new_user_has_no_friends()
     {
-        $this->actingAs($this->generateJaneSmith());
+        $this->actingAs($this->createJaneSmith());
 
         $this->getJson(route('api.messenger.friends.index'))
             ->assertStatus(200)
@@ -59,7 +59,7 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function new_company_has_no_friends()
     {
-        $this->actingAs($this->generateSomeCompany());
+        $this->actingAs($this->createSomeCompany());
 
         $this->getJson(route('api.messenger.friends.index'))
             ->assertStatus(200)
