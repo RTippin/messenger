@@ -165,6 +165,7 @@ class GroupMessageTest extends FeatureTestCase
 
         $this->group->participants()
             ->where('owner_id', '=', $doe->getKey())
+            ->where('owner_type', '=', get_class($doe))
             ->first()
             ->update([
                 'send_messages' => false,

@@ -173,8 +173,11 @@ class PrivateMessageTest extends FeatureTestCase
             NewMessageEvent::class,
         ]);
 
+        $doe = $this->userDoe();
+
         $this->private->participants()
-            ->where('owner_id', '=', $this->userDoe()->getKey())
+            ->where('owner_id', '=', $doe->getKey())
+            ->where('owner_type', '=', get_class($doe))
             ->first()
             ->update([
                 'pending' => true,
@@ -212,6 +215,7 @@ class PrivateMessageTest extends FeatureTestCase
 
         $this->private->participants()
             ->where('owner_id', '=', $doe->getKey())
+            ->where('owner_type', '=', get_class($doe))
             ->first()
             ->update([
                 'pending' => true,

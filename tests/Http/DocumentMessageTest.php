@@ -82,7 +82,7 @@ class DocumentMessageTest extends FeatureTestCase
      * @dataProvider documentValidation
      * @param $documentValue
      */
-    public function send_document_message_validates_image_file($documentValue)
+    public function send_document_message_validates_document_file($documentValue)
     {
         $this->actingAs($this->userTippin());
 

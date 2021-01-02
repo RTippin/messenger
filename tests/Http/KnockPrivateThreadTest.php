@@ -92,8 +92,11 @@ class KnockPrivateThreadTest extends FeatureTestCase
     /** @test */
     public function user_forbidden_to_knock_at_thread_when_awaiting_approval()
     {
+        $doe = $this->userDoe();
+
         $this->private->participants()
-            ->where('owner_id', '=', $this->userDoe()->getKey())
+            ->where('owner_id', '=', $doe->getKey())
+            ->where('owner_type', '=', get_class($doe))
             ->first()
             ->update([
                 'pending' => true,
@@ -114,6 +117,7 @@ class KnockPrivateThreadTest extends FeatureTestCase
 
         $this->private->participants()
             ->where('owner_id', '=', $doe->getKey())
+            ->where('owner_type', '=', get_class($doe))
             ->first()
             ->update([
                 'pending' => true,
