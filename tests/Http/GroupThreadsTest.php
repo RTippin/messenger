@@ -350,30 +350,35 @@ class GroupThreadsTest extends FeatureTestCase
     public function subjectValidation(): array
     {
         return [
-            [2],
-            ['1'],
-            ['12'],
-            [[1, 2]],
-            [null],
+            'Value cannot be an INT' => [2],
+            'Value cannot be single character' => ['1'],
+            'Value must be larger than 2 characters' => ['12'],
+            'Value cannot be an array' => [[1, 2]],
+            'Value cannot be null' => [null],
+            'Value cannot be empty' => [''],
         ];
     }
 
     public function providersValidation(): array
     {
         return [
-            [
+            'Alias and ID cannot be null' => [
                 [['alias' => null, 'id' => null]],
                 ['providers.0.alias', 'providers.0.id'],
             ],
-            [
+            'Alias and ID cannot be empty' => [
+                [['alias' => '', 'id' => '']],
+                ['providers.0.alias', 'providers.0.id'],
+            ],
+            'Alias must be a string' => [
                 [['alias' => 123, 'id' => 1]],
                 ['providers.0.alias'],
             ],
-            [
+            'Providers array cannot be empty' => [
                 [[]],
                 ['providers.0.alias', 'providers.0.id'],
             ],
-            [
+            'Validates all items in the array' => [
                 [['alias' => 'user', 'id' => 1], ['alias' => null, 'id' => null]],
                 ['providers.1.alias', 'providers.1.id'],
             ],

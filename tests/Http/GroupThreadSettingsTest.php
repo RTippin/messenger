@@ -223,21 +223,22 @@ class GroupThreadSettingsTest extends FeatureTestCase
     public function settingsValidation(): array
     {
         return [
-            [2],
-            ['string'],
-            [[1, 2]],
-            [null],
+            'Value cannot be an INT' => [2],
+            'Value cannot be a string' => ['string'],
+            'Value cannot be an array' => [[1, 2]],
+            'Value cannot be null' => [null],
         ];
     }
 
     public function subjectValidation(): array
     {
         return [
-            [2],
-            ['1'],
-            ['12'],
-            [[1, 2]],
-            [null],
+            'Value cannot be an INT' => [2],
+            'Value cannot be single character' => ['1'],
+            'Value must be larger than 2 characters' => ['12'],
+            'Value cannot be an array' => [[1, 2]],
+            'Value cannot be null' => [null],
+            'Value cannot be empty' => [''],
         ];
     }
 }

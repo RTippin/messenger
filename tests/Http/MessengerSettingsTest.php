@@ -144,10 +144,11 @@ class MessengerSettingsTest extends FeatureTestCase
     public function settingsValidation(): array
     {
         return [
-            [2, null],
-            ['string', 3],
-            [[], 'string'],
-            [null, null],
+            'Toggle cannot be int and status cannot be null' => [2, null],
+            'Toggle cannot be string and status cannot be greater than 2' => ['string', 3],
+            'Toggle cannot be array and status cannot be string' => [[], 'string'],
+            'Toggle and status cannot be null' => [null, null],
+            'Toggle and status cannot be empty' => ['', ''],
         ];
     }
 }
