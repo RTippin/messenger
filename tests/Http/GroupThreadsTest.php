@@ -363,19 +363,19 @@ class GroupThreadsTest extends FeatureTestCase
         return [
             [
                 [['alias' => null, 'id' => null]],
-                ['providers.0.alias', 'providers.0.id']
+                ['providers.0.alias', 'providers.0.id'],
             ],
             [
                 [['alias' => 123, 'id' => 1]],
-                ['providers.0.alias']
+                ['providers.0.alias'],
             ],
             [
                 [[]],
-                ['providers.0.alias', 'providers.0.id']
+                ['providers.0.alias', 'providers.0.id'],
             ],
             [
                 [['alias' => 'user', 'id' => 1], ['alias' => null, 'id' => null]],
-                ['providers.1.alias', 'providers.1.id']
+                ['providers.1.alias', 'providers.1.id'],
             ],
         ];
     }
