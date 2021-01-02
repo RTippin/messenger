@@ -204,19 +204,10 @@ class GroupThreadSettingsTest extends FeatureTestCase
                 'knocks' => false,
             ]);
 
-        Event::assertDispatched(function (ThreadSettingsBroadcast $event) {
-            $this->assertContains('Second Test Group', $event->broadcastWith());
-            $this->assertContains('presence-thread.'.$this->group->id, $event->broadcastOn());
+        Event::assertDispatched(ThreadSettingsBroadcast::class);
 
-            return true;
-        });
-
-        Event::assertDispatched(function (ThreadSettingsEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals($this->group->id, $event->thread->id);
-            $this->assertTrue($event->nameChanged);
-
-            return true;
+        Event::assertDispatched(function (ThreadSettingsEvent $event) {
+            return $event->nameChanged === true;
         });
     }
 

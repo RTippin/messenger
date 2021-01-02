@@ -84,7 +84,7 @@ class SentFriendsTest extends FeatureTestCase
 
         $developers = $this->companyDevelopers();
 
-        Event::fake([
+        $this->expectsEvents([
             FriendRequestBroadcast::class,
             FriendRequestEvent::class,
         ]);
@@ -107,22 +107,6 @@ class SentFriendsTest extends FeatureTestCase
             'recipient_id' => $developers->getKey(),
             'recipient_type' => get_class($developers),
         ]);
-
-        Event::assertDispatched(function (FriendRequestBroadcast $event) use ($tippin, $developers) {
-            $this->assertContains('private-company.'.$developers->getKey(), $event->broadcastOn());
-            $this->assertEquals($tippin->getKey(), $event->broadcastWith()['sender_id']);
-            $this->assertEquals('Richard Tippin', $event->broadcastWith()['sender']['name']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (FriendRequestEvent $event) use ($tippin, $developers) {
-            $this->assertEquals($tippin->getKey(), $event->friend->sender_id);
-            $this->assertEquals($developers->getKey(), $event->friend->recipient_id);
-            $this->assertEquals(get_class($developers), $event->friend->recipient_type);
-
-            return true;
-        });
     }
 
     /** @test */
@@ -131,11 +115,6 @@ class SentFriendsTest extends FeatureTestCase
         $tippin = $this->userTippin();
 
         $doe = $this->userDoe();
-
-        $this->doesntExpectEvents([
-            FriendRequestBroadcast::class,
-            FriendRequestEvent::class,
-        ]);
 
         $this->actingAs($tippin);
 
@@ -204,11 +183,6 @@ class SentFriendsTest extends FeatureTestCase
         $tippin = $this->userTippin();
 
         $doe = $this->userDoe();
-
-        $this->doesntExpectEvents([
-            FriendRequestBroadcast::class,
-            FriendRequestEvent::class,
-        ]);
 
         $this->createFriends(
             $tippin,

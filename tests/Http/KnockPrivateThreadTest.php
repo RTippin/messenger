@@ -92,6 +92,44 @@ class KnockPrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
+    public function user_forbidden_to_knock_at_thread_when_awaiting_approval()
+    {
+        $this->private->participants()
+            ->where('owner_id', '=', $this->userDoe()->getKey())
+            ->first()
+            ->update([
+                'pending' => true,
+            ]);
+
+        $this->actingAs($this->userTippin());
+
+        $this->postJson(route('api.messenger.threads.knock', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function recipient_forbidden_to_knock_at_thread_when_awaiting_approval()
+    {
+        $doe = $this->userDoe();
+
+        $this->private->participants()
+            ->where('owner_id', '=', $doe->getKey())
+            ->first()
+            ->update([
+                'pending' => true,
+            ]);
+
+        $this->actingAs($doe);
+
+        $this->postJson(route('api.messenger.threads.knock', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function non_participant_forbidden_to_knock_at_thread()
     {
         $this->actingAs($this->companyDevelopers());

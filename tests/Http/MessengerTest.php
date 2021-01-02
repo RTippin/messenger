@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\stubs\OtherModel;
 
 class MessengerTest extends FeatureTestCase
 {
@@ -12,6 +13,15 @@ class MessengerTest extends FeatureTestCase
     {
         $this->getJson(route('api.messenger.info'))
             ->assertUnauthorized();
+    }
+
+    /** @test */
+    public function invalid_provider_is_forbidden()
+    {
+        $this->actingAs(new OtherModel);
+
+        $this->getJson(route('api.messenger.info'))
+            ->assertForbidden();
     }
 
     /** @test */

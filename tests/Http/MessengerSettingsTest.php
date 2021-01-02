@@ -9,23 +9,23 @@ class MessengerSettingsTest extends FeatureTestCase
     /** @test */
     public function messenger_created_when_called_from_user_without_messenger()
     {
-        $newUser = $this->createJaneSmith();
+        $jane = $this->createJaneSmith();
 
         $this->assertDatabaseMissing('messengers', [
-            'owner_id' => $newUser->getKey(),
+            'owner_id' => $jane->getKey(),
         ]);
 
-        $this->actingAs($newUser);
+        $this->actingAs($jane);
 
         $this->getJson(route('api.messenger.settings'))
             ->assertSuccessful()
             ->assertJson([
-                'owner_id' => $newUser->getKey(),
+                'owner_id' => $jane->getKey(),
                 'dark_mode' => true,
             ]);
 
         $this->assertDatabaseHas('messengers', [
-            'owner_id' => $newUser->getKey(),
+            'owner_id' => $jane->getKey(),
         ]);
     }
 
@@ -60,9 +60,9 @@ class MessengerSettingsTest extends FeatureTestCase
     /** @test */
     public function updating_messenger_settings_and_set_status_to_away()
     {
-        $user = $this->userTippin();
+        $tippin = $this->userTippin();
 
-        $this->actingAs($user);
+        $this->actingAs($tippin);
 
         $this->putJson(route('api.messenger.settings'), [
             'message_popups' => false,
@@ -82,15 +82,15 @@ class MessengerSettingsTest extends FeatureTestCase
                 'online_status' => 2,
             ]);
 
-        $this->assertEquals(2, $user->onlineStatus());
+        $this->assertEquals(2, $tippin->onlineStatus());
     }
 
     /** @test */
     public function updating_messenger_settings_and_set_status_to_online()
     {
-        $user = $this->userTippin();
+        $tippin = $this->userTippin();
 
-        $this->actingAs($user);
+        $this->actingAs($tippin);
 
         $this->putJson(route('api.messenger.settings'), [
             'message_popups' => true,
@@ -110,15 +110,15 @@ class MessengerSettingsTest extends FeatureTestCase
                 'online_status' => 1,
             ]);
 
-        $this->assertEquals(1, $user->onlineStatus());
+        $this->assertEquals(1, $tippin->onlineStatus());
     }
 
     /** @test */
     public function updating_messenger_settings_and_set_status_to_offline()
     {
-        $user = $this->userTippin();
+        $tippin = $this->userTippin();
 
-        $this->actingAs($user);
+        $this->actingAs($tippin);
 
         $this->putJson(route('api.messenger.settings'), [
             'message_popups' => true,
@@ -138,7 +138,7 @@ class MessengerSettingsTest extends FeatureTestCase
                 'online_status' => 0,
             ]);
 
-        $this->assertEquals(0, $user->onlineStatus());
+        $this->assertEquals(0, $tippin->onlineStatus());
     }
 
     public function settingsValidation(): array

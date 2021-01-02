@@ -198,7 +198,7 @@ class GroupThreadsTest extends FeatureTestCase
 
         $doe = $this->userDoe();
 
-        Event::fake([
+        $this->expectsEvents([
             NewThreadEvent::class,
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
@@ -242,28 +242,6 @@ class GroupThreadsTest extends FeatureTestCase
         $this->assertDatabaseHas('threads', [
             'subject' => 'Test Group Participants',
         ]);
-
-        Event::assertDispatched(function (NewThreadEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals('Test Group Participants', $event->thread->subject);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (NewThreadBroadcast $event) use ($doe) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertContains('Test Group Participants', $event->broadcastWith()['thread']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (ParticipantsAddedEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals('Test Group Participants', $event->thread->subject);
-            $this->assertCount(1, $event->participants);
-
-            return true;
-        });
     }
 
     /** @test */
@@ -300,24 +278,7 @@ class GroupThreadsTest extends FeatureTestCase
                 ],
             ],
         ])
-            ->assertSuccessful()
-            ->assertJson([
-                'type' => 2,
-                'type_verbose' => 'GROUP',
-                'group' => true,
-                'options' => [
-                    'admin' => true,
-                    'invitations' => true,
-                    'add_participants' => true,
-                ],
-                'resources' => [
-                    'latest_message' => [
-                        'type' => 93,
-                        'type_verbose' => 'GROUP_CREATED',
-                        'body' => 'created Test Many Participants',
-                    ],
-                ],
-            ]);
+            ->assertSuccessful();
 
         $this->assertDatabaseHas('threads', [
             'subject' => 'Test Many Participants',

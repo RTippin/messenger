@@ -81,7 +81,7 @@ class LeaveGroupThreadTest extends FeatureTestCase
 
         $doe = $this->userDoe();
 
-        Event::fake([
+        $this->expectsEvents([
             ThreadLeftBroadcast::class,
             ThreadLeftEvent::class,
         ]);
@@ -106,21 +106,6 @@ class LeaveGroupThreadTest extends FeatureTestCase
             'owner_id' => $tippin->getKey(),
             'owner_type' => get_class($tippin),
         ]);
-
-        Event::assertDispatched(function (ThreadLeftBroadcast $event) use ($tippin) {
-            $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->group->id, $event->broadcastWith()['thread_id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (ThreadLeftEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals($this->group->id, $event->thread->id);
-            $this->assertEquals($tippin->getKey(), $event->participant->owner_id);
-
-            return true;
-        });
     }
 
     /** @test */
@@ -130,7 +115,7 @@ class LeaveGroupThreadTest extends FeatureTestCase
 
         $doe = $this->userDoe();
 
-        Event::fake([
+        $this->expectsEvents([
             ThreadLeftBroadcast::class,
             ThreadLeftEvent::class,
         ]);
@@ -157,21 +142,6 @@ class LeaveGroupThreadTest extends FeatureTestCase
             'owner_id' => $tippin->getKey(),
             'owner_type' => get_class($tippin),
         ]);
-
-        Event::assertDispatched(function (ThreadLeftBroadcast $event) use ($tippin) {
-            $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->group->id, $event->broadcastWith()['thread_id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (ThreadLeftEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals($this->group->id, $event->thread->id);
-            $this->assertEquals($tippin->getKey(), $event->participant->owner_id);
-
-            return true;
-        });
     }
 
     /** @test */

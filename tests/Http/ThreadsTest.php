@@ -47,7 +47,7 @@ class ThreadsTest extends FeatureTestCase
         $this->getJson(route('api.messenger.threads.index'))
             ->assertStatus(200)
             ->assertJsonCount(0, 'data')
-            ->assertJsonFragment([
+            ->assertJson([
                 'meta' => [
                     'final_page' => true,
                     'index' => true,
@@ -68,19 +68,7 @@ class ThreadsTest extends FeatureTestCase
 
         $this->getJson(route('api.messenger.threads.index'))
             ->assertStatus(200)
-            ->assertJsonCount(0, 'data')
-            ->assertJsonFragment([
-                'meta' => [
-                    'final_page' => true,
-                    'index' => true,
-                    'next_page_id' => null,
-                    'next_page_route' => null,
-                    'page_id' => null,
-                    'per_page' => Messenger::getThreadsIndexCount(),
-                    'results' => 0,
-                    'total' => 0,
-                ],
-            ]);
+            ->assertJsonCount(0, 'data');
     }
 
     /** @test */
@@ -112,15 +100,7 @@ class ThreadsTest extends FeatureTestCase
 
         $this->getJson(route('api.messenger.threads.index'))
             ->assertStatus(200)
-            ->assertJsonCount(1, 'data')
-            ->assertJson([
-                'data' => [
-                    [
-                        'type_verbose' => 'GROUP',
-                        'name' => 'First Test Group',
-                    ],
-                ],
-            ]);
+            ->assertJsonCount(1, 'data');
     }
 
     /** @test */
@@ -155,7 +135,7 @@ class ThreadsTest extends FeatureTestCase
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $this->private->id,
         ]))
-            ->assertStatus(200)
+            ->assertSuccessful()
             ->assertJson([
                 'id' => $this->private->id,
                 'type' => 1,
@@ -185,7 +165,7 @@ class ThreadsTest extends FeatureTestCase
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $this->group->id,
         ]))
-            ->assertStatus(200)
+            ->assertSuccessful()
             ->assertJson([
                 'id' => $this->group->id,
                 'type' => 2,

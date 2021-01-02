@@ -104,27 +104,7 @@ class PrivateThreadsTest extends FeatureTestCase
             'recipient_alias' => 'user',
             'recipient_id' => $doe->getKey(),
         ])
-            ->assertSuccessful()
-            ->assertJson([
-                'type' => 1,
-                'type_verbose' => 'PRIVATE',
-                'pending' => false,
-                'group' => false,
-                'unread' => true,
-                'name' => 'John Doe',
-                'resources' => [
-                    'latest_message' => [
-                        'body' => 'Hello World!',
-                    ],
-                    'recipient' => [
-                        'name' => 'John Doe',
-                        'options' => [
-                            'friend_status' => 1,
-                            'friend_status_verbose' => 'FRIEND',
-                        ],
-                    ],
-                ],
-            ]);
+            ->assertSuccessful();
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $doe->getKey(),
@@ -138,19 +118,11 @@ class PrivateThreadsTest extends FeatureTestCase
             'pending' => false,
         ]);
 
-        Event::assertDispatched(function (NewThreadBroadcast $event) use ($doe) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertFalse($event->broadcastWith()['thread']['pending']);
-
-            return true;
+        Event::assertDispatched(function (NewThreadBroadcast $event){
+            return $event->broadcastWith()['thread']['pending'] === false;
         });
 
-        Event::assertDispatched(function (NewThreadEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals(1, $event->thread->type);
-
-            return true;
-        });
+        Event::assertDispatched(NewThreadEvent::class);
     }
 
     /** @test */
@@ -160,7 +132,7 @@ class PrivateThreadsTest extends FeatureTestCase
 
         $developers = $this->companyDevelopers();
 
-        Event::fake([
+        $this->expectsEvents([
             NewThreadBroadcast::class,
             NewThreadEvent::class,
         ]);
@@ -172,23 +144,7 @@ class PrivateThreadsTest extends FeatureTestCase
             'recipient_alias' => 'company',
             'recipient_id' => $developers->getKey(),
         ])
-            ->assertSuccessful()
-            ->assertJson([
-                'type' => 1,
-                'type_verbose' => 'PRIVATE',
-                'pending' => true,
-                'group' => false,
-                'unread' => true,
-                'name' => 'Developers',
-                'options' => [
-                    'awaiting_my_approval' => false,
-                ],
-                'resources' => [
-                    'latest_message' => [
-                        'body' => 'Hello World!',
-                    ],
-                ],
-            ]);
+            ->assertSuccessful();
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $developers->getKey(),
@@ -201,20 +157,6 @@ class PrivateThreadsTest extends FeatureTestCase
             'owner_type' => get_class($tippin),
             'pending' => false,
         ]);
-
-        Event::assertDispatched(function (NewThreadBroadcast $event) use ($developers) {
-            $this->assertContains('private-company.'.$developers->getKey(), $event->broadcastOn());
-            $this->assertTrue($event->broadcastWith()['thread']['pending']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (NewThreadEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals(1, $event->thread->type);
-
-            return true;
-        });
     }
 
     /** @test */
@@ -228,11 +170,6 @@ class PrivateThreadsTest extends FeatureTestCase
             $tippin,
             $doe
         );
-
-        $this->doesntExpectEvents([
-            NewThreadBroadcast::class,
-            NewThreadEvent::class,
-        ]);
 
         $this->actingAs($tippin);
 

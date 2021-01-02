@@ -68,10 +68,6 @@ class KnockGroupThreadTest extends FeatureTestCase
     /** @test */
     public function non_admin_with_permission_can_knock_at_thread()
     {
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
         $developers = $this->companyDevelopers();
 
         $this->group->participants()
@@ -82,7 +78,7 @@ class KnockGroupThreadTest extends FeatureTestCase
                 'send_knocks' => true,
             ]);
 
-        Event::fake([
+        $this->expectsEvents([
             KnockBroadcast::class,
             KnockEvent::class,
         ]);
@@ -95,22 +91,6 @@ class KnockGroupThreadTest extends FeatureTestCase
             ->assertSuccessful();
 
         $this->assertTrue(Cache::has('knock.knock.'.$this->group->id));
-
-        Event::assertDispatched(function (KnockBroadcast $event) use ($doe, $developers, $tippin) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertNotContains('private-company.'.$developers->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->group->id, $event->broadcastWith()['thread']['id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (KnockEvent $event) use ($developers) {
-            $this->assertEquals($developers->getKey(), $event->provider->getKey());
-            $this->assertEquals($this->group->id, $event->thread->id);
-
-            return true;
-        });
     }
 
     /** @test */

@@ -115,7 +115,7 @@ class FriendsTest extends FeatureTestCase
 
         $developers = $this->companyDevelopers();
 
-        Event::fake([
+        $this->expectsEvents([
             FriendRemovedEvent::class,
         ]);
 
@@ -125,13 +125,6 @@ class FriendsTest extends FeatureTestCase
             'friend' => $this->friendCompany->id,
         ]))
             ->assertSuccessful();
-
-        Event::assertDispatched(function (FriendRemovedEvent $event) {
-            $this->assertEquals($this->inverseFriendCompany->id, $event->inverseFriend->id);
-            $this->assertEquals($this->friendCompany->id, $event->friend->id);
-
-            return true;
-        });
 
         $this->assertDatabaseMissing('friends', [
             'owner_id' => $tippin->getKey(),
@@ -207,10 +200,6 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function user_cannot_remove_inverse_friend()
     {
-        $this->doesntExpectEvents([
-            FriendRemovedEvent::class,
-        ]);
-
         $this->actingAs($this->userTippin());
 
         $this->deleteJson(route('api.messenger.friends.destroy', [
@@ -233,10 +222,6 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function user_cannot_remove_inverse_company_friend()
     {
-        $this->doesntExpectEvents([
-            FriendRemovedEvent::class,
-        ]);
-
         $this->actingAs($this->userTippin());
 
         $this->deleteJson(route('api.messenger.friends.destroy', [
