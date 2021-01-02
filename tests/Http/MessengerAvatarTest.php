@@ -86,7 +86,7 @@ class MessengerAvatarTest extends FeatureTestCase
             'Image cannot be integer' => [5],
             'Image cannot be null' => [null],
             'Image cannot be an array' => [[1, 2]],
-            'Image must be image format' => [UploadedFile::fake()->create('movie.mov', 500, 'video/quicktime')],
+            'Image cannot be a movie' => [UploadedFile::fake()->create('movie.mov', 500, 'video/quicktime')],
             'Image must be under 5mb' => [UploadedFile::fake()->create('image.jpg', 6000, 'image/jpeg')],
             'Image cannot be a pdf' => [UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')],
         ];

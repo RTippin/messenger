@@ -253,7 +253,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
             'Avatar cannot be integer' => [5],
             'Avatar cannot be null' => [null],
             'Avatar cannot be an array' => [[1, 2]],
-            'Avatar must be image format' => [UploadedFile::fake()->create('movie.mov', 500, 'video/quicktime')],
+            'Avatar cannot be a movie' => [UploadedFile::fake()->create('movie.mov', 500, 'video/quicktime')],
             'Avatar must be under 5mb' => [UploadedFile::fake()->create('image.jpg', 6000, 'image/jpeg')],
             'Avatar cannot be a pdf' => [UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')],
         ];

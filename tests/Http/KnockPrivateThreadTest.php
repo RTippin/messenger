@@ -81,9 +81,7 @@ class KnockPrivateThreadTest extends FeatureTestCase
     {
         Messenger::setKnockKnock(false);
 
-        $tippin = $this->userTippin();
-
-        $this->actingAs($tippin);
+        $this->actingAs($this->userTippin());
 
         $this->postJson(route('api.messenger.threads.knock', [
             'thread' => $this->private->id,
