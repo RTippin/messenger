@@ -14,13 +14,6 @@ class PrivateThreadsTest extends FeatureTestCase
     {
         $this->getJson(route('api.messenger.privates.index'))
             ->assertUnauthorized();
-
-        $this->postJson(route('api.messenger.privates.store'), [
-            'recipient_id' => $this->userDoe()->getKey(),
-            'recipient_alias' => 'user',
-            'message' => 'Hello!',
-        ])
-            ->assertUnauthorized();
     }
 
     /** @test */
@@ -249,5 +242,64 @@ class PrivateThreadsTest extends FeatureTestCase
             'recipient_id' => $doe->getKey(),
         ])
             ->assertForbidden();
+    }
+
+    /**
+     * @test
+     * @dataProvider messageValidation
+     * @param $messageValue
+     */
+    public function create_new_private_checks_message($messageValue)
+    {
+        $this->actingAs($this->userTippin());
+
+        $this->postJson(route('api.messenger.privates.store'), [
+            'message' => $messageValue,
+            'recipient_alias' => 'user',
+            'recipient_id' => 1,
+        ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('message');
+    }
+
+    /**
+     * @test
+     * @dataProvider recipientValidation
+     * @param $aliasValue
+     * @param $idValue
+     * @param $errors
+     */
+    public function create_new_private_checks_recipient_values($aliasValue, $idValue, $errors)
+    {
+        $this->actingAs($this->userTippin());
+
+        $this->postJson(route('api.messenger.privates.store'), [
+            'message' => 'Hello!',
+            'recipient_alias' => $aliasValue,
+            'recipient_id' => $idValue,
+        ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors($errors);
+    }
+
+    public function messageValidation(): array
+    {
+        return [
+            'Message cannot be empty' => [''],
+            'Message cannot be integers' => [5],
+            'Message cannot be boolean' => [true],
+            'Message cannot be null' => [null],
+            'Message cannot be an array' => [[1, 2]],
+        ];
+    }
+
+    public function recipientValidation(): array
+    {
+        return [
+            'Alias and ID cannot be empty' => ['', '', ['recipient_alias', 'recipient_id']],
+//            'Alias and ID cannot be boolean' => [true, true, ['recipient_alias', 'recipient_id']],
+            'Alias and ID cannot be null' => [null, null, ['recipient_alias', 'recipient_id']],
+            'Alias must be string' => [5, 1, ['recipient_alias']],
+        ];
     }
 }

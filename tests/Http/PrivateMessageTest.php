@@ -87,40 +87,34 @@ class PrivateMessageTest extends FeatureTestCase
     /**
      * @test
      * @dataProvider messageValidation
-     * @dataProvider temporaryIdValidation
-     * @param $messageInput
      * @param $messageValue
+     * @param $tempIdValue
      */
-    public function send_message_validates_request($messageInput, $messageValue)
+    public function send_message_validates_request($messageValue, $tempIdValue)
     {
         $this->actingAs($this->userTippin());
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->private->id,
         ]), [
-            $messageInput => $messageValue,
+            'message' => $messageValue,
+            'temporary_id' => $tempIdValue,
         ])
             ->assertStatus(422)
-            ->assertJsonValidationErrors($messageInput);
+            ->assertJsonValidationErrors([
+                'message',
+                'temporary_id',
+            ]);
     }
 
     public function messageValidation(): array
     {
         return [
-            'Message cannot be empty' => ['message', ''],
-            'Message cannot be integer' => ['message', 5],
-            'Message cannot be null' => ['message', null],
-            'Message cannot be an array' => ['message', [1, 2]],
-        ];
-    }
-
-    public function temporaryIdValidation(): array
-    {
-        return [
-            'Temp ID cannot be empty' => ['temporary_id', ''],
-            'Temp ID cannot be integer' => ['temporary_id', 5],
-            'Temp ID cannot be null' => ['temporary_id', null],
-            'Temp ID cannot be an array' => ['temporary_id', [1, 2]],
+            'Fields cannot be empty' => ['', ''],
+            'Fields cannot be integers' => [5, 5],
+            'Fields cannot be boolean' => [true, true],
+            'Fields cannot be null' => [null, null],
+            'Fields cannot be an array' => [[1, 2], [1, 2]],
         ];
     }
 }
