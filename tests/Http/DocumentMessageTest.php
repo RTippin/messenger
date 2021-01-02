@@ -10,7 +10,7 @@ use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
-class ImageMessageTest extends FeatureTestCase
+class DocumentMessageTest extends FeatureTestCase
 {
     private Thread $private;
 
@@ -25,7 +25,7 @@ class ImageMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function user_can_send_image_message()
+    public function user_can_send_document_message()
     {
         Storage::fake($this->private->getStorageDisk());
 
@@ -38,18 +38,18 @@ class ImageMessageTest extends FeatureTestCase
 
         $this->actingAs($tippin);
 
-        $this->postJson(route('api.messenger.threads.images.store', [
+        $this->postJson(route('api.messenger.threads.documents.store', [
             'thread' => $this->private->id,
         ]), [
-            'image' => UploadedFile::fake()->image('picture.jpg'),
+            'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
             'temporary_id' => '123-456-789',
         ])
             ->assertSuccessful()
             ->assertJson([
                 'thread_id' => $this->private->id,
                 'temporary_id' => '123-456-789',
-                'type' => 1,
-                'type_verbose' => 'IMAGE_MESSAGE',
+                'type' => 2,
+                'type_verbose' => 'DOCUMENT_MESSAGE',
                 'owner' => [
                     'provider_id' => $tippin->getKey(),
                     'provider_alias' => 'user',
@@ -58,20 +58,20 @@ class ImageMessageTest extends FeatureTestCase
             ]);
 
         Storage::disk($this->private->getStorageDisk())
-            ->assertExists($this->private->messages()->image()->first()->getImagePath());
+            ->assertExists($this->private->messages()->document()->first()->getDocumentPath());
     }
 
     /** @test */
-    public function user_forbidden_to_send_image_message_when_disabled_from_config()
+    public function user_forbidden_to_send_document_message_when_disabled_from_config()
     {
-        Messenger::setMessageImageUpload(false);
+        Messenger::setMessageDocumentUpload(false);
 
         $this->actingAs($this->userTippin());
 
-        $this->postJson(route('api.messenger.threads.images.store', [
+        $this->postJson(route('api.messenger.threads.documents.store', [
             'thread' => $this->private->id,
         ]), [
-            'image' => UploadedFile::fake()->image('picture.jpg'),
+            'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
             'temporary_id' => '123-456-789',
         ])
             ->assertForbidden();
@@ -79,33 +79,33 @@ class ImageMessageTest extends FeatureTestCase
 
     /**
      * @test
-     * @dataProvider imageValidation
-     * @param $imageValue
+     * @dataProvider documentValidation
+     * @param $documentValue
      */
-    public function send_image_message_validates_image_file($imageValue)
+    public function send_document_message_validates_image_file($documentValue)
     {
         $this->actingAs($this->userTippin());
 
-        $this->postJson(route('api.messenger.threads.images.store', [
+        $this->postJson(route('api.messenger.threads.documents.store', [
             'thread' => $this->private->id,
         ]), [
-            'image' => $imageValue,
+            'document' => $documentValue,
             'temporary_id' => '123-456-789',
         ])
             ->assertStatus(422)
-            ->assertJsonValidationErrors('image');
+            ->assertJsonValidationErrors('document');
     }
 
-    public function imageValidation(): array
+    public function documentValidation(): array
     {
         return [
-            'Image cannot be empty' => [''],
-            'Image cannot be integer' => [5],
-            'Image cannot be null' => [null],
-            'Image cannot be an array' => [[1, 2]],
-            'Image cannot be a movie' => [UploadedFile::fake()->create('movie.mov', 500, 'video/quicktime')],
-            'Image must be under 5mb' => [UploadedFile::fake()->create('image.jpg', 6000, 'image/jpeg')],
-            'Image cannot be a pdf' => [UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')],
+            'Document cannot be empty' => [''],
+            'Document cannot be integer' => [5],
+            'Document cannot be null' => [null],
+            'Document cannot be an array' => [[1, 2]],
+            'Document cannot be a movie' => [UploadedFile::fake()->create('movie.mov', 500, 'video/quicktime')],
+            'Document must be under 10mb' => [UploadedFile::fake()->create('test.pdf', 11000, 'application/pdf')],
+            'Document cannot be an image' => [UploadedFile::fake()->image('picture.png')],
         ];
     }
 }
