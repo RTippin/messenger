@@ -297,9 +297,10 @@ class PrivateThreadsTest extends FeatureTestCase
     {
         return [
             'Alias and ID cannot be empty' => ['', '', ['recipient_alias', 'recipient_id']],
-//            'Alias and ID cannot be boolean' => [true, true, ['recipient_alias', 'recipient_id']],
+            'Alias and ID cannot be boolean' => [true, true, ['recipient_alias', 'recipient_id']],
             'Alias and ID cannot be null' => [null, null, ['recipient_alias', 'recipient_id']],
             'Alias must be string' => [5, 1, ['recipient_alias']],
+            'ID cannot be array' => ['user', [1, 2], ['recipient_id']],
         ];
     }
 }

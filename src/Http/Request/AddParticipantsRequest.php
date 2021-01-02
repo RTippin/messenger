@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Http\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
+use RTippin\Messenger\Rules\IntegerOrString;
 
 class AddParticipantsRequest extends FormRequest
 {
@@ -16,7 +17,7 @@ class AddParticipantsRequest extends FormRequest
         return [
             'providers' => 'required|array|min:1',
             'providers.*.alias' => 'required|string',
-            'providers.*.id' => 'required',
+            'providers.*.id' => ['required', new IntegerOrString],
         ];
     }
 }

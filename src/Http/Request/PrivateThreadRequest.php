@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Http\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
+use RTippin\Messenger\Rules\IntegerOrString;
 
 class PrivateThreadRequest extends FormRequest
 {
@@ -17,7 +18,7 @@ class PrivateThreadRequest extends FormRequest
             'message' => 'required_without_all:document,image|string',
             'document' => 'required_without_all:message,image|max:10240|file|mimes:pdf,doc,ppt,xls,docx,pptx,xlsx,rar,zip,7z',
             'image' => 'required_without_all:document,message|max:5120|file|image',
-            'recipient_id' => 'required',
+            'recipient_id' => ['required', new IntegerOrString],
             'recipient_alias' => 'required|string',
         ];
     }
