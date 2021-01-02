@@ -17,80 +17,64 @@ trait HelperTrait
 {
     protected function userTippin()
     {
-        if (config('messenger.provider_uuids')) {
-            return UserModelUuid::where('email', '=', 'richard.tippin@gmail.com')
-                ->first();
-        }
+        /** @var UserModel|UserModelUuid $model */
+        $model = self::UseUUID ? UserModelUuid::class : UserModel::class;
 
-        return UserModel::where('email', '=', 'richard.tippin@gmail.com')
+        return $model::where('email', '=', 'richard.tippin@gmail.com')
             ->first();
     }
 
     protected function userDoe()
     {
-        if (config('messenger.provider_uuids')) {
-            return UserModelUuid::where('email', '=', 'doe@example.net')
-                ->first();
-        }
+        /** @var UserModel|UserModelUuid $model */
+        $model = self::UseUUID ? UserModelUuid::class : UserModel::class;
 
-        return UserModel::where('email', '=', 'doe@example.net')
+        return $model::where('email', '=', 'doe@example.net')
             ->first();
     }
 
     protected function companyDevelopers()
     {
-        if (config('messenger.provider_uuids')) {
-            return CompanyModelUuid::where('company_email', '=', 'developers@example.net')
-                ->first();
-        }
+        /** @var CompanyModel|CompanyModelUuid $model */
+        $model = self::UseUUID ? CompanyModelUuid::class : CompanyModel::class;
 
-        return CompanyModel::where('company_email', '=', 'developers@example.net')
+        return $model::where('company_email', '=', 'developers@example.net')
             ->first();
     }
 
     protected function companyLaravel()
     {
-        if (config('messenger.provider_uuids')) {
-            return CompanyModelUuid::where('company_email', '=', 'laravel@example.net')
-                ->first();
-        }
+        /** @var CompanyModel|CompanyModelUuid $model */
+        $model = self::UseUUID ? CompanyModelUuid::class : CompanyModel::class;
 
-        return CompanyModel::where('company_email', '=', 'laravel@example.net')
+        return $model::where('company_email', '=', 'laravel@example.net')
             ->first();
     }
 
     protected function createJaneSmith()
     {
-        if (config('messenger.provider_uuids')) {
-            return UserModelUuid::create([
-                'name' => 'Jane Smith',
-                'email' => 'smith@example.net',
-                'password' => 'secret',
-            ]);
-        }
-
-        return UserModel::create([
+        $jane = [
             'name' => 'Jane Smith',
             'email' => 'smith@example.net',
             'password' => 'secret',
-        ]);
+        ];
+
+        return self::UseUUID
+            ? UserModelUuid::create($jane)
+            : UserModel::create($jane);
     }
 
     protected function createSomeCompany()
     {
-        if (config('messenger.provider_uuids')) {
-            return CompanyModelUuid::create([
-                'company_name' => 'Some Company',
-                'company_email' => 'company@example.net',
-                'password' => 'secret',
-            ]);
-        }
-
-        return CompanyModel::create([
+        $someCompany = [
             'company_name' => 'Some Company',
             'company_email' => 'company@example.net',
             'password' => 'secret',
-        ]);
+        ];
+
+        return self::UseUUID
+            ? CompanyModelUuid::create($someCompany)
+            : CompanyModel::create($someCompany);
     }
 
     protected function createFriends(MessengerProvider $one, MessengerProvider $two): array

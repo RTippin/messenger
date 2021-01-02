@@ -14,6 +14,12 @@ class FeatureTestCase extends TestCase
 {
     use HelperTrait;
 
+    /**
+     * Set TRUE to run all feature test with
+     * provider models/tables using UUIDS.
+     */
+    const UseUUID = false;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -48,11 +54,11 @@ class FeatureTestCase extends TestCase
             'prefix' => '',
         ]);
 
-        $config->set('messenger.provider_uuids', false);
+        $config->set('messenger.provider_uuids', self::UseUUID);
 
         $config->set('messenger.providers', [
             'user' => [
-                'model' => UserModel::class,
+                'model' => (self::UseUUID ? UserModelUuid::class : UserModel::class),
                 'searchable' => true,
                 'friendable' => true,
                 'devices' => false,
@@ -64,7 +70,7 @@ class FeatureTestCase extends TestCase
                 ],
             ],
             'company' => [
-                'model' => CompanyModel::class,
+                'model' => (self::UseUUID ? CompanyModelUuid::class : CompanyModel::class),
                 'searchable' => true,
                 'friendable' => true,
                 'devices' => false,
@@ -82,75 +88,51 @@ class FeatureTestCase extends TestCase
 
     private function storeBaseUsers(): void
     {
-        if (config('messenger.provider_uuids')) {
-            $userOne = UserModelUuid::create([
-                'name' => 'Richard Tippin',
-                'email' => 'richard.tippin@gmail.com',
-                'password' => 'secret',
-            ]);
+        $tippin = [
+            'name' => 'Richard Tippin',
+            'email' => 'richard.tippin@gmail.com',
+            'password' => 'secret',
+        ];
 
-            Messenger::getProviderMessenger($userOne);
+        $doe = [
+            'name' => 'John Doe',
+            'email' => 'doe@example.net',
+            'password' => 'secret',
+        ];
 
-            $userTwo = UserModelUuid::create([
-                'name' => 'John Doe',
-                'email' => 'doe@example.net',
-                'password' => 'secret',
-            ]);
+        if (self::UseUUID) {
+            Messenger::getProviderMessenger(UserModelUuid::create($tippin));
 
-            Messenger::getProviderMessenger($userTwo);
+            Messenger::getProviderMessenger(UserModelUuid::create($doe));
         } else {
-            $userOne = UserModel::create([
-                'name' => 'Richard Tippin',
-                'email' => 'richard.tippin@gmail.com',
-                'password' => 'secret',
-            ]);
+            Messenger::getProviderMessenger(UserModel::create($tippin));
 
-            Messenger::getProviderMessenger($userOne);
-
-            $userTwo = UserModel::create([
-                'name' => 'John Doe',
-                'email' => 'doe@example.net',
-                'password' => 'secret',
-            ]);
-
-            Messenger::getProviderMessenger($userTwo);
+            Messenger::getProviderMessenger(UserModel::create($doe));
         }
     }
 
     private function storeBaseCompanies(): void
     {
-        if (config('messenger.provider_uuids')) {
-            $companyOne = CompanyModelUuid::create([
-                'company_name' => 'Developers',
-                'company_email' => 'developers@example.net',
-                'password' => 'secret',
-            ]);
+        $developers = [
+            'company_name' => 'Developers',
+            'company_email' => 'developers@example.net',
+            'password' => 'secret',
+        ];
 
-            Messenger::getProviderMessenger($companyOne);
+        $laravel = [
+            'company_name' => 'Laravel',
+            'company_email' => 'laravel@example.net',
+            'password' => 'secret',
+        ];
 
-            $companyTwo = CompanyModelUuid::create([
-                'company_name' => 'Laravel',
-                'company_email' => 'laravel@example.net',
-                'password' => 'secret',
-            ]);
+        if (self::UseUUID) {
+            Messenger::getProviderMessenger(CompanyModelUuid::create($developers));
 
-            Messenger::getProviderMessenger($companyTwo);
+            Messenger::getProviderMessenger(CompanyModelUuid::create($laravel));
         } else {
-            $companyOne = CompanyModel::create([
-                'company_name' => 'Developers',
-                'company_email' => 'developers@example.net',
-                'password' => 'secret',
-            ]);
+            Messenger::getProviderMessenger(CompanyModel::create($developers));
 
-            Messenger::getProviderMessenger($companyOne);
-
-            $companyTwo = CompanyModel::create([
-                'company_name' => 'Laravel',
-                'company_email' => 'laravel@example.net',
-                'password' => 'secret',
-            ]);
-
-            Messenger::getProviderMessenger($companyTwo);
+            Messenger::getProviderMessenger(CompanyModel::create($laravel));
         }
     }
 }
