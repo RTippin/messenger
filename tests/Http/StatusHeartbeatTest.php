@@ -77,7 +77,7 @@ class StatusHeartbeatTest extends FeatureTestCase
 
         $this->assertEquals(2, $tippin->onlineStatus());
 
-        Event::assertDispatched(function (StatusHeartbeatEvent $event){
+        Event::assertDispatched(function (StatusHeartbeatEvent $event) {
             return $event->away === true;
         });
     }

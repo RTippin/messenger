@@ -118,7 +118,7 @@ class PrivateThreadsTest extends FeatureTestCase
             'pending' => false,
         ]);
 
-        Event::assertDispatched(function (NewThreadBroadcast $event){
+        Event::assertDispatched(function (NewThreadBroadcast $event) {
             return $event->broadcastWith()['thread']['pending'] === false;
         });
 

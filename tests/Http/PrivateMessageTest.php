@@ -154,9 +154,7 @@ class PrivateMessageTest extends FeatureTestCase
             NewMessageEvent::class,
         ]);
 
-        $doe = $this->userDoe();
-
-        $this->actingAs($doe);
+        $this->actingAs($this->userDoe());
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->private->id,
