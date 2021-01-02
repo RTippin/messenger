@@ -11,31 +11,24 @@ class StatusHeartbeatTest extends FeatureTestCase
     /** @test */
     public function messenger_heartbeat_must_be_a_post()
     {
-        $this->doesntExpectEvents([
-            StatusHeartbeatEvent::class,
-        ]);
-
         $this->actingAs($this->userTippin());
 
         $this->getJson(route('api.messenger.heartbeat'))
             ->assertStatus(405);
     }
 
-    /** @test */
-    public function messenger_heartbeat_validates_input()
+    /**
+     * @test
+     * @dataProvider awayValidation
+     * @param $awayValue
+     */
+    public function messenger_heartbeat_checks_boolean($awayValue)
     {
-        $this->doesntExpectEvents([
-            StatusHeartbeatEvent::class,
-        ]);
-
         $this->actingAs($this->userTippin());
 
         $this->postJson(route('api.messenger.heartbeat'), [
-            'away' => 'string',
+            'away' => $awayValue,
         ])
-            ->assertJsonValidationErrors('away');
-
-        $this->postJson(route('api.messenger.heartbeat'))
             ->assertJsonValidationErrors('away');
     }
 
@@ -91,5 +84,16 @@ class StatusHeartbeatTest extends FeatureTestCase
 
             return true;
         });
+    }
+
+    public function awayValidation(): array
+    {
+        return [
+            'Away cannot be empty' => [''],
+            'Away cannot be string' => ['string'],
+            'Away cannot be integers' => [5],
+            'Away cannot be null' => [null],
+            'Away cannot be an array' => [[1, 2]],
+        ];
     }
 }
