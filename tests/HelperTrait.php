@@ -6,6 +6,7 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Friend;
+use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\stubs\CompanyModel;
 use RTippin\Messenger\Tests\stubs\CompanyModelUuid;
@@ -161,6 +162,16 @@ trait HelperTrait
         }
 
         return $group;
+    }
+
+    protected function makeMessageOnThread(Thread $thread, MessengerProvider $owner): Message
+    {
+        return $thread->messages()->create([
+            'body' => 'First Test Message',
+            'type' => 0,
+            'owner_id' => $owner->getKey(),
+            'owner_type' => get_class($owner),
+        ]);
     }
 
     protected function makeActiveCallOnThread(Thread $thread, MessengerProvider $owner): Call

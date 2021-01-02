@@ -3,8 +3,11 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Broadcasting\MessageArchivedBroadcast;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
+use RTippin\Messenger\Events\MessageArchivedEvent;
 use RTippin\Messenger\Events\NewMessageEvent;
+use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -12,14 +15,87 @@ class PrivateMessageTest extends FeatureTestCase
 {
     private Thread $private;
 
+    private Message $message;
+
     protected function setUp(): void
     {
         parent::setUp();
 
+        $tippin = $this->userTippin();
+
         $this->private = $this->makePrivateThread(
-            $this->userTippin(),
+            $tippin,
             $this->userDoe()
         );
+
+        $this->message = $this->makeMessageOnThread(
+            $this->private,
+            $tippin
+        );
+    }
+
+    /** @test */
+    public function guest_is_unauthorized()
+    {
+        $this->getJson(route('api.messenger.threads.messages.index', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertUnauthorized();
+    }
+
+    /** @test */
+    public function non_participant_is_forbidden()
+    {
+        $this->actingAs($this->companyDevelopers());
+
+        $this->getJson(route('api.messenger.threads.messages.index', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function recipient_can_view_messages_index()
+    {
+        $this->actingAs($this->userDoe());
+
+        $this->getJson(route('api.messenger.threads.messages.index', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJsonCount(1, 'data');
+    }
+
+    /** @test */
+    public function user_can_view_message()
+    {
+        $this->actingAs($this->userTippin());
+
+        $this->getJson(route('api.messenger.threads.messages.show', [
+            'thread' => $this->private->id,
+            'message' => $this->message->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJson([
+                'id' => $this->message->id,
+                'body' => 'First Test Message',
+            ]);
+    }
+
+    /** @test */
+    public function recipient_can_view_message()
+    {
+        $this->actingAs($this->userDoe());
+
+        $this->getJson(route('api.messenger.threads.messages.show', [
+            'thread' => $this->private->id,
+            'message' => $this->message->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJson([
+                'id' => $this->message->id,
+                'body' => 'First Test Message',
+            ]);
     }
 
     /** @test */
@@ -71,6 +147,53 @@ class PrivateMessageTest extends FeatureTestCase
     }
 
     /** @test */
+    public function recipient_can_send_message()
+    {
+        $this->expectsEvents([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+
+        $doe = $this->userDoe();
+
+        $this->actingAs($doe);
+
+        $this->postJson(route('api.messenger.threads.messages.store', [
+            'thread' => $this->private->id,
+        ]), [
+            'message' => 'Hello!',
+            'temporary_id' => '123-456-789',
+        ])
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function sender_can_send_message_when_thread_awaiting_recipient_approval()
+    {
+        $this->expectsEvents([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+
+        $this->private->participants()
+            ->where('owner_id', '=', $this->userDoe()->getKey())
+            ->first()
+            ->update([
+                'pending' => true,
+            ]);
+
+        $this->actingAs($this->userTippin());
+
+        $this->postJson(route('api.messenger.threads.messages.store', [
+            'thread' => $this->private->id,
+        ]), [
+            'message' => 'Hello!',
+            'temporary_id' => '123-456-789',
+        ])
+            ->assertSuccessful();
+    }
+
+    /** @test */
     public function non_participant_forbidden_to_send_message()
     {
         $this->actingAs($this->companyDevelopers());
@@ -81,6 +204,74 @@ class PrivateMessageTest extends FeatureTestCase
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',
         ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function recipient_forbidden_to_send_message_when_thread_awaiting_approval_on_them()
+    {
+        $doe = $this->userDoe();
+
+        $this->private->participants()
+            ->where('owner_id', '=', $doe->getKey())
+            ->first()
+            ->update([
+                'pending' => true,
+            ]);
+
+        $this->actingAs($doe);
+
+        $this->postJson(route('api.messenger.threads.messages.store', [
+            'thread' => $this->private->id,
+        ]), [
+            'message' => 'Hello!',
+            'temporary_id' => '123-456-789',
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function sender_can_archive_message()
+    {
+        $tippin = $this->userTippin();
+
+        $doe = $this->userDoe();
+
+        Event::fake([
+            MessageArchivedBroadcast::class,
+            MessageArchivedEvent::class,
+        ]);
+
+        $this->actingAs($tippin);
+
+        $this->deleteJson(route('api.messenger.threads.messages.destroy', [
+            'thread' => $this->private->id,
+            'message' => $this->message->id,
+        ]))
+            ->assertSuccessful();
+
+        Event::assertDispatched(function (MessageArchivedBroadcast $event) use ($doe, $tippin) {
+            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
+            $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
+            $this->assertEquals($this->message->id, $event->broadcastWith()['message_id']);
+
+            return true;
+        });
+
+        Event::assertDispatched(function (MessageArchivedEvent $event) {
+            return $this->message->id === $event->message->id;
+        });
+    }
+
+    /** @test */
+    public function recipient_forbidden_to_archive_message()
+    {
+        $this->actingAs($this->userDoe());
+
+        $this->deleteJson(route('api.messenger.threads.messages.destroy', [
+            'thread' => $this->private->id,
+            'message' => $this->message->id,
+        ]))
             ->assertForbidden();
     }
 
