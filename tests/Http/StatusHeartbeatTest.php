@@ -29,6 +29,7 @@ class StatusHeartbeatTest extends FeatureTestCase
         $this->postJson(route('api.messenger.heartbeat'), [
             'away' => $awayValue,
         ])
+            ->assertStatus(422)
             ->assertJsonValidationErrors('away');
     }
 

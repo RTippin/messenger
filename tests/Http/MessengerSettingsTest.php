@@ -47,6 +47,7 @@ class MessengerSettingsTest extends FeatureTestCase
             'dark_mode' => $boolInput,
             'online_status' => $intInput,
         ])
+            ->assertStatus(422)
             ->assertJsonValidationErrors([
                 'message_popups',
                 'message_sound',

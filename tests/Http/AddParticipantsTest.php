@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
-use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -287,5 +286,49 @@ class AddParticipantsTest extends FeatureTestCase
         ])
             ->assertSuccessful()
             ->assertJsonCount(0);
+    }
+
+    /**
+     * @test
+     * @dataProvider providersValidation
+     * @param $providers
+     * @param $errors
+     */
+    public function add_participants_checks_providers($providers, $errors)
+    {
+        $this->actingAs($this->userTippin());
+
+        $this->postJson(route('api.messenger.threads.participants.store', [
+            'thread' => $this->group->id,
+        ]), [
+            'providers' => $providers,
+        ])
+            ->assertJsonValidationErrors($errors);
+    }
+
+    public function providersValidation(): array
+    {
+        return [
+            'Alias and ID cannot be null' => [
+                [['alias' => null, 'id' => null]],
+                ['providers.0.alias', 'providers.0.id'],
+            ],
+            'Alias and ID cannot be empty' => [
+                [['alias' => '', 'id' => '']],
+                ['providers.0.alias', 'providers.0.id'],
+            ],
+            'Alias must be a string' => [
+                [['alias' => 123, 'id' => 1]],
+                ['providers.0.alias'],
+            ],
+            'Providers array cannot be empty' => [
+                [[]],
+                ['providers.0.alias', 'providers.0.id'],
+            ],
+            'Validates all items in the array' => [
+                [['alias' => 'user', 'id' => 1], ['alias' => null, 'id' => null]],
+                ['providers.1.alias', 'providers.1.id'],
+            ],
+        ];
     }
 }

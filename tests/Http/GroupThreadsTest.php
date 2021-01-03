@@ -65,6 +65,7 @@ class GroupThreadsTest extends FeatureTestCase
         $this->postJson(route('api.messenger.groups.store'), [
             'subject' => $subject,
         ])
+            ->assertStatus(422)
             ->assertJsonValidationErrors('subject');
     }
 
@@ -82,6 +83,7 @@ class GroupThreadsTest extends FeatureTestCase
             'subject' => 'Passes',
             'providers' => $providers,
         ])
+            ->assertStatus(422)
             ->assertJsonMissingValidationErrors('subject')
             ->assertJsonValidationErrors($errors);
     }

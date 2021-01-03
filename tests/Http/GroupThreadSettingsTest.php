@@ -75,6 +75,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
             'calling' => $fieldValue,
             'knocks' => $fieldValue,
         ])
+            ->assertStatus(422)
             ->assertJsonMissingValidationErrors('subject')
             ->assertJsonValidationErrors([
                 'add_participants',
@@ -104,6 +105,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
             'calling' => true,
             'knocks' => true,
         ])
+            ->assertStatus(422)
             ->assertJsonValidationErrors('subject');
     }
 
