@@ -225,7 +225,7 @@ class AddParticipantsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function only_friends_are_added()
+    public function non_friends_are_ignored_when_adding_participants()
     {
         $tippin = $this->userTippin();
 
@@ -261,7 +261,7 @@ class AddParticipantsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function no_participants_added_when_not_friends()
+    public function no_participants_added_when_no_friends_found()
     {
         $tippin = $this->userTippin();
 
@@ -280,6 +280,34 @@ class AddParticipantsTest extends FeatureTestCase
             'providers' => [
                 [
                     'id' => $smith->getKey(),
+                    'alias' => 'user',
+                ],
+            ],
+        ])
+            ->assertSuccessful()
+            ->assertJsonCount(0);
+    }
+
+    /** @test */
+    public function existing_participant_will_be_ignored_when_adding_participants()
+    {
+        $tippin = $this->userTippin();
+
+        $doe = $this->userDoe();
+
+        $this->doesntExpectEvents([
+            NewThreadBroadcast::class,
+            ParticipantsAddedEvent::class,
+        ]);
+
+        $this->actingAs($tippin);
+
+        $this->postJson(route('api.messenger.threads.participants.store', [
+            'thread' => $this->group->id,
+        ]), [
+            'providers' => [
+                [
+                    'id' => $doe->getKey(),
                     'alias' => 'user',
                 ],
             ],
