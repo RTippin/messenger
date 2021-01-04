@@ -117,6 +117,7 @@ class Participant extends Model
         'send_knocks' => 'boolean',
         'start_calls' => 'boolean',
         'add_participants' => 'boolean',
+        'manage_invites' => 'boolean',
     ];
 
     /**
