@@ -10,7 +10,7 @@ use RTippin\Messenger\Events\PromotedAdminEvent;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
-class ParticipantPromoteDemoteTest extends FeatureTestCase
+class PromoteDemoteParticipantTest extends FeatureTestCase
 {
     private Thread $private;
 
