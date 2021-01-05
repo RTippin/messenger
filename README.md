@@ -4,7 +4,6 @@
 [![Total Downloads][ico-downloads]][link-downloads]
 [![StyleCI][ico-styleci]][link-styleci]
 [![License][ico-license]][link-license]
-[![Build Status][ico-travis]][link-travis]
 
 # Laravel 8 Messenger suite
 
@@ -21,12 +20,6 @@
 - If our event listeners are enabled in your config, the queue your worker must use is `messenger`, as all listeners are queued on that channel.
 - Our included commands that push a job also use the `messenger` queue channel.
 - Read through our config file before migrating!
-
----
-
-## [View the LIVE Demo app](https://github.com/RTippin/messenger-demo)
-
-<img src="https://i.imgur.com/lnsRJfV.png" style="width:100%;"  alt="Demo"/>
 
 ---
 
@@ -93,6 +86,12 @@ If you enable all of our routing, simply login after you setup your providers in
     * We will purge all soft deleted messages that were archived past the set days (30 default). We do not need to fire any additional events or load models into memory, just remove from table, as this is not messages that are documents or images. 
 - `php artisan messenger:purge:threads` | `--now` | `--days=30`
     * We will purge all soft deleted threads that were archived past the set days (30 default). We run it through our action to remove the entire thread directory and sub files from storage and the thread from the database. Option to run immediately without pushing job to queue.
+
+---
+
+## [View the LIVE Demo app](https://github.com/RTippin/messenger-demo)
+
+<img src="https://i.imgur.com/lnsRJfV.png" style="width:100%;"  alt="Demo"/>
 
 ---
 
