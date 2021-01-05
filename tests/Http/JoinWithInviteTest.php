@@ -183,7 +183,7 @@ class JoinWithInviteTest extends FeatureTestCase
 
         $this->assertEquals(3, $this->group->participants()->count());
 
-        Event::assertDispatched(function (InviteUsedEvent $event) use($smith) {
+        Event::assertDispatched(function (InviteUsedEvent $event) use ($smith) {
             $this->assertEquals($smith->getKey(), $event->provider->getKey());
             $this->assertEquals($this->group->id, $event->thread->id);
             $this->assertEquals($this->invite->id, $event->invite->id);
