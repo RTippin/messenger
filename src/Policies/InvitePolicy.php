@@ -83,7 +83,7 @@ class InvitePolicy
     public function join($user, Invite $code)
     {
         return $code->isValid()
-        && ! $code->thread->hasCurrentProvider()
+        && $code->thread->canJoinWithInvite()
             ? $this->allow()
             : $this->deny('Not authorized to join with this invite.');
     }

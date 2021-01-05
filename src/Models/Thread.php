@@ -514,6 +514,18 @@ class Thread extends Model
     /**
      * @return bool
      */
+    public function canJoinWithInvite(): bool
+    {
+        return messenger()->isThreadInvitesEnabled()
+            && $this->isGroup()
+            && ! $this->lockout
+            && $this->invitations
+            && ! $this->hasCurrentProvider();
+    }
+
+    /**
+     * @return bool
+     */
     public function canCall(): bool
     {
         if (! messenger()->isCallingEnabled()
