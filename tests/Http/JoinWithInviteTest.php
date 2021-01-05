@@ -68,6 +68,28 @@ class JoinWithInviteTest extends FeatureTestCase
     }
 
     /** @test */
+    public function invite_shows_invalid_when_not_deleted_and_past_expires()
+    {
+        $this->travel(2)->hours();
+
+        $this->getJson(route('api.messenger.invites.join', [
+            'invite' => 'TEST1234',
+        ]))
+            ->assertSuccessful()
+            ->assertJson([
+                'id' => $this->invite->id,
+                'code' => 'TEST1234',
+                'thread_id' => $this->group->id,
+                'options' => [
+                    'messenger_auth' => false,
+                    'in_thread' => false,
+                    'thread_name' => null,
+                    'is_valid' => false,
+                ],
+            ]);
+    }
+
+    /** @test */
     public function guest_can_view_valid_invite()
     {
         $this->getJson(route('api.messenger.invites.join', [

@@ -141,6 +141,20 @@ class InvitesTest extends FeatureTestCase
     }
 
     /** @test */
+    public function invite_ignored_when_not_deleted_and_past_expires()
+    {
+        $this->travel(2)->hours();
+
+        $this->actingAs($this->userTippin());
+
+        $this->getJson(route('api.messenger.threads.invites.index', [
+            'thread' => $this->group->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJsonCount(0, 'data');
+    }
+
+    /** @test */
     public function admin_forbidden_to_view_invites_when_disabled_in_group_settings()
     {
         $this->group->update([
