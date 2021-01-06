@@ -34,7 +34,7 @@ class MessengerTest extends FeatureTestCase
             ->assertJson([
                 'siteName' => 'Messenger-Testbench',
                 'messageImageUpload' => true,
-                'calling' => false,
+                'calling' => true,
                 'threadsIndexCount' => 100,
             ]);
     }
@@ -44,16 +44,7 @@ class MessengerTest extends FeatureTestCase
     {
         $this->actingAs($this->userTippin());
 
-        $this->getJson(route('api.messenger.info'))
-            ->assertSuccessful()
-            ->assertJson([
-                'siteName' => 'Messenger-Testbench',
-                'messageImageUpload' => true,
-                'calling' => false,
-                'threadsIndexCount' => 100,
-            ]);
-
-        Messenger::setCalling(true);
+        Messenger::setCalling(false);
         Messenger::setMessageImageUpload(false);
         Messenger::setThreadsIndexCount(50);
 
@@ -62,7 +53,7 @@ class MessengerTest extends FeatureTestCase
             ->assertJson([
                 'siteName' => 'Messenger-Testbench',
                 'messageImageUpload' => false,
-                'calling' => true,
+                'calling' => false,
                 'threadsIndexCount' => 50,
             ]);
     }

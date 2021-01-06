@@ -56,6 +56,8 @@ class FeatureTestCase extends TestCase
 
         $config->set('messenger.provider_uuids', self::UseUUID);
 
+        $config->set('messenger.calling.enabled', true);
+
         $config->set('messenger.providers', [
             'user' => [
                 'model' => (self::UseUUID ? UserModelUuid::class : UserModel::class),

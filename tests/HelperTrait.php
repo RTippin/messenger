@@ -164,7 +164,7 @@ trait HelperTrait
             'setup_complete' => true,
             'room_id' => 123456789,
             'room_pin' => 'PIN',
-            'room_secret' => 'SECRET'
+            'room_secret' => 'SECRET',
         ]);
 
         $call->participants()->create([
