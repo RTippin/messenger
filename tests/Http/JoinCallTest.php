@@ -24,8 +24,7 @@ class JoinCallTest extends FeatureTestCase
 
         $this->group = $this->createGroupThread(
             $tippin,
-            $this->userDoe(),
-            $this->companyDevelopers()
+            $this->userDoe()
         );
 
         $this->call = $this->createCall(
