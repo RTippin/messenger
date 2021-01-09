@@ -75,7 +75,7 @@ class EndCallTest extends FeatureTestCase
 
         $this->call->participants()->create([
             'owner_id' => $doe->getKey(),
-            'owner_type' => get_class($doe)
+            'owner_type' => get_class($doe),
         ]);
 
         $this->actingAs($doe);
