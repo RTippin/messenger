@@ -154,13 +154,13 @@ trait HelperTrait
         ]);
     }
 
-    protected function createCall(Thread $thread, MessengerProvider $owner, bool $active = true): Call
+    protected function createCall(Thread $thread, MessengerProvider $owner, ...$participants): Call
     {
         $call = $thread->calls()->create([
             'type' => 1,
             'owner_id' => $owner->getKey(),
             'owner_type' => get_class($owner),
-            'call_ended' => $active ? null : now(),
+            'call_ended' => null,
             'setup_complete' => true,
             'room_id' => 123456789,
             'room_pin' => 'PIN',
@@ -171,6 +171,13 @@ trait HelperTrait
             'owner_id' => $owner->getKey(),
             'owner_type' => get_class($owner),
         ]);
+
+        foreach ($participants as $participant) {
+            $call->participants()->create([
+                'owner_id' => $participant->getKey(),
+                'owner_type' => get_class($participant),
+            ]);
+        }
 
         return $call;
     }
