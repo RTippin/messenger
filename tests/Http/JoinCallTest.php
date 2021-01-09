@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\CallJoinedBroadcast;
 use RTippin\Messenger\Events\CallJoinedEvent;
@@ -58,6 +59,22 @@ class JoinCallTest extends FeatureTestCase
     }
 
     /** @test */
+    public function forbidden_to_join_inactive_call()
+    {
+        $this->call->update([
+            'call_ended' => now(),
+        ]);
+
+        $this->actingAs($this->userTippin());
+
+        $this->postJson(route('api.messenger.threads.calls.join', [
+            'thread' => $this->group->id,
+            'call' => $this->call->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function kicked_participant_forbidden_to_rejoin_call()
     {
         $doe = $this->userDoe();
@@ -103,11 +120,12 @@ class JoinCallTest extends FeatureTestCase
                 ],
             ]);
 
-        $this->assertDatabaseHas('call_participants', [
-            'call_id' => $this->call->id,
-            'owner_id' => $doe->getKey(),
-            'owner_type' => get_class($doe),
-        ]);
+        $participant = $this->call->participants()
+            ->where('owner_id', '=', $doe->getKey())
+            ->where('owner_type', '=', get_class($doe))
+            ->first();
+
+        $this->assertTrue(Cache::has("call:{$this->call->id}:{$participant->id}"));
 
         Event::assertDispatched(function (CallJoinedBroadcast $event) use ($doe) {
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
@@ -117,8 +135,8 @@ class JoinCallTest extends FeatureTestCase
             return true;
         });
 
-        Event::assertDispatched(function (CallJoinedEvent $event) {
-            return $this->call->id === $event->call->id;
+        Event::assertDispatched(function (CallJoinedEvent $event) use ($participant) {
+            return $participant->id === $event->participant->id;
         });
     }
 
@@ -130,15 +148,15 @@ class JoinCallTest extends FeatureTestCase
             CallJoinedEvent::class,
         ]);
 
-        $doe = $this->userDoe();
+        $tippin = $this->userTippin();
 
-        $this->call->participants()->create([
-            'owner_id' => $doe->getKey(),
-            'owner_type' => get_class($doe),
+        $participant = $this->call->participants()->first();
+
+        $participant->update([
             'left_call' => now(),
         ]);
 
-        $this->actingAs($doe);
+        $this->actingAs($tippin);
 
         $this->postJson(route('api.messenger.threads.calls.join', [
             'thread' => $this->group->id,
@@ -146,13 +164,8 @@ class JoinCallTest extends FeatureTestCase
         ]))
             ->assertSuccessful();
 
-        $this->assertDatabaseHas('call_participants', [
-            'call_id' => $this->call->id,
-            'owner_id' => $doe->getKey(),
-            'owner_type' => get_class($doe),
-            'left_call' => null,
-        ]);
+        $this->assertNull($participant->fresh()->left_call);
 
-        $this->assertDatabaseCount('call_participants', 2);
+        $this->assertTrue(Cache::has("call:{$this->call->id}:{$participant->id}"));
     }
 }
