@@ -69,6 +69,42 @@ class EndCallTest extends FeatureTestCase
     }
 
     /** @test */
+    public function inactive_participant_forbidden_to_end_call()
+    {
+        $this->call->participants()
+            ->first()
+            ->update([
+                'left_call' => now(),
+            ]);
+
+        $this->actingAs($this->userTippin());
+
+        $this->postJson(route('api.messenger.threads.calls.end', [
+            'thread' => $this->group->id,
+            'call' => $this->call->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function kicked_participant_forbidden_to_end_call()
+    {
+        $this->call->participants()
+            ->first()
+            ->update([
+                'kicked' => true,
+            ]);
+
+        $this->actingAs($this->userTippin());
+
+        $this->postJson(route('api.messenger.threads.calls.end', [
+            'thread' => $this->group->id,
+            'call' => $this->call->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function non_call_admin_participant_forbidden_to_end_call()
     {
         $doe = $this->userDoe();
