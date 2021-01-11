@@ -66,7 +66,7 @@ class PendingFriendsTest extends FeatureTestCase
 
         Event::assertDispatched(function (FriendDeniedBroadcast $event) use ($pending, $tippin) {
             $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertEquals($pending->id, $event->broadcastWith()['sent_friend_id']);
+            $this->assertSame($pending->id, $event->broadcastWith()['sent_friend_id']);
 
             return true;
         });
@@ -123,11 +123,11 @@ class PendingFriendsTest extends FeatureTestCase
             'party_type' => get_class($tippin),
         ]);
 
-        $this->assertEquals(1, resolve(FriendDriver::class)->friendStatus($tippin));
+        $this->assertSame(1, resolve(FriendDriver::class)->friendStatus($tippin));
 
         Event::assertDispatched(function (FriendApprovedBroadcast $event) use ($tippin) {
             $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertEquals('John Doe', $event->broadcastWith()['sender']['name']);
+            $this->assertSame('John Doe', $event->broadcastWith()['sender']['name']);
 
             return true;
         });

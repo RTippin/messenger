@@ -85,8 +85,8 @@ class FriendsTest extends FeatureTestCase
             ->assertSuccessful();
 
         Event::assertDispatched(function (FriendRemovedEvent $event) {
-            $this->assertEquals($this->inverseFriend->id, $event->inverseFriend->id);
-            $this->assertEquals($this->friend->id, $event->friend->id);
+            $this->assertSame($this->inverseFriend->id, $event->inverseFriend->id);
+            $this->assertSame($this->friend->id, $event->friend->id);
 
             return true;
         });
@@ -105,7 +105,7 @@ class FriendsTest extends FeatureTestCase
             'party_type' => get_class($tippin),
         ]);
 
-        $this->assertEquals(0, resolve(FriendDriver::class)->friendStatus($doe));
+        $this->assertSame(0, resolve(FriendDriver::class)->friendStatus($doe));
     }
 
     /** @test */
@@ -140,7 +140,7 @@ class FriendsTest extends FeatureTestCase
             'party_type' => get_class($tippin),
         ]);
 
-        $this->assertEquals(0, resolve(FriendDriver::class)->friendStatus($developers));
+        $this->assertSame(0, resolve(FriendDriver::class)->friendStatus($developers));
     }
 
     /** @test */

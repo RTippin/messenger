@@ -171,16 +171,16 @@ class KickCallParticipantTest extends FeatureTestCase
 
         Event::assertDispatched(function (KickedFromCallBroadcast $event) use ($doe) {
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->call->id, $event->broadcastWith()['call_id']);
+            $this->assertSame($this->call->id, $event->broadcastWith()['call_id']);
             $this->assertTrue($event->broadcastWith()['kicked']);
 
             return true;
         });
 
         Event::assertDispatched(function (KickedFromCallEvent $event) use ($tippin) {
-            $this->assertEquals($this->call->id, $event->call->id);
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals($this->participant->id, $event->participant->id);
+            $this->assertSame($this->call->id, $event->call->id);
+            $this->assertSame($tippin->getKey(), $event->provider->getKey());
+            $this->assertSame($this->participant->id, $event->participant->id);
 
             return true;
         });

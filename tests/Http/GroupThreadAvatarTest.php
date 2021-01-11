@@ -49,7 +49,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
 
         $this->actingAs($this->userTippin());
 
-        $this->assertEquals('5.png', $this->group->image);
+        $this->assertSame('5.png', $this->group->image);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
             'thread' => $this->group->id,
@@ -71,7 +71,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
 
         $this->actingAs($tippin);
 
-        $this->assertEquals('5.png', $this->group->image);
+        $this->assertSame('5.png', $this->group->image);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
             'thread' => $this->group->id,
@@ -82,7 +82,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
 
         $this->assertEventsDispatched($tippin);
 
-        $this->assertEquals('1.png', $this->group->fresh()->image);
+        $this->assertSame('1.png', $this->group->fresh()->image);
     }
 
     /** @test */
@@ -171,7 +171,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
         Storage::disk(Messenger::getAvatarStorage('disk'))
             ->assertMissing($this->group->getStorageDirectory().'/avatar/avatar.jpg');
 
-        $this->assertEquals('2.png', $this->group->fresh()->image);
+        $this->assertSame('2.png', $this->group->fresh()->image);
     }
 
     /**
@@ -239,8 +239,8 @@ class GroupThreadAvatarTest extends FeatureTestCase
         });
 
         Event::assertDispatched(function (ThreadAvatarEvent $event) use ($provider) {
-            $this->assertEquals($provider->getKey(), $event->provider->getKey());
-            $this->assertEquals($this->group->id, $event->thread->id);
+            $this->assertSame($provider->getKey(), $event->provider->getKey());
+            $this->assertSame($this->group->id, $event->thread->id);
 
             return true;
         });

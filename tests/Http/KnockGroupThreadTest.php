@@ -52,14 +52,14 @@ class KnockGroupThreadTest extends FeatureTestCase
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
             $this->assertContains('private-company.'.$developers->getKey(), $event->broadcastOn());
             $this->assertNotContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->group->id, $event->broadcastWith()['thread']['id']);
+            $this->assertSame($this->group->id, $event->broadcastWith()['thread']['id']);
 
             return true;
         });
 
         Event::assertDispatched(function (KnockEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals($this->group->id, $event->thread->id);
+            $this->assertSame($tippin->getKey(), $event->provider->getKey());
+            $this->assertSame($this->group->id, $event->thread->id);
 
             return true;
         });

@@ -73,8 +73,8 @@ class PrivateThreadsTest extends FeatureTestCase
         });
 
         Event::assertDispatched(function (NewThreadEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals(1, $event->thread->type);
+            $this->assertSame($tippin->getKey(), $event->provider->getKey());
+            $this->assertSame(1, $event->thread->type);
 
             return true;
         });

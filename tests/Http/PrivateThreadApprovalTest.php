@@ -52,15 +52,15 @@ class PrivateThreadApprovalTest extends FeatureTestCase
 
         Event::assertDispatched(function (ThreadApprovalBroadcast $event) use ($doe) {
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->private->id, $event->broadcastWith()['thread']['id']);
+            $this->assertSame($this->private->id, $event->broadcastWith()['thread']['id']);
             $this->assertTrue($event->broadcastWith()['thread']['approved']);
 
             return true;
         });
 
         Event::assertDispatched(function (ThreadApprovalEvent $event) use ($tippin) {
-            $this->assertEquals($this->private->id, $event->thread->id);
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
+            $this->assertSame($this->private->id, $event->thread->id);
+            $this->assertSame($tippin->getKey(), $event->provider->getKey());
             $this->assertTrue($event->approved);
 
             return true;
@@ -94,15 +94,15 @@ class PrivateThreadApprovalTest extends FeatureTestCase
 
         Event::assertDispatched(function (ThreadApprovalBroadcast $event) use ($doe) {
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->private->id, $event->broadcastWith()['thread']['id']);
+            $this->assertSame($this->private->id, $event->broadcastWith()['thread']['id']);
             $this->assertFalse($event->broadcastWith()['thread']['approved']);
 
             return true;
         });
 
         Event::assertDispatched(function (ThreadApprovalEvent $event) use ($tippin) {
-            $this->assertEquals($this->private->id, $event->thread->id);
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
+            $this->assertSame($this->private->id, $event->thread->id);
+            $this->assertSame($tippin->getKey(), $event->provider->getKey());
             $this->assertFalse($event->approved);
 
             return true;

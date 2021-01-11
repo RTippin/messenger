@@ -169,8 +169,8 @@ class GroupThreadSettingsTest extends FeatureTestCase
         });
 
         Event::assertDispatched(function (ThreadSettingsEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals($this->group->id, $event->thread->id);
+            $this->assertSame($tippin->getKey(), $event->provider->getKey());
+            $this->assertSame($this->group->id, $event->thread->id);
             $this->assertFalse($event->nameChanged);
 
             return true;

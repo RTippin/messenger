@@ -181,15 +181,15 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
 
         Event::assertDispatched(function (PromotedAdminBroadcast $event) use ($doe) {
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->group->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
 
         Event::assertDispatched(function (PromotedAdminEvent $event) use ($tippin, $participant) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals($this->group->id, $event->thread->id);
-            $this->assertEquals($participant->id, $event->participant->id);
+            $this->assertSame($tippin->getKey(), $event->provider->getKey());
+            $this->assertSame($this->group->id, $event->thread->id);
+            $this->assertSame($participant->id, $event->participant->id);
 
             return true;
         });
@@ -230,15 +230,15 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
 
         Event::assertDispatched(function (DemotedAdminBroadcast $event) use ($doe) {
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->group->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
 
         Event::assertDispatched(function (DemotedAdminEvent $event) use ($tippin, $participant) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals($this->group->id, $event->thread->id);
-            $this->assertEquals($participant->id, $event->participant->id);
+            $this->assertSame($tippin->getKey(), $event->provider->getKey());
+            $this->assertSame($this->group->id, $event->thread->id);
+            $this->assertSame($participant->id, $event->participant->id);
 
             return true;
         });

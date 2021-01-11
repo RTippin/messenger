@@ -17,7 +17,7 @@ class MessengerApiTest extends FeatureTestCase
         (new MessengerApi())->handle($request, function (Request $request) {
             $this->assertNull(JsonResource::$wrap);
             $this->assertTrue($request->hasHeader('Accept'));
-            $this->assertEquals('application/json', $request->header('Accept'));
+            $this->assertSame('application/json', $request->header('Accept'));
         });
     }
 }

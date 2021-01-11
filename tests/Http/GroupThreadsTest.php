@@ -123,8 +123,8 @@ class GroupThreadsTest extends FeatureTestCase
             ]);
 
         Event::assertDispatched(function (NewThreadEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals('Test Group', $event->thread->subject);
+            $this->assertSame($tippin->getKey(), $event->provider->getKey());
+            $this->assertSame('Test Group', $event->thread->subject);
 
             return true;
         });
@@ -182,8 +182,8 @@ class GroupThreadsTest extends FeatureTestCase
         Event::assertNotDispatched(ParticipantsAddedEvent::class);
 
         Event::assertDispatched(function (NewThreadEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals('Test Group', $event->thread->subject);
+            $this->assertSame($tippin->getKey(), $event->provider->getKey());
+            $this->assertSame('Test Group', $event->thread->subject);
 
             return true;
         });
@@ -287,8 +287,8 @@ class GroupThreadsTest extends FeatureTestCase
         ]);
 
         Event::assertDispatched(function (NewThreadEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals('Test Many Participants', $event->thread->subject);
+            $this->assertSame($tippin->getKey(), $event->provider->getKey());
+            $this->assertSame('Test Many Participants', $event->thread->subject);
 
             return true;
         });
@@ -302,8 +302,8 @@ class GroupThreadsTest extends FeatureTestCase
         });
 
         Event::assertDispatched(function (ParticipantsAddedEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals('Test Many Participants', $event->thread->subject);
+            $this->assertSame($tippin->getKey(), $event->provider->getKey());
+            $this->assertSame('Test Many Participants', $event->thread->subject);
             $this->assertCount(2, $event->participants);
 
             return true;

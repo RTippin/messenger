@@ -81,14 +81,14 @@ class ArchivePrivateThreadTest extends FeatureTestCase
         Event::assertDispatched(function (ThreadArchivedBroadcast $event) use ($tippin, $doe) {
             $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->private->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame($this->private->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
 
         Event::assertDispatched(function (ThreadArchivedEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals($this->private->id, $event->thread->id);
+            $this->assertSame($tippin->getKey(), $event->provider->getKey());
+            $this->assertSame($this->private->id, $event->thread->id);
 
             return true;
         });

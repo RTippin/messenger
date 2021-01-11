@@ -47,14 +47,14 @@ class LeaveGroupThreadTest extends FeatureTestCase
 
         Event::assertDispatched(function (ThreadLeftBroadcast $event) use ($doe) {
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->group->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
 
         Event::assertDispatched(function (ThreadLeftEvent $event) use ($doe) {
-            $this->assertEquals($doe->getKey(), $event->provider->getKey());
-            $this->assertEquals($this->group->id, $event->thread->id);
+            $this->assertSame($doe->getKey(), $event->provider->getKey());
+            $this->assertSame($this->group->id, $event->thread->id);
             $this->assertEquals($doe->getKey(), $event->participant->owner_id);
 
             return true;
@@ -66,7 +66,7 @@ class LeaveGroupThreadTest extends FeatureTestCase
     {
         $this->actingAs($this->userTippin());
 
-        $this->assertEquals(2, $this->group->participants()->count());
+        $this->assertSame(2, $this->group->participants()->count());
 
         $this->postJson(route('api.messenger.threads.leave', [
             'thread' => $this->group->id,
@@ -94,7 +94,7 @@ class LeaveGroupThreadTest extends FeatureTestCase
 
         $this->actingAs($tippin);
 
-        $this->assertEquals(1, $this->group->participants()->count());
+        $this->assertSame(1, $this->group->participants()->count());
 
         $this->postJson(route('api.messenger.threads.leave', [
             'thread' => $this->group->id,
@@ -130,7 +130,7 @@ class LeaveGroupThreadTest extends FeatureTestCase
 
         $this->actingAs($tippin);
 
-        $this->assertEquals(2, $this->group->participants()->admins()->count());
+        $this->assertSame(2, $this->group->participants()->admins()->count());
 
         $this->postJson(route('api.messenger.threads.leave', [
             'thread' => $this->group->id,

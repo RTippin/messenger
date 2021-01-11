@@ -67,9 +67,9 @@ class SetMessengerProviderTest extends FeatureTestCase
         $middleware = app(SetMessengerProvider::class);
 
         $middleware->handle($request, function (Request $request) {
-            $this->assertEquals('richard.tippin@gmail.com', $request->user()->email);
+            $this->assertSame('richard.tippin@gmail.com', $request->user()->email);
             $this->assertTrue(Messenger::isProviderSet());
-            $this->assertEquals('richard.tippin@gmail.com', Messenger::getProvider()->email);
+            $this->assertSame('richard.tippin@gmail.com', Messenger::getProvider()->email);
         }, 'required');
     }
 
@@ -85,9 +85,9 @@ class SetMessengerProviderTest extends FeatureTestCase
         $middleware = app(SetMessengerProvider::class);
 
         $middleware->handle($request, function (Request $request) {
-            $this->assertEquals('developers@example.net', $request->user()->company_email);
+            $this->assertSame('developers@example.net', $request->user()->company_email);
             $this->assertTrue(Messenger::isProviderSet());
-            $this->assertEquals('developers@example.net', Messenger::getProvider()->company_email);
+            $this->assertSame('developers@example.net', Messenger::getProvider()->company_email);
         }, 'required');
     }
 }

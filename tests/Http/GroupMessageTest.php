@@ -114,8 +114,8 @@ class GroupMessageTest extends FeatureTestCase
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
             $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
             $this->assertContains('private-company.'.$developers->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->group->id, $event->broadcastWith()['thread_id']);
-            $this->assertEquals('123-456-789', $event->broadcastWith()['temporary_id']);
+            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame('123-456-789', $event->broadcastWith()['temporary_id']);
 
             return true;
         });

@@ -178,8 +178,8 @@ class AddParticipantsTest extends FeatureTestCase
         });
 
         Event::assertDispatched(function (ParticipantsAddedEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals('First Test Group', $event->thread->subject);
+            $this->assertSame($tippin->getKey(), $event->provider->getKey());
+            $this->assertSame('First Test Group', $event->thread->subject);
             $this->assertCount(2, $event->participants);
 
             return true;

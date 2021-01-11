@@ -62,16 +62,16 @@ class SentFriendsTest extends FeatureTestCase
 
         Event::assertDispatched(function (FriendRequestBroadcast $event) use ($tippin, $doe) {
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertEquals($tippin->getKey(), $event->broadcastWith()['sender_id']);
-            $this->assertEquals('Richard Tippin', $event->broadcastWith()['sender']['name']);
+            $this->assertSame($tippin->getKey(), $event->broadcastWith()['sender_id']);
+            $this->assertSame('Richard Tippin', $event->broadcastWith()['sender']['name']);
 
             return true;
         });
 
         Event::assertDispatched(function (FriendRequestEvent $event) use ($tippin, $doe) {
-            $this->assertEquals($tippin->getKey(), $event->friend->sender_id);
-            $this->assertEquals($doe->getKey(), $event->friend->recipient_id);
-            $this->assertEquals(get_class($doe), $event->friend->recipient_type);
+            $this->assertSame($tippin->getKey(), $event->friend->sender_id);
+            $this->assertSame($doe->getKey(), $event->friend->recipient_id);
+            $this->assertSame(get_class($doe), $event->friend->recipient_type);
 
             return true;
         });
@@ -167,7 +167,7 @@ class SentFriendsTest extends FeatureTestCase
 
         Event::assertDispatched(function (FriendCancelledBroadcast $event) use ($sent, $doe) {
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertEquals($sent->id, $event->broadcastWith()['pending_friend_id']);
+            $this->assertSame($sent->id, $event->broadcastWith()['pending_friend_id']);
 
             return true;
         });

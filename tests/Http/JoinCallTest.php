@@ -128,8 +128,8 @@ class JoinCallTest extends FeatureTestCase
 
         Event::assertDispatched(function (CallJoinedBroadcast $event) use ($doe) {
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->call->id, $event->broadcastWith()['id']);
-            $this->assertEquals($this->group->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame($this->call->id, $event->broadcastWith()['id']);
+            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });

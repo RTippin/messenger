@@ -49,10 +49,10 @@ class StatusHeartbeatTest extends FeatureTestCase
         ])
             ->assertSuccessful();
 
-        $this->assertEquals(1, $tippin->onlineStatus());
+        $this->assertSame(1, $tippin->onlineStatus());
 
         Event::assertDispatched(function (StatusHeartbeatEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
+            $this->assertSame($tippin->getKey(), $event->provider->getKey());
             $this->assertFalse($event->away);
             $this->assertNotNull($event->IP);
 
@@ -76,7 +76,7 @@ class StatusHeartbeatTest extends FeatureTestCase
         ])
             ->assertSuccessful();
 
-        $this->assertEquals(2, $tippin->onlineStatus());
+        $this->assertSame(2, $tippin->onlineStatus());
 
         Event::assertDispatched(function (StatusHeartbeatEvent $event) {
             return $event->away === true;

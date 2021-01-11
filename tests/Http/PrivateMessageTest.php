@@ -135,8 +135,8 @@ class PrivateMessageTest extends FeatureTestCase
         Event::assertDispatched(function (NewMessageBroadcast $event) use ($doe, $tippin) {
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
             $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->private->id, $event->broadcastWith()['thread_id']);
-            $this->assertEquals('123-456-789', $event->broadcastWith()['temporary_id']);
+            $this->assertSame($this->private->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame('123-456-789', $event->broadcastWith()['temporary_id']);
 
             return true;
         });
@@ -255,7 +255,7 @@ class PrivateMessageTest extends FeatureTestCase
         Event::assertDispatched(function (MessageArchivedBroadcast $event) use ($doe, $tippin) {
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
             $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->message->id, $event->broadcastWith()['message_id']);
+            $this->assertSame($this->message->id, $event->broadcastWith()['message_id']);
 
             return true;
         });

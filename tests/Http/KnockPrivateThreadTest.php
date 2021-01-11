@@ -48,14 +48,14 @@ class KnockPrivateThreadTest extends FeatureTestCase
         Event::assertDispatched(function (KnockBroadcast $event) use ($doe, $tippin) {
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
             $this->assertNotContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->private->id, $event->broadcastWith()['thread']['id']);
+            $this->assertSame($this->private->id, $event->broadcastWith()['thread']['id']);
 
             return true;
         });
 
         Event::assertDispatched(function (KnockEvent $event) use ($tippin) {
-            $this->assertEquals($tippin->getKey(), $event->provider->getKey());
-            $this->assertEquals($this->private->id, $event->thread->id);
+            $this->assertSame($tippin->getKey(), $event->provider->getKey());
+            $this->assertSame($this->private->id, $event->thread->id);
 
             return true;
         });

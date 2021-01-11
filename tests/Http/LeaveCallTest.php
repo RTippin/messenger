@@ -101,8 +101,8 @@ class LeaveCallTest extends FeatureTestCase
 
         Event::assertDispatched(function (CallLeftBroadcast $event) use ($tippin) {
             $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->call->id, $event->broadcastWith()['id']);
-            $this->assertEquals($this->group->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame($this->call->id, $event->broadcastWith()['id']);
+            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
