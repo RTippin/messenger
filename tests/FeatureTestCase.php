@@ -63,7 +63,7 @@ class FeatureTestCase extends TestCase
                 'model' => (self::UseUUID ? UserModelUuid::class : UserModel::class),
                 'searchable' => true,
                 'friendable' => true,
-                'devices' => false,
+                'devices' => true,
                 'default_avatar' => public_path('vendor/messenger/images/users.png'),
                 'provider_interactions' => [
                     'can_message' => true,
@@ -75,7 +75,7 @@ class FeatureTestCase extends TestCase
                 'model' => (self::UseUUID ? CompanyModelUuid::class : CompanyModel::class),
                 'searchable' => true,
                 'friendable' => true,
-                'devices' => false,
+                'devices' => true,
                 'default_avatar' => public_path('vendor/messenger/images/company.png'),
                 'provider_interactions' => [
                     'can_message' => true,
