@@ -11,7 +11,6 @@ use RTippin\Messenger\Broadcasting\Base\MessengerBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\BroadcastEvent;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Contracts\PushNotificationDriver;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
@@ -62,22 +61,22 @@ class BroadcastBroker implements BroadcastDriver
     protected bool $usingPresence = false;
 
     /**
-     * @var PushNotificationDriver
+     * @var PushNotificationBroker
      */
-    protected PushNotificationDriver $pushNotification;
+    protected PushNotificationBroker $pushNotification;
 
     /**
      * BroadcastBroker constructor.
      *
      * @param Messenger $messenger
      * @param ParticipantRepository $participantRepository
-     * @param PushNotificationDriver $pushNotification
+     * @param PushNotificationBroker $pushNotification
      * @param Factory $broadcast
      * @param Application $app
      */
     public function __construct(Messenger $messenger,
                                 ParticipantRepository $participantRepository,
-                                PushNotificationDriver $pushNotification,
+                                PushNotificationBroker $pushNotification,
                                 Factory $broadcast,
                                 Application $app)
     {
@@ -324,9 +323,11 @@ class BroadcastBroker implements BroadcastDriver
      */
     protected function executePushNotify(string $abstractBroadcast): void
     {
-        $this->pushNotification
-            ->to($this->recipients)
-            ->with($this->with)
-            ->notify($abstractBroadcast);
+        if ($this->messenger->isPushNotificationsEnabled()) {
+            $this->pushNotification
+                ->to($this->recipients)
+                ->with($this->with)
+                ->notify($abstractBroadcast);
+        }
     }
 }

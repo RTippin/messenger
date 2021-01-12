@@ -18,7 +18,6 @@ use RTippin\Messenger\Commands\PurgeMessages;
 use RTippin\Messenger\Commands\PurgeThreads;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\FriendDriver;
-use RTippin\Messenger\Contracts\PushNotificationDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Http\Middleware\AuthenticateOptional;
 use RTippin\Messenger\Http\Middleware\MessengerApi;
@@ -136,10 +135,6 @@ class MessengerServiceProvider extends ServiceProvider
             $this->getBroadcastImplementation()
         );
         $this->app->singleton(
-            PushNotificationDriver::class,
-            $this->getPushNotificationImplementation()
-        );
-        $this->app->singleton(
             VideoDriver::class,
             $this->getVideoImplementation()
         );
@@ -179,18 +174,6 @@ class MessengerServiceProvider extends ServiceProvider
         $alias = $this->app['config']->get('messenger.broadcasting.driver');
 
         return $this->app['config']->get('messenger.drivers.broadcasting')[$alias ?? 'null'];
-    }
-
-    /**
-     * Get the driver set in config for our services push notifications.
-     *
-     * @return string
-     */
-    protected function getPushNotificationImplementation(): string
-    {
-        $alias = $this->app['config']->get('messenger.push_notifications.driver');
-
-        return $this->app['config']->get('messenger.drivers.push_notifications')[$alias ?? 'null'];
     }
 
     /**

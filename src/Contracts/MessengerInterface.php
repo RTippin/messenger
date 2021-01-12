@@ -118,6 +118,12 @@ interface MessengerInterface
     public function isKnockKnockEnabled(): bool;
 
     /**
+     * @param bool $pushNotifications
+     * @return $this
+     */
+    public function setPushNotifications(bool $pushNotifications);
+
+    /**
      * @param bool $knockKnock
      * @return $this
      */
@@ -392,9 +398,9 @@ interface MessengerInterface
     public function getSocketEndpoint(): string;
 
     /**
-     * @return string
+     * @return bool
      */
-    public function getPushNotificationDriver(): string;
+    public function isPushNotificationsEnabled(): bool;
 
     /**
      * @return string

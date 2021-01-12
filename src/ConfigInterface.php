@@ -54,12 +54,12 @@ trait ConfigInterface
     /**
      * @var string
      */
-    private string $pushNotificationDriver;
+    private string $videoDriver;
 
     /**
-     * @var string
+     * @var bool
      */
-    private string $videoDriver;
+    private bool $pushNotifications;
 
     /**
      * @var array
@@ -269,6 +269,25 @@ trait ConfigInterface
                 ];
             }),
         ])->toArray();
+    }
+
+    /**
+     * @param bool $pushNotifications
+     * @return $this
+     */
+    public function setPushNotifications(bool $pushNotifications): self
+    {
+        $this->pushNotifications = $pushNotifications;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPushNotificationsEnabled(): bool
+    {
+        return $this->pushNotifications;
     }
 
     /**
@@ -734,14 +753,6 @@ trait ConfigInterface
     /**
      * @return string
      */
-    public function getPushNotificationDriver(): string
-    {
-        return $this->pushNotificationDriver;
-    }
-
-    /**
-     * @return string
-     */
     public function getApiEndpoint(): string
     {
         return $this->apiEndpoint;
@@ -806,8 +817,8 @@ trait ConfigInterface
         $this->defaultNotFoundImage = $this->configRepo->get('messenger.files.default_not_found_image');
         $this->defaultThreadAvatars = $this->configRepo->get('messenger.files.default_thread_avatars');
         $this->broadcastDriver = $this->configRepo->get('messenger.broadcasting.driver') ?? 'null';
-        $this->pushNotificationDriver = $this->configRepo->get('messenger.push_notifications.driver') ?? 'null';
         $this->videoDriver = $this->configRepo->get('messenger.calling.driver') ?? 'null';
+        $this->pushNotifications = $this->configRepo->get('messenger.push_notifications.enabled');
         $this->knockKnock = $this->configRepo->get('messenger.knocks.enabled');
         $this->knockTimeout = $this->configRepo->get('messenger.knocks.timeout');
         $this->threadInvites = $this->configRepo->get('messenger.invites.enabled');

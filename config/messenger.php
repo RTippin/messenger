@@ -5,9 +5,7 @@
 use RTippin\Messenger\Brokers\BroadcastBroker;
 use RTippin\Messenger\Brokers\JanusBroker;
 use RTippin\Messenger\Brokers\NullBroadcastBroker;
-use RTippin\Messenger\Brokers\NullPushNotificationBroker;
 use RTippin\Messenger\Brokers\NullVideoBroker;
-use RTippin\Messenger\Brokers\PushNotificationBroker;
 
 return [
     /*
@@ -242,10 +240,6 @@ return [
             'default' => BroadcastBroker::class,
             'null' => NullBroadcastBroker::class,
         ],
-        'push_notifications' => [
-            'default' => PushNotificationBroker::class,
-            'null' => NullPushNotificationBroker::class,
-        ],
         'calling' => [
             'janus' => JanusBroker::class,
             'null' => NullVideoBroker::class,
@@ -256,13 +250,13 @@ return [
         'driver' => env('MESSENGER_BROADCASTING_DRIVER', 'default'),
     ],
 
-    'push_notifications' => [
-        'driver' => env('MESSENGER_PUSH_NOTIFICATION_DRIVER', 'default'),
-    ],
-
     'calling' => [
         'enabled' => env('MESSENGER_CALLING_ENABLED', false),
         'driver' => env('MESSENGER_CALLING_DRIVER', 'null'),
+    ],
+
+    'push_notifications' => [
+        'enabled' => env('MESSENGER_PUSH_NOTIFICATIONS_ENABLED', false),
     ],
 
     /*
