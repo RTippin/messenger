@@ -13,7 +13,7 @@ class FriendPolicy
     /**
      * @var Messenger
      */
-    public Messenger $service;
+    public Messenger $messenger;
 
     /**
      * FriendPolicy constructor.
@@ -22,7 +22,7 @@ class FriendPolicy
      */
     public function __construct(Messenger $service)
     {
-        $this->service = $service;
+        $this->messenger = $service;
     }
 
     /**
@@ -45,9 +45,9 @@ class FriendPolicy
      */
     public function view($user, Friend $friend)
     {
-        return ($this->service->providerHasFriends()
-            && $this->service->getProviderId() == $friend->owner_id
-            && $this->service->getProviderClass() === $friend->owner_type)
+        return ($this->messenger->providerHasFriends()
+            && $this->messenger->getProviderId() == $friend->owner_id
+            && $this->messenger->getProviderClass() === $friend->owner_type)
             ? $this->allow()
             : $this->deny('Not authorized to view friend');
     }
@@ -61,9 +61,9 @@ class FriendPolicy
      */
     public function delete($user, Friend $friend)
     {
-        return ($this->service->providerHasFriends()
-            && $this->service->getProviderId() == $friend->owner_id
-            && $this->service->getProviderClass() === $friend->owner_type)
+        return ($this->messenger->providerHasFriends()
+            && $this->messenger->getProviderId() == $friend->owner_id
+            && $this->messenger->getProviderClass() === $friend->owner_type)
             ? $this->allow()
             : $this->deny('Not authorized to remove friend');
     }

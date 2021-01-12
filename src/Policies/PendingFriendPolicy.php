@@ -13,7 +13,7 @@ class PendingFriendPolicy
     /**
      * @var Messenger
      */
-    public Messenger $service;
+    public Messenger $messenger;
 
     /**
      * PendingFriendPolicy constructor.
@@ -22,7 +22,7 @@ class PendingFriendPolicy
      */
     public function __construct(Messenger $service)
     {
-        $this->service = $service;
+        $this->messenger = $service;
     }
 
     /**
@@ -33,7 +33,7 @@ class PendingFriendPolicy
      */
     public function viewAny($user)
     {
-        return $this->service->providerHasFriends()
+        return $this->messenger->providerHasFriends()
             ? $this->allow()
             : $this->deny('Not authorized to view pending friend request');
     }
@@ -47,9 +47,9 @@ class PendingFriendPolicy
      */
     public function view($user, PendingFriend $pending)
     {
-        return ($this->service->providerHasFriends()
-            && $this->service->getProviderId() == $pending->recipient_id
-            && $this->service->getProviderClass() === $pending->recipient_type)
+        return ($this->messenger->providerHasFriends()
+            && $this->messenger->getProviderId() == $pending->recipient_id
+            && $this->messenger->getProviderClass() === $pending->recipient_type)
             ? $this->allow()
             : $this->deny('Not authorized to view pending friend request');
     }
@@ -63,9 +63,9 @@ class PendingFriendPolicy
      */
     public function update($user, PendingFriend $pending)
     {
-        return ($this->service->providerHasFriends()
-            && $this->service->getProviderId() == $pending->recipient_id
-            && $this->service->getProviderClass() === $pending->recipient_type)
+        return ($this->messenger->providerHasFriends()
+            && $this->messenger->getProviderId() == $pending->recipient_id
+            && $this->messenger->getProviderClass() === $pending->recipient_type)
             ? $this->allow()
             : $this->deny('Not authorized to accept pending friend request');
     }
@@ -79,9 +79,9 @@ class PendingFriendPolicy
      */
     public function delete($user, PendingFriend $pending)
     {
-        return ($this->service->providerHasFriends()
-            && $this->service->getProviderId() == $pending->recipient_id
-            && $this->service->getProviderClass() === $pending->recipient_type)
+        return ($this->messenger->providerHasFriends()
+            && $this->messenger->getProviderId() == $pending->recipient_id
+            && $this->messenger->getProviderClass() === $pending->recipient_type)
             ? $this->allow()
             : $this->deny('Not authorized to deny pending friend request');
     }

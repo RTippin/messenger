@@ -13,7 +13,7 @@ class SentFriendPolicy
     /**
      * @var Messenger
      */
-    public Messenger $service;
+    public Messenger $messenger;
 
     /**
      * SentFriendPolicy constructor.
@@ -22,7 +22,7 @@ class SentFriendPolicy
      */
     public function __construct(Messenger $service)
     {
-        $this->service = $service;
+        $this->messenger = $service;
     }
 
     /**
@@ -33,7 +33,7 @@ class SentFriendPolicy
      */
     public function viewAny($user)
     {
-        return $this->service->providerHasFriends()
+        return $this->messenger->providerHasFriends()
             ? $this->allow()
             : $this->deny('Not authorized to view sent friend request');
     }
@@ -47,9 +47,9 @@ class SentFriendPolicy
      */
     public function view($user, SentFriend $sent)
     {
-        return ($this->service->providerHasFriends()
-            && $this->service->getProviderId() == $sent->sender_id
-            && $this->service->getProviderClass() === $sent->sender_type)
+        return ($this->messenger->providerHasFriends()
+            && $this->messenger->getProviderId() == $sent->sender_id
+            && $this->messenger->getProviderClass() === $sent->sender_type)
             ? $this->allow()
             : $this->deny('Not authorized to view sent friend request');
     }
@@ -62,7 +62,7 @@ class SentFriendPolicy
      */
     public function create($user)
     {
-        return $this->service->providerHasFriends()
+        return $this->messenger->providerHasFriends()
             ? $this->allow()
             : $this->deny('Not authorized add friends');
     }
@@ -76,9 +76,9 @@ class SentFriendPolicy
      */
     public function delete($user, SentFriend $sent)
     {
-        return ($this->service->providerHasFriends()
-            && $this->service->getProviderId() == $sent->sender_id
-            && $this->service->getProviderClass() === $sent->sender_type)
+        return ($this->messenger->providerHasFriends()
+            && $this->messenger->getProviderId() == $sent->sender_id
+            && $this->messenger->getProviderClass() === $sent->sender_type)
             ? $this->allow()
             : $this->deny('Not authorized to view remove friend request');
     }
