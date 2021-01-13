@@ -87,4 +87,36 @@ class MessengerTest extends FeatureTestCase
                 'unread_threads_count' => 2,
             ]);
     }
+
+    /** @test */
+    public function new_user_has_no_active_calls()
+    {
+        $this->actingAs($this->createJaneSmith());
+
+        $this->getJson(route('api.messenger.active.calls'))
+            ->assertSuccessful()
+            ->assertJsonCount(0);
+    }
+
+    /** @test */
+    public function user_has_one_active_call()
+    {
+        $tippin = $this->userTippin();
+
+        $thread = $this->createPrivateThread($tippin, $this->userDoe());
+
+        $call = $this->createCall($thread, $tippin);
+
+        $this->actingAs($tippin);
+
+        $this->getJson(route('api.messenger.active.calls'))
+            ->assertSuccessful()
+            ->assertJsonCount(1)
+            ->assertJson([
+                [
+                    'id' => $call->id,
+                    'thread_id' => $thread->id,
+                ],
+            ]);
+    }
 }
