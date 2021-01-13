@@ -26,16 +26,9 @@ class StartCallTest extends FeatureTestCase
 
         $doe = $this->userDoe();
 
-        $this->private = $this->createPrivateThread(
-            $tippin,
-            $doe
-        );
+        $this->private = $this->createPrivateThread($tippin, $doe);
 
-        $this->group = $this->createGroupThread(
-            $tippin,
-            $doe,
-            $this->companyDevelopers()
-        );
+        $this->group = $this->createGroupThread($tippin, $doe, $this->companyDevelopers());
     }
 
     /** @test */

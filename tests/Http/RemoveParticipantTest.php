@@ -30,10 +30,7 @@ class RemoveParticipantTest extends FeatureTestCase
 
         $tippin = $this->userTippin();
 
-        $private = $this->createPrivateThread(
-            $tippin,
-            $doe
-        );
+        $private = $this->createPrivateThread($tippin, $doe);
 
         $participant = $private->participants()
             ->where('owner_id', '=', $doe->getKey())

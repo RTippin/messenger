@@ -26,15 +26,9 @@ class KickCallParticipantTest extends FeatureTestCase
 
         $doe = $this->userDoe();
 
-        $this->group = $this->createGroupThread(
-            $tippin,
-            $this->userDoe()
-        );
+        $this->group = $this->createGroupThread($tippin, $doe);
 
-        $this->call = $this->createCall(
-            $this->group,
-            $tippin
-        );
+        $this->call = $this->createCall($this->group, $tippin);
 
         $this->participant = $this->call->participants()->create([
             'owner_id' => $doe->getKey(),

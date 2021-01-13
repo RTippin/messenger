@@ -20,20 +20,11 @@ class AddParticipantsTest extends FeatureTestCase
 
         $doe = $this->userDoe();
 
-        $this->group = $this->createGroupThread(
-            $tippin,
-            $doe
-        );
+        $this->group = $this->createGroupThread($tippin, $doe);
 
-        $this->createFriends(
-            $tippin,
-            $doe
-        );
+        $this->createFriends($tippin, $doe);
 
-        $this->createFriends(
-            $tippin,
-            $this->companyDevelopers()
-        );
+        $this->createFriends($tippin, $this->companyDevelopers());
     }
 
     /** @test */
@@ -41,10 +32,7 @@ class AddParticipantsTest extends FeatureTestCase
     {
         $tippin = $this->userTippin();
 
-        $private = $this->createPrivateThread(
-            $tippin,
-            $this->userDoe()
-        );
+        $private = $this->createPrivateThread($tippin, $this->userDoe());
 
         $this->actingAs($tippin);
 

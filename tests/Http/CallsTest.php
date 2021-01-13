@@ -18,15 +18,9 @@ class CallsTest extends FeatureTestCase
 
         $tippin = $this->userTippin();
 
-        $this->private = $this->createPrivateThread(
-            $tippin,
-            $this->userDoe()
-        );
+        $this->private = $this->createPrivateThread($tippin, $this->userDoe());
 
-        $this->call = $this->createCall(
-            $this->private,
-            $tippin
-        );
+        $this->call = $this->createCall($this->private, $tippin);
     }
 
     /** @test */

@@ -29,10 +29,7 @@ class GroupMessageTest extends FeatureTestCase
             $this->companyDevelopers()
         );
 
-        $this->message = $this->createMessage(
-            $this->group,
-            $tippin
-        );
+        $this->message = $this->createMessage($this->group, $tippin);
     }
 
     /** @test */

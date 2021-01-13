@@ -15,15 +15,11 @@ class FindRecipientThreadTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->private = $this->createPrivateThread(
-            $this->userTippin(),
-            $this->userDoe()
-        );
+        $tippin = $this->userTippin();
 
-        $this->privateWithCompany = $this->createPrivateThread(
-            $this->userTippin(),
-            $this->companyDevelopers()
-        );
+        $this->private = $this->createPrivateThread($tippin, $this->userDoe());
+
+        $this->privateWithCompany = $this->createPrivateThread($tippin, $this->companyDevelopers());
     }
 
     /**

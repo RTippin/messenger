@@ -20,16 +20,9 @@ class ThreadsTest extends FeatureTestCase
 
         $doe = $this->userDoe();
 
-        $this->group = $this->createGroupThread(
-            $tippin,
-            $doe,
-            $this->companyDevelopers()
-        );
+        $this->group = $this->createGroupThread($tippin, $doe, $this->companyDevelopers());
 
-        $this->private = $this->createPrivateThread(
-            $tippin,
-            $doe
-        );
+        $this->private = $this->createPrivateThread($tippin, $doe);
     }
 
     /** @test */

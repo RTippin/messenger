@@ -22,10 +22,7 @@ class InvitesTest extends FeatureTestCase
 
         $tippin = $this->userTippin();
 
-        $this->group = $this->createGroupThread(
-            $tippin,
-            $this->userDoe()
-        );
+        $this->group = $this->createGroupThread($tippin, $this->userDoe());
 
         $this->invite = $this->group->invites()
             ->create([

@@ -19,8 +19,7 @@ class ArchiveGroupThreadTest extends FeatureTestCase
         $this->group = $this->createGroupThread(
             $this->userTippin(),
             $this->userDoe(),
-            $this->companyDevelopers()
-        );
+            $this->companyDevelopers());
     }
 
     /** @test */

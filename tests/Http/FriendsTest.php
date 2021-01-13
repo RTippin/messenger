@@ -22,18 +22,14 @@ class FriendsTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $friends = $this->createFriends(
-            $this->userTippin(),
-            $this->userDoe()
-        );
+        $tippin = $this->userTippin();
+
+        $friends = $this->createFriends($tippin, $this->userDoe());
 
         $this->friend = $friends[0];
         $this->inverseFriend = $friends[1];
 
-        $friendsCompany = $this->createFriends(
-            $this->userTippin(),
-            $this->companyDevelopers()
-        );
+        $friendsCompany = $this->createFriends($tippin, $this->companyDevelopers());
 
         $this->friendCompany = $friendsCompany[0];
         $this->inverseFriendCompany = $friendsCompany[1];
