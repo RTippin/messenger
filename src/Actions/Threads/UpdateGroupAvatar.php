@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Actions\Threads;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Http\UploadedFile;
-use RTippin\Messenger\Actions\Base\BaseMessengerAction;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\ThreadAvatarBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Definitions;

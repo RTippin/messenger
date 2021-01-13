@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Actions\Threads;
 
 use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
-use RTippin\Messenger\Actions\Base\BaseMessengerAction;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\ThreadLeftEvent;

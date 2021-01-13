@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger\Actions\Base;
+namespace RTippin\Messenger\Actions;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;

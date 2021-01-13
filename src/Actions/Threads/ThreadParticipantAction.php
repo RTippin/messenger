@@ -2,7 +2,7 @@
 
 namespace RTippin\Messenger\Actions\Threads;
 
-use RTippin\Messenger\Actions\Base\BaseMessengerAction;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Models\Participant;

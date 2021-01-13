@@ -3,7 +3,7 @@
 namespace RTippin\Messenger\Actions\Threads;
 
 use Illuminate\Contracts\Events\Dispatcher;
-use RTippin\Messenger\Actions\Base\BaseMessengerAction;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\ThreadSettingsBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\ThreadSettingsEvent;

@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Actions\Invites;
 use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
-use RTippin\Messenger\Actions\Base\BaseMessengerAction;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\StoreParticipant;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\InviteUsedEvent;

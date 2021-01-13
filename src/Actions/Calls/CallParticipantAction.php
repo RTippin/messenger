@@ -3,7 +3,7 @@
 namespace RTippin\Messenger\Actions\Calls;
 
 use Illuminate\Contracts\Cache\Repository;
-use RTippin\Messenger\Actions\Base\BaseMessengerAction;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\CallParticipant;
 

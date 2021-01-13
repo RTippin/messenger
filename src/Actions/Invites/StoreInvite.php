@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Actions\Invites;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use RTippin\Messenger\Actions\Base\BaseMessengerAction;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Events\NewInviteEvent;
 use RTippin\Messenger\Http\Request\InviteRequest;
 use RTippin\Messenger\Http\Resources\InviteResource;

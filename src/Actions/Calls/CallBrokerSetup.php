@@ -3,7 +3,7 @@
 namespace RTippin\Messenger\Actions\Calls;
 
 use Exception;
-use RTippin\Messenger\Actions\Base\BaseMessengerAction;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;

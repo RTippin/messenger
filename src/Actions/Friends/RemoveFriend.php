@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Actions\Friends;
 use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
-use RTippin\Messenger\Actions\Base\BaseMessengerAction;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Events\FriendRemovedEvent;
 use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Models\Friend;

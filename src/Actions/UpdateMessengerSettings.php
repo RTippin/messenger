@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Actions;
 
-use RTippin\Messenger\Actions\Base\BaseMessengerAction;
 use RTippin\Messenger\Http\Request\MessengerSettingsRequest;
 use RTippin\Messenger\Messenger;
 

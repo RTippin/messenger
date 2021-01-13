@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Actions\Invites;
 
 use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
-use RTippin\Messenger\Actions\Base\BaseMessengerAction;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Events\InviteArchivedEvent;
 use RTippin\Messenger\Models\Invite;
 

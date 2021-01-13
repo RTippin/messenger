@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Actions\Friends;
 
 use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
-use RTippin\Messenger\Actions\Base\BaseMessengerAction;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\FriendCancelledBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\FriendCancelledEvent;

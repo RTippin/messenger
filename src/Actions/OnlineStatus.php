@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Actions;
 
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Http\Request;
-use RTippin\Messenger\Actions\Base\BaseMessengerAction;
 use RTippin\Messenger\Events\StatusHeartbeatEvent;
 use RTippin\Messenger\Messenger;
 
