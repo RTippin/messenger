@@ -111,4 +111,68 @@ class MarkThreadReadTest extends FeatureTestCase
 
         $this->assertSame($participant->last_read->toDayDateTimeString(), $participant->fresh()->last_read->toDayDateTimeString());
     }
+
+    /** @test */
+    public function pending_thread_awaiting_participant_approval_will_change_nothing()
+    {
+        $tippin = $this->userTippin();
+
+        $this->doesntExpectEvents([
+            ParticipantReadBroadcast::class,
+            ParticipantsReadEvent::class,
+        ]);
+
+        $participant = $this->private->participants()
+            ->where('owner_id', '=', $tippin->getKey())
+            ->where('owner_type', '=', get_class($tippin))
+            ->first();
+
+        $participant->update([
+            'pending' => true,
+        ]);
+
+        $this->actingAs($tippin);
+
+        $this->getJson(route('api.messenger.threads.mark.read', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertSuccessful();
+
+        $this->assertNull($participant->fresh()->last_read);
+    }
+
+    /** @test */
+    public function pending_thread_awaiting_other_participant_approval_can_mark_read()
+    {
+        $tippin = $this->userTippin();
+
+        $doe = $this->userDoe();
+
+        $this->expectsEvents([
+            ParticipantReadBroadcast::class,
+            ParticipantsReadEvent::class,
+        ]);
+
+        $this->private->participants()
+            ->where('owner_id', '=', $doe->getKey())
+            ->where('owner_type', '=', get_class($doe))
+            ->first()
+            ->update([
+                'pending' => true,
+            ]);
+
+        $this->actingAs($tippin);
+
+        $this->getJson(route('api.messenger.threads.mark.read', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertSuccessful();
+
+        $participant = $this->private->participants()
+            ->where('owner_id', '=', $tippin->getKey())
+            ->where('owner_type', '=', get_class($tippin))
+            ->first();
+
+        $this->assertNotNull($participant->fresh()->last_read);
+    }
 }
