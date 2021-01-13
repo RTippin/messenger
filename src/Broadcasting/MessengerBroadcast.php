@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger\Broadcasting\Base;
+namespace RTippin\Messenger\Broadcasting;
 
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;

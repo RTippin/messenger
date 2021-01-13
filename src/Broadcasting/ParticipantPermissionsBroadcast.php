@@ -2,8 +2,6 @@
 
 namespace RTippin\Messenger\Broadcasting;
 
-use RTippin\Messenger\Broadcasting\Base\MessengerBroadcast;
-
 class ParticipantPermissionsBroadcast extends MessengerBroadcast
 {
     /**

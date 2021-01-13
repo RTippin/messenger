@@ -7,7 +7,7 @@ use Illuminate\Contracts\Broadcasting\Factory;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Collection;
-use RTippin\Messenger\Broadcasting\Base\MessengerBroadcast;
+use RTippin\Messenger\Broadcasting\MessengerBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\BroadcastEvent;
 use RTippin\Messenger\Contracts\MessengerProvider;
