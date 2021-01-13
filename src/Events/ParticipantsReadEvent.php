@@ -12,7 +12,7 @@ class ParticipantsReadEvent
     /**
      * @var Participant
      */
-    private Participant $participant;
+    public Participant $participant;
 
     /**
      * Create a new event instance.
