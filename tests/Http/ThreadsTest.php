@@ -180,4 +180,48 @@ class ThreadsTest extends FeatureTestCase
                 ],
             ]);
     }
+
+    /** @test */
+    public function unread_thread_is_unread()
+    {
+        $tippin = $this->userTippin();
+
+        $this->createMessage($this->private, $tippin);
+
+        $this->actingAs($tippin);
+
+        $this->getJson(route('api.messenger.threads.is.unread', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJson([
+                'unread' => true,
+            ]);
+    }
+
+    /** @test */
+    public function read_thread_is_not_unread()
+    {
+        $tippin = $this->userTippin();
+
+        $this->createMessage($this->private, $tippin);
+
+        $this->private->participants()
+            ->where('owner_id', '=', $tippin->getKey())
+            ->where('owner_type', '=', get_class($tippin))
+            ->first()
+            ->update([
+                'last_read' => now()->addMinute(),
+            ]);
+
+        $this->actingAs($tippin);
+
+        $this->getJson(route('api.messenger.threads.is.unread', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJson([
+                'unread' => false,
+            ]);
+    }
 }
