@@ -191,7 +191,7 @@ class StartCallTest extends FeatureTestCase
         Event::assertDispatched(function (CallStartedBroadcast $event) use ($tippin, $doe) {
             $this->assertNotContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
             $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertEquals($this->private->id, $event->broadcastWith()['call']['thread_id']);
+            $this->assertSame($this->private->id, $event->broadcastWith()['call']['thread_id']);
 
             return true;
         });
