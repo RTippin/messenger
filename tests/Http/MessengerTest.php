@@ -57,4 +57,34 @@ class MessengerTest extends FeatureTestCase
                 'threadsIndexCount' => 50,
             ]);
     }
+
+    /** @test */
+    public function new_user_has_no_unread_threads()
+    {
+        $this->actingAs($this->createJaneSmith());
+
+        $this->getJson(route('api.messenger.unread.threads.count'))
+            ->assertSuccessful()
+            ->assertJson([
+                'unread_threads_count' => 0,
+            ]);
+    }
+
+    /** @test */
+    public function user_has_unread_threads_count()
+    {
+        $tippin = $this->userTippin();
+
+        $this->createGroupThread($tippin);
+
+        $this->createPrivateThread($tippin, $this->userDoe());
+
+        $this->actingAs($tippin);
+
+        $this->getJson(route('api.messenger.unread.threads.count'))
+            ->assertSuccessful()
+            ->assertJson([
+                'unread_threads_count' => 2,
+            ]);
+    }
 }
