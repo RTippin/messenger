@@ -7,6 +7,12 @@
 
 # Laravel 8 Messenger suite
 
+---
+
+<img src="https://i.imgur.com/lnsRJfV.png" style="width:100%;"  alt="Demo"/>
+
+---
+
 ### Prerequisites
 - PHP >= 7.4
 - Laravel >= 8.x
@@ -15,11 +21,21 @@
 ### Notes / upcoming
 - Frontend, should you choose to use the one included, is a bit outdated. We are in the process of making a React UI, and later a Vue one as well.
 - Included frontend uses socket.io / laravel-echo-server. Future release will expand options.
-- Test are coming.
+- Unit Test are coming.
 - Expanded docs.
 - If our event listeners are enabled in your config, the queue your worker must use is `messenger`, as all listeners are queued on that channel.
 - Our included commands that push a job also use the `messenger` queue channel.
 - Read through our config file before migrating!
+
+### Messenger Demo
+- You may view our demo laravel 8 source with this package installed, including a live demo: 
+  - [Demo Source][link-demo-source]
+  - [Live Demo][link-live-demo]
+- Demo models for how we integrate them with our contracts:
+  - [User Model][link-demo-user]
+  - [Company Model][link-demo-company]
+- Demo console kernel utilizes our commands to track active calls, purge archived files, etc
+  - [Console Kernel][link-demo-kernel]
 
 ---
 
@@ -52,20 +68,6 @@ If you enable all of our routing, simply login after you setup your providers in
 
 ---
 
-## API endpoints / examples
-
-- [Threads][link-threads]
-- [Participants][link-participants]
-- [Messages][link-messages]
-- [Document Messages][link-documents]
-- [Image Messages][link-images]
-- [Messenger][link-messenger]
-- [Friends][link-friends]
-- [Calls][link-calls]
-- [Invites][link-invites]
-
----
-
 ## Commands
 
 - `php artisan messenger:publish` | `--force`
@@ -89,11 +91,23 @@ If you enable all of our routing, simply login after you setup your providers in
 
 ---
 
-## [View the LIVE Demo app](https://github.com/RTippin/messenger-demo)
+## API endpoints / examples
 
-<img src="https://i.imgur.com/lnsRJfV.png" style="width:100%;"  alt="Demo"/>
+- [Threads][link-threads]
+- [Participants][link-participants]
+- [Messages][link-messages]
+- [Document Messages][link-documents]
+- [Image Messages][link-images]
+- [Messenger][link-messenger]
+- [Friends][link-friends]
+- [Calls][link-calls]
+- [Invites][link-invites]
 
----
+## Credits - [Richard Tippin][link-author]
+
+## License - MIT
+
+### Please see the [license file](LICENSE.md) for more information.
 
 ## Change log
 
@@ -102,14 +116,6 @@ Please see the [changelog](changelog.md) for more information on what has change
 ## Security
 
 If you discover any security related issues, please email author email instead of using the issue tracker.
-
-## Credits
-
-- [Richard Tippin][link-author]
-
-## License
-
-license. Please see the [license file](LICENSE.md) for more information.
 
 [ico-version]: https://img.shields.io/packagist/v/rtippin/messenger.svg?style=plastic&cacheSeconds=3600
 [ico-downloads]: https://img.shields.io/packagist/dt/rtippin/messenger.svg?style=plastic&cacheSeconds=3600
@@ -136,3 +142,8 @@ license. Please see the [license file](LICENSE.md) for more information.
 [link-participants]: docs/Participants.md
 [link-threads]: docs/Threads.md
 [link-invites]: docs/Invites.md
+[link-demo-source]: https://github.com/RTippin/messenger-demo
+[link-live-demo]: https://tippindev.com
+[link-demo-user]: https://github.com/RTippin/messenger-demo/blob/master/app/Models/User.php
+[link-demo-company]: https://github.com/RTippin/messenger-demo/blob/master/app/Models/Company.php
+[link-demo-kernel]: https://github.com/RTippin/messenger-demo/blob/master/app/Console/Kernel.php
