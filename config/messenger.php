@@ -22,9 +22,9 @@ return [
     |--------------------------------------------------------------------------
     |
     | All of our tables that have relations to one of your providers will use
-    | a morph. If your providers use UUIDs (char 36) as their primary keys,
+    | a morphTo. If your providers use UUIDs (char 36) as their primary keys,
     | then set this to true. Please note that if you use multiple providers,
-    | they all must have matching primary key types (int / char).
+    | they all must have matching primary key types (int / char / etc).
     |
     */
     'provider_uuids' => false,
@@ -48,21 +48,21 @@ return [
     | Messenger Providers Configuration
     |--------------------------------------------------------------------------
     |
-    | List every model you wish to use within this messenger system
-    | The name provided will be the alias used for that class for
-    | everything including upload folder names, channel names, etc
+    | Define every model you wish to use within this messenger system.
+    | The name provided will be the alias used for that class,
+    | including upload folder names, channel names, etc.
     |
     | *PLEASE NOTE: Once you choose an alias, you should not change it
-    | unless you plan to move the uploads/directory names around yourself
+    | unless you plan to move the uploads/directory names around yourself!
     |
-    | *Each provider you list must implement our MessengerProvider contract
+    | *Each provider you list must implement our MessengerProvider contract.
     | We also provide a Messagable trait you can use on your model that has
     | the basic methods this messenger needs (name / avatar / etc).
     | -RTippin\Messenger\Traits\Messageable
     | -RTippin\Messenger\Contracts\MessengerProvider
     |
     | *To enable a provider to be searchable, you must implement our contract
-    | listed below, and implement the static method for query builder. We
+    | listed below, and implement the static method for the query builder. We
     | include a trait you can use or reference to jump right in!
     | -RTippin\Messenger\Traits\Search
     | -RTippin\Messenger\Contracts\Searchable
@@ -166,50 +166,27 @@ return [
             'enabled' => true,
             'domain' => null,
             'prefix' => 'api/messenger',
-            'middleware' => [
-                'web',
-                'auth',
-                'messenger.provider:required',
-            ],
-            'invite_api_middleware' => [
-                'web',
-                'auth.optional',
-                'messenger.provider',
-            ],
+            'middleware' => ['web', 'auth', 'messenger.provider:required',],
+            'invite_api_middleware' => ['web', 'auth.optional', 'messenger.provider',],
         ],
         'web' => [
             'enabled' => true,
             'domain' => null,
             'prefix' => 'messenger',
-            'middleware' => [
-                'web',
-                'auth',
-                'messenger.provider',
-            ],
-            'invite_web_middleware' => [
-                'web',
-                'auth.optional',
-                'messenger.provider',
-            ],
+            'middleware' => ['web', 'auth', 'messenger.provider',],
+            'invite_web_middleware' => ['web', 'auth.optional', 'messenger.provider',],
         ],
         'provider_avatar' => [
             'enabled' => true,
             'domain' => null,
             'prefix' => 'images',
-            'middleware' => [
-                'web',
-                'cache.headers:public, max-age=86400;',
-            ],
+            'middleware' => ['web', 'cache.headers:public, max-age=86400;',],
         ],
         'channels' => [
             'enabled' => true,
             'domain' => null,
             'prefix' => 'api',
-            'middleware' => [
-                'web',
-                'auth',
-                'messenger.provider:required',
-            ],
+            'middleware' => ['web', 'auth', 'messenger.provider:required',],
         ],
     ],
 
@@ -230,6 +207,12 @@ return [
     | system. You are free to create your own service drivers as long as they
     | implement the corresponding contract. See each Drivers contract for
     | more information.
+    |
+    | If push notifications are enabled, every event that fires a broadcast will
+    | dispatch our PushNotificationEvent, which will contain a collection of
+    | (owner_id, owner_type) for all providers that you enabled devices on.
+    | It is up to you to hook into that event and use the data injected to
+    | dispatch your own push notification, such as FCM.
     |
     | * NULL drivers are a simple way to disable a service,
     |  especially useful in testing.
