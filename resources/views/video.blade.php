@@ -60,10 +60,17 @@
     call : {
         call_id : '{{$callId}}',
         thread_id : '{{$threadId}}',
+    @if(config('messenger.calling.driver') === 'janus')
         janus_secret : '{{config('janus.api_secret')}}',
         janus_debug : {{config('janus.client_debug') ? 'true' : 'false'}},
         janus_ice : @json(config('janus.ice_servers')),
         janus_main : @json(config('janus.main_servers'))
+    @else
+        janus_secret : null,
+        janus_debug : false,
+        janus_ice : null,
+        janus_main : null
+    @endif
     },
 @endpush
 @push('css')
