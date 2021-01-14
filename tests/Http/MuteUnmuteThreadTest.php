@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Events\ParticipantMutedEvent;
+use RTippin\Messenger\Events\ParticipantUnMutedEvent;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -76,15 +77,20 @@ class MuteUnmuteThreadTest extends FeatureTestCase
     /** @test */
     public function participant_can_unmute_thread()
     {
+        Event::fake([
+            ParticipantUnMutedEvent::class,
+        ]);
+
         $tippin = $this->userTippin();
 
-        $this->private->participants()
+        $participant = $this->private->participants()
             ->where('owner_id', '=', $tippin->getKey())
             ->where('owner_type', '=', get_class($tippin))
-            ->first()
-            ->update([
-                'muted' => true,
-            ]);
+            ->first();
+
+        $participant->update([
+            'muted' => true,
+        ]);
 
         $this->actingAs($tippin);
 
@@ -93,12 +99,11 @@ class MuteUnmuteThreadTest extends FeatureTestCase
         ]))
             ->assertSuccessful();
 
-        $this->assertDatabaseHas('participants', [
-            'owner_id' => $tippin->getKey(),
-            'owner_type' => get_class($tippin),
-            'thread_id' => $this->private->id,
-            'muted' => false,
-        ]);
+        $this->assertFalse($participant->fresh()->muted);
+
+        Event::assertDispatched(function (ParticipantUnMutedEvent $event) use ($participant) {
+            return $participant->id === $event->participant->id;
+        });
     }
 
     /** @test */
