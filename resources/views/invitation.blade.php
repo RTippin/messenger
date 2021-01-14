@@ -8,6 +8,7 @@
             background: #3d9a9b;
         }
     </style>
+    <meta name="robots" content="noindex">
 @endpush
 @section('content')
     <div class="container">
