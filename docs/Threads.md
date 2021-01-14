@@ -1310,3 +1310,15 @@ Renders Group Avatar
   "message": "success"
 }
 ```
+---
+### POST `/api/messenger/threads/{thread}/unmute` | *api.messenger.threads.unmute*
+#### Payload:
+```json
+{}
+```
+#### Response:
+```json
+{
+  "message": "success"
+}
+```
