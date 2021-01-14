@@ -107,6 +107,46 @@ class MuteUnmuteThreadTest extends FeatureTestCase
     }
 
     /** @test */
+    public function mute_thread_updates_nothing_if_already_muted()
+    {
+        $this->doesntExpectEvents([
+            ParticipantMutedEvent::class,
+        ]);
+
+        $tippin = $this->userTippin();
+
+        $this->private->participants()
+            ->where('owner_id', '=', $tippin->getKey())
+            ->where('owner_type', '=', get_class($tippin))
+            ->first()
+            ->update([
+                'muted' => true,
+            ]);
+
+        $this->actingAs($tippin);
+
+        $this->postJson(route('api.messenger.threads.mute', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function unmute_thread_updates_nothing_if_not_muted()
+    {
+        $this->doesntExpectEvents([
+            ParticipantUnMutedEvent::class,
+        ]);
+
+        $this->actingAs($this->userTippin());
+
+        $this->postJson(route('api.messenger.threads.unmute', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertSuccessful();
+    }
+
+    /** @test */
     public function muted_participant_receives_no_broadcast()
     {
         $doe = $this->userDoe();
