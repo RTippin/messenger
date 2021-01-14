@@ -1,11 +1,9 @@
-# Messenger
+# Laravel 8 Messenger suite
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
 [![StyleCI][ico-styleci]][link-styleci]
 [![License][ico-license]][link-license]
-
-# Laravel 8 Messenger suite
 
 ---
 
