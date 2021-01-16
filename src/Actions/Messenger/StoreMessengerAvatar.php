@@ -1,8 +1,9 @@
 <?php
 
-namespace RTippin\Messenger\Actions;
+namespace RTippin\Messenger\Actions\Messenger;
 
 use Illuminate\Http\UploadedFile;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\FileService;
 use RTippin\Messenger\Messenger;
 use Symfony\Component\HttpKernel\Exception\HttpException;
