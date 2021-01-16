@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use RTippin\Messenger\Actions\DestroyMessengerAvatar;
+use RTippin\Messenger\Actions\Messenger\DestroyMessengerAvatar;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 

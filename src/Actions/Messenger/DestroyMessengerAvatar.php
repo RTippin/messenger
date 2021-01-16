@@ -1,7 +1,8 @@
 <?php
 
-namespace RTippin\Messenger\Actions;
+namespace RTippin\Messenger\Actions\Messenger;
 
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\FileService;
 use RTippin\Messenger\Messenger;
 
