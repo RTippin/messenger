@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Events\StatusHeartbeatEvent;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -36,7 +35,7 @@ class StatusHeartbeatTest extends FeatureTestCase
     /** @test */
     public function messenger_heartbeat_online()
     {
-        Event::fake([
+        $this->expectsEvents([
             StatusHeartbeatEvent::class,
         ]);
 
@@ -50,20 +49,12 @@ class StatusHeartbeatTest extends FeatureTestCase
             ->assertSuccessful();
 
         $this->assertSame(1, $tippin->onlineStatus());
-
-        Event::assertDispatched(function (StatusHeartbeatEvent $event) use ($tippin) {
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
-            $this->assertFalse($event->away);
-            $this->assertNotNull($event->IP);
-
-            return true;
-        });
     }
 
     /** @test */
     public function messenger_heartbeat_away()
     {
-        Event::fake([
+        $this->expectsEvents([
             StatusHeartbeatEvent::class,
         ]);
 
@@ -77,10 +68,6 @@ class StatusHeartbeatTest extends FeatureTestCase
             ->assertSuccessful();
 
         $this->assertSame(2, $tippin->onlineStatus());
-
-        Event::assertDispatched(function (StatusHeartbeatEvent $event) {
-            return $event->away === true;
-        });
     }
 
     public function awayValidation(): array
