@@ -1,7 +1,5 @@
 <?php
 
-/** @noinspection PhpFieldAssignmentTypeMismatchInspection */
-
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Cache;

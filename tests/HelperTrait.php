@@ -15,7 +15,7 @@ use RTippin\Messenger\Tests\stubs\UserModelUuid;
 
 trait HelperTrait
 {
-    protected function userTippin()
+    protected function userTippin(): MessengerProvider
     {
         /** @var UserModel|UserModelUuid $model */
         $model = self::UseUUID ? UserModelUuid::class : UserModel::class;
@@ -24,7 +24,7 @@ trait HelperTrait
             ->first();
     }
 
-    protected function userDoe()
+    protected function userDoe(): MessengerProvider
     {
         /** @var UserModel|UserModelUuid $model */
         $model = self::UseUUID ? UserModelUuid::class : UserModel::class;
@@ -33,7 +33,7 @@ trait HelperTrait
             ->first();
     }
 
-    protected function companyDevelopers()
+    protected function companyDevelopers(): MessengerProvider
     {
         /** @var CompanyModel|CompanyModelUuid $model */
         $model = self::UseUUID ? CompanyModelUuid::class : CompanyModel::class;
@@ -42,7 +42,7 @@ trait HelperTrait
             ->first();
     }
 
-    protected function companyLaravel()
+    protected function companyLaravel(): MessengerProvider
     {
         /** @var CompanyModel|CompanyModelUuid $model */
         $model = self::UseUUID ? CompanyModelUuid::class : CompanyModel::class;
@@ -51,7 +51,7 @@ trait HelperTrait
             ->first();
     }
 
-    protected function createJaneSmith()
+    protected function createJaneSmith(): MessengerProvider
     {
         $jane = [
             'name' => 'Jane Smith',
@@ -64,7 +64,7 @@ trait HelperTrait
             : UserModel::create($jane);
     }
 
-    protected function createSomeCompany()
+    protected function createSomeCompany(): MessengerProvider
     {
         $someCompany = [
             'company_name' => 'Some Company',
