@@ -2,7 +2,7 @@
 
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
-use RTippin\Messenger\Actions\OnlineStatus;
+use RTippin\Messenger\Actions\Messenger\OnlineStatus;
 use RTippin\Messenger\Http\Request\StatusHeartbeatRequest;
 use RTippin\Messenger\Http\Resources\ProviderStatusResource;
 use RTippin\Messenger\Messenger;

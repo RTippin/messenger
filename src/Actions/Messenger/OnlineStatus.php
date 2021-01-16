@@ -1,9 +1,10 @@
 <?php
 
-namespace RTippin\Messenger\Actions;
+namespace RTippin\Messenger\Actions\Messenger;
 
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Http\Request;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Events\StatusHeartbeatEvent;
 use RTippin\Messenger\Messenger;
 

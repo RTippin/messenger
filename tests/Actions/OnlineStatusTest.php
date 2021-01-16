@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
-use RTippin\Messenger\Actions\OnlineStatus;
+use RTippin\Messenger\Actions\Messenger\OnlineStatus;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\StatusHeartbeatEvent;
 use RTippin\Messenger\Facades\Messenger;
