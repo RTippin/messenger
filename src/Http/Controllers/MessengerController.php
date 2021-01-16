@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Http\Controllers;
 use Illuminate\Auth\Access\AuthorizationException;
 use RTippin\Messenger\Actions\Messenger\DestroyMessengerAvatar;
 use RTippin\Messenger\Actions\Messenger\StoreMessengerAvatar;
-use RTippin\Messenger\Actions\UpdateMessengerSettings;
+use RTippin\Messenger\Actions\Messenger\UpdateMessengerSettings;
 use RTippin\Messenger\Http\Collections\ActiveCallCollection;
 use RTippin\Messenger\Http\Request\MessengerAvatarRequest;
 use RTippin\Messenger\Http\Request\MessengerSettingsRequest;

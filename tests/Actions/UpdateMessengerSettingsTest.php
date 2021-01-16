@@ -3,7 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Cache;
-use RTippin\Messenger\Actions\UpdateMessengerSettings;
+use RTippin\Messenger\Actions\Messenger\UpdateMessengerSettings;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
