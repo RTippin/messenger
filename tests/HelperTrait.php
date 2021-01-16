@@ -15,7 +15,10 @@ use RTippin\Messenger\Tests\stubs\UserModelUuid;
 
 trait HelperTrait
 {
-    protected function userTippin(): MessengerProvider
+    /**
+     * @return MessengerProvider|UserModel|UserModelUuid
+     */
+    protected function userTippin()
     {
         /** @var UserModel|UserModelUuid $model */
         $model = self::UseUUID ? UserModelUuid::class : UserModel::class;
@@ -24,7 +27,10 @@ trait HelperTrait
             ->first();
     }
 
-    protected function userDoe(): MessengerProvider
+    /**
+     * @return MessengerProvider|UserModel|UserModelUuid
+     */
+    protected function userDoe()
     {
         /** @var UserModel|UserModelUuid $model */
         $model = self::UseUUID ? UserModelUuid::class : UserModel::class;
@@ -33,7 +39,10 @@ trait HelperTrait
             ->first();
     }
 
-    protected function companyDevelopers(): MessengerProvider
+    /**
+     * @return MessengerProvider|CompanyModel|CompanyModelUuid
+     */
+    protected function companyDevelopers()
     {
         /** @var CompanyModel|CompanyModelUuid $model */
         $model = self::UseUUID ? CompanyModelUuid::class : CompanyModel::class;
@@ -42,7 +51,10 @@ trait HelperTrait
             ->first();
     }
 
-    protected function companyLaravel(): MessengerProvider
+    /**
+     * @return MessengerProvider|CompanyModel|CompanyModelUuid
+     */
+    protected function companyLaravel()
     {
         /** @var CompanyModel|CompanyModelUuid $model */
         $model = self::UseUUID ? CompanyModelUuid::class : CompanyModel::class;
@@ -51,7 +63,10 @@ trait HelperTrait
             ->first();
     }
 
-    protected function createJaneSmith(): MessengerProvider
+    /**
+     * @return MessengerProvider|UserModel|UserModelUuid
+     */
+    protected function createJaneSmith()
     {
         $jane = [
             'name' => 'Jane Smith',
@@ -64,7 +79,10 @@ trait HelperTrait
             : UserModel::create($jane);
     }
 
-    protected function createSomeCompany(): MessengerProvider
+    /**
+     * @return MessengerProvider|CompanyModel|CompanyModelUuid
+     */
+    protected function createSomeCompany()
     {
         $someCompany = [
             'company_name' => 'Some Company',
