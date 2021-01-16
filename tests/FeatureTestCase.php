@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests;
 
+use Illuminate\Support\Facades\Cache;
 use Orchestra\Testbench\TestCase;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\MessengerServiceProvider;
@@ -33,6 +34,13 @@ class FeatureTestCase extends TestCase
         $this->storeBaseUsers();
 
         $this->storeBaseCompanies();
+    }
+
+    protected function tearDown(): void
+    {
+        Cache::flush();
+
+        parent::tearDown();
     }
 
     protected function getPackageProviders($app): array
