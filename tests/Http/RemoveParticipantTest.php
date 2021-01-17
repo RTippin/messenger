@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
 use RTippin\Messenger\Events\RemovedFromThreadEvent;
 use RTippin\Messenger\Models\Thread;
@@ -72,7 +71,7 @@ class RemoveParticipantTest extends FeatureTestCase
 
         $tippin = $this->userTippin();
 
-        Event::fake([
+        $this->expectsEvents([
             ThreadLeftBroadcast::class,
             RemovedFromThreadEvent::class,
         ]);
@@ -93,20 +92,5 @@ class RemoveParticipantTest extends FeatureTestCase
         $this->assertSoftDeleted('participants', [
             'id' => $participant->id,
         ]);
-
-        Event::assertDispatched(function (ThreadLeftBroadcast $event) use ($doe) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (RemovedFromThreadEvent $event) use ($tippin, $participant) {
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
-            $this->assertSame($this->group->id, $event->thread->id);
-            $this->assertSame($participant->id, $event->participant->id);
-
-            return true;
-        });
     }
 }
