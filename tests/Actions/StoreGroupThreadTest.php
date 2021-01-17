@@ -152,7 +152,6 @@ class StoreGroupThreadTest extends FeatureTestCase
 
         $this->createFriends($this->tippin, $developers);
 
-
         app(StoreGroupThread::class)->execute([
             'subject' => 'Test Many Participants',
             'providers' => [
