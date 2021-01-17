@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
 use RTippin\Messenger\Events\ThreadLeftEvent;
 use RTippin\Messenger\Models\Thread;
@@ -27,7 +26,7 @@ class LeaveGroupThreadTest extends FeatureTestCase
     {
         $doe = $this->userDoe();
 
-        Event::fake([
+        $this->expectsEvents([
             ThreadLeftBroadcast::class,
             ThreadLeftEvent::class,
         ]);
@@ -44,21 +43,6 @@ class LeaveGroupThreadTest extends FeatureTestCase
             'owner_id' => $doe->getKey(),
             'owner_type' => get_class($doe),
         ]);
-
-        Event::assertDispatched(function (ThreadLeftBroadcast $event) use ($doe) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (ThreadLeftEvent $event) use ($doe) {
-            $this->assertSame($doe->getKey(), $event->provider->getKey());
-            $this->assertSame($this->group->id, $event->thread->id);
-            $this->assertEquals($doe->getKey(), $event->participant->owner_id);
-
-            return true;
-        });
     }
 
     /** @test */
