@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\ParticipantReadBroadcast;
 use RTippin\Messenger\Events\ParticipantsReadEvent;
 use RTippin\Messenger\Models\Thread;
@@ -50,7 +49,7 @@ class MarkThreadReadTest extends FeatureTestCase
     {
         $tippin = $this->userTippin();
 
-        Event::fake([
+        $this->expectsEvents([
             ParticipantReadBroadcast::class,
             ParticipantsReadEvent::class,
         ]);
@@ -68,17 +67,6 @@ class MarkThreadReadTest extends FeatureTestCase
             ->first();
 
         $this->assertNotNull($participant->last_read);
-
-        Event::assertDispatched(function (ParticipantReadBroadcast $event) use ($tippin) {
-            $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertSame($this->private->id, $event->broadcastWith()['thread_id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (ParticipantsReadEvent $event) use ($participant) {
-            return $participant->id === $event->participant->id;
-        });
     }
 
     /** @test */
@@ -91,14 +79,13 @@ class MarkThreadReadTest extends FeatureTestCase
             ParticipantsReadEvent::class,
         ]);
 
-        $participant = $this->private->participants()
+        $this->private->participants()
             ->where('owner_id', '=', $tippin->getKey())
             ->where('owner_type', '=', get_class($tippin))
-            ->first();
-
-        $participant->update([
-            'last_read' => now(),
-        ]);
+            ->first()
+            ->update([
+                'last_read' => now(),
+            ]);
 
         $this->travel(5)->minutes();
 
@@ -108,8 +95,6 @@ class MarkThreadReadTest extends FeatureTestCase
             'thread' => $this->private->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertSame($participant->last_read->toDayDateTimeString(), $participant->fresh()->last_read->toDayDateTimeString());
     }
 
     /** @test */
@@ -167,12 +152,5 @@ class MarkThreadReadTest extends FeatureTestCase
             'thread' => $this->private->id,
         ]))
             ->assertSuccessful();
-
-        $participant = $this->private->participants()
-            ->where('owner_id', '=', $tippin->getKey())
-            ->where('owner_type', '=', get_class($tippin))
-            ->first();
-
-        $this->assertNotNull($participant->fresh()->last_read);
     }
 }
