@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\ThreadArchivedBroadcast;
 use RTippin\Messenger\Events\ThreadArchivedEvent;
 use RTippin\Messenger\Models\Thread;
@@ -70,18 +69,12 @@ class ArchiveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_can_archive_group_thread()
     {
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
-        $developers = $this->companyDevelopers();
-
-        Event::fake([
+        $this->expectsEvents([
             ThreadArchivedBroadcast::class,
             ThreadArchivedEvent::class,
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->userTippin());
 
         $this->deleteJson(route('api.messenger.threads.destroy', [
             'thread' => $this->group->id,
@@ -91,22 +84,6 @@ class ArchiveGroupThreadTest extends FeatureTestCase
         $this->assertSoftDeleted('threads', [
             'id' => $this->group->id,
         ]);
-
-        Event::assertDispatched(function (ThreadArchivedBroadcast $event) use ($tippin, $doe, $developers) {
-            $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertContains('private-company.'.$developers->getKey(), $event->broadcastOn());
-            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (ThreadArchivedEvent $event) use ($tippin) {
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
-            $this->assertSame($this->group->id, $event->thread->id);
-
-            return true;
-        });
     }
 
     /** @test */
