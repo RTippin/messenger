@@ -68,13 +68,12 @@ class MuteUnmuteThreadTest extends FeatureTestCase
             ->first();
 
         $this->assertTrue($participant->muted);
-
     }
 
     /** @test */
     public function participant_can_unmute_thread()
     {
-        Event::fake([
+        $this->expectsEvents([
             ParticipantUnMutedEvent::class,
         ]);
 
@@ -97,10 +96,6 @@ class MuteUnmuteThreadTest extends FeatureTestCase
             ->assertSuccessful();
 
         $this->assertFalse($participant->fresh()->muted);
-
-        Event::assertDispatched(function (ParticipantUnMutedEvent $event) use ($participant) {
-            return $participant->id === $event->participant->id;
-        });
     }
 
     /** @test */
