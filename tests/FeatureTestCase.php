@@ -62,6 +62,7 @@ class FeatureTestCase extends TestCase
             'driver' => 'sqlite',
             'database' => ':memory:',
             'prefix' => '',
+            'foreign_key_constraints' => true,
         ]);
 
         $config->set('messenger.provider_uuids', self::UseUUID);
