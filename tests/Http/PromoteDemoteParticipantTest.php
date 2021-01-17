@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\DemotedAdminBroadcast;
 use RTippin\Messenger\Broadcasting\PromotedAdminBroadcast;
 use RTippin\Messenger\Events\DemotedAdminEvent;
@@ -150,7 +149,7 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
 
         $doe = $this->userDoe();
 
-        Event::fake([
+        $this->expectsEvents([
             PromotedAdminBroadcast::class,
             PromotedAdminEvent::class,
         ]);
@@ -171,21 +170,6 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
                 'id' => $participant->id,
                 'admin' => true,
             ]);
-
-        Event::assertDispatched(function (PromotedAdminBroadcast $event) use ($doe) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (PromotedAdminEvent $event) use ($tippin, $participant) {
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
-            $this->assertSame($this->group->id, $event->thread->id);
-            $this->assertSame($participant->id, $event->participant->id);
-
-            return true;
-        });
     }
 
     /** @test */
