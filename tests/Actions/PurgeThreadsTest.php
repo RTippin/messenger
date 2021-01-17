@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Threads\PurgeThreads;
 use RTippin\Messenger\Facades\Messenger;
@@ -28,7 +29,7 @@ class PurgeThreadsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function purge_threads_removes_from_database()
+    public function purge_threads_removes_threads_from_database()
     {
         app(PurgeThreads::class)->execute(Thread::all());
 
@@ -47,5 +48,27 @@ class PurgeThreadsTest extends FeatureTestCase
         $this->assertDatabaseMissing('threads', [
             'id' => $this->group->id,
         ]);
+    }
+
+    /** @test */
+    public function purge_threads_removes_stored_files_and_directories()
+    {
+        UploadedFile::fake()
+            ->image('avatar.jpg')
+            ->storeAs($this->private->getStorageDirectory().'/avatar',  'avatar.jpg', [
+                'disk' => $this->private->getStorageDisk(),
+            ]);
+
+        UploadedFile::fake()
+            ->image('avatar.jpg')
+            ->storeAs($this->group->getStorageDirectory().'/avatar', 'avatar.jpg', [
+                'disk' => $this->group->getStorageDisk(),
+            ]);
+
+        app(PurgeThreads::class)->execute(Thread::all());
+
+        Storage::disk($this->private->getStorageDisk())->assertMissing($this->private->getStorageDirectory());
+
+        Storage::disk($this->group->getStorageDisk())->assertMissing($this->group->getStorageDirectory());
     }
 }
