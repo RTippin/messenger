@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\KnockBroadcast;
 use RTippin\Messenger\Events\KnockEvent;
 use RTippin\Messenger\Facades\Messenger;
@@ -28,18 +27,12 @@ class KnockGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_can_knock_at_thread()
     {
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
-        $developers = $this->companyDevelopers();
-
-        Event::fake([
+        $this->expectsEvents([
             KnockBroadcast::class,
             KnockEvent::class,
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->userTippin());
 
         $this->postJson(route('api.messenger.threads.knock', [
             'thread' => $this->group->id,
@@ -47,22 +40,6 @@ class KnockGroupThreadTest extends FeatureTestCase
             ->assertSuccessful();
 
         $this->assertTrue(Cache::has('knock.knock.'.$this->group->id));
-
-        Event::assertDispatched(function (KnockBroadcast $event) use ($doe, $developers, $tippin) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertContains('private-company.'.$developers->getKey(), $event->broadcastOn());
-            $this->assertNotContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertSame($this->group->id, $event->broadcastWith()['thread']['id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (KnockEvent $event) use ($tippin) {
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
-            $this->assertSame($this->group->id, $event->thread->id);
-
-            return true;
-        });
     }
 
     /** @test */

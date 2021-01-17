@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\KnockBroadcast;
 use RTippin\Messenger\Events\KnockEvent;
 use RTippin\Messenger\Facades\Messenger;
@@ -29,9 +28,7 @@ class KnockPrivateThreadTest extends FeatureTestCase
     {
         $tippin = $this->userTippin();
 
-        $doe = $this->userDoe();
-
-        Event::fake([
+        $this->expectsEvents([
             KnockBroadcast::class,
             KnockEvent::class,
         ]);
@@ -44,21 +41,6 @@ class KnockPrivateThreadTest extends FeatureTestCase
             ->assertSuccessful();
 
         $this->assertTrue(Cache::has('knock.knock.'.$this->private->id.'.'.$tippin->getKey()));
-
-        Event::assertDispatched(function (KnockBroadcast $event) use ($doe, $tippin) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertNotContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertSame($this->private->id, $event->broadcastWith()['thread']['id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (KnockEvent $event) use ($tippin) {
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
-            $this->assertSame($this->private->id, $event->thread->id);
-
-            return true;
-        });
     }
 
     /** @test */
