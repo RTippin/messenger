@@ -89,18 +89,6 @@ class StoreGroupThreadTest extends FeatureTestCase
         $this->assertDatabaseHas('threads', [
             'subject' => 'Test Group',
         ]);
-
-        $this->assertDatabaseHas('participants', [
-            'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
-            'admin' => true,
-        ]);
-
-        $this->assertDatabaseHas('participants', [
-            'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
-            'admin' => false,
-        ]);
     }
 
     /** @test */
@@ -173,20 +161,8 @@ class StoreGroupThreadTest extends FeatureTestCase
             return true;
         });
 
-        Event::assertDispatched(function (NewThreadBroadcast $event) use ($developers) {
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
-            $this->assertContains('private-company.'.$developers->getKey(), $event->broadcastOn());
-            $this->assertContains('Test Many Participants', $event->broadcastWith()['thread']);
+        Event::assertDispatched(NewThreadBroadcast::class);
 
-            return true;
-        });
-
-        Event::assertDispatched(function (ParticipantsAddedEvent $event) {
-            $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
-            $this->assertSame('Test Many Participants', $event->thread->subject);
-            $this->assertCount(2, $event->participants);
-
-            return true;
-        });
+        Event::assertDispatched(ParticipantsAddedEvent::class);
     }
 }
