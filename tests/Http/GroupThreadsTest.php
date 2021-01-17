@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
 use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
@@ -91,14 +90,16 @@ class GroupThreadsTest extends FeatureTestCase
     /** @test */
     public function store_group_without_extra_participants()
     {
-        $tippin = $this->userTippin();
-
-        Event::fake([
+        $this->expectsEvents([
             NewThreadEvent::class,
+
+        ]);
+
+        $this->doesntExpectEvents([
             NewThreadBroadcast::class,
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->userTippin());
 
         $this->postJson(route('api.messenger.groups.store'), [
             'subject' => 'Test Group',
@@ -108,6 +109,7 @@ class GroupThreadsTest extends FeatureTestCase
                 'type' => 2,
                 'type_verbose' => 'GROUP',
                 'group' => true,
+                'name' => 'Test Group',
                 'options' => [
                     'admin' => true,
                     'invitations' => true,
@@ -121,19 +123,6 @@ class GroupThreadsTest extends FeatureTestCase
                     ],
                 ],
             ]);
-
-        Event::assertDispatched(function (NewThreadEvent $event) use ($tippin) {
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
-            $this->assertSame('Test Group', $event->thread->subject);
-
-            return true;
-        });
-
-        Event::assertNotDispatched(NewThreadBroadcast::class);
-
-        $this->assertDatabaseHas('threads', [
-            'subject' => 'Test Group',
-        ]);
     }
 
     /** @test */
@@ -141,8 +130,11 @@ class GroupThreadsTest extends FeatureTestCase
     {
         $tippin = $this->userTippin();
 
-        Event::fake([
+        $this->expectsEvents([
             NewThreadEvent::class,
+        ]);
+
+        $this->doesntExpectEvents([
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
@@ -153,7 +145,7 @@ class GroupThreadsTest extends FeatureTestCase
             'subject' => 'Test Group',
             'providers' => [
                 [
-                    'id' => 2,
+                    'id' => $this->userDoe()->getKey(),
                     'alias' => 'user',
                 ],
             ],
@@ -163,6 +155,7 @@ class GroupThreadsTest extends FeatureTestCase
                 'type' => 2,
                 'type_verbose' => 'GROUP',
                 'group' => true,
+                'name' => 'Test Group',
                 'options' => [
                     'admin' => true,
                     'invitations' => true,
@@ -176,21 +169,6 @@ class GroupThreadsTest extends FeatureTestCase
                     ],
                 ],
             ]);
-
-        Event::assertNotDispatched(NewThreadBroadcast::class);
-
-        Event::assertNotDispatched(ParticipantsAddedEvent::class);
-
-        Event::assertDispatched(function (NewThreadEvent $event) use ($tippin) {
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
-            $this->assertSame('Test Group', $event->thread->subject);
-
-            return true;
-        });
-
-        $this->assertDatabaseHas('threads', [
-            'subject' => 'Test Group',
-        ]);
     }
 
     /** @test */
@@ -227,6 +205,7 @@ class GroupThreadsTest extends FeatureTestCase
                 'type' => 2,
                 'type_verbose' => 'GROUP',
                 'group' => true,
+                'name' => 'Test Group Participants',
                 'options' => [
                     'admin' => true,
                     'invitations' => true,
@@ -240,10 +219,6 @@ class GroupThreadsTest extends FeatureTestCase
                     ],
                 ],
             ]);
-
-        $this->assertDatabaseHas('threads', [
-            'subject' => 'Test Group Participants',
-        ]);
     }
 
     /** @test */
@@ -255,7 +230,7 @@ class GroupThreadsTest extends FeatureTestCase
 
         $developers = $this->companyDevelopers();
 
-        Event::fake([
+        $this->expectsEvents([
             NewThreadEvent::class,
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
@@ -281,33 +256,6 @@ class GroupThreadsTest extends FeatureTestCase
             ],
         ])
             ->assertSuccessful();
-
-        $this->assertDatabaseHas('threads', [
-            'subject' => 'Test Many Participants',
-        ]);
-
-        Event::assertDispatched(function (NewThreadEvent $event) use ($tippin) {
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
-            $this->assertSame('Test Many Participants', $event->thread->subject);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (NewThreadBroadcast $event) use ($doe, $developers) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertContains('private-company.'.$developers->getKey(), $event->broadcastOn());
-            $this->assertContains('Test Many Participants', $event->broadcastWith()['thread']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (ParticipantsAddedEvent $event) use ($tippin) {
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
-            $this->assertSame('Test Many Participants', $event->thread->subject);
-            $this->assertCount(2, $event->participants);
-
-            return true;
-        });
     }
 
     public function subjectValidation(): array

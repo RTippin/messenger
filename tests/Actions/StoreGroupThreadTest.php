@@ -5,19 +5,32 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\StoreGroupThread;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewThreadEvent;
+use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreGroupThreadTest extends FeatureTestCase
 {
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->tippin = $this->userTippin();
+
+        $this->doe = $this->userDoe();
+
+        Messenger::setProvider($this->tippin);
+    }
+
     /** @test */
     public function store_group_without_extra_participants()
     {
-        $tippin = $this->userTippin();
-
-        Messenger::setProvider($tippin);
-
         app(StoreGroupThread::class)->withoutDispatches()->execute([
             'subject' => 'Test Group',
         ]);
@@ -31,35 +44,150 @@ class StoreGroupThreadTest extends FeatureTestCase
         ]);
 
         $this->assertDatabaseHas('participants', [
-            'owner_id' => $tippin->getKey(),
-            'owner_type' => get_class($tippin),
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => get_class($this->tippin),
             'admin' => true,
         ]);
     }
 
     /** @test */
-    public function store_group_without_extra_participants_fires_one_event()
+    public function store_group_stores_system_message()
     {
-        Event::fake([
-            NewThreadEvent::class,
-            NewThreadBroadcast::class,
+        app(StoreGroupThread::class)->withoutDispatches()->execute([
+            'subject' => 'Test Group',
         ]);
 
-        $tippin = $this->userTippin();
+        $this->assertDatabaseCount('messages', 1);
 
-        Messenger::setProvider($tippin);
+        $this->assertDatabaseHas('messages', [
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => get_class($this->tippin),
+            'type' => 93,
+            'body' => 'created Test Group',
+        ]);
+    }
+
+    /** @test */
+    public function store_group_with_extra_participant()
+    {
+        $this->createFriends($this->tippin, $this->doe);
+
+        app(StoreGroupThread::class)->withoutDispatches()->execute([
+            'subject' => 'Test Group',
+            'providers' => [
+                [
+                    'id' => $this->doe->getKey(),
+                    'alias' => 'user',
+                ],
+            ],
+        ]);
+
+        $this->assertDatabaseCount('participants', 2);
+
+        $this->assertDatabaseCount('threads', 1);
+
+        $this->assertDatabaseHas('threads', [
+            'subject' => 'Test Group',
+        ]);
+
+        $this->assertDatabaseHas('participants', [
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => get_class($this->tippin),
+            'admin' => true,
+        ]);
+
+        $this->assertDatabaseHas('participants', [
+            'owner_id' => $this->doe->getKey(),
+            'owner_type' => get_class($this->doe),
+            'admin' => false,
+        ]);
+    }
+
+    /** @test */
+    public function store_group_ignores_participant_if_not_friend()
+    {
+        app(StoreGroupThread::class)->withoutDispatches()->execute([
+            'subject' => 'Test Group',
+            'providers' => [
+                [
+                    'id' => $this->doe->getKey(),
+                    'alias' => 'user',
+                ],
+            ],
+        ]);
+
+        $this->assertDatabaseCount('participants', 1);
+
+        $this->assertDatabaseCount('threads', 1);
+    }
+
+    /** @test */
+    public function store_group_without_extra_participants_fires_one_event()
+    {
+        $this->expectsEvents([
+            NewThreadEvent::class,
+        ]);
+
+        $this->doesntExpectEvents([
+            NewThreadBroadcast::class,
+        ]);
 
         app(StoreGroupThread::class)->execute([
             'subject' => 'Test Group',
         ]);
+    }
 
-        Event::assertDispatched(function (NewThreadEvent $event) use ($tippin) {
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
-            $this->assertSame('Test Group', $event->thread->subject);
+    /** @test */
+    public function store_group_with_multiple_providers_fires_events()
+    {
+        Event::fake([
+            NewThreadEvent::class,
+            NewThreadBroadcast::class,
+            ParticipantsAddedEvent::class,
+        ]);
+
+        $developers = $this->companyDevelopers();
+
+        $this->createFriends($this->tippin, $this->doe);
+
+        $this->createFriends($this->tippin, $developers);
+
+
+        app(StoreGroupThread::class)->execute([
+            'subject' => 'Test Many Participants',
+            'providers' => [
+                [
+                    'id' => $this->doe->getKey(),
+                    'alias' => 'user',
+                ],
+                [
+                    'id' => $developers->getKey(),
+                    'alias' => 'company',
+                ],
+            ],
+        ]);
+
+        Event::assertDispatched(function (NewThreadEvent $event) {
+            $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
+            $this->assertSame('Test Many Participants', $event->thread->subject);
 
             return true;
         });
 
-        Event::assertNotDispatched(NewThreadBroadcast::class);
+        Event::assertDispatched(function (NewThreadBroadcast $event) use ($developers) {
+            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertContains('private-company.'.$developers->getKey(), $event->broadcastOn());
+            $this->assertContains('Test Many Participants', $event->broadcastWith()['thread']);
+
+            return true;
+        });
+
+        Event::assertDispatched(function (ParticipantsAddedEvent $event) {
+            $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
+            $this->assertSame('Test Many Participants', $event->thread->subject);
+            $this->assertCount(2, $event->participants);
+
+            return true;
+        });
     }
 }
