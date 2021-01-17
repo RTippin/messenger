@@ -195,7 +195,7 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
 
         $doe = $this->userDoe();
 
-        Event::fake([
+        $this->expectsEvents([
             DemotedAdminBroadcast::class,
             DemotedAdminEvent::class,
         ]);
@@ -220,20 +220,5 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
                 'id' => $participant->id,
                 'admin' => false,
             ]);
-
-        Event::assertDispatched(function (DemotedAdminBroadcast $event) use ($doe) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (DemotedAdminEvent $event) use ($tippin, $participant) {
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
-            $this->assertSame($this->group->id, $event->thread->id);
-            $this->assertSame($participant->id, $event->participant->id);
-
-            return true;
-        });
     }
 }
