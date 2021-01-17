@@ -62,5 +62,8 @@ class StoreMessengerAvatarTest extends FeatureTestCase
 
         Storage::disk(Messenger::getAvatarStorage('disk'))
             ->assertExists($this->directory.'/'.$this->tippin->picture);
+
+        Storage::disk(Messenger::getAvatarStorage('disk'))
+            ->assertMissing($this->directory.'/avatar.jpg');
     }
 }

@@ -24,15 +24,14 @@ class UpdateMessengerSettingsTest extends FeatureTestCase
     /** @test */
     public function messenger_settings_updates()
     {
-        app(UpdateMessengerSettings::class)
-            ->execute([
-                'message_popups' => false,
-                'message_sound' => false,
-                'call_ringtone_sound' => false,
-                'notify_sound' => false,
-                'dark_mode' => false,
-                'online_status' => 0,
-            ]);
+        app(UpdateMessengerSettings::class)->execute([
+            'message_popups' => false,
+            'message_sound' => false,
+            'call_ringtone_sound' => false,
+            'notify_sound' => false,
+            'dark_mode' => false,
+            'online_status' => 0,
+        ]);
 
         $settings = Messenger::getProviderMessenger();
 
@@ -49,10 +48,9 @@ class UpdateMessengerSettingsTest extends FeatureTestCase
     {
         Cache::put("user:online:{$this->tippin->getKey()}", 'online');
 
-        app(UpdateMessengerSettings::class)
-            ->execute([
-                'online_status' => 0,
-            ]);
+        app(UpdateMessengerSettings::class)->execute([
+            'online_status' => 0,
+        ]);
 
         $settings = Messenger::getProviderMessenger();
 
@@ -64,10 +62,9 @@ class UpdateMessengerSettingsTest extends FeatureTestCase
     /** @test */
     public function messenger_settings_sets_online_cache()
     {
-        app(UpdateMessengerSettings::class)
-            ->execute([
-                'online_status' => 1,
-            ]);
+        app(UpdateMessengerSettings::class)->execute([
+            'online_status' => 1,
+        ]);
 
         $settings = Messenger::getProviderMessenger();
 
@@ -81,10 +78,9 @@ class UpdateMessengerSettingsTest extends FeatureTestCase
     /** @test */
     public function messenger_settings_sets_away_cache()
     {
-        app(UpdateMessengerSettings::class)
-            ->execute([
-                'online_status' => 2,
-            ]);
+        app(UpdateMessengerSettings::class)->execute([
+            'online_status' => 2,
+        ]);
 
         $settings = Messenger::getProviderMessenger();
 
