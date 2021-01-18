@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\PromoteAdmin;
 use RTippin\Messenger\Broadcasting\PromotedAdminBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\PromotedAdminEvent;
 use RTippin\Messenger\Facades\Messenger;
@@ -18,19 +19,27 @@ class PromoteAdminTest extends FeatureTestCase
 
     private Participant $participant;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $doe = $this->userDoe();
+        $this->tippin = $this->userTippin();
 
-        $this->group = $this->createGroupThread($this->userTippin());
+        $this->doe = $this->userDoe();
+
+        $this->group = $this->createGroupThread($this->tippin);
 
         $this->participant = $this->group->participants()
             ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => $doe->getKey(),
-                'owner_type' => get_class($doe),
+                'owner_id' => $this->doe->getKey(),
+                'owner_type' => get_class($this->doe),
             ]));
+
+        Messenger::setProvider($this->tippin);
     }
 
     /** @test */
@@ -48,28 +57,22 @@ class PromoteAdminTest extends FeatureTestCase
     /** @test */
     public function demote_admin_fires_events()
     {
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
         Event::fake([
             PromotedAdminBroadcast::class,
             PromotedAdminEvent::class,
         ]);
 
-        Messenger::setProvider($tippin);
-
         app(PromoteAdmin::class)->execute($this->group, $this->participant);
 
-        Event::assertDispatched(function (PromotedAdminBroadcast $event) use ($doe) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
+        Event::assertDispatched(function (PromotedAdminBroadcast $event) {
+            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
 
-        Event::assertDispatched(function (PromotedAdminEvent $event) use ($tippin) {
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
+        Event::assertDispatched(function (PromotedAdminEvent $event) {
+            $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
             $this->assertSame($this->group->id, $event->thread->id);
             $this->assertSame($this->participant->id, $event->participant->id);
 

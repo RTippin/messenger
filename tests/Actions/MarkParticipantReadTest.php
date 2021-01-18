@@ -7,12 +7,15 @@ use RTippin\Messenger\Actions\Threads\MarkParticipantRead;
 use RTippin\Messenger\Broadcasting\ParticipantReadBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ParticipantsReadEvent;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class MarkParticipantReadTest extends FeatureTestCase
 {
     private Thread $private;
+
+    private Participant $participant;
 
     private MessengerProvider $tippin;
 
@@ -23,21 +26,21 @@ class MarkParticipantReadTest extends FeatureTestCase
         $this->tippin = $this->userTippin();
 
         $this->private = $this->createPrivateThread($this->tippin, $this->userDoe());
+
+        $this->participant = $this->private->participants()
+            ->where('owner_id', '=', $this->tippin->getKey())
+            ->where('owner_type', '=', get_class($this->tippin))
+            ->first();
     }
 
     /** @test */
     public function mark_participant_read_updates_participant()
     {
-        $participant = $this->private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
-            ->first();
+        $this->assertNull($this->participant->last_read);
 
-        $this->assertNull($participant->last_read);
+        app(MarkParticipantRead::class)->withoutDispatches()->execute($this->participant, $this->private);
 
-        app(MarkParticipantRead::class)->withoutDispatches()->execute($participant, $this->private);
-
-        $this->assertNotNull($participant->last_read);
+        $this->assertNotNull($this->participant->last_read);
     }
 
     /** @test */
@@ -48,12 +51,7 @@ class MarkParticipantReadTest extends FeatureTestCase
             ParticipantsReadEvent::class,
         ]);
 
-        $participant = $this->private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
-            ->first();
-
-        app(MarkParticipantRead::class)->execute($participant, $this->private);
+        app(MarkParticipantRead::class)->execute($this->participant, $this->private);
 
         Event::assertDispatched(function (ParticipantReadBroadcast $event) {
             $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
@@ -62,8 +60,8 @@ class MarkParticipantReadTest extends FeatureTestCase
             return true;
         });
 
-        Event::assertDispatched(function (ParticipantsReadEvent $event) use ($participant) {
-            return $participant->id === $event->participant->id;
+        Event::assertDispatched(function (ParticipantsReadEvent $event) {
+            return $this->participant->id === $event->participant->id;
         });
     }
 
@@ -75,47 +73,32 @@ class MarkParticipantReadTest extends FeatureTestCase
             ParticipantsReadEvent::class,
         ]);
 
-        $participant = $this->private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
-            ->first();
-
-        $participant->update([
+        $this->participant->update([
             'last_read' => now(),
         ]);
 
         $this->travel(5)->minutes();
 
-        app(MarkParticipantRead::class)->execute($participant, $this->private);
+        app(MarkParticipantRead::class)->execute($this->participant, $this->private);
     }
 
     /** @test */
     public function mark_participant_read_does_not_update_pending_participant()
     {
-        $participant = $this->private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
-            ->first();
-
-        $participant->update([
+        $this->participant->update([
             'pending' => true,
         ]);
 
-        app(MarkParticipantRead::class)->execute($participant, $this->private);
+        app(MarkParticipantRead::class)->execute($this->participant, $this->private);
 
-        $this->assertNull($participant->last_read);
+        $this->assertNull($this->participant->last_read);
     }
 
     /** @test */
     public function mark_participant_read_updates_participant_when_no_thread_supplied()
     {
-        $participant = $this->private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
-            ->first();
+        app(MarkParticipantRead::class)->withoutDispatches()->execute($this->participant);
 
-        app(MarkParticipantRead::class)->withoutDispatches()->execute($participant);
-
-        $this->assertNotNull($participant->last_read);
+        $this->assertNotNull($this->participant->last_read);
     }
 }

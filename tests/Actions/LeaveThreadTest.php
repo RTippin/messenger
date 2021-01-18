@@ -8,12 +8,15 @@ use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ThreadLeftEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class LeaveThreadTest extends FeatureTestCase
 {
     private Thread $group;
+
+    private Participant $participant;
 
     private MessengerProvider $tippin;
 
@@ -24,19 +27,19 @@ class LeaveThreadTest extends FeatureTestCase
         $this->tippin = $this->userTippin();
 
         $this->group = $this->createGroupThread($this->tippin);
+
+        $this->participant = $this->group->participants()->first();
+
+        Messenger::setProvider($this->tippin);
     }
 
     /** @test */
     public function leave_thread_soft_deletes_participant()
     {
-        Messenger::setProvider($this->tippin);
-
-        $participant = $this->group->participants()->first();
-
         app(LeaveThread::class)->withoutDispatches()->execute($this->group);
 
         $this->assertSoftDeleted('participants', [
-            'id' => $participant->id,
+            'id' => $this->participant->id,
         ]);
     }
 
@@ -48,10 +51,6 @@ class LeaveThreadTest extends FeatureTestCase
             ThreadLeftEvent::class,
         ]);
 
-        Messenger::setProvider($this->tippin);
-
-        $participant = $this->group->participants()->first();
-
         app(LeaveThread::class)->execute($this->group);
 
         Event::assertDispatched(function (ThreadLeftBroadcast $event) {
@@ -61,10 +60,10 @@ class LeaveThreadTest extends FeatureTestCase
             return true;
         });
 
-        Event::assertDispatched(function (ThreadLeftEvent $event) use ($participant) {
+        Event::assertDispatched(function (ThreadLeftEvent $event) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
             $this->assertSame($this->group->id, $event->thread->id);
-            $this->assertEquals($participant->id, $event->participant->id);
+            $this->assertEquals($this->participant->id, $event->participant->id);
 
             return true;
         });

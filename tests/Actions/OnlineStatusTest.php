@@ -26,7 +26,7 @@ class OnlineStatusTest extends FeatureTestCase
     /** @test */
     public function online_status_sets_away_cache()
     {
-        app(OnlineStatus::class)->withDispatches()->execute(true);
+        app(OnlineStatus::class)->withoutDispatches()->execute(true);
 
         $this->assertTrue(Cache::has("user:online:{$this->tippin->getKey()}"));
 
@@ -48,7 +48,7 @@ class OnlineStatusTest extends FeatureTestCase
     {
         Messenger::setOnlineStatus(false);
 
-        app(OnlineStatus::class)->withDispatches()->execute(false);
+        app(OnlineStatus::class)->withoutDispatches()->execute(false);
 
         $this->assertFalse(Cache::has("user:online:{$this->tippin->getKey()}"));
     }
@@ -66,7 +66,7 @@ class OnlineStatusTest extends FeatureTestCase
             'online_status' => 0,
         ]);
 
-        app(OnlineStatus::class)->withDispatches()->execute(false);
+        app(OnlineStatus::class)->withoutDispatches()->execute(false);
 
         $this->assertSame($before->toDayDateTimeString(), $this->tippin->updated_at->toDayDateTimeString());
     }
@@ -80,7 +80,7 @@ class OnlineStatusTest extends FeatureTestCase
             'updated_at' => $before,
         ]);
 
-        app(OnlineStatus::class)->withDispatches()->execute(true);
+        app(OnlineStatus::class)->withoutDispatches()->execute(true);
 
         $this->assertNotSame($before->toDayDateTimeString(), $this->tippin->updated_at->toDayDateTimeString());
     }
@@ -113,11 +113,7 @@ class OnlineStatusTest extends FeatureTestCase
         app(OnlineStatus::class)->execute(false);
 
         Event::assertDispatched(function (StatusHeartbeatEvent $event) {
-            $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
-            $this->assertFalse($event->away);
-            $this->assertSame('127.0.0.1', $event->IP);
-
-            return true;
+            return $event->away === false;
         });
     }
 }
