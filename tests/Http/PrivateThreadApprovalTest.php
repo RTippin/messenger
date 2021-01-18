@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\ThreadApprovalBroadcast;
 use RTippin\Messenger\Events\ThreadApprovalEvent;
 use RTippin\Messenger\Models\Thread;
@@ -28,9 +27,7 @@ class PrivateThreadApprovalTest extends FeatureTestCase
     {
         $tippin = $this->userTippin();
 
-        $doe = $this->userDoe();
-
-        Event::fake([
+        $this->expectsEvents([
             ThreadApprovalBroadcast::class,
             ThreadApprovalEvent::class,
         ]);
@@ -49,37 +46,17 @@ class PrivateThreadApprovalTest extends FeatureTestCase
             'owner_type' => get_class($tippin),
             'pending' => false,
         ]);
-
-        Event::assertDispatched(function (ThreadApprovalBroadcast $event) use ($doe) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertSame($this->private->id, $event->broadcastWith()['thread']['id']);
-            $this->assertTrue($event->broadcastWith()['thread']['approved']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (ThreadApprovalEvent $event) use ($tippin) {
-            $this->assertSame($this->private->id, $event->thread->id);
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
-            $this->assertTrue($event->approved);
-
-            return true;
-        });
     }
 
     /** @test */
     public function recipient_can_deny_pending_thread()
     {
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
-        Event::fake([
+        $this->expectsEvents([
             ThreadApprovalBroadcast::class,
             ThreadApprovalEvent::class,
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->userTippin());
 
         $this->postJson(route('api.messenger.threads.approval', [
             'thread' => $this->private->id,
@@ -91,22 +68,6 @@ class PrivateThreadApprovalTest extends FeatureTestCase
         $this->assertSoftDeleted('threads', [
             'id' => $this->private->id,
         ]);
-
-        Event::assertDispatched(function (ThreadApprovalBroadcast $event) use ($doe) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertSame($this->private->id, $event->broadcastWith()['thread']['id']);
-            $this->assertFalse($event->broadcastWith()['thread']['approved']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (ThreadApprovalEvent $event) use ($tippin) {
-            $this->assertSame($this->private->id, $event->thread->id);
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
-            $this->assertFalse($event->approved);
-
-            return true;
-        });
     }
 
     /** @test */
