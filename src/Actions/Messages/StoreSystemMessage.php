@@ -21,13 +21,14 @@ class StoreSystemMessage extends NewMessageAction
      */
     public function execute(...$parameters): self
     {
-        $this->setThread($parameters[0]);
+        $this->systemMessage = true;
 
-        $this->handleTransactions(
-            $parameters[1],
-            $parameters[3],
-            $parameters[2]
-        )
+        $this->setThread($parameters[0])
+            ->handleTransactions(
+                $parameters[1],
+                $parameters[3],
+                $parameters[2]
+            )
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();

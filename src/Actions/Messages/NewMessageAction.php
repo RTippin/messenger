@@ -32,6 +32,11 @@ abstract class NewMessageAction extends BaseMessengerAction
     protected DatabaseManager $database;
 
     /**
+     * @var bool
+     */
+    protected bool $systemMessage = false;
+
+    /**
      * NewMessageAction constructor.
      *
      * @param BroadcastDriver $broadcaster
@@ -135,11 +140,13 @@ abstract class NewMessageAction extends BaseMessengerAction
         if ($this->shouldExecuteChains()) {
             $this->getThread()->touch();
 
-            $this->chain(MarkParticipantRead::class)
-                ->withoutDispatches()
-                ->execute(
-                    $this->getThread()->currentParticipant()
-                );
+            if (! $this->systemMessage) {
+                $this->chain(MarkParticipantRead::class)
+                    ->withoutDispatches()
+                    ->execute(
+                        $this->getThread()->currentParticipant()
+                    );
+            }
         }
     }
 
