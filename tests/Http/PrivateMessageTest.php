@@ -229,34 +229,18 @@ class PrivateMessageTest extends FeatureTestCase
     /** @test */
     public function sender_can_archive_message()
     {
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
-        Event::fake([
+        $this->expectsEvents([
             MessageArchivedBroadcast::class,
             MessageArchivedEvent::class,
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->userTippin());
 
         $this->deleteJson(route('api.messenger.threads.messages.destroy', [
             'thread' => $this->private->id,
             'message' => $this->message->id,
         ]))
             ->assertSuccessful();
-
-        Event::assertDispatched(function (MessageArchivedBroadcast $event) use ($doe, $tippin) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertSame($this->message->id, $event->broadcastWith()['message_id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (MessageArchivedEvent $event) {
-            return $this->message->id === $event->message->id;
-        });
     }
 
     /** @test */
