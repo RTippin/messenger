@@ -90,4 +90,42 @@ class StoreSystemMessageTest extends FeatureTestCase
             return $this->group->id === $event->message->thread_id;
         });
     }
+
+    /**
+     * @test
+     * @dataProvider messageTypes
+     * @param $messageString
+     * @param $messageInt
+     */
+    public function system_message_stores_based_on_description($messageString, $messageInt)
+    {
+        app(StoreSystemMessage::class)->withoutDispatches()->execute(
+            $this->group,
+            $this->tippin,
+            'system',
+            $messageString
+        );
+
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $this->group->id,
+            'type' => $messageInt,
+        ]);
+    }
+
+    public function messageTypes(): array
+    {
+        return [
+            ['PARTICIPANT_JOINED_WITH_INVITE', 88],
+            ['VIDEO_CALL', 90],
+            ['GROUP_AVATAR_CHANGED', 91],
+            ['THREAD_ARCHIVED', 92],
+            ['GROUP_CREATED', 93],
+            ['GROUP_RENAMED', 94],
+            ['DEMOTED_ADMIN', 95],
+            ['PROMOTED_ADMIN', 96],
+            ['PARTICIPANT_LEFT_GROUP', 97],
+            ['PARTICIPANT_REMOVED', 98],
+            ['PARTICIPANTS_ADDED', 99],
+        ];
+    }
 }
