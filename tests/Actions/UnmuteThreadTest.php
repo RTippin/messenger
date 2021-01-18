@@ -11,7 +11,7 @@ use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
-class UnMuteThreadTest extends FeatureTestCase
+class UnmuteThreadTest extends FeatureTestCase
 {
     private Thread $group;
 
