@@ -181,7 +181,7 @@ class InvitesTest extends FeatureTestCase
     /** @test */
     public function admin_can_archive_invite()
     {
-        Event::fake([
+        $this->expectsEvents([
             InviteArchivedEvent::class,
         ]);
 
@@ -192,14 +192,6 @@ class InvitesTest extends FeatureTestCase
             'invite' => $this->invite->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertSoftDeleted('thread_invites', [
-            'id' => $this->invite->id,
-        ]);
-
-        Event::assertDispatched(function (InviteArchivedEvent $event) {
-            return $this->invite->id === $event->invite->id;
-        });
     }
 
     /** @test */
@@ -226,10 +218,6 @@ class InvitesTest extends FeatureTestCase
             'invite' => $this->invite->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertSoftDeleted('thread_invites', [
-            'id' => $this->invite->id,
-        ]);
     }
 
     /** @test */
