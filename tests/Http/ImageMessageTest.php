@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Http;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
@@ -14,29 +15,32 @@ class ImageMessageTest extends FeatureTestCase
 {
     private Thread $private;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->private = $this->createPrivateThread(
-            $this->userTippin(),
-            $this->userDoe()
-        );
+        $this->tippin = $this->userTippin();
+
+        $this->doe = $this->userDoe();
+
+        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
+
+        Storage::fake(Messenger::getThreadStorage('disk'));
     }
 
     /** @test */
     public function user_can_send_image_message()
     {
-        Storage::fake($this->private->getStorageDisk());
-
-        $tippin = $this->userTippin();
-
         $this->expectsEvents([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.images.store', [
             'thread' => $this->private->id,
@@ -51,14 +55,11 @@ class ImageMessageTest extends FeatureTestCase
                 'type' => 1,
                 'type_verbose' => 'IMAGE_MESSAGE',
                 'owner' => [
-                    'provider_id' => $tippin->getKey(),
+                    'provider_id' => $this->tippin->getKey(),
                     'provider_alias' => 'user',
                     'name' => 'Richard Tippin',
                 ],
             ]);
-
-        Storage::disk($this->private->getStorageDisk())
-            ->assertExists($this->private->messages()->image()->first()->getImagePath());
     }
 
     /** @test */
@@ -66,7 +67,7 @@ class ImageMessageTest extends FeatureTestCase
     {
         Messenger::setMessageImageUpload(false);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.images.store', [
             'thread' => $this->private->id,
@@ -84,7 +85,7 @@ class ImageMessageTest extends FeatureTestCase
      */
     public function send_image_message_validates_image_file($imageValue)
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.images.store', [
             'thread' => $this->private->id,
