@@ -7,12 +7,15 @@ use RTippin\Messenger\Actions\Threads\UnmuteThread;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ParticipantUnMutedEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class UnMuteThreadTest extends FeatureTestCase
 {
     private Thread $group;
+
+    private Participant $participant;
 
     private MessengerProvider $tippin;
 
@@ -24,22 +27,22 @@ class UnMuteThreadTest extends FeatureTestCase
 
         $this->group = $this->createGroupThread($this->tippin);
 
+        $this->participant = $this->group->participants()->first();
+
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
     public function unmute_thread_updates_participant()
     {
-        $participant = $this->group->participants()->first();
-
-        $participant->update([
+        $this->participant->update([
             'muted' => true,
         ]);
 
         app(UnmuteThread::class)->withoutDispatches()->execute($this->group);
 
         $this->assertDatabaseHas('participants', [
-            'id' => $participant->id,
+            'id' => $this->participant->id,
             'muted' => false,
         ]);
     }
@@ -51,16 +54,14 @@ class UnMuteThreadTest extends FeatureTestCase
             ParticipantUnMutedEvent::class,
         ]);
 
-        $participant = $this->group->participants()->first();
-
-        $participant->update([
+        $this->participant->update([
             'muted' => true,
         ]);
 
         app(UnmuteThread::class)->execute($this->group);
 
-        Event::assertDispatched(function (ParticipantUnMutedEvent $event) use ($participant) {
-            return $participant->id === $event->participant->id;
+        Event::assertDispatched(function (ParticipantUnMutedEvent $event) {
+            return $this->participant->id === $event->participant->id;
         });
     }
 }

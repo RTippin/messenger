@@ -8,12 +8,15 @@ use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\RemovedFromThreadEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class RemoveParticipantTest extends FeatureTestCase
 {
     private Thread $group;
+
+    private Participant $participant;
 
     private MessengerProvider $tippin;
 
@@ -28,20 +31,22 @@ class RemoveParticipantTest extends FeatureTestCase
         $this->doe = $this->userDoe();
 
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
+
+        $this->participant = $this->group->participants()
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
+            ->first();
+
+        Messenger::setProvider($this->tippin);
     }
 
     /** @test */
     public function remove_participant_soft_deletes_participant()
     {
-        $participant = $this->group->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
-            ->first();
-
-        app(RemoveParticipant::class)->withoutDispatches()->execute($this->group, $participant);
+        app(RemoveParticipant::class)->withoutDispatches()->execute($this->group, $this->participant);
 
         $this->assertSoftDeleted('participants', [
-            'id' => $participant->id,
+            'id' => $this->participant->id,
         ]);
     }
 
@@ -53,14 +58,7 @@ class RemoveParticipantTest extends FeatureTestCase
             RemovedFromThreadEvent::class,
         ]);
 
-        Messenger::setProvider($this->tippin);
-
-        $participant = $this->group->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
-            ->first();
-
-        app(RemoveParticipant::class)->execute($this->group, $participant);
+        app(RemoveParticipant::class)->execute($this->group, $this->participant);
 
         Event::assertDispatched(function (ThreadLeftBroadcast $event) {
             $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
@@ -69,10 +67,10 @@ class RemoveParticipantTest extends FeatureTestCase
             return true;
         });
 
-        Event::assertDispatched(function (RemovedFromThreadEvent $event) use ($participant) {
+        Event::assertDispatched(function (RemovedFromThreadEvent $event) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
             $this->assertSame($this->group->id, $event->thread->id);
-            $this->assertSame($participant->id, $event->participant->id);
+            $this->assertSame($this->participant->id, $event->participant->id);
 
             return true;
         });
