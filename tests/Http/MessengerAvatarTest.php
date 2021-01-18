@@ -12,13 +12,9 @@ class MessengerAvatarTest extends FeatureTestCase
     /** @test */
     public function user_can_upload_avatar()
     {
-        $disk = Messenger::getAvatarStorage('disk');
-
-        Storage::fake($disk);
+        Storage::fake(Messenger::getAvatarStorage('disk'));
 
         $tippin = $this->userTippin();
-
-        $directory = Messenger::getAvatarStorage('directory').'/user/'.$tippin->getKey();
 
         $this->actingAs($tippin);
 
@@ -26,8 +22,6 @@ class MessengerAvatarTest extends FeatureTestCase
             'image' => UploadedFile::fake()->image('avatar.jpg'),
         ])
             ->assertSuccessful();
-
-        Storage::disk($disk)->assertExists($directory.'/'.$tippin->picture);
     }
 
     /** @test */
@@ -45,22 +39,14 @@ class MessengerAvatarTest extends FeatureTestCase
 
         $directory = Messenger::getAvatarStorage('directory').'/user/'.$tippin->getKey();
 
-        UploadedFile::fake()
-            ->image('avatar.jpg')
-            ->storeAs($directory, 'avatar.jpg', [
-                'disk' => $disk,
-            ]);
-
-        Storage::disk($disk)->assertExists($directory.'/avatar.jpg');
+        UploadedFile::fake()->image('avatar.jpg')->storeAs($directory, 'avatar.jpg', [
+            'disk' => $disk,
+        ]);
 
         $this->actingAs($tippin);
 
         $this->deleteJson(route('api.messenger.avatar.destroy'))
             ->assertSuccessful();
-
-        Storage::disk($disk)->assertMissing($directory.'/avatar.jpg');
-
-        $this->assertNull($tippin->fresh()->picture);
     }
 
     /**

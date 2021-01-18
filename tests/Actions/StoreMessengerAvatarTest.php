@@ -15,6 +15,8 @@ class StoreMessengerAvatarTest extends FeatureTestCase
 
     private string $directory;
 
+    private string $disk;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -23,22 +25,33 @@ class StoreMessengerAvatarTest extends FeatureTestCase
 
         $this->directory = Messenger::getAvatarStorage('directory').'/user/'.$this->tippin->getKey();
 
+        $this->disk = Messenger::getAvatarStorage('disk');
+
         Messenger::setProvider($this->tippin);
 
-        Storage::fake(Messenger::getAvatarStorage('disk'));
+        Storage::fake($this->disk);
     }
 
     /** @test */
-    public function upload_avatar_stores_image_and_updates_provider()
+    public function upload_avatar_updates_provider()
     {
+        $this->assertNull($this->tippin->picture);
+
         app(StoreMessengerAvatar::class)->execute([
             'image' => UploadedFile::fake()->image('avatar.jpg'),
         ]);
 
         $this->assertNotNull($this->tippin->picture);
+    }
 
-        Storage::disk(Messenger::getAvatarStorage('disk'))
-            ->assertExists($this->directory.'/'.$this->tippin->picture);
+    /** @test */
+    public function upload_avatar_stores_image()
+    {
+        app(StoreMessengerAvatar::class)->execute([
+            'image' => UploadedFile::fake()->image('avatar.jpg'),
+        ]);
+
+        Storage::disk($this->disk)->assertExists($this->directory.'/'.$this->tippin->picture);
     }
 
     /** @test */
@@ -48,11 +61,9 @@ class StoreMessengerAvatarTest extends FeatureTestCase
             'picture' => 'avatar.jpg',
         ]);
 
-        UploadedFile::fake()
-            ->image('avatar.jpg')
-            ->storeAs($this->directory, 'avatar.jpg', [
-                'disk' => Messenger::getAvatarStorage('disk'),
-            ]);
+        UploadedFile::fake()->image('avatar.jpg')->storeAs($this->directory, 'avatar.jpg', [
+            'disk' => $this->disk,
+        ]);
 
         app(StoreMessengerAvatar::class)->execute([
             'image' => UploadedFile::fake()->image('avatar2.jpg'),
@@ -60,10 +71,8 @@ class StoreMessengerAvatarTest extends FeatureTestCase
 
         $this->assertNotSame('avatar.jpg', $this->tippin->picture);
 
-        Storage::disk(Messenger::getAvatarStorage('disk'))
-            ->assertExists($this->directory.'/'.$this->tippin->picture);
+        Storage::disk($this->disk)->assertExists($this->directory.'/'.$this->tippin->picture);
 
-        Storage::disk(Messenger::getAvatarStorage('disk'))
-            ->assertMissing($this->directory.'/avatar.jpg');
+        Storage::disk($this->disk)->assertMissing($this->directory.'/avatar.jpg');
     }
 }

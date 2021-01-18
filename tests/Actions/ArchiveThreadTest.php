@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\ArchiveThread;
 use RTippin\Messenger\Broadcasting\ThreadArchivedBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ThreadArchivedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
@@ -14,14 +15,19 @@ class ArchiveThreadTest extends FeatureTestCase
 {
     private Thread $private;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->private = $this->createPrivateThread(
-            $this->userTippin(),
-            $this->userDoe()
-        );
+        $this->tippin = $this->userTippin();
+
+        $this->doe = $this->userDoe();
+
+        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
     }
 
     /** @test */
@@ -37,11 +43,7 @@ class ArchiveThreadTest extends FeatureTestCase
     /** @test */
     public function archive_thread_fires_events()
     {
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
-        Messenger::setProvider($tippin);
+        Messenger::setProvider($this->tippin);
 
         Event::fake([
             ThreadArchivedBroadcast::class,
@@ -50,16 +52,16 @@ class ArchiveThreadTest extends FeatureTestCase
 
         app(ArchiveThread::class)->execute($this->private);
 
-        Event::assertDispatched(function (ThreadArchivedBroadcast $event) use ($tippin, $doe) {
-            $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
+        Event::assertDispatched(function (ThreadArchivedBroadcast $event) {
+            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertSame($this->private->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
 
-        Event::assertDispatched(function (ThreadArchivedEvent $event) use ($tippin) {
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
+        Event::assertDispatched(function (ThreadArchivedEvent $event) {
+            $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
             $this->assertSame($this->private->id, $event->thread->id);
 
             return true;
