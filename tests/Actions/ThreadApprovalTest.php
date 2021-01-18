@@ -36,7 +36,10 @@ class ThreadApprovalTest extends FeatureTestCase
     {
         Messenger::setProvider($this->tippin);
 
-        app(ThreadApproval::class)->withoutDispatches()->execute($this->private, true);
+        app(ThreadApproval::class)->withoutDispatches()->execute(
+            $this->private,
+            true
+        );
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->tippin->getKey(),
@@ -50,7 +53,10 @@ class ThreadApprovalTest extends FeatureTestCase
     {
         Messenger::setProvider($this->tippin);
 
-        app(ThreadApproval::class)->withoutDispatches()->execute($this->private, false);
+        app(ThreadApproval::class)->withoutDispatches()->execute(
+            $this->private,
+            false
+        );
 
         $this->assertSoftDeleted('threads', [
             'id' => $this->private->id,
@@ -64,7 +70,10 @@ class ThreadApprovalTest extends FeatureTestCase
 
         Messenger::setProvider($this->doe);
 
-        app(ThreadApproval::class)->withoutDispatches()->execute($this->private, true);
+        app(ThreadApproval::class)->withoutDispatches()->execute(
+            $this->private,
+            true
+        );
     }
 
     /** @test */
@@ -81,7 +90,10 @@ class ThreadApprovalTest extends FeatureTestCase
                 'pending' => false,
             ]);
 
-        app(ThreadApproval::class)->withoutDispatches()->execute($this->private, true);
+        app(ThreadApproval::class)->withoutDispatches()->execute(
+            $this->private,
+            true
+        );
     }
 
     /** @test */
@@ -93,7 +105,10 @@ class ThreadApprovalTest extends FeatureTestCase
 
         $group = $this->createGroupThread($this->tippin);
 
-        app(ThreadApproval::class)->withoutDispatches()->execute($group, true);
+        app(ThreadApproval::class)->withoutDispatches()->execute(
+            $group,
+            true
+        );
     }
 
     /** @test */
@@ -106,7 +121,10 @@ class ThreadApprovalTest extends FeatureTestCase
             ThreadApprovalEvent::class,
         ]);
 
-        app(ThreadApproval::class)->execute($this->private, true);
+        app(ThreadApproval::class)->execute(
+            $this->private,
+            true
+        );
 
         Event::assertDispatched(function (ThreadApprovalBroadcast $event) {
             $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
@@ -135,7 +153,10 @@ class ThreadApprovalTest extends FeatureTestCase
             ThreadApprovalEvent::class,
         ]);
 
-        app(ThreadApproval::class)->execute($this->private, false);
+        app(ThreadApproval::class)->execute(
+            $this->private,
+            false
+        );
 
         Event::assertDispatched(function (ThreadApprovalBroadcast $event) {
             return $event->broadcastWith()['thread']['approved'] === false;

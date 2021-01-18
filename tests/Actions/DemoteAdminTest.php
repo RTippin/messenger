@@ -43,8 +43,10 @@ class DemoteAdminTest extends FeatureTestCase
     /** @test */
     public function demote_admin_updates_participant()
     {
-        app(DemoteAdmin::class)->withoutDispatches()
-            ->execute($this->group, $this->participant);
+        app(DemoteAdmin::class)->withoutDispatches()->execute(
+            $this->group,
+            $this->participant
+        );
 
         $this->assertDatabaseHas('participants', [
             'id' => $this->participant->id,
@@ -62,7 +64,10 @@ class DemoteAdminTest extends FeatureTestCase
 
         Messenger::setProvider($this->tippin);
 
-        app(DemoteAdmin::class)->execute($this->group, $this->participant);
+        app(DemoteAdmin::class)->execute(
+            $this->group,
+            $this->participant
+        );
 
         Event::assertDispatched(function (DemotedAdminBroadcast $event) {
             $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());

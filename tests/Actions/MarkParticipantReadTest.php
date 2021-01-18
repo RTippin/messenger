@@ -38,7 +38,10 @@ class MarkParticipantReadTest extends FeatureTestCase
     {
         $this->assertNull($this->participant->last_read);
 
-        app(MarkParticipantRead::class)->withoutDispatches()->execute($this->participant, $this->private);
+        app(MarkParticipantRead::class)->withoutDispatches()->execute(
+            $this->participant,
+            $this->private
+        );
 
         $this->assertNotNull($this->participant->last_read);
     }
@@ -51,7 +54,10 @@ class MarkParticipantReadTest extends FeatureTestCase
             ParticipantsReadEvent::class,
         ]);
 
-        app(MarkParticipantRead::class)->execute($this->participant, $this->private);
+        app(MarkParticipantRead::class)->execute(
+            $this->participant,
+            $this->private
+        );
 
         Event::assertDispatched(function (ParticipantReadBroadcast $event) {
             $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
@@ -79,7 +85,10 @@ class MarkParticipantReadTest extends FeatureTestCase
 
         $this->travel(5)->minutes();
 
-        app(MarkParticipantRead::class)->execute($this->participant, $this->private);
+        app(MarkParticipantRead::class)->execute(
+            $this->participant,
+            $this->private
+        );
     }
 
     /** @test */
@@ -89,7 +98,10 @@ class MarkParticipantReadTest extends FeatureTestCase
             'pending' => true,
         ]);
 
-        app(MarkParticipantRead::class)->execute($this->participant, $this->private);
+        app(MarkParticipantRead::class)->execute(
+            $this->participant,
+            $this->private
+        );
 
         $this->assertNull($this->participant->last_read);
     }

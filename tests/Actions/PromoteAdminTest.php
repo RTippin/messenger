@@ -45,8 +45,10 @@ class PromoteAdminTest extends FeatureTestCase
     /** @test */
     public function promote_admin_updates_participant()
     {
-        app(PromoteAdmin::class)->withoutDispatches()
-            ->execute($this->group, $this->participant);
+        app(PromoteAdmin::class)->withoutDispatches()->execute(
+            $this->group,
+            $this->participant
+        );
 
         $this->assertDatabaseHas('participants', [
             'id' => $this->participant->id,
@@ -62,7 +64,10 @@ class PromoteAdminTest extends FeatureTestCase
             PromotedAdminEvent::class,
         ]);
 
-        app(PromoteAdmin::class)->execute($this->group, $this->participant);
+        app(PromoteAdmin::class)->execute(
+            $this->group,
+            $this->participant
+        );
 
         Event::assertDispatched(function (PromotedAdminBroadcast $event) {
             $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());

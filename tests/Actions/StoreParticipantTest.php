@@ -26,7 +26,10 @@ class StoreParticipantTest extends FeatureTestCase
     /** @test */
     public function store_participant_without_supplied_attributes()
     {
-        app(StoreParticipant::class)->execute($this->group, $this->doe);
+        app(StoreParticipant::class)->execute(
+            $this->group,
+            $this->doe
+        );
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->doe->getKey(),

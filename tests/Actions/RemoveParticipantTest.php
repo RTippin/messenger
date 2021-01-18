@@ -43,7 +43,10 @@ class RemoveParticipantTest extends FeatureTestCase
     /** @test */
     public function remove_participant_soft_deletes_participant()
     {
-        app(RemoveParticipant::class)->withoutDispatches()->execute($this->group, $this->participant);
+        app(RemoveParticipant::class)->withoutDispatches()->execute(
+            $this->group,
+            $this->participant
+        );
 
         $this->assertSoftDeleted('participants', [
             'id' => $this->participant->id,
@@ -58,7 +61,10 @@ class RemoveParticipantTest extends FeatureTestCase
             RemovedFromThreadEvent::class,
         ]);
 
-        app(RemoveParticipant::class)->execute($this->group, $this->participant);
+        app(RemoveParticipant::class)->execute(
+            $this->group,
+            $this->participant
+        );
 
         Event::assertDispatched(function (ThreadLeftBroadcast $event) {
             $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
