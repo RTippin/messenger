@@ -143,6 +143,8 @@ trait HelperTrait
             'invitations' => true,
             'calling' => true,
             'knocks' => true,
+            'messaging' => true,
+            'lockout' => false,
         ]);
 
         $group->participants()

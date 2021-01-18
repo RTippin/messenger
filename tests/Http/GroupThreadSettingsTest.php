@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\ThreadSettingsBroadcast;
 use RTippin\Messenger\Events\ThreadSettingsEvent;
 use RTippin\Messenger\Models\Thread;
@@ -135,14 +134,12 @@ class GroupThreadSettingsTest extends FeatureTestCase
     /** @test */
     public function update_group_settings_expects_events_and_name_not_changed()
     {
-        $tippin = $this->userTippin();
-
-        Event::fake([
+        $this->expectsEvents([
             ThreadSettingsBroadcast::class,
             ThreadSettingsEvent::class,
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->userTippin());
 
         $this->putJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
@@ -160,34 +157,17 @@ class GroupThreadSettingsTest extends FeatureTestCase
                 'messaging' => false,
                 'knocks' => false,
             ]);
-
-        Event::assertDispatched(function (ThreadSettingsBroadcast $event) {
-            $this->assertContains('First Test Group', $event->broadcastWith());
-            $this->assertContains('presence-thread.'.$this->group->id, $event->broadcastOn());
-
-            return true;
-        });
-
-        Event::assertDispatched(function (ThreadSettingsEvent $event) use ($tippin) {
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
-            $this->assertSame($this->group->id, $event->thread->id);
-            $this->assertFalse($event->nameChanged);
-
-            return true;
-        });
     }
 
     /** @test */
     public function update_group_settings_expects_events_and_name_did_change()
     {
-        $tippin = $this->userTippin();
-
-        Event::fake([
+        $this->expectsEvents([
             ThreadSettingsBroadcast::class,
             ThreadSettingsEvent::class,
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->userTippin());
 
         $this->putJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
@@ -205,12 +185,6 @@ class GroupThreadSettingsTest extends FeatureTestCase
                 'messaging' => false,
                 'knocks' => false,
             ]);
-
-        Event::assertDispatched(ThreadSettingsBroadcast::class);
-
-        Event::assertDispatched(function (ThreadSettingsEvent $event) {
-            return $event->nameChanged === true;
-        });
     }
 
     public function settingsValidation(): array
