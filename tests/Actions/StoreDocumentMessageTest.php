@@ -65,17 +65,17 @@ class StoreDocumentMessageTest extends FeatureTestCase
         Storage::disk($this->disk)->assertExists(Message::document()->first()->getDocumentPath());
     }
 
-//    /** @test */
-//    public function store_document_sets_temporary_id_on_message()
-//    {
-//        $action = app(StoreDocumentMessage::class)->withoutDispatches()->execute(
-//            $this->private,
-//            UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
-//            '123-456-789'
-//        );
-//
-//        $this->assertSame('123-456-789', $action->getMessage()->temporaryId());
-//    }
+    /** @test */
+    public function store_document_sets_temporary_id_on_message()
+    {
+        $action = app(StoreDocumentMessage::class)->withoutDispatches()->execute(
+            $this->private,
+            UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+            '123-456-789'
+        );
+
+        $this->assertSame('123-456-789', $action->getMessage()->temporaryId());
+    }
 
 //    /** @test */
 //    public function user_can_send_document_message()

@@ -81,7 +81,7 @@ abstract class NewMessageAction extends BaseMessengerAction
     protected function generateResource(): self
     {
         $this->setJsonResource(new MessageResource(
-                $this->getData(), $this->getThread()
+                $this->getMessage(), $this->getThread()
             )
         );
 
@@ -110,7 +110,7 @@ abstract class NewMessageAction extends BaseMessengerAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new NewMessageEvent(
-                $this->getData(true)
+                $this->getMessage(true)
             ));
         }
 
@@ -158,7 +158,7 @@ abstract class NewMessageAction extends BaseMessengerAction
                                   string $body,
                                   string $temporaryId = null): self
     {
-        $this->setData(
+        $this->setMessage(
             $this->getThread()
                 ->messages()
                 ->create([
