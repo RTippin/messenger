@@ -36,7 +36,7 @@ class PurgeDocumentMessagesTest extends FeatureTestCase
             'owner_id' => $tippin->getKey(),
             'owner_type' => get_class($tippin),
             'type' => 2,
-            'body' => 'test.pdf'
+            'body' => 'test.pdf',
         ]);
 
         UploadedFile::fake()
@@ -49,7 +49,7 @@ class PurgeDocumentMessagesTest extends FeatureTestCase
             'owner_id' => $tippin->getKey(),
             'owner_type' => get_class($tippin),
             'type' => 2,
-            'body' => 'foo.pdf'
+            'body' => 'foo.pdf',
         ]);
 
         UploadedFile::fake()
