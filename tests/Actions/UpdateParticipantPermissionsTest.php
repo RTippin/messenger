@@ -1,0 +1,123 @@
+<?php
+
+namespace RTippin\Messenger\Tests\Actions;
+
+use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\Threads\UpdateParticipantPermissions;
+use RTippin\Messenger\Broadcasting\ParticipantPermissionsBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Events\ParticipantPermissionsEvent;
+use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Participant;
+use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\FeatureTestCase;
+
+class UpdateParticipantPermissionsTest extends FeatureTestCase
+{
+    private Thread $group;
+
+    private Participant $participant;
+
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->tippin = $this->userTippin();
+
+        $this->doe = $this->userDoe();
+
+        $this->group = $this->createGroupThread($this->tippin, $this->doe);
+
+        $this->participant = $this->group->participants()
+            ->where('admin', '=', false)
+            ->first();
+
+        Messenger::setProvider($this->tippin);
+    }
+
+    /** @test */
+    public function update_permissions_updates_participant()
+    {
+        app(UpdateParticipantPermissions::class)->withoutDispatches()->execute(
+            $this->group,
+            $this->participant,
+            [
+                'send_messages' => false,
+                'add_participants' => true,
+                'manage_invites' => true,
+                'start_calls' => true,
+                'send_knocks' => true,
+            ]
+        );
+
+        $this->assertDatabaseHas('participants', [
+            'id' => $this->participant->id,
+            'send_messages' => false,
+            'add_participants' => true,
+            'manage_invites' => true,
+            'start_calls' => true,
+            'send_knocks' => true,
+        ]);
+    }
+
+    /** @test */
+    public function update_permissions_fires_events()
+    {
+        Event::fake([
+            ParticipantPermissionsBroadcast::class,
+            ParticipantPermissionsEvent::class,
+        ]);
+
+        app(UpdateParticipantPermissions::class)->execute(
+            $this->group,
+            $this->participant,
+            [
+                'send_messages' => false,
+                'add_participants' => true,
+                'manage_invites' => true,
+                'start_calls' => true,
+                'send_knocks' => true,
+            ]
+        );
+
+        Event::assertDispatched(function (ParticipantPermissionsBroadcast $event) {
+            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
+
+            return true;
+        });
+
+        Event::assertDispatched(function (ParticipantPermissionsEvent $event) {
+            $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
+            $this->assertSame($this->group->id, $event->thread->id);
+            $this->assertSame($this->participant->id, $event->participant->id);
+
+            return true;
+        });
+    }
+
+    /** @test */
+    public function update_permissions_fires_no_events_when_nothing_changed()
+    {
+        $this->doesntExpectEvents([
+            ParticipantPermissionsBroadcast::class,
+            ParticipantPermissionsEvent::class,
+        ]);
+
+        app(UpdateParticipantPermissions::class)->execute(
+            $this->group,
+            $this->participant,
+            [
+                'send_messages' => true,
+                'add_participants' => false,
+                'manage_invites' => false,
+                'start_calls' => false,
+                'send_knocks' => false,
+            ]
+        );
+    }
+}

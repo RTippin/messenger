@@ -2,9 +2,10 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\ParticipantPermissionsBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ParticipantPermissionsEvent;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -12,35 +13,38 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
 {
     private Thread $group;
 
+    private Participant $participant;
+
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread(
-            $this->userTippin(),
-            $this->userDoe(),
-            $this->companyDevelopers()
-        );
+        $this->tippin = $this->userTippin();
+
+        $this->doe = $this->userDoe();
+
+        $this->group = $this->createGroupThread($this->tippin, $this->doe);
+
+        $this->participant = $this->group->participants()
+            ->where('admin', '=', false)
+            ->first();
     }
 
     /** @test */
     public function user_forbidden_to_update_private_participant_permissions()
     {
-        $doe = $this->userDoe();
-
-        $tippin = $this->userTippin();
-
-        $private = $this->createPrivateThread(
-            $tippin,
-            $doe
-        );
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
 
         $participant = $private->participants()
-            ->where('owner_id', '=', $doe->getKey())
-            ->where('owner_type', '=', get_class($doe))
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
             ->first();
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.participants.update', [
             'thread' => $private->id,
@@ -58,23 +62,16 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
     /** @test */
     public function update_group_participant_permissions_without_changes_fires_no_events()
     {
-        $doe = $this->userDoe();
-
         $this->doesntExpectEvents([
             ParticipantPermissionsBroadcast::class,
             ParticipantPermissionsEvent::class,
         ]);
 
-        $participant = $this->group->participants()
-            ->where('owner_id', '=', $doe->getKey())
-            ->where('owner_type', '=', get_class($doe))
-            ->first();
-
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.participants.update', [
             'thread' => $this->group->id,
-            'participant' => $participant->id,
+            'participant' => $this->participant->id,
         ]), [
             'send_messages' => true,
             'add_participants' => false,
@@ -88,25 +85,16 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
     /** @test */
     public function admin_can_update_group_participant_permissions()
     {
-        $doe = $this->userDoe();
-
-        $tippin = $this->userTippin();
-
-        Event::fake([
+        $this->expectsEvents([
             ParticipantPermissionsBroadcast::class,
             ParticipantPermissionsEvent::class,
         ]);
 
-        $participant = $this->group->participants()
-            ->where('owner_id', '=', $doe->getKey())
-            ->where('owner_type', '=', get_class($doe))
-            ->first();
-
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.participants.update', [
             'thread' => $this->group->id,
-            'participant' => $participant->id,
+            'participant' => $this->participant->id,
         ]), [
             'send_messages' => false,
             'add_participants' => true,
@@ -116,7 +104,7 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
         ])
             ->assertSuccessful()
             ->assertJson([
-                'id' => $participant->id,
+                'id' => $this->participant->id,
                 'send_messages' => false,
                 'add_participants' => true,
                 'manage_invites' => true,
@@ -126,21 +114,6 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
                     'name' => 'John Doe',
                 ],
             ]);
-
-        Event::assertDispatched(function (ParticipantPermissionsBroadcast $event) use ($doe) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (ParticipantPermissionsEvent $event) use ($tippin, $participant) {
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
-            $this->assertSame($this->group->id, $event->thread->id);
-            $this->assertSame($participant->id, $event->participant->id);
-
-            return true;
-        });
     }
 
     /**
@@ -150,18 +123,11 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
      */
     public function update_group_participant_checks_boolean_values($permissionValue)
     {
-        $doe = $this->userDoe();
-
-        $participant = $this->group->participants()
-            ->where('owner_id', '=', $doe->getKey())
-            ->where('owner_type', '=', get_class($doe))
-            ->first();
-
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.participants.update', [
             'thread' => $this->group->id,
-            'participant' => $participant->id,
+            'participant' => $this->participant->id,
         ]), [
             'send_messages' => $permissionValue,
             'add_participants' => $permissionValue,
