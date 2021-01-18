@@ -29,7 +29,7 @@ class GroupMessageTest extends FeatureTestCase
 
         $this->doe = $this->userDoe();
 
-        $this->group = $this->createGroupThread($this->tippin, $this->doe,);
+        $this->group = $this->createGroupThread($this->tippin, $this->doe);
 
         $this->message = $this->createMessage($this->group, $this->tippin);
     }
