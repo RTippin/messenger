@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\MessageArchivedBroadcast;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\MessageArchivedEvent;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Models\Message;
@@ -17,15 +17,21 @@ class PrivateMessageTest extends FeatureTestCase
 
     private Message $message;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
+        $this->tippin = $this->userTippin();
 
-        $this->private = $this->createPrivateThread($tippin, $this->userDoe());
+        $this->doe = $this->userDoe();
 
-        $this->message = $this->createMessage($this->private, $tippin);
+        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $this->message = $this->createMessage($this->private, $this->tippin);
     }
 
     /** @test */
@@ -51,7 +57,7 @@ class PrivateMessageTest extends FeatureTestCase
     /** @test */
     public function recipient_can_view_messages_index()
     {
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.messages.index', [
             'thread' => $this->private->id,
@@ -63,7 +69,7 @@ class PrivateMessageTest extends FeatureTestCase
     /** @test */
     public function user_can_view_message()
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.show', [
             'thread' => $this->private->id,
@@ -79,7 +85,7 @@ class PrivateMessageTest extends FeatureTestCase
     /** @test */
     public function recipient_can_view_message()
     {
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.messages.show', [
             'thread' => $this->private->id,
@@ -95,16 +101,12 @@ class PrivateMessageTest extends FeatureTestCase
     /** @test */
     public function user_can_send_message()
     {
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
-        Event::fake([
+        $this->expectsEvents([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->private->id,
@@ -120,24 +122,11 @@ class PrivateMessageTest extends FeatureTestCase
                 'type_verbose' => 'MESSAGE',
                 'body' => 'Hello!',
                 'owner' => [
-                    'provider_id' => $tippin->getKey(),
+                    'provider_id' => $this->tippin->getKey(),
                     'provider_alias' => 'user',
                     'name' => 'Richard Tippin',
                 ],
             ]);
-
-        Event::assertDispatched(function (NewMessageBroadcast $event) use ($doe, $tippin) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertSame($this->private->id, $event->broadcastWith()['thread_id']);
-            $this->assertSame('123-456-789', $event->broadcastWith()['temporary_id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (NewMessageEvent $event) {
-            return $this->private->id === $event->message->thread_id;
-        });
     }
 
     /** @test */
@@ -148,7 +137,7 @@ class PrivateMessageTest extends FeatureTestCase
             NewMessageEvent::class,
         ]);
 
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->private->id,
@@ -177,7 +166,7 @@ class PrivateMessageTest extends FeatureTestCase
                 'pending' => true,
             ]);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->private->id,
@@ -205,17 +194,15 @@ class PrivateMessageTest extends FeatureTestCase
     /** @test */
     public function recipient_forbidden_to_send_message_when_thread_awaiting_approval_on_them()
     {
-        $doe = $this->userDoe();
-
         $this->private->participants()
-            ->where('owner_id', '=', $doe->getKey())
-            ->where('owner_type', '=', get_class($doe))
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
             ->first()
             ->update([
                 'pending' => true,
             ]);
 
-        $this->actingAs($doe);
+        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->private->id,
@@ -234,7 +221,7 @@ class PrivateMessageTest extends FeatureTestCase
             MessageArchivedEvent::class,
         ]);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.messages.destroy', [
             'thread' => $this->private->id,
@@ -246,7 +233,7 @@ class PrivateMessageTest extends FeatureTestCase
     /** @test */
     public function recipient_forbidden_to_archive_message()
     {
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->deleteJson(route('api.messenger.threads.messages.destroy', [
             'thread' => $this->private->id,
@@ -263,7 +250,7 @@ class PrivateMessageTest extends FeatureTestCase
      */
     public function send_message_validates_request($messageValue, $tempIdValue)
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->private->id,

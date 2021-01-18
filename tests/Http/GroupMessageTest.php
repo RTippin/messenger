@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\MessageArchivedBroadcast;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\MessageArchivedEvent;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Models\Message;
@@ -17,19 +17,21 @@ class GroupMessageTest extends FeatureTestCase
 
     private Message $message;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
+        $this->tippin = $this->userTippin();
 
-        $this->group = $this->createGroupThread(
-            $tippin,
-            $this->userDoe(),
-            $this->companyDevelopers()
-        );
+        $this->doe = $this->userDoe();
 
-        $this->message = $this->createMessage($this->group, $tippin);
+        $this->group = $this->createGroupThread($this->tippin, $this->doe,);
+
+        $this->message = $this->createMessage($this->group, $this->tippin);
     }
 
     /** @test */
@@ -46,7 +48,7 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function participant_can_view_messages_index()
     {
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.messages.index', [
             'thread' => $this->group->id,
@@ -58,7 +60,7 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function participant_can_view_message()
     {
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.messages.show', [
             'thread' => $this->group->id,
@@ -74,18 +76,12 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function admin_can_send_message()
     {
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
-        $developers = $this->companyDevelopers();
-
-        Event::fake([
+        $this->expectsEvents([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->group->id,
@@ -101,25 +97,11 @@ class GroupMessageTest extends FeatureTestCase
                 'type_verbose' => 'MESSAGE',
                 'body' => 'Hello!',
                 'owner' => [
-                    'provider_id' => $tippin->getKey(),
+                    'provider_id' => $this->tippin->getKey(),
                     'provider_alias' => 'user',
                     'name' => 'Richard Tippin',
                 ],
             ]);
-
-        Event::assertDispatched(function (NewMessageBroadcast $event) use ($doe, $tippin, $developers) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
-            $this->assertContains('private-company.'.$developers->getKey(), $event->broadcastOn());
-            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
-            $this->assertSame('123-456-789', $event->broadcastWith()['temporary_id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (NewMessageEvent $event) {
-            return $this->group->id === $event->message->thread_id;
-        });
     }
 
     /** @test */
@@ -130,7 +112,7 @@ class GroupMessageTest extends FeatureTestCase
             NewMessageEvent::class,
         ]);
 
-        $this->actingAs($this->companyDevelopers());
+        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->group->id,
@@ -158,17 +140,15 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function participant_forbidden_to_send_message_without_proper_permission()
     {
-        $doe = $this->userDoe();
-
         $this->group->participants()
-            ->where('owner_id', '=', $doe->getKey())
-            ->where('owner_type', '=', get_class($doe))
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
             ->first()
             ->update([
                 'send_messages' => false,
             ]);
 
-        $this->actingAs($doe);
+        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->group->id,
@@ -182,16 +162,14 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function participant_can_archive_own_message()
     {
-        $doe = $this->userDoe();
-
         $this->expectsEvents([
             MessageArchivedBroadcast::class,
             MessageArchivedEvent::class,
         ]);
 
-        $message = $this->createMessage($this->group, $doe);
+        $message = $this->createMessage($this->group, $this->doe);
 
-        $this->actingAs($doe);
+        $this->actingAs($this->doe);
 
         $this->deleteJson(route('api.messenger.threads.messages.destroy', [
             'thread' => $this->group->id,
@@ -208,12 +186,9 @@ class GroupMessageTest extends FeatureTestCase
             MessageArchivedEvent::class,
         ]);
 
-        $message = $this->createMessage(
-            $this->group,
-            $this->userDoe()
-        );
+        $message = $this->createMessage($this->group, $this->doe);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.messages.destroy', [
             'thread' => $this->group->id,
@@ -229,7 +204,7 @@ class GroupMessageTest extends FeatureTestCase
             'messaging' => false,
         ]);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->group->id,
@@ -247,7 +222,7 @@ class GroupMessageTest extends FeatureTestCase
             'messaging' => false,
         ]);
 
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->group->id,
