@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Events\InviteUsedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Invite;
@@ -156,13 +155,11 @@ class JoinWithInviteTest extends FeatureTestCase
     /** @test */
     public function non_participant_can_join_group_with_valid_invite()
     {
-        Event::fake([
+        $this->expectsEvents([
             InviteUsedEvent::class,
         ]);
 
-        $smith = $this->createJaneSmith();
-
-        $this->actingAs($smith);
+        $this->actingAs($this->createJaneSmith());
 
         $this->postJson(route('api.messenger.invites.join', [
             'invite' => 'TEST1234',
@@ -171,22 +168,6 @@ class JoinWithInviteTest extends FeatureTestCase
             ->assertJson([
                 'thread_id' => $this->group->id,
             ]);
-
-        $this->assertDatabaseHas('participants', [
-            'thread_id' => $this->group->id,
-            'owner_id' => $smith->getKey(),
-            'owner_type' => get_class($smith),
-        ]);
-
-        $this->assertSame(3, $this->group->participants()->count());
-
-        Event::assertDispatched(function (InviteUsedEvent $event) use ($smith) {
-            $this->assertSame($smith->getKey(), $event->provider->getKey());
-            $this->assertSame($this->group->id, $event->thread->id);
-            $this->assertSame($this->invite->id, $event->invite->id);
-
-            return true;
-        });
     }
 
     /** @test */

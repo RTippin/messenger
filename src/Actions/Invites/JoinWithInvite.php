@@ -123,7 +123,8 @@ class JoinWithInvite extends BaseMessengerAction
         return [
             $this->getThread(),
             $this->messenger->getProvider(),
-            Definitions::DefaultParticipant,
+            [],
+            true,
         ];
     }
 
