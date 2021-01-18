@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
 use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -19,16 +18,14 @@ class PrivateThreadsTest extends FeatureTestCase
     /** @test */
     public function creating_new_private_thread_with_non_friend_is_pending()
     {
-        $tippin = $this->userTippin();
-
         $doe = $this->userDoe();
 
-        Event::fake([
+        $this->expectsEvents([
             NewThreadBroadcast::class,
             NewThreadEvent::class,
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->userTippin());
 
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
@@ -58,26 +55,6 @@ class PrivateThreadsTest extends FeatureTestCase
             'owner_type' => get_class($doe),
             'pending' => true,
         ]);
-
-        $this->assertDatabaseHas('participants', [
-            'owner_id' => $tippin->getKey(),
-            'owner_type' => get_class($tippin),
-            'pending' => false,
-        ]);
-
-        Event::assertDispatched(function (NewThreadBroadcast $event) use ($doe) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertTrue($event->broadcastWith()['thread']['pending']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (NewThreadEvent $event) use ($tippin) {
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
-            $this->assertSame(1, $event->thread->type);
-
-            return true;
-        });
     }
 
     /** @test */
@@ -87,15 +64,12 @@ class PrivateThreadsTest extends FeatureTestCase
 
         $doe = $this->userDoe();
 
-        Event::fake([
+        $this->expectsEvents([
             NewThreadBroadcast::class,
             NewThreadEvent::class,
         ]);
 
-        $this->createFriends(
-            $tippin,
-            $doe
-        );
+        $this->createFriends($tippin, $doe);
 
         $this->actingAs($tippin);
 
@@ -111,18 +85,6 @@ class PrivateThreadsTest extends FeatureTestCase
             'owner_type' => get_class($doe),
             'pending' => false,
         ]);
-
-        $this->assertDatabaseHas('participants', [
-            'owner_id' => $tippin->getKey(),
-            'owner_type' => get_class($tippin),
-            'pending' => false,
-        ]);
-
-        Event::assertDispatched(function (NewThreadBroadcast $event) {
-            return $event->broadcastWith()['thread']['pending'] === false;
-        });
-
-        Event::assertDispatched(NewThreadEvent::class);
     }
 
     /** @test */
@@ -151,12 +113,6 @@ class PrivateThreadsTest extends FeatureTestCase
             'owner_type' => get_class($developers),
             'pending' => true,
         ]);
-
-        $this->assertDatabaseHas('participants', [
-            'owner_id' => $tippin->getKey(),
-            'owner_type' => get_class($tippin),
-            'pending' => false,
-        ]);
     }
 
     /** @test */
@@ -166,10 +122,7 @@ class PrivateThreadsTest extends FeatureTestCase
 
         $doe = $this->userDoe();
 
-        $this->createPrivateThread(
-            $tippin,
-            $doe
-        );
+        $this->createPrivateThread($tippin, $doe);
 
         $this->actingAs($tippin);
 
