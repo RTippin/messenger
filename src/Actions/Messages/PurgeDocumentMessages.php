@@ -39,37 +39,37 @@ class PurgeDocumentMessages extends BaseMessengerAction
         $documents = $parameters[0];
 
         $documents->each(
-            fn (Message $documents) => $this->purge($documents)
+            fn (Message $document) => $this->purge($document)
         );
 
         return $this;
     }
 
     /**
-     * @param Message $documents
+     * @param Message $document
      */
-    private function purge(Message $documents): void
+    private function purge(Message $document): void
     {
-        $this->destroyImage($documents);
+        $this->destroyDocument($document);
 
-        $this->destroyMessage($documents);
+        $this->destroyMessage($document);
     }
 
     /**
-     * @param Message $documents
+     * @param Message $document
      */
-    private function destroyImage(Message $documents): void
+    private function destroyDocument(Message $document): void
     {
         $this->fileService
-            ->setDisk($documents->getStorageDisk())
-            ->destroy($documents->getDocumentPath());
+            ->setDisk($document->getStorageDisk())
+            ->destroy($document->getDocumentPath());
     }
 
     /**
-     * @param Message $documents
+     * @param Message $document
      */
-    private function destroyMessage(Message $documents): void
+    private function destroyMessage(Message $document): void
     {
-        $documents->forceDelete();
+        $document->forceDelete();
     }
 }

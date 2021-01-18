@@ -15,6 +15,8 @@ class PurgeThreadsTest extends FeatureTestCase
 
     private Thread $group;
 
+    private string $disk;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -25,7 +27,9 @@ class PurgeThreadsTest extends FeatureTestCase
 
         $this->group = $this->createGroupThread($tippin);
 
-        Storage::fake(Messenger::getThreadStorage('disk'));
+        $this->disk = Messenger::getThreadStorage('disk');
+
+        Storage::fake($this->disk);
     }
 
     /** @test */
@@ -56,7 +60,7 @@ class PurgeThreadsTest extends FeatureTestCase
         UploadedFile::fake()
             ->image('avatar.jpg')
             ->storeAs($this->private->getStorageDirectory().'/avatar', 'avatar.jpg', [
-                'disk' => $this->private->getStorageDisk(),
+                'disk' => $this->disk,
             ]);
 
         UploadedFile::fake()
@@ -67,8 +71,8 @@ class PurgeThreadsTest extends FeatureTestCase
 
         app(PurgeThreads::class)->execute(Thread::all());
 
-        Storage::disk($this->private->getStorageDisk())->assertMissing($this->private->getStorageDirectory());
+        Storage::disk($this->disk)->assertMissing($this->private->getStorageDirectory());
 
-        Storage::disk($this->group->getStorageDisk())->assertMissing($this->group->getStorageDirectory());
+        Storage::disk($this->disk)->assertMissing($this->group->getStorageDirectory());
     }
 }
