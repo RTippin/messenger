@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Http;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
@@ -14,29 +15,32 @@ class DocumentMessageTest extends FeatureTestCase
 {
     private Thread $private;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->private = $this->createPrivateThread(
-            $this->userTippin(),
-            $this->userDoe()
-        );
+        $this->tippin = $this->userTippin();
+
+        $this->doe = $this->userDoe();
+
+        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
+
+        Storage::fake(Messenger::getThreadStorage('disk'));
     }
 
     /** @test */
     public function user_can_send_document_message()
     {
-        Storage::fake($this->private->getStorageDisk());
-
-        $tippin = $this->userTippin();
-
         $this->expectsEvents([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.documents.store', [
             'thread' => $this->private->id,
@@ -51,14 +55,11 @@ class DocumentMessageTest extends FeatureTestCase
                 'type' => 2,
                 'type_verbose' => 'DOCUMENT_MESSAGE',
                 'owner' => [
-                    'provider_id' => $tippin->getKey(),
+                    'provider_id' => $this->tippin->getKey(),
                     'provider_alias' => 'user',
                     'name' => 'Richard Tippin',
                 ],
             ]);
-
-        Storage::disk($this->private->getStorageDisk())
-            ->assertExists($this->private->messages()->document()->first()->getDocumentPath());
     }
 
     /** @test */
@@ -66,7 +67,7 @@ class DocumentMessageTest extends FeatureTestCase
     {
         Messenger::setMessageDocumentUpload(false);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.documents.store', [
             'thread' => $this->private->id,
@@ -84,7 +85,7 @@ class DocumentMessageTest extends FeatureTestCase
      */
     public function send_document_message_validates_document_file($documentValue)
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.documents.store', [
             'thread' => $this->private->id,

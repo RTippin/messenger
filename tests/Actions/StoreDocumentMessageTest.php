@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
@@ -77,40 +78,53 @@ class StoreDocumentMessageTest extends FeatureTestCase
         $this->assertSame('123-456-789', $action->getMessage()->temporaryId());
     }
 
-//    /** @test */
-//    public function user_can_send_document_message()
-//    {
-//        Storage::fake($this->disk);
-//
-//        $tippin = $this->userTippin();
-//
-//        $this->expectsEvents([
-//            NewMessageBroadcast::class,
-//            NewMessageEvent::class,
-//        ]);
-//
-//        $this->actingAs($tippin);
-//
-//        $this->postJson(route('api.messenger.threads.documents.store', [
-//            'thread' => $this->private->id,
-//        ]), [
-//            'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
-//            'temporary_id' => '123-456-789',
-//        ])
-//            ->assertSuccessful()
-//            ->assertJson([
-//                'thread_id' => $this->private->id,
-//                'temporary_id' => '123-456-789',
-//                'type' => 2,
-//                'type_verbose' => 'DOCUMENT_MESSAGE',
-//                'owner' => [
-//                    'provider_id' => $tippin->getKey(),
-//                    'provider_alias' => 'user',
-//                    'name' => 'Richard Tippin',
-//                ],
-//            ]);
-//
-//        Storage::disk($this->private->getStorageDisk())
-//            ->assertExists($this->private->messages()->document()->first()->getDocumentPath());
-//    }
+    /** @test */
+    public function store_document_updates_thread_and_participant_timestamps()
+    {
+        $threadUpdatedAt = $this->private->updated_at->toDayDateTimeString();
+
+        $this->travel(5)->minutes();
+
+        app(StoreDocumentMessage::class)->withoutDispatches()->execute(
+            $this->private,
+            UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')
+        );
+
+        $this->assertNotSame($threadUpdatedAt, $this->private->updated_at->toDayDateTimeString());
+
+        $participant = $this->private->participants()
+            ->where('owner_id', '=', $this->tippin->getKey())
+            ->where('owner_type', '=', get_class($this->tippin))
+            ->first();
+
+        $this->assertNotNull($participant->fresh()->last_read);
+    }
+
+    /** @test */
+    public function store_document_fires_events()
+    {
+        Event::fake([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+
+        app(StoreDocumentMessage::class)->execute(
+            $this->private,
+            UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+            '123-456-789'
+        );
+
+        Event::assertDispatched(function (NewMessageBroadcast $event) {
+            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertSame($this->private->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame('123-456-789', $event->broadcastWith()['temporary_id']);
+
+            return true;
+        });
+
+        Event::assertDispatched(function (NewMessageEvent $event) {
+            return $this->private->id === $event->message->thread_id;
+        });
+    }
 }
