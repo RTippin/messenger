@@ -110,6 +110,39 @@ class StoreManyParticipantsTest extends FeatureTestCase
     }
 
     /** @test */
+    public function store_many_participants_restores_participant_if_previously_soft_deleted()
+    {
+        $participant = $this->group->participants()->create(array_merge(Definitions::DefaultParticipant, [
+            'owner_id' => $this->doe->getKey(),
+            'owner_type' => get_class($this->doe),
+            'deleted_at' => now(),
+        ]));
+
+        $this->assertSoftDeleted('participants', [
+            'id' => $participant->id,
+        ]);
+
+        $this->createFriends($this->tippin, $this->doe);
+
+        app(StoreManyParticipants::class)->withoutDispatches()->execute(
+            $this->group,
+            [
+                [
+                    'id' => $this->doe->getKey(),
+                    'alias' => 'user',
+                ],
+            ],
+        );
+
+        $this->assertDatabaseCount('participants', 2);
+
+        $this->assertDatabaseHas('participants', [
+            'id' => $participant->id,
+            'deleted_at' => null,
+        ]);
+    }
+
+    /** @test */
     public function store_many_participants_stores_participants()
     {
         $developers = $this->companyDevelopers();
