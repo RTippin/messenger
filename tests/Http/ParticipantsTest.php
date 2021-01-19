@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -11,17 +12,21 @@ class ParticipantsTest extends FeatureTestCase
 
     private Thread $group;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
+        $this->tippin = $this->userTippin();
 
-        $doe = $this->userDoe();
+        $this->doe = $this->userDoe();
 
-        $this->group = $this->createGroupThread($tippin, $doe, $this->companyDevelopers());
+        $this->group = $this->createGroupThread($this->tippin, $this->doe, $this->companyDevelopers());
 
-        $this->private = $this->createPrivateThread($tippin, $doe);
+        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
     }
 
     /** @test */
@@ -47,7 +52,7 @@ class ParticipantsTest extends FeatureTestCase
     /** @test */
     public function user_can_view_group_participants()
     {
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.participants.index', [
             'thread' => $this->group->id,
@@ -59,7 +64,7 @@ class ParticipantsTest extends FeatureTestCase
     /** @test */
     public function user_can_view_private_participants()
     {
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.participants.index', [
             'thread' => $this->private->id,
@@ -71,14 +76,12 @@ class ParticipantsTest extends FeatureTestCase
     /** @test */
     public function user_can_view_private_participant()
     {
-        $doe = $this->userDoe();
-
         $participant = $this->private->participants()
-            ->where('owner_id', '=', $doe->getKey())
-            ->where('owner_type', '=', get_class($doe))
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
             ->first();
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.participants.show', [
             'thread' => $this->private->id,
@@ -103,7 +106,7 @@ class ParticipantsTest extends FeatureTestCase
             ->where('owner_type', '=', get_class($developers))
             ->first();
 
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.participants.show', [
             'thread' => $this->group->id,

@@ -4,19 +4,31 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class MessengerAvatarTest extends FeatureTestCase
 {
+    private MessengerProvider $tippin;
+
+    private string $disk;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->tippin = $this->userTippin();
+
+        $this->disk = Messenger::getAvatarStorage('disk');
+
+        Storage::fake($this->disk);
+    }
+
     /** @test */
     public function user_can_upload_avatar()
     {
-        Storage::fake(Messenger::getAvatarStorage('disk'));
-
-        $tippin = $this->userTippin();
-
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.avatar.update'), [
             'image' => UploadedFile::fake()->image('avatar.jpg'),
@@ -27,23 +39,17 @@ class MessengerAvatarTest extends FeatureTestCase
     /** @test */
     public function user_can_remove_avatar()
     {
-        $disk = Messenger::getAvatarStorage('disk');
-
-        Storage::fake($disk);
-
-        $tippin = $this->userTippin();
-
-        $tippin->update([
+        $this->tippin->update([
             'picture' => 'avatar.jpg',
         ]);
 
-        $directory = Messenger::getAvatarStorage('directory').'/user/'.$tippin->getKey();
+        $directory = Messenger::getAvatarStorage('directory').'/user/'.$this->tippin->getKey();
 
         UploadedFile::fake()->image('avatar.jpg')->storeAs($directory, 'avatar.jpg', [
-            'disk' => $disk,
+            'disk' => $this->disk,
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.avatar.destroy'))
             ->assertSuccessful();
@@ -56,7 +62,7 @@ class MessengerAvatarTest extends FeatureTestCase
      */
     public function avatar_upload_checks_size_mime_and_inputs($avatarValue)
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.avatar.update'), [
             'image' => $avatarValue,

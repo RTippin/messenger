@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Events\ParticipantMutedEvent;
 use RTippin\Messenger\Events\ParticipantUnMutedEvent;
@@ -14,14 +15,19 @@ class MuteUnmuteThreadTest extends FeatureTestCase
 {
     private Thread $private;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->private = $this->createPrivateThread(
-            $this->userTippin(),
-            $this->userDoe()
-        );
+        $this->tippin = $this->userTippin();
+
+        $this->doe = $this->userDoe();
+
+        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
     }
 
     /** @test */
@@ -53,21 +59,12 @@ class MuteUnmuteThreadTest extends FeatureTestCase
             ParticipantMutedEvent::class,
         ]);
 
-        $tippin = $this->userTippin();
-
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.mute', [
             'thread' => $this->private->id,
         ]))
             ->assertSuccessful();
-
-        $participant = $this->private->participants()
-            ->where('owner_id', '=', $tippin->getKey())
-            ->where('owner_type', '=', get_class($tippin))
-            ->first();
-
-        $this->assertTrue($participant->muted);
     }
 
     /** @test */
@@ -77,25 +74,21 @@ class MuteUnmuteThreadTest extends FeatureTestCase
             ParticipantUnMutedEvent::class,
         ]);
 
-        $tippin = $this->userTippin();
-
         $participant = $this->private->participants()
-            ->where('owner_id', '=', $tippin->getKey())
-            ->where('owner_type', '=', get_class($tippin))
+            ->where('owner_id', '=', $this->tippin->getKey())
+            ->where('owner_type', '=', get_class($this->tippin))
             ->first();
 
         $participant->update([
             'muted' => true,
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.unmute', [
             'thread' => $this->private->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertFalse($participant->fresh()->muted);
     }
 
     /** @test */
@@ -105,17 +98,15 @@ class MuteUnmuteThreadTest extends FeatureTestCase
             ParticipantMutedEvent::class,
         ]);
 
-        $tippin = $this->userTippin();
-
         $this->private->participants()
-            ->where('owner_id', '=', $tippin->getKey())
-            ->where('owner_type', '=', get_class($tippin))
+            ->where('owner_id', '=', $this->tippin->getKey())
+            ->where('owner_type', '=', get_class($this->tippin))
             ->first()
             ->update([
                 'muted' => true,
             ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.mute', [
             'thread' => $this->private->id,
@@ -130,7 +121,7 @@ class MuteUnmuteThreadTest extends FeatureTestCase
             ParticipantUnMutedEvent::class,
         ]);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.unmute', [
             'thread' => $this->private->id,
@@ -141,13 +132,9 @@ class MuteUnmuteThreadTest extends FeatureTestCase
     /** @test */
     public function muted_participant_receives_no_broadcast()
     {
-        $doe = $this->userDoe();
-
-        $tippin = $this->userTippin();
-
         $this->private->participants()
-            ->where('owner_id', '=', $doe->getKey())
-            ->where('owner_type', '=', get_class($doe))
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
             ->first()
             ->update([
                 'muted' => true,
@@ -158,7 +145,7 @@ class MuteUnmuteThreadTest extends FeatureTestCase
             NewMessageEvent::class,
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->private->id,
@@ -168,9 +155,9 @@ class MuteUnmuteThreadTest extends FeatureTestCase
         ])
             ->assertSuccessful();
 
-        Event::assertDispatched(function (NewMessageBroadcast $event) use ($doe, $tippin) {
-            $this->assertNotContains('private-user.'.$doe->getKey(), $event->broadcastOn());
-            $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
+        Event::assertDispatched(function (NewMessageBroadcast $event) {
+            $this->assertNotContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
 
             return true;
         });
