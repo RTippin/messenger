@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Support\Facades\Cache;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -13,21 +14,27 @@ class CallHeartbeatTest extends FeatureTestCase
 
     private Call $call;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
+        $this->tippin = $this->userTippin();
 
-        $this->group = $this->createGroupThread($tippin, $this->userDoe());
+        $this->doe = $this->userDoe();
 
-        $this->call = $this->createCall($this->group, $tippin);
+        $this->group = $this->createGroupThread($this->tippin, $this->doe);
+
+        $this->call = $this->createCall($this->group, $this->tippin);
     }
 
     /** @test */
     public function heartbeat_cannot_be_a_post()
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.heartbeat', [
             'thread' => $this->group->id,
@@ -39,7 +46,7 @@ class CallHeartbeatTest extends FeatureTestCase
     /** @test */
     public function heartbeat_on_missing_call_not_found()
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.calls.heartbeat', [
             'thread' => $this->group->id,
@@ -51,7 +58,7 @@ class CallHeartbeatTest extends FeatureTestCase
     /** @test */
     public function non_call_participant_forbidden_to_use_heartbeat()
     {
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.calls.heartbeat', [
             'thread' => $this->group->id,
@@ -69,7 +76,7 @@ class CallHeartbeatTest extends FeatureTestCase
                 'left_call' => now(),
             ]);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.calls.heartbeat', [
             'thread' => $this->group->id,
@@ -85,7 +92,7 @@ class CallHeartbeatTest extends FeatureTestCase
             'call_ended' => now(),
         ]);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.calls.heartbeat', [
             'thread' => $this->group->id,
@@ -99,7 +106,7 @@ class CallHeartbeatTest extends FeatureTestCase
     {
         $participant = $this->call->participants()->first();
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.calls.heartbeat', [
             'thread' => $this->group->id,

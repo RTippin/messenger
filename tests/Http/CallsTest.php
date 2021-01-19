@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -12,15 +13,21 @@ class CallsTest extends FeatureTestCase
 
     private Call $call;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
+        $this->tippin = $this->userTippin();
 
-        $this->private = $this->createPrivateThread($tippin, $this->userDoe());
+        $this->doe = $this->userDoe();
 
-        $this->call = $this->createCall($this->private, $tippin);
+        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $this->call = $this->createCall($this->private, $this->tippin);
     }
 
     /** @test */
@@ -49,7 +56,7 @@ class CallsTest extends FeatureTestCase
     /** @test */
     public function user_can_view_calls()
     {
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.calls.index', [
             'thread' => $this->private->id,
@@ -61,7 +68,7 @@ class CallsTest extends FeatureTestCase
     /** @test */
     public function user_can_view_active_call()
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.calls.show', [
             'thread' => $this->private->id,
@@ -92,7 +99,7 @@ class CallsTest extends FeatureTestCase
             'call_ended' => now(),
         ]);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $request = $this->getJson(route('api.messenger.threads.calls.show', [
             'thread' => $this->private->id,
@@ -111,7 +118,7 @@ class CallsTest extends FeatureTestCase
     /** @test */
     public function user_can_view_call_participants()
     {
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.calls.participants.index', [
             'thread' => $this->private->id,
@@ -126,7 +133,7 @@ class CallsTest extends FeatureTestCase
     {
         $participant = $this->call->participants()->first();
 
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.calls.participants.show', [
             'thread' => $this->private->id,
@@ -149,7 +156,7 @@ class CallsTest extends FeatureTestCase
                 'left_call' => now(),
             ]);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $request = $this->getJson(route('api.messenger.threads.calls.show', [
             'thread' => $this->private->id,

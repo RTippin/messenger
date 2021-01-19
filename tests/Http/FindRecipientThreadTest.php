@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -11,15 +12,25 @@ class FindRecipientThreadTest extends FeatureTestCase
 
     private Thread $privateWithCompany;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
+    private MessengerProvider $developers;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
+        $this->tippin = $this->userTippin();
 
-        $this->private = $this->createPrivateThread($tippin, $this->userDoe());
+        $this->doe = $this->userDoe();
 
-        $this->privateWithCompany = $this->createPrivateThread($tippin, $this->companyDevelopers());
+        $this->developers = $this->companyDevelopers();
+
+        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $this->privateWithCompany = $this->createPrivateThread($this->tippin, $this->developers);
     }
 
     /**
@@ -30,7 +41,7 @@ class FindRecipientThreadTest extends FeatureTestCase
      */
     public function private_thread_locator_returns_not_found_on_invalid_id_or_alias($alias, $id)
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.privates.locate', [
             'alias' => $alias,
@@ -42,19 +53,17 @@ class FindRecipientThreadTest extends FeatureTestCase
     /** @test */
     public function private_thread_locator_returns_user_with_existing_thread_id()
     {
-        $doe = $this->userDoe();
-
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.privates.locate', [
             'alias' => 'user',
-            'id' => $doe->getKey(),
+            'id' => $this->doe->getKey(),
         ]))
             ->assertStatus(200)
             ->assertJson([
                 'thread_id' => $this->private->id,
                 'recipient' => [
-                    'provider_id' => $doe->getKey(),
+                    'provider_id' => $this->doe->getKey(),
                     'provider_alias' => 'user',
                     'name' => 'John Doe',
                 ],
@@ -64,19 +73,17 @@ class FindRecipientThreadTest extends FeatureTestCase
     /** @test */
     public function private_thread_locator_returns_company_with_existing_thread_id()
     {
-        $developers = $this->companyDevelopers();
-
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.privates.locate', [
             'alias' => 'company',
-            'id' => $developers->getKey(),
+            'id' => $this->developers->getKey(),
         ]))
             ->assertStatus(200)
             ->assertJson([
                 'thread_id' => $this->privateWithCompany->id,
                 'recipient' => [
-                    'provider_id' => $developers->getKey(),
+                    'provider_id' => $this->developers->getKey(),
                     'provider_alias' => 'company',
                     'name' => 'Developers',
                 ],
@@ -88,7 +95,7 @@ class FindRecipientThreadTest extends FeatureTestCase
     {
         $otherUser = $this->createJaneSmith();
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.privates.locate', [
             'alias' => 'user',
@@ -110,7 +117,7 @@ class FindRecipientThreadTest extends FeatureTestCase
     {
         $otherCompany = $this->createSomeCompany();
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.privates.locate', [
             'alias' => 'company',
