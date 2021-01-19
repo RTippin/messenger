@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\FriendApprovedBroadcast;
 use RTippin\Messenger\Broadcasting\FriendDeniedBroadcast;
 use RTippin\Messenger\Contracts\FriendDriver;
@@ -48,7 +47,7 @@ class PendingFriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_deny_pending_request()
     {
-        Event::fake([
+        $this->expectsEvents([
             FriendDeniedBroadcast::class,
             FriendDeniedEvent::class,
         ]);
@@ -66,24 +65,6 @@ class PendingFriendsTest extends FeatureTestCase
             'pending' => $pending->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertDatabaseMissing('pending_friends', [
-            'sender_id' => $this->tippin->getKey(),
-            'sender_type' => get_class($this->tippin),
-            'recipient_id' => $this->doe->getKey(),
-            'recipient_type' => get_class($this->doe),
-        ]);
-
-        Event::assertDispatched(function (FriendDeniedBroadcast $event) use ($pending) {
-            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
-            $this->assertSame($pending->id, $event->broadcastWith()['sent_friend_id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (FriendDeniedEvent $event) use ($pending) {
-            return $event->friend->id === $pending->id;
-        });
     }
 
     /** @test */
