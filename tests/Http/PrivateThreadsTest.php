@@ -117,7 +117,6 @@ class PrivateThreadsTest extends FeatureTestCase
                     ],
                 ],
             ]);
-
     }
 
     /** @test */
