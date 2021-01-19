@@ -7,7 +7,6 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\StoreParticipant;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\InviteUsedEvent;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Invite;
