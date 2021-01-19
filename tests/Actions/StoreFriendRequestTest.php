@@ -20,6 +20,8 @@ class StoreFriendRequestTest extends FeatureTestCase
 
     private MessengerProvider $doe;
 
+    private MessengerProvider $developers;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -28,7 +30,18 @@ class StoreFriendRequestTest extends FeatureTestCase
 
         $this->doe = $this->userDoe();
 
+        $this->developers = $this->companyDevelopers();
+
         Messenger::setProvider($this->tippin);
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        parent::getEnvironmentSetUp($app);
+
+        $config = $app->get('config');
+
+        $config->set('messenger.providers.user.provider_interactions.can_friend', false);
     }
 
     /** @test */
@@ -133,6 +146,17 @@ class StoreFriendRequestTest extends FeatureTestCase
         app(StoreFriendRequest::class)->withoutDispatches()->execute([
             'recipient_id' => $this->doe->getKey(),
             'recipient_alias' => 'user',
+        ]);
+    }
+
+    /** @test */
+    public function store_friend_throws_exception_when_disabled_in_provider_interactions()
+    {
+        $this->expectException(AuthorizationException::class);
+
+        app(StoreFriendRequest::class)->withoutDispatches()->execute([
+            'recipient_id' => $this->developers->getKey(),
+            'recipient_alias' => 'company',
         ]);
     }
 }
