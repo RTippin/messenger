@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ThreadLeftEvent;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -11,44 +12,41 @@ class LeaveGroupThreadTest extends FeatureTestCase
 {
     private Thread $group;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread(
-            $this->userTippin(),
-            $this->userDoe()
-        );
+        $this->tippin = $this->userTippin();
+
+        $this->doe = $this->userDoe();
+
+        $this->group = $this->createGroupThread($this->tippin, $this->doe);
     }
 
     /** @test */
     public function non_admin_can_leave()
     {
-        $doe = $this->userDoe();
-
         $this->expectsEvents([
             ThreadLeftBroadcast::class,
             ThreadLeftEvent::class,
         ]);
 
-        $this->actingAs($doe);
+        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.leave', [
             'thread' => $this->group->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertSoftDeleted('participants', [
-            'thread_id' => $this->group->id,
-            'owner_id' => $doe->getKey(),
-            'owner_type' => get_class($doe),
-        ]);
     }
 
     /** @test */
     public function admin_cannot_leave_if_only_admin_and_not_only_participant()
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->assertSame(2, $this->group->participants()->count());
 
@@ -61,22 +59,18 @@ class LeaveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_can_leave_when_only_participant()
     {
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
         $this->expectsEvents([
             ThreadLeftBroadcast::class,
             ThreadLeftEvent::class,
         ]);
 
         $this->group->participants()
-            ->where('owner_id', '=', $doe->getKey())
-            ->where('owner_type', '=', get_class($doe))
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
             ->first()
             ->forceDelete();
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->assertSame(1, $this->group->participants()->count());
 
@@ -84,35 +78,25 @@ class LeaveGroupThreadTest extends FeatureTestCase
             'thread' => $this->group->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertSoftDeleted('participants', [
-            'thread_id' => $this->group->id,
-            'owner_id' => $tippin->getKey(),
-            'owner_type' => get_class($tippin),
-        ]);
     }
 
     /** @test */
     public function admin_can_leave_when_other_admins_exist()
     {
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
         $this->expectsEvents([
             ThreadLeftBroadcast::class,
             ThreadLeftEvent::class,
         ]);
 
         $this->group->participants()
-            ->where('owner_id', '=', $doe->getKey())
-            ->where('owner_type', '=', get_class($doe))
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
             ->first()
             ->update([
                 'admin' => true,
             ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->assertSame(2, $this->group->participants()->admins()->count());
 
@@ -120,25 +104,14 @@ class LeaveGroupThreadTest extends FeatureTestCase
             'thread' => $this->group->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertSoftDeleted('participants', [
-            'thread_id' => $this->group->id,
-            'owner_id' => $tippin->getKey(),
-            'owner_type' => get_class($tippin),
-        ]);
     }
 
     /** @test */
     public function cannot_leave_private_thread()
     {
-        $tippin = $this->userTippin();
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
 
-        $private = $this->createPrivateThread(
-            $tippin,
-            $this->userDoe()
-        );
-
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.leave', [
             'thread' => $private->id,

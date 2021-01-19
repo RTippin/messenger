@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\CallLeftBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallLeftEvent;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
@@ -16,21 +17,27 @@ class LeaveCallTest extends FeatureTestCase
 
     private Call $call;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
+        $this->tippin = $this->userTippin();
 
-        $this->group = $this->createGroupThread($tippin, $this->userDoe());
+        $this->doe = $this->userDoe();
 
-        $this->call = $this->createCall($this->group, $tippin);
+        $this->group = $this->createGroupThread($this->tippin, $this->doe);
+
+        $this->call = $this->createCall($this->group, $this->tippin);
     }
 
     /** @test */
     public function leaving_missing_call_not_found()
     {
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.calls.leave', [
             'thread' => $this->group->id,
@@ -42,7 +49,7 @@ class LeaveCallTest extends FeatureTestCase
     /** @test */
     public function non_call_participant_forbidden_to_leave_call()
     {
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.calls.leave', [
             'thread' => $this->group->id,
@@ -58,7 +65,7 @@ class LeaveCallTest extends FeatureTestCase
             'call_ended' => now(),
         ]);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.leave', [
             'thread' => $this->group->id,
@@ -75,13 +82,11 @@ class LeaveCallTest extends FeatureTestCase
             CallLeftEvent::class,
         ]);
 
-        $tippin = $this->userTippin();
-
         $participant = $this->call->participants()->first();
 
         Cache::put("call:{$this->call->id}:{$participant->id}", true);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.leave', [
             'thread' => $this->group->id,
@@ -93,8 +98,8 @@ class LeaveCallTest extends FeatureTestCase
 
         $this->assertFalse(Cache::has("call:{$this->call->id}:{$participant->id}"));
 
-        Event::assertDispatched(function (CallLeftBroadcast $event) use ($tippin) {
-            $this->assertContains('private-user.'.$tippin->getKey(), $event->broadcastOn());
+        Event::assertDispatched(function (CallLeftBroadcast $event) {
+            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
             $this->assertSame($this->call->id, $event->broadcastWith()['id']);
             $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
 

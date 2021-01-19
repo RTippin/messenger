@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Broadcasting\KnockBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\KnockEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
@@ -13,15 +14,19 @@ class KnockGroupThreadTest extends FeatureTestCase
 {
     private Thread $group;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread(
-            $this->userTippin(),
-            $this->userDoe(),
-            $this->companyDevelopers()
-        );
+        $this->tippin = $this->userTippin();
+
+        $this->doe = $this->userDoe();
+
+        $this->group = $this->createGroupThread($this->tippin, $this->doe);
     }
 
     /** @test */
@@ -32,24 +37,20 @@ class KnockGroupThreadTest extends FeatureTestCase
             KnockEvent::class,
         ]);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
             'thread' => $this->group->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertTrue(Cache::has('knock.knock.'.$this->group->id));
     }
 
     /** @test */
     public function non_admin_with_permission_can_knock_at_thread()
     {
-        $developers = $this->companyDevelopers();
-
         $this->group->participants()
-            ->where('owner_id', '=', $developers->getKey())
-            ->where('owner_type', '=', get_class($developers))
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
             ->first()
             ->update([
                 'send_knocks' => true,
@@ -60,24 +61,20 @@ class KnockGroupThreadTest extends FeatureTestCase
             KnockEvent::class,
         ]);
 
-        $this->actingAs($developers);
+        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.knock', [
             'thread' => $this->group->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertTrue(Cache::has('knock.knock.'.$this->group->id));
     }
 
     /** @test */
     public function admin_forbidden_to_knock_at_thread_when_timeout_exist()
     {
-        $tippin = $this->userTippin();
-
         Cache::put('knock.knock.'.$this->group->id, true);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
             'thread' => $this->group->id,
@@ -88,13 +85,11 @@ class KnockGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_forbidden_to_knock_at_thread_when_disabled_from_settings()
     {
-        $tippin = $this->userTippin();
-
         $this->group->update([
             'knocks' => false,
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
             'thread' => $this->group->id,
@@ -107,9 +102,7 @@ class KnockGroupThreadTest extends FeatureTestCase
     {
         Messenger::setKnockKnock(false);
 
-        $tippin = $this->userTippin();
-
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
             'thread' => $this->group->id,
@@ -120,9 +113,7 @@ class KnockGroupThreadTest extends FeatureTestCase
     /** @test */
     public function non_admin_without_permission_forbidden_to_knock_at_thread()
     {
-        $doe = $this->userDoe();
-
-        $this->actingAs($doe);
+        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.knock', [
             'thread' => $this->group->id,
