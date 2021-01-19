@@ -3,11 +3,25 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PrivateThreadsTest extends FeatureTestCase
 {
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->tippin = $this->userTippin();
+
+        $this->doe = $this->userDoe();
+    }
+
     /** @test */
     public function guest_is_unauthorized()
     {
@@ -18,19 +32,17 @@ class PrivateThreadsTest extends FeatureTestCase
     /** @test */
     public function creating_new_private_thread_with_non_friend_is_pending()
     {
-        $doe = $this->userDoe();
-
         $this->expectsEvents([
             NewThreadBroadcast::class,
             NewThreadEvent::class,
         ]);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
             'recipient_alias' => 'user',
-            'recipient_id' => $doe->getKey(),
+            'recipient_id' => $this->doe->getKey(),
         ])
             ->assertSuccessful()
             ->assertJson([
@@ -49,49 +61,31 @@ class PrivateThreadsTest extends FeatureTestCase
                     ],
                 ],
             ]);
-
-        $this->assertDatabaseHas('participants', [
-            'owner_id' => $doe->getKey(),
-            'owner_type' => get_class($doe),
-            'pending' => true,
-        ]);
     }
 
     /** @test */
     public function creating_new_private_thread_with_friend_is_not_pending()
     {
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
         $this->expectsEvents([
             NewThreadBroadcast::class,
             NewThreadEvent::class,
         ]);
 
-        $this->createFriends($tippin, $doe);
+        $this->createFriends($this->tippin, $this->doe);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
             'recipient_alias' => 'user',
-            'recipient_id' => $doe->getKey(),
+            'recipient_id' => $this->doe->getKey(),
         ])
             ->assertSuccessful();
-
-        $this->assertDatabaseHas('participants', [
-            'owner_id' => $doe->getKey(),
-            'owner_type' => get_class($doe),
-            'pending' => false,
-        ]);
     }
 
     /** @test */
-    public function creating_new_private_thread_with_non_friend_company_is_pending()
+    public function creating_new_private_thread_with_non_friend_company()
     {
-        $tippin = $this->userTippin();
-
         $developers = $this->companyDevelopers();
 
         $this->expectsEvents([
@@ -99,37 +93,44 @@ class PrivateThreadsTest extends FeatureTestCase
             NewThreadEvent::class,
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
             'recipient_alias' => 'company',
             'recipient_id' => $developers->getKey(),
         ])
-            ->assertSuccessful();
+            ->assertSuccessful()
+            ->assertJson([
+                'type' => 1,
+                'type_verbose' => 'PRIVATE',
+                'pending' => true,
+                'group' => false,
+                'unread' => true,
+                'name' => 'Developers',
+                'options' => [
+                    'awaiting_my_approval' => false,
+                ],
+                'resources' => [
+                    'latest_message' => [
+                        'body' => 'Hello World!',
+                    ],
+                ],
+            ]);
 
-        $this->assertDatabaseHas('participants', [
-            'owner_id' => $developers->getKey(),
-            'owner_type' => get_class($developers),
-            'pending' => true,
-        ]);
     }
 
     /** @test */
     public function creating_new_private_forbidden_when_one_exist()
     {
-        $tippin = $this->userTippin();
+        $this->createPrivateThread($this->tippin, $this->doe);
 
-        $doe = $this->userDoe();
-
-        $this->createPrivateThread($tippin, $doe);
-
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
             'recipient_alias' => 'user',
-            'recipient_id' => $doe->getKey(),
+            'recipient_id' => $this->doe->getKey(),
         ])
             ->assertForbidden();
     }
@@ -141,7 +142,7 @@ class PrivateThreadsTest extends FeatureTestCase
      */
     public function create_new_private_checks_message($messageValue)
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => $messageValue,
@@ -161,7 +162,7 @@ class PrivateThreadsTest extends FeatureTestCase
      */
     public function create_new_private_checks_recipient_values($aliasValue, $idValue, $errors)
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello!',

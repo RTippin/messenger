@@ -2,15 +2,25 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\StatusHeartbeatEvent;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StatusHeartbeatTest extends FeatureTestCase
 {
+    private MessengerProvider $tippin;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->tippin = $this->userTippin();
+    }
+
     /** @test */
     public function messenger_heartbeat_must_be_a_post()
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.heartbeat'))
             ->assertStatus(405);
@@ -23,7 +33,7 @@ class StatusHeartbeatTest extends FeatureTestCase
      */
     public function messenger_heartbeat_checks_boolean($awayValue)
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.heartbeat'), [
             'away' => $awayValue,
@@ -39,16 +49,14 @@ class StatusHeartbeatTest extends FeatureTestCase
             StatusHeartbeatEvent::class,
         ]);
 
-        $tippin = $this->userTippin();
-
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.heartbeat'), [
             'away' => false,
         ])
             ->assertSuccessful();
 
-        $this->assertSame(1, $tippin->onlineStatus());
+        $this->assertSame(1, $this->tippin->onlineStatus());
     }
 
     /** @test */
@@ -58,16 +66,14 @@ class StatusHeartbeatTest extends FeatureTestCase
             StatusHeartbeatEvent::class,
         ]);
 
-        $tippin = $this->userTippin();
-
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.heartbeat'), [
             'away' => true,
         ])
             ->assertSuccessful();
 
-        $this->assertSame(2, $tippin->onlineStatus());
+        $this->assertSame(2, $this->tippin->onlineStatus());
     }
 
     public function awayValidation(): array

@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -12,17 +13,25 @@ class ThreadsTest extends FeatureTestCase
 
     private Thread $group;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
+    private MessengerProvider $developers;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
+        $this->tippin = $this->userTippin();
 
-        $doe = $this->userDoe();
+        $this->doe = $this->userDoe();
 
-        $this->group = $this->createGroupThread($tippin, $doe, $this->companyDevelopers());
+        $this->developers = $this->companyDevelopers();
 
-        $this->private = $this->createPrivateThread($tippin, $doe);
+        $this->group = $this->createGroupThread($this->tippin, $this->doe, $this->developers);
+
+        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
     }
 
     /** @test */
@@ -67,7 +76,7 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function user_belongs_to_two_threads()
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.index'))
             ->assertStatus(200)
@@ -89,7 +98,7 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function company_belongs_to_one_thread()
     {
-        $this->actingAs($this->companyDevelopers());
+        $this->actingAs($this->developers);
 
         $this->getJson(route('api.messenger.threads.index'))
             ->assertStatus(200)
@@ -99,7 +108,7 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function invalid_thread_id_not_found()
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => '123456-789',
@@ -110,9 +119,9 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function user_forbidden_to_view_thread_they_do_not_belong_to()
     {
-        $group = $this->createGroupThread($this->userDoe());
+        $group = $this->createGroupThread($this->doe);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $group->id,
@@ -123,7 +132,7 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function user_can_view_individual_private_thread()
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $this->private->id,
@@ -143,7 +152,7 @@ class ThreadsTest extends FeatureTestCase
                 ],
                 'resources' => [
                     'recipient' => [
-                        'provider_id' => $this->userDoe()->getKey(),
+                        'provider_id' => $this->doe->getKey(),
                         'name' => 'John Doe',
                     ],
                 ],
@@ -153,7 +162,7 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function user_can_view_individual_group_thread()
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $this->group->id,
@@ -177,11 +186,9 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function unread_thread_is_unread()
     {
-        $tippin = $this->userTippin();
+        $this->createMessage($this->private, $this->tippin);
 
-        $this->createMessage($this->private, $tippin);
-
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.is.unread', [
             'thread' => $this->private->id,
@@ -195,19 +202,17 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function read_thread_is_not_unread()
     {
-        $tippin = $this->userTippin();
-
-        $this->createMessage($this->private, $tippin);
+        $this->createMessage($this->private, $this->tippin);
 
         $this->private->participants()
-            ->where('owner_id', '=', $tippin->getKey())
-            ->where('owner_type', '=', get_class($tippin))
+            ->where('owner_id', '=', $this->tippin->getKey())
+            ->where('owner_type', '=', get_class($this->tippin))
             ->first()
             ->update([
                 'last_read' => now()->addMinute(),
             ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.is.unread', [
             'thread' => $this->private->id,

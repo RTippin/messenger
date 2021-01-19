@@ -16,6 +16,8 @@ class ParticipantsTest extends FeatureTestCase
 
     private MessengerProvider $doe;
 
+    private MessengerProvider $developers;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -24,7 +26,9 @@ class ParticipantsTest extends FeatureTestCase
 
         $this->doe = $this->userDoe();
 
-        $this->group = $this->createGroupThread($this->tippin, $this->doe, $this->companyDevelopers());
+        $this->developers = $this->companyDevelopers();
+
+        $this->group = $this->createGroupThread($this->tippin, $this->doe, $this->developers);
 
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
     }
@@ -99,11 +103,9 @@ class ParticipantsTest extends FeatureTestCase
     /** @test */
     public function user_can_view_group_participant()
     {
-        $developers = $this->companyDevelopers();
-
         $participant = $this->group->participants()
-            ->where('owner_id', '=', $developers->getKey())
-            ->where('owner_type', '=', get_class($developers))
+            ->where('owner_id', '=', $this->developers->getKey())
+            ->where('owner_type', '=', get_class($this->developers))
             ->first();
 
         $this->actingAs($this->doe);

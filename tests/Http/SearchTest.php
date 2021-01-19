@@ -2,11 +2,29 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class SearchTest extends FeatureTestCase
 {
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
+    private MessengerProvider $developers;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->tippin = $this->userTippin();
+
+        $this->doe = $this->userDoe();
+
+        $this->developers = $this->companyDevelopers();
+    }
+
     /** @test */
     public function guest_is_unauthorized()
     {
@@ -19,7 +37,7 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function empty_search_returns_no_results()
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.search'))
             ->assertJsonCount(0, 'data')
@@ -36,9 +54,7 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function search_finds_user()
     {
-        $tippin = $this->userTippin();
-
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.search', [
             'query' => 'tippin',
@@ -49,7 +65,7 @@ class SearchTest extends FeatureTestCase
                     [
                         'name' => 'Richard Tippin',
                         'provider_alias' => 'user',
-                        'provider_id' => $tippin->getKey(),
+                        'provider_id' => $this->tippin->getKey(),
                     ],
                 ],
                 'meta' => [
@@ -66,9 +82,7 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function search_finds_company()
     {
-        $developers = $this->companyDevelopers();
-
-        $this->actingAs($developers);
+        $this->actingAs($this->developers);
 
         $this->getJson(route('api.messenger.search', [
             'query' => 'developers',
@@ -79,7 +93,7 @@ class SearchTest extends FeatureTestCase
                     [
                         'name' => 'Developers',
                         'provider_alias' => 'company',
-                        'provider_id' => $developers->getKey(),
+                        'provider_id' => $this->developers->getKey(),
                     ],
                 ],
                 'meta' => [
@@ -98,7 +112,7 @@ class SearchTest extends FeatureTestCase
     {
         $this->createJaneSmith();
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.search', [
             'query' => 'jane',
@@ -119,11 +133,7 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function multiple_search_queries_separated_by_space_returns_multiple_user_results()
     {
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.search', [
             'query' => 'tippin john',
@@ -134,12 +144,12 @@ class SearchTest extends FeatureTestCase
                     [
                         'name' => 'Richard Tippin',
                         'provider_alias' => 'user',
-                        'provider_id' => $tippin->getKey(),
+                        'provider_id' => $this->tippin->getKey(),
                     ],
                     [
                         'name' => 'John Doe',
                         'provider_alias' => 'user',
-                        'provider_id' => $doe->getKey(),
+                        'provider_id' => $this->doe->getKey(),
                     ],
                 ],
                 'meta' => [
@@ -157,14 +167,10 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function multiple_providers_search_queries_separated_by_space_returns_multiple_results()
     {
-        $tippin = $this->userTippin();
-
-        $laravel = $this->companyLaravel();
-
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.search', [
-            'query' => 'tippin laravel',
+            'query' => 'tippin developers',
         ]))
             ->assertJsonCount(2, 'data')
             ->assertJson([
@@ -172,22 +178,22 @@ class SearchTest extends FeatureTestCase
                     [
                         'name' => 'Richard Tippin',
                         'provider_alias' => 'user',
-                        'provider_id' => $tippin->getKey(),
+                        'provider_id' => $this->tippin->getKey(),
                     ],
                     [
-                        'name' => 'Laravel',
+                        'name' => 'Developers',
                         'provider_alias' => 'company',
-                        'provider_id' => $laravel->getKey(),
+                        'provider_id' => $this->developers->getKey(),
                     ],
                 ],
                 'meta' => [
                     'total' => 2,
                     'search_items' => [
                         'tippin',
-                        'laravel',
+                        'developers',
                     ],
                     'per_page' => Messenger::getSearchPageCount(),
-                    'search' => 'tippin laravel',
+                    'search' => 'tippin developers',
                 ],
             ]);
     }
@@ -195,7 +201,7 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function search_strips_special_characters()
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.search', [
             'query' => '%`tippin"><',
@@ -216,9 +222,7 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function exact_email_returns_user_result()
     {
-        $tippin = $this->userTippin();
-
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.search', [
             'query' => 'richard.tippin@gmail.com',
@@ -229,7 +233,7 @@ class SearchTest extends FeatureTestCase
                     [
                         'name' => 'Richard Tippin',
                         'provider_alias' => 'user',
-                        'provider_id' => $tippin->getKey(),
+                        'provider_id' => $this->tippin->getKey(),
                     ],
                 ],
                 'meta' => [
@@ -246,7 +250,7 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function exact_email_returns_company_result()
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.search', [
             'query' => 'developers@example.net',
@@ -257,7 +261,7 @@ class SearchTest extends FeatureTestCase
                     [
                         'name' => 'Developers',
                         'provider_alias' => 'company',
-                        'provider_id' => $this->companyDevelopers()->getKey(),
+                        'provider_id' => $this->developers->getKey(),
                     ],
                 ],
                 'meta' => [
@@ -274,7 +278,7 @@ class SearchTest extends FeatureTestCase
     /** @test */
     public function incomplete_email_returns_no_results()
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.search', [
             'query' => 'richard.tippin',

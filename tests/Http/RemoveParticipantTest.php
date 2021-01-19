@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\RemovedFromThreadEvent;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -11,32 +12,32 @@ class RemoveParticipantTest extends FeatureTestCase
 {
     private Thread $group;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread(
-            $this->userTippin(),
-            $this->userDoe(),
-            $this->companyDevelopers()
-        );
+        $this->tippin = $this->userTippin();
+
+        $this->doe = $this->userDoe();
+
+        $this->group = $this->createGroupThread($this->tippin, $this->doe);
     }
 
     /** @test */
     public function user_forbidden_to_remove_participant_from_private_thread()
     {
-        $doe = $this->userDoe();
-
-        $tippin = $this->userTippin();
-
-        $private = $this->createPrivateThread($tippin, $doe);
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
 
         $participant = $private->participants()
-            ->where('owner_id', '=', $doe->getKey())
-            ->where('owner_type', '=', get_class($doe))
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
             ->first();
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.participants.destroy', [
             'thread' => $private->id,
@@ -48,14 +49,12 @@ class RemoveParticipantTest extends FeatureTestCase
     /** @test */
     public function non_admin_forbidden_to_remove_participant()
     {
-        $tippin = $this->userTippin();
-
         $participant = $this->group->participants()
-            ->where('owner_id', '=', $tippin->getKey())
-            ->where('owner_type', '=', get_class($tippin))
+            ->where('owner_id', '=', $this->tippin->getKey())
+            ->where('owner_type', '=', get_class($this->tippin))
             ->first();
 
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->deleteJson(route('api.messenger.threads.participants.destroy', [
             'thread' => $this->group->id,
@@ -67,30 +66,22 @@ class RemoveParticipantTest extends FeatureTestCase
     /** @test */
     public function admin_can_remove_participant()
     {
-        $doe = $this->userDoe();
-
-        $tippin = $this->userTippin();
-
         $this->expectsEvents([
             ThreadLeftBroadcast::class,
             RemovedFromThreadEvent::class,
         ]);
 
         $participant = $this->group->participants()
-            ->where('owner_id', '=', $doe->getKey())
-            ->where('owner_type', '=', get_class($doe))
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
             ->first();
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.participants.destroy', [
             'thread' => $this->group->id,
             'participant' => $participant->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertSoftDeleted('participants', [
-            'id' => $participant->id,
-        ]);
     }
 }
