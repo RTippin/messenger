@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\FriendCancelledBroadcast;
 use RTippin\Messenger\Broadcasting\FriendRequestBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
@@ -50,7 +49,7 @@ class SentFriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_friend_another_user()
     {
-        Event::fake([
+        $this->expectsEvents([
             FriendRequestBroadcast::class,
             FriendRequestEvent::class,
         ]);
@@ -66,28 +65,6 @@ class SentFriendsTest extends FeatureTestCase
                 'sender_id' => $this->tippin->getKey(),
                 'sender_type' => get_class($this->tippin),
             ]);
-
-        $this->assertDatabaseHas('pending_friends', [
-            'sender_id' => $this->tippin->getKey(),
-            'sender_type' => get_class($this->tippin),
-            'recipient_id' => $this->doe->getKey(),
-            'recipient_type' => get_class($this->doe),
-        ]);
-
-        Event::assertDispatched(function (FriendRequestBroadcast $event) {
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
-            $this->assertSame($this->tippin->getKey(), $event->broadcastWith()['sender_id']);
-            $this->assertSame('Richard Tippin', $event->broadcastWith()['sender']['name']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (FriendRequestEvent $event) {
-            $this->assertSame($this->tippin->getKey(), $event->friend->sender_id);
-            $this->assertSame($this->doe->getKey(), $event->friend->recipient_id);
-
-            return true;
-        });
     }
 
     /** @test */
