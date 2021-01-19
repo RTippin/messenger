@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\ThreadSettingsBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ThreadSettingsEvent;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -11,14 +12,19 @@ class GroupThreadSettingsTest extends FeatureTestCase
 {
     private Thread $group;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread(
-            $this->userTippin(),
-            $this->userDoe()
-        );
+        $this->tippin = $this->userTippin();
+
+        $this->doe = $this->userDoe();
+
+        $this->group = $this->createGroupThread($this->tippin, $this->doe);
     }
 
     /** @test */
@@ -33,7 +39,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
     /** @test */
     public function admin_can_view_group_settings()
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
@@ -47,7 +53,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
     /** @test */
     public function non_admin_forbidden_to_view_group_settings()
     {
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
@@ -62,7 +68,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
      */
     public function group_settings_checks_booleans($fieldValue)
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
@@ -92,7 +98,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
      */
     public function group_settings_checks_subject($subject)
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
@@ -116,7 +122,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
             ThreadSettingsEvent::class,
         ]);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
@@ -139,7 +145,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
             ThreadSettingsEvent::class,
         ]);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,
@@ -167,7 +173,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
             ThreadSettingsEvent::class,
         ]);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.settings', [
             'thread' => $this->group->id,

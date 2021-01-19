@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Http;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\CallJoinedBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallJoinedEvent;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
@@ -16,21 +17,27 @@ class JoinCallTest extends FeatureTestCase
 
     private Call $call;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
+        $this->tippin = $this->userTippin();
 
-        $this->group = $this->createGroupThread($tippin, $this->userDoe());
+        $this->doe = $this->userDoe();
 
-        $this->call = $this->createCall($this->group, $tippin);
+        $this->group = $this->createGroupThread($this->tippin, $this->doe);
+
+        $this->call = $this->createCall($this->group, $this->tippin);
     }
 
     /** @test */
     public function joining_missing_call_not_found()
     {
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.calls.join', [
             'thread' => $this->group->id,
@@ -58,7 +65,7 @@ class JoinCallTest extends FeatureTestCase
             'call_ended' => now(),
         ]);
 
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.join', [
             'thread' => $this->group->id,
@@ -70,16 +77,14 @@ class JoinCallTest extends FeatureTestCase
     /** @test */
     public function kicked_participant_forbidden_to_rejoin_call()
     {
-        $doe = $this->userDoe();
-
         $this->call->participants()->create([
-            'owner_id' => $doe->getKey(),
-            'owner_type' => get_class($doe),
+            'owner_id' => $this->doe->getKey(),
+            'owner_type' => get_class($this->doe),
             'left_call' => now(),
             'kicked' => true,
         ]);
 
-        $this->actingAs($doe);
+        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.calls.join', [
             'thread' => $this->group->id,
@@ -96,9 +101,7 @@ class JoinCallTest extends FeatureTestCase
             CallJoinedEvent::class,
         ]);
 
-        $doe = $this->userDoe();
-
-        $this->actingAs($doe);
+        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.calls.join', [
             'thread' => $this->group->id,
@@ -114,14 +117,14 @@ class JoinCallTest extends FeatureTestCase
             ]);
 
         $participant = $this->call->participants()
-            ->where('owner_id', '=', $doe->getKey())
-            ->where('owner_type', '=', get_class($doe))
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
             ->first();
 
         $this->assertTrue(Cache::has("call:{$this->call->id}:{$participant->id}"));
 
-        Event::assertDispatched(function (CallJoinedBroadcast $event) use ($doe) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
+        Event::assertDispatched(function (CallJoinedBroadcast $event) {
+            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertSame($this->call->id, $event->broadcastWith()['id']);
             $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
 
@@ -141,15 +144,13 @@ class JoinCallTest extends FeatureTestCase
             CallJoinedEvent::class,
         ]);
 
-        $tippin = $this->userTippin();
-
         $participant = $this->call->participants()->first();
 
         $participant->update([
             'left_call' => now(),
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.join', [
             'thread' => $this->group->id,

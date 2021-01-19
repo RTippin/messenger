@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\InviteUsedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Invite;
@@ -14,18 +15,24 @@ class JoinWithInviteTest extends FeatureTestCase
 
     private Invite $invite;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
+        $this->tippin = $this->userTippin();
 
-        $this->group = $this->createGroupThread($tippin, $this->userDoe());
+        $this->doe = $this->userDoe();
+
+        $this->group = $this->createGroupThread($this->tippin, $this->doe);
 
         $this->invite = $this->group->invites()
             ->create([
-                'owner_id' => $tippin->getKey(),
-                'owner_type' => get_class($tippin),
+                'owner_id' => $this->tippin->getKey(),
+                'owner_type' => get_class($this->tippin),
                 'code' => 'TEST1234',
                 'max_use' => 1,
                 'uses' => 0,
@@ -133,7 +140,7 @@ class JoinWithInviteTest extends FeatureTestCase
     /** @test */
     public function existing_participant_viewing_invite_shows_in_thread()
     {
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.invites.join', [
             'invite' => 'TEST1234',
@@ -201,7 +208,7 @@ class JoinWithInviteTest extends FeatureTestCase
     /** @test */
     public function existing_participant_forbidden_to_join_group_with_valid_invite()
     {
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.invites.join', [
             'invite' => 'TEST1234',

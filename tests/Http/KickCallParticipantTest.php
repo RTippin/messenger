@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\KickedFromCallBroadcast;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\KickedFromCallEvent;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
@@ -18,28 +19,32 @@ class KickCallParticipantTest extends FeatureTestCase
 
     private CallParticipant $participant;
 
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
     protected function setUp(): void
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
+        $this->tippin = $this->userTippin();
 
-        $doe = $this->userDoe();
+        $this->doe = $this->userDoe();
 
-        $this->group = $this->createGroupThread($tippin, $doe);
+        $this->group = $this->createGroupThread($this->tippin, $this->doe);
 
-        $this->call = $this->createCall($this->group, $tippin);
+        $this->call = $this->createCall($this->group, $this->tippin);
 
         $this->participant = $this->call->participants()->create([
-            'owner_id' => $doe->getKey(),
-            'owner_type' => get_class($doe),
+            'owner_id' => $this->doe->getKey(),
+            'owner_type' => get_class($this->doe),
         ]);
     }
 
     /** @test */
     public function kick_participant_must_be_an_update()
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.participants.update', [
             'thread' => $this->group->id,
@@ -54,7 +59,7 @@ class KickCallParticipantTest extends FeatureTestCase
     /** @test */
     public function kick_participant_on_missing_participant_not_found()
     {
-        $this->actingAs($this->userTippin());
+        $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.calls.participants.update', [
             'thread' => $this->group->id,
@@ -69,17 +74,15 @@ class KickCallParticipantTest extends FeatureTestCase
     /** @test */
     public function non_call_participant_forbidden_to_kick_call_participant()
     {
-        $tippin = $this->userTippin();
-
         $this->call->participants()
-            ->where('owner_id', '=', $tippin->getKey())
-            ->where('owner_type', '=', get_class($tippin))
+            ->where('owner_id', '=', $this->tippin->getKey())
+            ->where('owner_type', '=', get_class($this->tippin))
             ->first()
             ->update([
                 'left_call' => now(),
             ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.calls.participants.update', [
             'thread' => $this->group->id,
@@ -94,7 +97,7 @@ class KickCallParticipantTest extends FeatureTestCase
     /** @test */
     public function non_call_admin_participant_forbidden_to_kick_call_participant()
     {
-        $this->actingAs($this->userDoe());
+        $this->actingAs($this->doe);
 
         $this->putJson(route('api.messenger.threads.calls.participants.update', [
             'thread' => $this->group->id,
@@ -109,20 +112,16 @@ class KickCallParticipantTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_kick_call_participant_in_private_thread()
     {
-        $tippin = $this->userTippin();
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
 
-        $doe = $this->userDoe();
-
-        $private = $this->createPrivateThread($tippin, $doe);
-
-        $call = $this->createCall($private, $tippin, $doe);
+        $call = $this->createCall($private, $this->tippin, $this->doe);
 
         $participant = $call->participants()
-            ->where('owner_id', '=', $doe->getKey())
-            ->where('owner_type', '=', get_class($doe))
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
             ->first();
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.calls.participants.update', [
             'thread' => $private->id,
@@ -142,11 +141,7 @@ class KickCallParticipantTest extends FeatureTestCase
             KickedFromCallEvent::class,
         ]);
 
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.calls.participants.update', [
             'thread' => $this->group->id,
@@ -163,17 +158,17 @@ class KickCallParticipantTest extends FeatureTestCase
 
         $this->assertNotNull($participant->left_call);
 
-        Event::assertDispatched(function (KickedFromCallBroadcast $event) use ($doe) {
-            $this->assertContains('private-user.'.$doe->getKey(), $event->broadcastOn());
+        Event::assertDispatched(function (KickedFromCallBroadcast $event) {
+            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertSame($this->call->id, $event->broadcastWith()['call_id']);
             $this->assertTrue($event->broadcastWith()['kicked']);
 
             return true;
         });
 
-        Event::assertDispatched(function (KickedFromCallEvent $event) use ($tippin) {
+        Event::assertDispatched(function (KickedFromCallEvent $event) {
             $this->assertSame($this->call->id, $event->call->id);
-            $this->assertSame($tippin->getKey(), $event->provider->getKey());
+            $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
             $this->assertSame($this->participant->id, $event->participant->id);
 
             return true;
@@ -188,18 +183,14 @@ class KickCallParticipantTest extends FeatureTestCase
             KickedFromCallEvent::class,
         ]);
 
-        $tippin = $this->userTippin();
-
-        $doe = $this->userDoe();
-
-        $call = $this->createCall($this->group, $doe, $tippin);
+        $call = $this->createCall($this->group, $this->doe, $this->tippin);
 
         $participant = $call->participants()
-            ->where('owner_id', '=', $tippin->getKey())
-            ->where('owner_type', '=', get_class($tippin))
+            ->where('owner_id', '=', $this->tippin->getKey())
+            ->where('owner_type', '=', get_class($this->tippin))
             ->first();
 
-        $this->actingAs($doe);
+        $this->actingAs($this->doe);
 
         $this->putJson(route('api.messenger.threads.calls.participants.update', [
             'thread' => $this->group->id,
@@ -225,14 +216,12 @@ class KickCallParticipantTest extends FeatureTestCase
             KickedFromCallEvent::class,
         ]);
 
-        $tippin = $this->userTippin();
-
         $this->participant->update([
             'kicked' => true,
             'left_call' => now(),
         ]);
 
-        $this->actingAs($tippin);
+        $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.calls.participants.update', [
             'thread' => $this->group->id,
