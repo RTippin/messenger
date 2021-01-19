@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\FriendRemovedEvent;
@@ -38,11 +37,13 @@ class FriendsTest extends FeatureTestCase
         $friends = $this->createFriends($this->tippin, $this->doe);
 
         $this->friend = $friends[0];
+
         $this->inverseFriend = $friends[1];
 
         $friendsCompany = $this->createFriends($this->tippin, $this->developers);
 
         $this->friendCompany = $friendsCompany[0];
+
         $this->inverseFriendCompany = $friendsCompany[1];
     }
 
@@ -76,7 +77,7 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_remove_friend()
     {
-        Event::fake([
+        $this->expectsEvents([
             FriendRemovedEvent::class,
         ]);
 
@@ -86,27 +87,6 @@ class FriendsTest extends FeatureTestCase
             'friend' => $this->friend->id,
         ]))
             ->assertSuccessful();
-
-        Event::assertDispatched(function (FriendRemovedEvent $event) {
-            $this->assertSame($this->inverseFriend->id, $event->inverseFriend->id);
-            $this->assertSame($this->friend->id, $event->friend->id);
-
-            return true;
-        });
-
-        $this->assertDatabaseMissing('friends', [
-            'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
-            'party_id' => $this->doe->getKey(),
-            'party_type' => get_class($this->doe),
-        ]);
-
-        $this->assertDatabaseMissing('friends', [
-            'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
-            'party_id' => $this->tippin->getKey(),
-            'party_type' => get_class($this->tippin),
-        ]);
 
         $this->assertSame(0, resolve(FriendDriver::class)->friendStatus($this->doe));
     }
@@ -124,20 +104,6 @@ class FriendsTest extends FeatureTestCase
             'friend' => $this->friendCompany->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertDatabaseMissing('friends', [
-            'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
-            'party_id' => $this->developers->getKey(),
-            'party_type' => get_class($this->developers),
-        ]);
-
-        $this->assertDatabaseMissing('friends', [
-            'owner_id' => $this->developers->getKey(),
-            'owner_type' => get_class($this->developers),
-            'party_id' => $this->tippin->getKey(),
-            'party_type' => get_class($this->tippin),
-        ]);
 
         $this->assertSame(0, resolve(FriendDriver::class)->friendStatus($this->developers));
     }
