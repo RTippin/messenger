@@ -38,8 +38,23 @@ class CallBrokerSetup extends BaseMessengerAction
     {
         $this->setThread($parameters[0])
             ->setCall($parameters[1])
+            ->checkCallNeedsToBeSetup()
             ->setupCallWithProvider()
             ->updateCall();
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws Exception
+     */
+    private function checkCallNeedsToBeSetup(): self
+    {
+        if(! $this->getCall()->isActive()
+            || $this->getCall()->isSetup()){
+            $this->throwSetupFailed('Call does not need to be setup.');
+        }
 
         return $this;
     }
@@ -51,18 +66,19 @@ class CallBrokerSetup extends BaseMessengerAction
     private function setupCallWithProvider(): self
     {
         if (! $this->videoDriver->create($this->getThread(), $this->getCall())) {
-            $this->throwSetupFailed();
+            $this->throwSetupFailed('Setup with video provider failed.');
         }
 
         return $this;
     }
 
     /**
+     * @param string $message
      * @throws Exception
      */
-    private function throwSetupFailed(): void
+    private function throwSetupFailed(string $message): void
     {
-        throw new Exception('Setup video provider failed.');
+        throw new Exception($message);
     }
 
     /**

@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Exception;
 use RTippin\Messenger\Actions\Calls\CallBrokerSetup;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Models\Call;
@@ -62,5 +63,35 @@ class CallBrokerSetupTest extends FeatureTestCase
             'room_secret' => 'TEST-SECRET',
             'payload' => 'TEST-EXTRA-PAYLOAD',
         ]);
+    }
+
+    /** @test */
+    public function call_setup_throws_exception_if_call_ended()
+    {
+        $this->call->update([
+            'call_ended' => now(),
+        ]);
+
+        $this->expectException(Exception::class);
+
+        app(CallBrokerSetup::class)->execute(
+            $this->group,
+            $this->call
+        );
+    }
+
+    /** @test */
+    public function call_setup_throws_exception_if_call_already_setup()
+    {
+        $this->call->update([
+            'setup_complete' => true,
+        ]);
+
+        $this->expectException(Exception::class);
+
+        app(CallBrokerSetup::class)->execute(
+            $this->group,
+            $this->call
+        );
     }
 }
