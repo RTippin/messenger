@@ -69,6 +69,44 @@ class JoinCallTest extends FeatureTestCase
     }
 
     /** @test */
+    public function join_call_does_not_fire_events_or_set_cache_if_already_in_call()
+    {
+        Messenger::setProvider($this->tippin);
+
+        $this->doesntExpectEvents([
+            CallJoinedBroadcast::class,
+            CallJoinedEvent::class,
+        ]);
+
+        $participant = $this->call->participants()->first();
+
+        app(JoinCall::class)->execute($this->call);
+
+        $this->assertFalse(Cache::has("call:{$this->call->id}:{$participant->id}"));
+    }
+
+    /** @test */
+    public function rejoin_call_updates_participant_and_cache()
+    {
+        $participant = $this->call->participants()->first();
+
+        $participant->update([
+            'left_call' => now(),
+        ]);
+
+        Messenger::setProvider($this->tippin);
+
+        app(JoinCall::class)->withoutDispatches()->execute($this->call);
+
+        $this->assertTrue(Cache::has("call:{$this->call->id}:{$participant->id}"));
+
+        $this->assertDatabaseHas('call_participants', [
+            'id' => $participant->id,
+            'left_call' => null,
+        ]);
+    }
+
+    /** @test */
     public function join_call_fires_events()
     {
         Messenger::setProvider($this->doe);

@@ -2,8 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\CallJoinedBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallJoinedEvent;
@@ -96,7 +94,7 @@ class JoinCallTest extends FeatureTestCase
     /** @test */
     public function participant_can_join_call()
     {
-        Event::fake([
+        $this->expectsEvents([
             CallJoinedBroadcast::class,
             CallJoinedEvent::class,
         ]);
@@ -115,25 +113,6 @@ class JoinCallTest extends FeatureTestCase
                     'name' => 'John Doe',
                 ],
             ]);
-
-        $participant = $this->call->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
-            ->first();
-
-        $this->assertTrue(Cache::has("call:{$this->call->id}:{$participant->id}"));
-
-        Event::assertDispatched(function (CallJoinedBroadcast $event) {
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
-            $this->assertSame($this->call->id, $event->broadcastWith()['id']);
-            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (CallJoinedEvent $event) use ($participant) {
-            return $participant->id === $event->participant->id;
-        });
     }
 
     /** @test */
@@ -157,9 +136,5 @@ class JoinCallTest extends FeatureTestCase
             'call' => $this->call->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertNull($participant->fresh()->left_call);
-
-        $this->assertTrue(Cache::has("call:{$this->call->id}:{$participant->id}"));
     }
 }
