@@ -15,24 +15,22 @@ class JoinWithInviteTest extends FeatureTestCase
 
     private Invite $invite;
 
-    private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
+        $tippin = $this->userTippin();
 
         $this->doe = $this->userDoe();
 
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
+        $this->group = $this->createGroupThread($tippin, $this->doe);
 
         $this->invite = $this->group->invites()
             ->create([
-                'owner_id' => $this->tippin->getKey(),
-                'owner_type' => get_class($this->tippin),
+                'owner_id' => $tippin->getKey(),
+                'owner_type' => get_class($tippin),
                 'code' => 'TEST1234',
                 'max_use' => 1,
                 'uses' => 0,

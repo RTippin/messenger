@@ -7,13 +7,10 @@ use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Messages\PurgeImageMessages;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
-use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PurgeImageMessagesTest extends FeatureTestCase
 {
-    private Thread $group;
-
     private Message $image1;
 
     private Message $image2;
@@ -26,13 +23,13 @@ class PurgeImageMessagesTest extends FeatureTestCase
 
         $tippin = $this->userTippin();
 
-        $this->group = $this->createGroupThread($tippin);
+        $group = $this->createGroupThread($tippin);
 
         $this->disk = Messenger::getThreadStorage('disk');
 
         Storage::fake($this->disk);
 
-        $this->image1 = $this->group->messages()->create([
+        $this->image1 = $group->messages()->create([
             'owner_id' => $tippin->getKey(),
             'owner_type' => get_class($tippin),
             'type' => 1,
@@ -40,11 +37,11 @@ class PurgeImageMessagesTest extends FeatureTestCase
         ]);
 
         UploadedFile::fake()->image('picture.jpg')
-            ->storeAs($this->group->getStorageDirectory().'/images', 'picture.jpg', [
+            ->storeAs($group->getStorageDirectory().'/images', 'picture.jpg', [
                 'disk' => $this->disk,
             ]);
 
-        $this->image2 = $this->group->messages()->create([
+        $this->image2 = $group->messages()->create([
             'owner_id' => $tippin->getKey(),
             'owner_type' => get_class($tippin),
             'type' => 1,
@@ -52,7 +49,7 @@ class PurgeImageMessagesTest extends FeatureTestCase
         ]);
 
         UploadedFile::fake()->image('foo.jpg')
-            ->storeAs($this->group->getStorageDirectory().'/images', 'foo.jpg', [
+            ->storeAs($group->getStorageDirectory().'/images', 'foo.jpg', [
                 'disk' => $this->disk,
             ]);
     }

@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Invites\StoreInvite;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewInviteEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
@@ -14,17 +13,15 @@ class StoreInviteTest extends FeatureTestCase
 {
     private Thread $group;
 
-    private MessengerProvider $tippin;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
+        $tippin = $this->userTippin();
 
-        $this->group = $this->createGroupThread($this->tippin);
+        $this->group = $this->createGroupThread($tippin);
 
-        Messenger::setProvider($this->tippin);
+        Messenger::setProvider($tippin);
     }
 
     /** @test */

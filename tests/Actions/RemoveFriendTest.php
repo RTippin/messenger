@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Friends\RemoveFriend;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\FriendRemovedEvent;
 use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -15,19 +14,11 @@ class RemoveFriendTest extends FeatureTestCase
 
     private Friend $inverseFriend;
 
-    private MessengerProvider $tippin;
-
-    private MessengerProvider $doe;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-
-        $this->doe = $this->userDoe();
-
-        $friends = $this->createFriends($this->tippin, $this->doe);
+        $friends = $this->createFriends($this->userTippin(), $this->userDoe());
 
         $this->friend = $friends[0];
 

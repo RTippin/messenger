@@ -17,17 +17,13 @@ class ImageMessageTest extends FeatureTestCase
 
     private MessengerProvider $tippin;
 
-    private MessengerProvider $doe;
-
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->tippin = $this->userTippin();
 
-        $this->doe = $this->userDoe();
-
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
+        $this->private = $this->createPrivateThread($this->tippin, $this->userDoe());
 
         Storage::fake(Messenger::getThreadStorage('disk'));
     }

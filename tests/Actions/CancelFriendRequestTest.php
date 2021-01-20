@@ -12,8 +12,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class CancelFriendRequestTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     private SentFriend $sentFriend;
@@ -22,13 +20,13 @@ class CancelFriendRequestTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
+        $tippin = $this->userTippin();
 
         $this->doe = $this->userDoe();
 
         $this->sentFriend = SentFriend::create([
-            'sender_id' => $this->tippin->getKey(),
-            'sender_type' => get_class($this->tippin),
+            'sender_id' => $tippin->getKey(),
+            'sender_type' => get_class($tippin),
             'recipient_id' => $this->doe->getKey(),
             'recipient_type' => get_class($this->doe),
         ]);

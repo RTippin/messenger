@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\UnmuteThread;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ParticipantUnMutedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Participant;
@@ -17,19 +16,17 @@ class UnmuteThreadTest extends FeatureTestCase
 
     private Participant $participant;
 
-    private MessengerProvider $tippin;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
+        $tippin = $this->userTippin();
 
-        $this->group = $this->createGroupThread($this->tippin);
+        $this->group = $this->createGroupThread($tippin);
 
         $this->participant = $this->group->participants()->first();
 
-        Messenger::setProvider($this->tippin);
+        Messenger::setProvider($tippin);
     }
 
     /** @test */

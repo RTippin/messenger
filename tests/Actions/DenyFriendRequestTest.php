@@ -12,8 +12,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class DenyFriendRequestTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     private PendingFriend $pendingFriend;
@@ -22,15 +20,15 @@ class DenyFriendRequestTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
+        $tippin = $this->userTippin();
 
         $this->doe = $this->userDoe();
 
         $this->pendingFriend = PendingFriend::create([
             'sender_id' => $this->doe->getKey(),
             'sender_type' => get_class($this->doe),
-            'recipient_id' => $this->tippin->getKey(),
-            'recipient_type' => get_class($this->tippin),
+            'recipient_id' => $tippin->getKey(),
+            'recipient_type' => get_class($tippin),
         ]);
     }
 

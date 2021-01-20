@@ -7,13 +7,10 @@ use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Messages\PurgeDocumentMessages;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
-use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PurgeDocumentMessagesTest extends FeatureTestCase
 {
-    private Thread $group;
-
     private Message $document1;
 
     private Message $document2;
@@ -26,13 +23,13 @@ class PurgeDocumentMessagesTest extends FeatureTestCase
 
         $tippin = $this->userTippin();
 
-        $this->group = $this->createGroupThread($tippin);
+        $group = $this->createGroupThread($tippin);
 
         $this->disk = Messenger::getThreadStorage('disk');
 
         Storage::fake($this->disk);
 
-        $this->document1 = $this->group->messages()->create([
+        $this->document1 = $group->messages()->create([
             'owner_id' => $tippin->getKey(),
             'owner_type' => get_class($tippin),
             'type' => 2,
@@ -41,11 +38,11 @@ class PurgeDocumentMessagesTest extends FeatureTestCase
 
         UploadedFile::fake()
             ->create('test.pdf', 500, 'application/pdf')
-            ->storeAs($this->group->getStorageDirectory().'/documents', 'test.pdf', [
+            ->storeAs($group->getStorageDirectory().'/documents', 'test.pdf', [
                 'disk' => $this->disk,
             ]);
 
-        $this->document2 = $this->group->messages()->create([
+        $this->document2 = $group->messages()->create([
             'owner_id' => $tippin->getKey(),
             'owner_type' => get_class($tippin),
             'type' => 2,
@@ -54,7 +51,7 @@ class PurgeDocumentMessagesTest extends FeatureTestCase
 
         UploadedFile::fake()
             ->create('foo.pdf', 500, 'application/pdf')
-            ->storeAs($this->group->getStorageDirectory().'/documents', 'foo.pdf', [
+            ->storeAs($group->getStorageDirectory().'/documents', 'foo.pdf', [
                 'disk' => $this->disk,
             ]);
     }
