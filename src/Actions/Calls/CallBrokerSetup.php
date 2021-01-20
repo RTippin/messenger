@@ -51,8 +51,7 @@ class CallBrokerSetup extends BaseMessengerAction
      */
     private function checkCallNeedsToBeSetup(): self
     {
-        if(! $this->getCall()->isActive()
-            || $this->getCall()->isSetup()){
+        if (! $this->getCall()->isActive() || $this->getCall()->isSetup()) {
             $this->throwSetupFailed('Call does not need to be setup.');
         }
 

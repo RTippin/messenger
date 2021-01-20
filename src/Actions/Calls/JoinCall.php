@@ -54,23 +54,29 @@ class JoinCall extends CallParticipantAction
      *
      * @param mixed ...$parameters
      * @var Call[0]
-     * @var bool[1]
+     * @var bool|null[1]
      * @return $this
      */
     public function execute(...$parameters): self
     {
         $this->setCall($parameters[0]);
 
-        if ($parameters[1] || ! $this->getCall()->hasJoinedCall()) {
+        $isNewCall = $parameters[1] ?? false;
+
+        if ($isNewCall || ! $this->getCall()->hasJoinedCall()) {
             $this->storeParticipant($this->messenger->getProvider());
         } else {
             $this->updateParticipant(...$this->participantAttributes());
         }
 
-        $this->setParticipantInCallCache($this->getCallParticipant())
-            ->generateResource()
-            ->fireBroadcast()
-            ->fireEvents();
+        if ($isNewCall
+            || $this->getCallParticipant()->wasRecentlyCreated
+            || $this->getCallParticipant()->wasChanged()) {
+            $this->setParticipantInCallCache($this->getCallParticipant())
+                ->generateResource()
+                ->fireBroadcast()
+                ->fireEvents();
+        }
 
         return $this;
     }
