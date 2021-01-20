@@ -45,4 +45,15 @@ class SetupCall implements ShouldQueue
             $event->call
         );
     }
+
+    /**
+     * Determine whether the listener should be queued.
+     *
+     * @param CallStartedEvent $event
+     * @return bool
+     */
+    public function shouldQueue(CallStartedEvent $event): bool
+    {
+        return $event->call->setup_complete === false;
+    }
 }
