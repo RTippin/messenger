@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
@@ -104,8 +103,6 @@ class CallHeartbeatTest extends FeatureTestCase
     /** @test */
     public function call_participant_can_use_heartbeat()
     {
-        $participant = $this->call->participants()->first();
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.calls.heartbeat', [
@@ -113,7 +110,5 @@ class CallHeartbeatTest extends FeatureTestCase
             'call' => $this->call->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertTrue(Cache::has("call:{$this->call->id}:{$participant->id}"));
     }
 }

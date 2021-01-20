@@ -28,8 +28,7 @@ class CallHeartbeat extends CallParticipantAction
     {
         $this->setCall($parameters[0])
             ->setParticipantInCallCache(
-                $this->getCall()
-                    ->currentCallParticipant()
+                $this->getCall()->currentCallParticipant()
             );
 
         return $this;
