@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\KickedFromCallBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\KickedFromCallEvent;
@@ -38,6 +37,7 @@ class KickCallParticipantTest extends FeatureTestCase
         $this->participant = $this->call->participants()->create([
             'owner_id' => $this->doe->getKey(),
             'owner_type' => get_class($this->doe),
+            'left_call' => null,
         ]);
     }
 
@@ -136,7 +136,7 @@ class KickCallParticipantTest extends FeatureTestCase
     /** @test */
     public function admin_can_kick_call_participant()
     {
-        Event::fake([
+        $this->expectsEvents([
             KickedFromCallBroadcast::class,
             KickedFromCallEvent::class,
         ]);
@@ -151,28 +151,6 @@ class KickCallParticipantTest extends FeatureTestCase
             'kicked' => true,
         ])
             ->assertSuccessful();
-
-        $participant = $this->participant->fresh();
-
-        $this->assertTrue($participant->kicked);
-
-        $this->assertNotNull($participant->left_call);
-
-        Event::assertDispatched(function (KickedFromCallBroadcast $event) {
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
-            $this->assertSame($this->call->id, $event->broadcastWith()['call_id']);
-            $this->assertTrue($event->broadcastWith()['kicked']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (KickedFromCallEvent $event) {
-            $this->assertSame($this->call->id, $event->call->id);
-            $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
-            $this->assertSame($this->participant->id, $event->participant->id);
-
-            return true;
-        });
     }
 
     /** @test */
@@ -200,18 +178,12 @@ class KickCallParticipantTest extends FeatureTestCase
             'kicked' => true,
         ])
             ->assertSuccessful();
-
-        $participantFresh = $participant->fresh();
-
-        $this->assertTrue($participantFresh->kicked);
-
-        $this->assertNotNull($participantFresh->left_call);
     }
 
     /** @test */
     public function admin_can_un_kick_call_participant()
     {
-        Event::fake([
+        $this->expectsEvents([
             KickedFromCallBroadcast::class,
             KickedFromCallEvent::class,
         ]);
@@ -231,15 +203,5 @@ class KickCallParticipantTest extends FeatureTestCase
             'kicked' => false,
         ])
             ->assertSuccessful();
-
-        $this->assertFalse($this->participant->fresh()->kicked);
-
-        Event::assertDispatched(function (KickedFromCallBroadcast $event) {
-            return $event->broadcastWith()['kicked'] === false;
-        });
-
-        Event::assertDispatched(function (KickedFromCallEvent $event) {
-            return $this->participant->id === $event->participant->id;
-        });
     }
 }
