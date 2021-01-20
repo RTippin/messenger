@@ -97,7 +97,7 @@ class StoreImageMessageTest extends FeatureTestCase
             ->where('owner_type', '=', get_class($this->tippin))
             ->first();
 
-        $this->assertNotNull($participant->fresh()->last_read);
+        $this->assertNotNull($participant->last_read);
     }
 
     /** @test */
