@@ -2,8 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\CallLeftBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallLeftEvent;
@@ -77,14 +75,10 @@ class LeaveCallTest extends FeatureTestCase
     /** @test */
     public function call_participant_can_leave_call()
     {
-        Event::fake([
+        $this->expectsEvents([
             CallLeftBroadcast::class,
             CallLeftEvent::class,
         ]);
-
-        $participant = $this->call->participants()->first();
-
-        Cache::put("call:{$this->call->id}:{$participant->id}", true);
 
         $this->actingAs($this->tippin);
 
@@ -93,21 +87,5 @@ class LeaveCallTest extends FeatureTestCase
             'call' => $this->call->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertNotNull($participant->fresh()->left_call);
-
-        $this->assertFalse(Cache::has("call:{$this->call->id}:{$participant->id}"));
-
-        Event::assertDispatched(function (CallLeftBroadcast $event) {
-            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
-            $this->assertSame($this->call->id, $event->broadcastWith()['id']);
-            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (CallLeftEvent $event) use ($participant) {
-            return $participant->id === $event->participant->id;
-        });
     }
 }
