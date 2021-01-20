@@ -8,49 +8,33 @@ use RTippin\Messenger\Models\Thread;
 
 class TestVideoBroker implements VideoDriver
 {
-    /**
-     * @inheritDoc
-     */
+    private bool $fail = false;
+
     public function create(Thread $thread, Call $call): bool
     {
-        return true;
+        return ! $this->fail;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function destroy(Call $call): bool
     {
-        return true;
+        return ! $this->fail;
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getRoomId(): ?string
     {
         return '123456';
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getRoomPin(): ?string
     {
         return 'TEST-PIN';
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getRoomSecret(): ?string
     {
         return 'TEST-SECRET';
     }
 
-    /**
-     * @inheritDoc
-     */
     public function getExtraPayload(): ?string
     {
         return 'TEST-EXTRA-PAYLOAD';
