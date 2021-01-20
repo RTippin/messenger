@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\CallEndedBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallEndedEvent;
@@ -125,7 +124,7 @@ class EndCallTest extends FeatureTestCase
     /** @test */
     public function admin_can_end_call()
     {
-        Event::fake([
+        $this->expectsEvents([
             CallEndedBroadcast::class,
             CallEndedEvent::class,
         ]);
@@ -137,23 +136,6 @@ class EndCallTest extends FeatureTestCase
             'call' => $this->call->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertNotNull($this->call->fresh()->call_ended);
-
-        $this->assertNotNull($this->call->participants()->first()->left_call);
-
-        Event::assertDispatched(function (CallEndedBroadcast $event) {
-            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
-            $this->assertSame($this->call->id, $event->broadcastWith()['id']);
-            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
-
-            return true;
-        });
-
-        Event::assertDispatched(function (CallEndedEvent $event) {
-            return $this->call->id === $event->call->id;
-        });
     }
 
     /** @test */
@@ -173,7 +155,5 @@ class EndCallTest extends FeatureTestCase
             'call' => $call->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertNotNull($call->fresh()->call_ended);
     }
 }
