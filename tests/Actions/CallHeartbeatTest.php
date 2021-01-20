@@ -7,13 +7,10 @@ use RTippin\Messenger\Actions\Calls\CallHeartbeat;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
-use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class CallHeartbeatTest extends FeatureTestCase
 {
-    private Thread $group;
-
     private Call $call;
 
     private CallParticipant $participant;
@@ -24,9 +21,9 @@ class CallHeartbeatTest extends FeatureTestCase
 
         $tippin = $this->userTippin();
 
-        $this->group = $this->createGroupThread($tippin);
+        $group = $this->createGroupThread($tippin);
 
-        $this->call = $this->createCall($this->group, $tippin);
+        $this->call = $this->createCall($group, $tippin);
 
         $this->participant = $this->call->participants()->first();
 
