@@ -51,8 +51,8 @@ class StoreCall extends NewCallAction
      * video room using our desired video call service.
      *
      * @param mixed ...$parameters
-     * @var bool|null[1]
      * @var Thread[0]
+     * @var bool|null[1]
      * @return $this
      * @throws AuthorizationException|Throwable|InvalidArgumentException
      */
