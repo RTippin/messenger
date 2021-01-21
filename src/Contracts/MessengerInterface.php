@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Contracts;
 
-use Illuminate\Support\Collection;
 use RTippin\Messenger\Exceptions\InvalidMessengerProvider;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Messenger as MessengerModel;
