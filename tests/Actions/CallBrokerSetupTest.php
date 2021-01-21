@@ -8,7 +8,6 @@ use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\stubs\TestVideoBroker;
 
 class CallBrokerSetupTest extends FeatureTestCase
 {
@@ -37,19 +36,17 @@ class CallBrokerSetupTest extends FeatureTestCase
         ]);
     }
 
-    protected function getEnvironmentSetUp($app): void
-    {
-        parent::getEnvironmentSetUp($app);
-
-        $app->singleton(
-            VideoDriver::class,
-            TestVideoBroker::class
-        );
-    }
-
     /** @test */
     public function call_setup_updates_call()
     {
+        $this->mock(VideoDriver::class)->shouldReceive([
+            'create' => true,
+            'getRoomId' => '123456',
+            'getRoomPin' => 'TEST-PIN',
+            'getRoomSecret' => 'TEST-SECRET',
+            'getExtraPayload' => 'TEST-EXTRA-PAYLOAD',
+        ]);
+
         app(CallBrokerSetup::class)->execute(
             $this->group,
             $this->call
@@ -63,6 +60,21 @@ class CallBrokerSetupTest extends FeatureTestCase
             'room_secret' => 'TEST-SECRET',
             'payload' => 'TEST-EXTRA-PAYLOAD',
         ]);
+    }
+
+    /** @test */
+    public function call_setup_throws_exception_if_setup_failed()
+    {
+        $this->mock(VideoDriver::class)->shouldReceive([
+            'create' => false,
+        ]);
+
+        $this->expectException(Exception::class);
+
+        app(CallBrokerSetup::class)->execute(
+            $this->group,
+            $this->call
+        );
     }
 
     /** @test */
