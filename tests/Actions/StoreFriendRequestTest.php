@@ -20,8 +20,6 @@ class StoreFriendRequestTest extends FeatureTestCase
 
     private MessengerProvider $doe;
 
-    private MessengerProvider $developers;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -29,24 +27,13 @@ class StoreFriendRequestTest extends FeatureTestCase
         $this->tippin = $this->userTippin();
 
         $this->doe = $this->userDoe();
-
-        $this->developers = $this->companyDevelopers();
-
-        Messenger::setProvider($this->tippin);
-    }
-
-    protected function getEnvironmentSetUp($app): void
-    {
-        parent::getEnvironmentSetUp($app);
-
-        $config = $app->get('config');
-
-        $config->set('messenger.providers.user.provider_interactions.can_friend', false);
     }
 
     /** @test */
     public function store_friend_request_stores_sent_friend()
     {
+        Messenger::setProvider($this->tippin);
+
         app(StoreFriendRequest::class)->withoutDispatches()->execute([
             'recipient_id' => $this->doe->getKey(),
             'recipient_alias' => 'user',
@@ -63,6 +50,8 @@ class StoreFriendRequestTest extends FeatureTestCase
     /** @test */
     public function store_friend_request_fires_events()
     {
+        Messenger::setProvider($this->tippin);
+
         Event::fake([
             FriendRequestBroadcast::class,
             FriendRequestEvent::class,
@@ -92,6 +81,8 @@ class StoreFriendRequestTest extends FeatureTestCase
     /** @test */
     public function store_friend_throws_exception_when_invalid_provider()
     {
+        Messenger::setProvider($this->tippin);
+
         $this->expectException(ModelNotFoundException::class);
 
         app(StoreFriendRequest::class)->withoutDispatches()->execute([
@@ -103,6 +94,8 @@ class StoreFriendRequestTest extends FeatureTestCase
     /** @test */
     public function store_friend_throws_exception_when_already_friends()
     {
+        Messenger::setProvider($this->tippin);
+
         $this->expectException(AuthorizationException::class);
 
         $this->createFriends($this->tippin, $this->doe);
@@ -116,6 +109,8 @@ class StoreFriendRequestTest extends FeatureTestCase
     /** @test */
     public function store_friend_throws_exception_when_is_sent_friend()
     {
+        Messenger::setProvider($this->tippin);
+
         $this->expectException(AuthorizationException::class);
 
         SentFriend::create([
@@ -134,6 +129,8 @@ class StoreFriendRequestTest extends FeatureTestCase
     /** @test */
     public function store_friend_throws_exception_when_is_pending_friend()
     {
+        Messenger::setProvider($this->tippin);
+
         $this->expectException(AuthorizationException::class);
 
         PendingFriend::create([
@@ -152,10 +149,18 @@ class StoreFriendRequestTest extends FeatureTestCase
     /** @test */
     public function store_friend_throws_exception_when_disabled_in_provider_interactions()
     {
+        $providers = $this->getBaseProvidersConfig();
+
+        $providers['user']['provider_interactions']['can_friend'] = false;
+
+        Messenger::setMessengerProviders($providers);
+
+        Messenger::setProvider($this->tippin);
+
         $this->expectException(AuthorizationException::class);
 
         app(StoreFriendRequest::class)->withoutDispatches()->execute([
-            'recipient_id' => $this->developers->getKey(),
+            'recipient_id' => $this->companyDevelopers()->getKey(),
             'recipient_alias' => 'company',
         ]);
     }

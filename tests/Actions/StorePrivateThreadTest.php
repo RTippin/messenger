@@ -31,22 +31,13 @@ class StorePrivateThreadTest extends FeatureTestCase
         $this->doe = $this->userDoe();
 
         Storage::fake(Messenger::getThreadStorage('disk'));
-
-        Messenger::setProvider($this->tippin);
-    }
-
-    protected function getEnvironmentSetUp($app): void
-    {
-        parent::getEnvironmentSetUp($app);
-
-        $config = $app->get('config');
-
-        $config->set('messenger.providers.user.provider_interactions.can_message', false);
     }
 
     /** @test */
     public function store_private_throws_exception_if_one_already_found_between_providers()
     {
+        Messenger::setProvider($this->tippin);
+
         $this->expectException(AuthorizationException::class);
 
         $this->createPrivateThread($this->tippin, $this->doe);
@@ -63,6 +54,14 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function store_private_throws_exception_if_provider_interactions_denies_messaging_first()
     {
+        $providers = $this->getBaseProvidersConfig();
+
+        $providers['user']['provider_interactions']['can_message'] = false;
+
+        Messenger::setMessengerProviders($providers);
+
+        Messenger::setProvider($this->tippin);
+
         $this->expectException(AuthorizationException::class);
 
         app(StorePrivateThread::class)->withoutDispatches()->execute([
@@ -77,6 +76,8 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function store_private_stores_thread_participants_and_message()
     {
+        Messenger::setProvider($this->tippin);
+
         app(StorePrivateThread::class)->withoutDispatches()->execute([
             'message' => 'Hello World!',
             'recipient_alias' => 'user',
@@ -98,6 +99,8 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function store_private_marks_recipient_pending_when_not_friends()
     {
+        Messenger::setProvider($this->tippin);
+
         app(StorePrivateThread::class)->withoutDispatches()->execute([
             'message' => 'Hello World!',
             'recipient_alias' => 'user',
@@ -120,6 +123,8 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function store_private_not_pending_when_providers_are_friends()
     {
+        Messenger::setProvider($this->tippin);
+
         $this->createFriends($this->tippin, $this->doe);
 
         app(StorePrivateThread::class)->withoutDispatches()->execute([
@@ -144,6 +149,8 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function store_private_pending_fires_events()
     {
+        Messenger::setProvider($this->tippin);
+
         Event::fake([
             NewThreadBroadcast::class,
             NewThreadEvent::class,
@@ -173,6 +180,8 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function store_private_not_pending_fires_events()
     {
+        Messenger::setProvider($this->tippin);
+
         Event::fake([
             NewThreadBroadcast::class,
             NewThreadEvent::class,
@@ -196,6 +205,8 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function store_private_doesnt_expect_message_events()
     {
+        Messenger::setProvider($this->tippin);
+
         $this->doesntExpectEvents([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
@@ -211,6 +222,8 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function store_private_stores_image_message()
     {
+        Messenger::setProvider($this->tippin);
+
         app(StorePrivateThread::class)->withoutDispatches()->execute([
             'image' => UploadedFile::fake()->image('picture.jpg'),
             'recipient_alias' => 'user',
@@ -227,6 +240,8 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function store_private_stores_document_message()
     {
+        Messenger::setProvider($this->tippin);
+
         app(StorePrivateThread::class)->withoutDispatches()->execute([
             'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
             'recipient_alias' => 'user',

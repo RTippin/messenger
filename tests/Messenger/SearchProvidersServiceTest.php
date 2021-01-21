@@ -18,14 +18,14 @@ class SearchProvidersServiceTest extends FeatureTestCase
         $this->search = app(SearchProvidersService::class);
     }
 
-    protected function getEnvironmentSetUp($app): void
-    {
-        parent::getEnvironmentSetUp($app);
-
-        $config = $app->get('config');
-
-        $config->set('messenger.providers.user.provider_interactions.can_search', false);
-    }
+//    protected function getEnvironmentSetUp($app): void
+//    {
+//        parent::getEnvironmentSetUp($app);
+//
+//        $config = $app->get('config');
+//
+//        $config->set('messenger.providers.user.provider_interactions.can_search', false);
+//    }
 
     /** @test */
     public function search_returns_empty_paginator()
@@ -80,6 +80,12 @@ class SearchProvidersServiceTest extends FeatureTestCase
     /** @test */
     public function search_ignores_providers_the_current_provider_is_not_allowed_to_search_for()
     {
+        $providers = $this->getBaseProvidersConfig();
+
+        $providers['user']['provider_interactions']['can_search'] = false;
+
+        Messenger::setMessengerProviders($providers);
+
         Messenger::setProvider($this->userTippin());
 
         $search = $this->search->search('Dev Laravel Doe')->get()->toArray();
