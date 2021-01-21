@@ -73,8 +73,6 @@ class GroupThreadAvatarTest extends FeatureTestCase
 
         $this->actingAs($this->tippin);
 
-        $this->assertSame('5.png', $this->group->image);
-
         $this->postJson(route('api.messenger.threads.avatar.update', [
             'thread' => $this->group->id,
         ]), [
@@ -82,7 +80,10 @@ class GroupThreadAvatarTest extends FeatureTestCase
         ])
             ->assertSuccessful();
 
-        $this->assertSame('1.png', $this->group->fresh()->image);
+        $this->assertDatabaseHas('threads', [
+            'id' => $this->group->id,
+            'image' => '1.png',
+        ]);
     }
 
     /** @test */
