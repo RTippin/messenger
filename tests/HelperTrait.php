@@ -23,8 +23,7 @@ trait HelperTrait
         /** @var UserModel|UserModelUuid $model */
         $model = self::UseUUID ? UserModelUuid::class : UserModel::class;
 
-        return $model::where('email', '=', 'richard.tippin@gmail.com')
-            ->first();
+        return $model::where('email', '=', 'richard.tippin@gmail.com')->first();
     }
 
     /**
@@ -35,8 +34,7 @@ trait HelperTrait
         /** @var UserModel|UserModelUuid $model */
         $model = self::UseUUID ? UserModelUuid::class : UserModel::class;
 
-        return $model::where('email', '=', 'doe@example.net')
-            ->first();
+        return $model::where('email', '=', 'doe@example.net')->first();
     }
 
     /**
@@ -47,8 +45,7 @@ trait HelperTrait
         /** @var CompanyModel|CompanyModelUuid $model */
         $model = self::UseUUID ? CompanyModelUuid::class : CompanyModel::class;
 
-        return $model::where('company_email', '=', 'developers@example.net')
-            ->first();
+        return $model::where('company_email', '=', 'developers@example.net')->first();
     }
 
     /**
@@ -59,8 +56,7 @@ trait HelperTrait
         /** @var CompanyModel|CompanyModelUuid $model */
         $model = self::UseUUID ? CompanyModelUuid::class : CompanyModel::class;
 
-        return $model::where('company_email', '=', 'laravel@example.net')
-            ->first();
+        return $model::where('company_email', '=', 'laravel@example.net')->first();
     }
 
     /**

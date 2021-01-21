@@ -3,24 +3,14 @@
 namespace RTippin\Messenger\Tests;
 
 use Illuminate\Support\Facades\Cache;
-use Orchestra\Testbench\TestCase;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\MessengerServiceProvider;
 use RTippin\Messenger\Tests\stubs\CompanyModel;
 use RTippin\Messenger\Tests\stubs\CompanyModelUuid;
 use RTippin\Messenger\Tests\stubs\UserModel;
 use RTippin\Messenger\Tests\stubs\UserModelUuid;
 
-class FeatureTestCase extends TestCase
+class FeatureTestCase extends MessengerTestCase
 {
-    use HelperTrait;
-
-    /**
-     * Set TRUE to run all feature test with
-     * provider models/tables using UUIDS.
-     */
-    const UseUUID = false;
-
     protected function setUp(): void
     {
         parent::setUp();
@@ -40,20 +30,13 @@ class FeatureTestCase extends TestCase
     {
         Cache::flush();
 
-        Messenger::reset();
-
         parent::tearDown();
-    }
-
-    protected function getPackageProviders($app): array
-    {
-        return [
-            MessengerServiceProvider::class,
-        ];
     }
 
     protected function getEnvironmentSetUp($app): void
     {
+        parent::getEnvironmentSetUp($app);
+
         $config = $app->get('config');
 
         $config->set('database.default', 'testbench');
@@ -64,39 +47,6 @@ class FeatureTestCase extends TestCase
             'prefix' => '',
             'foreign_key_constraints' => true,
         ]);
-
-        $config->set('messenger.provider_uuids', self::UseUUID);
-
-        $config->set('messenger.calling.enabled', true);
-
-        $config->set('messenger.providers', [
-            'user' => [
-                'model' => (self::UseUUID ? UserModelUuid::class : UserModel::class),
-                'searchable' => true,
-                'friendable' => true,
-                'devices' => true,
-                'default_avatar' => public_path('vendor/messenger/images/users.png'),
-                'provider_interactions' => [
-                    'can_message' => true,
-                    'can_search' => true,
-                    'can_friend' => true,
-                ],
-            ],
-            'company' => [
-                'model' => (self::UseUUID ? CompanyModelUuid::class : CompanyModel::class),
-                'searchable' => true,
-                'friendable' => true,
-                'devices' => true,
-                'default_avatar' => public_path('vendor/messenger/images/company.png'),
-                'provider_interactions' => [
-                    'can_message' => true,
-                    'can_search' => true,
-                    'can_friend' => true,
-                ],
-            ],
-        ]);
-
-        $config->set('messenger.site_name', 'Messenger-Testbench');
     }
 
     private function storeBaseUsers(): void
@@ -113,15 +63,12 @@ class FeatureTestCase extends TestCase
             'password' => 'secret',
         ];
 
-        if (self::UseUUID) {
-            Messenger::getProviderMessenger(UserModelUuid::create($tippin));
+        /** @var UserModelUuid|UserModel $model */
+        $model = self::UseUUID ? UserModelUuid::class : UserModel::class;
 
-            Messenger::getProviderMessenger(UserModelUuid::create($doe));
-        } else {
-            Messenger::getProviderMessenger(UserModel::create($tippin));
+        Messenger::getProviderMessenger($model::create($tippin));
 
-            Messenger::getProviderMessenger(UserModel::create($doe));
-        }
+        Messenger::getProviderMessenger($model::create($doe));
     }
 
     private function storeBaseCompanies(): void
@@ -138,14 +85,11 @@ class FeatureTestCase extends TestCase
             'password' => 'secret',
         ];
 
-        if (self::UseUUID) {
-            Messenger::getProviderMessenger(CompanyModelUuid::create($developers));
+        /** @var CompanyModelUuid|CompanyModel $model */
+        $model = self::UseUUID ? CompanyModelUuid::class : CompanyModel::class;
 
-            Messenger::getProviderMessenger(CompanyModelUuid::create($laravel));
-        } else {
-            Messenger::getProviderMessenger(CompanyModel::create($developers));
+        Messenger::getProviderMessenger($model::create($developers));
 
-            Messenger::getProviderMessenger(CompanyModel::create($laravel));
-        }
+        Messenger::getProviderMessenger($model::create($laravel));
     }
 }
