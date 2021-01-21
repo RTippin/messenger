@@ -256,19 +256,20 @@ trait ConfigInterface
      */
     public function getConfig(): array
     {
-        return collect(get_object_vars($this))->reject(fn ($value, $key) => in_array($key, self::$guarded)
-            && ! in_array($key, ['isProvidersCached'])
-        )->merge([
-            'providers' => $this->providers->map(function ($provider) {
-                return [
-                    'default_avatar' => basename($provider['default_avatar']),
-                    'searchable' => $provider['searchable'],
-                    'friendable' => $provider['friendable'],
-                    'devices' => $provider['devices'],
-                    'provider_interactions' => $provider['provider_interactions'],
-                ];
-            }),
-        ])->toArray();
+        return collect(get_object_vars($this))
+            ->reject(fn ($value, $key) => in_array($key, self::$guarded) && ! in_array($key, ['isProvidersCached']))
+            ->merge([
+                'providers' => $this->providers->map(function ($provider) {
+                    return [
+                        'default_avatar' => basename($provider['default_avatar']),
+                        'searchable' => $provider['searchable'],
+                        'friendable' => $provider['friendable'],
+                        'devices' => $provider['devices'],
+                        'provider_interactions' => $provider['provider_interactions'],
+                    ];
+                }),
+            ])
+            ->toArray();
     }
 
     /**

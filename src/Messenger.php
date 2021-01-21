@@ -105,9 +105,7 @@ final class Messenger implements MessengerInterface
      */
     public function findProviderAlias($provider = null): ?string
     {
-        return $this->providers->search(
-            fn ($item) => $item['model'] === $this->getClassNameString($provider)
-        ) ?: null;
+        return $this->providers->search(fn ($item) => $item['model'] === $this->getClassNameString($provider)) ?: null;
     }
 
     /**
@@ -131,9 +129,10 @@ final class Messenger implements MessengerInterface
      */
     public function isProviderSearchable($provider = null): bool
     {
-        return $this->providers->search(fn ($item) => $item['model'] === $this->getClassNameString($provider)
-            && $item['searchable'] === true
-        ) ? true : false;
+        return $this->providers
+            ->search(fn ($item) => $item['model'] === $this->getClassNameString($provider) && $item['searchable'] === true)
+            ? true
+            : false;
     }
 
     /**
@@ -145,9 +144,10 @@ final class Messenger implements MessengerInterface
      */
     public function isProviderFriendable($provider = null): bool
     {
-        return $this->providers->search(fn ($item) => $item['model'] === $this->getClassNameString($provider)
-            && $item['friendable'] === true
-        ) ? true : false;
+        return $this->providers
+            ->search(fn ($item) => $item['model'] === $this->getClassNameString($provider) && $item['friendable'] === true)
+            ? true
+            : false;
     }
 
     /**
@@ -166,11 +166,9 @@ final class Messenger implements MessengerInterface
      */
     public function getAllSearchableProviders(): array
     {
-        return $this->providers->filter(
-            fn ($provider) => $provider['searchable'] === true
-        )->map(
-            fn ($provider) => $provider['model']
-        )
+        return $this->providers
+            ->filter(fn ($provider) => $provider['searchable'] === true)
+            ->map(fn ($provider) => $provider['model'])
             ->flatten()
             ->toArray();
     }
@@ -181,12 +179,9 @@ final class Messenger implements MessengerInterface
      */
     public function getAllFriendableProviders(): array
     {
-        return $this->providers->filter(
-            fn ($provider) => $provider['friendable'] === true
-        )
-            ->map(
-                fn ($provider) => $provider['model']
-            )
+        return $this->providers
+            ->filter(fn ($provider) => $provider['friendable'] === true)
+            ->map(fn ($provider) => $provider['model'])
             ->flatten()
             ->toArray();
     }
@@ -196,9 +191,8 @@ final class Messenger implements MessengerInterface
      */
     public function getAllMessengerProviders(): array
     {
-        return $this->providers->map(
-            fn ($provider) => $provider['model']
-        )
+        return $this->providers
+            ->map(fn ($provider) => $provider['model'])
             ->flatten()
             ->toArray();
     }
@@ -208,12 +202,9 @@ final class Messenger implements MessengerInterface
      */
     public function getAllProvidersWithDevices(): array
     {
-        return $this->providers->filter(
-            fn ($provider) => $provider['devices'] === true
-        )
-            ->map(
-                fn ($provider) => $provider['model']
-            )
+        return $this->providers
+            ->filter(fn ($provider) => $provider['devices'] === true)
+            ->map(fn ($provider) => $provider['model'])
             ->flatten()
             ->toArray();
     }

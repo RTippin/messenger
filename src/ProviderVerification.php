@@ -169,11 +169,11 @@ trait ProviderVerification
                 return [$alias];
             }
 
-            return $this->explodeAndCollect($canMessage)->reject(fn ($value) => $value === $alias || ! $providers->has($value)
-            )
-            ->push($alias)
-            ->values()
-            ->toArray();
+            return $this->explodeAndCollect($canMessage)
+                ->reject(fn ($value) => $value === $alias || ! $providers->has($value))
+                ->push($alias)
+                ->values()
+                ->toArray();
         }
 
         return $providers->keys()->toArray();
@@ -200,21 +200,20 @@ trait ProviderVerification
                     : [];
             }
 
-            $filtered = $this->explodeAndCollect($canSearch)->reject(fn ($value) => $value === $alias
-                || ! $providers->has($value)
-                || $providers->get($value)['searchable'] === false
-            );
+            $filtered = $this->explodeAndCollect($canSearch)
+                ->reject(fn ($value) => $value === $alias
+                    || ! $providers->has($value)
+                    || $providers->get($value)['searchable'] === false);
 
             return $provider['searchable'] === true
                 ? $filtered->push($alias)->values()->toArray()
                 : $filtered->values()->toArray();
         }
 
-        return $providers->filter(
-            fn ($provider) => $provider['searchable'] === true
-        )
-        ->keys()
-        ->toArray();
+        return $providers
+            ->filter(fn ($provider) => $provider['searchable'] === true)
+            ->keys()
+            ->toArray();
     }
 
     /**
@@ -241,21 +240,20 @@ trait ProviderVerification
                 return [$alias];
             }
 
-            $filtered = $this->explodeAndCollect($canFriend)->reject(fn ($value) => $value === $alias
-                || ! $providers->has($value)
-                || $providers->get($value)['friendable'] === false
-            );
+            $filtered = $this->explodeAndCollect($canFriend)
+                ->reject(fn ($value) => $value === $alias
+                    || ! $providers->has($value)
+                    || $providers->get($value)['friendable'] === false);
 
             return $provider['friendable'] === true
                 ? $filtered->push($alias)->values()->toArray()
                 : $filtered->values()->toArray();
         }
 
-        return $providers->filter(
-            fn ($provider) => $provider['friendable'] === true
-        )
-        ->keys()
-        ->toArray();
+        return $providers
+            ->filter(fn ($provider) => $provider['friendable'] === true)
+            ->keys()
+            ->toArray();
     }
 
     /**
@@ -306,8 +304,7 @@ trait ProviderVerification
     public function passesReflectionInterface(string $abstract, string $contract): bool
     {
         try {
-            return (new ReflectionClass($abstract))
-                ->implementsInterface($contract);
+            return (new ReflectionClass($abstract))->implementsInterface($contract);
         } catch (ReflectionException $e) {
             //skip
         }

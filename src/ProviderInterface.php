@@ -322,14 +322,11 @@ trait ProviderInterface
      */
     public function getSearchableForCurrentProvider(): array
     {
-        return $this->providers->filter(fn ($provider, $alias) => $provider['searchable'] === true
-            && in_array($alias, $this->providerCanSearch)
-        )
-        ->map(
-            fn ($provider) => $provider['model']
-        )
-        ->flatten()
-        ->toArray();
+        return $this->providers
+            ->filter(fn ($provider, $alias) => $provider['searchable'] === true && in_array($alias, $this->providerCanSearch))
+            ->map(fn ($provider) => $provider['model'])
+            ->flatten()
+            ->toArray();
     }
 
     /**
@@ -341,14 +338,11 @@ trait ProviderInterface
      */
     public function getFriendableForCurrentProvider(): array
     {
-        return $this->providers->filter(fn ($provider, $alias) => $provider['friendable'] === true
-            && in_array($alias, $this->providerCanFriend)
-        )
-        ->map(
-            fn ($provider) => $provider['model']
-        )
-        ->flatten()
-        ->toArray();
+        return $this->providers
+            ->filter(fn ($provider, $alias) => $provider['friendable'] === true && in_array($alias, $this->providerCanFriend))
+            ->map(fn ($provider) => $provider['model'])
+            ->flatten()
+            ->toArray();
     }
 
     /**
