@@ -72,8 +72,6 @@ class LeaveGroupThreadTest extends FeatureTestCase
 
         $this->actingAs($this->tippin);
 
-        $this->assertSame(1, $this->group->participants()->count());
-
         $this->postJson(route('api.messenger.threads.leave', [
             'thread' => $this->group->id,
         ]))
@@ -97,8 +95,6 @@ class LeaveGroupThreadTest extends FeatureTestCase
             ]);
 
         $this->actingAs($this->tippin);
-
-        $this->assertSame(2, $this->group->participants()->admins()->count());
 
         $this->postJson(route('api.messenger.threads.leave', [
             'thread' => $this->group->id,

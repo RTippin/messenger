@@ -74,14 +74,13 @@ class MuteUnmuteThreadTest extends FeatureTestCase
             ParticipantUnMutedEvent::class,
         ]);
 
-        $participant = $this->private->participants()
+        $this->private->participants()
             ->where('owner_id', '=', $this->tippin->getKey())
             ->where('owner_type', '=', get_class($this->tippin))
-            ->first();
-
-        $participant->update([
-            'muted' => true,
-        ]);
+            ->first()
+            ->update([
+                'muted' => true,
+            ]);
 
         $this->actingAs($this->tippin);
 

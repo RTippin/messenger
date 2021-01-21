@@ -86,8 +86,6 @@ class PrivateThreadsTest extends FeatureTestCase
     /** @test */
     public function creating_new_private_thread_with_non_friend_company()
     {
-        $developers = $this->companyDevelopers();
-
         $this->expectsEvents([
             NewThreadBroadcast::class,
             NewThreadEvent::class,
@@ -98,7 +96,7 @@ class PrivateThreadsTest extends FeatureTestCase
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
             'recipient_alias' => 'company',
-            'recipient_id' => $developers->getKey(),
+            'recipient_id' => $this->companyDevelopers()->getKey(),
         ])
             ->assertSuccessful()
             ->assertJson([

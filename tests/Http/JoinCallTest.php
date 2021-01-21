@@ -123,11 +123,11 @@ class JoinCallTest extends FeatureTestCase
             CallJoinedEvent::class,
         ]);
 
-        $participant = $this->call->participants()->first();
-
-        $participant->update([
-            'left_call' => now(),
-        ]);
+        $this->call->participants()
+            ->first()
+            ->update([
+                'left_call' => now(),
+            ]);
 
         $this->actingAs($this->tippin);
 

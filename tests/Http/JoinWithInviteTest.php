@@ -27,8 +27,7 @@ class JoinWithInviteTest extends FeatureTestCase
 
         $this->group = $this->createGroupThread($tippin, $this->doe);
 
-        $this->invite = $this->group->invites()
-            ->create([
+        $this->invite = $this->group->invites()->create([
                 'owner_id' => $tippin->getKey(),
                 'owner_type' => get_class($tippin),
                 'code' => 'TEST1234',

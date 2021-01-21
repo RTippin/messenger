@@ -237,8 +237,6 @@ class InvitesTest extends FeatureTestCase
                 'max_use' => 25,
                 'expires_at' => null,
             ]);
-
-        $this->assertDatabaseCount('thread_invites', 2);
     }
 
     /** @test */

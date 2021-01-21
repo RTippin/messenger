@@ -101,14 +101,13 @@ class MarkThreadReadTest extends FeatureTestCase
             ParticipantsReadEvent::class,
         ]);
 
-        $participant = $this->private->participants()
+        $this->private->participants()
             ->where('owner_id', '=', $this->tippin->getKey())
             ->where('owner_type', '=', get_class($this->tippin))
-            ->first();
-
-        $participant->update([
-            'pending' => true,
-        ]);
+            ->first()
+            ->update([
+                'pending' => true,
+            ]);
 
         $this->actingAs($this->tippin);
 
