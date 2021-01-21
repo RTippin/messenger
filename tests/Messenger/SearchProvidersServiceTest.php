@@ -18,15 +18,6 @@ class SearchProvidersServiceTest extends FeatureTestCase
         $this->search = app(SearchProvidersService::class);
     }
 
-//    protected function getEnvironmentSetUp($app): void
-//    {
-//        parent::getEnvironmentSetUp($app);
-//
-//        $config = $app->get('config');
-//
-//        $config->set('messenger.providers.user.provider_interactions.can_search', false);
-//    }
-
     /** @test */
     public function search_returns_empty_paginator()
     {

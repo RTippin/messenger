@@ -37,7 +37,7 @@ class ProvidersVerification
      * @param array $providers
      * @return Collection
      */
-    private function collectAndFilterProviders(array $providers): Collection
+    protected function collectAndFilterProviders(array $providers): Collection
     {
         return collect($providers)->filter(
             fn ($provider) => $this->passesProviderValidation($provider)
@@ -50,7 +50,7 @@ class ProvidersVerification
      * @param Collection $providers
      * @return Collection
      */
-    private function sanitizeAliasKey(Collection $providers): Collection
+    protected function sanitizeAliasKey(Collection $providers): Collection
     {
         return $providers->mapWithKeys(fn ($provider, $alias) => [
             $this->sanitizeAlias($alias) => $provider,
@@ -65,7 +65,7 @@ class ProvidersVerification
      * @return Collection
      * @noinspection SpellCheckingInspection
      */
-    private function verifyProviderConfigs(Collection $providers): Collection
+    protected function verifyProviderConfigs(Collection $providers): Collection
     {
         return $providers->map(fn ($provider) => [
             'model' => $provider['model'],
@@ -83,7 +83,7 @@ class ProvidersVerification
      * @param Collection $providers
      * @return Collection
      */
-    private function verifyProviderInteractions(Collection $providers): Collection
+    protected function verifyProviderInteractions(Collection $providers): Collection
     {
         return $providers->map(fn ($provider, $alias) => array_merge($provider, [
             'provider_interactions' => [
@@ -100,7 +100,7 @@ class ProvidersVerification
      * @return bool
      * @noinspection SpellCheckingInspection
      */
-    private function passesProviderValidation($provider): bool
+    protected function passesProviderValidation($provider): bool
     {
         return is_array($provider)
             && array_key_exists('model', $provider)
@@ -124,7 +124,7 @@ class ProvidersVerification
      * @return bool
      * @noinspection SpellCheckingInspection
      */
-    private function passesFriendable(array $provider): bool
+    protected function passesFriendable(array $provider): bool
     {
         return $provider['friendable'] === true;
     }
@@ -133,7 +133,7 @@ class ProvidersVerification
      * @param array $provider
      * @return bool
      */
-    private function passesSearchable(array $provider): bool
+    protected function passesSearchable(array $provider): bool
     {
         return $provider['searchable'] === true
             && $this->passesReflectionInterface(
@@ -145,7 +145,7 @@ class ProvidersVerification
      * @param array $provider
      * @return bool
      */
-    private function passesHasDevices(array $provider): bool
+    protected function passesHasDevices(array $provider): bool
     {
         return $provider['devices'] === true;
     }
@@ -156,7 +156,7 @@ class ProvidersVerification
      * @param Collection $providers
      * @return array|string[]
      */
-    private function validatesCanMessage(string $alias,
+    protected function validatesCanMessage(string $alias,
                                          array $provider,
                                          Collection $providers): array
     {
@@ -185,7 +185,7 @@ class ProvidersVerification
      * @param Collection $providers
      * @return array|string[]
      */
-    private function validatesCanSearch(string $alias,
+    protected function validatesCanSearch(string $alias,
                                         array $provider,
                                         Collection $providers): array
     {
@@ -223,7 +223,7 @@ class ProvidersVerification
      * @return array|string[]
      * @noinspection SpellCheckingInspection
      */
-    private function validatesCanFriend(string $alias,
+    protected function validatesCanFriend(string $alias,
                                         array $provider,
                                         Collection $providers): array
     {
@@ -260,7 +260,7 @@ class ProvidersVerification
      * @param string $items
      * @return Collection
      */
-    private function explodeAndCollect(string $items): Collection
+    protected function explodeAndCollect(string $items): Collection
     {
         return collect(
             explode(
@@ -274,7 +274,7 @@ class ProvidersVerification
      * @param string $alias
      * @return string
      */
-    private function sanitizeAlias(string $alias): string
+    protected function sanitizeAlias(string $alias): string
     {
         return Str::lower(
             str_replace(
@@ -290,7 +290,7 @@ class ProvidersVerification
      * @param string $contract
      * @return bool
      */
-    private function passesReflectionInterface(string $abstract, string $contract): bool
+    protected function passesReflectionInterface(string $abstract, string $contract): bool
     {
         try {
             return (new ReflectionClass($abstract))->implementsInterface($contract);
