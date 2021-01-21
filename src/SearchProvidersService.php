@@ -176,12 +176,11 @@ class SearchProvidersService
         $this->searchQueryItems = collect(
             preg_split('/[ \n,]+/', $this->searchQuery)
         )
-        ->filter(
-            fn ($value) => strlen($value) >= 2
-        )
-        ->uniqueStrict()
-        ->take(4)
-        ->toArray();
+            ->filter(fn ($value) => strlen($value) >= 2)
+            ->uniqueStrict()
+            ->take(4)
+            ->values()
+            ->toArray();
 
         return $this;
     }
