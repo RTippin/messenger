@@ -595,13 +595,9 @@ interface MessengerInterface
     public function throwProviderError(): void;
 
     /**
-     * On boot, we set the services allowed provider classes.
-     * We pass them through some validations.
-     *
-     * @param array $providers
-     * @return Collection
+     * Reset all values back to default.
      */
-    public function formatValidProviders(array $providers): Collection;
+    public function reset(): void;
 
     /**
      * @param string $abstract

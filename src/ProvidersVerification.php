@@ -9,7 +9,7 @@ use ReflectionException;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Searchable;
 
-trait ProviderVerification
+class ProvidersVerification
 {
     /**
      * On boot, we set the services allowed provider classes.
@@ -257,17 +257,6 @@ trait ProviderVerification
     }
 
     /**
-     * @param $provider
-     * @return string|null
-     */
-    private function getClassNameString($provider = null): ?string
-    {
-        return is_object($provider)
-            ? get_class($provider)
-            : $provider;
-    }
-
-    /**
      * @param string $items
      * @return Collection
      */
@@ -301,7 +290,7 @@ trait ProviderVerification
      * @param string $contract
      * @return bool
      */
-    public function passesReflectionInterface(string $abstract, string $contract): bool
+    private function passesReflectionInterface(string $abstract, string $contract): bool
     {
         try {
             return (new ReflectionClass($abstract))->implementsInterface($contract);

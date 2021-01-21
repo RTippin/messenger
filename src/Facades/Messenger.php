@@ -100,6 +100,7 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static getProviderDefaultAvatarPath(string $alias)
  * @method static getDefaultNotFoundImage()
  * @method static getDefaultThreadAvatars(string $image = null)
+ * @method static reset()
  *
  * @mixin \RTippin\Messenger\Messenger
  * @see MessengerInterface

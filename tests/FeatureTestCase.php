@@ -40,7 +40,7 @@ class FeatureTestCase extends TestCase
     {
         Cache::flush();
 
-        Messenger::unsetProvider();
+        Messenger::reset();
 
         parent::tearDown();
     }

@@ -13,6 +13,7 @@ use Illuminate\Support\Collection;
  * @property-read Application $app
  * @property-read Repository $configRepo
  * @property-read Filesystem $filesystem
+ * @property-read ProvidersVerification $providersVerification
  */
 trait ConfigInterface
 {
@@ -869,7 +870,7 @@ trait ConfigInterface
      */
     private function setProvidersFromConfig(): void
     {
-        $this->providers = $this->formatValidProviders(
+        $this->providers = $this->providersVerification->formatValidProviders(
             $this->configRepo->get('messenger.providers')
         );
     }

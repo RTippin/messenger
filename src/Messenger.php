@@ -6,6 +6,8 @@ use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
+use ReflectionClass;
+use ReflectionException;
 use RTippin\Messenger\Contracts\MessengerInterface;
 
 /**
@@ -13,10 +15,6 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  */
 final class Messenger implements MessengerInterface
 {
-    /**
-     * MessengerService Provider Verifications.
-     */
-    use ProviderVerification;
     /**
      * MessengerService Provider Actions.
      */
@@ -51,6 +49,11 @@ final class Messenger implements MessengerInterface
     private ConfigRepository $configRepo;
 
     /**
+     * @var ProvidersVerification
+     */
+    private ProvidersVerification $providersVerification;
+
+    /**
      * Messenger constructor.
      * Load config values to use at runtime.
      *
@@ -58,30 +61,20 @@ final class Messenger implements MessengerInterface
      * @param CacheRepository $cacheDriver
      * @param Filesystem $filesystem
      * @param ConfigRepository $configRepo
+     * @param ProvidersVerification $providersVerification
      */
     public function __construct(Application $app,
                                 CacheRepository $cacheDriver,
                                 Filesystem $filesystem,
-                                ConfigRepository $configRepo)
+                                ConfigRepository $configRepo,
+                                ProvidersVerification $providersVerification)
     {
         $this->app = $app;
         $this->cacheDriver = $cacheDriver;
         $this->filesystem = $filesystem;
         $this->configRepo = $configRepo;
-
+        $this->providersVerification = $providersVerification;
         $this->boot();
-    }
-
-    /**
-     * Boot up our configs.
-     */
-    private function boot(): void
-    {
-        $this->isProvidersCached = $this->isProvidersCached();
-
-        $this->setMessengerProviders();
-
-        $this->setMessengerConfig();
     }
 
     /**
@@ -207,5 +200,52 @@ final class Messenger implements MessengerInterface
             ->map(fn ($provider) => $provider['model'])
             ->flatten()
             ->toArray();
+    }
+
+    /**
+     * @param string $abstract
+     * @param string $contract
+     * @return bool
+     */
+    public function passesReflectionInterface(string $abstract, string $contract): bool
+    {
+        try {
+            return (new ReflectionClass($abstract))->implementsInterface($contract);
+        } catch (ReflectionException $e) {
+            //skip
+        }
+
+        return false;
+    }
+
+    /**
+     * Reset all values back to default.
+     */
+    public function reset(): void
+    {
+        $this->unsetProvider()->boot();
+    }
+
+    /**
+     * Boot up our configs.
+     */
+    private function boot(): void
+    {
+        $this->isProvidersCached = $this->isProvidersCached();
+
+        $this->setMessengerProviders();
+
+        $this->setMessengerConfig();
+    }
+
+    /**
+     * @param $provider
+     * @return string|null
+     */
+    private function getClassNameString($provider = null): ?string
+    {
+        return is_object($provider)
+            ? get_class($provider)
+            : $provider;
     }
 }

@@ -6,13 +6,11 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Filesystem\Filesystem;
 use LogicException;
-use RTippin\Messenger\ProviderVerification;
+use RTippin\Messenger\ProvidersVerification;
 use Throwable;
 
 class ProvidersCache extends Command
 {
-    use ProviderVerification;
-
     /**
      * The name and signature of the console command.
      *
@@ -35,16 +33,22 @@ class ProvidersCache extends Command
     protected Filesystem $files;
 
     /**
+     * @var ProvidersVerification
+     */
+    private ProvidersVerification $providersVerification;
+
+    /**
      * Create a new config cache command instance.
      *
      * @param Filesystem $files
-     * @return void
+     * @param ProvidersVerification $providersVerification
      */
-    public function __construct(Filesystem $files)
+    public function __construct(Filesystem $files, ProvidersVerification $providersVerification)
     {
         parent::__construct();
 
         $this->files = $files;
+        $this->providersVerification = $providersVerification;
     }
 
     /**
@@ -92,7 +96,7 @@ class ProvidersCache extends Command
 
         $app->make(ConsoleKernelContract::class)->bootstrap();
 
-        return $this->formatValidProviders(
+        return $this->providersVerification->formatValidProviders(
             $app['config']['messenger']['providers']
         )->toArray();
     }
