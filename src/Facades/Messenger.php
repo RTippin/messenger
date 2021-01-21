@@ -101,6 +101,7 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static getDefaultNotFoundImage()
  * @method static getDefaultThreadAvatars(string $image = null)
  * @method static reset()
+ * @method static setMessengerProviders(array $providers = [])
  *
  * @mixin \RTippin\Messenger\Messenger
  * @see MessengerInterface

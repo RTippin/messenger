@@ -806,6 +806,52 @@ trait ConfigInterface
     }
 
     /**
+     * Set providers if provided, from cache if exist, otherwise set from config.
+     *
+     * @param array $providers
+     */
+    public function setMessengerProviders(array $providers = []): void
+    {
+        if (count($providers)) {
+            $this->providers = $this->providersVerification->formatValidProviders($providers);
+        } else if ($this->isProvidersCached) {
+            $providersFile = $this->loadCachedProvidersFile();
+            if ($providersFile) {
+                $this->providers = collect($providersFile);
+            } else {
+                $this->setProvidersFromConfig();
+            }
+        } else {
+            $this->setProvidersFromConfig();
+        }
+    }
+
+    /**
+     * Set providers from config.
+     */
+    private function setProvidersFromConfig(): void
+    {
+        $this->providers = $this->providersVerification->formatValidProviders(
+            $this->configRepo->get('messenger.providers')
+        );
+    }
+
+    /**
+     * @return mixed|null
+     * @noinspection PhpIncludeInspection
+     */
+    private function loadCachedProvidersFile()
+    {
+        try {
+            return require $this->app->bootstrapPath('cache/messenger.php');
+        } catch (Exception $e) {
+            report($e);
+
+            return null;
+        }
+    }
+
+    /**
      * Set all configs from the config file.
      */
     private function setMessengerConfig(): void
@@ -843,50 +889,5 @@ trait ConfigInterface
         $this->messagesPageCount = $this->configRepo->get('messenger.collections.messages.page_count');
         $this->callsIndexCount = $this->configRepo->get('messenger.collections.calls.index_count');
         $this->callsPageCount = $this->configRepo->get('messenger.collections.calls.page_count');
-    }
-
-    /**
-     * Set providers from cache if exist, otherwise set from config.
-     */
-    private function setMessengerProviders(): void
-    {
-        if ($this->isProvidersCached) {
-            $providersFile = $this->loadCachedProvidersFile();
-
-            if ($providersFile) {
-                $this->providers = collect(
-                    $providersFile
-                );
-            } else {
-                $this->setProvidersFromConfig();
-            }
-        } else {
-            $this->setProvidersFromConfig();
-        }
-    }
-
-    /**
-     * Set providers from config.
-     */
-    private function setProvidersFromConfig(): void
-    {
-        $this->providers = $this->providersVerification->formatValidProviders(
-            $this->configRepo->get('messenger.providers')
-        );
-    }
-
-    /**
-     * @return mixed|null
-     * @noinspection PhpIncludeInspection
-     */
-    private function loadCachedProvidersFile()
-    {
-        try {
-            return require $this->app->bootstrapPath('cache/messenger.php');
-        } catch (Exception $e) {
-            report($e);
-
-            return null;
-        }
     }
 }

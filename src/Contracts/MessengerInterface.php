@@ -469,6 +469,13 @@ interface MessengerInterface
     public function setProvider($provider = null);
 
     /**
+     * Set providers if provided, from cache if exist, otherwise set from config.
+     *
+     * @param array $providers
+     */
+    public function setMessengerProviders(array $providers = []): void;
+
+    /**
      * This will firstOrCreate a messenger model instance
      * for the given or currently set provider.
      *

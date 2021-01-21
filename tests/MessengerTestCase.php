@@ -42,7 +42,14 @@ class MessengerTestCase extends TestCase
 
         $config->set('messenger.calling.enabled', true);
 
-        $config->set('messenger.providers', [
+        $config->set('messenger.providers', $this->getBaseProvidersConfig());
+
+        $config->set('messenger.site_name', 'Messenger-Testbench');
+    }
+
+    protected function getBaseProvidersConfig(): array
+    {
+        return [
             'user' => [
                 'model' => (self::UseUUID ? UserModelUuid::class : UserModel::class),
                 'searchable' => true,
@@ -67,8 +74,6 @@ class MessengerTestCase extends TestCase
                     'can_friend' => true,
                 ],
             ],
-        ]);
-
-        $config->set('messenger.site_name', 'Messenger-Testbench');
+        ];
     }
 }
