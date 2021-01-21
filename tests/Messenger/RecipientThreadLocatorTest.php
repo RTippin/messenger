@@ -43,7 +43,7 @@ class RecipientThreadLocatorTest extends FeatureTestCase
     {
         $results = $this->locator->setAlias('user')->setId($this->doe->getKey())->locate();
 
-        $this->assertSame('John Doe', $results->getRecipient()->name());
+        $this->assertSame($this->doe->getKey(), $results->getRecipient()->getKey());
 
         $this->assertSame($this->private->id, $results->getThread()->id);
     }
@@ -53,7 +53,7 @@ class RecipientThreadLocatorTest extends FeatureTestCase
     {
         $results = $this->locator->setAlias('company')->setId($this->developers->getKey())->locate();
 
-        $this->assertSame('Developers', $results->getRecipient()->name());
+        $this->assertSame($this->developers->getKey(), $results->getRecipient()->getKey());
 
         $this->assertNull($results->getThread());
     }
