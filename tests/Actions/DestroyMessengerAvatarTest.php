@@ -43,11 +43,12 @@ class DestroyMessengerAvatarTest extends FeatureTestCase
     /** @test */
     public function destroy_avatar_updates_provider()
     {
-        $this->assertNotNull($this->tippin->picture);
-
         app(DestroyMessengerAvatar::class)->execute();
 
-        $this->assertNull($this->tippin->picture);
+        $this->assertDatabaseHas('users', [
+            'id' => $this->tippin->getKey(),
+            'picture' => null,
+        ]);
     }
 
     /** @test */

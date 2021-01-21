@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\MarkParticipantRead;
 use RTippin\Messenger\Broadcasting\ParticipantReadBroadcast;
@@ -36,14 +37,19 @@ class MarkParticipantReadTest extends FeatureTestCase
     /** @test */
     public function mark_participant_read_updates_participant()
     {
-        $this->assertNull($this->participant->last_read);
+        $read = now()->addMinutes(5);
+
+        Carbon::setTestNow($read);
 
         app(MarkParticipantRead::class)->withoutDispatches()->execute(
             $this->participant,
             $this->private
         );
 
-        $this->assertNotNull($this->participant->last_read);
+        $this->assertDatabaseHas('participants', [
+            'id' => $this->participant->id,
+            'last_read' => $read,
+        ]);
     }
 
     /** @test */
@@ -103,14 +109,24 @@ class MarkParticipantReadTest extends FeatureTestCase
             $this->private
         );
 
-        $this->assertNull($this->participant->last_read);
+        $this->assertDatabaseHas('participants', [
+            'id' => $this->participant->id,
+            'last_read' => null,
+        ]);
     }
 
     /** @test */
     public function mark_participant_read_updates_participant_when_no_thread_supplied()
     {
+        $read = now()->addMinutes(5);
+
+        Carbon::setTestNow($read);
+
         app(MarkParticipantRead::class)->withoutDispatches()->execute($this->participant);
 
-        $this->assertNotNull($this->participant->last_read);
+        $this->assertDatabaseHas('participants', [
+            'id' => $this->participant->id,
+            'last_read' => $read,
+        ]);
     }
 }

@@ -35,8 +35,8 @@ class JoinWithInviteTest extends FeatureTestCase
                 'owner_id' => $tippin->getKey(),
                 'owner_type' => get_class($tippin),
                 'code' => 'TEST1234',
-                'max_use' => 1,
-                'uses' => 0,
+                'max_use' => 10,
+                'uses' => 2,
                 'expires_at' => now()->addHour(),
             ]);
 
@@ -63,7 +63,7 @@ class JoinWithInviteTest extends FeatureTestCase
 
         $this->assertDatabaseHas('thread_invites', [
             'id' => $this->invite->id,
-            'uses' => 1,
+            'uses' => 3,
         ]);
     }
 

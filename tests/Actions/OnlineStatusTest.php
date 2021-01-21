@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Messenger\OnlineStatus;
@@ -58,6 +59,8 @@ class OnlineStatusTest extends FeatureTestCase
     {
         $before = now()->subMinutes(5);
 
+        Carbon::setTestNow($before);
+
         $this->tippin->update([
             'updated_at' => $before,
         ]);
@@ -68,7 +71,10 @@ class OnlineStatusTest extends FeatureTestCase
 
         app(OnlineStatus::class)->withoutDispatches()->execute(false);
 
-        $this->assertSame($before->toDayDateTimeString(), $this->tippin->updated_at->toDayDateTimeString());
+        $this->assertDatabaseHas('users', [
+            'id' => $this->tippin->getKey(),
+            'updated_at' => $before,
+        ]);
     }
 
     /** @test */
