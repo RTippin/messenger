@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
@@ -49,9 +50,9 @@ class StoreSystemMessageTest extends FeatureTestCase
     /** @test */
     public function system_message_updates_thread_timestamp()
     {
-        $threadUpdatedAt = $this->group->updated_at->toDayDateTimeString();
+        $updated = now()->addMinutes(5);
 
-        $this->travel(5)->minutes();
+        Carbon::setTestNow($updated);
 
         app(StoreSystemMessage::class)->withoutDispatches()->execute(
             $this->group,
@@ -60,7 +61,10 @@ class StoreSystemMessageTest extends FeatureTestCase
             'GROUP_CREATED'
         );
 
-        $this->assertNotSame($threadUpdatedAt, $this->group->updated_at->toDayDateTimeString());
+        $this->assertDatabaseHas('threads', [
+            'id' => $this->group->id,
+            'updated_at' => $updated,
+        ]);
     }
 
     /** @test */

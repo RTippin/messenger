@@ -54,8 +54,6 @@ class UpdateMessengerSettingsTest extends FeatureTestCase
             'online_status' => 0,
         ]);
 
-        $this->assertSame(0, Messenger::getProviderMessenger()->online_status);
-
         $this->assertFalse(Cache::has("user:online:{$this->tippin->getKey()}"));
     }
 
@@ -65,8 +63,6 @@ class UpdateMessengerSettingsTest extends FeatureTestCase
         app(UpdateMessengerSettings::class)->execute([
             'online_status' => 1,
         ]);
-
-        $this->assertSame(1, Messenger::getProviderMessenger()->online_status);
 
         $this->assertTrue(Cache::has("user:online:{$this->tippin->getKey()}"));
 
@@ -79,8 +75,6 @@ class UpdateMessengerSettingsTest extends FeatureTestCase
         app(UpdateMessengerSettings::class)->execute([
             'online_status' => 2,
         ]);
-
-        $this->assertSame(2, Messenger::getProviderMessenger()->online_status);
 
         $this->assertTrue(Cache::has("user:online:{$this->tippin->getKey()}"));
 

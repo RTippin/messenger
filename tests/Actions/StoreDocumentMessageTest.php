@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
@@ -81,23 +82,29 @@ class StoreDocumentMessageTest extends FeatureTestCase
     /** @test */
     public function store_document_updates_thread_and_participant_timestamps()
     {
-        $threadUpdatedAt = $this->private->updated_at->toDayDateTimeString();
+        $updated = now()->addMinutes(5);
 
-        $this->travel(5)->minutes();
+        Carbon::setTestNow($updated);
 
         app(StoreDocumentMessage::class)->withoutDispatches()->execute(
             $this->private,
             UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')
         );
 
-        $this->assertNotSame($threadUpdatedAt, $this->private->updated_at->toDayDateTimeString());
-
         $participant = $this->private->participants()
             ->where('owner_id', '=', $this->tippin->getKey())
             ->where('owner_type', '=', get_class($this->tippin))
             ->first();
 
-        $this->assertNotNull($participant->last_read);
+        $this->assertDatabaseHas('threads', [
+            'id' => $this->private->id,
+            'updated_at' => $updated,
+        ]);
+
+        $this->assertDatabaseHas('participants', [
+            'id' => $participant->id,
+            'last_read' => $updated,
+        ]);
     }
 
     /** @test */

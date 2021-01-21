@@ -118,10 +118,6 @@ class StoreManyParticipantsTest extends FeatureTestCase
             'deleted_at' => now(),
         ]));
 
-        $this->assertSoftDeleted('participants', [
-            'id' => $participant->id,
-        ]);
-
         $this->createFriends($this->tippin, $this->doe);
 
         app(StoreManyParticipants::class)->withoutDispatches()->execute(

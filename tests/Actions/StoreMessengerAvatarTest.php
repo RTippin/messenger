@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Messenger\StoreMessengerAvatar;
 use RTippin\Messenger\Contracts\MessengerProvider;
@@ -35,10 +36,17 @@ class StoreMessengerAvatarTest extends FeatureTestCase
     /** @test */
     public function upload_avatar_updates_provider()
     {
-        $this->assertNull($this->tippin->picture);
+        $updated = now()->addMinutes(5);
+
+        Carbon::setTestNow($updated);
 
         app(StoreMessengerAvatar::class)->execute([
             'image' => UploadedFile::fake()->image('avatar.jpg'),
+        ]);
+
+        $this->assertDatabaseHas('users', [
+            'id' => $this->tippin->getKey(),
+            'updated_at' => $updated,
         ]);
 
         $this->assertNotNull($this->tippin->picture);

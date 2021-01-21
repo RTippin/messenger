@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
@@ -77,23 +78,29 @@ class StoreMessageTest extends FeatureTestCase
     /** @test */
     public function store_message_updates_thread_and_participant_timestamps()
     {
-        $threadUpdatedAt = $this->private->updated_at->toDayDateTimeString();
+        $updated = now()->addMinutes(5);
 
-        $this->travel(5)->minutes();
+        Carbon::setTestNow($updated);
 
         app(StoreMessage::class)->withoutDispatches()->execute(
             $this->private,
             'Hello World'
         );
 
-        $this->assertNotSame($threadUpdatedAt, $this->private->updated_at->toDayDateTimeString());
-
         $participant = $this->private->participants()
             ->where('owner_id', '=', $this->tippin->getKey())
             ->where('owner_type', '=', get_class($this->tippin))
             ->first();
 
-        $this->assertNotNull($participant->fresh()->last_read);
+        $this->assertDatabaseHas('threads', [
+            'id' => $this->private->id,
+            'updated_at' => $updated,
+        ]);
+
+        $this->assertDatabaseHas('participants', [
+            'id' => $participant->id,
+            'last_read' => $updated,
+        ]);
     }
 
     /** @test */
