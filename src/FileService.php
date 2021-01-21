@@ -198,8 +198,7 @@ class FileService
     {
         return $file->storeAs($this->directory, $this->name, [
             'disk' => $this->disk,
-        ]
-        );
+        ]);
     }
 
     /**
