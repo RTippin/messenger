@@ -814,7 +814,7 @@ trait ConfigInterface
     {
         if (count($providers)) {
             $this->providers = $this->providersVerification->formatValidProviders($providers);
-        } else if ($this->isProvidersCached) {
+        } elseif ($this->isProvidersCached) {
             $providersFile = $this->loadCachedProvidersFile();
             if ($providersFile) {
                 $this->providers = collect($providersFile);
