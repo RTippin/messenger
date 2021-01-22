@@ -2,9 +2,12 @@
 
 namespace RTippin\Messenger\Tests\Messenger;
 
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Exceptions\InvalidMessengerProvider;
 use RTippin\Messenger\Facades\Messenger as MessengerFacade;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Tests\MessengerTestCase;
+use RTippin\Messenger\Tests\stubs\OtherModel;
 
 class MessengerTest extends MessengerTestCase
 {
@@ -27,6 +30,46 @@ class MessengerTest extends MessengerTestCase
     public function messenger_helper_same_instance_as_container()
     {
         $this->assertSame($this->messenger, messenger());
+    }
+
+    /** @test */
+    public function messenger_throws_exception_when_setting_invalid_provider()
+    {
+        $this->expectException(InvalidMessengerProvider::class);
+
+        $this->messenger->setProvider(new OtherModel);
+    }
+
+    /** @test */
+    public function messenger_sets_valid_provider()
+    {
+        $model = $this->getModelUser();
+
+        $provider = new $model([
+            'id' => 1,
+            'name' => 'Richard Tippin',
+            'email' => 'richard.tippin@gmail.com',
+            'password' => 'secret',
+        ]);
+
+        $this->messenger->setProvider($provider);
+
+        $this->assertSame($provider, $this->messenger->getProvider());
+        $this->assertSame('user', $this->messenger->getProviderAlias());
+        $this->assertSame(1, $this->messenger->getProviderId());
+        $this->assertSame($this->getModelUser(), $this->messenger->getProviderClass());
+        $this->assertSame($provider, app(MessengerProvider::class));
+        $this->assertTrue($this->messenger->providerHasFriends());
+        $this->assertTrue($this->messenger->providerHasDevices());
+        $this->assertTrue($this->messenger->isProviderSet());
+
+        $expected = [
+            $this->getModelUser(),
+            $this->getModelCompany(),
+        ];
+
+        $this->assertSame($expected, $this->messenger->getFriendableForCurrentProvider());
+        $this->assertSame($expected, $this->messenger->getSearchableForCurrentProvider());
     }
 
     /** @test */
@@ -96,7 +139,6 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->setThreadAvatarUpload(false);
         $this->messenger->setProviderAvatarUpload(false);
         $this->messenger->setProviderAvatarRemoval(false);
-
 
         // Now check values changed.
         $this->assertTrue($this->messenger->isPushNotificationsEnabled());

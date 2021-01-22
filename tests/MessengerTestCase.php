@@ -5,10 +5,6 @@ namespace RTippin\Messenger\Tests;
 use Orchestra\Testbench\TestCase;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\MessengerServiceProvider;
-use RTippin\Messenger\Tests\stubs\CompanyModel;
-use RTippin\Messenger\Tests\stubs\CompanyModelUuid;
-use RTippin\Messenger\Tests\stubs\UserModel;
-use RTippin\Messenger\Tests\stubs\UserModelUuid;
 
 class MessengerTestCase extends TestCase
 {
@@ -51,7 +47,7 @@ class MessengerTestCase extends TestCase
     {
         return [
             'user' => [
-                'model' => (self::UseUUID ? UserModelUuid::class : UserModel::class),
+                'model' => $this->getModelUser(),
                 'searchable' => true,
                 'friendable' => true,
                 'devices' => true,
@@ -63,7 +59,7 @@ class MessengerTestCase extends TestCase
                 ],
             ],
             'company' => [
-                'model' => (self::UseUUID ? CompanyModelUuid::class : CompanyModel::class),
+                'model' => $this->getModelCompany(),
                 'searchable' => true,
                 'friendable' => true,
                 'devices' => true,

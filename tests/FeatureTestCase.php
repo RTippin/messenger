@@ -4,10 +4,6 @@ namespace RTippin\Messenger\Tests;
 
 use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Tests\stubs\CompanyModel;
-use RTippin\Messenger\Tests\stubs\CompanyModelUuid;
-use RTippin\Messenger\Tests\stubs\UserModel;
-use RTippin\Messenger\Tests\stubs\UserModelUuid;
 
 class FeatureTestCase extends MessengerTestCase
 {
@@ -63,12 +59,9 @@ class FeatureTestCase extends MessengerTestCase
             'password' => 'secret',
         ];
 
-        /** @var UserModelUuid|UserModel $model */
-        $model = self::UseUUID ? UserModelUuid::class : UserModel::class;
+        Messenger::getProviderMessenger($this->getModelUser()::create($tippin));
 
-        Messenger::getProviderMessenger($model::create($tippin));
-
-        Messenger::getProviderMessenger($model::create($doe));
+        Messenger::getProviderMessenger($this->getModelUser()::create($doe));
     }
 
     private function storeBaseCompanies(): void
@@ -85,11 +78,8 @@ class FeatureTestCase extends MessengerTestCase
             'password' => 'secret',
         ];
 
-        /** @var CompanyModelUuid|CompanyModel $model */
-        $model = self::UseUUID ? CompanyModelUuid::class : CompanyModel::class;
+        Messenger::getProviderMessenger($this->getModelCompany()::create($developers));
 
-        Messenger::getProviderMessenger($model::create($developers));
-
-        Messenger::getProviderMessenger($model::create($laravel));
+        Messenger::getProviderMessenger($this->getModelCompany()::create($laravel));
     }
 }

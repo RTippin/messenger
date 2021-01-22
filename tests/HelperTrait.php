@@ -16,14 +16,27 @@ use RTippin\Messenger\Tests\stubs\UserModelUuid;
 trait HelperTrait
 {
     /**
+     * @return MessengerProvider|UserModel|UserModelUuid|string
+     */
+    protected function getModelUser()
+    {
+        return self::UseUUID ? UserModelUuid::class : UserModel::class;
+    }
+
+    /**
+     * @return MessengerProvider|CompanyModel|CompanyModelUuid|string
+     */
+    protected function getModelCompany()
+    {
+        return self::UseUUID ? CompanyModelUuid::class : CompanyModel::class;
+    }
+
+    /**
      * @return MessengerProvider|UserModel|UserModelUuid
      */
     protected function userTippin()
     {
-        /** @var UserModel|UserModelUuid $model */
-        $model = self::UseUUID ? UserModelUuid::class : UserModel::class;
-
-        return $model::where('email', '=', 'richard.tippin@gmail.com')->first();
+        return $this->getModelUser()::where('email', '=', 'richard.tippin@gmail.com')->first();
     }
 
     /**
@@ -31,10 +44,7 @@ trait HelperTrait
      */
     protected function userDoe()
     {
-        /** @var UserModel|UserModelUuid $model */
-        $model = self::UseUUID ? UserModelUuid::class : UserModel::class;
-
-        return $model::where('email', '=', 'doe@example.net')->first();
+        return $this->getModelUser()::where('email', '=', 'doe@example.net')->first();
     }
 
     /**
@@ -42,10 +52,7 @@ trait HelperTrait
      */
     protected function companyDevelopers()
     {
-        /** @var CompanyModel|CompanyModelUuid $model */
-        $model = self::UseUUID ? CompanyModelUuid::class : CompanyModel::class;
-
-        return $model::where('company_email', '=', 'developers@example.net')->first();
+        return $this->getModelCompany()::where('company_email', '=', 'developers@example.net')->first();
     }
 
     /**
@@ -53,10 +60,7 @@ trait HelperTrait
      */
     protected function companyLaravel()
     {
-        /** @var CompanyModel|CompanyModelUuid $model */
-        $model = self::UseUUID ? CompanyModelUuid::class : CompanyModel::class;
-
-        return $model::where('company_email', '=', 'laravel@example.net')->first();
+        return $this->getModelCompany()::where('company_email', '=', 'laravel@example.net')->first();
     }
 
     /**
@@ -86,9 +90,7 @@ trait HelperTrait
             'password' => 'secret',
         ];
 
-        return self::UseUUID
-            ? CompanyModelUuid::create($someCompany)
-            : CompanyModel::create($someCompany);
+        return $this->getModelCompany()::create($someCompany);
     }
 
     protected function createFriends(MessengerProvider $one, MessengerProvider $two): array
