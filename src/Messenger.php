@@ -201,6 +201,14 @@ final class Messenger implements MessengerInterface
     }
 
     /**
+     * Return the current instance of messenger.
+     */
+    public function instance(): self
+    {
+        return $this;
+    }
+
+    /**
      * Reset all values back to default.
      */
     public function reset(): void

@@ -101,6 +101,7 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static getDefaultThreadAvatars(string $image = null)
  * @method static reset()
  * @method static setMessengerProviders(array $providers = [])
+ * @method static instance()
  *
  * @mixin \RTippin\Messenger\Messenger
  * @see MessengerInterface
@@ -114,6 +115,6 @@ class Messenger extends Facade
      */
     protected static function getFacadeAccessor(): string
     {
-        return 'messenger';
+        return \RTippin\Messenger\Messenger::class;
     }
 }

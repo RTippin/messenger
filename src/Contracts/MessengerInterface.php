@@ -13,6 +13,12 @@ use RTippin\Messenger\Models\Participant;
 interface MessengerInterface
 {
     /**
+     * Return the current instance of messenger.
+     * @return $this
+     */
+    public function instance();
+
+    /**
      * Check if provider is valid by seeing if alias exist.
      *
      * @param mixed $provider
