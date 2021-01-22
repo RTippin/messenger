@@ -15,9 +15,12 @@ use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Traits\ChecksReflection;
 
 abstract class BaseMessengerAction implements Action
 {
+    use ChecksReflection;
+
     /**
      * @var null|string|Model|mixed|Collection
      */
@@ -120,13 +123,8 @@ abstract class BaseMessengerAction implements Action
      */
     public function chain(string $abstractAction): Action
     {
-        try {
-            if ((new ReflectionClass($abstractAction))
-                ->isSubclassOf(Action::class)) {
-                return app($abstractAction)->continuesChain();
-            }
-        } catch (ReflectionException $e) {
-            //skip
+        if ($this->checkIsSubclassOf($abstractAction, Action::class)) {
+            return app($abstractAction)->continuesChain();
         }
 
         throw new LogicException('Invalid chained action.');

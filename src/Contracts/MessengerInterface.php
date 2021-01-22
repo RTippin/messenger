@@ -604,11 +604,4 @@ interface MessengerInterface
      * Reset all values back to default.
      */
     public function reset(): void;
-
-    /**
-     * @param string $abstract
-     * @param string $contract
-     * @return bool
-     */
-    public function passesReflectionInterface(string $abstract, string $contract): bool;
 }

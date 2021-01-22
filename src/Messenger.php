@@ -6,8 +6,6 @@ use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
-use ReflectionClass;
-use ReflectionException;
 use RTippin\Messenger\Contracts\MessengerInterface;
 
 /**
@@ -200,22 +198,6 @@ final class Messenger implements MessengerInterface
             ->map(fn ($provider) => $provider['model'])
             ->flatten()
             ->toArray();
-    }
-
-    /**
-     * @param string $abstract
-     * @param string $contract
-     * @return bool
-     */
-    public function passesReflectionInterface(string $abstract, string $contract): bool
-    {
-        try {
-            return (new ReflectionClass($abstract))->implementsInterface($contract);
-        } catch (ReflectionException $e) {
-            //skip
-        }
-
-        return false;
     }
 
     /**

@@ -4,13 +4,14 @@ namespace RTippin\Messenger;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
-use ReflectionClass;
-use ReflectionException;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Searchable;
+use RTippin\Messenger\Traits\ChecksReflection;
 
 class ProvidersVerification
 {
+    use ChecksReflection;
+
     /**
      * On boot, we set the services allowed provider classes.
      * We pass them through some validations.
@@ -114,7 +115,7 @@ class ProvidersVerification
             && array_key_exists('can_message', $provider['provider_interactions'])
             && array_key_exists('can_search', $provider['provider_interactions'])
             && array_key_exists('can_friend', $provider['provider_interactions'])
-            && $this->passesReflectionInterface(
+            && $this->checkImplementsInterface(
                 $provider['model'], MessengerProvider::class
             );
     }
@@ -136,7 +137,7 @@ class ProvidersVerification
     protected function passesSearchable(array $provider): bool
     {
         return $provider['searchable'] === true
-            && $this->passesReflectionInterface(
+            && $this->checkImplementsInterface(
                 $provider['model'], Searchable::class
             );
     }
@@ -283,21 +284,5 @@ class ProvidersVerification
                 $alias
             )
         );
-    }
-
-    /**
-     * @param string $abstract
-     * @param string $contract
-     * @return bool
-     */
-    protected function passesReflectionInterface(string $abstract, string $contract): bool
-    {
-        try {
-            return (new ReflectionClass($abstract))->implementsInterface($contract);
-        } catch (ReflectionException $e) {
-            //skip
-        }
-
-        return false;
     }
 }

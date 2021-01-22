@@ -17,9 +17,12 @@ use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\ParticipantRepository;
+use RTippin\Messenger\Traits\ChecksReflection;
 
 class BroadcastBroker implements BroadcastDriver
 {
+    use ChecksReflection;
+
     /**
      * @var Messenger
      */
@@ -182,7 +185,7 @@ class BroadcastBroker implements BroadcastDriver
     {
         if (! is_null($this->recipients)
             && $this->recipients->count()
-            && $this->messenger->passesReflectionInterface(
+            && $this->checkImplementsInterface(
                 $abstract, BroadcastEvent::class
             )) {
             if ($this->usingPresence) {
