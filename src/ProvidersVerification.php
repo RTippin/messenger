@@ -40,9 +40,7 @@ class ProvidersVerification
      */
     protected function collectAndFilterProviders(array $providers): Collection
     {
-        return collect($providers)->filter(
-            fn ($provider) => $this->passesProviderValidation($provider)
-        );
+        return collect($providers)->filter(fn ($provider) => $this->passesProviderValidation($provider));
     }
 
     /**
@@ -55,8 +53,7 @@ class ProvidersVerification
     {
         return $providers->mapWithKeys(fn ($provider, $alias) => [
             $this->sanitizeAlias($alias) => $provider,
-        ]
-        );
+        ]);
     }
 
     /**
@@ -92,8 +89,7 @@ class ProvidersVerification
                 'can_search' => $this->validatesCanSearch($alias, $provider, $providers),
                 'can_friend' => $this->validatesCanFriend($alias, $provider, $providers),
             ],
-        ])
-        );
+        ]));
     }
 
     /**
@@ -115,9 +111,7 @@ class ProvidersVerification
             && array_key_exists('can_message', $provider['provider_interactions'])
             && array_key_exists('can_search', $provider['provider_interactions'])
             && array_key_exists('can_friend', $provider['provider_interactions'])
-            && $this->checkImplementsInterface(
-                $provider['model'], MessengerProvider::class
-            );
+            && $this->checkImplementsInterface($provider['model'], MessengerProvider::class);
     }
 
     /**
@@ -137,9 +131,7 @@ class ProvidersVerification
     protected function passesSearchable(array $provider): bool
     {
         return $provider['searchable'] === true
-            && $this->checkImplementsInterface(
-                $provider['model'], Searchable::class
-            );
+            && $this->checkImplementsInterface($provider['model'], Searchable::class);
     }
 
     /**

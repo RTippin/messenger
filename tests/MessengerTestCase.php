@@ -50,6 +50,14 @@ class MessengerTestCase extends TestCase
     protected function getBaseProvidersConfig(): array
     {
         return [
+            'user' => $this->getUserProviderConfig()['user'],
+            'company' => $this->getCompanyProviderConfig()['company'],
+        ];
+    }
+
+    protected function getUserProviderConfig(): array
+    {
+        return [
             'user' => [
                 'model' => (self::UseUUID ? UserModelUuid::class : UserModel::class),
                 'searchable' => true,
@@ -62,6 +70,12 @@ class MessengerTestCase extends TestCase
                     'can_friend' => true,
                 ],
             ],
+        ];
+    }
+
+    protected function getCompanyProviderConfig(): array
+    {
+        return [
             'company' => [
                 'model' => (self::UseUUID ? CompanyModelUuid::class : CompanyModel::class),
                 'searchable' => true,
