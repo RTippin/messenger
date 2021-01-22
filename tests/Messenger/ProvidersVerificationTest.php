@@ -3,18 +3,21 @@
 namespace RTippin\Messenger\Tests\Messenger;
 
 use Illuminate\Support\Collection;
+use RTippin\Messenger\ProvidersVerification;
 use RTippin\Messenger\Tests\MessengerTestCase;
-use RTippin\Messenger\Tests\stubs\ProvidersVerificationProxy;
+use RTippin\Messenger\Tests\stubs\CompanyModel;
+use RTippin\Messenger\Tests\stubs\OtherModel;
+use RTippin\Messenger\Tests\stubs\UserModel;
 
 class ProvidersVerificationTest extends MessengerTestCase
 {
-    private ProvidersVerificationProxy $verify;
+    private ProvidersVerification $verify;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->verify = new ProvidersVerificationProxy;
+        $this->verify = new ProvidersVerification;
     }
 
     /** @test */
@@ -24,18 +27,242 @@ class ProvidersVerificationTest extends MessengerTestCase
 
         $this->assertInstanceOf(Collection::class, $emptyResult);
 
-        $this->assertSame(0, $emptyResult->count());
+        $this->assertCount(0, $emptyResult->toArray());
     }
 
     /** @test */
-    public function provider_passes_checks_and_returns_as_collection()
+    public function model_not_implementing_provider_ignored()
     {
-        $user = $this->getUserProviderConfig();
+        $result = $this->verify->formatValidProviders([
+            'other' => [
+                'model' => OtherModel::class,
+                'searchable' => false,
+                'friendable' => false,
+                'devices' => false,
+                'default_avatar' => '/path/to/some.png',
+                'provider_interactions' => [
+                    'can_message' => true,
+                    'can_search' => true,
+                    'can_friend' => true,
+                ],
+            ],
+        ]);
 
-        $result = $this->verify->collectAndFilterProviders($user);
+        $this->assertCount(0, $result->toArray());
+    }
 
-        $this->assertInstanceOf(Collection::class, $result);
+    /** @test */
+    public function user_passes_and_returns_formatted()
+    {
+        $result = $this->verify->formatValidProviders($this->defaultUserConfig());
 
-        $this->assertSame($user, $result->toArray());
+        $expected = [
+            'user' => [
+                'model' => UserModel::class,
+                'searchable' => true,
+                'friendable' => true,
+                'devices' => true,
+                'default_avatar' => '/path/to/user.png',
+                'provider_interactions' => [
+                    'can_message' => ['user'],
+                    'can_search' => ['user'],
+                    'can_friend' => ['user'],
+                ],
+            ],
+        ];
+
+        $this->assertSame($expected, $result->toArray());
+    }
+
+    /** @test */
+    public function company_passes_and_returns_formatted()
+    {
+        $result = $this->verify->formatValidProviders($this->defaultCompanyConfig());
+
+        $expected = [
+            'company' => [
+                'model' => CompanyModel::class,
+                'searchable' => true,
+                'friendable' => true,
+                'devices' => true,
+                'default_avatar' => '/path/to/company.png',
+                'provider_interactions' => [
+                    'can_message' => ['company'],
+                    'can_search' => ['company'],
+                    'can_friend' => ['company'],
+                ],
+            ],
+        ];
+
+        $this->assertSame($expected, $result->toArray());
+    }
+
+    /** @test */
+    public function user_and_company_pass_and_returns_formatted()
+    {
+        $providers['user'] = $this->defaultUserConfig()['user'];
+
+        $providers['company'] = $this->defaultCompanyConfig()['company'];
+
+        $result = $this->verify->formatValidProviders($providers);
+
+        $expected = [
+            'user' => [
+                'model' => UserModel::class,
+                'searchable' => true,
+                'friendable' => true,
+                'devices' => true,
+                'default_avatar' => '/path/to/user.png',
+                'provider_interactions' => [
+                    'can_message' => ['user', 'company'],
+                    'can_search' => ['user', 'company'],
+                    'can_friend' => ['user', 'company'],
+                ],
+            ],
+            'company' => [
+                'model' => CompanyModel::class,
+                'searchable' => true,
+                'friendable' => true,
+                'devices' => true,
+                'default_avatar' => '/path/to/company.png',
+                'provider_interactions' => [
+                    'can_message' => ['user', 'company'],
+                    'can_search' => ['user', 'company'],
+                    'can_friend' => ['user', 'company'],
+                ],
+            ],
+        ];
+
+        $this->assertSame($expected, $result->toArray());
+    }
+
+    /** @test */
+    public function user_and_company_formats_interactions()
+    {
+        $result = $this->verify->formatValidProviders([
+            'user' => [
+                'model' => UserModel::class,
+                'searchable' => true,
+                'friendable' => true,
+                'devices' => true,
+                'default_avatar' => '/path/to/user.png',
+                'provider_interactions' => [
+                    'can_message' => false,
+                    'can_search' => 'user',
+                    'can_friend' => 'company',
+                ],
+            ],
+            'company' => [
+                'model' => CompanyModel::class,
+                'searchable' => true,
+                'friendable' => true,
+                'devices' => true,
+                'default_avatar' => '/path/to/company.png',
+                'provider_interactions' => [
+                    'can_message' => null,
+                    'can_search' => 'user|company',
+                    'can_friend' => 'company|user|other',
+                ],
+            ],
+        ]);
+
+        $user = [
+            'can_message' => ['user'],
+            'can_search' => ['user'],
+            'can_friend' => ['company', 'user'],
+        ];
+
+        $company = [
+            'can_message' => ['company'],
+            'can_search' => ['user', 'company'],
+            'can_friend' => ['user', 'company'],
+        ];
+
+        $this->assertSame($user, $result->toArray()['user']['provider_interactions']);
+
+        $this->assertSame($company, $result->toArray()['company']['provider_interactions']);
+    }
+
+    /** @test */
+    public function searchable_and_friendable_override_interactions()
+    {
+        $result = $this->verify->formatValidProviders([
+            'user' => [
+                'model' => UserModel::class,
+                'searchable' => false,
+                'friendable' => false,
+                'devices' => true,
+                'default_avatar' => '/path/to/user.png',
+                'provider_interactions' => [
+                    'can_message' => false,
+                    'can_search' => true,
+                    'can_friend' => true,
+                ],
+            ],
+            'company' => [
+                'model' => CompanyModel::class,
+                'searchable' => false,
+                'friendable' => false,
+                'devices' => true,
+                'default_avatar' => '/path/to/company.png',
+                'provider_interactions' => [
+                    'can_message' => false,
+                    'can_search' => true,
+                    'can_friend' => true,
+                ],
+            ],
+        ]);
+
+        $user = [
+            'can_message' => ['user'],
+            'can_search' => [],
+            'can_friend' => [],
+        ];
+
+        $company = [
+            'can_message' => ['company'],
+            'can_search' => [],
+            'can_friend' => [],
+        ];
+
+        $this->assertSame($user, $result->toArray()['user']['provider_interactions']);
+
+        $this->assertSame($company, $result->toArray()['company']['provider_interactions']);
+    }
+
+    private function defaultUserConfig(): array
+    {
+        return [
+            'user' => [
+                'model' => UserModel::class,
+                'searchable' => true,
+                'friendable' => true,
+                'devices' => true,
+                'default_avatar' => '/path/to/user.png',
+                'provider_interactions' => [
+                    'can_message' => true,
+                    'can_search' => true,
+                    'can_friend' => true,
+                ],
+            ],
+        ];
+    }
+
+    private function defaultCompanyConfig(): array
+    {
+        return [
+            'company' => [
+                'model' => CompanyModel::class,
+                'searchable' => true,
+                'friendable' => true,
+                'devices' => true,
+                'default_avatar' => '/path/to/company.png',
+                'provider_interactions' => [
+                    'can_message' => true,
+                    'can_search' => true,
+                    'can_friend' => true,
+                ],
+            ],
+        ];
     }
 }

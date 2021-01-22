@@ -50,38 +50,24 @@ class MessengerTestCase extends TestCase
     protected function getBaseProvidersConfig(): array
     {
         return [
-            'user' => $this->getUserProviderConfig()['user'],
-            'company' => $this->getCompanyProviderConfig()['company'],
-        ];
-    }
-
-    protected function getUserProviderConfig(): array
-    {
-        return [
             'user' => [
                 'model' => (self::UseUUID ? UserModelUuid::class : UserModel::class),
                 'searchable' => true,
                 'friendable' => true,
                 'devices' => true,
-                'default_avatar' => public_path('vendor/messenger/images/users.png'),
+                'default_avatar' => '/path/to/image.png',
                 'provider_interactions' => [
                     'can_message' => true,
                     'can_search' => true,
                     'can_friend' => true,
                 ],
             ],
-        ];
-    }
-
-    protected function getCompanyProviderConfig(): array
-    {
-        return [
             'company' => [
                 'model' => (self::UseUUID ? CompanyModelUuid::class : CompanyModel::class),
                 'searchable' => true,
                 'friendable' => true,
                 'devices' => true,
-                'default_avatar' => public_path('vendor/messenger/images/company.png'),
+                'default_avatar' => '/path/to/image.png',
                 'provider_interactions' => [
                     'can_message' => true,
                     'can_search' => true,
