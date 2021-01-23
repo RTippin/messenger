@@ -610,4 +610,9 @@ interface MessengerInterface
      * Reset all values back to default.
      */
     public function reset(): void;
+
+    /**
+     * @return array
+     */
+    public function getMessengerProviders(): array;
 }

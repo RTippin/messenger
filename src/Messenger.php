@@ -213,6 +213,10 @@ final class Messenger implements MessengerInterface
      */
     public function reset(): void
     {
+        $this->ghost = null;
+
+        $this->ghostParticipant = null;
+
         $this->unsetProvider()->boot();
     }
 

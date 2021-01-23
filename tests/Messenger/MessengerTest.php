@@ -6,8 +6,10 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Exceptions\InvalidMessengerProvider;
 use RTippin\Messenger\Facades\Messenger as MessengerFacade;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Tests\MessengerTestCase;
 use RTippin\Messenger\Tests\stubs\OtherModel;
+use RTippin\Messenger\Tests\stubs\UserModel;
 
 class MessengerTest extends MessengerTestCase
 {
@@ -38,6 +40,28 @@ class MessengerTest extends MessengerTestCase
         $this->expectException(InvalidMessengerProvider::class);
 
         $this->messenger->setProvider(new OtherModel);
+    }
+
+    /** @test */
+    public function messenger_resolves_ghost_user_when_requested()
+    {
+        $ghost = $this->messenger->getGhostProvider();
+
+        $this->assertInstanceOf(GhostUser::class, $ghost);
+    }
+
+    /** @test */
+    public function messenger_resolves_ghost_user_once()
+    {
+        $ghost = $this->messenger->getGhostProvider();
+
+        $this->assertSame($ghost, $this->messenger->getGhostProvider());
+        $this->assertSame($ghost, messenger()->getGhostProvider());
+        $this->assertSame($ghost, MessengerFacade::getGhostProvider());
+
+        $this->messenger->reset();
+
+        $this->assertNotSame($ghost, $this->messenger->getGhostProvider());
     }
 
     /** @test */
@@ -110,6 +134,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertTrue($this->messenger->isThreadAvatarUploadEnabled());
         $this->assertTrue($this->messenger->isProviderAvatarUploadEnabled());
         $this->assertTrue($this->messenger->isProviderAvatarRemovalEnabled());
+        $this->assertCount(2, $this->messenger->getMessengerProviders());
     }
 
     /** @test */
@@ -139,6 +164,20 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->setThreadAvatarUpload(false);
         $this->messenger->setProviderAvatarUpload(false);
         $this->messenger->setProviderAvatarRemoval(false);
+        $this->messenger->setMessengerProviders([
+            'user' => [
+                'model' => UserModel::class,
+                'searchable' => false,
+                'friendable' => false,
+                'devices' => false,
+                'default_avatar' => '/path/to/user.png',
+                'provider_interactions' => [
+                    'can_message' => false,
+                    'can_search' => false,
+                    'can_friend' => false,
+                ],
+            ],
+        ]);
 
         // Now check values changed.
         $this->assertTrue($this->messenger->isPushNotificationsEnabled());
@@ -164,5 +203,6 @@ class MessengerTest extends MessengerTestCase
         $this->assertFalse($this->messenger->isThreadAvatarUploadEnabled());
         $this->assertFalse($this->messenger->isProviderAvatarUploadEnabled());
         $this->assertFalse($this->messenger->isProviderAvatarRemovalEnabled());
+        $this->assertCount(1, $this->messenger->getMessengerProviders());
     }
 }

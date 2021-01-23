@@ -806,6 +806,14 @@ trait ConfigInterface
     }
 
     /**
+     * @return array
+     */
+    public function getMessengerProviders(): array
+    {
+        return $this->providers->toArray();
+    }
+
+    /**
      * Set providers if provided, from cache if exist, otherwise set from config.
      *
      * @param array $providers

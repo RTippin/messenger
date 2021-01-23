@@ -102,6 +102,7 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static reset()
  * @method static setMessengerProviders(array $providers = [])
  * @method static instance()
+ * @method static getMessengerProviders()
  *
  * @mixin \RTippin\Messenger\Messenger
  * @see MessengerInterface
