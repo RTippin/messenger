@@ -35,7 +35,7 @@ trait OnlineInterface
             } elseif ($provider
                 && $this->isValidMessengerProvider($provider)
                 && $this->getOnlineStatusSetting($provider) !== 0) {
-                if ($this->getOnlineStatusSetting($this->getProvider()) === 2) {
+                if ($this->getOnlineStatusSetting($provider) === 2) {
                     $this->setProviderToAway($provider);
                 } else {
                     $this->cacheDriver->put(
