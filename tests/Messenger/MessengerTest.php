@@ -7,6 +7,7 @@ use RTippin\Messenger\Exceptions\InvalidMessengerProvider;
 use RTippin\Messenger\Facades\Messenger as MessengerFacade;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\GhostUser;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Tests\MessengerTestCase;
 use RTippin\Messenger\Tests\stubs\OtherModel;
 use RTippin\Messenger\Tests\stubs\UserModel;
@@ -65,6 +66,26 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
+    public function messenger_resolves_ghost_participant_when_requested()
+    {
+        $participant = $this->messenger->getGhostParticipant('1234');
+
+        $this->assertInstanceOf(Participant::class, $participant);
+    }
+
+    /** @test */
+    public function messenger_resolves_ghost_participant_once_unless_thread_id_changes()
+    {
+        $participant = $this->messenger->getGhostParticipant('1234');
+
+        $this->assertSame($participant, $this->messenger->getGhostParticipant('1234'));
+        $this->assertSame($participant, messenger()->getGhostParticipant('1234'));
+        $this->assertSame($participant, MessengerFacade::getGhostParticipant('1234'));
+
+        $this->assertNotSame($participant, $this->messenger->getGhostParticipant('5678'));
+    }
+
+    /** @test */
     public function messenger_sets_valid_provider()
     {
         $model = $this->getModelUser();
@@ -82,6 +103,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame('user', $this->messenger->getProviderAlias());
         $this->assertSame(1, $this->messenger->getProviderId());
         $this->assertSame($this->getModelUser(), $this->messenger->getProviderClass());
+        $this->assertTrue(app()->bound(MessengerProvider::class));
         $this->assertSame($provider, app(MessengerProvider::class));
         $this->assertTrue($this->messenger->providerHasFriends());
         $this->assertTrue($this->messenger->providerHasDevices());
@@ -94,6 +116,35 @@ class MessengerTest extends MessengerTestCase
 
         $this->assertSame($expected, $this->messenger->getFriendableForCurrentProvider());
         $this->assertSame($expected, $this->messenger->getSearchableForCurrentProvider());
+    }
+
+    /** @test */
+    public function messenger_unsets_provider()
+    {
+        $model = $this->getModelUser();
+
+        $provider = new $model([
+            'id' => 1,
+            'name' => 'Richard Tippin',
+            'email' => 'richard.tippin@gmail.com',
+            'password' => 'secret',
+        ]);
+
+        $this->messenger->setProvider($provider);
+
+        $this->assertSame($provider, $this->messenger->getProvider());
+
+        $this->messenger->unsetProvider();
+
+        $this->assertNull($this->messenger->getProviderAlias());
+        $this->assertNull($this->messenger->getProviderId());
+        $this->assertNull($this->messenger->getProviderClass());
+        $this->assertFalse(app()->bound(MessengerProvider::class));
+        $this->assertFalse($this->messenger->providerHasFriends());
+        $this->assertFalse($this->messenger->providerHasDevices());
+        $this->assertFalse($this->messenger->isProviderSet());
+        $this->assertSame([], $this->messenger->getFriendableForCurrentProvider());
+        $this->assertSame([], $this->messenger->getSearchableForCurrentProvider());
     }
 
     /** @test */

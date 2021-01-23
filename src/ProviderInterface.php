@@ -181,9 +181,9 @@ trait ProviderInterface
     /**
      * Get the current alias of the set Messenger Provider.
      *
-     * @return string
+     * @return string|null
      */
-    public function getProviderAlias(): string
+    public function getProviderAlias(): ?string
     {
         return $this->alias;
     }
