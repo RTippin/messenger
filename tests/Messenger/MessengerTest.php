@@ -148,6 +148,138 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
+    public function messenger_allows_set_provider_to_message_given_provider_first()
+    {
+        $user = $this->getModelUser();
+
+        $company = $this->getModelCompany();
+
+        $providerUser = new $user;
+
+        $providerCompany = new $company;
+
+        $this->messenger->setProvider($providerUser);
+
+        $this->assertTrue($this->messenger->canMessageProviderFirst($providerUser));
+        $this->assertTrue($this->messenger->canMessageProviderFirst($company));
+        $this->assertTrue($this->messenger->canMessageProviderFirst($user));
+        $this->assertTrue($this->messenger->canMessageProviderFirst($providerCompany));
+    }
+
+    /** @test */
+    public function messenger_denies_set_provider_to_message_given_provider_first()
+    {
+        $user = $this->getModelUser();
+
+        $company = $this->getModelCompany();
+
+        $providers = $this->getBaseProvidersConfig();
+
+        $providers['user']['provider_interactions']['can_message'] = false;
+
+        $this->messenger->setMessengerProviders($providers);
+
+        $providerUser = new $user;
+
+        $providerOtherUser = new OtherModel;
+
+        $providerCompany = new $company;
+
+        $this->messenger->setProvider($providerUser);
+
+        $this->assertTrue($this->messenger->canMessageProviderFirst($providerUser));
+        $this->assertFalse($this->messenger->canMessageProviderFirst($company));
+        $this->assertFalse($this->messenger->canMessageProviderFirst($providerOtherUser));
+        $this->assertFalse($this->messenger->canMessageProviderFirst($providerCompany));
+    }
+
+    /** @test */
+    public function messenger_allows_given_provider_to_be_searched_by_set_provider()
+    {
+        $user = $this->getModelUser();
+
+        $company = $this->getModelCompany();
+
+        $providerUser = new $user;
+
+        $providerCompany = new $company;
+
+        $this->messenger->setProvider($providerUser);
+
+        $this->assertTrue($this->messenger->canSearchProvider($providerUser));
+        $this->assertTrue($this->messenger->canSearchProvider($company));
+        $this->assertTrue($this->messenger->canSearchProvider($user));
+        $this->assertTrue($this->messenger->canSearchProvider($providerCompany));
+    }
+
+    /** @test */
+    public function messenger_denies_given_provider_to_be_searched_by_set_provider()
+    {
+        $user = $this->getModelUser();
+
+        $company = $this->getModelCompany();
+
+        $providers = $this->getBaseProvidersConfig();
+
+        $providers['user']['provider_interactions']['can_search'] = false;
+
+        $this->messenger->setMessengerProviders($providers);
+
+        $providerOtherUser = new OtherModel;
+
+        $providerCompany = new $company;
+
+        $this->messenger->setProvider(new $user);
+
+        $this->assertFalse($this->messenger->canSearchProvider($providerOtherUser));
+        $this->assertFalse($this->messenger->canSearchProvider($providerCompany));
+        $this->assertFalse($this->messenger->canSearchProvider($company));
+    }
+
+    /** @test */
+    public function messenger_allows_set_provider_to_initiate_friend_request_with_given_provider()
+    {
+        $user = $this->getModelUser();
+
+        $company = $this->getModelCompany();
+
+        $providerUser = new $user;
+
+        $providerCompany = new $company;
+
+        $this->messenger->setProvider($providerUser);
+
+        $this->assertTrue($this->messenger->canFriendProvider($providerUser));
+        $this->assertTrue($this->messenger->canFriendProvider($company));
+        $this->assertTrue($this->messenger->canFriendProvider($user));
+        $this->assertTrue($this->messenger->canFriendProvider($providerCompany));
+    }
+
+    /** @test */
+    public function messenger_denies_set_provider_to_initiate_friend_request_with_given_provider()
+    {
+        $user = $this->getModelUser();
+
+        $company = $this->getModelCompany();
+
+        $providers = $this->getBaseProvidersConfig();
+
+        $providers['user']['provider_interactions']['can_friend'] = false;
+
+        $this->messenger->setMessengerProviders($providers);
+
+        $providerOtherUser = new OtherModel;
+
+        $providerCompany = new $company;
+
+        $this->messenger->setProvider(new $user);
+
+        $this->assertFalse($this->messenger->canFriendProvider($providerOtherUser));
+        $this->assertFalse($this->messenger->canFriendProvider($providerCompany));
+        $this->assertFalse($this->messenger->canFriendProvider($company));
+    }
+
+    /** @test */
     public function messenger_can_get_configs()
     {
         $this->assertSame('Messenger-Testbench', $this->messenger->getSiteName());

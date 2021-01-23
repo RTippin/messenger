@@ -16,22 +16,6 @@ use RTippin\Messenger\Tests\stubs\UserModelUuid;
 trait HelperTrait
 {
     /**
-     * @return MessengerProvider|UserModel|UserModelUuid|string
-     */
-    protected function getModelUser()
-    {
-        return self::UseUUID ? UserModelUuid::class : UserModel::class;
-    }
-
-    /**
-     * @return MessengerProvider|CompanyModel|CompanyModelUuid|string
-     */
-    protected function getModelCompany()
-    {
-        return self::UseUUID ? CompanyModelUuid::class : CompanyModel::class;
-    }
-
-    /**
      * @return MessengerProvider|UserModel|UserModelUuid
      */
     protected function userTippin()

@@ -229,40 +229,4 @@ class ProvidersVerificationTest extends MessengerTestCase
 
         $this->assertSame($company, $result->toArray()['company']['provider_interactions']);
     }
-
-    private function defaultUserConfig(): array
-    {
-        return [
-            'user' => [
-                'model' => UserModel::class,
-                'searchable' => true,
-                'friendable' => true,
-                'devices' => true,
-                'default_avatar' => '/path/to/user.png',
-                'provider_interactions' => [
-                    'can_message' => true,
-                    'can_search' => true,
-                    'can_friend' => true,
-                ],
-            ],
-        ];
-    }
-
-    private function defaultCompanyConfig(): array
-    {
-        return [
-            'company' => [
-                'model' => CompanyModel::class,
-                'searchable' => true,
-                'friendable' => true,
-                'devices' => true,
-                'default_avatar' => '/path/to/company.png',
-                'provider_interactions' => [
-                    'can_message' => true,
-                    'can_search' => true,
-                    'can_friend' => true,
-                ],
-            ],
-        ];
-    }
 }

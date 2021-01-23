@@ -3,8 +3,13 @@
 namespace RTippin\Messenger\Tests;
 
 use Orchestra\Testbench\TestCase;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\MessengerServiceProvider;
+use RTippin\Messenger\Tests\stubs\CompanyModel;
+use RTippin\Messenger\Tests\stubs\CompanyModelUuid;
+use RTippin\Messenger\Tests\stubs\UserModel;
+use RTippin\Messenger\Tests\stubs\UserModelUuid;
 
 class MessengerTestCase extends TestCase
 {
@@ -71,5 +76,21 @@ class MessengerTestCase extends TestCase
                 ],
             ],
         ];
+    }
+
+    /**
+     * @return MessengerProvider|UserModel|UserModelUuid|string
+     */
+    protected function getModelUser()
+    {
+        return self::UseUUID ? UserModelUuid::class : UserModel::class;
+    }
+
+    /**
+     * @return MessengerProvider|CompanyModel|CompanyModelUuid|string
+     */
+    protected function getModelCompany()
+    {
+        return self::UseUUID ? CompanyModelUuid::class : CompanyModel::class;
     }
 }
