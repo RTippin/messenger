@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\stubs\OtherModel;
 
 class MessengerOnlineTest extends FeatureTestCase
 {
@@ -80,5 +81,17 @@ class MessengerOnlineTest extends FeatureTestCase
         $this->messenger->setProviderToOnline($this->tippin);
 
         $this->assertFalse(Cache::has("user:online:{$this->tippin->getKey()}"));
+    }
+
+    /** @test */
+    public function messenger_doesnt_set_online_cache_key_for_invalid_provider()
+    {
+        $invalid = new OtherModel([
+            'id' => 404,
+        ]);
+
+        $this->messenger->setProviderToOnline($invalid);
+
+        $this->assertFalse(Cache::has("user:online:{$invalid->getKey()}"));
     }
 }
