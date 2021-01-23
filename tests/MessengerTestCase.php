@@ -56,7 +56,7 @@ class MessengerTestCase extends TestCase
                 'searchable' => true,
                 'friendable' => true,
                 'devices' => true,
-                'default_avatar' => '/path/to/image.png',
+                'default_avatar' => '/path/to/user.png',
                 'provider_interactions' => [
                     'can_message' => true,
                     'can_search' => true,
@@ -68,7 +68,7 @@ class MessengerTestCase extends TestCase
                 'searchable' => true,
                 'friendable' => true,
                 'devices' => true,
-                'default_avatar' => '/path/to/image.png',
+                'default_avatar' => '/path/to/company.png',
                 'provider_interactions' => [
                     'can_message' => true,
                     'can_search' => true,

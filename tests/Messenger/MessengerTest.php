@@ -182,6 +182,58 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
+    public function messenger_returns_all_provider_classes()
+    {
+        $expected = [
+            $this->getModelUser(),
+            $this->getModelCompany(),
+        ];
+
+        $this->assertSame($expected, $this->messenger->getAllMessengerProviders());
+    }
+
+    /** @test */
+    public function messenger_returns_provider_classes_that_can_be_searched()
+    {
+        $expected = [
+            $this->getModelUser(),
+            $this->getModelCompany(),
+        ];
+
+        $this->assertSame($expected, $this->messenger->getAllSearchableProviders());
+    }
+
+    /** @test */
+    public function messenger_returns_provider_classes_that_can_be_friended()
+    {
+        $expected = [
+            $this->getModelUser(),
+            $this->getModelCompany(),
+        ];
+
+        $this->assertSame($expected, $this->messenger->getAllFriendableProviders());
+    }
+
+    /** @test */
+    public function messenger_returns_provider_classes_that_have_devices()
+    {
+        $expected = [
+            $this->getModelUser(),
+            $this->getModelCompany(),
+        ];
+
+        $this->assertSame($expected, $this->messenger->getAllProvidersWithDevices());
+    }
+
+    /** @test */
+    public function messenger_returns_default_provider_avatar_path_using_provider_alias()
+    {
+        $this->assertSame('/path/to/user.png', $this->messenger->getProviderDefaultAvatarPath('user'));
+        $this->assertSame('/path/to/company.png', $this->messenger->getProviderDefaultAvatarPath('company'));
+        $this->assertNull($this->messenger->getProviderDefaultAvatarPath('undefined'));
+    }
+
+    /** @test */
     public function messenger_resolves_ghost_user_when_requested()
     {
         $ghost = $this->messenger->getGhostProvider();
