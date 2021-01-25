@@ -10,7 +10,9 @@ use RTippin\Messenger\Contracts\MessengerInterface;
 use RTippin\Messenger\Services\ProvidersVerification;
 
 /**
- * Class Messenger.
+ * Laravel Messenger System.
+ * Created by: Richard Tippin
+ * https://github.com/RTippin/messenger
  */
 final class Messenger implements MessengerInterface
 {
