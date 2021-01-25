@@ -49,7 +49,7 @@ class StartCallTest extends FeatureTestCase
     /** @test */
     public function non_participant_forbidden_to_start_call_in_group()
     {
-        $this->actingAs($this->companyLaravel());
+        $this->actingAs($this->createSomeCompany());
 
         $this->postJson(route('api.messenger.threads.calls.store', [
             'thread' => $this->group->id,

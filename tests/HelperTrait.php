@@ -40,27 +40,15 @@ trait HelperTrait
     }
 
     /**
-     * @return MessengerProvider|CompanyModel|CompanyModelUuid
-     */
-    protected function companyLaravel()
-    {
-        return $this->getModelCompany()::where('company_email', '=', 'laravel@example.net')->first();
-    }
-
-    /**
      * @return MessengerProvider|UserModel|UserModelUuid
      */
     protected function createJaneSmith()
     {
-        $jane = [
+        return $this->getModelUser()::create([
             'name' => 'Jane Smith',
             'email' => 'smith@example.net',
             'password' => 'secret',
-        ];
-
-        return self::UseUUID
-            ? UserModelUuid::create($jane)
-            : UserModel::create($jane);
+        ]);
     }
 
     /**
@@ -68,13 +56,11 @@ trait HelperTrait
      */
     protected function createSomeCompany()
     {
-        $someCompany = [
+        return $this->getModelCompany()::create([
             'company_name' => 'Some Company',
             'company_email' => 'company@example.net',
             'password' => 'secret',
-        ];
-
-        return $this->getModelCompany()::create($someCompany);
+        ]);
     }
 
     protected function createFriends(MessengerProvider $one, MessengerProvider $two): array

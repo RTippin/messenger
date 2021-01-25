@@ -127,7 +127,7 @@ class AddParticipantsTest extends FeatureTestCase
     /** @test */
     public function admin_can_add_many_participants()
     {
-        $laravel = $this->companyLaravel();
+        $company = $this->createSomeCompany();
 
         $smith = $this->createJaneSmith();
 
@@ -138,7 +138,7 @@ class AddParticipantsTest extends FeatureTestCase
 
         $this->createFriends($this->tippin, $smith);
 
-        $this->createFriends($this->tippin, $laravel);
+        $this->createFriends($this->tippin, $company);
 
         $this->actingAs($this->tippin);
 
@@ -151,7 +151,7 @@ class AddParticipantsTest extends FeatureTestCase
                     'alias' => 'user',
                 ],
                 [
-                    'id' => $laravel->getKey(),
+                    'id' => $company->getKey(),
                     'alias' => 'company',
                 ],
             ],
@@ -163,7 +163,7 @@ class AddParticipantsTest extends FeatureTestCase
     /** @test */
     public function non_admin_with_permission_can_add_participants()
     {
-        $laravel = $this->companyLaravel();
+        $company = $this->createSomeCompany();
 
         $this->expectsEvents([
             NewThreadBroadcast::class,
@@ -178,7 +178,7 @@ class AddParticipantsTest extends FeatureTestCase
                 'add_participants' => true,
             ]);
 
-        $this->createFriends($this->doe, $laravel);
+        $this->createFriends($this->doe, $company);
 
         $this->actingAs($this->doe);
 
@@ -187,7 +187,7 @@ class AddParticipantsTest extends FeatureTestCase
         ]), [
             'providers' => [
                 [
-                    'id' => $laravel->getKey(),
+                    'id' => $company->getKey(),
                     'alias' => 'company',
                 ],
             ],
@@ -201,7 +201,7 @@ class AddParticipantsTest extends FeatureTestCase
     {
         $smith = $this->createJaneSmith();
 
-        $laravel = $this->companyLaravel();
+        $company = $this->createSomeCompany();
 
         $this->expectsEvents([
             NewThreadBroadcast::class,
@@ -221,7 +221,7 @@ class AddParticipantsTest extends FeatureTestCase
                     'alias' => 'user',
                 ],
                 [
-                    'id' => $laravel->getKey(),
+                    'id' => $company->getKey(),
                     'alias' => 'company',
                 ],
             ],

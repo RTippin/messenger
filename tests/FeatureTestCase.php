@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests;
 
 use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Messenger as MessengerModel;
 
 class FeatureTestCase extends MessengerTestCase
 {
@@ -47,39 +48,40 @@ class FeatureTestCase extends MessengerTestCase
 
     private function storeBaseUsers(): void
     {
-        $tippin = [
+        $tippin = $this->getModelUser()::create([
             'name' => 'Richard Tippin',
             'email' => 'richard.tippin@gmail.com',
             'password' => 'secret',
-        ];
+        ]);
 
-        $doe = [
+        $doe = $this->getModelUser()::create([
             'name' => 'John Doe',
             'email' => 'doe@example.net',
             'password' => 'secret',
-        ];
+        ]);
 
-        Messenger::getProviderMessenger($this->getModelUser()::create($tippin));
+        MessengerModel::create([
+            'owner_id' => $tippin->getKey(),
+            'owner_type' => get_class($tippin),
+        ]);
 
-        Messenger::getProviderMessenger($this->getModelUser()::create($doe));
+        MessengerModel::create([
+            'owner_id' => $doe->getKey(),
+            'owner_type' => get_class($doe),
+        ]);
     }
 
     private function storeBaseCompanies(): void
     {
-        $developers = [
+        $developers = $this->getModelCompany()::create([
             'company_name' => 'Developers',
             'company_email' => 'developers@example.net',
             'password' => 'secret',
-        ];
+        ]);
 
-        $laravel = [
-            'company_name' => 'Laravel',
-            'company_email' => 'laravel@example.net',
-            'password' => 'secret',
-        ];
-
-        Messenger::getProviderMessenger($this->getModelCompany()::create($developers));
-
-        Messenger::getProviderMessenger($this->getModelCompany()::create($laravel));
+        MessengerModel::create([
+            'owner_id' => $developers->getKey(),
+            'owner_type' => get_class($developers),
+        ]);
     }
 }

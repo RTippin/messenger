@@ -47,7 +47,7 @@ class JoinCallTest extends FeatureTestCase
     /** @test */
     public function non_participant_forbidden_to_join_call()
     {
-        $this->actingAs($this->companyLaravel());
+        $this->actingAs($this->createSomeCompany());
 
         $this->postJson(route('api.messenger.threads.calls.join', [
             'thread' => $this->group->id,

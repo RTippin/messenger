@@ -79,7 +79,7 @@ class SearchProvidersServiceTest extends FeatureTestCase
 
         Messenger::setProvider($this->userTippin());
 
-        $search = $this->search->search('Dev Laravel Doe')->get()->toArray();
+        $search = $this->search->search('Developers Doe')->get()->toArray();
 
         $this->assertCount(1, $search);
 
