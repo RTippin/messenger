@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Tests\Messenger;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\RecipientThreadLocator;
+use RTippin\Messenger\Services\RecipientThreadLocator;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 

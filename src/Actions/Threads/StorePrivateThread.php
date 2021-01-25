@@ -17,7 +17,7 @@ use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Http\Request\PrivateThreadRequest;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\RecipientThreadLocator;
+use RTippin\Messenger\Services\RecipientThreadLocator;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
