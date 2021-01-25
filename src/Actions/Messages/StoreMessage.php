@@ -5,9 +5,9 @@ namespace RTippin\Messenger\Actions\Messages;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use RTippin\Messenger\Contracts\BroadcastDriver;
-use RTippin\Messenger\EmojiConverter;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Services\EmojiConverter;
 use Throwable;
 
 class StoreMessage extends NewMessageAction
