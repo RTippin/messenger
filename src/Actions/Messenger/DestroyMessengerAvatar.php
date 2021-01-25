@@ -2,8 +2,8 @@
 
 namespace RTippin\Messenger\Actions\Messenger;
 
-use RTippin\Messenger\FileService;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Services\FileService;
 
 class DestroyMessengerAvatar extends MessengerAvatarAction
 {

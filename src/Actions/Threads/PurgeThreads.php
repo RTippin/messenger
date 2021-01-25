@@ -4,8 +4,8 @@ namespace RTippin\Messenger\Actions\Threads;
 
 use Illuminate\Database\Eloquent\Collection;
 use RTippin\Messenger\Actions\BaseMessengerAction;
-use RTippin\Messenger\FileService;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Services\FileService;
 
 class PurgeThreads extends BaseMessengerAction
 {

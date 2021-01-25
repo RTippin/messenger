@@ -4,8 +4,8 @@ namespace RTippin\Messenger\Actions\Messages;
 
 use Illuminate\Database\Eloquent\Collection;
 use RTippin\Messenger\Actions\BaseMessengerAction;
-use RTippin\Messenger\FileService;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Services\FileService;
 
 class PurgeDocumentMessages extends BaseMessengerAction
 {

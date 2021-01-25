@@ -6,9 +6,9 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Contracts\BroadcastDriver;
-use RTippin\Messenger\FileService;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Services\FileService;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 

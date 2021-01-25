@@ -10,12 +10,12 @@ use RTippin\Messenger\Broadcasting\ThreadAvatarBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\ThreadAvatarEvent;
-use RTippin\Messenger\FileService;
 use RTippin\Messenger\Http\Request\GroupAvatarRequest;
 use RTippin\Messenger\Http\Resources\Broadcast\ThreadSettingsBroadcastResource;
 use RTippin\Messenger\Http\Resources\ThreadSettingsResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Services\FileService;
 
 class UpdateGroupAvatar extends BaseMessengerAction
 {

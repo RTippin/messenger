@@ -3,8 +3,8 @@
 namespace RTippin\Messenger\Actions\Messenger;
 
 use RTippin\Messenger\Actions\BaseMessengerAction;
-use RTippin\Messenger\FileService;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Services\FileService;
 
 abstract class MessengerAvatarAction extends BaseMessengerAction
 {

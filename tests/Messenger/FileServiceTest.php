@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Tests\Messenger;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Orchestra\Testbench\TestCase;
-use RTippin\Messenger\FileService;
+use RTippin\Messenger\Services\FileService;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class FileServiceTest extends TestCase

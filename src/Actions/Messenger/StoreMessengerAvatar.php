@@ -3,8 +3,8 @@
 namespace RTippin\Messenger\Actions\Messenger;
 
 use Illuminate\Http\UploadedFile;
-use RTippin\Messenger\FileService;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Services\FileService;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class StoreMessengerAvatar extends MessengerAvatarAction

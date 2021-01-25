@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger;
+namespace RTippin\Messenger\Services;
 
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Http\UploadedFile;
