@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests;
 
 use Orchestra\Testbench\TestCase;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\MessengerServiceProvider;
 use RTippin\Messenger\Tests\stubs\CompanyModel;
 use RTippin\Messenger\Tests\stubs\CompanyModelUuid;
@@ -20,13 +19,6 @@ class MessengerTestCase extends TestCase
      * provider models/tables using UUIDS.
      */
     const UseUUID = false;
-
-    protected function tearDown(): void
-    {
-        Messenger::reset();
-
-        parent::tearDown();
-    }
 
     protected function getPackageProviders($app): array
     {
