@@ -50,7 +50,6 @@ class ProviderChannelTest extends FeatureTestCase
             'channel_name' => "private-unknown.{$this->tippin->getKey()}",
         ])
             ->assertForbidden();
-
     }
 
     /** @test */
@@ -59,7 +58,7 @@ class ProviderChannelTest extends FeatureTestCase
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "private-user.404",
+            'channel_name' => 'private-user.404',
         ])
             ->assertForbidden();
     }
@@ -70,7 +69,7 @@ class ProviderChannelTest extends FeatureTestCase
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "private-.",
+            'channel_name' => 'private-.',
         ])
             ->assertForbidden();
     }
@@ -85,7 +84,7 @@ class ProviderChannelTest extends FeatureTestCase
         $this->actingAs($invalid);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "private-user.404",
+            'channel_name' => 'private-user.404',
         ])
             ->assertForbidden();
     }
