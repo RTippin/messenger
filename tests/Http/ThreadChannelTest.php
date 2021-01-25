@@ -55,4 +55,53 @@ class ThreadChannelTest extends FeatureTestCase
         ])
             ->assertForbidden();
     }
+
+    /** @test */
+    public function non_participant_forbidden()
+    {
+        $this->actingAs($this->companyDevelopers());
+
+        $this->postJson('/api/broadcasting/auth', [
+            'channel_name' => "presence-thread.{$this->private->id}",
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function pending_participant_forbidden()
+    {
+        $this->private->participants()
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
+            ->first()
+            ->update([
+                'pending' => true,
+            ]);
+
+        $this->actingAs($this->doe);
+
+        $this->postJson('/api/broadcasting/auth', [
+            'channel_name' => "presence-thread.{$this->private->id}",
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function participant_is_authorized()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->postJson('/api/broadcasting/auth', [
+            'channel_name' => "presence-thread.{$this->private->id}",
+        ])
+            ->assertSuccessful()
+            ->assertJson([
+                'channel_data' => [
+                    'user_info' => [
+                        'name' => 'Richard Tippin',
+                        'provider_id' => $this->tippin->getKey(),
+                    ],
+                ],
+            ]);
+    }
 }
