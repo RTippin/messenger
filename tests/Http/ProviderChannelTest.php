@@ -1,0 +1,114 @@
+<?php
+
+namespace RTippin\Messenger\Tests\Http;
+
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\stubs\OtherModel;
+
+class ProviderChannelTest extends FeatureTestCase
+{
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $developers;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->tippin = $this->userTippin();
+
+        $this->developers = $this->companyDevelopers();
+    }
+
+    protected function getEnvironmentSetUp($app): void
+    {
+        parent::getEnvironmentSetUp($app);
+
+        $config = $app->get('config');
+
+        // Need to set a driver other than null
+        // for broadcast routes to be utilized
+        $config->set('broadcasting.default', 'redis');
+    }
+
+    /** @test */
+    public function guest_is_unauthorized()
+    {
+        $this->postJson('/api/broadcasting/auth', [
+            'channel_name' => 'private-user.1',
+        ])
+            ->assertUnauthorized();
+    }
+
+    /** @test */
+    public function invalid_alias_forbidden()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->post('api/broadcasting/auth', [
+            'channel_name' => "private-unknown.{$this->tippin->getKey()}",
+        ])
+            ->assertForbidden();
+
+    }
+
+    /** @test */
+    public function invalid_id_forbidden()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->postJson('/api/broadcasting/auth', [
+            'channel_name' => "private-user.404",
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function null_is_forbidden()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->postJson('/api/broadcasting/auth', [
+            'channel_name' => "private-.",
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function invalid_provider_is_forbidden()
+    {
+        $invalid = new OtherModel([
+            'id' => 404,
+        ]);
+
+        $this->actingAs($invalid);
+
+        $this->postJson('/api/broadcasting/auth', [
+            'channel_name' => "private-user.404",
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function user_is_authorized()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->postJson('/api/broadcasting/auth', [
+            'channel_name' => "private-user.{$this->tippin->getKey()}",
+        ])
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function company_is_authorized()
+    {
+        $this->actingAs($this->developers);
+
+        $this->postJson('/api/broadcasting/auth', [
+            'channel_name' => "private-company.{$this->developers->getKey()}",
+        ])
+            ->assertSuccessful();
+    }
+}
