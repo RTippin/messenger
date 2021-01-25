@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Tests\Messenger;
 
 use Illuminate\Pagination\LengthAwarePaginator;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\SearchProvidersService;
+use RTippin\Messenger\Services\SearchProvidersService;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class SearchProvidersServiceTest extends FeatureTestCase
