@@ -11,8 +11,7 @@ use RTippin\Messenger\Services\ProvidersVerification;
 
 /**
  * Laravel Messenger System.
- * Created by: Richard Tippin
- * https://github.com/RTippin/messenger
+ * Created by: Richard Tippin.
  */
 final class Messenger implements MessengerInterface
 {
