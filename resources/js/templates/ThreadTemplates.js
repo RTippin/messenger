@@ -394,7 +394,7 @@ window.ThreadTemplates = (function () {
                     'class="btn btn-lg text-secondary btn-light pt-1 pb-0 px-2 video_btn" type="button"><i class="fas fa-video fa-2x"></i></button>';
             }
             if(data.options.call){
-                return '<button onclick="ThreadManager.calls().initCall()" data-toggle="tooltip" title="Create group call" data-placement="left" ' +
+                return '<button onclick="ThreadManager.calls().initCall()" data-toggle="tooltip" title="Start a group call" data-placement="left" ' +
                         'class="btn btn-lg text-secondary btn-light pt-1 pb-0 px-2 video_btn" type="button"><i class="fas fa-video fa-2x"></i></button>';
             }
             return ''
