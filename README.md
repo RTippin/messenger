@@ -1,4 +1,4 @@
-# Laravel 8 Messenger suite
+# Laravel 8 Messenger
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
@@ -14,15 +14,16 @@
 ### Prerequisites
 - PHP >= 7.4
 - Laravel >= 8.x
-- laravel broadcast driver if you want to use realtime.
+- laravel broadcast driver configured.
 
 ### Notes / upcoming
-- Frontend, should you choose to use the one included, is a bit outdated. We are in the process of making a React UI, and later a Vue one as well.
-- Included frontend uses socket.io / laravel-echo-server. Future release will expand options.
-- Unit Test are coming.
+- A React frontend will be in the works.
+- Included frontend uses socket.io / laravel-echo. Future release will expand options.
 - Expanded docs.
 - If our event listeners are enabled in your config, the queue your worker must use is `messenger`, as all listeners are queued on that channel.
 - Our included commands that push a job also use the `messenger` queue channel.
+- If you enable calling, we support an included [Janus Media Server][link-janus-server] driver, which you will still need to install the media server yourself.
+- To configure your own 3rd party video provider, checkout our VideoDriver you will need to implement with your own video implementation, and add to our configs [`drivers`][link-config-drivers] section. Then you set the calling driver to your new implementation from our configs [`calling`][link-config-calling] section.
 - Read through our config file before migrating!
 
 ### Messenger Demo
@@ -127,6 +128,8 @@ If you discover any security related issues, please email author email instead o
 [link-styleci]: https://styleci.io/repos/309521487
 [link-author]: https://github.com/rtippin
 [link-config]: config/messenger.php
+[link-config-drivers]: https://github.com/RTippin/messenger/blob/master/config/messenger.php#L221
+[link-config-calling]: https://github.com/RTippin/messenger/blob/master/config/messenger.php#L236
 [link-messageable]: src/Traits/Messageable.php
 [link-searchable]: src/Contracts/Searchable.php
 [link-search]: src/Traits/Search.php
@@ -145,3 +148,4 @@ If you discover any security related issues, please email author email instead o
 [link-demo-user]: https://github.com/RTippin/messenger-demo/blob/master/app/Models/User.php
 [link-demo-company]: https://github.com/RTippin/messenger-demo/blob/master/app/Models/Company.php
 [link-demo-kernel]: https://github.com/RTippin/messenger-demo/blob/master/app/Console/Kernel.php
+[link-janus-server]: https://janus.conf.meetecho.com/docs/videoroom.html
