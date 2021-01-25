@@ -6,7 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Filesystem\Filesystem;
 use LogicException;
-use RTippin\Messenger\ProvidersVerification;
+use RTippin\Messenger\Services\ProvidersVerification;
 use Throwable;
 
 class ProvidersCache extends Command

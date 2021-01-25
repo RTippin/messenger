@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger;
+namespace RTippin\Messenger\Services;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;

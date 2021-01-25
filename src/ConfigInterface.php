@@ -7,6 +7,7 @@ use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
+use RTippin\Messenger\Services\ProvidersVerification;
 
 /**
  * @property-read Collection $providers
