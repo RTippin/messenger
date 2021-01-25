@@ -3,7 +3,7 @@
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use RTippin\Messenger\ImageRenderService;
+use RTippin\Messenger\Services\ImageRenderService;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 

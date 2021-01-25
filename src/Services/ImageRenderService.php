@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger;
+namespace RTippin\Messenger\Services;
 
 use Exception;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
@@ -8,6 +8,8 @@ use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
 use Intervention\Image\ImageManager;
+use RTippin\Messenger\Definitions;
+use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
