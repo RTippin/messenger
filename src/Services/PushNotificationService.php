@@ -1,19 +1,19 @@
 <?php
 
-namespace RTippin\Messenger\Brokers;
+namespace RTippin\Messenger\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Collection;
+use RTippin\Messenger\Contracts\BroadcastEvent;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Contracts\PushNotificationDriver;
 use RTippin\Messenger\Events\PushNotificationEvent;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Participant;
 
-class PushNotificationBroker implements PushNotificationDriver
+class PushNotificationService
 {
     /**
      * @var Messenger
@@ -41,7 +41,7 @@ class PushNotificationBroker implements PushNotificationDriver
     private Dispatcher $dispatcher;
 
     /**
-     * PushNotificationBroker constructor.
+     * PushNotificationService constructor.
      *
      * @param Messenger $messenger
      * @param Dispatcher $dispatcher
@@ -57,7 +57,12 @@ class PushNotificationBroker implements PushNotificationDriver
     }
 
     /**
-     * @inheritDoc
+     * Set recipients to the provided collection. Collection may
+     * contain a mix of messenger providers, thread participants,
+     * or call participants.
+     *
+     * @param Collection $recipients
+     * @return $this
      */
     public function to(Collection $recipients): self
     {
@@ -67,7 +72,10 @@ class PushNotificationBroker implements PushNotificationDriver
     }
 
     /**
-     * @inheritDoc
+     * Set the resource we will use to broadcast out.
+     *
+     * @param array $resource
+     * @return $this
      */
     public function with(array $resource): self
     {
@@ -77,7 +85,12 @@ class PushNotificationBroker implements PushNotificationDriver
     }
 
     /**
-     * @inheritDoc
+     * We will use the abstract broadcast event to get the name of the notification,
+     * then extract all providers from the given resource collection, and remove any
+     * that do not have devices enabled, then fire the event with the formatted data
+     * for our listener to handle on the queue.
+     *
+     * @param string|BroadcastEvent $abstract
      */
     public function notify(string $abstract): void
     {
@@ -121,14 +134,10 @@ class PushNotificationBroker implements PushNotificationDriver
      */
     protected function extractValidProviders(): Collection
     {
-        return $this->recipients->map(
-            fn ($recipient) => $this->extractProvider($recipient)
-        )
-            ->reject(
-                fn ($recipient) => ! count($recipient)
-            )->reject(
-                fn ($recipient) => ! in_array($recipient['owner_type'], $this->messenger->getAllProvidersWithDevices())
-            )
+        return $this->recipients
+            ->map(fn ($recipient) => $this->extractProvider($recipient))
+            ->reject(fn ($recipient) => ! count($recipient))
+            ->reject(fn ($recipient) => ! in_array($recipient['owner_type'], $this->messenger->getAllProvidersWithDevices()))
             ->uniqueStrict('owner_id');
     }
 
@@ -148,8 +157,7 @@ class PushNotificationBroker implements PushNotificationDriver
         ];
 
         if (in_array($abstract, $participants)
-            && $this->messenger
-                ->isValidMessengerProvider($recipient->owner_type)) {
+            && $this->messenger->isValidMessengerProvider($recipient->owner_type)) {
             /** @var Participant|CallParticipant $recipient */
 
             return [
@@ -159,8 +167,7 @@ class PushNotificationBroker implements PushNotificationDriver
         }
 
         if (! in_array($abstract, $participants)
-            && $this->messenger
-                ->isValidMessengerProvider($recipient)) {
+            && $this->messenger->isValidMessengerProvider($recipient)) {
             /** @var MessengerProvider $recipient */
 
             return [

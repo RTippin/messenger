@@ -8,7 +8,6 @@
   "webEndpoint": "/messenger",
   "socketEndpoint": "http://localhost:6001",
   "broadcastDriver": "default",
-  "pushNotificationDriver": "default",
   "videoDriver": "janus",
   "knockKnock": true,
   "knockTimeout": 5,
