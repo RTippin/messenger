@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests;
 
 use Illuminate\Support\Facades\Cache;
-use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Messenger as MessengerModel;
 
 class FeatureTestCase extends MessengerTestCase
