@@ -100,7 +100,7 @@ class PushNotificationService
 
             $filteredRecipients = $this->extractValidProviders();
 
-            if ($filteredRecipients->count()) {
+            if (! is_null($broadcastAs) && $filteredRecipients->count()) {
                 $this->dispatchNotification($broadcastAs, $filteredRecipients);
             }
         }
@@ -110,9 +110,9 @@ class PushNotificationService
      * Construct the broadcast event to get the name defined.
      *
      * @param string $abstract
-     * @return string
+     * @return string|null
      */
-    protected function getBroadcastAs(string $abstract): string
+    protected function getBroadcastAs(string $abstract): ?string
     {
         try {
             return $this->app
@@ -123,7 +123,7 @@ class PushNotificationService
             //continue on
         }
 
-        return 'undefined';
+        return null;
     }
 
     /**
