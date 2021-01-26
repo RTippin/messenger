@@ -151,6 +151,52 @@ class BroadcastDriverTest extends FeatureTestCase
     }
 
     /** @test */
+    public function broadcast_to_thread_participant()
+    {
+        Event::fake([
+            FakeBroadcastEvent::class,
+        ]);
+
+        $participant = $this->group->participants()->admins()->first();
+
+        app(BroadcastDriver::class)
+            ->to($participant)
+            ->with(self::WITH)
+            ->broadcast(FakeBroadcastEvent::class);
+
+        Event::assertDispatched(function (FakeBroadcastEvent $event) {
+            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertCount(1, $event->broadcastOn());
+            $this->assertSame(1234, $event->broadcastWith()['data']);
+
+            return true;
+        });
+    }
+
+    /** @test */
+    public function broadcast_to_call_participant()
+    {
+        Event::fake([
+            FakeBroadcastEvent::class,
+        ]);
+
+        $callParticipant = $this->createCall($this->group, $this->tippin)->participants()->first();
+
+        app(BroadcastDriver::class)
+            ->to($callParticipant)
+            ->with(self::WITH)
+            ->broadcast(FakeBroadcastEvent::class);
+
+        Event::assertDispatched(function (FakeBroadcastEvent $event) {
+            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertCount(1, $event->broadcastOn());
+            $this->assertSame(1234, $event->broadcastWith()['data']);
+
+            return true;
+        });
+    }
+
+    /** @test */
     public function broadcast_to_selected_providers()
     {
         Event::fake([
