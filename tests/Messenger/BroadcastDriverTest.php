@@ -8,6 +8,7 @@ use RTippin\Messenger\Broadcasting\MessengerBroadcast;
 use RTippin\Messenger\Brokers\BroadcastBroker;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Events\PushNotificationEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -76,6 +77,26 @@ class BroadcastDriverTest extends FeatureTestCase
             ->broadcast(FakeBroadcastEvent::class);
 
         Event::assertNotDispatched(InvalidBroadcastEvent::class);
+    }
+
+    /** @test */
+    public function broadcast_driver_calls_push_notification_when_enabled()
+    {
+        Messenger::setPushNotifications(true);
+
+        Event::fake([
+            FakeBroadcastEvent::class,
+            PushNotificationEvent::class,
+        ]);
+
+        app(BroadcastDriver::class)
+            ->to($this->tippin)
+            ->with(self::WITH)
+            ->broadcast(FakeBroadcastEvent::class);
+
+        Event::assertDispatched(FakeBroadcastEvent::class);;
+
+        Event::assertDispatched(PushNotificationEvent::class);
     }
 
     /** @test */
