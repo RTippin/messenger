@@ -11,6 +11,7 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\stubs\OtherModel;
 
 class BroadcastDriverTest extends FeatureTestCase
 {
@@ -60,6 +61,47 @@ class BroadcastDriverTest extends FeatureTestCase
             ->broadcast(InvalidBroadcastEvent::class);
 
         Event::assertNotDispatched(InvalidBroadcastEvent::class);
+    }
+
+    /** @test */
+    public function broadcast_driver_with_no_valid_recipients_fires_no_event()
+    {
+        Event::fake([
+            FakeBroadcastEvent::class,
+        ]);
+
+        app(BroadcastDriver::class)
+            ->to(null)
+            ->with(self::WITH)
+            ->broadcast(FakeBroadcastEvent::class);
+
+        Event::assertNotDispatched(InvalidBroadcastEvent::class);
+    }
+
+    /** @test */
+    public function broadcast_driver_ignores_invalid_providers()
+    {
+        Event::fake([
+            FakeBroadcastEvent::class,
+        ]);
+
+        $to = collect([
+            $this->tippin,
+            new OtherModel,
+        ]);
+
+        app(BroadcastDriver::class)
+            ->toSelected($to)
+            ->with(self::WITH)
+            ->broadcast(FakeBroadcastEvent::class);
+
+        Event::assertDispatched(function (FakeBroadcastEvent $event) {
+            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertCount(1, $event->broadcastOn());
+            $this->assertSame(1234, $event->broadcastWith()['data']);
+
+            return true;
+        });
     }
 
     /** @test */
