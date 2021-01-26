@@ -2,8 +2,12 @@
 
 namespace RTippin\Messenger\Tests\Messenger;
 
+use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Broadcasting\MessengerBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Events\PushNotificationEvent;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Services\PushNotificationService;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PushNotificationServiceTest extends FeatureTestCase
@@ -34,8 +38,25 @@ class PushNotificationServiceTest extends FeatureTestCase
     }
 
     /** @test */
-    public function broadcast_driver_using_default_broadcast_broker()
+    public function notify_with_no_valid_recipients_fires_no_event()
     {
-        $this->assertTrue(true);
+        Event::fake([
+            PushNotificationEvent::class,
+        ]);
+
+        app(PushNotificationService::class)
+            ->to(collect([]))
+            ->with(self::WITH)
+            ->notify(FakeNotifyEvent::class);
+
+        Event::assertNotDispatched(PushNotificationEvent::class);
+    }
+}
+
+class FakeNotifyEvent extends MessengerBroadcast
+{
+    public function broadcastAs(): string
+    {
+        return 'fake.notify';
     }
 }
