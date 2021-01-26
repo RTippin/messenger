@@ -94,7 +94,7 @@ class BroadcastDriverTest extends FeatureTestCase
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
 
-        Event::assertDispatched(FakeBroadcastEvent::class);;
+        Event::assertDispatched(FakeBroadcastEvent::class);
 
         Event::assertDispatched(PushNotificationEvent::class);
     }
