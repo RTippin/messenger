@@ -13,7 +13,7 @@ use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Participant;
 
-class PushNotificationService
+class PushNotificationFormatter
 {
     /**
      * @var Messenger
@@ -41,7 +41,7 @@ class PushNotificationService
     private Dispatcher $dispatcher;
 
     /**
-     * PushNotificationService constructor.
+     * PushNotificationFormatter constructor.
      *
      * @param Messenger $messenger
      * @param Dispatcher $dispatcher
