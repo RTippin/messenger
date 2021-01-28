@@ -138,7 +138,8 @@ class PushNotificationService
             ->map(fn ($recipient) => $this->extractProvider($recipient))
             ->reject(fn ($recipient) => ! count($recipient))
             ->reject(fn ($recipient) => ! in_array($recipient['owner_type'], $this->messenger->getAllProvidersWithDevices()))
-            ->uniqueStrict('owner_id');
+            ->uniqueStrict(fn ($recipient) => $recipient['owner_type'].$recipient['owner_id'])
+            ->values();
     }
 
     /**
