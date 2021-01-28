@@ -40,7 +40,7 @@ class PushNotificationFormatterTest extends FeatureTestCase
     }
 
     /** @test */
-    public function notify_with_no_empty_collection_fires_no_event()
+    public function notify_with_empty_collection_fires_no_event()
     {
         Event::fake([
             PushNotificationEvent::class,
