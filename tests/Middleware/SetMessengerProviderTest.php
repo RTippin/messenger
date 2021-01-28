@@ -68,7 +68,7 @@ class SetMessengerProviderTest extends MessengerTestCase
             'email' => 'tippin@example.net',
         ]);
 
-        $request->setUserResolver(function () use($tippin) {
+        $request->setUserResolver(function () use ($tippin) {
             return $tippin;
         });
 
