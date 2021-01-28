@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\MessengerBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\PushNotificationEvent;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\PushNotificationService;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -106,6 +107,123 @@ class PushNotificationServiceTest extends FeatureTestCase
 
             $this->assertContains($tippin, $recipients);
             $this->assertContains($developers, $recipients);
+            $this->assertCount(2, $event->recipients);
+            $this->assertSame('fake.notify', $event->broadcastAs);
+            $this->assertSame(1234, $event->data['data']);
+
+            return true;
+        });
+    }
+
+    /** @test */
+    public function notify_ignores_provider_models_with_devices_disabled_in_config()
+    {
+        Event::fake([
+            PushNotificationEvent::class,
+        ]);
+
+        $providers = $this->getBaseProvidersConfig();
+
+        $providers['company']['devices'] = false;
+
+        Messenger::setMessengerProviders($providers);
+
+        $to = collect([
+            $this->tippin,
+            $this->developers,
+        ]);
+
+        app(PushNotificationService::class)
+            ->to($to)
+            ->with(self::WITH)
+            ->notify(FakeNotifyEvent::class);
+
+        Event::assertDispatched(function (PushNotificationEvent $event) {
+            $recipients = $event->recipients->toArray();
+
+            $developers = [
+                'owner_type' => get_class($this->developers),
+                'owner_id' => $this->developers->getKey(),
+            ];
+
+            $this->assertNotContains($developers, $recipients);
+            $this->assertCount(1, $event->recipients);
+            $this->assertSame('fake.notify', $event->broadcastAs);
+            $this->assertSame(1234, $event->data['data']);
+
+            return true;
+        });
+    }
+
+    /** @test */
+    public function notify_thread_participants()
+    {
+        Event::fake([
+            PushNotificationEvent::class,
+        ]);
+
+        $to = $this->group->participants()->get();
+
+        app(PushNotificationService::class)
+            ->to($to)
+            ->with(self::WITH)
+            ->notify(FakeNotifyEvent::class);
+
+        Event::assertDispatched(function (PushNotificationEvent $event) {
+            $this->assertCount(3, $event->recipients);
+            $this->assertSame('fake.notify', $event->broadcastAs);
+            $this->assertSame(1234, $event->data['data']);
+
+            return true;
+        });
+    }
+
+    /** @test */
+    public function notify_call_participants()
+    {
+        Event::fake([
+            PushNotificationEvent::class,
+        ]);
+
+        $call = $this->createCall($this->group, $this->tippin, $this->doe);
+
+        $to = $call->participants()->get();
+
+        app(PushNotificationService::class)
+            ->to($to)
+            ->with(self::WITH)
+            ->notify(FakeNotifyEvent::class);
+
+        Event::assertDispatched(function (PushNotificationEvent $event) {
+            $this->assertCount(2, $event->recipients);
+            $this->assertSame('fake.notify', $event->broadcastAs);
+            $this->assertSame(1234, $event->data['data']);
+
+            return true;
+        });
+    }
+
+    /** @test */
+    public function notify_rejects_duplicate_matching_providers()
+    {
+        Event::fake([
+            PushNotificationEvent::class,
+        ]);
+
+        $to = collect([
+            $this->tippin,
+            $this->developers,
+            $this->tippin,
+            $this->developers,
+            $this->group->participants()->admins()->first(),
+        ]);
+
+        app(PushNotificationService::class)
+            ->to($to)
+            ->with(self::WITH)
+            ->notify(FakeNotifyEvent::class);
+
+        Event::assertDispatched(function (PushNotificationEvent $event) {
             $this->assertCount(2, $event->recipients);
             $this->assertSame('fake.notify', $event->broadcastAs);
             $this->assertSame(1234, $event->data['data']);
