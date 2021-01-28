@@ -6,10 +6,10 @@ use Illuminate\Http\Request;
 use RTippin\Messenger\Exceptions\InvalidMessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Http\Middleware\SetMessengerProvider;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\MessengerTestCase;
 use RTippin\Messenger\Tests\stubs\OtherModel;
 
-class SetMessengerProviderTest extends FeatureTestCase
+class SetMessengerProviderTest extends MessengerTestCase
 {
     /** @test */
     public function guest_will_not_be_set()
@@ -60,16 +60,24 @@ class SetMessengerProviderTest extends FeatureTestCase
     {
         $request = new Request;
 
-        $request->setUserResolver(function () {
-            return $this->userTippin();
+        $user = $this->getModelUser();
+
+        $tippin = new $user([
+            'first' => 'Richard',
+            'last' => 'Tippin',
+            'email' => 'tippin@example.net',
+        ]);
+
+        $request->setUserResolver(function () use($tippin) {
+            return $tippin;
         });
 
         $middleware = app(SetMessengerProvider::class);
 
         $middleware->handle($request, function (Request $request) {
-            $this->assertSame('richard.tippin@gmail.com', $request->user()->email);
+            $this->assertSame('tippin@example.net', $request->user()->email);
             $this->assertTrue(Messenger::isProviderSet());
-            $this->assertSame('richard.tippin@gmail.com', Messenger::getProvider()->email);
+            $this->assertSame('tippin@example.net', Messenger::getProvider()->email);
         }, 'required');
     }
 
@@ -78,8 +86,15 @@ class SetMessengerProviderTest extends FeatureTestCase
     {
         $request = new Request;
 
-        $request->setUserResolver(function () {
-            return $this->companyDevelopers();
+        $company = $this->getModelCompany();
+
+        $developers = new $company([
+            'company_name' => 'Developers',
+            'company_email' => 'developers@example.net',
+        ]);
+
+        $request->setUserResolver(function () use ($developers) {
+            return $developers;
         });
 
         $middleware = app(SetMessengerProvider::class);

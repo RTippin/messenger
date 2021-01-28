@@ -4,10 +4,10 @@ namespace RTippin\Messenger\Tests\Middleware;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Orchestra\Testbench\TestCase;
 use RTippin\Messenger\Http\Middleware\MessengerApi;
-use RTippin\Messenger\Tests\FeatureTestCase;
 
-class MessengerApiTest extends FeatureTestCase
+class MessengerApiTest extends TestCase
 {
     /** @test */
     public function wrapping_disabled_on_json_resource_and_json_header_is_set()
