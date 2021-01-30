@@ -2,12 +2,15 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Events\CallQueuedListener;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\LeaveThread;
 use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ThreadLeftEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Listeners\ArchiveEmptyThread;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -66,6 +69,18 @@ class LeaveThreadTest extends FeatureTestCase
             $this->assertEquals($this->participant->id, $event->participant->id);
 
             return true;
+        });
+    }
+
+    /** @test */
+    public function leave_thread_event_triggers_listener()
+    {
+        Bus::fake();
+
+        app(LeaveThread::class)->withoutBroadcast()->execute($this->group);
+
+        Bus::assertDispatched(function (CallQueuedListener $job) {
+            return $job->class == ArchiveEmptyThread::class;
         });
     }
 }
