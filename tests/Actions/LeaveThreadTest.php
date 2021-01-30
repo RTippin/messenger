@@ -11,6 +11,7 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ThreadLeftEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Listeners\ArchiveEmptyThread;
+use RTippin\Messenger\Listeners\ThreadLeftMessage;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -73,14 +74,18 @@ class LeaveThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function leave_thread_event_triggers_listener()
+    public function leave_thread_event_triggers_listeners()
     {
         Bus::fake();
 
         app(LeaveThread::class)->withoutBroadcast()->execute($this->group);
 
         Bus::assertDispatched(function (CallQueuedListener $job) {
-            return $job->class == ArchiveEmptyThread::class;
+            return $job->class === ArchiveEmptyThread::class;
+        });
+
+        Bus::assertDispatched(function (CallQueuedListener $job) {
+            return $job->class === ThreadLeftMessage::class;
         });
     }
 }

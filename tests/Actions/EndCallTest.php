@@ -111,12 +111,11 @@ class EndCallTest extends FeatureTestCase
         app(EndCall::class)->withoutBroadcast()->execute($this->call);
 
         Bus::assertDispatched(function (CallQueuedListener $job) {
-            return in_array($job->class, [
-                TeardownCall::class,
-                CallEndedMessage::class,
-            ]);
+            return $job->class === TeardownCall::class;
         });
 
-        Bus::assertDispatchedTimes(CallQueuedListener::class, 2);
+        Bus::assertDispatched(function (CallQueuedListener $job) {
+            return $job->class === CallEndedMessage::class;
+        });
     }
 }
