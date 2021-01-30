@@ -3,6 +3,8 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Events\CallQueuedListener;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Calls\StoreCall;
@@ -12,6 +14,7 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallJoinedEvent;
 use RTippin\Messenger\Events\CallStartedEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Listeners\SetupCall;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -120,6 +123,18 @@ class StoreCallTest extends FeatureTestCase
 
         Event::assertDispatched(function (CallStartedEvent $event) {
             return $this->private->id === $event->call->thread_id;
+        });
+    }
+
+    /** @test */
+    public function store_call_triggers_listener()
+    {
+        Bus::fake();
+
+        app(StoreCall::class)->withoutBroadcast()->execute($this->private);
+
+        Bus::assertDispatched(function (CallQueuedListener $job) {
+            return $job->class === SetupCall::class;
         });
     }
 }
