@@ -2,7 +2,9 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Events\CallQueuedListener;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Threads\UpdateGroupAvatar;
@@ -10,6 +12,7 @@ use RTippin\Messenger\Broadcasting\ThreadAvatarBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ThreadAvatarEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Listeners\ThreadAvatarMessage;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -120,6 +123,23 @@ class UpdateGroupAvatarTest extends FeatureTestCase
             $this->assertSame($this->group->id, $event->thread->id);
 
             return true;
+        });
+    }
+
+    /** @test */
+    public function update_group_avatar_triggers_listener()
+    {
+        Bus::fake();
+
+        app(UpdateGroupAvatar::class)->withoutBroadcast()->execute(
+            $this->group,
+            [
+                'default' => '1.png',
+            ]
+        );
+
+        Bus::assertDispatched(function (CallQueuedListener $job) {
+            return $job->class === ThreadAvatarMessage::class;
         });
     }
 }

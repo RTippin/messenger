@@ -2,6 +2,8 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Events\CallQueuedListener;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\StoreManyParticipants;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
@@ -9,6 +11,7 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Listeners\ParticipantsAddedMessage;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -218,6 +221,28 @@ class StoreManyParticipantsTest extends FeatureTestCase
             $this->assertCount(2, $event->participants);
 
             return true;
+        });
+    }
+
+    /** @test */
+    public function store_many_participants_triggers_listener()
+    {
+        Bus::fake();
+
+        $this->createFriends($this->tippin, $this->doe);
+
+        app(StoreManyParticipants::class)->withoutBroadcast()->execute(
+            $this->group,
+            [
+                [
+                    'id' => $this->doe->getKey(),
+                    'alias' => 'user',
+                ],
+            ],
+        );
+
+        Bus::assertDispatched(function (CallQueuedListener $job) {
+            return $job->class === ParticipantsAddedMessage::class;
         });
     }
 }

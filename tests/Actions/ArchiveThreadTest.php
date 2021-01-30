@@ -2,12 +2,15 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Events\CallQueuedListener;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\ArchiveThread;
 use RTippin\Messenger\Broadcasting\ThreadArchivedBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ThreadArchivedEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Listeners\ThreadArchivedMessage;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -28,6 +31,8 @@ class ArchiveThreadTest extends FeatureTestCase
         $this->doe = $this->userDoe();
 
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
+
+        Messenger::setProvider($this->tippin);
     }
 
     /** @test */
@@ -43,8 +48,6 @@ class ArchiveThreadTest extends FeatureTestCase
     /** @test */
     public function archive_thread_fires_events()
     {
-        Messenger::setProvider($this->tippin);
-
         Event::fake([
             ThreadArchivedBroadcast::class,
             ThreadArchivedEvent::class,
@@ -65,6 +68,18 @@ class ArchiveThreadTest extends FeatureTestCase
             $this->assertSame($this->private->id, $event->thread->id);
 
             return true;
+        });
+    }
+
+    /** @test */
+    public function archive_thread_triggers_listener()
+    {
+        Bus::fake();
+
+        app(ArchiveThread::class)->withoutBroadcast()->execute($this->private);
+
+        Bus::assertDispatched(function (CallQueuedListener $job) {
+            return $job->class === ThreadArchivedMessage::class;
         });
     }
 }

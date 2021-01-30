@@ -2,12 +2,15 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Events\CallQueuedListener;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Invites\JoinWithInvite;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\InviteUsedEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Listeners\JoinedWithInviteMessage;
 use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -103,6 +106,18 @@ class JoinWithInviteTest extends FeatureTestCase
             $this->assertSame($this->invite->id, $event->invite->id);
 
             return true;
+        });
+    }
+
+    /** @test */
+    public function join_with_invite_triggers_listener()
+    {
+        Bus::fake();
+
+        app(JoinWithInvite::class)->execute($this->invite);
+
+        Bus::assertDispatched(function (CallQueuedListener $job) {
+            return $job->class === JoinedWithInviteMessage::class;
         });
     }
 }

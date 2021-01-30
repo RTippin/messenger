@@ -2,12 +2,15 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Events\CallQueuedListener;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\UpdateGroupSettings;
 use RTippin\Messenger\Broadcasting\ThreadSettingsBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ThreadSettingsEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Listeners\ThreadNameMessage;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -135,5 +138,22 @@ class UpdateGroupSettingsTest extends FeatureTestCase
                 'knocks' => true,
             ]
         );
+    }
+
+    /** @test */
+    public function update_group_settings_triggers_listener()
+    {
+        Bus::fake();
+
+        app(UpdateGroupSettings::class)->withoutBroadcast()->execute(
+            $this->group,
+            [
+                'subject' => 'Rename Test Group',
+            ]
+        );
+
+        Bus::assertDispatched(function (CallQueuedListener $job) {
+            return $job->class === ThreadNameMessage::class;
+        });
     }
 }

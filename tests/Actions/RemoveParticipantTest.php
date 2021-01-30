@@ -2,12 +2,15 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Events\CallQueuedListener;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\RemoveParticipant;
 use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\RemovedFromThreadEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Listeners\RemovedFromThreadMessage;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -79,6 +82,21 @@ class RemoveParticipantTest extends FeatureTestCase
             $this->assertSame($this->participant->id, $event->participant->id);
 
             return true;
+        });
+    }
+
+    /** @test */
+    public function remove_participant_triggers_listener()
+    {
+        Bus::fake();
+
+        app(RemoveParticipant::class)->withoutBroadcast()->execute(
+            $this->group,
+            $this->participant
+        );
+
+        Bus::assertDispatched(function (CallQueuedListener $job) {
+            return $job->class === RemovedFromThreadMessage::class;
         });
     }
 }

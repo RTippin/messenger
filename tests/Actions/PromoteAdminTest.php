@@ -2,6 +2,8 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Events\CallQueuedListener;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\PromoteAdmin;
 use RTippin\Messenger\Broadcasting\PromotedAdminBroadcast;
@@ -9,6 +11,7 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\PromotedAdminEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Listeners\PromotedAdminMessage;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -57,7 +60,7 @@ class PromoteAdminTest extends FeatureTestCase
     }
 
     /** @test */
-    public function demote_admin_fires_events()
+    public function promote_admin_fires_events()
     {
         Event::fake([
             PromotedAdminBroadcast::class,
@@ -82,6 +85,21 @@ class PromoteAdminTest extends FeatureTestCase
             $this->assertSame($this->participant->id, $event->participant->id);
 
             return true;
+        });
+    }
+
+    /** @test */
+    public function promote_admin_triggers_listener()
+    {
+        Bus::fake();
+
+        app(PromoteAdmin::class)->withoutBroadcast()->execute(
+            $this->group,
+            $this->participant
+        );
+
+        Bus::assertDispatched(function (CallQueuedListener $job) {
+            return $job->class === PromotedAdminMessage::class;
         });
     }
 }
