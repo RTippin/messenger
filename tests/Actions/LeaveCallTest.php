@@ -2,13 +2,16 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Calls\LeaveCall;
 use RTippin\Messenger\Broadcasting\CallLeftBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallLeftEvent;
+use RTippin\Messenger\Listeners\EndCallIfEmpty;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
@@ -91,6 +94,21 @@ class LeaveCallTest extends FeatureTestCase
 
         Event::assertDispatched(function (CallLeftEvent $event) {
             return $this->participant->id === $event->participant->id;
+        });
+    }
+
+    /** @test */
+    public function leave_call_triggers_listener()
+    {
+        Bus::fake();
+
+        app(LeaveCall::class)->withoutBroadcast()->execute(
+            $this->call,
+            $this->participant
+        );
+
+        Bus::assertDispatched(function (CallQueuedListener $job) {
+            return $job->class === EndCallIfEmpty::class;
         });
     }
 }
