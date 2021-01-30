@@ -2,12 +2,16 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Calls\EndCall;
 use RTippin\Messenger\Broadcasting\CallEndedBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallEndedEvent;
+use RTippin\Messenger\Listeners\CallEndedMessage;
+use RTippin\Messenger\Listeners\TeardownCall;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
@@ -97,5 +101,22 @@ class EndCallTest extends FeatureTestCase
         Event::assertDispatched(function (CallEndedEvent $event) {
             return $this->call->id === $event->call->id;
         });
+    }
+
+    /** @test */
+    public function end_call_triggers_listeners()
+    {
+        Bus::fake();
+
+        app(EndCall::class)->withoutBroadcast()->execute($this->call);
+
+        Bus::assertDispatched(function (CallQueuedListener $job) {
+            return in_array($job->class, [
+                TeardownCall::class,
+                CallEndedMessage::class,
+            ]);
+        });
+
+        Bus::assertDispatchedTimes(CallQueuedListener::class, 2);
     }
 }
