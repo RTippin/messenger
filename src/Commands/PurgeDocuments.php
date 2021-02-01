@@ -35,12 +35,23 @@ class PurgeDocuments extends Command
      */
     public function handle(): void
     {
-        Message::document()
+        $count = Message::document()
             ->onlyTrashed()
             ->where('deleted_at', '<=', now()->subDays($this->option('days')))
-            ->chunk(100, fn (Collection $images) => $this->dispatchJob($images));
+            ->count();
 
-        $this->info('Purge document messages dispatched.');
+        if ($count > 0) {
+            Message::document()
+                ->onlyTrashed()
+                ->where('deleted_at', '<=', now()->subDays($this->option('days')))
+                ->chunk(100, fn (Collection $images) => $this->dispatchJob($images));
+
+            $message = $this->option('now') ? 'completed!' : 'dispatched!';
+
+            $this->info("{$count} document messages archived {$this->option('days')} days or greater found. Purging {$message}");
+        } else {
+            $this->info("No document messages archived {$this->option('days')} days or greater found.");
+        }
     }
 
     /**
