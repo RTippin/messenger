@@ -40,6 +40,7 @@ class InvitesCheck extends Command
             $this->info('Thread invites are currently disabled.');
         } else {
             $count = Invite::invalid()->count();
+
             $message = $this->option('now') ? 'completed!' : 'dispatched!';
             if ($count > 0) {
                 Invite::invalid()->with('thread')->chunk(100, fn (Collection $invites) => $this->dispatchJob($invites));

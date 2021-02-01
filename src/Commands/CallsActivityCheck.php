@@ -37,6 +37,7 @@ class CallsActivityCheck extends Command
             $this->info('Call system currently disabled.');
         } else {
             $count = Call::active()->where('created_at', '<', now()->subMinute())->count();
+
             $message = $this->option('now') ? 'completed' : 'dispatched';
             if ($count > 0) {
                 Call::active()

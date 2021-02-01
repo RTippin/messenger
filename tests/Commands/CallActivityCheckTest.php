@@ -22,6 +22,8 @@ class CallActivityCheckTest extends FeatureTestCase
         $this->tippin = $this->userTippin();
 
         $this->group = $this->createGroupThread($this->tippin);
+
+        Bus::fake();
     }
 
     /** @test */
@@ -30,6 +32,8 @@ class CallActivityCheckTest extends FeatureTestCase
         $this->artisan('messenger:calls:check-activity')
             ->expectsOutput('No matching active calls found.')
             ->assertExitCode(0);
+
+        Bus::assertNotDispatched(CheckCallsActivity::class);
     }
 
     /** @test */
@@ -40,14 +44,14 @@ class CallActivityCheckTest extends FeatureTestCase
         $this->artisan('messenger:calls:check-activity')
             ->expectsOutput('Call system currently disabled.')
             ->assertExitCode(0);
+
+        Bus::assertNotDispatched(CheckCallsActivity::class);
     }
 
     /** @test */
     public function call_command_ignores_calls_created_within_the_last_minute()
     {
         $this->createCall($this->group, $this->tippin);
-
-        Bus::fake();
 
         $this->artisan('messenger:calls:check-activity')
             ->expectsOutput('No matching active calls found.')
@@ -60,8 +64,6 @@ class CallActivityCheckTest extends FeatureTestCase
     public function call_command_dispatches_job()
     {
         $this->createCall($this->group, $this->tippin);
-
-        Bus::fake();
 
         $this->travel(2)->minutes();
 
@@ -76,8 +78,6 @@ class CallActivityCheckTest extends FeatureTestCase
     public function call_command_runs_job_now()
     {
         $this->createCall($this->group, $this->tippin);
-
-        Bus::fake();
 
         $this->travel(2)->minutes();
 
@@ -96,8 +96,6 @@ class CallActivityCheckTest extends FeatureTestCase
         $this->createCall($this->group, $this->tippin);
 
         $this->createCall($this->group, $this->tippin);
-
-        Bus::fake();
 
         $this->travel(2)->minutes();
 

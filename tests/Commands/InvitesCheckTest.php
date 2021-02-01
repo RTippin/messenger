@@ -22,6 +22,8 @@ class InvitesCheckTest extends FeatureTestCase
         $this->tippin = $this->userTippin();
 
         $this->group = $this->createGroupThread($this->tippin);
+
+        Bus::fake();
     }
 
     /** @test */
@@ -39,6 +41,8 @@ class InvitesCheckTest extends FeatureTestCase
         $this->artisan('messenger:invites:check-valid')
             ->expectsOutput('No invalid invites found.')
             ->assertExitCode(0);
+
+        Bus::assertNotDispatched(ArchiveInvalidInvites::class);
     }
 
     /** @test */
@@ -56,6 +60,8 @@ class InvitesCheckTest extends FeatureTestCase
         $this->artisan('messenger:invites:check-valid')
             ->expectsOutput('No invalid invites found.')
             ->assertExitCode(0);
+
+        Bus::assertNotDispatched(ArchiveInvalidInvites::class);
     }
 
     /** @test */
@@ -66,6 +72,8 @@ class InvitesCheckTest extends FeatureTestCase
         $this->artisan('messenger:invites:check-valid')
             ->expectsOutput('Thread invites are currently disabled.')
             ->assertExitCode(0);
+
+        Bus::assertNotDispatched(ArchiveInvalidInvites::class);
     }
 
     /** @test */
@@ -79,8 +87,6 @@ class InvitesCheckTest extends FeatureTestCase
             'uses' => 1,
             'expires_at' => now(),
         ]);
-
-        Bus::fake();
 
         $this->artisan('messenger:invites:check-valid', [
             '--now' => true,
@@ -103,8 +109,6 @@ class InvitesCheckTest extends FeatureTestCase
             'expires_at' => null,
         ]);
 
-        Bus::fake();
-
         $this->artisan('messenger:invites:check-valid')
             ->expectsOutput('1 invalid invites found. Archive invites dispatched!')
             ->assertExitCode(0);
@@ -123,8 +127,6 @@ class InvitesCheckTest extends FeatureTestCase
             'uses' => 0,
             'expires_at' => now()->addMinutes(5),
         ]);
-
-        Bus::fake();
 
         $this->travel(10)->minutes();
 
@@ -155,8 +157,6 @@ class InvitesCheckTest extends FeatureTestCase
             'uses' => 0,
             'expires_at' => now()->addMinutes(5),
         ]);
-
-        Bus::fake();
 
         $this->travel(10)->minutes();
 
