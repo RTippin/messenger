@@ -17,13 +17,13 @@
 - laravel broadcast driver configured.
 
 ### Notes / upcoming
-- A React frontend will be in the works.
-- Included frontend uses socket.io / laravel-echo. Future release will expand options.
-- Expanded docs.
 - If our event listeners are enabled in your config, the queue your worker must use is `messenger`, as all listeners are queued on that channel.
 - Our included commands that push a job also use the `messenger` queue channel.
 - If you enable calling, we support an included [Janus Media Server][link-janus-server] driver, which you will still need to install the media server yourself.
 - To configure your own 3rd party video provider, checkout our VideoDriver you will need to implement with your own video implementation, and add to our configs [`drivers`][link-config-drivers] section. Then you set the calling driver to your new implementation from our configs [`calling`][link-config-calling] section.
+- A React frontend will be in the works.
+- Included frontend uses socket.io / laravel-echo. Future release will expand options.
+- Expanded docs.
 - Read through our config file before migrating!
 
 ### Messenger Demo
@@ -38,36 +38,222 @@
 
 ---
 
-## Installation
+# Installation
 
-Via Composer
+## Via Composer
 
 ``` bash
 $ composer require rtippin/messenger
 ```
 
-Publish package assets / configs / views
-
+## Publish Assets
+- To publish views / config / js assets is one easy command, use:
 ```bash
 $ php artisan messenger:publish
 ```
+- To publish individual assets, use:
+```bash
+$ php artisan vendor:publish --tag=messenger.config
+$ php artisan vendor:publish --tag=messenger.views
+$ php artisan vendor:publish --tag=messenger.assets
+$ php artisan vendor:publish --tag=messenger.migrations
+$ php artisan vendor:publish --tag=messenger.janus.config
+```
+***All publish commands accept the `--force` flag, which will overwrite existing files if already published!***
 
-Check out the published [`messenger.php`][link-config] config file in your config/ directory. You are going to want to first specify if you plan to use UUIDs on your provider models before running the migrations.
+***Migrations do not need to be published for them to run. It is recommended to leave those alone!***
+
+## Migrate
+***Check out the published [`messenger.php`][link-config] config file in your config/ directory. You are going to want to first specify if you plan to use UUIDs on your provider models before running the migrations. (False by default)***
 
 ```bash
 $ php artisan migrate
 ```
+## Providers Config
+- Add every provider model you wish to use within the providers array in our config.
 
-Add every provider model you wish to use within the providers array in our config. Each provider will need to implement our [`MessengerProvider`][link-messenger-contract] contract. We include a [`Messageable`][link-messageable] trait you can use on your providers that will usually suffice for your needs.
+**Example:**
 
-If you want your provider to be searchable, you must implement our [`Searchable`][link-searchable] contract on those providers. We also include a [`Search`][link-search] trait that works out of the box with the default laravel User model.
+```php
+'providers' => [
+    'user' => [
+        'model' => App\Models\User::class,
+        'searchable' => true,
+        'friendable' => true,
+        'devices' => false,
+        'default_avatar' => public_path('vendor/messenger/images/users.png'),
+        'provider_interactions' => [
+            'can_message' => true,
+            'can_search' => true,
+            'can_friend' => true,
+        ],
+    ],
+    'company' => [
+        'model' => App\Models\Company::class,
+        'searchable' => true,
+        'friendable' => true,
+        'devices' => false,
+        'default_avatar' => public_path('vendor/messenger/images/company.png'),
+        'provider_interactions' => [
+            'can_message' => true,
+            'can_search' => true,
+            'can_friend' => true,
+        ],
+    ],
+],
+```
+- Each provider you define will need to implement our [`MessengerProvider`][link-messenger-contract] contract. We include a [`Messageable`][link-messageable] trait you can use on your providers that will usually suffice for your needs.
 
+***Example:***
 
-If you enable all of our routing, simply login after you setup your providers in our config, and head to the default `/messenger` route!
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Traits\Messageable;
+
+class User extends Authenticatable implements MessengerProvider
+{
+    use Messageable;
+}
+```
+
+- When provider avatar upload/removal is enabled, we assume you have a `picture` column that is `string/nullable` on that providers table. You may overwrite the column name on your model using the below method, should your column be named differently.
+
+***Example:***
+
+```php
+public function getAvatarColumn(): string
+{
+    return 'avatar';
+}
+```
+
+- To grab your providers name, our default returns the 'name' column from your model, stripping tags and making words uppercase. You may overwrite the way the name on your model is returned using the below method.
+
+***Example:***
+
+```php
+public function name(): string
+{
+    return strip_tags(ucwords($this->first." ".$this->last));
+}
+```
+
+- If you want a provider to be searchable, you must implement our [`Searchable`][link-searchable] contract on those providers. We also include a [`Search`][link-search] trait that works out of the box with the default laravel User model.
+
+***Example:***
+
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\Searchable;
+use RTippin\Messenger\Traits\Messageable;
+use RTippin\Messenger\Traits\Search;
+
+class User extends Authenticatable implements MessengerProvider, Searchable
+{
+    use Messageable;
+    use Search;
+}
+```
+
+- If you have different columns used to search for your provider, you can skip using the default `Search` trait, and define the public static method yourself.
+
+***Example:***
+
+```php
+public static function getProviderSearchableBuilder(Builder $query,
+                                                    string $search,
+                                                    array $searchItems): Builder
+{
+    return $query->where(function (Builder $query) use ($searchItems) {
+        foreach ($searchItems as $item) {
+            $query->orWhere('company_name', 'LIKE', "%{$item}%");
+        }
+    })->orWhere('company_email', '=', $search);
+}
+```
+
+## Storage Config
+
+***Default:***
+
+```php
+'storage' => [
+    'avatars' => [
+        'disk' => 'public',
+        'directory' => 'images',
+    ],
+    'threads' => [
+        'disk' => 'messenger',
+        'directory' => 'threads',
+    ],
+],
+```
+
+- The default path used for avatar uploads from your providers is set to the default `public` disk laravel uses in the `filesystem.php` config file. Images would then be saved under `storage_path('app/public/images')`
+- The default path used for any uploads belonging to a thread is set to the `messenger` disk, which you will have to create within your `filesystem.php` config, or set to a disk of your choosing. Using the below example, thread files would be located under `storage_path('app/messenger/threads')`
+
+***Example disk in filesystem.php:***
+```php
+'messenger' => [
+    'driver' => 'local',
+    'root' => storage_path('app/messenger'),
+    'url' => env('APP_URL').'/storage',
+],
+```
+
+## Routing Config
+
+***Default:***
+
+```php
+'routing' => [
+    'api' => [
+        'domain' => null,
+        'prefix' => 'api/messenger',
+        'middleware' => ['web', 'auth', 'messenger.provider:required'],
+        'invite_api_middleware' => ['web', 'auth.optional', 'messenger.provider'],
+    ],
+    'web' => [
+        'enabled' => true,
+        'domain' => null,
+        'prefix' => 'messenger',
+        'middleware' => ['web', 'auth', 'messenger.provider'],
+        'invite_web_middleware' => ['web', 'auth.optional', 'messenger.provider'],
+    ],
+    'provider_avatar' => [
+        'enabled' => true,
+        'domain' => null,
+        'prefix' => 'images',
+        'middleware' => ['web', 'cache.headers:public, max-age=86400;'],
+    ],
+    'channels' => [
+        'enabled' => true,
+        'domain' => null,
+        'prefix' => 'api',
+        'middleware' => ['web', 'auth', 'messenger.provider:required'],
+    ],
+],
+```
+- Our API is the core of this package, and are the only routes that cannot be disabled. The api routes also bootstrap all of our policies and controllers for you!
+- Web routes provide access to our included frontend/UI should you choose to not craft your own.
+- Provider avatar route gives fine grain control of how or to whom you want to display provider avatars to.
+- Channels are what we broadcast our realtime data over! The included private channel: `private-{alias}.{id}`. Thread presence channel: `presence-thread.{thread}`. Call presence channel: `presence-call.{call}.thread.{thread}`
+- For each section of routes, you may choose your desired endpoint domain, prefix and middleware.
+- The default `messenger.provider` middleware is included with this package and simply sets the active messenger provider by grabbing the authed user from `$request->user()`. See [SetMessengerProvider][link-set-provider-middleware] for more information.
 
 ---
 
-## Commands
+# Commands
 
 - `php artisan messenger:publish` | `--force`
     * Publish our views / js / css / config, with a force option to overwrite if already exist.
@@ -149,3 +335,4 @@ If you discover any security related issues, please email author email instead o
 [link-demo-company]: https://github.com/RTippin/messenger-demo/blob/master/app/Models/Company.php
 [link-demo-kernel]: https://github.com/RTippin/messenger-demo/blob/master/app/Console/Kernel.php
 [link-janus-server]: https://janus.conf.meetecho.com/docs/videoroom.html
+[link-set-provider-middleware]: https://github.com/RTippin/messenger/blob/master/src/Http/Middleware/SetMessengerProvider.php
