@@ -36,10 +36,17 @@ class InvitesCheck extends Command
         // Grab any invites where the expires_at has passed, or where the max_use
         // is not 0 (no limit) and the uses is equal or greater than its max_use
 
-        if ($messenger->isThreadInvitesEnabled()) {
-            Invite::invalid()->chunk(100, fn (Collection $invites) => $this->dispatchJob($invites));
+        if (! $messenger->isThreadInvitesEnabled()) {
+            $this->info('Thread invites are currently disabled.');
+        } else {
+            if (Invite::invalid()->count()) {
+                Invite::invalid()->with('thread')->chunk(100, fn (Collection $invites) => $this->dispatchJob($invites));
 
-            $this->info('Invite checks dispatched!');
+                $message = $this->option('now') ? 'completed!' : 'dispatched!';
+                $this->info("Invite checks {$message}");
+            } else {
+                $this->info('No invalid invites.');
+            }
         }
     }
 
