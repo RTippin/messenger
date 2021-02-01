@@ -35,12 +35,23 @@ class PurgeImages extends Command
      */
     public function handle(): void
     {
-        Message::image()
+        $count = Message::image()
             ->onlyTrashed()
             ->where('deleted_at', '<=', now()->subDays($this->option('days')))
-            ->chunk(100, fn (Collection $images) => $this->dispatchJob($images));
+            ->count();
 
-        $this->info('Purge image messages dispatched.');
+        if ($count > 0) {
+            Message::image()
+                ->onlyTrashed()
+                ->where('deleted_at', '<=', now()->subDays($this->option('days')))
+                ->chunk(100, fn (Collection $images) => $this->dispatchJob($images));
+
+            $message = $this->option('now') ? 'completed!' : 'dispatched!';
+
+            $this->info("{$count} image messages archived {$this->option('days')} days or greater found. Purging {$message}");
+        } else {
+            $this->info("No image messages archived {$this->option('days')} days or greater found.");
+        }
     }
 
     /**
