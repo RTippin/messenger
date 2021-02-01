@@ -19,14 +19,12 @@ trait RouteMap
     {
         $router = $this->app->make(Router::class);
 
-        if ($this->app['config']->get('messenger.routing.api.enabled')) {
-            $router->group($this->apiRouteConfiguration(), function () {
-                $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
-            });
-            $router->group($this->apiRouteConfiguration(true), function () {
-                $this->loadRoutesFrom(__DIR__.'/../routes/invite_api.php');
-            });
-        }
+        $router->group($this->apiRouteConfiguration(), function () {
+            $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
+        });
+        $router->group($this->apiRouteConfiguration(true), function () {
+            $this->loadRoutesFrom(__DIR__.'/../routes/invite_api.php');
+        });
 
         if ($this->app['config']->get('messenger.routing.web.enabled')) {
             $router->group($this->webRouteConfiguration(), function () {

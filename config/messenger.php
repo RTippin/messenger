@@ -163,7 +163,6 @@ return [
     */
     'routing' => [
         'api' => [
-            'enabled' => true,
             'domain' => null,
             'prefix' => 'api/messenger',
             'middleware' => ['web', 'auth', 'messenger.provider:required'],

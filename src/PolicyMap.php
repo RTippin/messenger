@@ -54,12 +54,10 @@ trait PolicyMap
      */
     protected function registerPolicies(): void
     {
-        if ($this->app['config']->get('messenger.routing.api.enabled')) {
-            $gate = $this->app->make(Gate::class);
+        $gate = $this->app->make(Gate::class);
 
-            foreach ($this->policies as $key => $value) {
-                $gate->policy($key, $value);
-            }
+        foreach ($this->policies as $key => $value) {
+            $gate->policy($key, $value);
         }
     }
 }
