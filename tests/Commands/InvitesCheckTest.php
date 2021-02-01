@@ -69,7 +69,7 @@ class InvitesCheckTest extends FeatureTestCase
     }
 
     /** @test */
-    public function invites_command_dispatches_job_now()
+    public function invites_command_runs_job_now()
     {
         $this->group->invites()->create([
             'owner_id' => $this->tippin->getKey(),

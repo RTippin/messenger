@@ -25,7 +25,7 @@ class CallActivityCheckTest extends FeatureTestCase
     }
 
     /** @test */
-    public function checker_command_does_nothing_with_no_active_calls()
+    public function call_command_does_nothing_when_no_active_calls_found()
     {
         $this->artisan('messenger:calls:check-activity')
             ->expectsOutput('No active calls.')
@@ -33,7 +33,7 @@ class CallActivityCheckTest extends FeatureTestCase
     }
 
     /** @test */
-    public function checker_command_does_nothing_when_calling_disabled_in_config()
+    public function call_command_does_nothing_when_calling_disabled_in_config()
     {
         Messenger::setCalling(false);
 
@@ -43,21 +43,21 @@ class CallActivityCheckTest extends FeatureTestCase
     }
 
     /** @test */
-    public function checker_command_ignores_calls_created_within_the_last_minute()
+    public function call_command_ignores_calls_created_within_the_last_minute()
     {
         $this->createCall($this->group, $this->tippin);
 
         Bus::fake();
 
         $this->artisan('messenger:calls:check-activity')
-            ->expectsOutput('Activity checks dispatched!')
+            ->expectsOutput('Call activity checks dispatched!')
             ->assertExitCode(0);
 
         Bus::assertNotDispatched(CheckCallsActivity::class);
     }
 
     /** @test */
-    public function checker_command_dispatches_checker_job()
+    public function call_command_dispatches_job()
     {
         $this->createCall($this->group, $this->tippin);
 
@@ -66,14 +66,14 @@ class CallActivityCheckTest extends FeatureTestCase
         $this->travel(2)->minutes();
 
         $this->artisan('messenger:calls:check-activity')
-            ->expectsOutput('Activity checks dispatched!')
+            ->expectsOutput('Call activity checks dispatched!')
             ->assertExitCode(0);
 
         Bus::assertDispatched(CheckCallsActivity::class);
     }
 
     /** @test */
-    public function checker_command_runs_checker_job_now()
+    public function call_command_runs_job_now()
     {
         $this->createCall($this->group, $this->tippin);
 
@@ -84,7 +84,7 @@ class CallActivityCheckTest extends FeatureTestCase
         $this->artisan('messenger:calls:check-activity', [
             '--now' => true,
         ])
-            ->expectsOutput('Activity checks completed!')
+            ->expectsOutput('Call activity checks completed!')
             ->assertExitCode(0);
 
         Bus::assertDispatched(CheckCallsActivity::class);

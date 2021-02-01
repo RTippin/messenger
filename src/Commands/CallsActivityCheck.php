@@ -41,12 +41,8 @@ class CallsActivityCheck extends Command
                     ->where('created_at', '<', now()->subMinute())
                     ->chunk(100, fn (Collection $calls) => $this->dispatchJob($calls));
 
-                if ($this->option('now')) {
-                    $this->info('Activity checks completed!');
-                } else {
-                    $this->info('Activity checks dispatched!');
-                }
-
+                $message = $this->option('now') ? 'completed!' : 'dispatched!';
+                $this->info("Call activity checks {$message}");
             } else {
                 $this->info('No active calls.');
             }
