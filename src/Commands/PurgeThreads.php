@@ -35,7 +35,7 @@ class PurgeThreads extends Command
      */
     public function handle(): void
     {
-        $count =  Thread::onlyTrashed()
+        $count = Thread::onlyTrashed()
             ->where('deleted_at', '<=', now()->subDays($this->option('days')))
             ->count();
 
