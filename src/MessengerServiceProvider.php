@@ -35,16 +35,6 @@ class MessengerServiceProvider extends ServiceProvider
     use RouteMap;
 
     /**
-     * Get the services provided by the provider.
-     *
-     * @return array
-     */
-    public function provides(): array
-    {
-        return ['messenger'];
-    }
-
-    /**
      * Perform post-registration booting of services.
      *
      * @return void
