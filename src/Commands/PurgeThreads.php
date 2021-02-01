@@ -35,11 +35,21 @@ class PurgeThreads extends Command
      */
     public function handle(): void
     {
-        Thread::onlyTrashed()
+        $count =  Thread::onlyTrashed()
             ->where('deleted_at', '<=', now()->subDays($this->option('days')))
-            ->chunk(100, fn (Collection $threads) => $this->dispatchJob($threads));
+            ->count();
 
-        $this->info('Purge threads dispatched.');
+        if ($count > 0) {
+            Thread::onlyTrashed()
+                ->where('deleted_at', '<=', now()->subDays($this->option('days')))
+                ->chunk(100, fn (Collection $threads) => $this->dispatchJob($threads));
+
+            $message = $this->option('now') ? 'completed!' : 'dispatched!';
+
+            $this->info("{$count} threads archived {$this->option('days')} days or greater found. Purging {$message}");
+        } else {
+            $this->info("No threads archived {$this->option('days')} days or greater found.");
+        }
     }
 
     /**
