@@ -32,11 +32,20 @@ class PurgeMessages extends Command
      */
     public function handle(): void
     {
-        $trashedMessages = Message::text()
+        $count = Message::text()
             ->onlyTrashed()
             ->where('deleted_at', '<=', now()->subDays($this->option('days')))
-            ->forceDelete();
+            ->count();
 
-        $this->info("We purged {$trashedMessages} archived messages!");
+        if ($count > 0) {
+            Message::text()
+                ->onlyTrashed()
+                ->where('deleted_at', '<=', now()->subDays($this->option('days')))
+                ->forceDelete();
+
+            $this->info("{$count} messages archived {$this->option('days')} days or greater have been purged!");
+        } else {
+            $this->info("No messages archived {$this->option('days')} days or greater found.");
+        }
     }
 }
