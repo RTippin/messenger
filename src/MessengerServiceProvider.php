@@ -174,6 +174,10 @@ class MessengerServiceProvider extends ServiceProvider
             return Limit::perMinute(120)->by(optional($request->user())->getKey() ?: $request->ip());
         });
 
+        RateLimiter::for('messenger.message', function (Request $request) {
+            return Limit::perMinute(60)->by(optional($request->user())->getKey() ?: $request->ip());
+        });
+
         RateLimiter::for('messenger.search', function (Request $request) {
             return Limit::perMinute(45)->by(optional($request->user())->getKey() ?: $request->ip());
         });

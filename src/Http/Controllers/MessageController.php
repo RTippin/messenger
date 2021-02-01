@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Routing\Controller;
 use RTippin\Messenger\Actions\Messages\ArchiveMessage;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
 use RTippin\Messenger\Http\Collections\MessageCollection;
@@ -16,9 +17,17 @@ use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\MessageRepository;
 use Throwable;
 
-class MessageController
+class MessageController extends Controller
 {
     use AuthorizesRequests;
+
+    /**
+     * MessageController constructor.
+     */
+    public function __construct()
+    {
+        $this->middleware('throttle:messenger.message')->only('store');
+    }
 
     /**
      * Display a listing of the most recent messages.
