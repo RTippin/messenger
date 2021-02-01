@@ -151,6 +151,26 @@ trait ConfigInterface
     /**
      * @var int
      */
+    private int $apiRateLimit;
+
+    /**
+     * @var int
+     */
+    private int $searchRateLimit;
+
+    /**
+     * @var int
+     */
+    private int $messageRateLimit;
+
+    /**
+     * @var int
+     */
+    private int $attachmentRateLimit;
+
+    /**
+     * @var int
+     */
     private int $searchPageCount;
 
     /**
@@ -562,6 +582,82 @@ trait ConfigInterface
     /**
      * @return int
      */
+    public function getApiRateLimit(): int
+    {
+        return $this->apiRateLimit;
+    }
+
+    /**
+     * @param int $apiRateLimit
+     * @return $this
+     */
+    public function setApiRateLimit(int $apiRateLimit): self
+    {
+        $this->apiRateLimit = $apiRateLimit;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getSearchRateLimit(): int
+    {
+        return $this->searchRateLimit;
+    }
+
+    /**
+     * @param int $searchRateLimit
+     * @return $this
+     */
+    public function setSearchRateLimit(int $searchRateLimit): self
+    {
+        $this->searchRateLimit = $searchRateLimit;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMessageRateLimit(): int
+    {
+        return $this->messageRateLimit;
+    }
+
+    /**
+     * @param int $messageRateLimit
+     * @return $this
+     */
+    public function setMessageRateLimit(int $messageRateLimit): self
+    {
+        $this->messageRateLimit = $messageRateLimit;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getAttachmentRateLimit(): int
+    {
+        return $this->attachmentRateLimit;
+    }
+
+    /**
+     * @param int $attachmentRateLimit
+     * @return $this
+     */
+    public function setAttachmentRateLimit(int $attachmentRateLimit): self
+    {
+        $this->attachmentRateLimit = $attachmentRateLimit;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
     public function getSearchPageCount(): int
     {
         return $this->searchPageCount;
@@ -898,5 +994,9 @@ trait ConfigInterface
         $this->messagesPageCount = $this->configRepo->get('messenger.collections.messages.page_count');
         $this->callsIndexCount = $this->configRepo->get('messenger.collections.calls.index_count');
         $this->callsPageCount = $this->configRepo->get('messenger.collections.calls.page_count');
+        $this->apiRateLimit = $this->configRepo->get('messenger.rate_limits.api');
+        $this->searchRateLimit = $this->configRepo->get('messenger.rate_limits.search');
+        $this->messageRateLimit = $this->configRepo->get('messenger.rate_limits.message');
+        $this->attachmentRateLimit = $this->configRepo->get('messenger.rate_limits.attachment');
     }
 }

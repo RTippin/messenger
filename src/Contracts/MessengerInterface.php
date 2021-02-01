@@ -269,6 +269,50 @@ interface MessengerInterface
     /**
      * @return int
      */
+    public function getApiRateLimit(): int;
+
+    /**
+     * @param int $apiRateLimit
+     * @return $this
+     */
+    public function setApiRateLimit(int $apiRateLimit);
+
+    /**
+     * @return int
+     */
+    public function getSearchRateLimit(): int;
+
+    /**
+     * @param int $searchRateLimit
+     * @return $this
+     */
+    public function setSearchRateLimit(int $searchRateLimit);
+
+    /**
+     * @return int
+     */
+    public function getMessageRateLimit(): int;
+
+    /**
+     * @param int $messageRateLimit
+     * @return $this
+     */
+    public function setMessageRateLimit(int $messageRateLimit);
+
+    /**
+     * @return int
+     */
+    public function getAttachmentRateLimit(): int;
+
+    /**
+     * @param int $attachmentRateLimit
+     * @return $this
+     */
+    public function setAttachmentRateLimit(int $attachmentRateLimit);
+
+    /**
+     * @return int
+     */
     public function getThreadsIndexCount(): int;
 
     /**

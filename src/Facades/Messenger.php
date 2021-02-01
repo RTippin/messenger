@@ -102,7 +102,14 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static reset()
  * @method static setMessengerProviders(array $providers = [])
  * @method static instance()
- * @method static getMessengerProviders()
+ * @method static getApiRateLimit()
+ * @method static setApiRateLimit(int $apiRateLimit)
+ * @method static getSearchRateLimit()
+ * @method static setSearchRateLimit(int $searchRateLimit)
+ * @method static getMessageRateLimit()
+ * @method static setMessageRateLimit(int $messageRateLimit)
+ * @method static getAttachmentRateLimit()
+ * @method static setAttachmentRateLimit(int $attachmentRateLimit)
  *
  * @mixin \RTippin\Messenger\Messenger
  * @see MessengerInterface

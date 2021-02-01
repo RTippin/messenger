@@ -22,6 +22,7 @@ use RTippin\Messenger\Commands\PurgeThreads;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
+use RTippin\Messenger\Facades\Messenger as MessengerFacade;
 use RTippin\Messenger\Http\Middleware\AuthenticateOptional;
 use RTippin\Messenger\Http\Middleware\MessengerApi;
 use RTippin\Messenger\Http\Middleware\SetMessengerProvider;
@@ -171,25 +172,39 @@ class MessengerServiceProvider extends ServiceProvider
     protected function configureRateLimiting(): void
     {
         RateLimiter::for('messenger-api', function (Request $request) {
-            return Limit::perMinute(120)->by(optional($request->user())->getKey() ?: $request->ip());
+            $limit = MessengerFacade::getApiRateLimit();
+
+            return $limit > 0
+                ? Limit::perMinute($limit)->by(optional($request->user())->getKey() ?: $request->ip())
+                : Limit::none();
         });
 
         RateLimiter::for('messenger-message', function (Request $request) {
             $thread = $request->route()->originalParameter('thread');
             $user = optional($request->user())->getKey() ?: $request->ip();
+            $limit = MessengerFacade::getMessageRateLimit();
 
-            return Limit::perMinute(60)->by($thread.'.'.$user);
+            return $limit > 0
+                ? Limit::perMinute($limit)->by($thread.'.'.$user)
+                : Limit::none();
         });
 
         RateLimiter::for('messenger-attachment', function (Request $request) {
             $thread = $request->route()->originalParameter('thread');
             $user = optional($request->user())->getKey() ?: $request->ip();
+            $limit = MessengerFacade::getAttachmentRateLimit();
 
-            return Limit::perMinute(10)->by($thread.'.'.$user);
+            return $limit > 0
+                ? Limit::perMinute($limit)->by($thread.'.'.$user)
+                : Limit::none();
         });
 
         RateLimiter::for('messenger-search', function (Request $request) {
-            return Limit::perMinute(45)->by(optional($request->user())->getKey() ?: $request->ip());
+            $limit = MessengerFacade::getSearchRateLimit();
+
+            return $limit > 0
+                ? Limit::perMinute($limit)->by(optional($request->user())->getKey() ?: $request->ip())
+                : Limit::none();
         });
     }
 
