@@ -28,7 +28,7 @@ class CallActivityCheckTest extends FeatureTestCase
     public function call_command_does_nothing_when_no_active_calls_found()
     {
         $this->artisan('messenger:calls:check-activity')
-            ->expectsOutput('No active calls.')
+            ->expectsOutput('No matching active calls found.')
             ->assertExitCode(0);
     }
 
@@ -50,7 +50,7 @@ class CallActivityCheckTest extends FeatureTestCase
         Bus::fake();
 
         $this->artisan('messenger:calls:check-activity')
-            ->expectsOutput('Call activity checks dispatched!')
+            ->expectsOutput('No matching active calls found.')
             ->assertExitCode(0);
 
         Bus::assertNotDispatched(CheckCallsActivity::class);
@@ -66,7 +66,7 @@ class CallActivityCheckTest extends FeatureTestCase
         $this->travel(2)->minutes();
 
         $this->artisan('messenger:calls:check-activity')
-            ->expectsOutput('Call activity checks dispatched!')
+            ->expectsOutput('1 active calls found. Call activity checks dispatched!')
             ->assertExitCode(0);
 
         Bus::assertDispatched(CheckCallsActivity::class);
@@ -84,7 +84,25 @@ class CallActivityCheckTest extends FeatureTestCase
         $this->artisan('messenger:calls:check-activity', [
             '--now' => true,
         ])
-            ->expectsOutput('Call activity checks completed!')
+            ->expectsOutput('1 active calls found. Call activity checks completed!')
+            ->assertExitCode(0);
+
+        Bus::assertDispatched(CheckCallsActivity::class);
+    }
+
+    /** @test */
+    public function call_command_finds_multiple_calls()
+    {
+        $this->createCall($this->group, $this->tippin);
+
+        $this->createCall($this->group, $this->tippin);
+
+        Bus::fake();
+
+        $this->travel(2)->minutes();
+
+        $this->artisan('messenger:calls:check-activity')
+            ->expectsOutput('2 active calls found. Call activity checks dispatched!')
             ->assertExitCode(0);
 
         Bus::assertDispatched(CheckCallsActivity::class);

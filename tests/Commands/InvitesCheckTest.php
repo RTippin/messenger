@@ -37,7 +37,7 @@ class InvitesCheckTest extends FeatureTestCase
         ]);
 
         $this->artisan('messenger:invites:check-valid')
-            ->expectsOutput('No invalid invites.')
+            ->expectsOutput('No invalid invites found.')
             ->assertExitCode(0);
     }
 
@@ -54,7 +54,7 @@ class InvitesCheckTest extends FeatureTestCase
         ]);
 
         $this->artisan('messenger:invites:check-valid')
-            ->expectsOutput('No invalid invites.')
+            ->expectsOutput('No invalid invites found.')
             ->assertExitCode(0);
     }
 
@@ -85,7 +85,7 @@ class InvitesCheckTest extends FeatureTestCase
         $this->artisan('messenger:invites:check-valid', [
             '--now' => true,
         ])
-            ->expectsOutput('Invite checks completed!')
+            ->expectsOutput('1 invalid invites found. Archive invites completed!')
             ->assertExitCode(0);
 
         Bus::assertDispatched(ArchiveInvalidInvites::class);
@@ -106,7 +106,7 @@ class InvitesCheckTest extends FeatureTestCase
         Bus::fake();
 
         $this->artisan('messenger:invites:check-valid')
-            ->expectsOutput('Invite checks dispatched!')
+            ->expectsOutput('1 invalid invites found. Archive invites dispatched!')
             ->assertExitCode(0);
 
         Bus::assertDispatched(ArchiveInvalidInvites::class);
@@ -129,7 +129,39 @@ class InvitesCheckTest extends FeatureTestCase
         $this->travel(10)->minutes();
 
         $this->artisan('messenger:invites:check-valid')
-            ->expectsOutput('Invite checks dispatched!')
+            ->expectsOutput('1 invalid invites found. Archive invites dispatched!')
+            ->assertExitCode(0);
+
+        Bus::assertDispatched(ArchiveInvalidInvites::class);
+    }
+
+    /** @test */
+    public function invites_command_finds_multiple_invalid_invites()
+    {
+        $this->group->invites()->create([
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => get_class($this->tippin),
+            'code' => 'TEST1234',
+            'max_use' => 1,
+            'uses' => 1,
+            'expires_at' => null,
+        ]);
+
+        $this->group->invites()->create([
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => get_class($this->tippin),
+            'code' => 'TEST5678',
+            'max_use' => 0,
+            'uses' => 0,
+            'expires_at' => now()->addMinutes(5),
+        ]);
+
+        Bus::fake();
+
+        $this->travel(10)->minutes();
+
+        $this->artisan('messenger:invites:check-valid')
+            ->expectsOutput('2 invalid invites found. Archive invites dispatched!')
             ->assertExitCode(0);
 
         Bus::assertDispatched(ArchiveInvalidInvites::class);
