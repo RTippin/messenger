@@ -2,9 +2,12 @@
 
 namespace RTippin\Messenger;
 
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use RTippin\Messenger\Brokers\FriendBroker;
 use RTippin\Messenger\Commands\CallsActivityCheck;
@@ -31,11 +34,6 @@ class MessengerServiceProvider extends ServiceProvider
     use RouteMap;
 
     /**
-     * Base middleware we apply to our API routes.
-     */
-    protected array $apiMiddleware = ['messenger.api'];
-
-    /**
      * Get the services provided by the provider.
      *
      * @return array
@@ -54,6 +52,7 @@ class MessengerServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->registerMiddleware();
+        $this->configureRateLimiting();
         $this->registerPolicies();
         $this->registerEvents();
         $this->registerRoutes();
@@ -141,6 +140,8 @@ class MessengerServiceProvider extends ServiceProvider
     }
 
     /**
+     * Register our middleware.
+     *
      * @throws BindingResolutionException
      */
     protected function registerMiddleware(): void
@@ -162,6 +163,20 @@ class MessengerServiceProvider extends ServiceProvider
             'auth.optional',
             AuthenticateOptional::class
         );
+    }
+
+    /**
+     * Configure the rate limiters for Messenger.
+     */
+    protected function configureRateLimiting(): void
+    {
+        RateLimiter::for('messenger.api', function (Request $request) {
+            return Limit::perMinute(120)->by(optional($request->user())->getKey() ?: $request->ip());
+        });
+
+        RateLimiter::for('messenger.search', function (Request $request) {
+            return Limit::perMinute(45)->by(optional($request->user())->getKey() ?: $request->ip());
+        });
     }
 
     /**
@@ -196,11 +211,10 @@ class MessengerServiceProvider extends ServiceProvider
      */
     protected function mergeApiMiddleware($middleware): array
     {
-        return array_merge(
-            $this->apiMiddleware,
-            is_array($middleware)
-                ? $middleware
-                : [$middleware]
-        );
+        $merged = array_merge(['messenger.api'], is_array($middleware) ? $middleware : [$middleware]);
+
+        array_push($merged, 'throttle:messenger.api');
+
+        return $merged;
     }
 }

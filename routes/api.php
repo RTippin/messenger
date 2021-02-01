@@ -58,7 +58,7 @@ Route::name('api.messenger.')->group(function () {
     //Invitation join
     Route::post('join/{invite:code}', JoinGroupInvite::class)->name('invites.join.store');
     //Search
-    Route::get('search/{query?}', Search::class)->name('search')->middleware('throttle:45,1');
+    Route::get('search/{query?}', Search::class)->name('search');
     //Friends routes
     Route::prefix('friends')->name('friends.')->group(function () {
         Route::apiResource('pending', PendingFriendController::class)->except('store');

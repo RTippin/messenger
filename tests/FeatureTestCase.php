@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests;
 
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Models\Messenger as MessengerModel;
 
@@ -20,6 +21,8 @@ class FeatureTestCase extends MessengerTestCase
         $this->storeBaseUsers();
 
         $this->storeBaseCompanies();
+
+        $this->withoutMiddleware(ThrottleRequests::class);
     }
 
     protected function tearDown(): void
