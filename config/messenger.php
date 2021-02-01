@@ -191,6 +191,19 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | API rate limits / request per minute allowed. Use 0 for unlimited
+    |--------------------------------------------------------------------------
+    |
+    */
+    'rate_limits' => [
+        'api' => 120,       // Applies over entire API
+        'search' => 45,     // Applies on search
+        'message' => 60,    // Applies to sending messages per thread
+        'attachment' => 10, // Applies to uploading images/documents per thread
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Endpoint our javascript will use for socket.io
     |--------------------------------------------------------------------------
     |
