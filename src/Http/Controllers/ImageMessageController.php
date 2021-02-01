@@ -23,7 +23,7 @@ class ImageMessageController extends Controller
      */
     public function __construct()
     {
-        $this->middleware('throttle:messenger.message')->only('store');
+        $this->middleware('throttle:messenger-message')->only('store');
     }
 
     /**

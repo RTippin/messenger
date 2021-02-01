@@ -170,15 +170,18 @@ class MessengerServiceProvider extends ServiceProvider
      */
     protected function configureRateLimiting(): void
     {
-        RateLimiter::for('messenger.api', function (Request $request) {
+        RateLimiter::for('messenger-api', function (Request $request) {
             return Limit::perMinute(120)->by(optional($request->user())->getKey() ?: $request->ip());
         });
 
-        RateLimiter::for('messenger.message', function (Request $request) {
-            return Limit::perMinute(60)->by(optional($request->user())->getKey() ?: $request->ip());
+        RateLimiter::for('messenger-message', function (Request $request) {
+            $thread = $request->route()->originalParameter('thread');
+            $user = optional($request->user())->getKey() ?: $request->ip();
+
+            return Limit::perMinute(60)->by($thread.'.'.$user);
         });
 
-        RateLimiter::for('messenger.search', function (Request $request) {
+        RateLimiter::for('messenger-search', function (Request $request) {
             return Limit::perMinute(45)->by(optional($request->user())->getKey() ?: $request->ip());
         });
     }
@@ -217,7 +220,7 @@ class MessengerServiceProvider extends ServiceProvider
     {
         $merged = array_merge(['messenger.api'], is_array($middleware) ? $middleware : [$middleware]);
 
-        array_push($merged, 'throttle:messenger.api');
+        array_push($merged, 'throttle:messenger-api');
 
         return $merged;
     }

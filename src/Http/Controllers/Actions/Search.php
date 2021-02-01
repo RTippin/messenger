@@ -13,7 +13,7 @@ class Search extends Controller
      */
     public function __construct()
     {
-        $this->middleware('throttle:messenger.search');
+        $this->middleware('throttle:messenger-search');
     }
 
     /**
