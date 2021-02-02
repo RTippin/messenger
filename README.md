@@ -40,13 +40,13 @@
 
 # Installation
 
-## Via Composer
+### Via Composer
 
 ``` bash
 $ composer require rtippin/messenger
 ```
 
-## Publish Assets
+### Publish Assets
 - To publish views / config / js assets is one easy command, use:
 ```bash
 $ php artisan messenger:publish
@@ -63,13 +63,16 @@ $ php artisan vendor:publish --tag=messenger.janus.config
 
 ***Migrations do not need to be published for them to run. It is recommended to leave those alone!***
 
-## Migrate
+### Migrate
 ***Check out the published [`messenger.php`][link-config] config file in your config/ directory. You are going to want to first specify if you plan to use UUIDs on your provider models before running the migrations. (False by default)***
 
 ```bash
 $ php artisan migrate
 ```
-## Providers Config
+
+# Configuration
+
+### Providers
 - Add every provider model you wish to use within the providers array in our config.
 
 **Example:**
@@ -182,7 +185,7 @@ public static function getProviderSearchableBuilder(Builder $query,
 }
 ```
 
-## Storage Config
+### Storage
 
 ***Default:***
 
@@ -211,7 +214,7 @@ public static function getProviderSearchableBuilder(Builder $query,
 ],
 ```
 
-## Routing Config
+### Routing
 
 ***Default:***
 
@@ -250,6 +253,127 @@ public static function getProviderSearchableBuilder(Builder $query,
 - Channels are what we broadcast our realtime data over! The included private channel: `private-{alias}.{id}`. Thread presence channel: `presence-thread.{thread}`. Call presence channel: `presence-call.{call}.thread.{thread}`
 - For each section of routes, you may choose your desired endpoint domain, prefix and middleware.
 - The default `messenger.provider` middleware is included with this package and simply sets the active messenger provider by grabbing the authed user from `$request->user()`. See [SetMessengerProvider][link-set-provider-middleware] for more information.
+
+### Rate Limits
+
+***Default:***
+
+```php
+'rate_limits' => [
+    'api' => 120,       // Applies over entire API
+    'search' => 45,     // Applies on search
+    'message' => 60,    // Applies to sending messages per thread
+    'attachment' => 10, // Applies to uploading images/documents per thread
+],
+```
+- You can set the rate limits for our API, including fine grain control over search, messaging, and attachment uploads. Setting a limit to `0` will remove its rate limit entirely.
+
+### Queued Event Listeners
+
+***Default:***
+
+```php
+'queued_event_listeners' => true,
+```
+
+- When enabled, the following listeners will be bound to their events, and queued on the `messenger` queue channel. These listeners provide some nice automation / housekeeping while utilizing the queue for async performance gains. Please see our directory of [listeners][link-listeners] to see how we hook into our action classes.
+- You must configure your workers to watch over the `messenger` channel, otherwise the listeners will never be executed.
+
+```php
+CallStartedEvent::class => [
+    SetupCall::class,
+],
+CallLeftEvent::class => [
+    EndCallIfEmpty::class,
+],
+CallEndedEvent::class => [
+    TeardownCall::class,
+    CallEndedMessage::class,
+],
+DemotedAdminEvent::class => [
+    DemotedAdminMessage::class,
+],
+InviteUsedEvent::class => [
+    JoinedWithInviteMessage::class,
+],
+ParticipantsAddedEvent::class => [
+    ParticipantsAddedMessage::class,
+],
+PromotedAdminEvent::class => [
+    PromotedAdminMessage::class,
+],
+RemovedFromThreadEvent::class => [
+    RemovedFromThreadMessage::class,
+],
+StatusHeartbeatEvent::class => [
+    StoreMessengerIp::class,
+],
+ThreadLeftEvent::class => [
+    ThreadLeftMessage::class,
+    ArchiveEmptyThread::class,
+],
+ThreadArchivedEvent::class => [
+    ThreadArchivedMessage::class,
+],
+ThreadAvatarEvent::class => [
+    ThreadAvatarMessage::class,
+],
+ThreadSettingsEvent::class => [
+    ThreadNameMessage::class,
+],
+```
+
+### Drivers
+
+***Default:***
+
+```php
+'drivers' => [
+    'broadcasting' => [
+        'default' => BroadcastBroker::class,
+        'null' => NullBroadcastBroker::class,
+    ],
+    'calling' => [
+        'janus' => JanusBroker::class,
+        'null' => NullVideoBroker::class,
+    ],
+],
+
+'broadcasting' => [
+    'driver' => env('MESSENGER_BROADCASTING_DRIVER', 'default'),
+],
+
+'calling' => [
+    'enabled' => env('MESSENGER_CALLING_ENABLED', false),
+    'driver' => env('MESSENGER_CALLING_DRIVER', 'null'),
+],
+
+'push_notifications' => [
+    'enabled' => env('MESSENGER_PUSH_NOTIFICATIONS_ENABLED', false),
+],
+```
+
+- Our default broadcast driver, [BroadcastBroker][link-broadcast-broker], is responsible for extracting private/presence channel names and dispatching the broadcast event that any action in our system calls for.
+  - If push notifications are enabled, this broker will also forward its data to our [PushNotificationFormatter][link-push-notify]. The formatter will then fire a `PushNotificationEvent` that you can attach a listener to handle your own FCM / other service.
+- Video calling is disabled by default. Our current supported 3rd party video provider is an open source media server, [Janus Media Server][link-janus-server]. We only utilize their [VideoRoom Plugin][link-janus-video], using create and destroy rooms.
+  - More video drivers will be included in the future, such as one for Twillio.
+- All drivers can be extended or swapped with your own custom implementations. Create your own class, extend our proper contract, and add your custom driver into the appropriate drivers array in the config.
+
+***Example:***
+```php
+//messenger.php
+'drivers' => [
+    'calling' => [
+        'janus' => JanusBroker::class,
+        'twillio' => TwillioBroker::class,
+        'null' => NullVideoBroker::class,
+    ],
+],
+```
+```dotenv
+#.env
+MESSENGER_CALLING_DRIVER=twillio
+```
 
 ---
 
@@ -314,8 +438,8 @@ If you discover any security related issues, please email author email instead o
 [link-styleci]: https://styleci.io/repos/309521487
 [link-author]: https://github.com/rtippin
 [link-config]: config/messenger.php
-[link-config-drivers]: https://github.com/RTippin/messenger/blob/master/config/messenger.php#L221
-[link-config-calling]: https://github.com/RTippin/messenger/blob/master/config/messenger.php#L236
+[link-config-drivers]: https://github.com/RTippin/messenger/blob/master/config/messenger.php#L233
+[link-config-calling]: https://github.com/RTippin/messenger/blob/master/config/messenger.php#L248
 [link-messageable]: src/Traits/Messageable.php
 [link-searchable]: src/Contracts/Searchable.php
 [link-search]: src/Traits/Search.php
@@ -334,5 +458,9 @@ If you discover any security related issues, please email author email instead o
 [link-demo-user]: https://github.com/RTippin/messenger-demo/blob/master/app/Models/User.php
 [link-demo-company]: https://github.com/RTippin/messenger-demo/blob/master/app/Models/Company.php
 [link-demo-kernel]: https://github.com/RTippin/messenger-demo/blob/master/app/Console/Kernel.php
-[link-janus-server]: https://janus.conf.meetecho.com/docs/videoroom.html
-[link-set-provider-middleware]: https://github.com/RTippin/messenger/blob/master/src/Http/Middleware/SetMessengerProvider.php
+[link-janus-server]: https://janus.conf.meetecho.com/docs/
+[link-janus-video]: https://janus.conf.meetecho.com/docs/videoroom.html
+[link-set-provider-middleware]: src/Http/Middleware/SetMessengerProvider.php
+[link-listeners]: src/Listeners
+[link-broadcast-broker]: src/Brokers/BroadcastBroker.php
+[link-push-notify]: src/Services/PushNotificationFormatter.php
