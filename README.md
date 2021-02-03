@@ -149,6 +149,10 @@ public function name(): string
 }
 ```
 
+---
+
+### Searchable
+
 - If you want a provider to be searchable, you must implement our [`Searchable`][link-searchable] contract on those providers. We also include a [`Search`][link-search] trait that works out of the box with the default laravel User model.
 
 ***Example:***
@@ -186,6 +190,86 @@ public static function getProviderSearchableBuilder(Builder $query,
         }
     })->orWhere('company_email', '=', $search);
 }
+```
+
+---
+
+### Devices
+
+- Devices are a helpful way for you to attach a listener onto our [PushNotificationEvent][link-push-event]. When any broadcast over a private channel occurs, we forward a stripped down list of all recipients/providers and their types/IDs, along with the original data broadcasted over websockets, and the event name.
+  - You must be using our `default` broadcast driver, and have `push_notifications` enabled. How you use the data from our event to send push notifications (FCM etc) is up to you!
+  
+***EXAMPLE:***
+
+`Knock at group thread : PushNotificationEvent::class dispatched`
+
+```php
+PushNotificationEvent::class => $recipients //Collection
+[
+  [
+    'owner_type' => 'App\Models\User',
+    'owner_id' => 1,
+  ],
+  [
+    'owner_type' => 'App\Models\Company',
+    'owner_id' => 22,
+  ]
+]
+```
+
+```php
+PushNotificationEvent::class => $broadcastAs //String
+'knock.knock'
+```
+
+```php
+PushNotificationEvent::class => $data //Array
+[
+    'thread' => [
+        'id' => '92a46441-930e-4492-b9ab-d40df4f0b9c1',
+        'type' => 2,
+        'type_verbose' => 'GROUP',
+        'group' => true,
+        'name' => 'Test Group',
+        //etc
+    ],
+    'sender' => [],
+]
+```
+
+---
+
+### Provider Interactions
+
+- Provider interactions give fine grain control over how your provider can interact with other providers, should you have multiple. A provider must first have `friendable` and `searchable` enabled for those interaction permissions to take effect.
+  - A provider will always have full interactions between itself, meaning a user will always be able to friend another user, if the user provider is friendable. Setting `can_friend` to false will simply deny a user to initiate a friend request with any other providers you have defined.
+- Accepted values are `true`, `false`, `null`, `alias`, `alias1|alias2`
+  - FALSE or NULL will indicate that the provider cannot perform those interactions to any other provider you defined.
+  - TRUE indicates the provider can perform those interactions to any other provider you defined.
+  - ALIAS, or multiple aliases separated by the PIPE `|` indicate specific providers the selected provider can interact with.
+- Meanings:
+  - `can_message` is permissions to initiate a private conversation with another provider. This does not stop or alter private threads already created, nor does it impact group threads. Initiating a private thread is defined as a provider starting a new private thread with another provider. A user may not be able to start a conversation with a company, but a company may be allowed to start the conversation with the user. Once a private thread is created, it is business as usual!
+  - `can_search` is what other providers your provider will be allowed to search for. A user may not be allowed to search for companies, so any companies would not be included in their API response, however companies searching may be allowed to have users in their results.
+  - `can_friend` is permission to initiate a friend request with another provider. Similar to `can_message`, this permission only occurs when one provider sends another a friend request. Canceling / Accepting / Denying a friend request, or your list of actual friends is not impacted by this permission.
+
+***Example:***
+
+```php
+'provider_interactions' => [
+    'can_message' => true,
+    'can_search' => true,
+    'can_friend' => true,
+],
+'provider_interactions' => [
+    'can_message' => 'company|admin',
+    'can_search' => 'company',
+    'can_friend' => false,
+],
+'provider_interactions' => [
+    'can_message' => null,
+    'can_search' => 'company|admin|employee',
+    'can_friend' => 'company',
+],
 ```
 
 ---
@@ -275,7 +359,7 @@ public static function getProviderSearchableBuilder(Builder $query,
     'attachment' => 10, // Applies to uploading images/documents per thread
 ],
 ```
-- You can set the rate limits for our API, including fine grain control over search, messaging, and attachment uploads. Setting a limit to `0` will remove its rate limit entirely.
+- You can set the rate limits for our API, including fine grain control over search, messaging, and attachment uploads. Setting a limit to `0` will remove its rate limiter entirely.
 
 ---
 
@@ -482,7 +566,7 @@ ThreadSettingsEvent::class => [
 ```
 
 - Our default broadcast driver, [BroadcastBroker][link-broadcast-broker], is responsible for extracting private/presence channel names and dispatching the broadcast event that any action in our system calls for.
-  - If push notifications are enabled, this broker will also forward its data to our [PushNotificationFormatter][link-push-notify]. The formatter will then fire a `PushNotificationEvent` that you can attach a listener to handle your own FCM / other service.
+  - If push notifications are enabled, this broker will also forward its data to our [PushNotificationFormatter][link-push-notify]. The formatter will then fire a [PushNotificationEvent][link-push-event] that you can attach a listener to handle your own FCM / other service.
 - Video calling is disabled by default. Our current supported 3rd party video provider is an open source media server, [Janus Media Server][link-janus-server]. We only utilize their [VideoRoom Plugin][link-janus-video], using create and destroy rooms.
   - More video drivers will be included in the future, such as one for Twillio.
 - All drivers can be extended or swapped with your own custom implementations. Create your own class, extend our proper contract, and add your custom driver into the appropriate drivers array in the config.
@@ -677,3 +761,4 @@ If you discover any security related issues, please email author email instead o
 [link-listeners]: src/Listeners
 [link-broadcast-broker]: src/Brokers/BroadcastBroker.php
 [link-push-notify]: src/Services/PushNotificationFormatter.php
+[link-push-event]: https://github.com/RTippin/messenger/blob/master/src/Events/PushNotificationEvent.php
