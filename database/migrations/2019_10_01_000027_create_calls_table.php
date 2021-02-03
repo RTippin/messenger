@@ -19,6 +19,7 @@ class CreateCallsTable extends Migration
             messengerMorphType('owner', $table);
             $table->integer('type')->default(1);
             $table->boolean('setup_complete')->default(0);
+            $table->boolean('teardown_complete')->default(0);
             $table->string('room_id')->nullable();
             $table->string('room_pin')->nullable();
             $table->string('room_secret')->nullable();

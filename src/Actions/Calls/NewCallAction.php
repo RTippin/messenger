@@ -162,6 +162,7 @@ abstract class NewCallAction extends BaseMessengerAction
                     'owner_id' => $this->messenger->getProviderId(),
                     'owner_type' => $this->messenger->getProviderClass(),
                     'setup_complete' => $isSetupComplete,
+                    'teardown_complete' => false,
                 ])
                 ->setRelations([
                     'owner' => $this->messenger->getProvider(),

@@ -37,7 +37,7 @@ class CallBrokerSetup extends BaseMessengerAction
     public function execute(...$parameters): self
     {
         $this->setThread($parameters[0])
-            ->setCall($parameters[1])
+            ->setCall($parameters[1]->fresh())
             ->checkCallNeedsToBeSetup()
             ->setupCallWithProvider()
             ->updateCall();

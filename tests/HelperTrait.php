@@ -150,6 +150,7 @@ trait HelperTrait
             'owner_type' => get_class($owner),
             'call_ended' => null,
             'setup_complete' => true,
+            'teardown_complete' => false,
             'room_id' => '123456789',
             'room_pin' => 'PIN',
             'room_secret' => 'SECRET',

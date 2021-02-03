@@ -28,10 +28,14 @@ class CallBrokerTeardownTest extends FeatureTestCase
     {
         $this->mock(VideoDriver::class)
             ->shouldReceive('destroy')
-            ->with($this->call)
             ->andReturn(true);
 
         app(CallBrokerTeardown::class)->execute($this->call);
+
+        $this->assertDatabaseHas('calls', [
+            'id' => $this->call->id,
+            'teardown_complete' => true,
+        ]);
     }
 
     /** @test */
@@ -39,8 +43,19 @@ class CallBrokerTeardownTest extends FeatureTestCase
     {
         $this->mock(VideoDriver::class)
             ->shouldReceive('destroy')
-            ->with($this->call)
             ->andReturn(false);
+
+        $this->expectException(Exception::class);
+
+        app(CallBrokerTeardown::class)->execute($this->call);
+    }
+
+    /** @test */
+    public function call_teardown_throws_exception_if_call_already_torn_down()
+    {
+        $this->call->update([
+            'teardown_complete' => true,
+        ]);
 
         $this->expectException(Exception::class);
 

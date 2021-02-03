@@ -52,6 +52,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string|null $payload
  * @method static Builder|Call wherePayload($value)
  * @property int $setup_complete
+ * @property int $teardown_complete
  * @method static Builder|Call whereSetupComplete($value)
  */
 class Call extends Model
@@ -81,6 +82,7 @@ class Call extends Model
     protected $casts = [
         'room_id' => 'integer',
         'setup_complete' => 'boolean',
+        'teardown_complete' => 'boolean',
         'kicked' => 'boolean',
         'type' => 'integer',
     ];
@@ -170,6 +172,14 @@ class Call extends Model
     public function isSetup(): bool
     {
         return $this->setup_complete;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isTornDown(): bool
+    {
+        return $this->teardown_complete;
     }
 
     /**

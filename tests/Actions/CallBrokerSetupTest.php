@@ -29,6 +29,7 @@ class CallBrokerSetupTest extends FeatureTestCase
             'owner_type' => get_class($tippin),
             'call_ended' => null,
             'setup_complete' => false,
+            'teardown_complete' => false,
             'room_id' => null,
             'room_pin' => null,
             'room_secret' => null,
@@ -55,6 +56,7 @@ class CallBrokerSetupTest extends FeatureTestCase
         $this->assertDatabaseHas('calls', [
             'id' => $this->call->id,
             'setup_complete' => true,
+            'teardown_complete' => false,
             'room_id' => '123456',
             'room_pin' => 'TEST-PIN',
             'room_secret' => 'TEST-SECRET',
