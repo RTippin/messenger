@@ -154,7 +154,7 @@ public function name(): string
 ### Searchable
 
 - If you want a provider to be searchable, you must implement our [`Searchable`][link-searchable] contract on those providers. We also include a [`Search`][link-search] trait that works out of the box with the default laravel User model.
-
+  
 ***Example:***
 
 ```php
@@ -176,6 +176,7 @@ class User extends Authenticatable implements MessengerProvider, Searchable
 ```
 
 - If you have different columns used to search for your provider, you can skip using the default `Search` trait, and define the public static method yourself.
+  - We inject the query builder, along with the original full string search term, and an array of the search term exploded via spaces and commas.
 
 ***Example:***
 
@@ -197,7 +198,7 @@ public static function getProviderSearchableBuilder(Builder $query,
 ### Devices
 
 - Devices are a helpful way for you to attach a listener onto our [PushNotificationEvent][link-push-event]. When any broadcast over a private channel occurs, we forward a stripped down list of all recipients/providers and their types/IDs, along with the original data broadcasted over websockets, and the event name.
-  - You must be using our `default` broadcast driver, and have `push_notifications` enabled. How you use the data from our event to send push notifications (FCM etc) is up to you!
+  - To use this default event, you must be using our `default` broadcast driver, and have `push_notifications` enabled. How you use the data from our event to send push notifications (FCM etc) is up to you!
   
 ***EXAMPLE:***
 
@@ -205,6 +206,7 @@ public static function getProviderSearchableBuilder(Builder $query,
 
 ```php
 PushNotificationEvent::class => $recipients //Collection
+
 [
   [
     'owner_type' => 'App\Models\User',
@@ -219,11 +221,13 @@ PushNotificationEvent::class => $recipients //Collection
 
 ```php
 PushNotificationEvent::class => $broadcastAs //String
+
 'knock.knock'
 ```
 
 ```php
 PushNotificationEvent::class => $data //Array
+
 [
     'thread' => [
         'id' => '92a46441-930e-4492-b9ab-d40df4f0b9c1',
@@ -241,7 +245,8 @@ PushNotificationEvent::class => $data //Array
 
 ### Provider Interactions
 
-- Provider interactions give fine grain control over how your provider can interact with other providers, should you have multiple. A provider must first have `friendable` and `searchable` enabled for those interaction permissions to take effect.
+- Provider interactions give fine grain control over how your provider can interact with other providers, should you have multiple.
+  - A provider must first have `friendable` and `searchable` enabled for those interaction permissions to take effect. If a user can search anyone, but your company provider has `searchable` disabled, no companies would be searched.
   - A provider will always have full interactions between itself, meaning a user will always be able to friend another user, if the user provider is friendable. Setting `can_friend` to false will simply deny a user to initiate a friend request with any other providers you have defined.
 - Accepted values are `true`, `false`, `null`, `alias`, `alias1|alias2`
   - FALSE or NULL will indicate that the provider cannot perform those interactions to any other provider you defined.
@@ -249,8 +254,8 @@ PushNotificationEvent::class => $data //Array
   - ALIAS, or multiple aliases separated by the PIPE `|` indicate specific providers the selected provider can interact with.
 - Meanings:
   - `can_message` is permissions to initiate a private conversation with another provider. This does not stop or alter private threads already created, nor does it impact group threads. Initiating a private thread is defined as a provider starting a new private thread with another provider. A user may not be able to start a conversation with a company, but a company may be allowed to start the conversation with the user. Once a private thread is created, it is business as usual!
-  - `can_search` is what other providers your provider will be allowed to search for. A user may not be allowed to search for companies, so any companies would not be included in their API response, however companies searching may be allowed to have users in their results.
-  - `can_friend` is permission to initiate a friend request with another provider. Similar to `can_message`, this permission only occurs when one provider sends another a friend request. Canceling / Accepting / Denying a friend request, or your list of actual friends is not impacted by this permission.
+  - `can_search` is what other providers your provider will be allowed to search for. A user may not be allowed to search for companies, so any companies would not be included in their API response, however a company performing a search may be allowed to have users in their results.
+  - `can_friend` is permission to initiate a friend request with another provider. Similar to `can_message`, this permission only occurs when one provider sends another a friend request. Cancelling / Accepting / Denying a friend request, or your list of actual friends is not impacted by this permission.
 
 ***Example:***
 
@@ -574,6 +579,7 @@ ThreadSettingsEvent::class => [
 ***Example:***
 ```php
 //messenger.php
+
 'drivers' => [
     'calling' => [
         'janus' => JanusBroker::class,
@@ -584,6 +590,7 @@ ThreadSettingsEvent::class => [
 ```
 ```dotenv
 #.env
+
 MESSENGER_CALLING_DRIVER=twillio
 MESSENGER_CALLING_ENABLED=true
 ```
