@@ -1,6 +1,11 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+## [v0.11 (02-03-2021)]
+
+### Changed
+- `teardown_complete` added to calls table used to avoid duplicate tear downs. Added a short cache lockout upon ending a call to avoid race conditions with automated EndCallIfEmpty job.
+
 ## [v0.10 (02-03-2021)]
 
 ### Changed
