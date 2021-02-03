@@ -187,6 +187,8 @@ public static function getProviderSearchableBuilder(Builder $query,
 }
 ```
 
+---
+
 ### Storage
 
 ***Default:***
@@ -215,6 +217,8 @@ public static function getProviderSearchableBuilder(Builder $query,
     'url' => env('APP_URL').'/storage',
 ],
 ```
+
+---
 
 ### Routing
 
@@ -256,6 +260,8 @@ public static function getProviderSearchableBuilder(Builder $query,
 - For each section of routes, you may choose your desired endpoint domain, prefix and middleware.
 - The default `messenger.provider` middleware is included with this package and simply sets the active messenger provider by grabbing the authed user from `$request->user()`. See [SetMessengerProvider][link-set-provider-middleware] for more information.
 
+---
+
 ### Rate Limits
 
 ***Default:***
@@ -269,6 +275,8 @@ public static function getProviderSearchableBuilder(Builder $query,
 ],
 ```
 - You can set the rate limits for our API, including fine grain control over search, messaging, and attachment uploads. Setting a limit to `0` will remove its rate limit entirely.
+
+---
 
 ### Group Invites
 
@@ -284,6 +292,8 @@ public static function getProviderSearchableBuilder(Builder $query,
 - Group invites allow users inside a group thread to create an invitation code / link. Anyone not already a participant of the group will be able to join automatically by using that link.
   - You may disable this feature, or even constrain how many active invites a group thread may have at any one point in time.
 
+---
+
 ### Knocks
 
 ***Default:***
@@ -297,6 +307,8 @@ public static function getProviderSearchableBuilder(Builder $query,
 
 - Knocks are a fun way to grab attention of others within a private or group thread! Users can knock at one another in a private thread, where in a group thread, admins or participants with permission may use that feature.
   - You may disable this feature, or set the timeout a user can knock at a thread (in minutes). `0` for the timeout will be no timeout!
+
+---
   
 ### Online status
 
@@ -311,7 +323,9 @@ public static function getProviderSearchableBuilder(Builder $query,
 
 - Online status will use a combination of the cache and database to show other users when you are online / away / offline.
   - You may disable this feature, or specify how long a users online status will live within the cache.
-  
+
+---
+
 ### Collections
 
 ***Default:***
@@ -341,6 +355,8 @@ public static function getProviderSearchableBuilder(Builder $query,
 ```
 
 - We use JSON resources and collections to return content over our API. You can set how big you want the collections to be here.
+
+---
 
 ### Files
 
@@ -374,6 +390,8 @@ public static function getProviderSearchableBuilder(Builder $query,
 ```
 
 - You may disable individual features, such as file uploads, within this section. You may also set a different default image to serve for a group thread, and the image used when another is not found.
+
+---
 
 ### Queued Event Listeners
 
@@ -429,6 +447,8 @@ ThreadSettingsEvent::class => [
     ThreadNameMessage::class,
 ],
 ```
+
+---
 
 ### Drivers
 
