@@ -22,6 +22,7 @@
 - If you enable calling, we support an included [Janus Media Server][link-janus-server] driver, which you will still need to install the media server yourself.
 - To configure your own 3rd party video provider, checkout our VideoDriver you will need to implement with your own video implementation, and add to our configs [`drivers`][link-config-drivers] section. Then you set the calling driver to your new implementation from our configs [`calling`][link-config-calling] section.
 - A React frontend will be in the works.
+- Extending the Friends system to be a swappable driver.
 - Included frontend uses socket.io / laravel-echo. Future release will expand options.
 - Expanded docs.
 - Read through our config file before migrating!
@@ -256,7 +257,7 @@ public static function getProviderSearchableBuilder(Builder $query,
 - Our API is the core of this package, and are the only routes that cannot be disabled. The api routes also bootstrap all of our policies and controllers for you!
 - Web routes provide access to our included frontend/UI should you choose to not craft your own.
 - Provider avatar route gives fine grain control of how or to whom you want to display provider avatars to.
-- Channels are what we broadcast our realtime data over! The included private channel: `private-{alias}.{id}`. Thread presence channel: `presence-thread.{thread}`. Call presence channel: `presence-call.{call}.thread.{thread}`
+- Channels are what we broadcast our realtime data over! The included private channel: `private-messenger.{alias}.{id}`. Thread presence channel: `presence-messenger.thread.{thread}`. Call presence channel: `presence-messenger.call.{call}.thread.{thread}`
 - For each section of routes, you may choose your desired endpoint domain, prefix and middleware.
 - The default `messenger.provider` middleware is included with this package and simply sets the active messenger provider by grabbing the authed user from `$request->user()`. See [SetMessengerProvider][link-set-provider-middleware] for more information.
 
@@ -533,9 +534,9 @@ MESSENGER_CALLING_ENABLED=true
 ***Default Channel Routes:***
 
 ```php
-$broadcaster->channel('{alias}.{id}', ProviderChannel::class); // Private
-$broadcaster->channel('call.{call}.thread.{thread}', CallChannel::class); // Presence
-$broadcaster->channel('thread.{thread}', ThreadChannel::class); // Presence
+$broadcaster->channel('messenger.call.{call}.thread.{thread}', CallChannel::class); // Presence
+$broadcaster->channel('messenger.thread.{thread}', ThreadChannel::class); // Presence
+$broadcaster->channel('messenger.{alias}.{id}', ProviderChannel::class); // Private
 ```
   
 ***Private Channel Broadcast:***
@@ -567,7 +568,7 @@ ThreadLeftBroadcast::class => 'thread.left',
 
 ```js
 //Private
-Echo.private('user.1')
+Echo.private('messenger.user.1')
   .listen('.new.message', methods.incomingMessage)
   .listen('.thread.archived', methods.threadLeft)
   .listen('.message.archived', methods.messagePurged)
@@ -588,8 +589,8 @@ Echo.private('user.1')
 ```
 
 - Most data your client side will receive will be done through the user/providers private channel. Broadcast such as messages, calls, friend request, knocks, and more will be transmitted over the `ProviderChannel`. To subscribe to this channel, follow the below example using the `alias` of the provider you set in your providers config:
-  - `private-user.1` | User model with ID of 1
-  - `private-company.1234-5678` | Company model with ID of 1234-5678
+  - `private-messenger.user.1` | User model with ID of 1
+  - `private-messenger.company.1234-5678` | Company model with ID of 1234-5678
 
 ***Presence Channel Broadcast:***
 
@@ -602,13 +603,13 @@ ThreadSettingsBroadcast::class => 'thread.settings',
 
 ```js
 //Presence
-Echo.join('thread.1234-5678')
+Echo.join('messenger.thread.1234-5678')
   .listen('.thread.settings', methods.groupSettingsState)
   .listen('.thread.avatar', methods.groupAvatarState)
 ```
 
 - While inside a thread, you will want to subscribe to the `ThreadChannel` presence channel. This is where realtime, client to client events are broadcast. Typing, seen message, online status are all client to client and this is a great channel to utilize for this. The backend will broadcast a select few events over presence, such as when the groups settings are updated, or group avatar changed. This lets anyone currently in the thread know to update their UI! See example below for channel format to subscribe on:
-  - `presence-thread.1234-5678` | Thread presence channel for Thread model with ID of 1234-5678
+  - `presence-messenger.thread.1234-5678` | Thread presence channel for Thread model with ID of 1234-5678
 
 ---
 
@@ -632,7 +633,7 @@ Echo.join('thread.1234-5678')
 
 ## Change log
 
-Please see the [changelog](changelog.md) for more information on what has changed recently.
+Please see the [changelog](CHANGELOG.md) for more information on what has changed recently.
 
 ## Security
 

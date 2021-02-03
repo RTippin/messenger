@@ -45,7 +45,7 @@ class CallChannelTest extends FeatureTestCase
     public function guest_is_unauthorized()
     {
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-call.{$this->call->id}.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.call.{$this->call->id}.thread.{$this->private->id}",
         ])
             ->assertUnauthorized();
     }
@@ -56,7 +56,7 @@ class CallChannelTest extends FeatureTestCase
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-call.{$this->call->id}.thread.404",
+            'channel_name' => "presence-messenger.call.{$this->call->id}.thread.404",
         ])
             ->assertForbidden();
     }
@@ -67,7 +67,7 @@ class CallChannelTest extends FeatureTestCase
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-call.404.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.call.404.thread.{$this->private->id}",
         ])
             ->assertForbidden();
     }
@@ -78,7 +78,7 @@ class CallChannelTest extends FeatureTestCase
         $this->actingAs($this->companyDevelopers());
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-call.{$this->call->id}.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.call.{$this->call->id}.thread.{$this->private->id}",
         ])
             ->assertForbidden();
     }
@@ -89,7 +89,7 @@ class CallChannelTest extends FeatureTestCase
         $this->actingAs($this->doe);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-call.{$this->call->id}.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.call.{$this->call->id}.thread.{$this->private->id}",
         ])
             ->assertForbidden();
     }
@@ -106,7 +106,7 @@ class CallChannelTest extends FeatureTestCase
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-call.{$this->call->id}.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.call.{$this->call->id}.thread.{$this->private->id}",
         ])
             ->assertForbidden();
     }
@@ -121,7 +121,7 @@ class CallChannelTest extends FeatureTestCase
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-call.{$this->call->id}.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.call.{$this->call->id}.thread.{$this->private->id}",
         ])
             ->assertForbidden();
     }
@@ -132,7 +132,7 @@ class CallChannelTest extends FeatureTestCase
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-call.{$this->call->id}.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.call.{$this->call->id}.thread.{$this->private->id}",
         ])
             ->assertSuccessful()
             ->assertJson([

@@ -53,7 +53,7 @@ class DenyFriendRequestTest extends FeatureTestCase
         app(DenyFriendRequest::class)->execute($this->pendingFriend);
 
         Event::assertDispatched(function (FriendDeniedBroadcast $event) {
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertSame($this->pendingFriend->id, $event->broadcastWith()['sent_friend_id']);
 
             return true;

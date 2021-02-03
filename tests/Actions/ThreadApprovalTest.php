@@ -127,7 +127,7 @@ class ThreadApprovalTest extends FeatureTestCase
         );
 
         Event::assertDispatched(function (ThreadApprovalBroadcast $event) {
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertSame($this->private->id, $event->broadcastWith()['thread']['id']);
             $this->assertTrue($event->broadcastWith()['thread']['approved']);
 

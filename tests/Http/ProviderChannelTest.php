@@ -36,7 +36,7 @@ class ProviderChannelTest extends FeatureTestCase
     public function guest_is_unauthorized()
     {
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => 'private-user.1',
+            'channel_name' => 'private-messenger.user.1',
         ])
             ->assertUnauthorized();
     }
@@ -47,7 +47,7 @@ class ProviderChannelTest extends FeatureTestCase
         $this->actingAs($this->tippin);
 
         $this->post('api/broadcasting/auth', [
-            'channel_name' => "private-unknown.{$this->tippin->getKey()}",
+            'channel_name' => "private-messenger.unknown.{$this->tippin->getKey()}",
         ])
             ->assertForbidden();
     }
@@ -58,7 +58,7 @@ class ProviderChannelTest extends FeatureTestCase
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => 'private-user.404',
+            'channel_name' => 'private-messenger.user.404',
         ])
             ->assertForbidden();
     }
@@ -69,7 +69,7 @@ class ProviderChannelTest extends FeatureTestCase
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => 'private-.',
+            'channel_name' => 'private-messenger.',
         ])
             ->assertForbidden();
     }
@@ -84,7 +84,7 @@ class ProviderChannelTest extends FeatureTestCase
         $this->actingAs($invalid);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => 'private-user.404',
+            'channel_name' => 'private-messenger.user.404',
         ])
             ->assertForbidden();
     }
@@ -95,7 +95,7 @@ class ProviderChannelTest extends FeatureTestCase
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "private-user.{$this->tippin->getKey()}",
+            'channel_name' => "private-messenger.user.{$this->tippin->getKey()}",
         ])
             ->assertSuccessful();
     }
@@ -106,7 +106,7 @@ class ProviderChannelTest extends FeatureTestCase
         $this->actingAs($this->developers);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "private-company.{$this->developers->getKey()}",
+            'channel_name' => "private-messenger.company.{$this->developers->getKey()}",
         ])
             ->assertSuccessful();
     }

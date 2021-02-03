@@ -40,7 +40,7 @@ class ThreadChannelTest extends FeatureTestCase
     public function guest_is_unauthorized()
     {
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.thread.{$this->private->id}",
         ])
             ->assertUnauthorized();
     }
@@ -51,7 +51,7 @@ class ThreadChannelTest extends FeatureTestCase
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => 'presence-thread.404',
+            'channel_name' => 'presence-messenger.thread.404',
         ])
             ->assertForbidden();
     }
@@ -62,7 +62,7 @@ class ThreadChannelTest extends FeatureTestCase
         $this->actingAs($this->companyDevelopers());
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.thread.{$this->private->id}",
         ])
             ->assertForbidden();
     }
@@ -81,7 +81,7 @@ class ThreadChannelTest extends FeatureTestCase
         $this->actingAs($this->doe);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.thread.{$this->private->id}",
         ])
             ->assertForbidden();
     }
@@ -92,7 +92,7 @@ class ThreadChannelTest extends FeatureTestCase
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.thread.{$this->private->id}",
         ])
             ->assertSuccessful()
             ->assertJson([

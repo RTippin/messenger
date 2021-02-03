@@ -90,8 +90,8 @@ class EndCallTest extends FeatureTestCase
         app(EndCall::class)->execute($this->call);
 
         Event::assertDispatched(function (CallEndedBroadcast $event) {
-            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertSame($this->call->id, $event->broadcastWith()['id']);
             $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
 

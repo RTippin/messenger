@@ -113,7 +113,7 @@ class UpdateGroupAvatarTest extends FeatureTestCase
 
         Event::assertDispatched(function (ThreadAvatarBroadcast $event) {
             $this->assertContains('First Test Group', $event->broadcastWith());
-            $this->assertContains('presence-thread.'.$this->group->id, $event->broadcastOn());
+            $this->assertContains('presence-messenger.thread.'.$this->group->id, $event->broadcastOn());
 
             return true;
         });

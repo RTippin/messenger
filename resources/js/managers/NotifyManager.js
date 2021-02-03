@@ -191,11 +191,11 @@ window.NotifyManager = (function () {
         },
         PrivateChannel : function(id){
             if(!opt.socket.Echo) return;
-            if(typeof opt.socket.Echo.connector.channels['private-'+Messenger.common().model+'.'+id] !== 'undefined'){
-                opt.socket.private_channel = opt.socket.Echo.connector.channels['private-'+Messenger.common().model+'.'+id];
+            if(typeof opt.socket.Echo.connector.channels['private-messenger.'+Messenger.common().model+'.'+id] !== 'undefined'){
+                opt.socket.private_channel = opt.socket.Echo.connector.channels['private-messenger.'+Messenger.common().model+'.'+id];
                 return;
             }
-            opt.socket.private_channel = opt.socket.Echo.private(Messenger.common().model+'.'+id);
+            opt.socket.private_channel = opt.socket.Echo.private('messenger.'+Messenger.common().model+'.'+id);
             opt.socket.private_channel.listen('.new.message', methods.incomingMessage)
             .listen('.thread.archived', methods.threadLeft)
             .listen('.message.archived', methods.messagePurged)

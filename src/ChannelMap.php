@@ -27,9 +27,9 @@ trait ChannelMap
 
             $broadcaster = $this->app->make(Broadcaster::class);
 
-            $broadcaster->channel('{alias}.{id}', ProviderChannel::class);
-            $broadcaster->channel('call.{call}.thread.{thread}', CallChannel::class);
-            $broadcaster->channel('thread.{thread}', ThreadChannel::class);
+            $broadcaster->channel('messenger.thread.{thread}', ThreadChannel::class);
+            $broadcaster->channel('messenger.call.{call}.thread.{thread}', CallChannel::class);
+            $broadcaster->channel('messenger.{alias}.{id}', ProviderChannel::class);
         }
     }
 

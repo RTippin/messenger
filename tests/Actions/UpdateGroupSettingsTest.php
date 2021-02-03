@@ -73,7 +73,7 @@ class UpdateGroupSettingsTest extends FeatureTestCase
 
         Event::assertDispatched(function (ThreadSettingsBroadcast $event) {
             $this->assertContains('Rename Test Group', $event->broadcastWith());
-            $this->assertContains('presence-thread.'.$this->group->id, $event->broadcastOn());
+            $this->assertContains('presence-messenger.thread.'.$this->group->id, $event->broadcastOn());
 
             return true;
         });
@@ -109,7 +109,7 @@ class UpdateGroupSettingsTest extends FeatureTestCase
 
         Event::assertDispatched(function (ThreadSettingsBroadcast $event) {
             $this->assertContains('First Test Group', $event->broadcastWith());
-            $this->assertContains('presence-thread.'.$this->group->id, $event->broadcastOn());
+            $this->assertContains('presence-messenger.thread.'.$this->group->id, $event->broadcastOn());
 
             return true;
         });

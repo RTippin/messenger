@@ -208,8 +208,8 @@ class StoreManyParticipantsTest extends FeatureTestCase
         );
 
         Event::assertDispatched(function (NewThreadBroadcast $event) use ($developers) {
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
-            $this->assertContains('private-company.'.$developers->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.company.'.$developers->getKey(), $event->broadcastOn());
             $this->assertContains('First Test Group', $event->broadcastWith()['thread']);
 
             return true;

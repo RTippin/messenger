@@ -593,12 +593,12 @@ window.ThreadManager = (function () {
                 opt.socket.chat.subscribe();
                 return;
             }
-            if(typeof NotifyManager.sockets().Echo.connector.channels['presence-thread.'+opt.thread.id] !== 'undefined'){
-                NotifyManager.sockets().Echo.connector.channels['presence-thread.'+opt.thread.id].subscribe();
-                opt.socket.chat = NotifyManager.sockets().Echo.connector.channels['presence-thread.'+opt.thread.id]
+            if(typeof NotifyManager.sockets().Echo.connector.channels['presence-messenger.thread.'+opt.thread.id] !== 'undefined'){
+                NotifyManager.sockets().Echo.connector.channels['presence-messenger.thread.'+opt.thread.id].subscribe();
+                opt.socket.chat = NotifyManager.sockets().Echo.connector.channels['presence-messenger.thread.'+opt.thread.id]
             }
             else{
-                opt.socket.chat = NotifyManager.sockets().Echo.join('thread.'+opt.thread.id);
+                opt.socket.chat = NotifyManager.sockets().Echo.join('messenger.thread.'+opt.thread.id);
             }
             opt.socket.chat.here(function(users){
                 opt.storage.active_profiles = [];

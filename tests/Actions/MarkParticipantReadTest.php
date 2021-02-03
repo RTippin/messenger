@@ -66,7 +66,7 @@ class MarkParticipantReadTest extends FeatureTestCase
         );
 
         Event::assertDispatched(function (ParticipantReadBroadcast $event) {
-            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
             $this->assertSame($this->private->id, $event->broadcastWith()['thread_id']);
 
             return true;

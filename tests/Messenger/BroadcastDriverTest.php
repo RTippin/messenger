@@ -117,7 +117,7 @@ class BroadcastDriverTest extends FeatureTestCase
             ->broadcast(FakeBroadcastEvent::class);
 
         Event::assertDispatched(function (FakeBroadcastEvent $event) {
-            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
             $this->assertCount(1, $event->broadcastOn());
             $this->assertSame(1234, $event->broadcastWith()['data']);
 
@@ -138,9 +138,9 @@ class BroadcastDriverTest extends FeatureTestCase
             ->broadcast(FakeBroadcastEvent::class);
 
         Event::assertDispatched(function (FakeBroadcastEvent $event) {
-            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
-            $this->assertContains('private-company.'.$this->developers->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.company.'.$this->developers->getKey(), $event->broadcastOn());
             $this->assertSame(1234, $event->broadcastWith()['data']);
 
             return true;
@@ -162,9 +162,9 @@ class BroadcastDriverTest extends FeatureTestCase
             ->broadcast(FakeBroadcastEvent::class);
 
         Event::assertDispatched(function (FakeBroadcastEvent $event) {
-            $this->assertNotContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
-            $this->assertContains('private-company.'.$this->developers->getKey(), $event->broadcastOn());
+            $this->assertNotContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.company.'.$this->developers->getKey(), $event->broadcastOn());
             $this->assertSame(1234, $event->broadcastWith()['data']);
 
             return true;
@@ -184,7 +184,7 @@ class BroadcastDriverTest extends FeatureTestCase
             ->broadcast(FakeBroadcastEvent::class);
 
         Event::assertDispatched(function (FakeBroadcastEvent $event) {
-            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
             $this->assertCount(1, $event->broadcastOn());
             $this->assertSame(1234, $event->broadcastWith()['data']);
 
@@ -205,7 +205,7 @@ class BroadcastDriverTest extends FeatureTestCase
             ->broadcast(FakeBroadcastEvent::class);
 
         Event::assertDispatched(function (FakeBroadcastEvent $event) {
-            $this->assertContains('private-company.'.$this->developers->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.company.'.$this->developers->getKey(), $event->broadcastOn());
             $this->assertCount(1, $event->broadcastOn());
             $this->assertSame(1234, $event->broadcastWith()['data']);
 
@@ -228,7 +228,7 @@ class BroadcastDriverTest extends FeatureTestCase
             ->broadcast(FakeBroadcastEvent::class);
 
         Event::assertDispatched(function (FakeBroadcastEvent $event) {
-            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
             $this->assertCount(1, $event->broadcastOn());
             $this->assertSame(1234, $event->broadcastWith()['data']);
 
@@ -251,7 +251,7 @@ class BroadcastDriverTest extends FeatureTestCase
             ->broadcast(FakeBroadcastEvent::class);
 
         Event::assertDispatched(function (FakeBroadcastEvent $event) {
-            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
             $this->assertCount(1, $event->broadcastOn());
             $this->assertSame(1234, $event->broadcastWith()['data']);
 
@@ -277,8 +277,8 @@ class BroadcastDriverTest extends FeatureTestCase
             ->broadcast(FakeBroadcastEvent::class);
 
         Event::assertDispatched(function (FakeBroadcastEvent $event) {
-            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
-            $this->assertContains('private-company.'.$this->developers->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.company.'.$this->developers->getKey(), $event->broadcastOn());
             $this->assertCount(2, $event->broadcastOn());
             $this->assertSame(1234, $event->broadcastWith()['data']);
 
@@ -299,7 +299,7 @@ class BroadcastDriverTest extends FeatureTestCase
             ->broadcast(FakeBroadcastEvent::class);
 
         Event::assertDispatched(function (FakeBroadcastEvent $event) {
-            $this->assertContains('presence-thread.'.$this->group->id, $event->broadcastOn());
+            $this->assertContains('presence-messenger.thread.'.$this->group->id, $event->broadcastOn());
             $this->assertCount(1, $event->broadcastOn());
             $this->assertSame(1234, $event->broadcastWith()['data']);
 
@@ -322,7 +322,7 @@ class BroadcastDriverTest extends FeatureTestCase
             ->broadcast(FakeBroadcastEvent::class);
 
         Event::assertDispatched(function (FakeBroadcastEvent $event) use ($call) {
-            $this->assertContains("presence-call.{$call->id}.thread.{$this->group->id}", $event->broadcastOn());
+            $this->assertContains("presence-messenger.call.{$call->id}.thread.{$this->group->id}", $event->broadcastOn());
             $this->assertCount(1, $event->broadcastOn());
             $this->assertSame(1234, $event->broadcastWith()['data']);
 
@@ -350,8 +350,8 @@ class BroadcastDriverTest extends FeatureTestCase
             ->broadcast(FakeBroadcastEvent::class);
 
         Event::assertDispatched(function (FakeBroadcastEvent $event) use ($call) {
-            $this->assertContains("presence-call.{$call->id}.thread.{$this->group->id}", $event->broadcastOn());
-            $this->assertContains('presence-thread.'.$this->group->id, $event->broadcastOn());
+            $this->assertContains("presence-messenger.call.{$call->id}.thread.{$this->group->id}", $event->broadcastOn());
+            $this->assertContains('presence-messenger.thread.'.$this->group->id, $event->broadcastOn());
             $this->assertCount(2, $event->broadcastOn());
             $this->assertSame(1234, $event->broadcastWith()['data']);
 

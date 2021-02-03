@@ -64,8 +64,8 @@ class ArchiveMessageTest extends FeatureTestCase
         );
 
         Event::assertDispatched(function (MessageArchivedBroadcast $event) {
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
-            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
             $this->assertSame($this->message->id, $event->broadcastWith()['message_id']);
 
             return true;

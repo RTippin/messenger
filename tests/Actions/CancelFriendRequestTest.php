@@ -53,7 +53,7 @@ class CancelFriendRequestTest extends FeatureTestCase
         app(CancelFriendRequest::class)->execute($this->sentFriend);
 
         Event::assertDispatched(function (FriendCancelledBroadcast $event) {
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertSame($this->sentFriend->id, $event->broadcastWith()['pending_friend_id']);
 
             return true;

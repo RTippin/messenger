@@ -163,7 +163,7 @@ class StorePrivateThreadTest extends FeatureTestCase
         ]);
 
         Event::assertDispatched(function (NewThreadBroadcast $event) {
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertTrue($event->broadcastWith()['thread']['pending']);
 
             return true;

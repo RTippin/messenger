@@ -70,7 +70,7 @@ class RemoveParticipantTest extends FeatureTestCase
         );
 
         Event::assertDispatched(function (ThreadLeftBroadcast $event) {
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
 
             return true;

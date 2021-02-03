@@ -75,7 +75,7 @@ class AcceptFriendRequestTest extends FeatureTestCase
         app(AcceptFriendRequest::class)->execute($this->pendingFriend);
 
         Event::assertDispatched(function (FriendApprovedBroadcast $event) {
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertSame('Richard Tippin', $event->broadcastWith()['sender']['name']);
 
             return true;

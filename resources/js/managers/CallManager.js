@@ -180,7 +180,7 @@ window.CallManager = (function () {
             }
         },
         setup : function(){
-            opt.channel = NotifyManager.sockets().Echo.join('call.'+opt.call_id+'.thread.'+opt.thread_id);
+            opt.channel = NotifyManager.sockets().Echo.join('messenger.call.'+opt.call_id+'.thread.'+opt.thread_id);
             opt.channel.here(function(users){
                 opt.active_profiles = [];
                 opt.channel_status = true;

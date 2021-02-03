@@ -215,7 +215,7 @@ class BroadcastBroker implements BroadcastDriver
      * Generate each private thread channel name. Accepts
      * thread and call participants, or messenger provider.
      *
-     * outputs private-{alias}.{id}
+     * outputs private-messenger.{alias}.{id}
      *
      * @param mixed $recipient
      * @return string|null
@@ -235,14 +235,14 @@ class BroadcastBroker implements BroadcastDriver
             && $this->messenger->isValidMessengerProvider($recipient->owner_type)) {
             /** @var Participant|CallParticipant $recipient */
 
-            return "private-{$this->messenger->findProviderAlias($recipient->owner_type)}.{$recipient->owner_id}";
+            return "private-messenger.{$this->messenger->findProviderAlias($recipient->owner_type)}.{$recipient->owner_id}";
         }
 
         if (! in_array($abstract, $participants)
             && $this->messenger->isValidMessengerProvider($recipient)) {
             /** @var MessengerProvider $recipient */
 
-            return "private-{$this->messenger->findProviderAlias($recipient)}.{$recipient->getKey()}";
+            return "private-messenger.{$this->messenger->findProviderAlias($recipient)}.{$recipient->getKey()}";
         }
 
         return null;
@@ -272,13 +272,13 @@ class BroadcastBroker implements BroadcastDriver
         if ($abstract === Thread::class) {
             /** @var Thread $entity */
 
-            return "presence-thread.{$entity->id}";
+            return "presence-messenger.thread.{$entity->id}";
         }
 
         if ($abstract === Call::class) {
             /** @var Call $entity */
 
-            return "presence-call.{$entity->id}.thread.{$entity->thread_id}";
+            return "presence-messenger.call.{$entity->id}.thread.{$entity->thread_id}";
         }
 
         return null;

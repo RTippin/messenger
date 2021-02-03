@@ -114,8 +114,8 @@ class StoreCallTest extends FeatureTestCase
         Event::assertNotDispatched(CallJoinedEvent::class);
 
         Event::assertDispatched(function (CallStartedBroadcast $event) {
-            $this->assertNotContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertNotContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertSame($this->private->id, $event->broadcastWith()['call']['thread_id']);
 
             return true;

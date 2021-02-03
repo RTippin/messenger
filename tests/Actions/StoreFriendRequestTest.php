@@ -63,7 +63,7 @@ class StoreFriendRequestTest extends FeatureTestCase
         ]);
 
         Event::assertDispatched(function (FriendRequestBroadcast $event) {
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertSame($this->tippin->getKey(), $event->broadcastWith()['sender_id']);
             $this->assertSame('Richard Tippin', $event->broadcastWith()['sender']['name']);
 

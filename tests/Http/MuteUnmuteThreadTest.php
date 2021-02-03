@@ -155,8 +155,8 @@ class MuteUnmuteThreadTest extends FeatureTestCase
             ->assertSuccessful();
 
         Event::assertDispatched(function (NewMessageBroadcast $event) {
-            $this->assertNotContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
-            $this->assertContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertNotContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
 
             return true;
         });

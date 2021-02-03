@@ -72,8 +72,8 @@ class SendKnockTest extends FeatureTestCase
         app(SendKnock::class)->execute($this->private);
 
         Event::assertDispatched(function (KnockBroadcast $event) {
-            $this->assertContains('private-user.'.$this->doe->getKey(), $event->broadcastOn());
-            $this->assertNotContains('private-user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertNotContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
             $this->assertSame($this->private->id, $event->broadcastWith()['thread']['id']);
 
             return true;
