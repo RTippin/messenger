@@ -64,8 +64,10 @@ $ php artisan vendor:publish --tag=messenger.janus.config
 ***Migrations do not need to be published for them to run. It is recommended to leave those alone!***
 
 ### Migrate
-***Check out the published [`messenger.php`][link-config] config file in your config/ directory. You are going to want to first specify if you plan to use UUIDs on your provider models before running the migrations. (False by default)***
-
+***Check out the published [`messenger.php`][link-config] config file in your config directory. You are going to want to first specify if you plan to use UUIDs on your provider models before running the migrations. (False by default)***
+```php
+'provider_uuids' => false,
+```
 ```bash
 $ php artisan migrate
 ```
@@ -268,6 +270,111 @@ public static function getProviderSearchableBuilder(Builder $query,
 ```
 - You can set the rate limits for our API, including fine grain control over search, messaging, and attachment uploads. Setting a limit to `0` will remove its rate limit entirely.
 
+### Group Invites
+
+***Default:***
+
+```php
+'invites' => [
+    'enabled' => env('MESSENGER_INVITES_ENABLED', true),
+    'max_per_thread' => env('MESSENGER_INVITES_THREAD_MAX', 3),
+],
+```
+
+- Group invites allow users inside a group thread to create an invitation code / link. Anyone not already a participant of the group will be able to join automatically by using that link.
+  - You may disable this feature, or even constrain how many active invites a group thread may have at any one point in time.
+
+### Knocks
+
+***Default:***
+
+```php
+'knocks' => [
+    'enabled' => env('MESSENGER_KNOCKS_ENABLED', true),
+    'timeout' => env('MESSENGER_KNOCKS_TIMEOUT', 5),
+],
+```
+
+- Knocks are a fun way to grab attention of others within a private or group thread! Users can knock at one another in a private thread, where in a group thread, admins or participants with permission may use that feature.
+  - You may disable this feature, or set the timeout a user can knock at a thread (in minutes). `0` for the timeout will be no timeout!
+  
+### Online status
+
+***Default:***
+
+```php
+'online_status' => [
+    'enabled' => env('MESSENGER_ONLINE_STATUS_ENABLED', true),
+    'lifetime' => env('MESSENGER_ONLINE_STATUS_LIFETIME', 4),
+],
+```
+
+- Online status will use a combination of the cache and database to show other users when you are online / away / offline.
+  - You may disable this feature, or specify how long a users online status will live within the cache.
+  
+### Collections
+
+***Default:***
+
+```php
+'collections' => [
+    'search' => [
+        'page_count' => 25,
+    ],
+    'threads' => [
+        'index_count' => 100,
+        'page_count' => 25,
+    ],
+    'participants' => [
+        'index_count' => 500,
+        'page_count' => 50,
+    ],
+    'messages' => [
+        'index_count' => 50,
+        'page_count' => 50,
+    ],
+    'calls' => [
+        'index_count' => 25,
+        'page_count' => 25,
+    ],
+],
+```
+
+- We use JSON resources and collections to return content over our API. You can set how big you want the collections to be here.
+
+### Files
+
+***Default:***
+
+```php
+'files' => [
+    'message_documents' => [
+        'upload' => env('MESSENGER_MESSAGE_DOCUMENT_UPLOAD', true),
+        'download' => env('MESSENGER_MESSAGE_DOCUMENT_DOWNLOAD', true),
+    ],
+    'message_images' => [
+        'upload' => env('MESSENGER_MESSAGE_IMAGE_UPLOAD', true),
+    ],
+    'thread_avatars' => [
+        'upload' => env('MESSENGER_THREAD_AVATAR_UPLOAD', true),
+    ],
+    'provider_avatars' => [
+        'upload' => env('MESSENGER_PROVIDER_AVATAR_UPLOAD', true),
+        'removal' => env('MESSENGER_PROVIDER_AVATAR_REMOVAL', true),
+    ],
+    'default_thread_avatars' => [
+        '1.png' => public_path('vendor/messenger/images/1.png'),
+        '2.png' => public_path('vendor/messenger/images/2.png'),
+        '3.png' => public_path('vendor/messenger/images/3.png'),
+        '4.png' => public_path('vendor/messenger/images/4.png'),
+        '5.png' => public_path('vendor/messenger/images/5.png'),
+    ],
+    'default_not_found_image' => public_path('vendor/messenger/images/image404.png'),
+],
+```
+
+- You may disable individual features, such as file uploads, within this section. You may also set a different default image to serve for a group thread, and the image used when another is not found.
+
 ### Queued Event Listeners
 
 ***Default:***
@@ -403,17 +510,85 @@ MESSENGER_CALLING_ENABLED=true
 
 # Broadcasting
 
-***Default:***
+***Default Channel Routes:***
 
 ```php
-$broadcaster->channel('{alias}.{id}', ProviderChannel::class);
-$broadcaster->channel('call.{call}.thread.{thread}', CallChannel::class);
-$broadcaster->channel('thread.{thread}', ThreadChannel::class);
+$broadcaster->channel('{alias}.{id}', ProviderChannel::class); // Private
+$broadcaster->channel('call.{call}.thread.{thread}', CallChannel::class); // Presence
+$broadcaster->channel('thread.{thread}', ThreadChannel::class); // Presence
+```
+  
+***Private Channel Broadcast:***
+
+```php
+CallEndedBroadcast::class => 'call.ended',
+CallJoinedBroadcast::class => 'joined.call',
+CallLeftBroadcast::class => 'left.call',
+CallStartedBroadcast::class => 'incoming.call',
+DemotedAdminBroadcast::class => 'demoted.admin',
+FriendApprovedBroadcast::class => 'friend.approved',
+FriendCancelledBroadcast::class => 'friend.cancelled',
+FriendDeniedBroadcast::class => 'friend.denied',
+FriendRequestBroadcast::class => 'friend.request',
+KickedFromCallBroadcast::class => 'call.kicked',
+KnockBroadcast::class => 'knock.knock',
+MessageArchivedBroadcast::class => 'message.archived',
+NewMessageBroadcast::class => 'new.message',
+NewThreadBroadcast::class => 'new.thread',
+ParticipantPermissionsBroadcast::class => 'permissions.updated',
+ParticipantReadBroadcast::class => 'thread.read',
+PromotedAdminBroadcast::class => 'promoted.admin',
+ThreadApprovalBroadcast::class => 'thread.approval',
+ThreadArchivedBroadcast::class => 'thread.archived',
+ThreadLeftBroadcast::class => 'thread.left',
+```
+
+***JS Echo Example:***
+
+```js
+//Private
+Echo.private('user.1')
+  .listen('.new.message', methods.incomingMessage)
+  .listen('.thread.archived', methods.threadLeft)
+  .listen('.message.archived', methods.messagePurged)
+  .listen('.knock.knock', methods.incomingKnok)
+  .listen('.new.thread', methods.newThread)
+  .listen('.thread.approval', methods.threadApproval)
+  .listen('.thread.left', methods.threadLeft)
+  .listen('.incoming.call', methods.incomingCall)
+  .listen('.joined.call', methods.callJoined)
+  .listen('.left.call', methods.callLeft)
+  .listen('.call.ended', methods.callEnded)
+  .listen('.friend.request', methods.friendRequest)
+  .listen('.friend.approved', methods.friendApproved)
+  .listen('.friend.cancelled', methods.friendCancelled)
+  .listen('.promoted.admin', methods.promotedAdmin)
+  .listen('.demoted.admin', methods.demotedAdmin)
+  .listen('.permissions.updated', methods.permissionsUpdated)
 ```
 
 - Most data your client side will receive will be done through the user/providers private channel. Broadcast such as messages, calls, friend request, knocks, and more will be transmitted over the `ProviderChannel`. To subscribe to this channel, follow the below example using the `alias` of the provider you set in your providers config:
   - `private-user.1` | User model with ID of 1
   - `private-company.1234-5678` | Company model with ID of 1234-5678
+
+***Presence Channel Broadcast:***
+
+```php
+ThreadAvatarBroadcast::class => 'thread.avatar',
+ThreadSettingsBroadcast::class => 'thread.settings',
+```
+
+***JS Echo Example:***
+
+```js
+//Presence
+Echo.join('thread.1234-5678')
+  .listen('.thread.settings', methods.groupSettingsState)
+  .listen('.thread.avatar', methods.groupAvatarState)
+```
+
+- While inside a thread, you will want to subscribe to the `ThreadChannel` presence channel. This is where realtime, client to client events are broadcast. Typing, seen message, online status are all client to client and this is a great channel to utilize for this. The backend will broadcast a select few events over presence, such as when the groups settings are updated, or group avatar changed. This lets anyone currently in the thread know to update their UI! See example below for channel format to subscribe on:
+  - `presence-thread.1234-5678` | Thread presence channel for Thread model with ID of 1234-5678
 
 ---
 
