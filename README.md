@@ -373,6 +373,7 @@ ThreadSettingsEvent::class => [
 ```dotenv
 #.env
 MESSENGER_CALLING_DRIVER=twillio
+MESSENGER_CALLING_ENABLED=true
 ```
 
 ---
@@ -397,6 +398,22 @@ MESSENGER_CALLING_DRIVER=twillio
     * We will purge all soft deleted messages that were archived past the set days (30 default). We do not need to fire any additional events or load models into memory, just remove from table, as this is not messages that are documents or images. 
 - `php artisan messenger:purge:threads` | `--now` | `--days=30`
     * We will purge all soft deleted threads that were archived past the set days (30 default). We run it through our action to remove the entire thread directory and sub files from storage and the thread from the database. Option to run immediately without pushing job to queue.
+
+---
+
+# Broadcasting
+
+***Default:***
+
+```php
+$broadcaster->channel('{alias}.{id}', ProviderChannel::class);
+$broadcaster->channel('call.{call}.thread.{thread}', CallChannel::class);
+$broadcaster->channel('thread.{thread}', ThreadChannel::class);
+```
+
+- Most data your client side will receive will be done through the user/providers private channel. Broadcast such as messages, calls, friend request, knocks, and more will be transmitted over the `ProviderChannel`. To subscribe to this channel, follow the below example using the `alias` of the provider you set in your providers config:
+  - `private-user.1` | User model with ID of 1
+  - `private-company.1234-5678` | Company model with ID of 1234-5678
 
 ---
 
