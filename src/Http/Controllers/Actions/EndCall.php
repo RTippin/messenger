@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Http\Controllers\Actions;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
+use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Actions\Calls\EndCall as EndCallAction;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
@@ -21,7 +22,7 @@ class EndCall
      * @param Thread $thread
      * @param Call $call
      * @return JsonResponse
-     * @throws AuthorizationException|Throwable
+     * @throws AuthorizationException|Throwable|InvalidArgumentException
      */
     public function __invoke(EndCallAction $endCall,
                           Thread $thread,

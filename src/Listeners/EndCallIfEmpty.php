@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Actions\Calls\EndCall;
 use RTippin\Messenger\Events\CallLeftEvent;
 use Throwable;
@@ -36,7 +37,7 @@ class EndCallIfEmpty implements ShouldQueue
      *
      * @param CallLeftEvent $event
      * @return void
-     * @throws Throwable
+     * @throws Throwable|InvalidArgumentException
      */
     public function handle(CallLeftEvent $event): void
     {

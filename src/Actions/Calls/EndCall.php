@@ -2,8 +2,10 @@
 
 namespace RTippin\Messenger\Actions\Calls;
 
+use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
+use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\CallEndedBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
@@ -18,6 +20,11 @@ class EndCall extends BaseMessengerAction
      * @var BroadcastDriver
      */
     private BroadcastDriver $broadcaster;
+
+    /**
+     * @var Repository
+     */
+    protected Repository $cacheDriver;
 
     /**
      * @var DatabaseManager
@@ -35,14 +42,17 @@ class EndCall extends BaseMessengerAction
      * @param BroadcastDriver $broadcaster
      * @param DatabaseManager $database
      * @param Dispatcher $dispatcher
+     * @param Repository $cacheDriver
      */
     public function __construct(BroadcastDriver $broadcaster,
                                 DatabaseManager $database,
-                                Dispatcher $dispatcher)
+                                Dispatcher $dispatcher,
+                                Repository $cacheDriver)
     {
         $this->broadcaster = $broadcaster;
         $this->database = $database;
         $this->dispatcher = $dispatcher;
+        $this->cacheDriver = $cacheDriver;
     }
 
     /**
@@ -52,21 +62,40 @@ class EndCall extends BaseMessengerAction
      * @param mixed ...$parameters
      * @return $this
      * @var Call[0]
-     * @throws Throwable
+     * @throws Throwable|InvalidArgumentException
      */
     public function execute(...$parameters): self
     {
         $this->setCall($parameters[0]);
 
-        $this->getCall()->refresh();
+        if (! $this->hasNoEndingLockout()) {
+            $this->setEndingLockout();
 
-        if ($this->getCall()->isActive()) {
-            $this->handleTransactions()
-                ->fireBroadcast()
-                ->fireEvents();
+            if ($this->getCall()->fresh()->isActive()) {
+                $this->handleTransactions()
+                    ->fireBroadcast()
+                    ->fireEvents();
+            }
         }
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    private function hasNoEndingLockout(): bool
+    {
+        return $this->cacheDriver->has("call:{$this->getCall()->id}:ending");
+    }
+
+    /**
+     * @return void
+     */
+    private function setEndingLockout(): void
+    {
+        $this->cacheDriver->put("call:{$this->getCall()->id}:ending", true, 10);
     }
 
     /**
@@ -78,7 +107,7 @@ class EndCall extends BaseMessengerAction
         if ($this->isChained()) {
             $this->endCall();
         } else {
-            $this->database->transaction(fn () => $this->endCall(), 3);
+            $this->database->transaction(fn () => $this->endCall());
         }
 
         return $this;

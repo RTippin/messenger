@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Actions\Calls\CallActivityChecker;
 use Throwable;
 
@@ -35,7 +36,7 @@ class CheckCallsActivity implements ShouldQueue
      *
      * @param CallActivityChecker $checker
      * @return void
-     * @throws Throwable
+     * @throws Throwable|InvalidArgumentException
      */
     public function handle(CallActivityChecker $checker)
     {

@@ -51,7 +51,7 @@ class CallActivityChecker extends BaseMessengerAction
      * @param mixed ...$parameters
      * @var Collection[0]
      * @return $this
-     * @throws Throwable
+     * @throws Throwable|InvalidArgumentException
      */
     public function execute(...$parameters): self
     {
@@ -67,7 +67,7 @@ class CallActivityChecker extends BaseMessengerAction
 
     /**
      * @param Call $call
-     * @throws Throwable
+     * @throws Throwable|InvalidArgumentException
      */
     private function performActivityChecks(Call $call): void
     {
@@ -79,7 +79,7 @@ class CallActivityChecker extends BaseMessengerAction
     /**
      * @param Call $call
      * @return bool
-     * @throws Throwable
+     * @throws Throwable|InvalidArgumentException
      */
     private function endIfEmpty(Call $call): bool
     {

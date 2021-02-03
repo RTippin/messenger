@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Calls\EndCall;
 use RTippin\Messenger\Broadcasting\CallEndedBroadcast;
@@ -70,6 +71,19 @@ class EndCallTest extends FeatureTestCase
         $this->call->update([
             'call_ended' => now(),
         ]);
+
+        $this->doesntExpectEvents([
+            CallEndedBroadcast::class,
+            CallEndedEvent::class,
+        ]);
+
+        app(EndCall::class)->execute($this->call);
+    }
+
+    /** @test */
+    public function end_call_does_nothing_if_ending_cache_key_exist()
+    {
+        Cache::put("call:{$this->call->id}:ending", true);
 
         $this->doesntExpectEvents([
             CallEndedBroadcast::class,
