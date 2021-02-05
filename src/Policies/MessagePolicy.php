@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Policies;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
-use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 
 class MessagePolicy
