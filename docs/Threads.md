@@ -167,6 +167,7 @@
       "type_verbose": "MESSAGE",
       "system_message": false,
       "body": "Hello!",
+      "edited": false,
       "created_at": "2020-12-08T04:00:19.000000Z",
       "updated_at": "2020-12-08T04:00:19.000000Z",
       "meta": {
@@ -265,6 +266,7 @@
       "type_verbose": "GROUP_CREATED",
       "system_message": true,
       "body": "created Test Group",
+      "edited": false,
       "created_at": "2020-12-08T04:13:02.000000Z",
       "updated_at": "2020-12-08T04:13:02.000000Z",
       "meta": {
@@ -392,6 +394,7 @@
       "type_verbose": "MESSAGE",
       "system_message": false,
       "body": "Hello!",
+      "edited": false,
       "created_at": "2020-12-08T04:00:19.000000Z",
       "updated_at": "2020-12-08T04:00:19.000000Z",
       "meta": {
@@ -490,6 +493,7 @@
           "type_verbose": "PARTICIPANTS_ADDED",
           "system_message": true,
           "body": "added Jane Doe to the group",
+          "edited": false,
           "created_at": "2020-12-08T04:13:03.000000Z",
           "updated_at": "2020-12-08T04:13:03.000000Z",
           "meta": {
@@ -612,6 +616,7 @@
           "type_verbose": "MESSAGE",
           "system_message": false,
           "body": "Hello!",
+          "edited": false,
           "created_at": "2020-12-08T04:09:01.000000Z",
           "updated_at": "2020-12-08T04:09:01.000000Z",
           "meta": {
@@ -722,6 +727,7 @@
       "type_verbose": "PARTICIPANTS_ADDED",
       "system_message": true,
       "body": "added Jane Doe to the group",
+      "edited": false,
       "created_at": "2020-12-08T04:29:01.000000Z",
       "updated_at": "2020-12-08T04:29:01.000000Z",
       "meta": {
@@ -773,6 +779,7 @@
       "type_verbose": "GROUP_CREATED",
       "system_message": true,
       "body": "created Test Group!",
+      "edited": false,
       "created_at": "2020-12-08T04:28:59.000000Z",
       "updated_at": "2020-12-08T04:28:59.000000Z",
       "meta": {
@@ -1195,6 +1202,7 @@ Renders Group Avatar
                     "type_verbose": "VIDEO_CALL",
                     "system_message": true,
                     "body": "was in a video call",
+                    "edited": false,
                     "created_at": "2020-12-08T04:47:41.000000Z",
                     "updated_at": "2020-12-08T04:47:41.000000Z",
                     "meta": {
@@ -1235,6 +1243,7 @@ Renders Group Avatar
                     "type_verbose": "MESSAGE",
                     "system_message": false,
                     "body": "Hello!",
+                    "edited": false,
                     "created_at": "2020-12-08T04:09:01.000000Z",
                     "updated_at": "2020-12-08T04:09:01.000000Z",
                     "meta": {
@@ -1287,6 +1296,7 @@ Renders Group Avatar
             "type_verbose": "VIDEO_CALL",
             "system_message": true,
             "body": "was in a video call",
+            "edited": false,
             "created_at": "2020-12-08T04:47:41.000000Z",
             "updated_at": "2020-12-08T04:47:41.000000Z",
             "meta": {

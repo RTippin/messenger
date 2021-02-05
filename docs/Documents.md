@@ -35,6 +35,7 @@
       "type_verbose": "DOCUMENT_MESSAGE",
       "system_message": false,
       "body": "testPdf_1607405513.pdf",
+      "edited": false,
       "created_at": "2020-12-08T05:31:53.000000Z",
       "updated_at": "2020-12-08T05:31:53.000000Z",
       "meta": {
@@ -101,6 +102,7 @@
   "type_verbose": "DOCUMENT_MESSAGE",
   "system_message": false,
   "body": "testPdf_1607405513.pdf",
+  "edited": false,
   "created_at": "2020-12-08T05:31:53.000000Z",
   "updated_at": "2020-12-08T05:31:53.000000Z",
   "meta": {

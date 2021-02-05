@@ -35,6 +35,7 @@
       "type_verbose": "IMAGE_MESSAGE",
       "system_message": false,
       "body": "img_5fcf0ea71dcb17.99881745.jpg",
+      "edited": false,
       "created_at": "2020-12-08T05:27:03.000000Z",
       "updated_at": "2020-12-08T05:27:03.000000Z",
       "meta": {
@@ -109,6 +110,7 @@
   "type_verbose": "IMAGE_MESSAGE",
   "system_message": false,
   "body": "img_5fcf12573c2f76.23243115.jpg",
+  "edited": false,
   "created_at": "2020-12-08T05:42:47.000000Z",
   "updated_at": "2020-12-08T05:42:47.000000Z",
   "meta": {

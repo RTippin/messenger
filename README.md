@@ -686,6 +686,7 @@ Echo.private('messenger.user.1')
 ***Presence Channel Broadcast:***
 
 ```php
+MessageEditedBroadcast::class => 'message.edited',
 ThreadAvatarBroadcast::class => 'thread.avatar',
 ThreadSettingsBroadcast::class => 'thread.settings',
 ```
@@ -697,9 +698,10 @@ ThreadSettingsBroadcast::class => 'thread.settings',
 Echo.join('messenger.thread.1234-5678')
   .listen('.thread.settings', methods.groupSettingsState)
   .listen('.thread.avatar', methods.groupAvatarState)
+  .listen('.message.edited', methods.renderUpdatedMessage)
 ```
 
-- While inside a thread, you will want to subscribe to the `ThreadChannel` presence channel. This is where realtime, client to client events are broadcast. Typing, seen message, online status are all client to client and this is a great channel to utilize for this. The backend will broadcast a select few events over presence, such as when the groups settings are updated, or group avatar changed. This lets anyone currently in the thread know to update their UI! See example below for channel format to subscribe on:
+- While inside a thread, you will want to subscribe to the `ThreadChannel` presence channel. This is where realtime, client to client events are broadcast. Typing, seen message, online status are all client to client and this is a great channel to utilize for this. The backend will broadcast a select few events over presence, such as when the groups settings are updated, or group avatar changed, or a user edited their message. This lets anyone currently in the thread know to update their UI! See example below for channel format to subscribe on:
   - `presence-messenger.thread.1234-5678` | Thread presence channel for Thread model with ID of 1234-5678
 
 ---

@@ -1,6 +1,11 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+## [v0.12 (02-05-2021)]
+
+### Added
+- Edit message feature
+
 ## [v0.11 (02-03-2021)]
 
 ### Changed
