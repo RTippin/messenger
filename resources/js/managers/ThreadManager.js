@@ -649,6 +649,7 @@ window.ThreadManager = (function () {
             })
             .listen('.thread.settings', methods.groupSettingsState)
             .listen('.thread.avatar', methods.groupAvatarState)
+            .listen('.message.edited', methods.renderUpdatedMessage)
         }
     },
     Health = {
@@ -1870,6 +1871,59 @@ window.ThreadManager = (function () {
                 if(thread.unread && thread.unread_count > 0) unread++;
             });
             NotifyManager.updateMessageCount({total_unread : unread})
+        },
+        editMessage : function(arg){
+            if(!opt.thread.id) return;
+            let messageStorage = methods.locateStorageItem({type : 'message', id : arg.id}), i = messageStorage.index;
+            if (messageStorage.found && opt.storage.messages[i].owner_id === Messenger.common().id){
+                Messenger.alert().Modal({
+                    icon : 'edit',
+                    theme : 'dark',
+                    title: 'Editing Message',
+                    h4: false,
+                    backdrop_ctrl : false,
+                    unlock_buttons : false,
+                    body : ThreadTemplates.render().edit_message(opt.storage.messages[i].body),
+                    cb_btn_txt : 'Update',
+                    cb_btn_icon : 'edit',
+                    cb_btn_theme : 'success',
+                    onReady : function(){
+                        setTimeout(function () {
+                            $("#edit_message_textarea").focus();
+                        }, 500)
+                    },
+                    callback : function(){
+                        methods.updateMessage(arg)
+                    }
+                });
+            }
+        },
+        updateMessage : function(arg){
+            let textarea = $("#edit_message_textarea");
+            textarea.prop('disabled', true);
+            Messenger.xhr().payload({
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/messages/' + arg.id,
+                data : {
+                    message : textarea.val()
+                },
+                success : function(message){
+                    methods.renderUpdatedMessage(message, true);
+                },
+                close_modal : true,
+                fail_alert : true
+            }, 'put');
+        },
+        renderUpdatedMessage : function(message, force){
+            if(force === true && message.owner_id === Messenger.common().id){
+                return;
+            }
+            let msg = $("#message_"+message.id), messageStorage = methods.locateStorageItem({type : 'message', id : message.id}), i = messageStorage.index;
+            if (messageStorage.found){
+                opt.storage.messages[i] = message;
+            }
+            if(msg.length){
+                msg.find('.message-text').html(ThreadTemplates.render().message_body(message))
+            }
         }
     },
     archive = {
@@ -2870,6 +2924,7 @@ window.ThreadManager = (function () {
         archive : function(){
             return archive
         },
+        editMessage : methods.editMessage,
         mute : function(){
             return Mute;
         },

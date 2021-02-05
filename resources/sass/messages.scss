@@ -271,7 +271,7 @@
 }
 
 .message .message-body {
-    max-width: calc(100% - 79px);
+    max-width: calc(100% - 94px);
     position: relative;
     width: auto;
     float: left;
@@ -342,7 +342,7 @@
 .message.my-message .message-body {
     float: right;
     margin: 0 15px 9px 5px;
-    max-width: calc(100% - 39px);
+    max-width: calc(100% - 54px);
 }
 
 .message.my-message:after {
@@ -386,7 +386,7 @@
 }
 
 .message.grouped-message .message-body {
-    max-width: calc(100% - 39px);
+    max-width: calc(100% - 54px);
     margin-top: -8px;
 }
 

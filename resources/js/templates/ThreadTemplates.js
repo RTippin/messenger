@@ -258,18 +258,22 @@ window.ThreadTemplates = (function () {
                 case 2:
                     return '<a href="'+data.document+'" target="_blank"><i class="fas fa-cloud-download-alt"></i> '+data.body+'</a>';
                 default:
-                    return (typeof emojione !== 'undefined' ? methods.makeLinks(methods.makeYoutube(emojione.toImage(data.body))) : methods.makeLinks(methods.makeYoutube(data.body)))
+                    let body = (typeof emojione !== 'undefined' ? methods.makeLinks(methods.makeYoutube(emojione.toImage(data.body))) : methods.makeLinks(methods.makeYoutube(data.body)));
+
+                    return data.edited ? body + ' <small class="font-weight-bold text-muted" title="Edited on '+moment(Messenger.format().makeUtcLocal(data.updated_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'">(edited)</small>' : body;
             }
         },
         message_archive : function(data, grouped){
             if(!ThreadManager.state().thread_lockout && ThreadManager.state().thread_admin){
-                return '<div onclick="ThreadManager.archive().Message({id : \''+data.id+'\'})" class="message_hover_opt message_hover_group_opt float-left ml-1 pt-'+(grouped ? '1' : '2')+' h6 text-secondary pointer_area NS"><i title="Delete Message" class="fas fa-trash"></i></div>'
+                return '<div onclick="ThreadManager.archive().Message({id : \''+data.id+'\'})" class="message_hover_opt message_hover_group_opt float-left ml-0 pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS"><i title="Delete Message" class="fas fa-trash"></i></div>'
             }
             return '';
         },
         my_message_archive : function(data, grouped){
             if(!ThreadManager.state().thread_lockout){
-                return '<div onclick="ThreadManager.archive().Message({id : \''+data.id+'\'})" class="message_hover_opt float-right mr-1 pt-'+(grouped ? '1' : '2')+' h6 text-secondary pointer_area NS"><i title="Delete Message" class="fas fa-trash"></i></div>'
+                let edit = '<div onclick="ThreadManager.editMessage({id : \''+data.id+'\'})" class="message_hover_opt float-right mr-0 pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS"><i title="Edit Message" class="fas fa-edit"></i></div>';
+                return (data.type === 0 ? edit : '') +
+                    '<div onclick="ThreadManager.archive().Message({id : \''+data.id+'\'})" class="message_hover_opt float-right mr-1 pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS"><i title="Delete Message" class="fas fa-trash"></i></div>'
             }
             return '';
         },
@@ -1092,6 +1096,15 @@ window.ThreadTemplates = (function () {
                 '        </div>\n' +
                 '    </div>\n' +
                 '</div>'
+        },
+        edit_message : function(body){
+            return '<form id="edit_message_form" action="javascript:void(0)">\n' +
+                '<div class="form-row mx-n2 rounded bg-light text-dark py-3 px-2 shadow-sm">\n' +
+                '    <div class="col-12 mb-0">\n' +
+                '         <textarea id="edit_message_textarea" style="resize: none;" rows="6" class="form-control font-weight-bold shadow-sm">'+body+'</textarea>' +
+                '     </div>\n' +
+                '</div>'+
+                '</form>'
         },
         thread_base : function(data, creating){
             return '<div class="card messages-panel mt-1">\n' +
