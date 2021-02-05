@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Policies;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 
 class MessagePolicy
@@ -94,6 +95,25 @@ class MessagePolicy
         return $this->messenger->isMessageImageUploadEnabled() && $thread->canMessage()
             ? $this->allow()
             : $this->deny('Not authorized to upload image.');
+    }
+
+    /**
+     * Determine whether the provider can update the model.
+     *
+     * @param $user
+     * @param Message $message
+     * @param Thread $thread
+     * @return mixed
+     */
+    public function update($user, Message $message, Thread $thread)
+    {
+        return $thread->hasCurrentProvider()
+        && ! $thread->isLocked()
+        && $message->isText()
+        && $this->messenger->getProviderId() == $message->owner_id
+        && $this->messenger->getProviderClass() === $message->owner_type
+            ? $this->allow()
+            : $this->deny('Not authorized to update message.');
     }
 
     /**

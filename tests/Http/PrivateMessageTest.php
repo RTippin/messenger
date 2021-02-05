@@ -214,6 +214,36 @@ class PrivateMessageTest extends FeatureTestCase
     }
 
     /** @test */
+    public function owner_can_update_message()
+    {
+        //TODO
+    }
+
+    /** @test */
+    public function non_owner_forbidden_to_update_message()
+    {
+        //TODO
+    }
+
+    /** @test */
+    public function forbidden_to_update_image_message()
+    {
+        //TODO
+    }
+
+    /** @test */
+    public function forbidden_to_update_document_message()
+    {
+        //TODO
+    }
+
+    /** @test */
+    public function forbidden_to_update_system_message()
+    {
+        //TODO
+    }
+
+    /** @test */
     public function sender_can_archive_message()
     {
         $this->expectsEvents([

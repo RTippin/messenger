@@ -10,6 +10,7 @@ use Illuminate\Routing\Controller;
 use RTippin\Messenger\Actions\Messages\ArchiveMessage;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
 use RTippin\Messenger\Http\Collections\MessageCollection;
+use RTippin\Messenger\Http\Request\EditMessageRequest;
 use RTippin\Messenger\Http\Request\MessageRequest;
 use RTippin\Messenger\Http\Resources\MessageResource;
 use RTippin\Messenger\Models\Message;
@@ -119,6 +120,27 @@ class MessageController extends Controller
         ]);
 
         return new MessageResource($message, $thread);
+    }
+
+    /**
+     * Update the specified resource.
+     *
+     * @param EditMessageRequest $request
+     * @param Thread $thread
+     * @param Message $message
+     * @return MessageResource
+     * @throws AuthorizationException
+     */
+    public function update(EditMessageRequest $request,
+                           Thread $thread,
+                           Message $message): MessageResource
+    {
+        $this->authorize('update', [
+            $message,
+            $thread,
+        ]);
+
+        //TODO
     }
 
     /**

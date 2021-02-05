@@ -63,6 +63,7 @@ class MessageResource extends JsonResource
             'type_verbose' => $this->message->getTypeVerbose(),
             'system_message' => $this->message->isSystemMessage(),
             'body' => $this->formatMessageBody(),
+            'edited' => $this->message->isEdited(),
             'created_at' => $this->message->created_at,
             'updated_at' => $this->message->updated_at,
             'meta' => [

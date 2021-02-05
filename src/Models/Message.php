@@ -261,6 +261,23 @@ class Message extends Model
     /**
      * @return bool
      */
+    public function isEdited(): bool
+    {
+        return $this->isText()
+            && $this->created_at !== $this->updated_at;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isText(): bool
+    {
+        return $this->type === 0;
+    }
+
+    /**
+     * @return bool
+     */
     public function isSystemMessage(): bool
     {
         return ! in_array($this->type, [0, 1, 2]);

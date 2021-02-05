@@ -116,7 +116,7 @@ Route::name('api.messenger.')->group(function () {
         Route::post('promote', PromoteAdmin::class)->name('promote');
         Route::post('demote', DemoteAdmin::class)->name('demote');
     });
-    Route::apiResource('threads.messages', MessageController::class)->except('update');
+    Route::apiResource('threads.messages', MessageController::class);
     Route::apiResource('threads.images', ImageMessageController::class)->only(['index', 'store']);
     Route::apiResource('threads.documents', DocumentMessageController::class)->only(['index', 'store']);
     Route::apiResource('threads.invites', InviteController::class)->only(['index', 'store', 'destroy']);
