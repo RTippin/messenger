@@ -264,7 +264,7 @@ class Message extends Model
     public function isEdited(): bool
     {
         return $this->isText()
-            && $this->created_at !== $this->updated_at;
+            && $this->created_at < $this->updated_at;
     }
 
     /**
