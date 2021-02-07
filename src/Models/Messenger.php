@@ -22,21 +22,6 @@ use RTippin\Messenger\Contracts\MessengerProvider;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read Model $owner
- * @method static \Illuminate\Database\Eloquent\Builder|Messenger newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Messenger newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Messenger query()
- * @method static \Illuminate\Database\Eloquent\Builder|Messenger whereCallRingtoneSound($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Messenger whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Messenger whereDarkMode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Messenger whereIp($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Messenger whereMessagePopups($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Messenger whereMessageSound($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Messenger whereNotifySound($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Messenger whereOnlineStatus($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Messenger whereOwnerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Messenger whereOwnerType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Messenger whereTimezone($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Messenger whereUpdatedAt($value)
  * @mixin Model|\Eloquent
  */
 class Messenger extends Model

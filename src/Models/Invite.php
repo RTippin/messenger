@@ -26,23 +26,9 @@ use RTippin\Messenger\Traits\Uuids;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read Model|MessengerProvider $owner
  * @property-read \RTippin\Messenger\Models\Thread $thread
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Invite newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Invite newQuery()
  * @method static \Illuminate\Database\Query\Builder|\RTippin\Messenger\Models\Invite onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Invite query()
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Invite whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Invite whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Invite whereExpiresAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Invite whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Invite whereMaxUse($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Invite whereOwnerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Invite whereOwnerType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Invite whereThreadId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Invite whereUpdatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Invite whereUses($value)
  * @method static \Illuminate\Database\Query\Builder|\RTippin\Messenger\Models\Invite withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\RTippin\Messenger\Models\Invite withoutTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Invite whereCode($value)
  * @method static Builder|Message valid()
  * @method static Builder|Message invalid()
  * @mixin Model|\Eloquent

@@ -20,16 +20,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \RTippin\Messenger\Models\Call $call
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\CallParticipant newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\CallParticipant newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\CallParticipant query()
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\CallParticipant whereCallId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\CallParticipant whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\CallParticipant whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\CallParticipant whereLeftCall($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\CallParticipant whereOwnerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\CallParticipant whereOwnerType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\CallParticipant whereUpdatedAt($value)
  * @mixin Model|\Eloquent
  * @property-read Model|MessengerProvider $owner
  * @property int $kicked

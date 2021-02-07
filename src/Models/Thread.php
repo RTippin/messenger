@@ -42,28 +42,11 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @property-read int|null $participants_count
  * @property-read \RTippin\Messenger\Models\Message|null $recentMessage
  * @method static Builder|Thread group()
- * @method static Builder|Thread newModelQuery()
- * @method static Builder|Thread newQuery()
  * @method static \Illuminate\Database\Query\Builder|Thread onlyTrashed()
- * @method static Builder|Thread private()
- * @method static Builder|Thread query()
- * @method static Builder|Thread whereAddParticipants($value)
- * @method static Builder|Thread whereCalling($value)
- * @method static Builder|Thread whereCreatedAt($value)
- * @method static Builder|Thread whereDeletedAt($value)
- * @method static Builder|Thread whereId($value)
- * @method static Builder|Thread whereImage($value)
- * @method static Builder|Thread whereKnocks($value)
- * @method static Builder|Thread whereLockout($value)
- * @method static Builder|Thread whereMessaging($value)
- * @method static Builder|Thread whereSubject($value)
- * @method static Builder|Thread whereType($value)
- * @method static Builder|Thread whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|Thread withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Thread withoutTrashed()
  * @mixin Model|\Eloquent
  * @property bool $invitations
- * @method static Builder|Thread whereInvitations($value)
  */
 class Thread extends Model
 {

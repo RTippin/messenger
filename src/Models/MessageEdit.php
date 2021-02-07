@@ -14,13 +14,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string $body
  * @property \Illuminate\Support\Carbon|null $edited_at
  * @property-read \RTippin\Messenger\Models\Message $message
- * @method static \Illuminate\Database\Eloquent\Builder|Message newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Message newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Message query()
- * @method static \Illuminate\Database\Eloquent\Builder|Message whereBody($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Message whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Message whereMessageId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Message whereEditedAt($value)
  * @mixin Model|\Eloquent
  */
 class MessageEdit extends Model

@@ -36,25 +36,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read Model|MessengerProvider $owner
  * @property-read \RTippin\Messenger\Models\Thread $thread
  * @property-read \RTippin\Messenger\Models\Message|null $lastSeenMessage
- * @method static \Illuminate\Database\Eloquent\Builder|Participant newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Participant newQuery()
  * @method static \Illuminate\Database\Query\Builder|Participant onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Participant query()
- * @method static \Illuminate\Database\Eloquent\Builder|Participant whereAddParticipants($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Participant whereAdmin($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Participant whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Participant whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Participant whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Participant whereLastRead($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Participant whereMuted($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Participant whereOwnerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Participant whereOwnerType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Participant wherePending($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Participant whereSendKnocks($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Participant whereSendMessages($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Participant whereStartCalls($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Participant whereThreadId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Participant whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|Participant withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Participant withoutTrashed()
  * @mixin Model|\Eloquent
@@ -63,7 +45,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static Builder|Participant notMuted()
  * @method static Builder|Participant notPending()
  * @property int $manage_invites
- * @method static Builder|Participant whereManageInvites($value)
  */
 class Participant extends Model
 {

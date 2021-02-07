@@ -17,16 +17,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string $recipient_type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\SentFriend newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\SentFriend newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\SentFriend query()
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\SentFriend whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\SentFriend whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\SentFriend whereRecipientId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\SentFriend whereRecipientType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\SentFriend whereSenderId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\SentFriend whereSenderType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\SentFriend whereUpdatedAt($value)
  * @mixin Model|\Eloquent
  * @property-read MessengerProvider $recipient
  * @property-read MessengerProvider $sender

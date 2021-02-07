@@ -30,19 +30,7 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \RTippin\Messenger\Models\Thread $thread
  * @property-read Model|MessengerProvider $owner
- * @method static \Illuminate\Database\Eloquent\Builder|Message newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|Message newQuery()
  * @method static \Illuminate\Database\Query\Builder|Message onlyTrashed()
- * @method static \Illuminate\Database\Eloquent\Builder|Message query()
- * @method static \Illuminate\Database\Eloquent\Builder|Message whereBody($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Message whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Message whereDeletedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Message whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Message whereOwnerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Message whereOwnerType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Message whereThreadId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Message whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|Message whereUpdatedAt($value)
  * @method static \Illuminate\Database\Query\Builder|Message withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Message withoutTrashed()
  * @mixin Model|\Eloquent

@@ -30,30 +30,13 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read \Illuminate\Database\Eloquent\Collection|\RTippin\Messenger\Models\CallParticipant[] $participants
  * @property-read int|null $participants_count
  * @property-read \RTippin\Messenger\Models\Thread $thread
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call newModelQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call newQuery()
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call query()
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call whereCallEnded($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call whereCreatedAt($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call whereId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call whereMode($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call whereOwnerId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call whereOwnerType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call whereRoomId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call whereRoomPin($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call whereRoomSecret($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call whereThreadId($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call whereType($value)
- * @method static \Illuminate\Database\Eloquent\Builder|\RTippin\Messenger\Models\Call whereUpdatedAt($value)
  * @mixin Model|\Eloquent
  * @property-read Model|MessengerProvider $owner
  * @method static Builder|Call videoCall()
  * @method static Builder|Call active()
  * @property string|null $payload
- * @method static Builder|Call wherePayload($value)
  * @property int $setup_complete
  * @property int $teardown_complete
- * @method static Builder|Call whereSetupComplete($value)
  */
 class Call extends Model
 {
