@@ -123,6 +123,25 @@ class MessageController extends Controller
         return new MessageResource($message, $thread);
     }
 
+//    /**
+//     * Display the specified resource.
+//     *
+//     * @param Thread $thread
+//     * @param Message $message
+//     * @return MessageResource
+//     * @throws AuthorizationException
+//     */
+//    public function showEdits(Thread $thread,
+//                         Message $message): MessageResource
+//    {
+//        $this->authorize('viewEdits', [
+//            Message::class,
+//            $thread,
+//        ]);
+//
+//        return new MessageResource($message, $thread);
+//    }
+
     /**
      * Update the specified resource.
      *
