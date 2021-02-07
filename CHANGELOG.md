@@ -1,10 +1,17 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+## [v0.13 (02-07-2021)]
+
+### Added
+- Edit message table to store edit history.
+- Route to view edit history.
+- Config option to disable both edit message and viewing edit history.
+
 ## [v0.12 (02-05-2021)]
 
 ### Added
-- Edit message feature
+- Edit message feature.
 
 ## [v0.11 (02-03-2021)]
 
@@ -19,9 +26,9 @@
 ## [v0.9 (02-01-2021)]
 
 ### Added
-- Test
+- Test.
 
 ## [v0.1]
 
 ### Added
-- Everything
+- Everything.

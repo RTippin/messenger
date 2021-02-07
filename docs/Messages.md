@@ -155,6 +155,21 @@
 }
 ```
 ---
+### GET `/api/messenger/threads/{thread}/messages/{message}/edits` | *api.messenger.threads.messages.history*
+#### Response:
+```json
+[
+  {
+    "body": "yes",
+    "edited_at": "2021-02-07T07:02:05.000000Z"
+  },
+  {
+    "body": "yes edited",
+    "edited_at": "2021-02-07T07:02:15.000000Z"
+  }
+]
+```
+---
 ### POST `/api/messenger/threads/{thread}/messages` | *api.messenger.threads.messages.store*
 #### Payload:
 ```json

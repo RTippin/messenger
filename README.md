@@ -368,6 +368,22 @@ PushNotificationEvent::class => $data //Array
 
 ---
 
+### Editable Messages
+
+***Default:***
+
+```php
+'message_edits' => [
+    'enabled' => env('MESSENGER_MESSAGE_EDITS_ENABLED', true),
+    'history_view' => env('MESSENGER_MESSAGE_EDITS_VIEW_HISTORY', true),
+],
+```
+
+- Allow message owners to edit their messages, and for anyone in the thread to view the history of edits for a message.
+  - By default, the edit history will only be stored if you have our `queued_event_listeners` enabled.
+
+---
+
 ### Group Invites
 
 ***Default:***
@@ -510,6 +526,9 @@ DemotedAdminEvent::class => [
 ],
 InviteUsedEvent::class => [
     JoinedWithInviteMessage::class,
+],
+MessageEditedEvent::class => [
+    StoreMessageEdit::class,
 ],
 ParticipantsAddedEvent::class => [
     ParticipantsAddedMessage::class,
