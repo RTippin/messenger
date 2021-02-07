@@ -526,6 +526,8 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame(45, $this->messenger->getSearchRateLimit());
         $this->assertSame(60, $this->messenger->getMessageRateLimit());
         $this->assertSame(10, $this->messenger->getAttachmentRateLimit());
+        $this->assertTrue($this->messenger->isMessageEditsEnabled());
+        $this->assertTrue($this->messenger->isMessageEditsViewEnabled());
     }
 
     /** @test */
@@ -555,6 +557,8 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->setThreadAvatarUpload(false);
         $this->messenger->setProviderAvatarUpload(false);
         $this->messenger->setProviderAvatarRemoval(false);
+        $this->messenger->setMessageEdits(false);
+        $this->messenger->setMessageEditsView(false);
         $this->messenger->setApiRateLimit(5);
         $this->messenger->setSearchRateLimit(5);
         $this->messenger->setMessageRateLimit(5);
@@ -603,5 +607,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame(5, $this->messenger->getMessageRateLimit());
         $this->assertSame(5, $this->messenger->getAttachmentRateLimit());
         $this->assertCount(1, $this->messenger->getMessengerProviders());
+        $this->assertFalse($this->messenger->isMessageEditsEnabled());
+        $this->assertFalse($this->messenger->isMessageEditsViewEnabled());
     }
 }

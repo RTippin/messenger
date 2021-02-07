@@ -148,6 +148,28 @@ interface MessengerInterface
     /**
      * @return bool
      */
+    public function isMessageEditsEnabled(): bool;
+
+    /**
+     * @param bool $messageEdits
+     * @return $this
+     */
+    public function setMessageEdits(bool $messageEdits);
+
+    /**
+     * @return bool
+     */
+    public function isMessageEditsViewEnabled(): bool;
+
+    /**
+     * @param bool $messageEditsView
+     * @return $this
+     */
+    public function setMessageEditsView(bool $messageEditsView);
+
+    /**
+     * @return bool
+     */
     public function isCallingEnabled(): bool;
 
     /**

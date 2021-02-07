@@ -111,6 +111,16 @@ trait ConfigInterface
     /**
      * @var bool
      */
+    private bool $messageEdits;
+
+    /**
+     * @var bool
+     */
+    private bool $messageEditsView;
+
+    /**
+     * @var bool
+     */
     private bool $threadInvites;
 
     /**
@@ -311,6 +321,44 @@ trait ConfigInterface
     public function isPushNotificationsEnabled(): bool
     {
         return $this->pushNotifications;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMessageEditsEnabled(): bool
+    {
+        return $this->messageEdits;
+    }
+
+    /**
+     * @param bool $messageEdits
+     * @return $this
+     */
+    public function setMessageEdits(bool $messageEdits): self
+    {
+        $this->messageEdits = $messageEdits;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMessageEditsViewEnabled(): bool
+    {
+        return $this->messageEditsView;
+    }
+
+    /**
+     * @param bool $messageEditsView
+     * @return $this
+     */
+    public function setMessageEditsView(bool $messageEditsView): self
+    {
+        $this->messageEditsView = $messageEditsView;
+
+        return $this;
     }
 
     /**
@@ -974,6 +1022,8 @@ trait ConfigInterface
         $this->pushNotifications = $this->configRepo->get('messenger.push_notifications.enabled');
         $this->knockKnock = $this->configRepo->get('messenger.knocks.enabled');
         $this->knockTimeout = $this->configRepo->get('messenger.knocks.timeout');
+        $this->messageEdits = $this->configRepo->get('messenger.message_edits.enabled');
+        $this->messageEditsView = $this->configRepo->get('messenger.message_edits.history_view');
         $this->threadInvites = $this->configRepo->get('messenger.invites.enabled');
         $this->threadInvitesMax = $this->configRepo->get('messenger.invites.max_per_thread');
         $this->onlineStatus = $this->configRepo->get('messenger.online_status.enabled');

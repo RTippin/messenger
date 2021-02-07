@@ -290,6 +290,22 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Message Edits
+    |--------------------------------------------------------------------------
+    |
+    | Enable or disable the edit message feature. When enabled, the owner of a
+    | message will be allowed to edit that message. A history of the edits will
+    | be stored, should you enable our default queued_event_listeners. You may
+    | also allow/deny users in a thread to view the edit history of the message.
+    |
+    */
+    'message_edits' => [
+        'enabled' => env('MESSENGER_MESSAGE_EDITS_ENABLED', true),
+        'history_view' => env('MESSENGER_MESSAGE_EDITS_VIEW_HISTORY', true),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Thread invitations
     |--------------------------------------------------------------------------
     |
