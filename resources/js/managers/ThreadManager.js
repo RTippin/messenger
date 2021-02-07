@@ -59,7 +59,6 @@ window.ThreadManager = (function () {
         },
         elements : {
             nav_search_link : $(".nav-search-link"),
-            nav_calls_link : $(".nav-calls-link"),
             my_avatar_area : $("#my_avatar_status"),
             thread_area : $("#messages_ul"),
             message_container : $("#message_container"),
@@ -216,7 +215,6 @@ window.ThreadManager = (function () {
                 elm.addEventListener(eventName, methods.fileDragDrop, false)
             });
             if(opt.elements.nav_search_link.length) opt.elements.nav_search_link.click(mounted.searchLinkClicked);
-            if(opt.elements.nav_calls_link.length) opt.elements.nav_calls_link.click(mounted.callsLinkClicked);
             setInterval(mounted.timeAgo, 10000);
             opt.SETUP = false;
         },
@@ -444,11 +442,6 @@ window.ThreadManager = (function () {
             mounted.stopDefault(e);
             $('body').click();
             LoadIn.search()
-        },
-        callsLinkClicked : function(e){
-            mounted.stopDefault(e);
-            $('body').click();
-            LoadIn.callThreads()
         },
         runMessengerSearch : function(e){
             if(opt.thread.type !== 7) return;
@@ -2625,8 +2618,29 @@ window.ThreadManager = (function () {
             });
             window.history.pushState({type : 5}, null, Messenger.common().WEB)
         },
-        callThreads : function(){
-
+        messageEdits : function(route){
+            if(!opt.thread.id) return;
+            Messenger.alert().Modal({
+                size : 'md',
+                backdrop_ctrl : false,
+                overflow : true,
+                theme : 'dark',
+                icon : 'edit',
+                title: 'Loading Edit History...',
+                pre_loader: true,
+                h4: false,
+                onReady: function () {
+                    Messenger.xhr().request({
+                        route : route,
+                        success : function(data){
+                            Messenger.alert().fillModal({
+                                title : 'Message Edit History',
+                                body : ThreadTemplates.render().message_edit_history(data)
+                            });
+                        }
+                    })
+                }
+            })
         },
         threads : function(){
             Messenger.xhr().request({

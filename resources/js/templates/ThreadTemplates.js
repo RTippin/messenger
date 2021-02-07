@@ -14,6 +14,9 @@ window.ThreadTemplates = (function () {
             }
             return body.replace(regExp, html);
         },
+        format_message_body : function(body){
+            return (typeof emojione !== 'undefined' ? methods.makeLinks(methods.makeYoutube(emojione.toImage(body))) : methods.makeLinks(methods.makeYoutube(body)))
+        },
         switch_mobile_view : function (power) {
             let nav = $("#FS_navbar"), main_section = $("#FS_main_section"), msg_sidebar = $("#message_sidebar_container"), msg_content = $("#message_content_container");
             if(power){
@@ -188,6 +191,19 @@ window.ThreadTemplates = (function () {
             }
             return html
         },
+        message_edit_history : function(data){
+            let html = '<div class="mx-n2"><ul id="edit_history">';
+            data.forEach(function (message) {
+                html += templates.message_edit_item(message)
+            });
+            html += '</ul></div>';
+            return html
+        },
+        message_edit_item : function(data){
+            return '<li title="Edited on '+moment(Messenger.format().makeUtcLocal(data.edited_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="thread_list_item mb-2">' +
+                methods.format_message_body(data.body) +
+                '</li>'
+        },
         document_item : function(data){
             return '<li title="'+Messenger.format().escapeHtml(data.owner.name)+' on '+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="thread_list_item mb-2">' +
                 '<div class="thread-list-status"><span class="shadow-sm badge badge-pill badge-success">Document <i class="fas fa-file-alt"></i></span></div> '+
@@ -258,9 +274,9 @@ window.ThreadTemplates = (function () {
                 case 2:
                     return '<a href="'+data.document+'" target="_blank"><i class="fas fa-cloud-download-alt"></i> '+data.body+'</a>';
                 default:
-                    let body = (typeof emojione !== 'undefined' ? methods.makeLinks(methods.makeYoutube(emojione.toImage(data.body))) : methods.makeLinks(methods.makeYoutube(data.body)));
+                    let body = methods.format_message_body(data.body);
 
-                    return data.edited ? body + ' <small class="font-weight-bold text-muted" title="Edited on '+moment(Messenger.format().makeUtcLocal(data.updated_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'">(edited)</small>' : body;
+                    return data.edited ? body + ' <span onclick="ThreadManager.load().messageEdits(\''+data.edited_history_route+'\')" class="pointer_area"><small class="font-weight-bold text-muted" title="Edited on '+moment(Messenger.format().makeUtcLocal(data.updated_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'">(edited)</small></span>' : body;
             }
         },
         message_archive : function(data, grouped){
