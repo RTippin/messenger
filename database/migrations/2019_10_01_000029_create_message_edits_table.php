@@ -17,7 +17,7 @@ class CreateMessageEditsTable extends Migration
             $table->uuid('id')->primary();
             $table->uuid('message_id');
             $table->text('body');
-            $table->timestamps();
+            $table->timestamp('edited_at');
             $table->foreign('message_id')
                 ->references('id')
                 ->on('messages')

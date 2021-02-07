@@ -38,7 +38,7 @@ class MessageEditResource extends JsonResource
     {
         return [
             'body' => $this->sanitizedBody(),
-            'created_at' => $this->message->created_at,
+            'edited_at' => $this->message->edited_at,
         ];
     }
 

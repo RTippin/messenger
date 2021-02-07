@@ -117,6 +117,7 @@ Route::name('api.messenger.')->group(function () {
         Route::post('demote', DemoteAdmin::class)->name('demote');
     });
     Route::apiResource('threads.messages', MessageController::class);
+    Route::get('threads/{thread}/messages/{message}/edits', [MessageController::class, 'showEdits'])->name('messages.history');
     Route::apiResource('threads.images', ImageMessageController::class)->only(['index', 'store']);
     Route::apiResource('threads.documents', DocumentMessageController::class)->only(['index', 'store']);
     Route::apiResource('threads.invites', InviteController::class)->only(['index', 'store', 'destroy']);

@@ -11,6 +11,7 @@ use RTippin\Messenger\Actions\Messages\ArchiveMessage;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
 use RTippin\Messenger\Actions\Messages\UpdateMessage;
 use RTippin\Messenger\Http\Collections\MessageCollection;
+use RTippin\Messenger\Http\Collections\MessageEditCollection;
 use RTippin\Messenger\Http\Request\EditMessageRequest;
 use RTippin\Messenger\Http\Request\MessageRequest;
 use RTippin\Messenger\Http\Resources\MessageResource;
@@ -123,24 +124,24 @@ class MessageController extends Controller
         return new MessageResource($message, $thread);
     }
 
-//    /**
-//     * Display the specified resource.
-//     *
-//     * @param Thread $thread
-//     * @param Message $message
-//     * @return MessageResource
-//     * @throws AuthorizationException
-//     */
-//    public function showEdits(Thread $thread,
-//                         Message $message): MessageResource
-//    {
-//        $this->authorize('viewEdits', [
-//            Message::class,
-//            $thread,
-//        ]);
-//
-//        return new MessageResource($message, $thread);
-//    }
+    /**
+     * Display the specified resource.
+     *
+     * @param Thread $thread
+     * @param Message $message
+     * @return MessageEditCollection
+     * @throws AuthorizationException
+     */
+    public function showEdits(Thread $thread,
+                         Message $message): MessageEditCollection
+    {
+        $this->authorize('viewEdits', [
+            $message,
+            $thread,
+        ]);
+
+        return new MessageEditCollection($message->edits()->get());
+    }
 
     /**
      * Update the specified resource.

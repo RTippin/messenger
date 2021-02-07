@@ -58,16 +58,18 @@ class MessagePolicy
      * Determine whether the provider can view the model edits.
      *
      * @param $user
+     * @param Message $message
      * @param Thread $thread
      * @return mixed
      */
-    public function viewEdits($user, Thread $thread)
+    public function viewEdits($user, Message $message, Thread $thread)
     {
         return $thread->hasCurrentProvider()
         && $this->messenger->isMessageEditsEnabled()
         && $this->messenger->isMessageEditsViewEnabled()
+        && $message->isEdited()
             ? $this->allow()
-            : $this->deny('Not authorized to view message edits history.');
+            : $this->deny('Not authorized to view edits for that message.');
     }
 
     /**

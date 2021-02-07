@@ -26,6 +26,7 @@ class StoreMessageEdit implements ShouldQueue
     {
         $event->message->edits()->create([
             'body' => $event->originalBody,
+            'edited_at' => $event->message->updated_at,
         ]);
     }
 }
