@@ -83,6 +83,7 @@ Route::name('api.messenger.')->group(function () {
         //Pagination
         Route::get('participants/page/{participant}', [ParticipantController::class, 'paginate'])->name('participants.page');
         Route::get('messages/page/{message}', [MessageController::class, 'paginate'])->name('messages.page');
+        Route::get('messages/{message}/history', [MessageController::class, 'showEdits'])->name('messages.history');
         Route::get('calls/page/{call}', [CallController::class, 'paginate'])->name('calls.page');
         Route::get('logs/page/{log}', [SystemMessageController::class, 'paginate'])->name('logs.page');
         Route::get('images/page/{image}', [ImageMessageController::class, 'paginate'])->name('images.page');
@@ -117,7 +118,6 @@ Route::name('api.messenger.')->group(function () {
         Route::post('demote', DemoteAdmin::class)->name('demote');
     });
     Route::apiResource('threads.messages', MessageController::class);
-    Route::get('threads/{thread}/messages/{message}/edits', [MessageController::class, 'showEdits'])->name('messages.history');
     Route::apiResource('threads.images', ImageMessageController::class)->only(['index', 'store']);
     Route::apiResource('threads.documents', DocumentMessageController::class)->only(['index', 'store']);
     Route::apiResource('threads.invites', InviteController::class)->only(['index', 'store', 'destroy']);

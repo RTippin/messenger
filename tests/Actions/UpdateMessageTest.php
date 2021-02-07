@@ -2,12 +2,15 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Events\CallQueuedListener;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Messages\UpdateMessage;
 use RTippin\Messenger\Broadcasting\MessageEditedBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\MessageEditedEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Listeners\StoreMessageEdit;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -107,6 +110,22 @@ class UpdateMessageTest extends FeatureTestCase
             $this->assertSame('First Test Message', $event->originalBody);
 
             return true;
+        });
+    }
+
+    /** @test */
+    public function update_message_triggers_listener()
+    {
+        Bus::fake();
+
+        app(UpdateMessage::class)->withoutBroadcast()->execute(
+            $this->group,
+            $this->message,
+            'Edited Message'
+        );
+
+        Bus::assertDispatched(function (CallQueuedListener $job) {
+            return $job->class === StoreMessageEdit::class;
         });
     }
 }

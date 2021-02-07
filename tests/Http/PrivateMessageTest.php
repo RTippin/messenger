@@ -3,11 +3,9 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\MessageArchivedBroadcast;
-use RTippin\Messenger\Broadcasting\MessageEditedBroadcast;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\MessageArchivedEvent;
-use RTippin\Messenger\Events\MessageEditedEvent;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
@@ -211,118 +209,6 @@ class PrivateMessageTest extends FeatureTestCase
         ]), [
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',
-        ])
-            ->assertForbidden();
-    }
-
-    /** @test */
-    public function owner_can_update_message()
-    {
-        $this->expectsEvents([
-            MessageEditedBroadcast::class,
-            MessageEditedEvent::class,
-        ]);
-
-        $this->travel(5)->minutes();
-
-        $this->actingAs($this->tippin);
-
-        $this->putJson(route('api.messenger.threads.messages.update', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
-        ]), [
-            'message' => 'Edited Message',
-        ])
-            ->assertSuccessful()
-            ->assertJson([
-                'id' => $this->message->id,
-                'body' => 'Edited Message',
-                'edited' => true,
-            ]);
-    }
-
-    /** @test */
-    public function non_owner_forbidden_to_update_message()
-    {
-        $this->actingAs($this->doe);
-
-        $this->putJson(route('api.messenger.threads.messages.update', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
-        ]), [
-            'message' => 'Edited Message',
-        ])
-            ->assertForbidden();
-    }
-
-    /** @test */
-    public function forbidden_to_update_image_message()
-    {
-        $this->message->update([
-            'type' => 1,
-        ]);
-
-        $this->actingAs($this->tippin);
-
-        $this->putJson(route('api.messenger.threads.messages.update', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
-        ]), [
-            'message' => 'Edited Message',
-        ])
-            ->assertForbidden();
-    }
-
-    /** @test */
-    public function forbidden_to_update_document_message()
-    {
-        $this->message->update([
-            'type' => 2,
-        ]);
-
-        $this->actingAs($this->tippin);
-
-        $this->putJson(route('api.messenger.threads.messages.update', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
-        ]), [
-            'message' => 'Edited Message',
-        ])
-            ->assertForbidden();
-    }
-
-    /** @test */
-    public function forbidden_to_update_system_message()
-    {
-        $this->message->update([
-            'type' => 99,
-        ]);
-
-        $this->actingAs($this->tippin);
-
-        $this->putJson(route('api.messenger.threads.messages.update', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
-        ]), [
-            'message' => 'Edited Message',
-        ])
-            ->assertForbidden();
-    }
-
-    /** @test */
-    public function forbidden_to_update_message_when_thread_locked()
-    {
-        $this->private->update([
-            'lockout' => true,
-        ]);
-
-        $this->actingAs($this->tippin);
-
-        $this->putJson(route('api.messenger.threads.messages.update', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
-        ]), [
-            'message' => 'Edited Message',
         ])
             ->assertForbidden();
     }

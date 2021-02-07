@@ -81,6 +81,9 @@ class MessageResource extends JsonResource
             'temporary_id' => $this->when($this->message->hasTemporaryId(),
                 fn () => $this->message->temporaryId()
             ),
+            'edited_history_route' => $this->when($this->message->isEdited(),
+                fn () => $this->message->getEditHistoryRoute()
+            ),
             $this->mergeWhen($this->message->isImage(),
                 fn () => $this->linksForImage()
             ),

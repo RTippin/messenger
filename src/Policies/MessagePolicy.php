@@ -127,6 +127,7 @@ class MessagePolicy
         return $thread->hasCurrentProvider()
         && ! $thread->isLocked()
         && $message->isText()
+        && $this->messenger->isMessageEditsEnabled()
         && $this->messenger->getProviderId() == $message->owner_id
         && $this->messenger->getProviderClass() === $message->owner_type
             ? $this->allow()

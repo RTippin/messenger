@@ -268,6 +268,23 @@ class Message extends Model
     }
 
     /**
+     * @return string|null
+     */
+    public function getEditHistoryRoute(): ?string
+    {
+        if (! $this->isEdited()) {
+            return null;
+        }
+
+        return messengerRoute('api.messenger.threads.messages.history',
+            [
+                'thread' => $this->thread_id,
+                'message' => $this->id,
+            ]
+        );
+    }
+
+    /**
      * @return bool
      */
     public function isEdited(): bool
