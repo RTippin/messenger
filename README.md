@@ -16,6 +16,22 @@
 - Laravel >= 8.x
 - laravel broadcast driver configured.
 
+### Features
+- Realtime messaging between multiple models.
+- Private and group threads.
+- Permissions per participant within a group thread.
+- Friends system.
+- Search system.
+- Online status.
+- Provider avatars, group thread avatars, message attachments (images, documents etc).
+- Calling / Group Calling.
+- Group thread invitation links (like discord).
+- All actions are protected behind policies.
+- Scheduled commands for automation cleanup and checks.
+- Queued event listeners.
+- Many features can be toggled within our config.
+- All in one system ready to plug into any laravel app. You may even choose to utilize only our API, and disable the web routes and published frontend assets.
+
 ### Notes / upcoming
 - If our event listeners are enabled in your config, the queue your worker must use is `messenger`, as all listeners are queued on that channel.
 - Our included commands that push a job also use the `messenger` queue channel.
@@ -24,7 +40,6 @@
 - A React frontend will be in the works.
 - Extending the Friends system to be a swappable driver.
 - Included frontend uses socket.io / laravel-echo. Future release will expand options.
-- Expanded docs.
 - Read through our config file before migrating!
 
 ### Messenger Demo
