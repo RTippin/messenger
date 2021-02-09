@@ -5,8 +5,8 @@ namespace RTippin\Messenger\Tests\Messenger;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Orchestra\Testbench\TestCase;
+use RTippin\Messenger\Exceptions\UploadFailedException;
 use RTippin\Messenger\Services\FileService;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class FileServiceTest extends TestCase
 {
@@ -91,7 +91,9 @@ class FileServiceTest extends TestCase
     /** @test */
     public function service_throws_exception_when_upload_fails()
     {
-        $this->expectException(HttpException::class);
+        $this->expectException(UploadFailedException::class);
+
+        $this->expectExceptionMessage('File failed to upload.');
 
         $badFile = UploadedFile::fake()->create('undefined', 0, 'undefined');
 

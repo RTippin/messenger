@@ -126,7 +126,7 @@ class StoreImageMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_document_fires_events()
+    public function store_image_fires_events()
     {
         Event::fake([
             NewMessageBroadcast::class,

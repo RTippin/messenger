@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Services;
 
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Http\UploadedFile;
-use Symfony\Component\HttpKernel\Exception\HttpException;
+use RTippin\Messenger\Exceptions\UploadFailedException;
 
 class FileService
 {
@@ -90,7 +90,7 @@ class FileService
     /**
      * @param UploadedFile $file
      * @return $this
-     * @throws HttpException
+     * @throws UploadFailedException
      */
     public function upload(UploadedFile $file): self
     {
@@ -139,7 +139,7 @@ class FileService
     /**
      * @param UploadedFile $file
      * @return string
-     * @throws HttpException
+     * @throws UploadFailedException
      */
     private function fileUpload(UploadedFile $file): ?string
     {
@@ -204,10 +204,10 @@ class FileService
     /**
      * Upload failed! :(.
      *
-     * @throws HttpException
+     * @throws UploadFailedException
      */
     private function uploadFailed()
     {
-        throw new HttpException(422, 'File was unable to upload. Please try again.');
+        throw new UploadFailedException;
     }
 }

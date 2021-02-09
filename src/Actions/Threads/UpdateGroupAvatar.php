@@ -10,6 +10,7 @@ use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\ThreadAvatarEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
+use RTippin\Messenger\Exceptions\UploadFailedException;
 use RTippin\Messenger\Http\Request\GroupAvatarRequest;
 use RTippin\Messenger\Http\Resources\Broadcast\ThreadSettingsBroadcastResource;
 use RTippin\Messenger\Http\Resources\ThreadSettingsResource;
@@ -86,7 +87,7 @@ class UpdateGroupAvatar extends BaseMessengerAction
      * @var Thread[0]
      * @var GroupAvatarRequest[1]
      * @return $this
-     * @throws FeatureDisabledException
+     * @throws FeatureDisabledException|UploadFailedException
      */
     public function execute(...$parameters): self
     {
@@ -145,7 +146,7 @@ class UpdateGroupAvatar extends BaseMessengerAction
     /**
      * @param array $params
      * @return $this
-     * @throws FeatureDisabledException
+     * @throws FeatureDisabledException|UploadFailedException
      */
     private function handleAction(array $params): self
     {
@@ -165,7 +166,7 @@ class UpdateGroupAvatar extends BaseMessengerAction
     /**
      * @param UploadedFile $image
      * @return string|null
-     * @throws FeatureDisabledException
+     * @throws FeatureDisabledException|UploadFailedException
      */
     private function uploadAvatar(UploadedFile $image): ?string
     {

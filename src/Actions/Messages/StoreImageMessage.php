@@ -7,10 +7,10 @@ use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
+use RTippin\Messenger\Exceptions\UploadFailedException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\FileService;
-use Symfony\Component\HttpKernel\Exception\HttpException;
 use Throwable;
 
 class StoreImageMessage extends NewMessageAction
@@ -59,7 +59,7 @@ class StoreImageMessage extends NewMessageAction
      * @var UploadedFile[1]
      * @var string|null[2]
      * @return $this
-     * @throws Throwable|FeatureDisabledException
+     * @throws Throwable|FeatureDisabledException|UploadFailedException
      */
     public function execute(...$parameters): self
     {
@@ -95,7 +95,7 @@ class StoreImageMessage extends NewMessageAction
     /**
      * @param UploadedFile $file
      * @return string
-     * @throws HttpException
+     * @throws UploadFailedException
      */
     private function upload(UploadedFile $file): ?string
     {
