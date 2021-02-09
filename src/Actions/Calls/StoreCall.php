@@ -60,9 +60,7 @@ class StoreCall extends NewCallAction
     public function execute(...$parameters): self
     {
         $this->setThread($parameters[0])
-            ->callingIsEnabled()
-            ->hasNoActiveCall()
-            ->hasNoCallLockout()
+            ->canInitiateCall()
             ->setCallLockout()
             ->handleTransactions(
                 'VIDEO',
