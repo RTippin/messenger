@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Listeners;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use RTippin\Messenger\Actions\Calls\CallBrokerTeardown;
 use RTippin\Messenger\Events\CallEndedEvent;
-use Throwable;
+use RTippin\Messenger\Exceptions\CallBrokerException;
 
 class TeardownCall implements ShouldQueue
 {
@@ -36,7 +36,7 @@ class TeardownCall implements ShouldQueue
      *
      * @param CallEndedEvent $event
      * @return void
-     * @throws Throwable
+     * @throws CallBrokerException
      */
     public function handle(CallEndedEvent $event): void
     {

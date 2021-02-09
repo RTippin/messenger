@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Exception;
 use RTippin\Messenger\Actions\Calls\CallBrokerTeardown;
 use RTippin\Messenger\Contracts\VideoDriver;
+use RTippin\Messenger\Exceptions\CallBrokerException;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -45,7 +45,9 @@ class CallBrokerTeardownTest extends FeatureTestCase
             ->shouldReceive('destroy')
             ->andReturn(false);
 
-        $this->expectException(Exception::class);
+        $this->expectException(CallBrokerException::class);
+
+        $this->expectExceptionMessage('Teardown video provider failed.');
 
         app(CallBrokerTeardown::class)->execute($this->call);
     }
@@ -57,7 +59,9 @@ class CallBrokerTeardownTest extends FeatureTestCase
             'teardown_complete' => true,
         ]);
 
-        $this->expectException(Exception::class);
+        $this->expectException(CallBrokerException::class);
+
+        $this->expectExceptionMessage('Call already torn down.');
 
         app(CallBrokerTeardown::class)->execute($this->call);
     }
