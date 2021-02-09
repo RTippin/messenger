@@ -10,13 +10,13 @@ use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\FriendRequestEvent;
 use RTippin\Messenger\Exceptions\FriendException;
+use RTippin\Messenger\Exceptions\ProviderNotFoundException;
 use RTippin\Messenger\Http\Request\FriendRequest;
 use RTippin\Messenger\Http\Resources\Broadcast\FriendRequestBroadcastResource;
 use RTippin\Messenger\Http\Resources\SentFriendResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\SentFriend;
 use RTippin\Messenger\Repositories\ProvidersRepository;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class StoreFriendRequest extends BaseMessengerAction
 {
@@ -78,7 +78,7 @@ class StoreFriendRequest extends BaseMessengerAction
      * @param mixed ...$parameters
      * @var FriendRequest[0]
      * @return $this
-     * @throws FriendException|NotFoundHttpException
+     * @throws FriendException|ProviderNotFoundException
      */
     public function execute(...$parameters): self
     {
@@ -109,13 +109,13 @@ class StoreFriendRequest extends BaseMessengerAction
 
     /**
      * @return $this
-     * @throws FriendException|NotFoundHttpException
+     * @throws FriendException|ProviderNotFoundException
      * @noinspection PhpParamsInspection
      */
     private function recipientIsValid(): self
     {
         if (is_null($this->recipient)) {
-            throw new NotFoundHttpException('Unable to locate the recipient you specified.');
+            throw new ProviderNotFoundException;
         }
 
         if ($this->messenger->getProvider()->is($this->recipient)) {

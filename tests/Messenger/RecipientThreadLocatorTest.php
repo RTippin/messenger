@@ -3,11 +3,11 @@
 namespace RTippin\Messenger\Tests\Messenger;
 
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Exceptions\ProviderNotFoundException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\RecipientThreadLocator;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RecipientThreadLocatorTest extends FeatureTestCase
 {
@@ -91,7 +91,7 @@ class RecipientThreadLocatorTest extends FeatureTestCase
     /** @test */
     public function locator_can_throw_exception()
     {
-        $this->expectException(NotFoundHttpException::class);
+        $this->expectException(ProviderNotFoundException::class);
 
         $this->locator->throwNotFoundError();
     }

@@ -8,11 +8,11 @@ use RTippin\Messenger\Broadcasting\FriendRequestBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\FriendRequestEvent;
 use RTippin\Messenger\Exceptions\FriendException;
+use RTippin\Messenger\Exceptions\ProviderNotFoundException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\PendingFriend;
 use RTippin\Messenger\Models\SentFriend;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class StoreFriendRequestTest extends FeatureTestCase
 {
@@ -83,9 +83,9 @@ class StoreFriendRequestTest extends FeatureTestCase
     {
         Messenger::setProvider($this->tippin);
 
-        $this->expectException(NotFoundHttpException::class);
+        $this->expectException(ProviderNotFoundException::class);
 
-        $this->expectExceptionMessage('Unable to locate the recipient you specified.');
+        $this->expectExceptionMessage('We were unable to locate the recipient you requested.');
 
         app(StoreFriendRequest::class)->withoutDispatches()->execute([
             'recipient_id' => 404,

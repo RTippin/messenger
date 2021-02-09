@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
+use RTippin\Messenger\Exceptions\ProviderNotFoundException;
 use RTippin\Messenger\Http\Resources\RecipientThreadResource;
 use RTippin\Messenger\Services\RecipientThreadLocator;
 
@@ -15,6 +16,7 @@ class FindRecipientThread
      * @param string $alias
      * @param string $id
      * @return RecipientThreadResource
+     * @throws ProviderNotFoundException
      */
     public function __invoke(RecipientThreadLocator $locator,
                              string $alias,

@@ -14,6 +14,7 @@ use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewThreadEvent;
+use RTippin\Messenger\Exceptions\ProviderNotFoundException;
 use RTippin\Messenger\Http\Request\PrivateThreadRequest;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
@@ -293,7 +294,7 @@ class StorePrivateThread extends NewThreadAction
 
     /**
      * @return $this
-     * @throws NotFoundHttpException
+     * @throws ProviderNotFoundException
      */
     private function recipientWasFound(): self
     {

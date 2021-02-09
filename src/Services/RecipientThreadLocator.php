@@ -3,11 +3,11 @@
 namespace RTippin\Messenger\Services;
 
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Exceptions\ProviderNotFoundException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\PrivateThreadRepository;
 use RTippin\Messenger\Repositories\ProvidersRepository;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class RecipientThreadLocator
 {
@@ -112,11 +112,11 @@ class RecipientThreadLocator
     }
 
     /**
-     * @throws NotFoundHttpException
+     * @throws ProviderNotFoundException
      */
     public function throwNotFoundError()
     {
-        throw new NotFoundHttpException('We were unable to locate the recipient you requested.');
+        throw new ProviderNotFoundException;
     }
 
     /**
