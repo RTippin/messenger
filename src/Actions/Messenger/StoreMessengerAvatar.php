@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Actions\Messenger;
 
 use Illuminate\Http\UploadedFile;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Services\FileService;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -25,15 +26,28 @@ class StoreMessengerAvatar extends MessengerAvatarAction
      * @param mixed ...$parameters
      * @var UploadedFile[0]['image']
      * @return $this
+     * @throws FeatureDisabledException
      */
     public function execute(...$parameters): self
     {
+        $this->isAvatarUploadEnabled();
+
         $file = $this->upload($parameters[0]['image']);
 
         $this->removeOldIfExist()
             ->updateProviderAvatar($file);
 
         return $this;
+    }
+
+    /**
+     * @throws FeatureDisabledException
+     */
+    private function isAvatarUploadEnabled(): void
+    {
+        if (! $this->messenger->isProviderAvatarUploadEnabled()) {
+            throw new FeatureDisabledException('Avatar upload is currently disabled.');
+        }
     }
 
     /**

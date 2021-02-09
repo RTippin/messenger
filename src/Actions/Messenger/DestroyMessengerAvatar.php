@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Actions\Messenger;
 
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Services\FileService;
 
@@ -22,12 +23,25 @@ class DestroyMessengerAvatar extends MessengerAvatarAction
     /**
      * @param mixed ...$parameters
      * @return $this
+     * @throws FeatureDisabledException
      */
     public function execute(...$parameters): self
     {
+        $this->isAvatarRemovalEnabled();
+
         $this->removeOldIfExist()
             ->updateProviderAvatar(null);
 
         return $this;
+    }
+
+    /**
+     * @throws FeatureDisabledException
+     */
+    private function isAvatarRemovalEnabled(): void
+    {
+        if (! $this->messenger->isProviderAvatarRemovalEnabled()) {
+            throw new FeatureDisabledException('Avatar removal is currently disabled.');
+        }
     }
 }

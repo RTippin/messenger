@@ -7,6 +7,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Messenger\StoreMessengerAvatar;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -31,6 +32,20 @@ class StoreMessengerAvatarTest extends FeatureTestCase
         Messenger::setProvider($this->tippin);
 
         Storage::fake($this->disk);
+    }
+
+    /** @test */
+    public function upload_avatar_throws_exception_when_disabled()
+    {
+        Messenger::setProviderAvatarUpload(false);
+
+        $this->expectException(FeatureDisabledException::class);
+
+        $this->expectExceptionMessage('Avatar upload is currently disabled.');
+
+        app(StoreMessengerAvatar::class)->execute([
+            'image' => UploadedFile::fake()->image('avatar.jpg'),
+        ]);
     }
 
     /** @test */

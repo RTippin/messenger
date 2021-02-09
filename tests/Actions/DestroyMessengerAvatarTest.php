@@ -6,6 +6,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Messenger\DestroyMessengerAvatar;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -38,6 +39,18 @@ class DestroyMessengerAvatarTest extends FeatureTestCase
         UploadedFile::fake()->image('avatar.jpg')->storeAs($this->directory, 'avatar.jpg', [
             'disk' => $this->disk,
         ]);
+    }
+
+    /** @test */
+    public function destroy_avatar_throws_exception_when_disabled()
+    {
+        Messenger::setProviderAvatarRemoval(false);
+
+        $this->expectException(FeatureDisabledException::class);
+
+        $this->expectExceptionMessage('Avatar removal is currently disabled.');
+
+        app(DestroyMessengerAvatar::class)->execute();
     }
 
     /** @test */
