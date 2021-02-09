@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Actions\Threads;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Actions\BaseMessengerAction;
@@ -10,6 +9,7 @@ use RTippin\Messenger\Broadcasting\ThreadAvatarBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\ThreadAvatarEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Request\GroupAvatarRequest;
 use RTippin\Messenger\Http\Resources\Broadcast\ThreadSettingsBroadcastResource;
 use RTippin\Messenger\Http\Resources\ThreadSettingsResource;
@@ -86,7 +86,7 @@ class UpdateGroupAvatar extends BaseMessengerAction
      * @var Thread[0]
      * @var GroupAvatarRequest[1]
      * @return $this
-     * @throws AuthorizationException
+     * @throws FeatureDisabledException
      */
     public function execute(...$parameters): self
     {
@@ -145,7 +145,7 @@ class UpdateGroupAvatar extends BaseMessengerAction
     /**
      * @param array $params
      * @return $this
-     * @throws AuthorizationException
+     * @throws FeatureDisabledException
      */
     private function handleAction(array $params): self
     {
@@ -165,7 +165,7 @@ class UpdateGroupAvatar extends BaseMessengerAction
     /**
      * @param UploadedFile $image
      * @return string|null
-     * @throws AuthorizationException
+     * @throws FeatureDisabledException
      */
     private function uploadAvatar(UploadedFile $image): ?string
     {
@@ -274,12 +274,12 @@ class UpdateGroupAvatar extends BaseMessengerAction
 
     /**
      * @return $this
-     * @throws AuthorizationException
+     * @throws FeatureDisabledException
      */
     private function isThreadAvatarUploadEnabled(): self
     {
         if (! $this->messenger->isThreadAvatarUploadEnabled()) {
-            throw new AuthorizationException('Thread avatar uploads are currently disabled.');
+            throw new FeatureDisabledException('Group avatar uploads are currently disabled.');
         }
 
         return $this;

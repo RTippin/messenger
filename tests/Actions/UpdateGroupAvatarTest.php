@@ -11,6 +11,7 @@ use RTippin\Messenger\Actions\Threads\UpdateGroupAvatar;
 use RTippin\Messenger\Broadcasting\ThreadAvatarBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ThreadAvatarEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Listeners\ThreadAvatarMessage;
 use RTippin\Messenger\Models\Thread;
@@ -45,6 +46,23 @@ class UpdateGroupAvatarTest extends FeatureTestCase
         UploadedFile::fake()->image('avatar.jpg')->storeAs($this->group->getStorageDirectory().'/avatar', 'avatar.jpg', [
             'disk' => $this->disk,
         ]);
+    }
+
+    /** @test */
+    public function update_group_avatar_throws_exception_when_upload_disabled()
+    {
+        Messenger::setThreadAvatarUpload(false);
+
+        $this->expectException(FeatureDisabledException::class);
+
+        $this->expectExceptionMessage('Group avatar uploads are currently disabled.');
+
+        app(UpdateGroupAvatar::class)->withoutDispatches()->execute(
+            $this->group,
+            [
+                'image' => UploadedFile::fake()->image('picture.jpg'),
+            ]
+        );
     }
 
     /** @test */
