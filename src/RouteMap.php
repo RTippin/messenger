@@ -2,15 +2,49 @@
 
 namespace RTippin\Messenger;
 
+use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\RateLimiter;
+use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Http\Middleware\AuthenticateOptional;
+use RTippin\Messenger\Http\Middleware\MessengerApi;
+use RTippin\Messenger\Http\Middleware\SetMessengerProvider;
 
 /**
  * @property-read Application $app
  */
 trait RouteMap
 {
+    /**
+     * Register our middleware.
+     *
+     * @throws BindingResolutionException
+     */
+    protected function registerMiddleware(): void
+    {
+        $this->app->make(Kernel::class)
+            ->prependToMiddlewarePriority(MessengerApi::class);
+
+        $router = $this->app->make(Router::class);
+
+        $router->aliasMiddleware(
+            'messenger.api',
+            MessengerApi::class
+        );
+        $router->aliasMiddleware(
+            'messenger.provider',
+            SetMessengerProvider::class
+        );
+        $router->aliasMiddleware(
+            'auth.optional',
+            AuthenticateOptional::class
+        );
+    }
+
     /**
      * Register all routes used by messenger.
      * @throws BindingResolutionException
@@ -40,6 +74,48 @@ trait RouteMap
                 $this->loadRoutesFrom(__DIR__.'/../routes/avatar.php');
             });
         }
+    }
+
+    /**
+     * Configure the rate limiters for Messenger.
+     */
+    protected function configureRateLimiting(): void
+    {
+        RateLimiter::for('messenger-api', function (Request $request) {
+            $limit = Messenger::getApiRateLimit();
+
+            return $limit > 0
+                ? Limit::perMinute($limit)->by(optional($request->user())->getKey() ?: $request->ip())
+                : Limit::none();
+        });
+
+        RateLimiter::for('messenger-message', function (Request $request) {
+            $thread = $request->route()->originalParameter('thread');
+            $user = optional($request->user())->getKey() ?: $request->ip();
+            $limit = Messenger::getMessageRateLimit();
+
+            return $limit > 0
+                ? Limit::perMinute($limit)->by($thread.'.'.$user)
+                : Limit::none();
+        });
+
+        RateLimiter::for('messenger-attachment', function (Request $request) {
+            $thread = $request->route()->originalParameter('thread');
+            $user = optional($request->user())->getKey() ?: $request->ip();
+            $limit = Messenger::getAttachmentRateLimit();
+
+            return $limit > 0
+                ? Limit::perMinute($limit)->by($thread.'.'.$user)
+                : Limit::none();
+        });
+
+        RateLimiter::for('messenger-search', function (Request $request) {
+            $limit = Messenger::getSearchRateLimit();
+
+            return $limit > 0
+                ? Limit::perMinute($limit)->by(optional($request->user())->getKey() ?: $request->ip())
+                : Limit::none();
+        });
     }
 
     /**
