@@ -4,15 +4,15 @@ namespace RTippin\Messenger\Exceptions;
 
 use Illuminate\Auth\Access\AuthorizationException;
 
-class InvalidMessengerProvider extends AuthorizationException
+class FeatureDisabledException extends AuthorizationException
 {
     /**
-     * Create a new invalid provider exception.
+     * Create a new feature disabled exception.
      *
      * @param  string  $message
      * @return void
      */
-    public function __construct($message = 'Messenger provider not set or compatible.')
+    public function __construct($message = 'That feature is currently disabled.')
     {
         parent::__construct($message);
     }
