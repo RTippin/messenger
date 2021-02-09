@@ -1,6 +1,15 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+## [v0.14 (02-09-2021)]
+
+### Added
+- New Exceptions.
+
+### Changed
+- Exceptions thrown throughout out package.
+- Moved some authorization logic done in controllers or model into actions.
+
 ## [v0.13 (02-07-2021)]
 
 ### Added
