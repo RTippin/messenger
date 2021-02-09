@@ -7,7 +7,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 class FeatureDisabledException extends AuthorizationException
 {
     /**
-     * Create a new feature disabled exception.
+     * FeatureDisabledException constructor.
      *
      * @param  string  $message
      * @return void

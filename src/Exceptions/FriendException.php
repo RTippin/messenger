@@ -7,7 +7,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 class FriendException extends AuthorizationException
 {
     /**
-     * Create a new call exception.
+     * FriendException constructor.
      *
      * @param  string  $message
      * @return void

@@ -7,7 +7,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 class NewCallException extends AuthorizationException
 {
     /**
-     * Create a new call exception.
+     * NewCallException constructor.
      *
      * @param  string  $message
      * @return void

@@ -7,7 +7,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 class KnockException extends AuthorizationException
 {
     /**
-     * Create a new call exception.
+     * KnockException constructor.
      *
      * @param  string  $message
      * @return void

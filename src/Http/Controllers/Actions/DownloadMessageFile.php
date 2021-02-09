@@ -5,6 +5,8 @@ namespace RTippin\Messenger\Http\Controllers\Actions;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
+use RTippin\Messenger\Exceptions\FileNotFoundException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
@@ -45,7 +47,7 @@ class DownloadMessageFile
      * @param Message $message
      * @param string $file
      * @return StreamedResponse
-     * @throws AuthorizationException
+     * @throws FeatureDisabledException|FileNotFoundException|AuthorizationException
      */
     public function __invoke(Thread $thread,
                              Message $message,
@@ -66,12 +68,12 @@ class DownloadMessageFile
     }
 
     /**
-     * @throws AuthorizationException
+     * @throws FeatureDisabledException
      */
     private function checkDownloadsEnabled()
     {
         if (! $this->messenger->isMessageDocumentDownloadEnabled()) {
-            throw new AuthorizationException('Document downloads are currently disabled.');
+            throw new FeatureDisabledException('Document downloads are currently disabled.');
         }
     }
 
@@ -86,7 +88,7 @@ class DownloadMessageFile
             || ! $this->filesystemManager
                 ->disk($message->getStorageDisk())
                 ->exists($message->getDocumentPath())) {
-            throw new NotFoundHttpException("File not found: {$fileNameChallenge}");
+            throw new FileNotFoundException($fileNameChallenge);
         }
     }
 }

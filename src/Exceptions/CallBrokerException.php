@@ -8,6 +8,7 @@ class CallBrokerException extends Exception
 {
     /**
      * CallBrokerException constructor.
+     *
      * @param string $message
      */
     public function __construct($message = 'Call broker failed.')

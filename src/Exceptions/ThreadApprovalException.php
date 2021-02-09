@@ -7,7 +7,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 class ThreadApprovalException extends AuthorizationException
 {
     /**
-     * Create a new call exception.
+     * ThreadApprovalException constructor.
      *
      * @param  string  $message
      * @return void

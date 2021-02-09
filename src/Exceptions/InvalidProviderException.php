@@ -7,7 +7,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 class InvalidProviderException extends AuthorizationException
 {
     /**
-     * Create a new invalid provider exception.
+     * InvalidProviderException constructor.
      *
      * @param  string  $message
      * @return void
