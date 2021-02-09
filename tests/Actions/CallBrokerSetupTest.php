@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Exception;
 use RTippin\Messenger\Actions\Calls\CallBrokerSetup;
 use RTippin\Messenger\Contracts\VideoDriver;
+use RTippin\Messenger\Exceptions\CallBrokerException;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -71,7 +71,9 @@ class CallBrokerSetupTest extends FeatureTestCase
             'create' => false,
         ]);
 
-        $this->expectException(Exception::class);
+        $this->expectException(CallBrokerException::class);
+
+        $this->expectExceptionMessage('Setup with video provider failed.');
 
         app(CallBrokerSetup::class)->execute(
             $this->group,
@@ -86,7 +88,9 @@ class CallBrokerSetupTest extends FeatureTestCase
             'call_ended' => now(),
         ]);
 
-        $this->expectException(Exception::class);
+        $this->expectException(CallBrokerException::class);
+
+        $this->expectExceptionMessage('Call does not need to be setup.');
 
         app(CallBrokerSetup::class)->execute(
             $this->group,
@@ -101,7 +105,9 @@ class CallBrokerSetupTest extends FeatureTestCase
             'setup_complete' => true,
         ]);
 
-        $this->expectException(Exception::class);
+        $this->expectException(CallBrokerException::class);
+
+        $this->expectExceptionMessage('Call does not need to be setup.');
 
         app(CallBrokerSetup::class)->execute(
             $this->group,

@@ -2,10 +2,10 @@
 
 namespace RTippin\Messenger\Listeners;
 
-use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use RTippin\Messenger\Actions\Calls\CallBrokerSetup;
 use RTippin\Messenger\Events\CallStartedEvent;
+use RTippin\Messenger\Exceptions\CallBrokerException;
 
 class SetupCall implements ShouldQueue
 {
@@ -36,7 +36,7 @@ class SetupCall implements ShouldQueue
      *
      * @param CallStartedEvent $event
      * @return void
-     * @throws Exception
+     * @throws CallBrokerException
      */
     public function handle(CallStartedEvent $event): void
     {

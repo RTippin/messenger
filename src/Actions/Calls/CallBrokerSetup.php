@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Actions\Calls;
 
-use Exception;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Contracts\VideoDriver;
+use RTippin\Messenger\Exceptions\CallBrokerException;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
 
@@ -32,7 +32,7 @@ class CallBrokerSetup extends BaseMessengerAction
      * @return $this
      * @var Thread[0]
      * @var Call[1]
-     * @throws Exception
+     * @throws CallBrokerException
      */
     public function execute(...$parameters): self
     {
@@ -47,7 +47,7 @@ class CallBrokerSetup extends BaseMessengerAction
 
     /**
      * @return $this
-     * @throws Exception
+     * @throws CallBrokerException
      */
     private function checkCallNeedsToBeSetup(): self
     {
@@ -60,7 +60,7 @@ class CallBrokerSetup extends BaseMessengerAction
 
     /**
      * @return $this
-     * @throws Exception
+     * @throws CallBrokerException
      */
     private function setupCallWithProvider(): self
     {
@@ -73,11 +73,11 @@ class CallBrokerSetup extends BaseMessengerAction
 
     /**
      * @param string $message
-     * @throws Exception
+     * @throws CallBrokerException
      */
     private function throwSetupFailed(string $message): void
     {
-        throw new Exception($message);
+        throw new CallBrokerException($message);
     }
 
     /**
