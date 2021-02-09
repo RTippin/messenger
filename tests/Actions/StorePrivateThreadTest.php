@@ -12,6 +12,8 @@ use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Events\NewThreadEvent;
+use RTippin\Messenger\Exceptions\NewThreadException;
+use RTippin\Messenger\Exceptions\ProviderNotFoundException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -34,21 +36,37 @@ class StorePrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
+    public function store_private_throws_exception_if_provider_not_found()
+    {
+        Messenger::setProvider($this->tippin);
+
+        $this->expectException(ProviderNotFoundException::class);
+
+        $this->expectExceptionMessage('We were unable to locate the recipient you requested.');
+
+        app(StorePrivateThread::class)->withoutDispatches()->execute([
+            'message' => 'Hello World!',
+            'recipient_alias' => 'user',
+            'recipient_id' => 404,
+        ]);
+    }
+
+    /** @test */
     public function store_private_throws_exception_if_one_already_found_between_providers()
     {
         Messenger::setProvider($this->tippin);
 
-        $this->expectException(AuthorizationException::class);
-
         $this->createPrivateThread($this->tippin, $this->doe);
+
+        $this->expectException(NewThreadException::class);
+
+        $this->expectExceptionMessage('You already have an existing conversation with John Doe.');
 
         app(StorePrivateThread::class)->withoutDispatches()->execute([
             'message' => 'Hello World!',
             'recipient_alias' => 'user',
             'recipient_id' => $this->doe->getKey(),
         ]);
-
-        $this->assertDatabaseCount('threads', 1);
     }
 
     /** @test */
@@ -62,15 +80,15 @@ class StorePrivateThreadTest extends FeatureTestCase
 
         Messenger::setProvider($this->tippin);
 
-        $this->expectException(AuthorizationException::class);
+        $this->expectException(NewThreadException::class);
+
+        $this->expectExceptionMessage('Not authorized to start conversations with Developers.');
 
         app(StorePrivateThread::class)->withoutDispatches()->execute([
             'message' => 'Hello World!',
             'recipient_alias' => 'company',
             'recipient_id' => $this->companyDevelopers()->getKey(),
         ]);
-
-        $this->assertDatabaseCount('threads', 0);
     }
 
     /** @test */

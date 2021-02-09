@@ -14,12 +14,12 @@ use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewThreadEvent;
+use RTippin\Messenger\Exceptions\NewThreadException;
 use RTippin\Messenger\Exceptions\ProviderNotFoundException;
 use RTippin\Messenger\Http\Request\PrivateThreadRequest;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\RecipientThreadLocator;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Throwable;
 
 class StorePrivateThread extends NewThreadAction
@@ -112,9 +112,7 @@ class StorePrivateThread extends NewThreadAction
             $inputs['recipient_alias'],
             $inputs['recipient_id']
         )
-            ->recipientWasFound()
-            ->existingThreadNotFound()
-            ->canMessageProviderFirst()
+            ->canCreateThread()
             ->setMessageActions($inputs)
             ->determineIfPending()
             ->handleTransactions($inputs)
@@ -294,38 +292,20 @@ class StorePrivateThread extends NewThreadAction
 
     /**
      * @return $this
-     * @throws ProviderNotFoundException
+     * @throws NewThreadException|ProviderNotFoundException
      */
-    private function recipientWasFound(): self
+    private function canCreateThread(): self
     {
         if (is_null($this->recipient)) {
             $this->locator->throwNotFoundError();
         }
 
-        return $this;
-    }
-
-    /**
-     * @return $this
-     * @throws AuthorizationException
-     */
-    private function existingThreadNotFound(): self
-    {
         if (! is_null($this->existingThread)) {
-            throw new AuthorizationException("You already have an existing conversation with {$this->recipient->name()}");
+            throw new NewThreadException("You already have an existing conversation with {$this->recipient->name()}.");
         }
 
-        return $this;
-    }
-
-    /**
-     * @return $this
-     * @throws AuthorizationException
-     */
-    private function canMessageProviderFirst(): self
-    {
         if (! $this->messenger->canMessageProviderFirst($this->recipient)) {
-            throw new AuthorizationException("Not authorized to start conversations with {$this->recipient->name()}");
+            throw new NewThreadException("Not authorized to start conversations with {$this->recipient->name()}.");
         }
 
         return $this;
