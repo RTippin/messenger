@@ -4,10 +4,13 @@ namespace RTippin\Messenger\Actions\Threads;
 
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
+use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\KnockBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\KnockEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
+use RTippin\Messenger\Exceptions\KnockException;
 use RTippin\Messenger\Http\Resources\Broadcast\KnockBroadcastResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
@@ -59,14 +62,37 @@ class SendKnock extends BaseMessengerAction
      * @param mixed ...$parameters
      * @var Thread[0]
      * @return $this
+     * @throws FeatureDisabledException|KnockException|InvalidArgumentException
      */
     public function execute(...$parameters): self
     {
         $this->setThread($parameters[0])
+            ->checkCanKnockAtThread()
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents()
             ->storeCacheTimeout();
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws FeatureDisabledException|KnockException|InvalidArgumentException
+     */
+    private function checkCanKnockAtThread(): self
+    {
+        if (! $this->messenger->isKnockKnockEnabled()) {
+            throw new FeatureDisabledException('Knocking is currently disabled.');
+        }
+
+        if ($this->messenger->getKnockTimeout() !== 0
+            && ($this->getThread()->isGroup()
+                && $this->cacheDriver->has("knock.knock.{$this->getThread()->id}"))
+            || ($this->getThread()->isPrivate()
+                && $this->cacheDriver->has("knock.knock.{$this->getThread()->id}.{$this->messenger->getProviderId()}"))) {
+            throw new KnockException("You may only knock at {$this->getThread()->name()} once every {$this->messenger->getKnockTimeout()} minutes.");
+        }
 
         return $this;
     }

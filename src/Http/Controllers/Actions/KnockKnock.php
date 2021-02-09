@@ -5,7 +5,10 @@ namespace RTippin\Messenger\Http\Controllers\Actions;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
+use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Actions\Threads\SendKnock;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
+use RTippin\Messenger\Exceptions\KnockException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 
@@ -35,27 +38,14 @@ class KnockKnock
      * @param SendKnock $sendKnock
      * @param Thread $thread
      * @return JsonResponse
-     * @throws AuthorizationException
+     * @throws AuthorizationException|FeatureDisabledException|KnockException|InvalidArgumentException
      */
     public function __invoke(SendKnock $sendKnock,
                              Thread $thread): JsonResponse
     {
         $this->authorize('sendKnock', $thread);
 
-        $this->checkKnockTimeout($thread);
-
         return $sendKnock->execute($thread)
             ->getMessageResponse();
-    }
-
-    /**
-     * @param Thread $thread
-     * @throws AuthorizationException
-     */
-    private function checkKnockTimeout(Thread $thread)
-    {
-        if ($thread->hasKnockTimeout()) {
-            throw new AuthorizationException("You may only knock at {$thread->name()} once every {$this->messenger->getKnockTimeout()} minutes.");
-        }
     }
 }

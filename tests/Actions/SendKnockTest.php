@@ -8,6 +8,8 @@ use RTippin\Messenger\Actions\Threads\SendKnock;
 use RTippin\Messenger\Broadcasting\KnockBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\KnockEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
+use RTippin\Messenger\Exceptions\KnockException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -31,6 +33,44 @@ class SendKnockTest extends FeatureTestCase
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
 
         Messenger::setProvider($this->tippin);
+    }
+
+    /** @test */
+    public function send_knock_throws_exception_when_disabled()
+    {
+        Messenger::setKnockKnock(false);
+
+        $this->expectException(FeatureDisabledException::class);
+
+        $this->expectExceptionMessage('Knocking is currently disabled.');
+
+        app(SendKnock::class)->withoutDispatches()->execute($this->private);
+    }
+
+    /** @test */
+    public function send_knock_private_throws_exception_when_lockout_key_exist()
+    {
+        Cache::put("knock.knock.{$this->private->id}.{$this->tippin->getKey()}", true);
+
+        $this->expectException(KnockException::class);
+
+        $this->expectExceptionMessage('You may only knock at John Doe once every 5 minutes.');
+
+        app(SendKnock::class)->withoutDispatches()->execute($this->private);
+    }
+
+    /** @test */
+    public function send_knock_group_throws_exception_when_lockout_key_exist()
+    {
+        $group = $this->createGroupThread($this->tippin);
+
+        Cache::put("knock.knock.{$group->id}", true);
+
+        $this->expectException(KnockException::class);
+
+        $this->expectExceptionMessage('You may only knock at First Test Group once every 5 minutes.');
+
+        app(SendKnock::class)->withoutDispatches()->execute($group);
     }
 
     /** @test */

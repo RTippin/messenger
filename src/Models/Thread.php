@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Database\Factories\ThreadFactory;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Traits\Uuids;
@@ -537,20 +536,6 @@ class Thread extends Model
                     || (! $this->isAdmin()
                         && ! $this->currentParticipant()->send_knocks)))) {
             return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @return bool
-     */
-    public function hasKnockTimeout(): bool
-    {
-        if ($this->hasCurrentProvider()) {
-            return $this->isGroup()
-                ? Cache::has("knock.knock.{$this->id}")
-                : Cache::has("knock.knock.{$this->id}.{$this->currentParticipant()->owner_id}");
         }
 
         return true;
