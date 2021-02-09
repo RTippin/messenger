@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Http\Controllers;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use RTippin\Messenger\Actions\Messenger\DestroyMessengerAvatar;
 use RTippin\Messenger\Actions\Messenger\StoreMessengerAvatar;
 use RTippin\Messenger\Actions\Messenger\UpdateMessengerSettings;
