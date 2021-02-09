@@ -12,7 +12,7 @@ class NewCallException extends AuthorizationException
      * @param  string  $message
      * @return void
      */
-    public function __construct($message = 'That feature is currently disabled.')
+    public function __construct($message = 'New call failed.')
     {
         parent::__construct($message);
     }
