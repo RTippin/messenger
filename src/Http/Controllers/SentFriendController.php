@@ -4,16 +4,17 @@ namespace RTippin\Messenger\Http\Controllers;
 
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use RTippin\Messenger\Actions\Friends\CancelFriendRequest;
 use RTippin\Messenger\Actions\Friends\StoreFriendRequest;
 use RTippin\Messenger\Contracts\FriendDriver;
+use RTippin\Messenger\Exceptions\FriendException;
 use RTippin\Messenger\Http\Collections\SentFriendCollection;
 use RTippin\Messenger\Http\Request\FriendRequest;
 use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Http\Resources\SentFriendResource;
 use RTippin\Messenger\Models\SentFriend;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class SentFriendController
 {
@@ -40,7 +41,7 @@ class SentFriendController
      * @param FriendRequest $request
      * @param StoreFriendRequest $storeFriendRequest
      * @return SentFriendResource
-     * @throws AuthorizationException|ModelNotFoundException
+     * @throws AuthorizationException|NotFoundHttpException|FriendException
      */
     public function store(FriendRequest $request,
                           StoreFriendRequest $storeFriendRequest): SentFriendResource

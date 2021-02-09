@@ -2,21 +2,21 @@
 
 namespace RTippin\Messenger\Actions\Friends;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\FriendRequestBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\FriendRequestEvent;
+use RTippin\Messenger\Exceptions\FriendException;
 use RTippin\Messenger\Http\Request\FriendRequest;
 use RTippin\Messenger\Http\Resources\Broadcast\FriendRequestBroadcastResource;
 use RTippin\Messenger\Http\Resources\SentFriendResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\SentFriend;
 use RTippin\Messenger\Repositories\ProvidersRepository;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class StoreFriendRequest extends BaseMessengerAction
 {
@@ -78,7 +78,7 @@ class StoreFriendRequest extends BaseMessengerAction
      * @param mixed ...$parameters
      * @var FriendRequest[0]
      * @return $this
-     * @throws AuthorizationException|ModelNotFoundException
+     * @throws FriendException|NotFoundHttpException
      */
     public function execute(...$parameters): self
     {
@@ -110,19 +110,25 @@ class StoreFriendRequest extends BaseMessengerAction
 
     /**
      * @return $this
-     * @throws AuthorizationException
+     * @throws FriendException|NotFoundHttpException
      * @noinspection PhpParamsInspection
      */
     private function recipientIsValid(): self
     {
-        if (is_null($this->recipient)
-            || $this->messenger->getProvider()->is($this->recipient)) {
-            $this->throwProviderNotFoundError();
+        if (is_null($this->recipient)) {
+            throw new NotFoundHttpException('Unable to locate the recipient you specified.');
         }
 
-        if (! $this->messenger->canFriendProvider($this->recipient)
-            || $this->friends->friendStatus($this->recipient) !== 0) {
-            $this->throwAuthorizationError();
+        if ($this->messenger->getProvider()->is($this->recipient)) {
+            throw new FriendException('Cannot friend yourself.');
+        }
+
+        if (! $this->messenger->canFriendProvider($this->recipient)) {
+            throw new FriendException('Not authorized to add friend.');
+        }
+
+        if ($this->friends->friendStatus($this->recipient) !== 0) {
+            throw new FriendException("You are already friends, or have a pending request with {$this->recipient->name()}.");
         }
 
         return $this;
@@ -198,21 +204,5 @@ class StoreFriendRequest extends BaseMessengerAction
         }
 
         return $this;
-    }
-
-    /**
-     * @throws ModelNotFoundException
-     */
-    private function throwProviderNotFoundError()
-    {
-        throw new ModelNotFoundException;
-    }
-
-    /**
-     * @throws AuthorizationException
-     */
-    private function throwAuthorizationError()
-    {
-        throw new AuthorizationException('Not authorized to add friend.');
     }
 }
