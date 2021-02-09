@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Actions\Invites;
 use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
-use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\StoreParticipant;
 use RTippin\Messenger\Events\InviteUsedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
@@ -13,17 +12,12 @@ use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Invite;
 use Throwable;
 
-class JoinWithInvite extends BaseMessengerAction
+class JoinWithInvite extends InviteAction
 {
     /**
      * @var Dispatcher
      */
     private Dispatcher $dispatcher;
-
-    /**
-     * @var Messenger
-     */
-    private Messenger $messenger;
 
     /**
      * @var DatabaseManager
@@ -41,8 +35,9 @@ class JoinWithInvite extends BaseMessengerAction
                                 DatabaseManager $database,
                                 Dispatcher $dispatcher)
     {
+        parent::__construct($messenger);
+
         $this->dispatcher = $dispatcher;
-        $this->messenger = $messenger;
         $this->database = $database;
     }
 
@@ -64,16 +59,6 @@ class JoinWithInvite extends BaseMessengerAction
             ->fireEvents($invite);
 
         return $this;
-    }
-
-    /**
-     * @throws FeatureDisabledException
-     */
-    private function isInvitationsEnabled(): void
-    {
-        if (! $this->messenger->isThreadInvitesEnabled()) {
-            throw new FeatureDisabledException('Group invites are currently disabled.');
-        }
     }
 
     /**

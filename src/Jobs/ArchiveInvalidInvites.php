@@ -10,6 +10,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use RTippin\Messenger\Actions\Invites\ArchiveInvite;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Models\Invite;
 
 class ArchiveInvalidInvites implements ShouldQueue
@@ -36,7 +37,7 @@ class ArchiveInvalidInvites implements ShouldQueue
      *
      * @param ArchiveInvite $archiveInvite
      * @return void
-     * @throws Exception
+     * @throws Exception|FeatureDisabledException
      */
     public function handle(ArchiveInvite $archiveInvite)
     {

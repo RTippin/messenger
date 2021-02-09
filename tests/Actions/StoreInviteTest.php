@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Invites\StoreInvite;
 use RTippin\Messenger\Events\NewInviteEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -22,6 +23,24 @@ class StoreInviteTest extends FeatureTestCase
         $this->group = $this->createGroupThread($tippin);
 
         Messenger::setProvider($tippin);
+    }
+
+    /** @test */
+    public function store_invite_throws_exception_if_disabled()
+    {
+        Messenger::setThreadInvites(false);
+
+        $this->expectException(FeatureDisabledException::class);
+
+        $this->expectExceptionMessage('Group invites are currently disabled.');
+
+        app(StoreInvite::class)->withoutDispatches()->execute(
+            $this->group,
+            [
+                'expires' => 0,
+                'uses' => 0,
+            ]
+        );
     }
 
     /** @test */

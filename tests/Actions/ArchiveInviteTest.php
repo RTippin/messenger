@@ -5,6 +5,8 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Invites\ArchiveInvite;
 use RTippin\Messenger\Events\InviteArchivedEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -28,6 +30,18 @@ class ArchiveInviteTest extends FeatureTestCase
             'uses' => 0,
             'expires_at' => null,
         ]);
+    }
+
+    /** @test */
+    public function archive_invite_throws_exception_if_disabled()
+    {
+        Messenger::setThreadInvites(false);
+
+        $this->expectException(FeatureDisabledException::class);
+
+        $this->expectExceptionMessage('Group invites are currently disabled.');
+
+        app(ArchiveInvite::class)->withoutDispatches()->execute($this->invite);
     }
 
     /** @test */

@@ -5,20 +5,15 @@ namespace RTippin\Messenger\Actions\Invites;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Str;
-use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Events\NewInviteEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Request\InviteRequest;
 use RTippin\Messenger\Http\Resources\InviteResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 
-class StoreInvite extends BaseMessengerAction
+class StoreInvite extends InviteAction
 {
-    /**
-     * @var Messenger
-     */
-    private Messenger $messenger;
-
     /**
      * @var Dispatcher
      */
@@ -33,8 +28,9 @@ class StoreInvite extends BaseMessengerAction
     public function __construct(Messenger $messenger,
                                 Dispatcher $dispatcher)
     {
+        parent::__construct($messenger);
+
         $this->dispatcher = $dispatcher;
-        $this->messenger = $messenger;
     }
 
     /**
@@ -44,9 +40,12 @@ class StoreInvite extends BaseMessengerAction
      * @var Thread[0]
      * @var InviteRequest[1]
      * @return $this
+     * @throws FeatureDisabledException
      */
     public function execute(...$parameters): self
     {
+        $this->isInvitationsEnabled();
+
         $this->setThread($parameters[0])
             ->storeInvite($parameters[1])
             ->generateResource()

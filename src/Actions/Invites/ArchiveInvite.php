@@ -4,11 +4,12 @@ namespace RTippin\Messenger\Actions\Invites;
 
 use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
-use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Events\InviteArchivedEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
+use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Invite;
 
-class ArchiveInvite extends BaseMessengerAction
+class ArchiveInvite extends InviteAction
 {
     /**
      * @var Dispatcher
@@ -18,10 +19,13 @@ class ArchiveInvite extends BaseMessengerAction
     /**
      * ArchiveInvite constructor.
      *
+     * @param Messenger $messenger
      * @param Dispatcher $dispatcher
      */
-    public function __construct(Dispatcher $dispatcher)
+    public function __construct(Messenger $messenger, Dispatcher $dispatcher)
     {
+        parent::__construct($messenger);
+
         $this->dispatcher = $dispatcher;
     }
 
@@ -29,10 +33,12 @@ class ArchiveInvite extends BaseMessengerAction
      * @param mixed ...$parameters
      * @var Invite[0]
      * @return $this
-     * @throws Exception
+     * @throws Exception|FeatureDisabledException
      */
     public function execute(...$parameters): self
     {
+        $this->isInvitationsEnabled();
+
         $this->setData($parameters[0])
             ->archiveInvite()
             ->fireEvents();
