@@ -2,12 +2,13 @@
 
 namespace RTippin\Messenger\Actions\Calls;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Contracts\BroadcastDriver;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
+use RTippin\Messenger\Exceptions\NewCallException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 use Throwable;
@@ -54,11 +55,12 @@ class StoreCall extends NewCallAction
      * @var Thread[0]
      * @var bool|null[1]
      * @return $this
-     * @throws AuthorizationException|Throwable|InvalidArgumentException
+     * @throws NewCallException|Throwable|InvalidArgumentException|FeatureDisabledException
      */
     public function execute(...$parameters): self
     {
         $this->setThread($parameters[0])
+            ->callingIsEnabled()
             ->hasNoActiveCall()
             ->hasNoCallLockout()
             ->setCallLockout()
@@ -84,9 +86,7 @@ class StoreCall extends NewCallAction
         if ($this->isChained()) {
             $this->executeTransactions($type, $setupComplete);
         } else {
-            $this->database->transaction(
-                fn () => $this->executeTransactions($type, $setupComplete),
-                3);
+            $this->database->transaction(fn () => $this->executeTransactions($type, $setupComplete), 3);
         }
 
         return $this;

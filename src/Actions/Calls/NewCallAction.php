@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Actions\Calls;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
 use Psr\SimpleCache\InvalidArgumentException;
@@ -11,6 +10,8 @@ use RTippin\Messenger\Broadcasting\CallStartedBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\CallStartedEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
+use RTippin\Messenger\Exceptions\NewCallException;
 use RTippin\Messenger\Http\Resources\Broadcast\NewCallBroadcastResource;
 use RTippin\Messenger\Http\Resources\CallResource;
 use RTippin\Messenger\Messenger;
@@ -112,12 +113,12 @@ abstract class NewCallAction extends BaseMessengerAction
 
     /**
      * @return $this
-     * @throws AuthorizationException
+     * @throws FeatureDisabledException
      */
-    protected function hasNoActiveCall(): self
+    protected function callingIsEnabled(): self
     {
-        if ($this->getThread()->hasActiveCall()) {
-            throw new AuthorizationException("{$this->getThread()->name()} already has an active call.");
+        if (! $this->messenger->isCallingEnabled()) {
+            throw new FeatureDisabledException('Calling is currently disabled.');
         }
 
         return $this;
@@ -125,13 +126,25 @@ abstract class NewCallAction extends BaseMessengerAction
 
     /**
      * @return $this
-     * @throws AuthorizationException
-     * @throws InvalidArgumentException
+     * @throws NewCallException
+     */
+    protected function hasNoActiveCall(): self
+    {
+        if ($this->getThread()->hasActiveCall()) {
+            throw new NewCallException("{$this->getThread()->name()} already has an active call.");
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws InvalidArgumentException|NewCallException
      */
     protected function hasNoCallLockout(): self
     {
         if ($this->cacheDriver->get("call:{$this->getThread()->id}:starting")) {
-            throw new AuthorizationException("{$this->getThread()->name()} has a call awaiting creation.");
+            throw new NewCallException("{$this->getThread()->name()} has a call awaiting creation.");
         }
 
         return $this;

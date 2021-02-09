@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
@@ -13,6 +12,8 @@ use RTippin\Messenger\Broadcasting\CallStartedBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallJoinedEvent;
 use RTippin\Messenger\Events\CallStartedEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
+use RTippin\Messenger\Exceptions\NewCallException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Listeners\SetupCall;
 use RTippin\Messenger\Models\Call;
@@ -82,7 +83,9 @@ class StoreCallTest extends FeatureTestCase
     {
         Cache::put("call:{$this->private->id}:starting", true);
 
-        $this->expectException(AuthorizationException::class);
+        $this->expectException(NewCallException::class);
+
+        $this->expectExceptionMessage('John Doe has a call awaiting creation.');
 
         app(StoreCall::class)->withoutDispatches()->execute($this->private);
     }
@@ -92,7 +95,21 @@ class StoreCallTest extends FeatureTestCase
     {
         $this->createCall($this->private, $this->tippin);
 
-        $this->expectException(AuthorizationException::class);
+        $this->expectException(NewCallException::class);
+
+        $this->expectExceptionMessage('John Doe already has an active call.');
+
+        app(StoreCall::class)->withoutDispatches()->execute($this->private);
+    }
+
+    /** @test */
+    public function store_call_throws_exception_when_calling_disabled()
+    {
+        Messenger::setCalling(false);
+
+        $this->expectException(FeatureDisabledException::class);
+
+        $this->expectExceptionMessage('Calling is currently disabled.');
 
         app(StoreCall::class)->withoutDispatches()->execute($this->private);
     }
