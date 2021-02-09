@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use RTippin\Messenger\Exceptions\InvalidMessengerProvider;
+use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Messenger;
 
 class SetMessengerProvider
@@ -34,7 +34,7 @@ class SetMessengerProvider
      * @param Closure $next
      * @param null $required
      * @return mixed
-     * @throws InvalidMessengerProvider
+     * @throws InvalidProviderException
      */
     public function handle(Request $request, Closure $next, $required = null)
     {
@@ -52,7 +52,7 @@ class SetMessengerProvider
      * you need to grab the model that is authed.
      *
      * @param Request $request
-     * @throws InvalidMessengerProvider
+     * @throws InvalidProviderException
      */
     protected function setProvider(Request $request): void
     {

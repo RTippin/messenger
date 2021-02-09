@@ -3,7 +3,7 @@
 namespace RTippin\Messenger\Tests\Middleware;
 
 use Illuminate\Http\Request;
-use RTippin\Messenger\Exceptions\InvalidMessengerProvider;
+use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Http\Middleware\SetMessengerProvider;
 use RTippin\Messenger\Tests\MessengerTestCase;
@@ -26,7 +26,7 @@ class SetMessengerProviderTest extends MessengerTestCase
     /** @test */
     public function required_provider_throws_error_when_none()
     {
-        $this->expectException(InvalidMessengerProvider::class);
+        $this->expectException(InvalidProviderException::class);
 
         $middleware = app(SetMessengerProvider::class);
 
@@ -40,7 +40,7 @@ class SetMessengerProviderTest extends MessengerTestCase
     /** @test */
     public function invalid_provider_throws_error()
     {
-        $this->expectException(InvalidMessengerProvider::class);
+        $this->expectException(InvalidProviderException::class);
 
         $request = new Request;
 

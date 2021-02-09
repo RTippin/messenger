@@ -2,7 +2,7 @@
 
 namespace RTippin\Messenger\Contracts;
 
-use RTippin\Messenger\Exceptions\InvalidMessengerProvider;
+use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Messenger as MessengerModel;
 use RTippin\Messenger\Models\Participant;
@@ -536,7 +536,7 @@ interface MessengerInterface
      *
      * @param MessengerProvider|mixed|null $provider
      * @return $this
-     * @throws InvalidMessengerProvider
+     * @throws InvalidProviderException
      */
     public function setProvider($provider = null);
 
@@ -668,7 +668,7 @@ interface MessengerInterface
     public function getFriendableForCurrentProvider(): array;
 
     /**
-     * @throws InvalidMessengerProvider
+     * @throws InvalidProviderException
      */
     public function throwProviderError(): void;
 

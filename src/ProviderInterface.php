@@ -4,7 +4,7 @@ namespace RTippin\Messenger;
 
 use Illuminate\Contracts\Foundation\Application;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Exceptions\InvalidMessengerProvider;
+use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Messenger as MessengerModel;
 use RTippin\Messenger\Models\Participant;
@@ -88,7 +88,7 @@ trait ProviderInterface
      *
      * @param MessengerProvider|mixed|null $provider
      * @return $this
-     * @throws InvalidMessengerProvider
+     * @throws InvalidProviderException
      */
     public function setProvider($provider = null): self
     {
@@ -354,10 +354,10 @@ trait ProviderInterface
     }
 
     /**
-     * @throws InvalidMessengerProvider
+     * @throws InvalidProviderException
      */
     public function throwProviderError(): void
     {
-        throw new InvalidMessengerProvider;
+        throw new InvalidProviderException;
     }
 }

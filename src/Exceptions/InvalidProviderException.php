@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Exceptions;
 
 use Illuminate\Auth\Access\AuthorizationException;
 
-class InvalidMessengerProvider extends AuthorizationException
+class InvalidProviderException extends AuthorizationException
 {
     /**
      * Create a new invalid provider exception.

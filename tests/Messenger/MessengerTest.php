@@ -3,7 +3,7 @@
 namespace RTippin\Messenger\Tests\Messenger;
 
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Exceptions\InvalidMessengerProvider;
+use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Facades\Messenger as MessengerFacade;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\GhostUser;
@@ -278,7 +278,7 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function messenger_throws_exception_when_setting_invalid_provider()
     {
-        $this->expectException(InvalidMessengerProvider::class);
+        $this->expectException(InvalidProviderException::class);
 
         $this->messenger->setProvider(new OtherModel);
     }
