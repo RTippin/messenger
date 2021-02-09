@@ -8,6 +8,7 @@ use Illuminate\Database\DatabaseManager;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\StoreParticipant;
 use RTippin\Messenger\Events\InviteUsedEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Invite;
 use Throwable;
@@ -49,10 +50,12 @@ class JoinWithInvite extends BaseMessengerAction
      * @param mixed ...$parameters
      * @var Invite[0]
      * @return $this
-     * @throws Exception|Throwable
+     * @throws Exception|Throwable|FeatureDisabledException
      */
     public function execute(...$parameters): self
     {
+        $this->isInvitationsEnabled();
+
         /** @var Invite $invite */
         $invite = $parameters[0];
 
@@ -61,6 +64,16 @@ class JoinWithInvite extends BaseMessengerAction
             ->fireEvents($invite);
 
         return $this;
+    }
+
+    /**
+     * @throws FeatureDisabledException
+     */
+    private function isInvitationsEnabled(): void
+    {
+        if (! $this->messenger->isThreadInvitesEnabled()) {
+            throw new FeatureDisabledException('Group invites are currently disabled.');
+        }
     }
 
     /**

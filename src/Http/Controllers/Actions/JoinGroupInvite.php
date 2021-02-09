@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use RTippin\Messenger\Actions\Invites\JoinWithInvite;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Models\Participant;
 use Throwable;
@@ -18,7 +19,7 @@ class JoinGroupInvite
      * @param JoinWithInvite $joinWithInvite
      * @param Invite $invite
      * @return Participant
-     * @throws AuthorizationException|Exception|Throwable
+     * @throws AuthorizationException|Exception|Throwable|FeatureDisabledException
      */
     public function __invoke(JoinWithInvite $joinWithInvite,
                              Invite $invite): Participant

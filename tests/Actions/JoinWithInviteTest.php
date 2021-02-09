@@ -9,6 +9,7 @@ use RTippin\Messenger\Actions\Invites\JoinWithInvite;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\InviteUsedEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Listeners\JoinedWithInviteMessage;
 use RTippin\Messenger\Models\Invite;
@@ -44,6 +45,18 @@ class JoinWithInviteTest extends FeatureTestCase
             ]);
 
         Messenger::setProvider($this->doe);
+    }
+
+    /** @test */
+    public function join_with_invite_throws_exception_if_invites_disabled()
+    {
+        Messenger::setThreadInvites(false);
+
+        $this->expectException(FeatureDisabledException::class);
+
+        $this->expectExceptionMessage('Group invites are currently disabled.');
+
+        app(JoinWithInvite::class)->withoutDispatches()->execute($this->invite);
     }
 
     /** @test */
