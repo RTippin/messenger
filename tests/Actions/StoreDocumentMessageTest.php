@@ -10,6 +10,7 @@ use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewMessageEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
@@ -40,6 +41,21 @@ class StoreDocumentMessageTest extends FeatureTestCase
         Messenger::setProvider($this->tippin);
 
         Storage::fake($this->disk);
+    }
+
+    /** @test */
+    public function store_document_throws_exception_when_disabled()
+    {
+        Messenger::setMessageDocumentUpload(false);
+
+        $this->expectException(FeatureDisabledException::class);
+
+        $this->expectExceptionMessage('Document messages are currently disabled.');
+
+        app(StoreDocumentMessage::class)->withoutDispatches()->execute(
+            $this->private,
+            UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')
+        );
     }
 
     /** @test */

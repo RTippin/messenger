@@ -33,7 +33,7 @@ class ArchiveInviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function archive_invite_throws_exception_if_disabled()
+    public function archive_invite_throws_exception_when_disabled()
     {
         Messenger::setThreadInvites(false);
 

@@ -48,7 +48,7 @@ class JoinWithInviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function join_with_invite_throws_exception_if_invites_disabled()
+    public function join_with_invite_throws_exception_when_invites_disabled()
     {
         Messenger::setThreadInvites(false);
 

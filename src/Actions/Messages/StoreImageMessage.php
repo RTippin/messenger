@@ -6,6 +6,7 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Contracts\BroadcastDriver;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\FileService;
@@ -58,10 +59,12 @@ class StoreImageMessage extends NewMessageAction
      * @var UploadedFile[1]
      * @var string|null[2]
      * @return $this
-     * @throws Throwable
+     * @throws Throwable|FeatureDisabledException
      */
     public function execute(...$parameters): self
     {
+        $this->isImageUploadEnabled();
+
         $this->setThread($parameters[0]);
 
         $file = $this->upload($parameters[1]);
@@ -77,6 +80,16 @@ class StoreImageMessage extends NewMessageAction
             ->fireEvents();
 
         return $this;
+    }
+
+    /**
+     * @throws FeatureDisabledException
+     */
+    private function isImageUploadEnabled(): void
+    {
+        if (! $this->messenger->isMessageImageUploadEnabled()) {
+            throw new FeatureDisabledException('Image messages are currently disabled.');
+        }
     }
 
     /**

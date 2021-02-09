@@ -10,6 +10,7 @@ use RTippin\Messenger\Actions\Messages\StoreImageMessage;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewMessageEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
@@ -40,6 +41,21 @@ class StoreImageMessageTest extends FeatureTestCase
         Messenger::setProvider($this->tippin);
 
         Storage::fake($this->disk);
+    }
+
+    /** @test */
+    public function store_image_throws_exception_when_disabled()
+    {
+        Messenger::setMessageImageUpload(false);
+
+        $this->expectException(FeatureDisabledException::class);
+
+        $this->expectExceptionMessage('Image messages are currently disabled.');
+
+        app(StoreImageMessage::class)->withoutDispatches()->execute(
+            $this->private,
+            UploadedFile::fake()->image('picture.jpg')
+        );
     }
 
     /** @test */

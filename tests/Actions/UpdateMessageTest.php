@@ -9,6 +9,7 @@ use RTippin\Messenger\Actions\Messages\UpdateMessage;
 use RTippin\Messenger\Broadcasting\MessageEditedBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\MessageEditedEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Listeners\StoreMessageEdit;
 use RTippin\Messenger\Models\Message;
@@ -34,6 +35,22 @@ class UpdateMessageTest extends FeatureTestCase
         $this->message = $this->createMessage($this->group, $this->tippin);
 
         Messenger::setProvider($this->tippin);
+    }
+
+    /** @test */
+    public function update_message_throws_exception_when_disabled()
+    {
+        Messenger::setMessageEdits(false);
+
+        $this->expectException(FeatureDisabledException::class);
+
+        $this->expectExceptionMessage('Edit messages are currently disabled.');
+
+        app(UpdateMessage::class)->withoutDispatches()->execute(
+            $this->group,
+            $this->message,
+            'Edited Message'
+        );
     }
 
     /** @test */

@@ -7,6 +7,7 @@ use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\MessageEditedBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\MessageEditedEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Resources\MessageResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
@@ -67,9 +68,12 @@ class UpdateMessage extends BaseMessengerAction
      * @var Message[1]
      * @var string[2]
      * @return $this
+     * @throws FeatureDisabledException
      */
     public function execute(...$parameters): self
     {
+        $this->isEditMessagesEnabled();
+
         $this->setThread($parameters[0])
             ->setMessage($parameters[1])
             ->updateMessage($parameters[2])
@@ -82,6 +86,20 @@ class UpdateMessage extends BaseMessengerAction
         return $this;
     }
 
+    /**
+     * @throws FeatureDisabledException
+     */
+    private function isEditMessagesEnabled(): void
+    {
+        if (! $this->messenger->isMessageEditsEnabled()) {
+            throw new FeatureDisabledException('Edit messages are currently disabled.');
+        }
+    }
+
+    /**
+     * @param string $body
+     * @return $this
+     */
     private function updateMessage(string $body): self
     {
         $this->originalBody = $this->getMessage()->body;

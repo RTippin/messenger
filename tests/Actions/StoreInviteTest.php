@@ -26,7 +26,7 @@ class StoreInviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_invite_throws_exception_if_disabled()
+    public function store_invite_throws_exception_when_disabled()
     {
         Messenger::setThreadInvites(false);
 
