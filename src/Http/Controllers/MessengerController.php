@@ -6,6 +6,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use RTippin\Messenger\Actions\Messenger\DestroyMessengerAvatar;
 use RTippin\Messenger\Actions\Messenger\StoreMessengerAvatar;
 use RTippin\Messenger\Actions\Messenger\UpdateMessengerSettings;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Collections\ActiveCallCollection;
 use RTippin\Messenger\Http\Request\MessengerAvatarRequest;
 use RTippin\Messenger\Http\Request\MessengerSettingsRequest;
@@ -80,13 +81,11 @@ class MessengerController
      * @param MessengerAvatarRequest $request
      * @param StoreMessengerAvatar $storeMessengerAvatar
      * @return MessengerResource
-     * @throws AuthorizationException
+     * @throws FeatureDisabledException
      */
     public function updateAvatar(MessengerAvatarRequest $request,
                                  StoreMessengerAvatar $storeMessengerAvatar): MessengerResource
     {
-        $this->allowedToUploadAvatar();
-
         $storeMessengerAvatar->execute($request->validated());
 
         return new MessengerResource(
@@ -97,36 +96,14 @@ class MessengerController
     /**
      * @param DestroyMessengerAvatar $destroyMessengerAvatar
      * @return MessengerResource
-     * @throws AuthorizationException
+     * @throws FeatureDisabledException
      */
     public function destroyAvatar(DestroyMessengerAvatar $destroyMessengerAvatar): MessengerResource
     {
-        $this->allowedToRemoveAvatar();
-
         $destroyMessengerAvatar->execute();
 
         return new MessengerResource(
             $this->messenger->getProviderMessenger()
         );
-    }
-
-    /**
-     * @throws AuthorizationException
-     */
-    private function allowedToUploadAvatar()
-    {
-        if (! $this->messenger->isProviderAvatarUploadEnabled()) {
-            throw new AuthorizationException('Avatar uploads are currently disabled.');
-        }
-    }
-
-    /**
-     * @throws AuthorizationException
-     */
-    private function allowedToRemoveAvatar()
-    {
-        if (! $this->messenger->isProviderAvatarRemovalEnabled()) {
-            throw new AuthorizationException('Avatar removal is currently disabled.');
-        }
     }
 }

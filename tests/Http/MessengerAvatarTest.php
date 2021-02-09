@@ -26,6 +26,19 @@ class MessengerAvatarTest extends FeatureTestCase
     }
 
     /** @test */
+    public function user_forbidden_to_upload_avatar_when_disabled()
+    {
+        Messenger::setProviderAvatarUpload(false);
+
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.avatar.update'), [
+            'image' => UploadedFile::fake()->image('avatar.jpg'),
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function user_can_upload_avatar()
     {
         $this->actingAs($this->tippin);
@@ -53,6 +66,17 @@ class MessengerAvatarTest extends FeatureTestCase
 
         $this->deleteJson(route('api.messenger.avatar.destroy'))
             ->assertSuccessful();
+    }
+
+    /** @test */
+    public function user_forbidden_to_remove_avatar_when_disabled()
+    {
+        Messenger::setProviderAvatarRemoval(false);
+
+        $this->actingAs($this->tippin);
+
+        $this->deleteJson(route('api.messenger.avatar.destroy'))
+            ->assertForbidden();
     }
 
     /**
