@@ -102,8 +102,7 @@ class StoreFriendRequest extends BaseMessengerAction
      */
     private function locateRecipientProvider(string $alias, string $id): self
     {
-        $this->recipient = $this->providersRepository
-            ->getProviderUsingAliasAndId($alias, $id);
+        $this->recipient = $this->providersRepository->getProviderUsingAliasAndId($alias, $id);
 
         return $this;
     }

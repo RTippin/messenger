@@ -111,9 +111,7 @@ class StoreManyParticipants extends ThreadParticipantAction
         if ($this->isChained()) {
             $this->executeTransactions($providers, $isNewGroup);
         } else {
-            $this->database->transaction(
-                fn () => $this->executeTransactions($providers, $isNewGroup)
-            );
+            $this->database->transaction(fn () => $this->executeTransactions($providers, $isNewGroup));
         }
 
         return $this;
@@ -157,15 +155,9 @@ class StoreManyParticipants extends ThreadParticipantAction
     {
         if ($this->messenger->providerHasFriends() && count($providers)) {
             $providers = collect($providers)
-                ->transform(
-                    fn (array $provider) => $this->getProvider($provider['alias'], $provider['id'])
-                )
-                ->filter(
-                    fn ($provider) => ! is_null($provider)
-                )
-                ->reject(
-                    fn (MessengerProvider $provider) => $this->friends->friendStatus($provider) !== 1
-                );
+                ->transform(fn (array $provider) => $this->getProvider($provider['alias'], $provider['id']))
+                ->filter(fn ($provider) => ! is_null($provider))
+                ->reject(fn (MessengerProvider $provider) => $this->friends->friendStatus($provider) !== 1);
 
             return $isNewGroup
                 ? $providers

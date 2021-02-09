@@ -38,9 +38,7 @@ class PurgeImageMessages extends BaseMessengerAction
         /** @var Collection $images */
         $images = $parameters[0];
 
-        $images->each(
-            fn (Message $image) => $this->purge($image)
-        );
+        $images->each(fn (Message $image) => $this->purge($image));
 
         return $this;
     }

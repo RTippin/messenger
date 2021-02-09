@@ -83,9 +83,7 @@ class StoreGroupThread extends NewThreadAction
         if ($this->isChained()) {
             $this->executeTransactions($subject, $providers);
         } else {
-            $this->database->transaction(
-                fn () => $this->executeTransactions($subject, $providers)
-            );
+            $this->database->transaction(fn () => $this->executeTransactions($subject, $providers));
         }
 
         return $this;

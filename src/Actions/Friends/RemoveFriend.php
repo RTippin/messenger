@@ -76,9 +76,7 @@ class RemoveFriend extends BaseMessengerAction
         if ($this->isChained()) {
             $this->executeTransactions();
         } else {
-            $this->database->transaction(
-                fn () => $this->executeTransactions()
-            );
+            $this->database->transaction(fn () => $this->executeTransactions());
         }
 
         return $this;

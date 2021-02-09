@@ -39,9 +39,7 @@ abstract class MessengerAvatarAction extends BaseMessengerAction
         if (! is_null($this->messenger->getProvider()->{$this->messenger->getProvider()->getAvatarColumn()})) {
             $this->fileService
                 ->setDisk($this->messenger->getAvatarStorage('disk'))
-                ->destroy(
-                    "{$this->getDirectory()}/{$this->messenger->getProvider()->{$this->messenger->getProvider()->getAvatarColumn()}}"
-                );
+                ->destroy("{$this->getDirectory()}/{$this->messenger->getProvider()->{$this->messenger->getProvider()->getAvatarColumn()}}");
         }
 
         return $this;

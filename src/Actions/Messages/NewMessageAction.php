@@ -70,9 +70,7 @@ abstract class NewMessageAction extends BaseMessengerAction
                 $owner, $type, $body, $temporaryId
             );
         } else {
-            $this->database->transaction(fn () => $this->executeTransactions(
-                    $owner, $type, $body, $temporaryId
-            ), 5);
+            $this->database->transaction(fn () => $this->executeTransactions($owner, $type, $body, $temporaryId), 5);
         }
 
         return $this;
@@ -143,9 +141,7 @@ abstract class NewMessageAction extends BaseMessengerAction
             if (! $this->systemMessage) {
                 $this->chain(MarkParticipantRead::class)
                     ->withoutDispatches()
-                    ->execute(
-                        $this->getThread()->currentParticipant()
-                    );
+                    ->execute($this->getThread()->currentParticipant());
             }
         }
     }

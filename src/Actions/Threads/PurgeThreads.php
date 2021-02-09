@@ -38,9 +38,7 @@ class PurgeThreads extends BaseMessengerAction
         /** @var Collection $threads */
         $threads = $parameters[0];
 
-        $threads->each(
-            fn (Thread $thread) => $this->purge($thread)
-        );
+        $threads->each(fn (Thread $thread) => $this->purge($thread));
 
         return $this;
     }

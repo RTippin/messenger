@@ -153,9 +153,7 @@ class UpdateGroupAvatar extends BaseMessengerAction
             if ($this->usingDefault) {
                 $this->updateThread($this->theDefaultImage);
             } else {
-                $this->updateThread(
-                    $this->uploadAvatar($params['image'])
-                );
+                $this->updateThread($this->uploadAvatar($params['image']));
             }
         } else {
             $this->withoutDispatches();
@@ -198,9 +196,7 @@ class UpdateGroupAvatar extends BaseMessengerAction
             && ! in_array($this->originalAvatar, Definitions::DefaultGroupAvatars)) {
             $this->fileService
                 ->setDisk($this->getThread()->getStorageDisk())
-                ->destroy(
-                    "{$this->getDirectory()}/{$this->originalAvatar}"
-                );
+                ->destroy("{$this->getDirectory()}/{$this->originalAvatar}");
         }
 
         return $this;

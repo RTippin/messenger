@@ -38,9 +38,7 @@ class PurgeDocumentMessages extends BaseMessengerAction
         /** @var Collection $documents */
         $documents = $parameters[0];
 
-        $documents->each(
-            fn (Message $document) => $this->purge($document)
-        );
+        $documents->each(fn (Message $document) => $this->purge($document));
 
         return $this;
     }

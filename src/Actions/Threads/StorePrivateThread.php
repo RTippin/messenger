@@ -134,9 +134,7 @@ class StorePrivateThread extends NewThreadAction
         if ($this->isChained()) {
             $this->executeTransactions($inputs);
         } else {
-            $this->database->transaction(
-                fn () => $this->executeTransactions($inputs)
-            );
+            $this->database->transaction(fn () => $this->executeTransactions($inputs));
         }
 
         return $this;
@@ -258,7 +256,8 @@ class StorePrivateThread extends NewThreadAction
      */
     private function locateRecipientAndThread(string $alias, string $id): self
     {
-        $this->locator->setAlias($alias)
+        $this->locator
+            ->setAlias($alias)
             ->setId($id)
             ->locate();
 

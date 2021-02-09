@@ -73,9 +73,7 @@ class JoinWithInvite extends BaseMessengerAction
         if ($this->isChained()) {
             $this->executeTransactions($invite);
         } else {
-            $this->database->transaction(
-                fn () => $this->executeTransactions($invite), 3
-            );
+            $this->database->transaction(fn () => $this->executeTransactions($invite), 3);
         }
 
         return $this;
