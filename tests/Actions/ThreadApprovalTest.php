@@ -2,12 +2,12 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\ThreadApproval;
 use RTippin\Messenger\Broadcasting\ThreadApprovalBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ThreadApprovalEvent;
+use RTippin\Messenger\Exceptions\ThreadApprovalException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -66,7 +66,9 @@ class ThreadApprovalTest extends FeatureTestCase
     /** @test */
     public function thread_approval_throws_exception_if_not_receiver_approving()
     {
-        $this->expectException(AuthorizationException::class);
+        $this->expectException(ThreadApprovalException::class);
+
+        $this->expectExceptionMessage('Not authorized to approve that conversation.');
 
         Messenger::setProvider($this->doe);
 
@@ -79,7 +81,9 @@ class ThreadApprovalTest extends FeatureTestCase
     /** @test */
     public function thread_approval_throws_exception_if_not_pending()
     {
-        $this->expectException(AuthorizationException::class);
+        $this->expectException(ThreadApprovalException::class);
+
+        $this->expectExceptionMessage('That conversation is not pending.');
 
         Messenger::setProvider($this->tippin);
 
@@ -99,7 +103,9 @@ class ThreadApprovalTest extends FeatureTestCase
     /** @test */
     public function thread_approval_throws_exception_if_group_thread()
     {
-        $this->expectException(AuthorizationException::class);
+        $this->expectException(ThreadApprovalException::class);
+
+        $this->expectExceptionMessage('Group threads do not have approvals.');
 
         Messenger::setProvider($this->tippin);
 

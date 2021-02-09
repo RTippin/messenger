@@ -3,11 +3,11 @@
 namespace RTippin\Messenger\Actions\Threads;
 
 use Exception;
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Events\Dispatcher;
 use RTippin\Messenger\Broadcasting\ThreadApprovalBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\ThreadApprovalEvent;
+use RTippin\Messenger\Exceptions\ThreadApprovalException;
 use RTippin\Messenger\Http\Resources\Broadcast\ThreadApprovalBroadcastResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
@@ -55,7 +55,7 @@ class ThreadApproval extends ThreadParticipantAction
      * @var Thread[0]
      * @var bool[1]
      * @return $this
-     * @throws AuthorizationException|Exception
+     * @throws ThreadApprovalException|Exception
      */
     public function execute(...$parameters): self
     {
@@ -133,12 +133,20 @@ class ThreadApproval extends ThreadParticipantAction
 
     /**
      * @return $this
-     * @throws AuthorizationException
+     * @throws ThreadApprovalException
      */
     private function checkThreadNeedsApproval(): self
     {
+        if ($this->getThread()->isGroup()) {
+            throw new ThreadApprovalException('Group threads do not have approvals.');
+        }
+
+        if (! $this->getThread()->isPending()) {
+            throw new ThreadApprovalException('That conversation is not pending.');
+        }
+
         if (! $this->getThread()->isAwaitingMyApproval()) {
-            throw new AuthorizationException('This conversation is not pending approval.');
+            throw new ThreadApprovalException;
         }
 
         return $this;
