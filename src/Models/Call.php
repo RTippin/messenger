@@ -66,7 +66,6 @@ class Call extends Model
         'room_id' => 'integer',
         'setup_complete' => 'boolean',
         'teardown_complete' => 'boolean',
-        'kicked' => 'boolean',
         'type' => 'integer',
     ];
 

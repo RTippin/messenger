@@ -154,6 +154,7 @@ trait HelperTrait
             'room_id' => '123456789',
             'room_pin' => 'PIN',
             'room_secret' => 'SECRET',
+            'payload' => 'PAYLOAD',
         ]);
 
         $call->participants()->create([

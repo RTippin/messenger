@@ -87,7 +87,7 @@ class CallsTest extends FeatureTestCase
                     'in_call' => true,
                     'left_call' => false,
                     'joined' => true,
-                    'payload' => null,
+                    'payload' => 'PAYLOAD',
                 ],
             ]);
     }
