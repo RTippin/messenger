@@ -36,6 +36,18 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
+    public function call_exists()
+    {
+        $this->assertDatabaseCount('calls', 1);
+
+        $this->assertDatabaseHas('calls', [
+            'id' => $this->call->id,
+        ]);
+
+        $this->assertInstanceOf(Call::class, $this->call);
+    }
+
+    /** @test */
     public function call_attributes_casted()
     {
         $this->call->update([
@@ -46,7 +58,7 @@ class CallTest extends FeatureTestCase
         $this->assertInstanceOf(Carbon::class, $this->call->updated_at);
         $this->assertInstanceOf(Carbon::class, $this->call->call_ended);
         $this->assertSame(1, $this->call->type);
-        $this->assertTrue(true, $this->call->setup_complete);
+        $this->assertSame(true, $this->call->setup_complete);
         $this->assertSame(false, $this->call->teardown_complete);
         $this->assertSame(123456789, $this->call->room_id);
         $this->assertSame('PIN', $this->call->room_pin);
