@@ -63,9 +63,9 @@ trait EventMap
         InviteUsedEvent::class => [
             JoinedWithInviteMessage::class,
         ],
-        MessageEditedEvent::class => [
-            StoreMessageEdit::class,
-        ],
+//        MessageEditedEvent::class => [
+//            StoreMessageEdit::class,
+//        ],
         ParticipantsAddedEvent::class => [
             ParticipantsAddedMessage::class,
         ],

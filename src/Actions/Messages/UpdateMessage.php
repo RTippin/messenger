@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Actions\Messages;
 
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Database\DatabaseManager;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\MessageEditedBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
@@ -13,6 +14,7 @@ use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\EmojiConverter;
+use Throwable;
 
 class UpdateMessage extends BaseMessengerAction
 {
@@ -20,6 +22,11 @@ class UpdateMessage extends BaseMessengerAction
      * @var BroadcastDriver
      */
     private BroadcastDriver $broadcaster;
+
+    /**
+     * @var DatabaseManager
+     */
+    private DatabaseManager $database;
 
     /**
      * @var Dispatcher
@@ -45,16 +52,19 @@ class UpdateMessage extends BaseMessengerAction
      * StoreMessage constructor.
      *
      * @param BroadcastDriver $broadcaster
+     * @param DatabaseManager $database
      * @param Dispatcher $dispatcher
      * @param Messenger $messenger
      * @param EmojiConverter $converter
      */
     public function __construct(BroadcastDriver $broadcaster,
+                                DatabaseManager $database,
                                 Dispatcher $dispatcher,
                                 Messenger $messenger,
                                 EmojiConverter $converter)
     {
         $this->broadcaster = $broadcaster;
+        $this->database = $database;
         $this->dispatcher = $dispatcher;
         $this->messenger = $messenger;
         $this->converter = $converter;
@@ -68,7 +78,7 @@ class UpdateMessage extends BaseMessengerAction
      * @var Message[1]
      * @var string[2]
      * @return $this
-     * @throws FeatureDisabledException
+     * @throws FeatureDisabledException|Throwable
      */
     public function execute(...$parameters): self
     {
@@ -76,7 +86,7 @@ class UpdateMessage extends BaseMessengerAction
 
         $this->setThread($parameters[0])
             ->setMessage($parameters[1])
-            ->updateMessage($parameters[2])
+            ->handleTransactions($parameters[2])
             ->generateResource();
 
         if ($this->getMessage()->wasChanged()) {
@@ -99,14 +109,37 @@ class UpdateMessage extends BaseMessengerAction
     /**
      * @param string $body
      * @return $this
+     * @throws Throwable
      */
-    private function updateMessage(string $body): self
+    private function handleTransactions(string $body): self
+    {
+        if ($this->isChained()) {
+            $this->executeTransactions($body);
+        } else {
+            $this->database->transaction(fn () => $this->executeTransactions($body));
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param string $body
+     * @return $this
+     */
+    private function executeTransactions(string $body): self
     {
         $this->originalBody = $this->getMessage()->body;
 
         $this->getMessage()->update([
             'body' => $this->converter->toShort($body),
         ]);
+
+        if ($this->getMessage()->wasChanged()) {
+            $this->getMessage()->edits()->create([
+                'body' => $this->originalBody,
+                'edited_at' => $this->getMessage()->updated_at,
+            ]);
+        }
 
         return $this;
     }

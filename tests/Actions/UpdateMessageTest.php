@@ -54,7 +54,7 @@ class UpdateMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function update_message_updates_message()
+    public function update_message_updates_message_and_stores_edit()
     {
         app(UpdateMessage::class)->withoutDispatches()->execute(
             $this->group,
@@ -65,6 +65,11 @@ class UpdateMessageTest extends FeatureTestCase
         $this->assertDatabaseHas('messages', [
             'id' => $this->message->id,
             'body' => 'Edited Message',
+        ]);
+
+        $this->assertDatabaseHas('message_edits', [
+            'message_id' => $this->message->id,
+            'body' => 'First Test Message',
         ]);
     }
 
