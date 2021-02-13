@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Models;
 
+use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Models\GhostUser;
@@ -35,12 +36,17 @@ class FriendTest extends FeatureTestCase
     public function friend_exists()
     {
         $this->assertDatabaseCount('friends', 1);
-
         $this->assertDatabaseHas('friends', [
             'id' => $this->friend->id,
         ]);
-
         $this->assertInstanceOf(Friend::class, $this->friend);
+    }
+
+    /** @test */
+    public function friend_attributes_casted()
+    {
+        $this->assertInstanceOf(Carbon::class, $this->friend->created_at);
+        $this->assertInstanceOf(Carbon::class, $this->friend->updated_at);
     }
 
     /** @test */
@@ -48,6 +54,8 @@ class FriendTest extends FeatureTestCase
     {
         $this->assertSame($this->friend->owner_id, $this->friend->owner->getKey());
         $this->assertSame($this->friend->party_id, $this->friend->party->getKey());
+        $this->assertInstanceOf(MessengerProvider::class, $this->friend->owner);
+        $this->assertInstanceOf(MessengerProvider::class, $this->friend->party);
     }
 
     /** @test */

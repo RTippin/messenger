@@ -39,11 +39,9 @@ class InviteTest extends FeatureTestCase
     public function invite_exists()
     {
         $this->assertDatabaseCount('thread_invites', 1);
-
         $this->assertDatabaseHas('thread_invites', [
             'id' => $this->invite->id,
         ]);
-
         $this->assertInstanceOf(Invite::class, $this->invite);
     }
 

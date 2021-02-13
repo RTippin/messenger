@@ -34,12 +34,21 @@ class CallParticipantTest extends FeatureTestCase
     public function call_participant_exists()
     {
         $this->assertDatabaseCount('call_participants', 1);
-
         $this->assertDatabaseHas('call_participants', [
             'id' => $this->participant->id,
         ]);
-
         $this->assertInstanceOf(CallParticipant::class, $this->participant);
+        $this->assertSame(1, CallParticipant::inCall()->count());
+    }
+
+    /** @test */
+    public function active_call_participant_finds_none()
+    {
+        $this->participant->update([
+            'left_call' => now(),
+        ]);
+
+        $this->assertSame(0, CallParticipant::inCall()->count());
     }
 
     /** @test */
@@ -47,6 +56,8 @@ class CallParticipantTest extends FeatureTestCase
     {
         $this->assertSame($this->call->id, $this->participant->call->id);
         $this->assertSame($this->tippin->getKey(), $this->call->owner->getKey());
+        $this->assertInstanceOf(Call::class, $this->participant->call);
+        $this->assertInstanceOf(MessengerProvider::class, $this->participant->owner);
     }
 
     /** @test */
