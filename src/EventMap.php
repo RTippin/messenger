@@ -10,7 +10,6 @@ use RTippin\Messenger\Events\CallLeftEvent;
 use RTippin\Messenger\Events\CallStartedEvent;
 use RTippin\Messenger\Events\DemotedAdminEvent;
 use RTippin\Messenger\Events\InviteUsedEvent;
-use RTippin\Messenger\Events\MessageEditedEvent;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Events\PromotedAdminEvent;
 use RTippin\Messenger\Events\RemovedFromThreadEvent;
@@ -28,7 +27,6 @@ use RTippin\Messenger\Listeners\ParticipantsAddedMessage;
 use RTippin\Messenger\Listeners\PromotedAdminMessage;
 use RTippin\Messenger\Listeners\RemovedFromThreadMessage;
 use RTippin\Messenger\Listeners\SetupCall;
-use RTippin\Messenger\Listeners\StoreMessageEdit;
 use RTippin\Messenger\Listeners\StoreMessengerIp;
 use RTippin\Messenger\Listeners\TeardownCall;
 use RTippin\Messenger\Listeners\ThreadArchivedMessage;
@@ -63,9 +61,6 @@ trait EventMap
         InviteUsedEvent::class => [
             JoinedWithInviteMessage::class,
         ],
-//        MessageEditedEvent::class => [
-//            StoreMessageEdit::class,
-//        ],
         ParticipantsAddedEvent::class => [
             ParticipantsAddedMessage::class,
         ],

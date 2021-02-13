@@ -2,8 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Illuminate\Events\CallQueuedListener;
-use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Messages\UpdateMessage;
 use RTippin\Messenger\Broadcasting\MessageEditedBroadcast;
@@ -11,7 +10,6 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\MessageEditedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Listeners\StoreMessageEdit;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -56,6 +54,10 @@ class UpdateMessageTest extends FeatureTestCase
     /** @test */
     public function update_message_updates_message_and_stores_edit()
     {
+        $editedAt = now()->addMinutes(5);
+
+        Carbon::setTestNow($editedAt);
+
         app(UpdateMessage::class)->withoutDispatches()->execute(
             $this->group,
             $this->message,
@@ -65,11 +67,13 @@ class UpdateMessageTest extends FeatureTestCase
         $this->assertDatabaseHas('messages', [
             'id' => $this->message->id,
             'body' => 'Edited Message',
+            'updated_at' => $editedAt,
         ]);
 
         $this->assertDatabaseHas('message_edits', [
             'message_id' => $this->message->id,
             'body' => 'First Test Message',
+            'edited_at' => $editedAt,
         ]);
     }
 
@@ -101,6 +105,8 @@ class UpdateMessageTest extends FeatureTestCase
             $this->message,
             'First Test Message'
         );
+
+        $this->assertDatabaseCount('message_edits', 0);
     }
 
     /** @test */
@@ -132,22 +138,6 @@ class UpdateMessageTest extends FeatureTestCase
             $this->assertSame('First Test Message', $event->originalBody);
 
             return true;
-        });
-    }
-
-    /** @test */
-    public function update_message_triggers_listener()
-    {
-        Bus::fake();
-
-        app(UpdateMessage::class)->withoutBroadcast()->execute(
-            $this->group,
-            $this->message,
-            'Edited Message'
-        );
-
-        Bus::assertDispatched(function (CallQueuedListener $job) {
-            return $job->class === StoreMessageEdit::class;
         });
     }
 }

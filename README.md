@@ -395,7 +395,7 @@ PushNotificationEvent::class => $data //Array
 ```
 
 - Allow message owners to edit their messages, and for anyone in the thread to view the history of edits for a message.
-  - By default, the edit history will only be stored if you have our `queued_event_listeners` enabled.
+  - Message edit history will be stored in the `message_edits` table.
 
 ---
 
@@ -542,9 +542,6 @@ DemotedAdminEvent::class => [
 InviteUsedEvent::class => [
     JoinedWithInviteMessage::class,
 ],
-MessageEditedEvent::class => [
-    StoreMessageEdit::class,
-],
 ParticipantsAddedEvent::class => [
     ParticipantsAddedMessage::class,
 ],
@@ -613,7 +610,6 @@ ThreadSettingsEvent::class => [
 ***Example:***
 ```php
 //messenger.php
-
 'drivers' => [
     'calling' => [
         'janus' => JanusBroker::class,
@@ -624,7 +620,6 @@ ThreadSettingsEvent::class => [
 ```
 ```dotenv
 #.env
-
 MESSENGER_CALLING_DRIVER=twillio
 MESSENGER_CALLING_ENABLED=true
 ```
