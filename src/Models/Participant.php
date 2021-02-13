@@ -35,7 +35,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read int|null $messages_count
  * @property-read Model|MessengerProvider $owner
  * @property-read \RTippin\Messenger\Models\Thread $thread
- * @property-read \RTippin\Messenger\Models\Message|null $lastSeenMessage
  * @method static \Illuminate\Database\Query\Builder|Participant onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|Participant withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Participant withoutTrashed()
@@ -80,10 +79,7 @@ class Participant extends Model
      *
      * @var array
      */
-    protected $dates = [
-        'deleted_at',
-        'last_read',
-    ];
+    protected $dates = ['last_read'];
 
     /**
      * The attributes that should be cast.
@@ -114,7 +110,7 @@ class Participant extends Model
     }
 
     /**
-     * @return HasMany|Messenger|Collection
+     * @return HasMany|Collection
      */
     public function messages()
     {
@@ -122,9 +118,10 @@ class Participant extends Model
             Message::class,
             'thread_id',
             'thread_id'
-        )->where('owner_id', '=', $this->owner_id)
-         ->where('owner_type', '=', $this->owner_type)
-         ->latest();
+        )
+            ->where('owner_id', '=', $this->owner_id)
+            ->where('owner_type', '=', $this->owner_type)
+            ->latest();
     }
 
     /**
@@ -138,16 +135,18 @@ class Participant extends Model
     }
 
     /**
-     * @return HasOne|Message
+     * @return Message|null
      */
-    public function lastSeenMessage()
+    public function getLastSeenMessage(): ?Message
     {
-        return $this->hasOne(
-            Message::class,
-            'thread_id',
-            'thread_id')
+        if (is_null($this->last_read)) {
+            return null;
+        }
+
+        return Message::where('thread_id', '=', $this->thread_id)
+            ->where('created_at', '<=', $this->last_read)
             ->latest()
-            ->where('created_at', '<=', $this->last_read);
+            ->first();
     }
 
     /**

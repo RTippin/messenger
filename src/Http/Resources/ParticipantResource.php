@@ -68,14 +68,10 @@ class ParticipantResource extends JsonResource
      */
     private function lastSeenMessageId(): ?string
     {
-        if (is_null($this->participant->last_read)) {
-            return null;
-        }
-
         if ($this->thread->updated_at <= $this->participant->last_read) {
             return optional($this->thread->recentMessage)->id;
         }
 
-        return optional($this->participant->lastSeenMessage)->id;
+        return optional($this->participant->getLastSeenMessage())->id;
     }
 }
