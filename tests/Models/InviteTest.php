@@ -48,9 +48,12 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function invite_attributes_casted()
     {
+        $this->invite->delete();
+
         $this->assertInstanceOf(Carbon::class, $this->invite->created_at);
         $this->assertInstanceOf(Carbon::class, $this->invite->updated_at);
         $this->assertInstanceOf(Carbon::class, $this->invite->expires_at);
+        $this->assertInstanceOf(Carbon::class, $this->invite->deleted_at);
         $this->assertSame(10, $this->invite->max_use);
         $this->assertSame(1, $this->invite->uses);
     }

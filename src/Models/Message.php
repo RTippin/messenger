@@ -30,6 +30,7 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \RTippin\Messenger\Models\Thread $thread
  * @property-read Model|MessengerProvider $owner
+ * @property-read \RTippin\Messenger\Models\MessageEdit $edits
  * @method static \Illuminate\Database\Query\Builder|Message onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|Message withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Message withoutTrashed()
@@ -75,13 +76,6 @@ class Message extends Model
      * @var array
      */
     protected $guarded = [];
-
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at'];
 
     /**
      * @var array

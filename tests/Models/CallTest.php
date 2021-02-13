@@ -77,7 +77,6 @@ class CallTest extends FeatureTestCase
         $this->assertInstanceOf(Thread::class, $this->call->thread);
         $this->assertInstanceOf(MessengerProvider::class, $this->call->owner);
         $this->assertInstanceOf(Collection::class, $this->call->participants);
-        $this->assertInstanceOf(CallParticipant::class, $this->call->participants->first());
     }
 
     /** @test */
