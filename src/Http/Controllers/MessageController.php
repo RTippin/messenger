@@ -151,7 +151,7 @@ class MessageController extends Controller
      * @param Thread $thread
      * @param Message $message
      * @return MessageResource
-     * @throws AuthorizationException
+     * @throws AuthorizationException|Throwable
      */
     public function update(EditMessageRequest $request,
                            UpdateMessage $updateMessage,
