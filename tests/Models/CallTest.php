@@ -73,7 +73,6 @@ class CallTest extends FeatureTestCase
         $this->assertSame($this->group->id, $this->call->thread->id);
         $this->assertSame($this->tippin->getKey(), $this->call->owner->getKey());
         $this->assertCount(2, $this->call->participants);
-        $this->assertEquals($this->tippin->getKey(), $this->call->participants->first()->owner_id);
         $this->assertInstanceOf(Thread::class, $this->call->thread);
         $this->assertInstanceOf(MessengerProvider::class, $this->call->owner);
         $this->assertInstanceOf(Collection::class, $this->call->participants);

@@ -61,7 +61,7 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function invite_has_relations()
     {
-        $this->assertSame($this->invite->owner_id, $this->invite->owner->getKey());
+        $this->assertSame($this->tippin->getKey(), $this->invite->owner->getKey());
         $this->assertSame($this->group->id, $this->invite->thread->id);
         $this->assertInstanceOf(Thread::class, $this->invite->thread);
         $this->assertInstanceOf(MessengerProvider::class, $this->invite->owner);

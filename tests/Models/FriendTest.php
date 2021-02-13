@@ -52,8 +52,8 @@ class FriendTest extends FeatureTestCase
     /** @test */
     public function friend_has_relations()
     {
-        $this->assertSame($this->friend->owner_id, $this->friend->owner->getKey());
-        $this->assertSame($this->friend->party_id, $this->friend->party->getKey());
+        $this->assertSame($this->tippin->getKey(), $this->friend->owner->getKey());
+        $this->assertSame($this->doe->getKey(), $this->friend->party->getKey());
         $this->assertInstanceOf(MessengerProvider::class, $this->friend->owner);
         $this->assertInstanceOf(MessengerProvider::class, $this->friend->party);
     }

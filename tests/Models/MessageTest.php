@@ -76,7 +76,7 @@ class MessageTest extends FeatureTestCase
     /** @test */
     public function message_has_relations()
     {
-        $this->assertSame($this->message->owner_id, $this->message->owner->getKey());
+        $this->assertSame($this->tippin->getKey(), $this->message->owner->getKey());
         $this->assertSame($this->group->id, $this->message->thread->id);
         $this->assertInstanceOf(Thread::class, $this->message->thread);
         $this->assertInstanceOf(MessengerProvider::class, $this->message->owner);
