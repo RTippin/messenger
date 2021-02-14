@@ -40,7 +40,7 @@ class ProvidersVerification
      */
     protected function collectAndFilterProviders(array $providers): Collection
     {
-        return collect($providers)->filter(fn ($provider) => $this->passesProviderValidation($provider));
+        return collect($providers)->filter(fn ($provider, $alias) => $this->passesProviderValidation($provider, $alias));
     }
 
     /**
@@ -93,13 +93,15 @@ class ProvidersVerification
     }
 
     /**
-     * @param $provider
+     * @param mixed $provider
+     * @param int|string $alias
      * @return bool
      * @noinspection SpellCheckingInspection
      */
-    protected function passesProviderValidation($provider): bool
+    protected function passesProviderValidation($provider, $alias): bool
     {
         return is_array($provider)
+            && is_string($alias)
             && array_key_exists('model', $provider)
             && class_exists($provider['model'])
             && array_key_exists('searchable', $provider)

@@ -31,6 +31,16 @@ class ProvidersVerificationTest extends MessengerTestCase
     }
 
     /** @test */
+    public function provider_without_string_alias_key_returns_empty_collection()
+    {
+        $emptyResult = $this->verify->formatValidProviders([$this->getBaseProvidersConfig()['user']]);
+
+        $this->assertInstanceOf(Collection::class, $emptyResult);
+
+        $this->assertCount(0, $emptyResult->toArray());
+    }
+
+    /** @test */
     public function model_not_implementing_provider_ignored()
     {
         $result = $this->verify->formatValidProviders([
