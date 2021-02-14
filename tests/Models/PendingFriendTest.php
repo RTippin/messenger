@@ -1,0 +1,72 @@
+<?php
+
+namespace RTippin\Messenger\Tests\Models;
+
+use Illuminate\Support\Carbon;
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Models\GhostUser;
+use RTippin\Messenger\Models\PendingFriend;
+use RTippin\Messenger\Tests\FeatureTestCase;
+
+class PendingFriendTest extends FeatureTestCase
+{
+    private MessengerProvider $tippin;
+
+    private MessengerProvider $doe;
+
+    private PendingFriend $pending;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        $this->tippin = $this->userTippin();
+
+        $this->doe = $this->userDoe();
+
+        $this->pending = PendingFriend::create([
+            'sender_id' => $this->tippin->getKey(),
+            'sender_type' => get_class($this->tippin),
+            'recipient_id' => $this->doe->getKey(),
+            'recipient_type' => get_class($this->doe),
+        ]);
+    }
+
+    /** @test */
+    public function pending_friend_exists()
+    {
+        $this->assertDatabaseCount('pending_friends', 1);
+        $this->assertDatabaseHas('pending_friends', [
+            'id' => $this->pending->id,
+        ]);
+        $this->assertInstanceOf(PendingFriend::class, $this->pending);
+    }
+
+    /** @test */
+    public function pending_friend_attributes_casted()
+    {
+        $this->assertInstanceOf(Carbon::class, $this->pending->created_at);
+        $this->assertInstanceOf(Carbon::class, $this->pending->updated_at);
+    }
+
+    /** @test */
+    public function pending_friend_has_relations()
+    {
+        $this->assertSame($this->tippin->getKey(), $this->pending->sender->getKey());
+        $this->assertSame($this->doe->getKey(), $this->pending->recipient->getKey());
+        $this->assertInstanceOf(MessengerProvider::class, $this->pending->sender);
+        $this->assertInstanceOf(MessengerProvider::class, $this->pending->recipient);
+    }
+
+    /** @test */
+    public function pending_friend_relations_return_ghost_when_not_found()
+    {
+        $this->pending->update([
+            'sender_id' => 404,
+            'recipient_id' => 404,
+        ]);
+
+        $this->assertInstanceOf(GhostUser::class, $this->pending->sender);
+        $this->assertInstanceOf(GhostUser::class, $this->pending->recipient);
+    }
+}
