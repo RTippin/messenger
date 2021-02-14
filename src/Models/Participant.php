@@ -50,6 +50,13 @@ class Participant extends Model
     use Uuids;
 
     /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'participants';
+
+    /**
      * @var bool
      */
     public $incrementing = false;
@@ -58,13 +65,6 @@ class Participant extends Model
      * @var string
      */
     public $keyType = 'string';
-
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'participants';
 
     /**
      * The attributes that can be set with Mass Assignment.

@@ -31,6 +31,13 @@ class CallParticipant extends Model
     use Uuids;
 
     /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'call_participants';
+
+    /**
      * @var bool
      */
     public $incrementing = false;

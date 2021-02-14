@@ -26,6 +26,11 @@ class Friend extends Model
     use Uuids;
 
     /**
+     * @var string
+     */
+    protected $table = 'friends';
+
+    /**
      * @var bool
      */
     public $incrementing = false;
@@ -34,11 +39,6 @@ class Friend extends Model
      * @var string
      */
     public $keyType = 'string';
-
-    /**
-     * @var string
-     */
-    protected $table = 'friends';
 
     /**
      * @var array

@@ -5,10 +5,12 @@ namespace RTippin\Messenger\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Traits\Uuids;
 
 /**
  * App\Models\Messages\Messenger.
  *
+ * @property string $id
  * @property string $owner_type
  * @property string $owner_id
  * @property bool $message_popups
@@ -26,6 +28,15 @@ use RTippin\Messenger\Contracts\MessengerProvider;
  */
 class Messenger extends Model
 {
+    use Uuids;
+
+    /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'messengers';
+
     /**
      * The model's default values for attributes.
      *
@@ -52,10 +63,6 @@ class Messenger extends Model
      */
     public $keyType = 'string';
 
-    /**
-     * @var string
-     */
-    protected $primaryKey = 'owner_id';
     /**
      * @var array
      */

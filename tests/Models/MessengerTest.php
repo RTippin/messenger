@@ -27,8 +27,7 @@ class MessengerTest extends FeatureTestCase
     public function messenger_exists()
     {
         $this->assertDatabaseHas('messengers', [
-            'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
+            'id' => $this->messengerModel->id,
         ]);
         $this->assertInstanceOf(Messenger::class, $this->messengerModel);
     }

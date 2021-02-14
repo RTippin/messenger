@@ -14,6 +14,7 @@ class CreateMessengersTable extends Migration
     public function up()
     {
         Schema::create('messengers', function (Blueprint $table) {
+            $table->uuid('id')->primary();
             messengerMorphType('owner', $table);
             $table->boolean('message_popups')->default(1);
             $table->boolean('message_sound')->default(1);

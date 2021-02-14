@@ -49,6 +49,13 @@ class Message extends Model
     use Uuids;
 
     /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'messages';
+
+    /**
      * @var bool
      */
     public $incrementing = false;
@@ -62,13 +69,6 @@ class Message extends Model
      * @var string
      */
     public $keyType = 'string';
-
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'messages';
 
     /**
      * The attributes that can be set with Mass Assignment.

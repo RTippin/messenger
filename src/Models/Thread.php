@@ -55,6 +55,13 @@ class Thread extends Model
     use HasEagerLimit;
 
     /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'threads';
+
+    /**
      * @var bool
      */
     public $incrementing = false;
@@ -63,13 +70,6 @@ class Thread extends Model
      * @var string
      */
     public $keyType = 'string';
-
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'threads';
 
     /**
      * The attributes that can't be set with Mass Assignment.

@@ -8,6 +8,7 @@
 
 ### Changed
 - Edit message action will store the edit history immediately after update message.
+- Put a primary key back onto messenger model and table messengers.
 
 ## [v0.14 (02-09-2021)]
 

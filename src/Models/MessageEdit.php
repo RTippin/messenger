@@ -21,6 +21,13 @@ class MessageEdit extends Model
     use Uuids;
 
     /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'message_edits';
+
+    /**
      * @var bool
      */
     public $incrementing = false;
@@ -34,13 +41,6 @@ class MessageEdit extends Model
      * @var string
      */
     public $keyType = 'string';
-
-    /**
-     * The database table used by the model.
-     *
-     * @var string
-     */
-    protected $table = 'message_edits';
 
     /**
      * The attributes that can be set with Mass Assignment.

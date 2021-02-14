@@ -26,6 +26,11 @@ class PendingFriend extends Model
     use Uuids;
 
     /**
+     * @var string
+     */
+    protected $table = 'pending_friends';
+
+    /**
      * @var bool
      */
     public $incrementing = false;
@@ -34,11 +39,6 @@ class PendingFriend extends Model
      * @var string
      */
     public $keyType = 'string';
-
-    /**
-     * @var string
-     */
-    protected $table = 'pending_friends';
 
     /**
      * @var array

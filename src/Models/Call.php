@@ -43,6 +43,13 @@ class Call extends Model
     use Uuids;
 
     /**
+     * The database table used by the model.
+     *
+     * @var string
+     */
+    protected $table = 'calls';
+
+    /**
      * @var bool
      */
     public $incrementing = false;

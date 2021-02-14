@@ -39,6 +39,11 @@ class Invite extends Model
     use SoftDeletes;
 
     /**
+     * @var string
+     */
+    protected $table = 'thread_invites';
+
+    /**
      * @var bool
      */
     public $incrementing = false;
@@ -54,11 +59,6 @@ class Invite extends Model
      * @var array
      */
     protected $guarded = [];
-
-    /**
-     * @var string
-     */
-    protected $table = 'thread_invites';
 
     /**
      * @var array
