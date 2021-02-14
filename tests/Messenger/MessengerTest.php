@@ -8,9 +8,9 @@ use RTippin\Messenger\Facades\Messenger as MessengerFacade;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Participant;
-use RTippin\Messenger\Tests\MessengerTestCase;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
+use RTippin\Messenger\Tests\MessengerTestCase;
 
 class MessengerTest extends MessengerTestCase
 {
