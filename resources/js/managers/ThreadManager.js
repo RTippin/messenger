@@ -1867,8 +1867,10 @@ window.ThreadManager = (function () {
         },
         editMessage : function(arg){
             if(!opt.thread.id) return;
-            let messageStorage = methods.locateStorageItem({type : 'message', id : arg.id}), i = messageStorage.index;
+            let messageStorage = methods.locateStorageItem({type : 'message', id : arg.id}), i = messageStorage.index, msg = $("#message_"+arg.id);
             if (messageStorage.found && opt.storage.messages[i].owner_id === Messenger.common().id){
+                msg.find('.message-body').addClass('shadow-warning');
+                msg.find('.message_hover_opt').removeClass('NS');
                 Messenger.alert().Modal({
                     icon : 'edit',
                     theme : 'dark',
@@ -1887,6 +1889,10 @@ window.ThreadManager = (function () {
                     },
                     callback : function(){
                         methods.updateMessage(arg)
+                    },
+                    onClosed : function(){
+                        msg.find('.message-body').removeClass('shadow-warning');
+                        msg.find('.message_hover_opt').addClass('NS')
                     }
                 });
             }
@@ -1923,7 +1929,7 @@ window.ThreadManager = (function () {
         Message : function(arg){
             if(!opt.thread.id) return;
             let msg = $("#message_"+arg.id);
-            msg.find('.message-body').addClass('border border-warning');
+            msg.find('.message-body').addClass('shadow-warning');
             msg.find('.message_hover_opt').removeClass('NS');
             Messenger.alert().Modal({
                 size : 'sm',
@@ -1954,7 +1960,7 @@ window.ThreadManager = (function () {
                     }, 'delete');
                 },
                 onClosed : function(){
-                    msg.find('.message-body').removeClass('border border-warning');
+                    msg.find('.message-body').removeClass('shadow-warning');
                     msg.find('.message_hover_opt').addClass('NS')
                 }
             });

@@ -60,6 +60,11 @@ body, wrapper {
   box-shadow: 0 0 3px 3px #dc3545;
 }
 
+.shadow-warning {
+  box-shadow: 0 0 8px 5px #dc3545;
+  z-index: 999;
+}
+
 .group-image {
   width: 35px;
   height: 35px;
