@@ -5,10 +5,10 @@ namespace RTippin\Messenger\Tests;
 use Orchestra\Testbench\TestCase;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\MessengerServiceProvider;
-use RTippin\Messenger\Tests\stubs\CompanyModel;
-use RTippin\Messenger\Tests\stubs\CompanyModelUuid;
-use RTippin\Messenger\Tests\stubs\UserModel;
-use RTippin\Messenger\Tests\stubs\UserModelUuid;
+use RTippin\Messenger\Tests\Fixtures\CompanyModel;
+use RTippin\Messenger\Tests\Fixtures\CompanyModelUuid;
+use RTippin\Messenger\Tests\Fixtures\UserModel;
+use RTippin\Messenger\Tests\Fixtures\UserModelUuid;
 
 class MessengerTestCase extends TestCase
 {

@@ -5,9 +5,9 @@ namespace RTippin\Messenger\Tests\Messenger;
 use Illuminate\Support\Collection;
 use RTippin\Messenger\Services\ProvidersVerification;
 use RTippin\Messenger\Tests\MessengerTestCase;
-use RTippin\Messenger\Tests\stubs\CompanyModel;
-use RTippin\Messenger\Tests\stubs\OtherModel;
-use RTippin\Messenger\Tests\stubs\UserModel;
+use RTippin\Messenger\Tests\Fixtures\CompanyModel;
+use RTippin\Messenger\Tests\Fixtures\OtherModel;
+use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class ProvidersVerificationTest extends MessengerTestCase
 {

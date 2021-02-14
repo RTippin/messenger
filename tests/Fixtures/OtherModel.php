@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger\Tests\stubs;
+namespace RTippin\Messenger\Tests\Fixtures;
 
 use Illuminate\Foundation\Auth\User;
 

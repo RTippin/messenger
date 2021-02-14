@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Tests\Http;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\stubs\OtherModel;
+use RTippin\Messenger\Tests\Fixtures\OtherModel;
 
 class MessengerTest extends FeatureTestCase
 {

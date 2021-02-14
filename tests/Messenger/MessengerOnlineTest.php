@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\DB;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\stubs\OtherModel;
+use RTippin\Messenger\Tests\Fixtures\OtherModel;
 
 class MessengerOnlineTest extends FeatureTestCase
 {

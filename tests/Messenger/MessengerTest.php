@@ -9,8 +9,8 @@ use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Tests\MessengerTestCase;
-use RTippin\Messenger\Tests\stubs\OtherModel;
-use RTippin\Messenger\Tests\stubs\UserModel;
+use RTippin\Messenger\Tests\Fixtures\OtherModel;
+use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class MessengerTest extends MessengerTestCase
 {

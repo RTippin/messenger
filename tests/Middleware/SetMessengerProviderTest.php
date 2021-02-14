@@ -7,7 +7,7 @@ use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Http\Middleware\SetMessengerProvider;
 use RTippin\Messenger\Tests\MessengerTestCase;
-use RTippin\Messenger\Tests\stubs\OtherModel;
+use RTippin\Messenger\Tests\Fixtures\OtherModel;
 
 class SetMessengerProviderTest extends MessengerTestCase
 {

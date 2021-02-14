@@ -12,7 +12,7 @@ class FeatureTestCase extends MessengerTestCase
     {
         parent::setUp();
 
-        $this->loadMigrationsFrom(__DIR__.'/stubs/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/Fixtures/migrations');
 
         $this->artisan('migrate', [
             '--database' => 'testbench',
