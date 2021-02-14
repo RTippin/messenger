@@ -105,6 +105,7 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static getDefaultThreadAvatars(string $image = null)
  * @method static reset()
  * @method static setMessengerProviders(array $providers = [])
+ * @method static getMessengerProviders()
  * @method static instance()
  * @method static getApiRateLimit()
  * @method static setApiRateLimit(int $apiRateLimit)

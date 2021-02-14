@@ -41,6 +41,7 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @property-read int|null $participants_count
  * @property-read \RTippin\Messenger\Models\Message|null $recentMessage
  * @method static Builder|Thread group()
+ * @method static Builder|Thread private()
  * @method static \Illuminate\Database\Query\Builder|Thread onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|Thread withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Thread withoutTrashed()
@@ -79,13 +80,6 @@ class Thread extends Model
     protected $guarded = [];
 
     /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['deleted_at'];
-
-    /**
      * The attributes that should be cast.
      *
      * @var array
@@ -120,24 +114,24 @@ class Thread extends Model
     private int $unreadCountCache = 0;
 
     /**
-     * @return HasMany|Message|Collection
-     */
-    public function messages()
-    {
-        return $this->hasMany(
-            Message::class,
-            'thread_id',
-            'id'
-        );
-    }
-
-    /**
      * @return HasMany|Participant|Collection
      */
     public function participants()
     {
         return $this->hasMany(
             Participant::class,
+            'thread_id',
+            'id'
+        );
+    }
+
+    /**
+     * @return HasMany|Message|Collection
+     */
+    public function messages()
+    {
+        return $this->hasMany(
+            Message::class,
             'thread_id',
             'id'
         );
@@ -156,6 +150,14 @@ class Thread extends Model
     }
 
     /**
+     * @return HasMany|Invite|Collection
+     */
+    public function invites()
+    {
+        return $this->hasMany(Invite::class);
+    }
+
+    /**
      * @return HasOne|Call
      */
     public function activeCall()
@@ -167,6 +169,19 @@ class Thread extends Model
         )
             ->whereNull('call_ended')
             ->latest();
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function recentMessage(): HasOne
+    {
+        return $this->hasOne(
+            Message::class,
+            'thread_id',
+            'id')
+            ->latest()
+            ->limit(1);
     }
 
     /**
@@ -189,27 +204,6 @@ class Thread extends Model
     public function scopePrivate(Builder $query): Builder
     {
         return $query->where('type', '=', 1);
-    }
-
-    /**
-     * @return HasOne
-     */
-    public function recentMessage()
-    {
-        return $this->hasOne(
-            Message::class,
-            'thread_id',
-            'id')
-            ->latest()
-            ->limit(1);
-    }
-
-    /**
-     * @return HasMany|Invite|Collection
-     */
-    public function invites()
-    {
-        return $this->hasMany(Invite::class);
     }
 
     /**
@@ -550,8 +544,8 @@ class Thread extends Model
             return false;
         }
 
-        if ($this->currentParticipant()->last_read === null
-            || $this->updated_at->gt($this->currentParticipant()->last_read)) {
+        if (is_null($this->currentParticipant()->last_read)
+            || $this->updated_at > $this->currentParticipant()->last_read) {
             return true;
         }
 

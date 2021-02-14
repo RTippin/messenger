@@ -104,7 +104,7 @@ class ParticipantTest extends FeatureTestCase
     /** @test */
     public function participant_scope_valid_providers_ignores_company()
     {
-        Messenger::setMessengerProviders([$this->getBaseProvidersConfig()['user']]);
+        Messenger::setMessengerProviders(['user' => $this->getBaseProvidersConfig()['user']]);
 
         $this->assertSame(2, Participant::validProviders()->count());
     }
