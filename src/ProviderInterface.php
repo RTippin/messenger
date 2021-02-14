@@ -297,9 +297,8 @@ trait ProviderInterface
 
         $this->ghostParticipant = new Participant([
             'thread_id' => $threadId,
-            'admin' => 0,
-            'muted' => 1,
-            'pending' => 1,
+            'admin' => false,
+            'muted' => true,
             'last_read' => null,
         ]);
 

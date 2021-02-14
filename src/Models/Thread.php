@@ -379,14 +379,9 @@ class Thread extends Model
      */
     public function isAdmin(): bool
     {
-        if ($this->isGroup()
-            && $this->hasCurrentProvider()) {
-            return $this->currentParticipant()->admin
-                ? true
-                : false;
-        }
-
-        return false;
+        return $this->isGroup()
+            && $this->hasCurrentProvider()
+            && $this->currentParticipant()->admin;
     }
 
     /**
@@ -394,16 +389,10 @@ class Thread extends Model
      */
     public function isLocked(): bool
     {
-        if (! $this->hasCurrentProvider()
+        return ! $this->hasCurrentProvider()
+            || $this->lockout
             || ($this->isPrivate()
-                && ($this->lockout
-                    || $this->recipient()->owner instanceof GhostUser))) {
-            return true;
-        } elseif ($this->isGroup() && $this->lockout) {
-            return true;
-        }
-
-        return false;
+                && $this->recipient()->owner instanceof GhostUser);
     }
 
     /**
@@ -411,13 +400,8 @@ class Thread extends Model
      */
     public function isMuted(): bool
     {
-        if (! $this->hasCurrentProvider()
-            || $this->isLocked()
-            || $this->currentParticipant()->muted) {
-            return true;
-        }
-
-        return false;
+        return $this->hasCurrentProvider()
+            && $this->currentParticipant()->muted;
     }
 
     /**
@@ -425,12 +409,10 @@ class Thread extends Model
      */
     public function isPending(): bool
     {
-        if ($this->hasCurrentProvider() && $this->isPrivate()) {
-            return $this->currentParticipant()->pending
-                || $this->recipient()->pending;
-        }
-
-        return false;
+        return $this->hasCurrentProvider()
+            && $this->isPrivate()
+            && ($this->currentParticipant()->pending
+                || $this->recipient()->pending);
     }
 
     /**
@@ -447,16 +429,11 @@ class Thread extends Model
      */
     public function canMessage(): bool
     {
-        if ($this->isLocked()
-            || $this->currentParticipant()->pending
-            || ($this->isGroup()
-                && (! $this->messaging
-                    || (! $this->isAdmin()
-                        && ! $this->currentParticipant()->send_messages)))) {
-            return false;
-        }
-
-        return true;
+        return ! $this->isLocked()
+            && $this->messaging
+            && ! $this->isAwaitingMyApproval()
+            && ($this->currentParticipant()->send_messages
+                || $this->isAdmin());
     }
 
     /**
@@ -464,14 +441,11 @@ class Thread extends Model
      */
     public function canAddParticipants(): bool
     {
-        if ($this->isLocked()
-            || $this->isPrivate()) {
-            return false;
-        }
-
-        return $this->add_participants
-            && ($this->isAdmin()
-                || $this->currentParticipant()->add_participants);
+        return ! $this->isLocked()
+            && $this->isGroup()
+            && $this->add_participants
+            && ($this->currentParticipant()->add_participants
+                || $this->isAdmin());
     }
 
     /**
