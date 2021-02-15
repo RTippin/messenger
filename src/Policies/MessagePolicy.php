@@ -128,7 +128,7 @@ class MessagePolicy
         && ! $thread->isLocked()
         && $message->isText()
         && $this->messenger->isMessageEditsEnabled()
-        && $this->messenger->getProviderId() == $message->owner_id
+        && (string) $this->messenger->getProviderId() === (string) $message->owner_id
         && $this->messenger->getProviderClass() === $message->owner_type
             ? $this->allow()
             : $this->deny('Not authorized to update message.');
@@ -147,7 +147,7 @@ class MessagePolicy
         return $thread->hasCurrentProvider()
         && ! $thread->isLocked()
         && ! $message->isSystemMessage()
-        && (($this->messenger->getProviderId() == $message->owner_id
+        && (((string) $this->messenger->getProviderId() === (string) $message->owner_id
                 && $this->messenger->getProviderClass() === $message->owner_type)
             || $thread->isAdmin())
             ? $this->allow()

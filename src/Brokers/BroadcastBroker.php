@@ -113,7 +113,7 @@ class BroadcastBroker implements BroadcastDriver
 
         $this->recipients = $this->participantRepository
             ->getThreadBroadcastableParticipants($this->thread)
-            ->reject(fn (Participant $participant) => $participant->owner_id == $this->messenger->getProviderId()
+            ->reject(fn (Participant $participant) => (string) $participant->owner_id === (string) $this->messenger->getProviderId()
                     && $participant->owner_type === $this->messenger->getProviderClass()
             );
 
