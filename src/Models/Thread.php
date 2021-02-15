@@ -94,14 +94,14 @@ class Thread extends Model
     ];
 
     /**
-     * @var Participant
+     * @var Participant|null
      */
-    private Participant $recipientCache;
+    private ?Participant $recipientCache = null;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private string $nameCache;
+    private ?string $nameCache = null;
 
     /**
      * @var Participant|null
@@ -239,11 +239,27 @@ class Thread extends Model
     }
 
     /**
+     * @return bool
+     */
+    public function isGroup(): bool
+    {
+        return $this->type === 2;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isPrivate(): bool
+    {
+        return $this->type === 1;
+    }
+
+    /**
      * @return Participant
      */
     public function recipient(): Participant
     {
-        if (isset($this->recipientCache)) {
+        if (! is_null($this->recipientCache)) {
             return $this->recipientCache;
         }
 
@@ -312,7 +328,7 @@ class Thread extends Model
      */
     public function name(): string
     {
-        if (isset($this->nameCache)) {
+        if (! is_null($this->nameCache)) {
             return $this->nameCache;
         }
 
@@ -507,16 +523,9 @@ class Thread extends Model
      */
     public function isUnread(): bool
     {
-        if (! $this->hasCurrentProvider()) {
-            return false;
-        }
-
-        if (is_null($this->currentParticipant()->last_read)
-            || $this->updated_at > $this->currentParticipant()->last_read) {
-            return true;
-        }
-
-        return false;
+        return $this->hasCurrentProvider()
+            && (is_null($this->currentParticipant()->last_read)
+                || $this->updated_at > $this->currentParticipant()->last_read);
     }
 
     /**
@@ -537,22 +546,6 @@ class Thread extends Model
                 ->count();
 
         return $this->unreadCountCache;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isGroup(): bool
-    {
-        return $this->type === 2;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isPrivate(): bool
-    {
-        return $this->type === 1;
     }
 
     /**

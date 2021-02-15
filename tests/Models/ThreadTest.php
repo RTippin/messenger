@@ -6,7 +6,9 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\GhostUser;
+use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -68,6 +70,43 @@ class ThreadTest extends FeatureTestCase
         $this->assertInstanceOf(Collection::class, $this->group->messages);
         $this->assertInstanceOf(Collection::class, $this->group->calls);
         $this->assertInstanceOf(Collection::class, $this->group->invites);
+    }
+
+    /** @test */
+    public function thread_has_active_call()
+    {
+        $this->createCall($this->group, $this->tippin);
+
+        $this->assertInstanceOf(Call::class, $this->group->activeCall);
+        $this->assertSame($this->group->id, $this->group->activeCall->thread_id);
+        $this->assertTrue($this->group->hasActiveCall());
+    }
+
+    /** @test */
+    public function thread_does_not_have_active_call()
+    {
+        $this->assertNull($this->group->activeCall);
+        $this->assertFalse($this->group->hasActiveCall());
+    }
+
+    /** @test */
+    public function thread_has_latest_message()
+    {
+        $this->createMessage($this->group, $this->tippin);
+
+        $this->travel(5)->minutes();
+
+        $latest = $this->createMessage($this->group, $this->tippin);
+
+        $this->assertInstanceOf(Message::class, $this->group->recentMessage);
+        $this->assertSame($this->group->id, $this->group->recentMessage->thread_id);
+        $this->assertSame($latest->id, $this->group->recentMessage->id);
+    }
+
+    /** @test */
+    public function thread_does_not_have_latest_message()
+    {
+        $this->assertNull($this->group->recentMessage);
     }
 
     /** @test */
@@ -910,5 +949,129 @@ class ThreadTest extends FeatureTestCase
         Messenger::setProvider($this->tippin);
 
         $this->assertFalse($this->group->canKnock());
+    }
+
+    /** @test */
+    public function thread_is_unread_when_last_read_null()
+    {
+        Messenger::setProvider($this->tippin);
+
+        $this->assertTrue($this->group->isUnread());
+    }
+
+    /** @test */
+    public function thread_is_unread_when_last_read_less_than_thread_last_updated()
+    {
+        $this->group->participants()
+            ->admins()
+            ->first()
+            ->update([
+                'last_read' => now(),
+            ]);
+
+        $this->group->update([
+            'updated_at' => now()->addHour(),
+        ]);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertTrue($this->group->isUnread());
+    }
+
+    /** @test */
+    public function thread_not_unread_when_last_read_greater_than_thread_last_updated()
+    {
+        $this->group->participants()
+            ->admins()
+            ->first()
+            ->update([
+                'last_read' => now()->addHour(),
+            ]);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertFalse($this->group->isUnread());
+    }
+
+    /** @test */
+    public function thread_not_unread_when_provider_not_set()
+    {
+        $this->assertFalse($this->group->isUnread());
+    }
+
+    /** @test */
+    public function thread_not_unread_when_participant_not_in_thread()
+    {
+        Messenger::setProvider($this->companyDevelopers());
+
+        $this->assertFalse($this->group->isUnread());
+    }
+
+    /** @test */
+    public function thread_unread_count_matches_message_count_when_last_read_null()
+    {
+        $this->createMessage($this->group, $this->tippin);
+
+        $this->createMessage($this->group, $this->tippin);
+
+        $this->createMessage($this->group, $this->tippin);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertSame(3, $this->group->unreadCount());
+    }
+
+    /** @test */
+    public function thread_unread_count_matches_message_count_created_after_last_read()
+    {
+        $this->createMessage($this->group, $this->tippin);
+
+        $this->createMessage($this->group, $this->tippin);
+
+        $this->travel(1)->minutes();
+
+        $this->group->participants()
+            ->admins()
+            ->first()
+            ->update([
+                'last_read' => now(),
+            ]);
+
+        $this->travel(1)->minutes();
+
+        $this->createMessage($this->group, $this->tippin);
+
+        $this->group->update([
+            'updated_at' => now(),
+        ]);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertSame(1, $this->group->unreadCount());
+    }
+
+    /** @test */
+    public function thread_unread_count_zero_when_no_messages()
+    {
+        Messenger::setProvider($this->tippin);
+
+        $this->assertSame(0, $this->group->unreadCount());
+    }
+
+    /** @test */
+    public function thread_unread_count_zero_when_thread_read()
+    {
+        $this->createMessage($this->group, $this->tippin);
+
+        $this->group->participants()
+            ->admins()
+            ->first()
+            ->update([
+                'last_read' => now()->addHour(),
+            ]);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertSame(0, $this->group->unreadCount());
     }
 }
