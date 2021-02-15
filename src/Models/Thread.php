@@ -457,8 +457,8 @@ class Thread extends Model
             && ! $this->isLocked()
             && $this->isGroup()
             && $this->invitations
-            && ($this->isAdmin()
-                || $this->currentParticipant()->manage_invites);
+            && ($this->currentParticipant()->manage_invites
+                || $this->isAdmin());
     }
 
     /**
@@ -467,6 +467,7 @@ class Thread extends Model
     public function canJoinWithInvite(): bool
     {
         return messenger()->isThreadInvitesEnabled()
+            && messenger()->isProviderSet()
             && $this->isGroup()
             && ! $this->lockout
             && $this->invitations
@@ -478,17 +479,13 @@ class Thread extends Model
      */
     public function canCall(): bool
     {
-        if (! messenger()->isCallingEnabled()
-            || $this->isLocked()
-            || $this->isPending()
-            || ($this->isGroup()
-                && (! $this->calling
-                    || (! $this->isAdmin()
-                        && ! $this->currentParticipant()->start_calls)))) {
-            return false;
-        }
-
-        return true;
+        return messenger()->isCallingEnabled()
+            && ! $this->isLocked()
+            && ! $this->isPending()
+            && $this->calling
+            && ($this->isPrivate()
+                || ($this->currentParticipant()->start_calls
+                    || $this->isAdmin()));
     }
 
     /**
@@ -496,17 +493,13 @@ class Thread extends Model
      */
     public function canKnock(): bool
     {
-        if (! messenger()->isKnockKnockEnabled()
-            || $this->isLocked()
-            || $this->isPending()
-            || ($this->isGroup()
-                && (! $this->knocks
-                    || (! $this->isAdmin()
-                        && ! $this->currentParticipant()->send_knocks)))) {
-            return false;
-        }
-
-        return true;
+        return messenger()->isKnockKnockEnabled()
+            && ! $this->isLocked()
+            && ! $this->isPending()
+            && $this->knocks
+            && ($this->isPrivate()
+                || ($this->currentParticipant()->send_knocks
+                    || $this->isAdmin()));
     }
 
     /**

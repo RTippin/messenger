@@ -299,7 +299,13 @@ trait ProviderInterface
             'thread_id' => $threadId,
             'admin' => false,
             'muted' => true,
+            'pending' => false,
             'last_read' => null,
+            'start_calls' => false,
+            'send_knocks' => false,
+            'send_messages' => false,
+            'add_participants' => false,
+            'manage_invites' => false,
         ]);
 
         return $this->ghostParticipant;

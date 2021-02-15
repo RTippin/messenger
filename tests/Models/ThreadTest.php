@@ -544,4 +544,371 @@ class ThreadTest extends FeatureTestCase
 
         $this->assertFalse($private->canAddParticipants());
     }
+
+    /** @test */
+    public function cannot_invite_participants_to_private_thread()
+    {
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertFalse($private->canInviteParticipants());
+    }
+
+    /** @test */
+    public function admin_can_invite_participants()
+    {
+        Messenger::setProvider($this->tippin);
+
+        $this->assertTrue($this->group->canInviteParticipants());
+    }
+
+    /** @test */
+    public function non_admin_without_permission_cannot_invite_participants()
+    {
+        Messenger::setProvider($this->doe);
+
+        $this->assertFalse($this->group->canInviteParticipants());
+    }
+
+    /** @test */
+    public function non_admin_with_permission_can_invite_participants()
+    {
+        $this->group->participants()
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
+            ->first()
+            ->update([
+                'manage_invites' => true,
+            ]);
+
+        Messenger::setProvider($this->doe);
+
+        $this->assertTrue($this->group->canInviteParticipants());
+    }
+
+    /** @test */
+    public function can_invite_participants_when_disabled_on_participant_but_is_admin()
+    {
+        $this->group->participants()
+            ->admins()
+            ->first()
+            ->update([
+                'manage_invites' => false,
+            ]);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertTrue($this->group->canInviteParticipants());
+    }
+
+    /** @test */
+    public function cannot_invite_participants_when_disabled_in_thread_settings()
+    {
+        $this->group->update([
+            'invitations' => false,
+        ]);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertFalse($this->group->canInviteParticipants());
+    }
+
+    /** @test */
+    public function cannot_invite_participants_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertFalse($this->group->canInviteParticipants());
+    }
+
+    /** @test */
+    public function cannot_invite_participants_when_disabled_in_config()
+    {
+        Messenger::setThreadInvites(false);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertFalse($this->group->canInviteParticipants());
+    }
+
+    /** @test */
+    public function can_join_with_invite()
+    {
+        Messenger::setProvider($this->companyDevelopers());
+
+        $this->assertTrue($this->group->canJoinWithInvite());
+    }
+
+    /** @test */
+    public function cannot_join_with_invite_when_no_provider_set()
+    {
+        $this->assertFalse($this->group->canJoinWithInvite());
+    }
+
+    /** @test */
+    public function cannot_join_with_invite_when_disabled_in_config()
+    {
+        Messenger::setThreadInvites(false);
+
+        Messenger::setProvider($this->companyDevelopers());
+
+        $this->assertFalse($this->group->canJoinWithInvite());
+    }
+
+    /** @test */
+    public function cannot_join_with_invite_when_already_in_thread()
+    {
+        Messenger::setProvider($this->tippin);
+
+        $this->assertFalse($this->group->canJoinWithInvite());
+    }
+
+    /** @test */
+    public function cannot_join_with_invite_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        Messenger::setProvider($this->companyDevelopers());
+
+        $this->assertFalse($this->group->canJoinWithInvite());
+    }
+
+    /** @test */
+    public function cannot_join_with_invite_when_disabled_in_thread_settings()
+    {
+        $this->group->update([
+            'invitations' => false,
+        ]);
+
+        Messenger::setProvider($this->companyDevelopers());
+
+        $this->assertFalse($this->group->canJoinWithInvite());
+    }
+
+    /** @test */
+    public function cannot_join_with_invite_when_in_private_thread()
+    {
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
+
+        Messenger::setProvider($this->companyDevelopers());
+
+        $this->assertFalse($private->canJoinWithInvite());
+    }
+
+    /** @test */
+    public function can_start_call_in_threads()
+    {
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertTrue($private->canCall());
+        $this->assertTrue($this->group->canCall());
+    }
+
+    /** @test */
+    public function can_start_call_when_disabled_on_participant_but_is_admin()
+    {
+        $this->group->participants()
+            ->admins()
+            ->first()
+            ->update([
+                'start_calls' => false,
+            ]);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertTrue($this->group->canCall());
+    }
+
+    /** @test */
+    public function can_start_call_when_disabled_on_participant_but_is_private_thread()
+    {
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $private->participants()
+            ->where('owner_id', '=', $this->tippin->getKey())
+            ->where('owner_type', '=', get_class($this->tippin))
+            ->first()
+            ->update([
+                'start_calls' => false,
+            ]);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertTrue($private->canCall());
+    }
+
+    /** @test */
+    public function cannot_start_call_when_private_thread_is_pending()
+    {
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $private->participants()
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
+            ->first()
+            ->update([
+                'pending' => true,
+            ]);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertFalse($private->canCall());
+    }
+
+    /** @test */
+    public function non_admin_without_permissions_cannot_start_call()
+    {
+        Messenger::setProvider($this->doe);
+
+        $this->assertFalse($this->group->canCall());
+    }
+
+    /** @test */
+    public function cannot_start_call_when_disabled_in_config()
+    {
+        Messenger::setCalling(false);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertFalse($this->group->canCall());
+    }
+
+    /** @test */
+    public function cannot_start_call_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertFalse($this->group->canCall());
+    }
+
+    /** @test */
+    public function cannot_start_call_when_disabled_in_thread_settings()
+    {
+        $this->group->update([
+            'calling' => false,
+        ]);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertFalse($this->group->canCall());
+    }
+
+    /////////////////////////////
+
+    /** @test */
+    public function can_knock_in_threads()
+    {
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertTrue($private->canKnock());
+        $this->assertTrue($this->group->canKnock());
+    }
+
+    /** @test */
+    public function can_knock_when_disabled_on_participant_but_is_admin()
+    {
+        $this->group->participants()
+            ->admins()
+            ->first()
+            ->update([
+                'send_knocks' => false,
+            ]);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertTrue($this->group->canKnock());
+    }
+
+    /** @test */
+    public function can_knock_when_disabled_on_participant_but_is_private_thread()
+    {
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $private->participants()
+            ->where('owner_id', '=', $this->tippin->getKey())
+            ->where('owner_type', '=', get_class($this->tippin))
+            ->first()
+            ->update([
+                'send_knocks' => false,
+            ]);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertTrue($private->canKnock());
+    }
+
+    /** @test */
+    public function cannot_knock_when_private_thread_is_pending()
+    {
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $private->participants()
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
+            ->first()
+            ->update([
+                'pending' => true,
+            ]);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertFalse($private->canKnock());
+    }
+
+    /** @test */
+    public function non_admin_without_permissions_cannot_knock()
+    {
+        Messenger::setProvider($this->doe);
+
+        $this->assertFalse($this->group->canKnock());
+    }
+
+    /** @test */
+    public function cannot_knock_when_disabled_in_config()
+    {
+        Messenger::setKnockKnock(false);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertFalse($this->group->canKnock());
+    }
+
+    /** @test */
+    public function cannot_knock_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertFalse($this->group->canKnock());
+    }
+
+    /** @test */
+    public function cannot_knock_when_disabled_in_thread_settings()
+    {
+        $this->group->update([
+            'knocks' => false,
+        ]);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertFalse($this->group->canKnock());
+    }
 }
