@@ -1,7 +1,7 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
-## [v0.15 (02-13-2021)]
+## [v0.15 (02-14-2021)]
 
 ### Removed
 - StoreEditMessage listener.
