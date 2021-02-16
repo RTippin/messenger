@@ -73,10 +73,11 @@ class JoinCall extends CallParticipantAction
             || $this->getCallParticipant()->wasRecentlyCreated
             || $this->getCallParticipant()->wasChanged()) {
             $this->setParticipantInCallCache($this->getCallParticipant())
-                ->generateResource()
                 ->fireBroadcast()
                 ->fireEvents();
         }
+
+        $this->generateResource();
 
         return $this;
     }
