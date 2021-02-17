@@ -67,7 +67,6 @@ window.ThreadManager = (function () {
             thread_search_input : $("#thread_search_input"),
             thread_search_bar : $("#threads_search_bar"),
             drag_drop_zone : $('#drag_drop_overlay'),
-            wb_chat_unread_count : $("#wb_chat_unread_count"),
             messenger_search_input : null,
             messenger_search_results : null,
             msg_panel : null,
@@ -298,7 +297,6 @@ window.ThreadManager = (function () {
                     thread_search_input : opt.elements.thread_search_input,
                     thread_search_bar : opt.elements.thread_search_bar,
                     drag_drop_zone : opt.elements.drag_drop_zone,
-                    wb_chat_unread_count : opt.elements.wb_chat_unread_count,
                     messenger_search_input : null,
                     messenger_search_results : null,
                     msg_panel : null,
@@ -740,12 +738,6 @@ window.ThreadManager = (function () {
                 return;
             }
             methods.updateThread(data, false, false, true);
-            if(CallManager.state().initialized && CallManager.state().thread_id === data.thread_id){
-                let thread = methods.locateStorageItem({type : 'thread', id :CallManager.state().thread_id });
-                if(thread.found){
-                    opt.elements.wb_chat_unread_count.html(opt.storage.threads[thread.index].unread_count);
-                }
-            }
             if(Messenger.common().id !== data.owner_id) NotifyManager.sound('message')
         },
         callStatus : function(data, action){
@@ -1121,7 +1113,7 @@ window.ThreadManager = (function () {
             }
             for(let x = 0; x < opt.storage.active_profiles.length; x++) {
                 if (opt.storage.active_profiles[x].provider_id === owner){
-                    found = opt.storage.active_profiles[x];
+                    found = true;
                     break;
                 }
             }
@@ -1131,7 +1123,7 @@ window.ThreadManager = (function () {
                 opt.storage.participants[i].added = false;
                 opt.storage.participants[i].typing = !!typing.length;
                 opt.storage.participants[i].caught_up = (typing.length ? true : opt.storage.participants[i].caught_up);
-                opt.storage.participants[i].in_chat = (found !== false || (!found && !!typing.length));
+                opt.storage.participants[i].in_chat = (!!typing.length || found);
                 $(".bobble_head_"+owner).remove();
                 $(".seen-by").each(function(){
                     if(!$(this).children().length) $(this).remove()
@@ -1151,20 +1143,21 @@ window.ThreadManager = (function () {
             methods.drawBobbleHeads()
         },
         updateActiveProfile : function(owner, action){
-            for(let i = 0; i < opt.storage.active_profiles.length; i++) {
-                if (opt.storage.active_profiles[i].provider_id === owner){
-                    if(action === 3){
+            if(action === 3){
+                for(let i = 0; i < opt.storage.active_profiles.length; i++) {
+                    if (opt.storage.active_profiles[i].provider_id === owner){
                         opt.storage.active_profiles.splice(i, 1);
+                        break;
                     }
-                    else{
-                        let bobble = methods.locateStorageItem({type : 'bobble', id : owner}), z = bobble.index;
-                        if(bobble.found){
-                            opt.storage.participants[z].owner.options.online_status = action;
-                        }
-                    }
-                    break;
                 }
             }
+            else {
+                let bobble = methods.locateStorageItem({type : 'bobble', id : owner}), z = bobble.index;
+                if(bobble.found){
+                    opt.storage.participants[z].owner.options.online_status = action;
+                }
+            }
+
             methods.updateBobbleHead(owner, null);
             methods.drawBobbleHeads();
             if(action === 3 && opt.thread.type === 1) setTimeout(LoadIn.bobbleHeads, 6000);

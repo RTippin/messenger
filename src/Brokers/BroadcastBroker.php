@@ -98,6 +98,8 @@ class BroadcastBroker implements BroadcastDriver
     {
         $this->thread = $thread;
 
+        $this->presence(false);
+
         $this->recipients = $this->participantRepository
             ->getThreadBroadcastableParticipants($this->thread);
 
@@ -110,6 +112,8 @@ class BroadcastBroker implements BroadcastDriver
     public function toOthersInThread(Thread $thread): self
     {
         $this->thread = $thread;
+
+        $this->presence(false);
 
         $this->recipients = $this->participantRepository
             ->getThreadBroadcastableParticipants($this->thread)
@@ -125,6 +129,8 @@ class BroadcastBroker implements BroadcastDriver
      */
     public function toSelected(Collection $recipients): self
     {
+        $this->presence(false);
+
         if ($recipients->count()) {
             $this->recipients = $recipients;
         }
@@ -137,6 +143,8 @@ class BroadcastBroker implements BroadcastDriver
      */
     public function to($recipient): self
     {
+        $this->presence(false);
+
         $this->recipients = collect([$recipient]);
 
         return $this;
@@ -147,7 +155,7 @@ class BroadcastBroker implements BroadcastDriver
      */
     public function toPresence($entity): self
     {
-        $this->usingPresence = true;
+        $this->presence(true);
 
         $this->recipients = collect([$entity]);
 
@@ -159,7 +167,7 @@ class BroadcastBroker implements BroadcastDriver
      */
     public function toManyPresence(Collection $presence): self
     {
-        $this->usingPresence = true;
+        $this->presence(true);
 
         if ($presence->count()) {
             $this->recipients = $presence;
@@ -282,6 +290,14 @@ class BroadcastBroker implements BroadcastDriver
         }
 
         return null;
+    }
+
+    /**
+     * @param bool $usingPresence
+     */
+    protected function presence(bool $usingPresence): void
+    {
+        $this->usingPresence = $usingPresence;
     }
 
     /**
