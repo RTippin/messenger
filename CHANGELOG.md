@@ -1,6 +1,12 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+## [v0.16 (02-17-2021)]
+
+### Changed
+- Bugfix on join call skipping generating participant resource on response.
+- Broadcast broker resets private/presence each time to method called.
+
 ## [v0.15 (02-14-2021)]
 
 ### Removed
