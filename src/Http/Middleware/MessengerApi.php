@@ -24,7 +24,9 @@ class MessengerApi
         // We want to force the headers to JSON for our API as some
         // controllers return arrays and we expect laravels
         // response factory to transform to json
-        $request->headers->set('Accept', 'application/json');
+        if (! $request->headers->has('Accept')) {
+            $request->headers->set('Accept', 'application/json');
+        }
 
         return $next($request);
     }
