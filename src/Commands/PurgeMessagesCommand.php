@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Commands;
 use Illuminate\Console\Command;
 use RTippin\Messenger\Models\Message;
 
-class PurgeMessages extends Command
+class PurgeMessagesCommand extends Command
 {
     /**
      * The name and signature of the console command.

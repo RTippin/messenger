@@ -8,7 +8,7 @@ use RTippin\Messenger\Jobs\ArchiveInvalidInvites;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Invite;
 
-class InvitesCheck extends Command
+class InvitesCheckCommand extends Command
 {
     /**
      * The name and signature of the console command.

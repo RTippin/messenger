@@ -5,15 +5,15 @@ namespace RTippin\Messenger;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\ServiceProvider;
 use RTippin\Messenger\Brokers\FriendBroker;
-use RTippin\Messenger\Commands\CallsActivityCheck;
-use RTippin\Messenger\Commands\InvitesCheck;
-use RTippin\Messenger\Commands\ProvidersCache;
-use RTippin\Messenger\Commands\ProvidersClear;
-use RTippin\Messenger\Commands\Publish;
-use RTippin\Messenger\Commands\PurgeDocuments;
-use RTippin\Messenger\Commands\PurgeImages;
-use RTippin\Messenger\Commands\PurgeMessages;
-use RTippin\Messenger\Commands\PurgeThreads;
+use RTippin\Messenger\Commands\CallsActivityCheckCommand;
+use RTippin\Messenger\Commands\InvitesCheckCommand;
+use RTippin\Messenger\Commands\ProvidersCacheCommand;
+use RTippin\Messenger\Commands\ProvidersClearCommand;
+use RTippin\Messenger\Commands\PublishCommand;
+use RTippin\Messenger\Commands\PurgeDocumentsCommand;
+use RTippin\Messenger\Commands\PurgeImagesCommand;
+use RTippin\Messenger\Commands\PurgeMessagesCommand;
+use RTippin\Messenger\Commands\PurgeThreadsCommand;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
@@ -54,15 +54,15 @@ class MessengerServiceProvider extends ServiceProvider
     protected function bootForConsole(): void
     {
         $this->commands([
-            CallsActivityCheck::class,
-            InvitesCheck::class,
-            ProvidersCache::class,
-            ProvidersClear::class,
-            Publish::class,
-            PurgeDocuments::class,
-            PurgeImages::class,
-            PurgeMessages::class,
-            PurgeThreads::class,
+            CallsActivityCheckCommand::class,
+            InvitesCheckCommand::class,
+            ProvidersCacheCommand::class,
+            ProvidersClearCommand::class,
+            PublishCommand::class,
+            PurgeDocumentsCommand::class,
+            PurgeImagesCommand::class,
+            PurgeMessagesCommand::class,
+            PurgeThreadsCommand::class,
         ]);
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');

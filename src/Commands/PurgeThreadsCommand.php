@@ -4,10 +4,10 @@ namespace RTippin\Messenger\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
-use RTippin\Messenger\Jobs\PurgeThreads as PurgeThreadsJob;
+use RTippin\Messenger\Jobs\PurgeThreads;
 use RTippin\Messenger\Models\Thread;
 
-class PurgeThreads extends Command
+class PurgeThreadsCommand extends Command
 {
     /**
      * The name and signature of the console command.
@@ -59,7 +59,7 @@ class PurgeThreads extends Command
     private function dispatchJob(Collection $threads): void
     {
         $this->option('now')
-            ? PurgeThreadsJob::dispatchSync($threads)
-            : PurgeThreadsJob::dispatch($threads)->onQueue('messenger');
+            ? PurgeThreads::dispatchSync($threads)
+            : PurgeThreads::dispatch($threads)->onQueue('messenger');
     }
 }

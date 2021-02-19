@@ -9,7 +9,7 @@ use LogicException;
 use RTippin\Messenger\Services\ProvidersVerification;
 use Throwable;
 
-class ProvidersCache extends Command
+class ProvidersCacheCommand extends Command
 {
     /**
      * The name and signature of the console command.

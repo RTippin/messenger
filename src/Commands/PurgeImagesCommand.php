@@ -4,53 +4,53 @@ namespace RTippin\Messenger\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
-use RTippin\Messenger\Jobs\PurgeDocumentMessages;
+use RTippin\Messenger\Jobs\PurgeImageMessages;
 use RTippin\Messenger\Models\Message;
 
-class PurgeDocuments extends Command
+class PurgeImagesCommand extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'messenger:purge:documents 
+    protected $signature = 'messenger:purge:images 
                                             {--now : Perform requested checks now instead of dispatching job}
-                                            {--days=30 : Purge document messages soft deleted X days ago or greater}';
+                                            {--days=30 : Purge image messages soft deleted X days ago or greater}';
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Force delete document messages X days ago from soft delete';
+    protected $description = 'Force delete image messages X days ago from soft delete';
 
     /**
-     * Execute the console command. We will purge all soft deleted document
+     * Execute the console command. We will purge all soft deleted image
      * messages that were archived past the set days. We run it through
-     * our action to remove the file from storage and message from
+     * our action to remove the image from storage and message from
      * database.
      *
      * @return void
      */
     public function handle(): void
     {
-        $count = Message::document()
+        $count = Message::image()
             ->onlyTrashed()
             ->where('deleted_at', '<=', now()->subDays($this->option('days')))
             ->count();
 
         if ($count > 0) {
-            Message::document()
+            Message::image()
                 ->onlyTrashed()
                 ->where('deleted_at', '<=', now()->subDays($this->option('days')))
                 ->chunk(100, fn (Collection $images) => $this->dispatchJob($images));
 
             $message = $this->option('now') ? 'completed!' : 'dispatched!';
 
-            $this->info("{$count} document messages archived {$this->option('days')} days or greater found. Purging {$message}");
+            $this->info("{$count} image messages archived {$this->option('days')} days or greater found. Purging {$message}");
         } else {
-            $this->info("No document messages archived {$this->option('days')} days or greater found.");
+            $this->info("No image messages archived {$this->option('days')} days or greater found.");
         }
     }
 
@@ -61,7 +61,7 @@ class PurgeDocuments extends Command
     private function dispatchJob(Collection $images): void
     {
         $this->option('now')
-            ? PurgeDocumentMessages::dispatchSync($images)
-            : PurgeDocumentMessages::dispatch($images)->onQueue('messenger');
+            ? PurgeImageMessages::dispatchSync($images)
+            : PurgeImageMessages::dispatch($images)->onQueue('messenger');
     }
 }

@@ -8,7 +8,7 @@ use RTippin\Messenger\Jobs\CheckCallsActivity;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Call;
 
-class CallsActivityCheck extends Command
+class CallsActivityCheckCommand extends Command
 {
     /**
      * The name and signature of the console command.
