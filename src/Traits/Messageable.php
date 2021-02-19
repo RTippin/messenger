@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
-use RTippin\Messenger\Definitions;
+use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Support\Helpers;
 
 /**

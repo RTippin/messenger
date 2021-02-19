@@ -3,11 +3,11 @@
 namespace RTippin\Messenger\Tests;
 
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Tests\Fixtures\CompanyModel;
 use RTippin\Messenger\Tests\Fixtures\CompanyModelUuid;
 use RTippin\Messenger\Tests\Fixtures\UserModel;

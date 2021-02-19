@@ -8,11 +8,11 @@ use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\StoreManyParticipants;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Listeners\ParticipantsAddedMessage;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreManyParticipantsTest extends FeatureTestCase

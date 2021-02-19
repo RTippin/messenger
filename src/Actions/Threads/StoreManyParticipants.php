@@ -9,12 +9,12 @@ use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Http\Resources\Broadcast\NewThreadBroadcastResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\ProvidersRepository;
+use RTippin\Messenger\Support\Definitions;
 use Throwable;
 
 class StoreManyParticipants extends ThreadParticipantAction

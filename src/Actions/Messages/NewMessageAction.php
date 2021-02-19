@@ -9,9 +9,9 @@ use RTippin\Messenger\Actions\Threads\MarkParticipantRead;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Http\Resources\MessageResource;
+use RTippin\Messenger\Support\Definitions;
 use Throwable;
 
 abstract class NewMessageAction extends BaseMessengerAction

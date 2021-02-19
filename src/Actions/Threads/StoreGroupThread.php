@@ -7,10 +7,10 @@ use Illuminate\Database\DatabaseManager;
 use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Http\Request\GroupThreadRequest;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Support\Definitions;
 use Throwable;
 
 class StoreGroupThread extends NewThreadAction

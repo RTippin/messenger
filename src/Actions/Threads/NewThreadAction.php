@@ -3,11 +3,11 @@
 namespace RTippin\Messenger\Actions\Threads;
 
 use RTippin\Messenger\Actions\BaseMessengerAction;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Http\Resources\Broadcast\NewThreadBroadcastResource;
 use RTippin\Messenger\Http\Resources\ThreadResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\Definitions;
 
 abstract class NewThreadAction extends BaseMessengerAction
 {

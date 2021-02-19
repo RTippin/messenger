@@ -7,13 +7,13 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Invites\JoinWithInvite;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\InviteUsedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Listeners\JoinedWithInviteMessage;
 use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class JoinWithInviteTest extends FeatureTestCase

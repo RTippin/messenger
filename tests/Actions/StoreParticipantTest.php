@@ -4,8 +4,8 @@ namespace RTippin\Messenger\Tests\Actions;
 
 use RTippin\Messenger\Actions\Threads\StoreParticipant;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreParticipantTest extends FeatureTestCase

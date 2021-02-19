@@ -7,8 +7,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Repositories\ThreadRepository;
+use RTippin\Messenger\Support\Definitions;
 
 /**
  * @property-read Model|MessengerProvider $provider

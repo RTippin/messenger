@@ -8,13 +8,13 @@ use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\CallStartedBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\CallStartedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\NewCallException;
 use RTippin\Messenger\Http\Resources\Broadcast\NewCallBroadcastResource;
 use RTippin\Messenger\Http\Resources\CallResource;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Support\Definitions;
 
 abstract class NewCallAction extends BaseMessengerAction
 {

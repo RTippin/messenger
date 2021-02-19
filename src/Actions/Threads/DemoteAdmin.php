@@ -5,12 +5,12 @@ namespace RTippin\Messenger\Actions\Threads;
 use Illuminate\Contracts\Events\Dispatcher;
 use RTippin\Messenger\Broadcasting\DemotedAdminBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\DemotedAdminEvent;
 use RTippin\Messenger\Http\Resources\ParticipantResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\Definitions;
 
 class DemoteAdmin extends ThreadParticipantAction
 {

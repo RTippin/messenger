@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger;
+namespace RTippin\Messenger\Support;
 
 class Definitions
 {

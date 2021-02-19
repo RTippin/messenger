@@ -4,8 +4,8 @@ namespace RTippin\Messenger\Actions\Threads;
 
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Models\Participant;
+use RTippin\Messenger\Support\Definitions;
 
 abstract class ThreadParticipantAction extends BaseMessengerAction
 {

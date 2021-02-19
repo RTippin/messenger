@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Http\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
-use RTippin\Messenger\Definitions;
+use RTippin\Messenger\Support\Definitions;
 
 class GroupAvatarRequest extends FormRequest
 {

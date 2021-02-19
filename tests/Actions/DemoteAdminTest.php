@@ -8,12 +8,12 @@ use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\DemoteAdmin;
 use RTippin\Messenger\Broadcasting\DemotedAdminBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\DemotedAdminEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Listeners\DemotedAdminMessage;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class DemoteAdminTest extends FeatureTestCase

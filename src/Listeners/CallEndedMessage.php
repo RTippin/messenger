@@ -4,8 +4,8 @@ namespace RTippin\Messenger\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
 use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\CallEndedEvent;
+use RTippin\Messenger\Support\Definitions;
 use Throwable;
 
 class CallEndedMessage implements ShouldQueue

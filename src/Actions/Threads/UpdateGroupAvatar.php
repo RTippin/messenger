@@ -7,7 +7,6 @@ use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\ThreadAvatarBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Events\ThreadAvatarEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\UploadFailedException;
@@ -17,6 +16,7 @@ use RTippin\Messenger\Http\Resources\ThreadSettingsResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\FileService;
+use RTippin\Messenger\Support\Definitions;
 
 class UpdateGroupAvatar extends BaseMessengerAction
 {

@@ -8,10 +8,10 @@ use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
 use Intervention\Image\ImageManager;
-use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\Definitions;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
