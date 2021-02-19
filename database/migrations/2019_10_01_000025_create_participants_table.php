@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use RTippin\Messenger\Support\Helpers;
 
 class CreateParticipantsTable extends Migration
 {
@@ -16,7 +17,7 @@ class CreateParticipantsTable extends Migration
         Schema::create('participants', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('thread_id');
-            messengerMorphType('owner', $table);
+            Helpers::SchemaMorphType('owner', $table);
             $table->boolean('admin')->default(0);
             $table->boolean('muted')->default(0);
             $table->boolean('pending')->default(0);

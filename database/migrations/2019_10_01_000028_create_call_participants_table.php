@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use RTippin\Messenger\Support\Helpers;
 
 class CreateCallParticipantsTable extends Migration
 {
@@ -16,7 +17,7 @@ class CreateCallParticipantsTable extends Migration
         Schema::create('call_participants', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('call_id');
-            messengerMorphType('owner', $table);
+            Helpers::SchemaMorphType('owner', $table);
             $table->boolean('kicked')->default(0);
             $table->timestamp('left_call')->nullable();
             $table->timestamps();

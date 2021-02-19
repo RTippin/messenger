@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use RTippin\Messenger\Support\Helpers;
 
 class CreateMessengersTable extends Migration
 {
@@ -15,7 +16,7 @@ class CreateMessengersTable extends Migration
     {
         Schema::create('messengers', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            messengerMorphType('owner', $table);
+            Helpers::SchemaMorphType('owner', $table);
             $table->boolean('message_popups')->default(1);
             $table->boolean('message_sound')->default(1);
             $table->boolean('call_ringtone_sound')->default(1);

@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use RTippin\Messenger\Support\Helpers;
 
 class CreateMessagesTable extends Migration
 {
@@ -16,7 +17,7 @@ class CreateMessagesTable extends Migration
         Schema::create('messages', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('thread_id');
-            messengerMorphType('owner', $table);
+            Helpers::SchemaMorphType('owner', $table);
             $table->integer('type')->index();
             $table->text('body');
             $table->timestamps();

@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use RTippin\Messenger\Support\Helpers;
 
 class CreatePendingFriendsTable extends Migration
 {
@@ -15,8 +16,8 @@ class CreatePendingFriendsTable extends Migration
     {
         Schema::create('pending_friends', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            messengerMorphType('sender', $table);
-            messengerMorphType('recipient', $table);
+            Helpers::SchemaMorphType('sender', $table);
+            Helpers::SchemaMorphType('recipient', $table);
             $table->timestamps();
         });
     }

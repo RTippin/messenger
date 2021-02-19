@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use RTippin\Messenger\Support\Helpers;
 
 class CreateFriendsTable extends Migration
 {
@@ -15,8 +16,8 @@ class CreateFriendsTable extends Migration
     {
         Schema::create('friends', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            messengerMorphType('owner', $table);
-            messengerMorphType('party', $table);
+            Helpers::SchemaMorphType('owner', $table);
+            Helpers::SchemaMorphType('party', $table);
             $table->timestamps();
         });
     }
