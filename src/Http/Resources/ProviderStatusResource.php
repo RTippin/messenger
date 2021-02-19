@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Http\Resources;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Definitions;
 use RTippin\Messenger\Repositories\ThreadRepository;
@@ -71,7 +72,7 @@ class ProviderStatusResource extends JsonResource
      */
     private function pendingFriendsCount(): int
     {
-        return messengerFriends()
+        return app(FriendDriver::class)
             ->getProviderPendingFriends()
             ->count();
     }

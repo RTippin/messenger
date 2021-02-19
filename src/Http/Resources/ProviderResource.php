@@ -6,6 +6,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Definitions;
 
@@ -204,7 +205,7 @@ class ProviderResource extends JsonResource
     private function getFriendStatus(): int
     {
         if (is_null($this->forceFriendStatus)) {
-            return messengerFriends()->friendStatus($this->provider);
+            return app(FriendDriver::class)->friendStatus($this->provider);
         }
 
         return $this->forceFriendStatus;
@@ -217,7 +218,7 @@ class ProviderResource extends JsonResource
     private function getFriendResourceId(int $friendStatus): ?string
     {
         return optional(
-            messengerFriends()->getFriendResource(
+            app(FriendDriver::class)->getFriendResource(
                 $friendStatus,
                 $this->provider
             )

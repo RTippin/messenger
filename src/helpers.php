@@ -15,18 +15,18 @@ if (! function_exists('messenger')) {
         return resolve(Messenger::class);
     }
 }
-
-if (! function_exists('messengerFriends')) {
-    /**
-     * @return FriendDriver
-     *
-     * Return the active instance of the friend broker
-     */
-    function messengerFriends(): FriendDriver
-    {
-        return resolve(FriendDriver::class);
-    }
-}
+//
+//if (! function_exists('messengerFriends')) {
+//    /**
+//     * @return FriendDriver
+//     *
+//     * Return the active instance of the friend broker
+//     */
+//    function messengerFriends(): FriendDriver
+//    {
+//        return resolve(FriendDriver::class);
+//    }
+//}
 
 //if (! function_exists('messengerMorphType')) {
 //    /**
