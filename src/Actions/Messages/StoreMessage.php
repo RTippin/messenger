@@ -7,7 +7,7 @@ use Illuminate\Database\DatabaseManager;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Services\EmojiConverter;
+use RTippin\Messenger\Support\EmojiConverter;
 use Throwable;
 
 class StoreMessage extends NewMessageAction

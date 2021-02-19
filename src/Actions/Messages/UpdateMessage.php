@@ -13,7 +13,7 @@ use RTippin\Messenger\Http\Resources\MessageResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Services\EmojiConverter;
+use RTippin\Messenger\Support\EmojiConverter;
 use Throwable;
 
 class UpdateMessage extends BaseMessengerAction

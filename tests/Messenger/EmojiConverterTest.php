@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Tests\Messenger;
 
 use JoyPixels\Client;
 use Orchestra\Testbench\TestCase;
-use RTippin\Messenger\Services\EmojiConverter;
+use RTippin\Messenger\Support\EmojiConverter;
 
 class EmojiConverterTest extends TestCase
 {
