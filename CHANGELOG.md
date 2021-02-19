@@ -7,9 +7,7 @@
 - helpers.php methods except messenger().
 
 ### Changed
-- Moved Definitions.php to support directory.
-- Moved other helper methods from helpers.php into the support Helpers.php class.
-- Put a primary key back onto messenger model and table messengers.
+- New Helpers class and support directory. Moved files around.
 - Minor bug fixes.
 
 ## [v0.16 (02-17-2021)]

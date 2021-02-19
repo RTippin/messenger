@@ -17,7 +17,7 @@ use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\ParticipantRepository;
-use RTippin\Messenger\Services\PushNotificationFormatter;
+use RTippin\Messenger\Support\PushNotificationFormatter;
 use RTippin\Messenger\Traits\ChecksReflection;
 
 class BroadcastBroker implements BroadcastDriver

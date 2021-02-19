@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger\Services;
+namespace RTippin\Messenger\Support;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Events\Dispatcher;

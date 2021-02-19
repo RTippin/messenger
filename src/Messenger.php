@@ -7,7 +7,7 @@ use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
 use RTippin\Messenger\Contracts\MessengerInterface;
-use RTippin\Messenger\Services\ProvidersVerification;
+use RTippin\Messenger\Support\ProvidersVerification;
 
 /**
  * Laravel Messenger System.

@@ -3,7 +3,7 @@
 namespace RTippin\Messenger\Tests\Messenger;
 
 use Illuminate\Support\Collection;
-use RTippin\Messenger\Services\ProvidersVerification;
+use RTippin\Messenger\Support\ProvidersVerification;
 use RTippin\Messenger\Tests\Fixtures\CompanyModel;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
 use RTippin\Messenger\Tests\Fixtures\UserModel;

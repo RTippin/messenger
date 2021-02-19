@@ -8,7 +8,7 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\PushNotificationEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Services\PushNotificationFormatter;
+use RTippin\Messenger\Support\PushNotificationFormatter;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
 
