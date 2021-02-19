@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\MessageFactory;
 use RTippin\Messenger\Definitions;
+use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\Uuids;
 use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
 
@@ -220,7 +221,7 @@ class Message extends Model
             return null;
         }
 
-        return messengerRoute(($api ? 'api.' : '').'messenger.threads.gallery.render',
+        return Helpers::Route(($api ? 'api.' : '').'messenger.threads.gallery.render',
             [
                 'thread' => $this->thread_id,
                 'message' => $this->id,
@@ -240,7 +241,7 @@ class Message extends Model
             return null;
         }
 
-        return messengerRoute(($api ? 'api.' : '').'messenger.threads.files.download',
+        return Helpers::Route(($api ? 'api.' : '').'messenger.threads.files.download',
             [
                 'thread' => $this->thread_id,
                 'message' => $this->id,
@@ -258,7 +259,7 @@ class Message extends Model
             return null;
         }
 
-        return messengerRoute('api.messenger.threads.messages.history',
+        return Helpers::Route('api.messenger.threads.messages.history',
             [
                 'thread' => $this->thread_id,
                 'message' => $this->id,

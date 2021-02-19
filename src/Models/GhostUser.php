@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Models;
 
 use Illuminate\Database\Eloquent\Model as Eloquent;
+use RTippin\Messenger\Support\Helpers;
 
 /**
  * App\GhostUser.
@@ -47,7 +48,7 @@ class GhostUser extends Eloquent
      */
     public function getAvatarRoute(string $size = 'sm', $api = false): ?string
     {
-        return messengerRoute(($api ? 'api.' : '').'avatar.render',
+        return Helpers::Route(($api ? 'api.' : '').'avatar.render',
             [
                 'alias' => 'ghost',
                 'id' => 'ghost',

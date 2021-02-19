@@ -28,46 +28,46 @@ if (! function_exists('messengerFriends')) {
     }
 }
 
-if (! function_exists('messengerMorphType')) {
-    /**
-     * Helper to set morph key type in migrations.
-     *
-     * @param string $column
-     * @param Blueprint $table
-     */
-    function messengerMorphType(string $column, Blueprint $table)
-    {
-        if (config('messenger.provider_uuids')) {
-            $table->uuidMorphs($column);
-        } else {
-            $table->numericMorphs($column);
-        }
-    }
-}
-
-if (! function_exists('messengerRoute')) {
-    /**
-     * Generate the URL to a named route.
-     *
-     * @param  array|string  $name
-     * @param  mixed  $parameters
-     * @param  bool  $absolute
-     * @return string|null
-     */
-    function messengerRoute(string $name, $parameters = null, bool $absolute = false): ?string
-    {
-        if (app('router')->has($name)) {
-            try {
-                return app('url')->route(
-                    $name,
-                    $parameters ? $parameters : [],
-                    $absolute
-                );
-            } catch (Exception $e) {
-                report($e);
-            }
-        }
-
-        return null;
-    }
-}
+//if (! function_exists('messengerMorphType')) {
+//    /**
+//     * Helper to set morph key type in migrations.
+//     *
+//     * @param string $column
+//     * @param Blueprint $table
+//     */
+//    function messengerMorphType(string $column, Blueprint $table)
+//    {
+//        if (config('messenger.provider_uuids')) {
+//            $table->uuidMorphs($column);
+//        } else {
+//            $table->numericMorphs($column);
+//        }
+//    }
+//}
+//
+//if (! function_exists('messengerRoute')) {
+//    /**
+//     * Generate the URL to a named route.
+//     *
+//     * @param  array|string  $name
+//     * @param  mixed  $parameters
+//     * @param  bool  $absolute
+//     * @return string|null
+//     */
+//    function messengerRoute(string $name, $parameters = null, bool $absolute = false): ?string
+//    {
+//        if (app('router')->has($name)) {
+//            try {
+//                return app('url')->route(
+//                    $name,
+//                    $parameters ? $parameters : [],
+//                    $absolute
+//                );
+//            } catch (Exception $e) {
+//                report($e);
+//            }
+//        }
+//
+//        return null;
+//    }
+//}

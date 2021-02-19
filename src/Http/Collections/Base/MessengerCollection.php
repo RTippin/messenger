@@ -8,6 +8,7 @@ use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\GroupThreadRepository;
 use RTippin\Messenger\Repositories\PrivateThreadRepository;
 use RTippin\Messenger\Repositories\ThreadRepository;
+use RTippin\Messenger\Support\Helpers;
 
 abstract class MessengerCollection extends ResourceCollection
 {
@@ -177,48 +178,48 @@ abstract class MessengerCollection extends ResourceCollection
         if ($this->nextPageId()) {
             switch ($this->collectionType) {
                 case 'threads':
-                    return messengerRoute('api.messenger.threads.page', $this->nextPageId());
+                    return Helpers::Route('api.messenger.threads.page', $this->nextPageId());
                 case 'groups':
-                    return messengerRoute('api.messenger.groups.page', $this->nextPageId());
+                    return Helpers::Route('api.messenger.groups.page', $this->nextPageId());
                 case 'privates':
-                    return messengerRoute('api.messenger.privates.page', $this->nextPageId());
+                    return Helpers::Route('api.messenger.privates.page', $this->nextPageId());
                 case 'participants':
-                    return messengerRoute('api.messenger.threads.participants.page',
+                    return Helpers::Route('api.messenger.threads.participants.page',
                         [
                             'thread' => $this->thread->id,
                             'participant' => $this->nextPageId(),
                         ]
                     );
                 case 'messages':
-                    return messengerRoute('api.messenger.threads.messages.page',
+                    return Helpers::Route('api.messenger.threads.messages.page',
                         [
                             'thread' => $this->thread->id,
                             'message' => $this->nextPageId(),
                         ]
                     );
                 case 'calls':
-                    return messengerRoute('api.messenger.threads.calls.page',
+                    return Helpers::Route('api.messenger.threads.calls.page',
                         [
                             'thread' => $this->thread->id,
                             'call' => $this->nextPageId(),
                         ]
                     );
                 case 'logs':
-                    return messengerRoute('api.messenger.threads.logs.page',
+                    return Helpers::Route('api.messenger.threads.logs.page',
                         [
                             'thread' => $this->thread->id,
                             'log' => $this->nextPageId(),
                         ]
                     );
                 case 'images':
-                    return messengerRoute('api.messenger.threads.images.page',
+                    return Helpers::Route('api.messenger.threads.images.page',
                         [
                             'thread' => $this->thread->id,
                             'image' => $this->nextPageId(),
                         ]
                     );
                 case 'documents':
-                    return messengerRoute('api.messenger.threads.documents.page',
+                    return Helpers::Route('api.messenger.threads.documents.page',
                         [
                             'thread' => $this->thread->id,
                             'document' => $this->nextPageId(),

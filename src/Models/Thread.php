@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use RTippin\Messenger\Database\Factories\ThreadFactory;
 use RTippin\Messenger\Definitions;
+use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\Uuids;
 use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
 
@@ -360,7 +361,7 @@ class Thread extends Model
      */
     public function getThreadAvatarRoute(string $size = 'sm', $api = false): string
     {
-        return messengerRoute(($api ? 'api.' : '').'messenger.threads.avatar.render',
+        return Helpers::Route(($api ? 'api.' : '').'messenger.threads.avatar.render',
             [
                 'thread' => $this->id,
                 'size' => $size,

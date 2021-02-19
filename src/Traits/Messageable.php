@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Traits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use RTippin\Messenger\Definitions;
+use RTippin\Messenger\Support\Helpers;
 
 /**
  * App\Traits\Messageable.
@@ -72,7 +73,7 @@ trait Messageable
      */
     public function getAvatarRoute(string $size = 'sm', $api = false): ?string
     {
-        return messengerRoute(($api ? 'api.' : '').'avatar.render',
+        return Helpers::Route(($api ? 'api.' : '').'avatar.render',
             [
                 'alias' => messenger()->findProviderAlias($this),
                 'id' => $this->getKey(),
