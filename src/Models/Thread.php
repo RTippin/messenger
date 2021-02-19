@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use RTippin\Messenger\Database\Factories\ThreadFactory;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\Uuids;
@@ -212,7 +213,7 @@ class Thread extends Model
      */
     public function getStorageDisk(): string
     {
-        return messenger()->getThreadStorage('disk');
+        return Messenger::getThreadStorage('disk');
     }
 
     /**
@@ -220,7 +221,7 @@ class Thread extends Model
      */
     public function getStorageDirectory(): string
     {
-        return messenger()->getThreadStorage('directory')."/{$this->id}";
+        return Messenger::getThreadStorage('directory')."/{$this->id}";
     }
 
     /**
@@ -265,7 +266,7 @@ class Thread extends Model
         }
 
         if (! $this->hasCurrentProvider()) {
-            return $this->recipientCache = messenger()->getGhostParticipant($this->id);
+            return $this->recipientCache = Messenger::getGhostParticipant($this->id);
         }
 
         /** @var Participant $recipient */
@@ -284,9 +285,9 @@ class Thread extends Model
         }
 
         return $this->recipientCache = ($recipient
-            && messenger()->isValidMessengerProvider($recipient->owner))
+            && Messenger::isValidMessengerProvider($recipient->owner))
             ? $recipient
-            : messenger()->getGhostParticipant($this->id);
+            : Messenger::getGhostParticipant($this->id);
     }
 
     /**
@@ -295,19 +296,19 @@ class Thread extends Model
     public function currentParticipant(): ?Participant
     {
         if ($this->currentParticipantCache
-            || ! messenger()->isProviderSet()) {
+            || ! Messenger::isProviderSet()) {
             return $this->currentParticipantCache;
         }
 
         if ($this->relationLoaded('participants')) {
             $this->currentParticipantCache = $this->participants
-                ->where('owner_id', messenger()->getProviderId())
-                ->where('owner_type', messenger()->getProviderClass())
+                ->where('owner_id', Messenger::getProviderId())
+                ->where('owner_type', Messenger::getProviderClass())
                 ->first();
         } else {
             $this->currentParticipantCache = $this->participants()
-                ->where('owner_id', messenger()->getProviderId())
-                ->where('owner_type', messenger()->getProviderClass())
+                ->where('owner_id', Messenger::getProviderId())
+                ->where('owner_type', Messenger::getProviderClass())
                 ->first();
         }
 
@@ -470,7 +471,7 @@ class Thread extends Model
      */
     public function canInviteParticipants(): bool
     {
-        return messenger()->isThreadInvitesEnabled()
+        return Messenger::isThreadInvitesEnabled()
             && ! $this->isLocked()
             && $this->isGroup()
             && $this->invitations
@@ -483,8 +484,8 @@ class Thread extends Model
      */
     public function canJoinWithInvite(): bool
     {
-        return messenger()->isThreadInvitesEnabled()
-            && messenger()->isProviderSet()
+        return Messenger::isThreadInvitesEnabled()
+            && Messenger::isProviderSet()
             && $this->isGroup()
             && ! $this->lockout
             && $this->invitations
@@ -496,7 +497,7 @@ class Thread extends Model
      */
     public function canCall(): bool
     {
-        return messenger()->isCallingEnabled()
+        return Messenger::isCallingEnabled()
             && ! $this->isLocked()
             && ! $this->isPending()
             && $this->calling
@@ -510,7 +511,7 @@ class Thread extends Model
      */
     public function canKnock(): bool
     {
-        return messenger()->isKnockKnockEnabled()
+        return Messenger::isKnockKnockEnabled()
             && ! $this->isLocked()
             && ! $this->isPending()
             && $this->knocks

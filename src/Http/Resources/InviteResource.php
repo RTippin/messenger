@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Invite;
 
 class InviteResource extends JsonResource
@@ -58,7 +59,7 @@ class InviteResource extends JsonResource
         $isValid = $invite->isValid();
 
         return [
-            'messenger_auth' => messenger()->isProviderSet(),
+            'messenger_auth' => Messenger::isProviderSet(),
             'in_thread' => $isValid ? $this->isAlreadyInThread($invite) : false,
             'thread_name' => $isValid ? $invite->thread->name() : null,
             'is_valid' => $isValid,
@@ -71,7 +72,7 @@ class InviteResource extends JsonResource
      */
     private function isAlreadyInThread(Invite $invite): bool
     {
-        return messenger()->isProviderSet()
+        return Messenger::isProviderSet()
             ? $invite->thread->hasCurrentProvider()
             : false;
     }

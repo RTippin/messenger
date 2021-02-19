@@ -21,7 +21,7 @@ class MessengerResource extends JsonResource
         $messenger = $this->resource;
 
         return [
-            'owner' => new ProviderResource(messenger()->getProvider()),
+            'owner' => new ProviderResource(\RTippin\Messenger\Facades\Messenger::getProvider()),
             $this->merge($messenger),
         ];
     }

@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Http\Collections\Base;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\GroupThreadRepository;
 use RTippin\Messenger\Repositories\PrivateThreadRepository;
@@ -118,16 +119,16 @@ abstract class MessengerCollection extends ResourceCollection
                 case 'threads':
                 case 'groups':
                 case 'privates':
-                    return messenger()->getThreadsPageCount();
+                    return Messenger::getThreadsPageCount();
                 case 'participants':
-                    return messenger()->getParticipantsPageCount();
+                    return Messenger::getParticipantsPageCount();
                 case 'messages':
                 case 'logs':
                 case 'images':
                 case 'documents':
-                    return messenger()->getMessagesPageCount();
+                    return Messenger::getMessagesPageCount();
                 case 'calls':
-                    return messenger()->getCallsPageCount();
+                    return Messenger::getCallsPageCount();
                 default:
                     return 25;
             }
@@ -137,16 +138,16 @@ abstract class MessengerCollection extends ResourceCollection
             case 'threads':
             case 'groups':
             case 'privates':
-                return messenger()->getThreadsIndexCount();
+                return Messenger::getThreadsIndexCount();
             case 'participants':
-                return messenger()->getParticipantsIndexCount();
+                return Messenger::getParticipantsIndexCount();
             case 'messages':
             case 'logs':
             case 'images':
             case 'documents':
-                return messenger()->getMessagesIndexCount();
+                return Messenger::getMessagesIndexCount();
             case 'calls':
-                return messenger()->getCallsIndexCount();
+                return Messenger::getCallsIndexCount();
             default:
                 return 25;
         }
@@ -241,16 +242,16 @@ abstract class MessengerCollection extends ResourceCollection
                 case 'threads':
                 case 'groups':
                 case 'privates':
-                    return $this->collection->count() < messenger()->getThreadsIndexCount();
+                    return $this->collection->count() < Messenger::getThreadsIndexCount();
                 case 'participants':
-                    return $this->collection->count() < messenger()->getParticipantsIndexCount();
+                    return $this->collection->count() < Messenger::getParticipantsIndexCount();
                 case 'messages':
                 case 'logs':
                 case 'images':
                 case 'documents':
-                    return $this->collection->count() < messenger()->getMessagesIndexCount();
+                    return $this->collection->count() < Messenger::getMessagesIndexCount();
                 case 'calls':
-                    return $this->collection->count() < messenger()->getCallsIndexCount();
+                    return $this->collection->count() < Messenger::getCallsIndexCount();
             }
         }
 

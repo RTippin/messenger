@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
@@ -51,7 +52,7 @@ class Friend extends Model
     public function owner()
     {
         return $this->morphTo()->withDefault(function () {
-            return messenger()->getGhostProvider();
+            return Messenger::getGhostProvider();
         });
     }
 
@@ -61,7 +62,7 @@ class Friend extends Model
     public function party()
     {
         return $this->morphTo()->withDefault(function () {
-            return messenger()->getGhostProvider();
+            return Messenger::getGhostProvider();
         });
     }
 }

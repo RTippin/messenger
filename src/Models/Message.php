@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\MessageFactory;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\Uuids;
@@ -103,7 +104,7 @@ class Message extends Model
     public function owner()
     {
         return $this->morphTo()->withDefault(function () {
-            return messenger()->getGhostProvider();
+            return Messenger::getGhostProvider();
         });
     }
 
@@ -175,7 +176,7 @@ class Message extends Model
      */
     public function getStorageDisk(): string
     {
-        return messenger()->getThreadStorage('disk');
+        return Messenger::getThreadStorage('disk');
     }
 
     /**
@@ -183,7 +184,7 @@ class Message extends Model
      */
     public function getStorageDirectory(): string
     {
-        return messenger()->getThreadStorage('directory')."/{$this->thread_id}";
+        return Messenger::getThreadStorage('directory')."/{$this->thread_id}";
     }
 
     /**

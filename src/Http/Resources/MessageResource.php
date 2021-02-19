@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\GhostUser;
@@ -250,18 +251,18 @@ class MessageResource extends JsonResource
             ->where('owner_type', '=', $data['owner_type'])
             ->first();
 
-        if ($participant && messenger()->isValidMessengerProvider($participant->owner)) {
+        if ($participant && Messenger::isValidMessengerProvider($participant->owner)) {
             return $participant->owner;
         }
 
         /** @var MessengerProvider|null $owner */
         $owner = null;
 
-        if (messenger()->isValidMessengerProvider($data['owner_type'])) {
+        if (Messenger::isValidMessengerProvider($data['owner_type'])) {
             $owner = $data['owner_type']::find($data['owner_id']);
         }
 
-        return $owner ?: messenger()->getGhostProvider();
+        return $owner ?: Messenger::getGhostProvider();
     }
 
     /**

@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Support\Helpers;
 
@@ -75,7 +76,7 @@ trait Messageable
     {
         return Helpers::Route(($api ? 'api.' : '').'avatar.render',
             [
-                'alias' => messenger()->findProviderAlias($this),
+                'alias' => Messenger::findProviderAlias($this),
                 'id' => $this->getKey(),
                 'size' => $size,
                 'image' => $this->{$this->getAvatarColumn()} ? $this->{$this->getAvatarColumn()} : 'default.png',
@@ -95,7 +96,7 @@ trait Messageable
             return $this->isOnlineCache;
         }
 
-        $this->isOnlineCache = messenger()->getProviderOnlineStatus($this);
+        $this->isOnlineCache = Messenger::getProviderOnlineStatus($this);
 
         return $this->isOnlineCache;
     }

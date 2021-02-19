@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Traits\Uuids;
 
@@ -94,7 +95,7 @@ class Call extends Model
     public function owner()
     {
         return $this->morphTo()->withDefault(function () {
-            return messenger()->getGhostProvider();
+            return Messenger::getGhostProvider();
         });
     }
 
@@ -214,14 +215,14 @@ class Call extends Model
      */
     public function currentCallParticipant(): ?CallParticipant
     {
-        if (! messenger()->isProviderSet()
+        if (! Messenger::isProviderSet()
             || $this->currentParticipantCache) {
             return $this->currentParticipantCache;
         }
 
         return $this->currentParticipantCache = $this->participants
-            ->where('owner_id', messenger()->getProviderId())
-            ->where('owner_type', '=', messenger()->getProviderClass())
+            ->where('owner_id', Messenger::getProviderId())
+            ->where('owner_type', '=', Messenger::getProviderClass())
             ->first();
     }
 
@@ -236,8 +237,8 @@ class Call extends Model
             return false;
         }
 
-        if ((string) messenger()->getProviderId() === (string) $this->owner_id
-            && messenger()->getProviderClass() === $this->owner_type) {
+        if ((string) Messenger::getProviderId() === (string) $this->owner_id
+            && Messenger::getProviderClass() === $this->owner_type) {
             return true;
         }
 

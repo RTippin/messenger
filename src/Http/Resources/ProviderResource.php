@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Definitions;
 
 /**
@@ -53,9 +54,9 @@ class ProviderResource extends JsonResource
         $this->addOptions = $addOptions;
         $this->forceFriendStatus = $forceFriendStatus;
         $this->addBaseModel = $addBaseModel;
-        $this->provider = messenger()->isValidMessengerProvider($provider)
+        $this->provider = Messenger::isValidMessengerProvider($provider)
             ? $provider
-            : messenger()->getGhostProvider();
+            : Messenger::getGhostProvider();
     }
 
     /**
@@ -71,7 +72,7 @@ class ProviderResource extends JsonResource
             'name' => $this->provider->name(),
             'route' => $this->provider->getRoute(),
             'provider_id' => $this->provider->getKey(),
-            'provider_alias' => messenger()->findProviderAlias($this->provider) ?: 'ghost',
+            'provider_alias' => Messenger::findProviderAlias($this->provider) ?: 'ghost',
             'base' => $this->when($this->addBaseModel,
                 fn () => $this->provider->withoutRelations()->toArray()
             ),
@@ -139,8 +140,8 @@ class ProviderResource extends JsonResource
      */
     private function canMessageFirst(): bool
     {
-        return messenger()->canMessageProviderFirst($this->provider)
-            && ! messenger()->getProvider()->is($this->provider);
+        return Messenger::canMessageProviderFirst($this->provider)
+            && ! Messenger::getProvider()->is($this->provider);
     }
 
     /**
@@ -149,8 +150,8 @@ class ProviderResource extends JsonResource
      */
     private function isFriendable(): bool
     {
-        return messenger()->isProviderFriendable($this->provider)
-            && ! messenger()->getProvider()->is($this->provider);
+        return Messenger::isProviderFriendable($this->provider)
+            && ! Messenger::getProvider()->is($this->provider);
     }
 
     /**
@@ -161,7 +162,7 @@ class ProviderResource extends JsonResource
     private function canFriend(bool $isFriendable): bool
     {
         return $isFriendable
-            ? messenger()->canFriendProvider($this->provider)
+            ? Messenger::canFriendProvider($this->provider)
             : false;
     }
 
@@ -170,7 +171,7 @@ class ProviderResource extends JsonResource
      */
     private function isSearchable(): bool
     {
-        return messenger()->isProviderSearchable($this->provider);
+        return Messenger::isProviderSearchable($this->provider);
     }
 
     /**
@@ -180,7 +181,7 @@ class ProviderResource extends JsonResource
     private function canSearch(bool $isSearchable): bool
     {
         return $isSearchable
-            ? messenger()->canSearchProvider($this->provider)
+            ? Messenger::canSearchProvider($this->provider)
             : false;
     }
 
@@ -190,7 +191,7 @@ class ProviderResource extends JsonResource
      */
     private function getLastActive(int $friendStatus)
     {
-        if (messenger()->isOnlineStatusEnabled()) {
+        if (Messenger::isOnlineStatusEnabled()) {
             return $friendStatus === 1
                 ? $this->provider->lastActiveDateTime()
                 : null;

@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Repositories\ThreadRepository;
 use RTippin\Messenger\Support\Definitions;
 
@@ -53,7 +54,7 @@ class ProviderStatusResource extends JsonResource
             'online_status_verbose' => Definitions::OnlineStatus[$this->provider->onlineStatus()],
             'unread_threads_count' => $this->unreadThreadsCount(),
             'pending_friends_count' => $this->pendingFriendsCount(),
-            'settings' => messenger()->getProviderMessenger($this->provider),
+            'settings' => Messenger::getProviderMessenger($this->provider),
         ];
     }
 

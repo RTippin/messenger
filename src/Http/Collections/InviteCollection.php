@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Http\Collections;
 
 use Exception;
 use Illuminate\Http\Request;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use RTippin\Messenger\Http\Resources\InviteResource;
 use RTippin\Messenger\Models\Thread;
@@ -37,7 +38,7 @@ class InviteCollection extends MessengerCollection
             'data' => $this->safeTransformer(),
             'meta' => [
                 'total' => $this->thread->invites()->valid()->count(),
-                'max_allowed' => messenger()->getThreadMaxInvitesCount() ?: null,
+                'max_allowed' => Messenger::getThreadMaxInvitesCount() ?: null,
             ],
         ];
     }
