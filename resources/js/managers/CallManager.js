@@ -68,9 +68,6 @@ window.CallManager = (function () {
             }
             opt._call = call;
             opt.call_loaded = true;
-            if(!call.options.joined){
-                //TODO
-            }
             opt.call_owner = call.owner_id;
             opt.thread_id = call.thread_id;
             opt.thread_type = call.meta.thread_type;
@@ -80,14 +77,8 @@ window.CallManager = (function () {
             opt.INIT_time = moment.now();
             // opt.call_mode = arg.call_mode;
             // opt.thread_admin = arg.thread_admin;
-            Sockets.heartbeat(false);
-            if(opt.call_type === 1){
-                window.addEventListener("beforeunload", methods.windowClosed, false);
-                window.addEventListener("keydown", methods.checkForRefresh, false);
-            }
-            mounted.setConnections();
-            mounted.ready(true, false);
-            mounted.setJanusInfo(call)
+            mounted.setJanusInfo(call, false);
+            NotifyManager.setTitle(call.meta.thread_name + ' | ' + 'Video Call');
         },
         loadCall : function(thread, call, success){
             Messenger.xhr().request({
@@ -96,15 +87,60 @@ window.CallManager = (function () {
                 fail : mounted.callFailed
             })
         },
-        ready : function(socket, janus){
-            if(opt.call_type === 1 && janus){
-                $("#hang_up").removeClass('NS');
-                $("#videos").removeClass('NS');
-                if(opt.call_admin) $("#end_call_nav").removeClass('NS');
-                Messenger.alert().destroyModal();
+        joinConfirm : function(){
+            Messenger.alert().destroyModal();
+            Messenger.alert().Modal({
+                icon : 'video',
+                backdrop_ctrl : false,
+                allow_close : false,
+                centered : true,
+                size : 'md',
+                h4 : false,
+                theme : 'success',
+                title : 'Ready to connect?',
+                body : templates.join_confirm(),
+                onReady : function(){
+                    $("#call_join_confirm").one('click', mounted.checkIfJoined);
+                    $("#call_exit_confirm").one('click', function(){
+                        window.close();
+                    });
+                }
+            })
+        },
+        checkIfJoined : function() {
+            if(!opt._call.options.joined || !opt._call.options.in_call){
+                $("#join_confirm_modal").html(Messenger.alert().loader(true))
+                Messenger.xhr().payload({
+                    route : Messenger.common().API + 'threads/' + opt._call.thread_id + '/calls/' + opt._call.id + '/join',
+                    data : {},
+                    success : function(){
+                        mounted.loadCall(opt._call.thread_id, opt._call.id, function(call){
+                            mounted.setJanusInfo(call, true);
+                        });
+                    },
+                    fail : mounted.callFailed,
+                    bypass : true,
+                    fail_alert : true
+                });
+            }
+            else{
+                mounted.ready();
             }
         },
-        setJanusInfo : function(call){
+        ready : function(){
+            Sockets.heartbeat(false);
+            Sockets.setupRTC();
+            mounted.setConnections();
+            $("#hang_up").removeClass('NS');
+            $("#videos").removeClass('NS');
+            if(opt.call_admin) $("#end_call_nav").removeClass('NS');
+            Messenger.alert().destroyModal();
+            if(opt.call_type === 1){
+                window.addEventListener("beforeunload", methods.windowClosed, false);
+                window.addEventListener("keydown", methods.checkForRefresh, false);
+            }
+        },
+        setJanusInfo : function(call, reloaded){
             if(!call.options.setup_complete){
                 setTimeout(function(){
                     mounted.loadCall(call.thread_id, call.id, mounted.setJanusInfo)
@@ -114,8 +150,12 @@ window.CallManager = (function () {
             opt._call = call;
             opt.room_id = parseInt(call.options.room_id);
             opt.room_pin = call.options.room_pin;
-            mounted.ready(false, true);
-            Sockets.setupRTC();
+            if(reloaded){
+                mounted.ready();
+            }
+            else{
+                mounted.joinConfirm();
+            }
         },
         setConnections : function (delayed) {
             if(!Messenger.common().modules.includes('NotifyManager') || !NotifyManager.sockets().status){
@@ -128,7 +168,6 @@ window.CallManager = (function () {
                 return;
             }
             Sockets.setup();
-            NotifyManager.setTitle(opt._call.meta.thread_name + ' | ' + 'Video Call');
         },
         callFailed : function(){
             Messenger.alert().Modal({
@@ -212,7 +251,6 @@ window.CallManager = (function () {
                 Sockets.pushLeave(user)
             })
             .listen('.shutdown', methods.serverShutdownNotice);
-            mounted.ready(true, false);
         },
         setupRTC : function(){
             if(!Messenger.common().modules.includes('JanusServer')){
@@ -240,6 +278,12 @@ window.CallManager = (function () {
         call_alert : function(data){
             return '<div id="new_call_modal" class="col-12 text-center mb-1"><h4 class="font-weight-bold">'+(data.call.thread_type === 2 ? data.call.thread_name : data.sender.name)+'</h4>' +
                     '<img class="img-fluid rounded" src="'+(data.call.thread_type === 2 ? data.call.thread_avatar.sm : data.sender.avatar.sm)+'" /></div>'
+        },
+        join_confirm : function() {
+            return '<div id="join_confirm_modal" class="col-12 text-center">' +
+                '<button id="call_join_confirm" type="button" title="Join" class="mx-3 mb-4 shadow-lg btn btn-circle btn-circle-xl btn-success">Join <i class="fas fa-video"></i></button>' +
+                '<button id="call_exit_confirm" type="button" title="Exit" class="mx-3 mb-4 shadow-lg btn btn-circle btn-circle-xl btn-danger">Exit <i class="fas fa-times"></i></button>' +
+                '</div>';
         }
     },
     methods = {
