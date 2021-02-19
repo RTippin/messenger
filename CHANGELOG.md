@@ -8,7 +8,7 @@
 
 ### Changed
 - New Helpers class and support directory. Moved files around.
-- Minor bug fixes.
+- Added intermediate modal to confirm joining call once page loads.
 
 ## [v0.16 (02-17-2021)]
 
