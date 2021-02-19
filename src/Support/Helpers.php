@@ -2,8 +2,8 @@
 
 namespace RTippin\Messenger\Support;
 
-use Illuminate\Database\Schema\Blueprint;
 use Exception;
+use Illuminate\Database\Schema\Blueprint;
 
 class Helpers
 {
