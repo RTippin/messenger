@@ -1,6 +1,17 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+## [v0.17 (02-19-2021)]
+
+### Removed
+- helpers.php methods except messenger().
+
+### Changed
+- Moved Definitions.php to support directory.
+- Moved other helper methods from helpers.php into the support Helpers.php class.
+- Put a primary key back onto messenger model and table messengers.
+- Minor bug fixes.
+
 ## [v0.16 (02-17-2021)]
 
 ### Changed
