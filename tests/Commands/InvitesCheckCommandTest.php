@@ -9,7 +9,7 @@ use RTippin\Messenger\Jobs\ArchiveInvalidInvites;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
-class InvitesCheckTest extends FeatureTestCase
+class InvitesCheckCommandTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
 

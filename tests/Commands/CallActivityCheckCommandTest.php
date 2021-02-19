@@ -9,7 +9,7 @@ use RTippin\Messenger\Jobs\CheckCallsActivity;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
-class CallActivityCheckTest extends FeatureTestCase
+class CallActivityCheckCommandTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
 

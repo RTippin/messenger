@@ -6,7 +6,7 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
-class PurgeMessagesTest extends FeatureTestCase
+class PurgeMessagesCommandTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
 

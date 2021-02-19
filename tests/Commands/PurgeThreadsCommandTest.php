@@ -10,7 +10,7 @@ use RTippin\Messenger\Jobs\PurgeThreads;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
-class PurgeThreadsTest extends FeatureTestCase
+class PurgeThreadsCommandTest extends FeatureTestCase
 {
     protected function setUp(): void
     {

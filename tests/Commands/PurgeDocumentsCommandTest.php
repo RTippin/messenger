@@ -10,7 +10,7 @@ use RTippin\Messenger\Jobs\PurgeDocumentMessages;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
-class PurgeDocumentsTest extends FeatureTestCase
+class PurgeDocumentsCommandTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
 
