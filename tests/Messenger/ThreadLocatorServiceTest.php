@@ -6,12 +6,12 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Exceptions\ProviderNotFoundException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Services\RecipientThreadLocator;
+use RTippin\Messenger\Services\ThreadLocatorService;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
-class RecipientThreadLocatorTest extends FeatureTestCase
+class ThreadLocatorServiceTest extends FeatureTestCase
 {
-    private RecipientThreadLocator $locator;
+    private ThreadLocatorService $locator;
 
     private Thread $private;
 
@@ -33,7 +33,7 @@ class RecipientThreadLocatorTest extends FeatureTestCase
 
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
 
-        $this->locator = app(RecipientThreadLocator::class);
+        $this->locator = app(ThreadLocatorService::class);
 
         Messenger::setProvider($this->tippin);
     }

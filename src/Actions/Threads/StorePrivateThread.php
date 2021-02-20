@@ -19,15 +19,15 @@ use RTippin\Messenger\Exceptions\ProviderNotFoundException;
 use RTippin\Messenger\Http\Request\PrivateThreadRequest;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Services\RecipientThreadLocator;
+use RTippin\Messenger\Services\ThreadLocatorService;
 use Throwable;
 
 class StorePrivateThread extends NewThreadAction
 {
     /**
-     * @var RecipientThreadLocator
+     * @var ThreadLocatorService
      */
-    private RecipientThreadLocator $locator;
+    private ThreadLocatorService $locator;
 
     /**
      * @var Thread|null
@@ -77,14 +77,14 @@ class StorePrivateThread extends NewThreadAction
      * @param DatabaseManager $database
      * @param Dispatcher $dispatcher
      * @param FriendDriver $friends
-     * @param RecipientThreadLocator $locator
+     * @param ThreadLocatorService $locator
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
                                 DatabaseManager $database,
                                 Dispatcher $dispatcher,
                                 FriendDriver $friends,
-                                RecipientThreadLocator $locator)
+                                ThreadLocatorService $locator)
     {
         parent::__construct($messenger);
 

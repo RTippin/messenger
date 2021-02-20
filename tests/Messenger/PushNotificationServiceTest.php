@@ -12,7 +12,7 @@ use RTippin\Messenger\Services\PushNotificationService;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
 
-class PushNotificationFormatterTest extends FeatureTestCase
+class PushNotificationServiceTest extends FeatureTestCase
 {
     private Thread $group;
 

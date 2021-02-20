@@ -9,7 +9,7 @@ use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\PrivateThreadRepository;
 use RTippin\Messenger\Repositories\ProvidersRepository;
 
-class RecipientThreadLocator
+class ThreadLocatorService
 {
     /**
      * @var PrivateThreadRepository
@@ -47,7 +47,7 @@ class RecipientThreadLocator
     private ?Thread $thread = null;
 
     /**
-     * RecipientThreadLocator constructor.
+     * ThreadLocatorService constructor.
      *
      * @param Messenger $messenger
      * @param ProvidersRepository $providersRepository
