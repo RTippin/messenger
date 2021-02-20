@@ -47,13 +47,9 @@ class RateLimitersTest extends FeatureTestCase
 
         $response = $this->getJson(route('api.messenger.threads.index'));
 
-        $limit = $response->headers->get('X-Ratelimit-Limit');
+        $this->assertFalse($response->headers->has('X-Ratelimit-Limit'));
 
-        $remaining = $response->headers->get('X-RateLimit-Remaining');
-
-        $this->assertNull($limit);
-
-        $this->assertNull($remaining);
+        $this->assertFalse($response->headers->has('X-RateLimit-Remaining'));
     }
 
     /** @test */
