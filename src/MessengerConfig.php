@@ -7,6 +7,8 @@ use Illuminate\Contracts\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
+use RTippin\Messenger\Contracts\BroadcastDriver;
+use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Support\ProvidersVerification;
 
 /**
@@ -245,6 +247,7 @@ trait MessengerConfig
         'providerCanFriend',
         'providerCanMessageFirst',
         'providerHasDevices',
+        'providersVerification',
         'defaultNotFoundImage',
         'defaultThreadAvatars',
         'avatarStorage',
@@ -890,11 +893,41 @@ trait MessengerConfig
     }
 
     /**
+     * @param string $driverAlias
+     * @return $this
+     */
+    public function setBroadcastDriver(string $driverAlias): self
+    {
+        $this->broadcastDriver = $driverAlias;
+
+        $driver = $this->configRepo->get('messenger.drivers.broadcasting')[$driverAlias];
+
+        $this->app->singleton(BroadcastDriver::class, $driver);
+
+        return $this;
+    }
+
+    /**
      * @return string
      */
     public function getVideoDriver(): string
     {
         return $this->videoDriver;
+    }
+
+    /**
+     * @param string $driverAlias
+     * @return $this
+     */
+    public function setVideoDriver(string $driverAlias): self
+    {
+        $this->videoDriver = $driverAlias;
+
+        $driver = $this->configRepo->get('messenger.drivers.calling')[$driverAlias];
+
+        $this->app->singleton(VideoDriver::class, $driver);
+
+        return $this;
     }
 
     /**

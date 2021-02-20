@@ -2,12 +2,17 @@
 
 namespace RTippin\Messenger\Tests\Messenger;
 
+use RTippin\Messenger\Brokers\JanusBroker;
+use RTippin\Messenger\Brokers\NullBroadcastBroker;
+use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Facades\Messenger as MessengerFacade;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Participant;
+use RTippin\Messenger\Services\Janus\VideoRoomService;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
 use RTippin\Messenger\Tests\MessengerTestCase;
@@ -528,6 +533,26 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame(10, $this->messenger->getAttachmentRateLimit());
         $this->assertTrue($this->messenger->isMessageEditsEnabled());
         $this->assertTrue($this->messenger->isMessageEditsViewEnabled());
+    }
+
+    /** @test */
+    public function messenger_can_set_drivers()
+    {
+        $this->assertSame('default', $this->messenger->getBroadcastDriver());
+        $this->assertSame('null', $this->messenger->getVideoDriver());
+
+        $this->messenger->setBroadcastDriver('null');
+        $this->messenger->setVideoDriver('janus');
+
+        $this->mock(VideoRoomService::class);
+
+        $broadcastDriver = app(BroadcastDriver::class);
+        $videoDriver = app(VideoDriver::class);
+
+        $this->assertSame('null', $this->messenger->getBroadcastDriver());
+        $this->assertInstanceOf(NullBroadcastBroker::class, $broadcastDriver);
+        $this->assertSame('janus', $this->messenger->getVideoDriver());
+        $this->assertInstanceOf(JanusBroker::class, $videoDriver);
     }
 
     /** @test */

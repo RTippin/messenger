@@ -449,9 +449,21 @@ interface MessengerInterface
     public function getBroadcastDriver(): string;
 
     /**
+     * @param string $driverAlias
+     * @return $this
+     */
+    public function setBroadcastDriver(string $driverAlias);
+
+    /**
      * @return string
      */
     public function getVideoDriver(): string;
+
+    /**
+     * @param string $driverAlias
+     * @return $this
+     */
+    public function setVideoDriver(string $driverAlias);
 
     /**
      * @return string

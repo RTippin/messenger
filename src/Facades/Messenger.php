@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use phpDocumentor\Reflection\Types\Static_;
 use RTippin\Messenger\Contracts\MessengerInterface;
 
 /**
@@ -115,6 +116,8 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static setMessageRateLimit(int $messageRateLimit)
  * @method static getAttachmentRateLimit()
  * @method static setAttachmentRateLimit(int $attachmentRateLimit)
+ * @method static setBroadcastDriver(string $driverAlias)
+ * @method static setVideoDriver(string $driverAlias)
  *
  * @mixin \RTippin\Messenger\Messenger
  * @see MessengerInterface
