@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use phpDocumentor\Reflection\Types\Static_;
 use RTippin\Messenger\Contracts\MessengerInterface;
 
 /**
