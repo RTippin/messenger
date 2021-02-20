@@ -17,7 +17,7 @@ use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\ParticipantRepository;
-use RTippin\Messenger\Support\PushNotificationFormatter;
+use RTippin\Messenger\Services\PushNotificationService;
 use RTippin\Messenger\Traits\ChecksReflection;
 
 class BroadcastBroker implements BroadcastDriver
@@ -65,22 +65,22 @@ class BroadcastBroker implements BroadcastDriver
     protected bool $usingPresence = false;
 
     /**
-     * @var PushNotificationFormatter
+     * @var PushNotificationService
      */
-    protected PushNotificationFormatter $pushNotification;
+    protected PushNotificationService $pushNotification;
 
     /**
      * BroadcastBroker constructor.
      *
      * @param Messenger $messenger
      * @param ParticipantRepository $participantRepository
-     * @param PushNotificationFormatter $pushNotification
+     * @param PushNotificationService $pushNotification
      * @param Factory $broadcast
      * @param Application $app
      */
     public function __construct(Messenger $messenger,
                                 ParticipantRepository $participantRepository,
-                                PushNotificationFormatter $pushNotification,
+                                PushNotificationService $pushNotification,
                                 Factory $broadcast,
                                 Application $app)
     {

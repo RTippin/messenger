@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger\Support;
+namespace RTippin\Messenger\Services;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Events\Dispatcher;
@@ -13,7 +13,7 @@ use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Participant;
 
-class PushNotificationFormatter
+class PushNotificationService
 {
     /**
      * @var Messenger
@@ -41,7 +41,7 @@ class PushNotificationFormatter
     private Dispatcher $dispatcher;
 
     /**
-     * PushNotificationFormatter constructor.
+     * PushNotificationService constructor.
      *
      * @param Messenger $messenger
      * @param Dispatcher $dispatcher

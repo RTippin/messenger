@@ -802,6 +802,6 @@ If you discover any security related issues, please email author email instead o
 [link-set-provider-middleware]: src/Http/Middleware/SetMessengerProvider.php
 [link-listeners]: src/Listeners
 [link-broadcast-broker]: src/Brokers/BroadcastBroker.php
-[link-push-notify]: src/Services/PushNotificationFormatter.php
+[link-push-notify]: src/Services/PushNotificationService.php
 [link-push-event]: https://github.com/RTippin/messenger/blob/master/src/Events/PushNotificationEvent.php
 [link-messenger-faker]: https://github.com/RTippin/messenger-faker

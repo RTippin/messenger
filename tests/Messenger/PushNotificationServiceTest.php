@@ -8,7 +8,7 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\PushNotificationEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Support\PushNotificationFormatter;
+use RTippin\Messenger\Services\PushNotificationService;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
 
@@ -48,7 +48,7 @@ class PushNotificationFormatterTest extends FeatureTestCase
 
         $to = collect();
 
-        app(PushNotificationFormatter::class)
+        app(PushNotificationService::class)
             ->to($to)
             ->with(self::WITH)
             ->notify(FakeNotifyEvent::class);
@@ -67,7 +67,7 @@ class PushNotificationFormatterTest extends FeatureTestCase
             new OtherModel,
         ]);
 
-        app(PushNotificationFormatter::class)
+        app(PushNotificationService::class)
             ->to($to)
             ->with(self::WITH)
             ->notify(FakeNotifyEvent::class);
@@ -87,7 +87,7 @@ class PushNotificationFormatterTest extends FeatureTestCase
             $this->developers,
         ]);
 
-        app(PushNotificationFormatter::class)
+        app(PushNotificationService::class)
             ->to($to)
             ->with(self::WITH)
             ->notify(FakeNotifyEvent::class);
@@ -133,7 +133,7 @@ class PushNotificationFormatterTest extends FeatureTestCase
             $this->developers,
         ]);
 
-        app(PushNotificationFormatter::class)
+        app(PushNotificationService::class)
             ->to($to)
             ->with(self::WITH)
             ->notify(FakeNotifyEvent::class);
@@ -164,7 +164,7 @@ class PushNotificationFormatterTest extends FeatureTestCase
 
         $to = $this->group->participants()->get();
 
-        app(PushNotificationFormatter::class)
+        app(PushNotificationService::class)
             ->to($to)
             ->with(self::WITH)
             ->notify(FakeNotifyEvent::class);
@@ -189,7 +189,7 @@ class PushNotificationFormatterTest extends FeatureTestCase
 
         $to = $call->participants()->get();
 
-        app(PushNotificationFormatter::class)
+        app(PushNotificationService::class)
             ->to($to)
             ->with(self::WITH)
             ->notify(FakeNotifyEvent::class);
@@ -218,7 +218,7 @@ class PushNotificationFormatterTest extends FeatureTestCase
             $this->group->participants()->admins()->first(),
         ]);
 
-        app(PushNotificationFormatter::class)
+        app(PushNotificationService::class)
             ->to($to)
             ->with(self::WITH)
             ->notify(FakeNotifyEvent::class);
