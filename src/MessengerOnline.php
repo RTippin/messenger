@@ -9,7 +9,7 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 /**
  * @property-read Repository $cacheDriver
  */
-trait OnlineInterface
+trait MessengerOnline
 {
     /**
      * Put the given or loaded model into cache as online.

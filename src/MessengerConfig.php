@@ -16,7 +16,7 @@ use RTippin\Messenger\Support\ProvidersVerification;
  * @property-read Filesystem $filesystem
  * @property-read ProvidersVerification $providersVerification
  */
-trait ConfigInterface
+trait MessengerConfig
 {
     /**
      * @var string

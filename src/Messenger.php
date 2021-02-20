@@ -15,18 +15,9 @@ use RTippin\Messenger\Support\ProvidersVerification;
  */
 final class Messenger implements MessengerInterface
 {
-    /**
-     * MessengerService Provider Actions.
-     */
-    use ProviderInterface;
-    /**
-     * MessengerService Config Actions.
-     */
-    use ConfigInterface;
-    /**
-     * MessengerService Provider Online Actions.
-     */
-    use OnlineInterface;
+    use MessengerProviders;
+    use MessengerConfig;
+    use MessengerOnline;
 
     /**
      * @var Application
