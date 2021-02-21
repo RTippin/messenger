@@ -318,7 +318,7 @@ window.ThreadManager = (function () {
                 pickerPosition: "top",
                 saveEmojisAs : "shortname",
                 filtersPosition: "bottom",
-                search: false,
+                search: true,
                 tonesStyle: "radio",
                 autocomplete: false,
                 events: {

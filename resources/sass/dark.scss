@@ -193,6 +193,11 @@ div.emojionearea.form-control {
   border-color: $gray-900 !important;
 }
 
+.emojionearea-search input {
+  background-color: $gray-700 !important;
+  color : $white !important;
+}
+
 div.emojionearea.form-control.focused {
   box-shadow: 0 0 3px 1px $cyan !important;
 }
