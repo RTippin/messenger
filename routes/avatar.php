@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use RTippin\Messenger\Http\Controllers\Actions\RenderProviderAvatar;
 
 /*

@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
 use RTippin\Messenger\Http\Controllers\Actions\DownloadMessageFile;
 use RTippin\Messenger\Http\Controllers\Actions\RenderGroupAvatar;
 use RTippin\Messenger\Http\Controllers\Actions\RenderMessageImage;
