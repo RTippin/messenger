@@ -117,6 +117,14 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static setAttachmentRateLimit(int $attachmentRateLimit)
  * @method static setBroadcastDriver(string $driverAlias)
  * @method static setVideoDriver(string $driverAlias)
+ * @method static getMessageImageSizeLimit()
+ * @method static setMessageImageSizeLimit(int $messageImageSizeLimit)
+ * @method static getMessageDocumentSizeLimit()
+ * @method static setMessageDocumentSizeLimit(int $messageDocumentSizeLimit)
+ * @method static getThreadAvatarSizeLimit()
+ * @method static setThreadAvatarSizeLimit(int $threadAvatarSizeLimit)
+ * @method static getProviderAvatarSizeLimit()
+ * @method static setProviderAvatarSizeLimit(int $providerAvatarSizeLimit)
  *
  * @mixin \RTippin\Messenger\Messenger
  * @see MessengerInterface

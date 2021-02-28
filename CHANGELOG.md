@@ -1,6 +1,11 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v0.19 (02-28-2021)]
+
+#### Added
+- New configs to set upload limit sizes.
+
 ### [v0.18 (02-20-2021)]
 
 #### Changed

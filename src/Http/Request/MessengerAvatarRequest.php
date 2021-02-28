@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Http\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
+use RTippin\Messenger\Facades\Messenger;
 
 class MessengerAvatarRequest extends FormRequest
 {
@@ -13,8 +14,10 @@ class MessengerAvatarRequest extends FormRequest
      */
     public function rules(): array
     {
+        $limit = Messenger::getProviderAvatarSizeLimit();
+
         return [
-            'image' => 'required|max:5120|file|image',
+            'image' => "required|max:{$limit}|file|image",
         ];
     }
 }

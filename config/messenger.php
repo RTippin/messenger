@@ -256,7 +256,8 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | File toggles to enable / disable features and default image paths
+    | File toggles to enable / disable features and default image paths.
+    | Size limits are the max upload size in kilobytes.
     |--------------------------------------------------------------------------
     |
     | *Default thread avatars can be any file type, but the
@@ -267,16 +268,20 @@ return [
         'message_documents' => [
             'upload' => env('MESSENGER_MESSAGE_DOCUMENT_UPLOAD', true),
             'download' => env('MESSENGER_MESSAGE_DOCUMENT_DOWNLOAD', true),
+            'size_limit' => env('MESSENGER_MESSAGE_DOCUMENT_SIZE_LIMIT', 10240),
         ],
         'message_images' => [
             'upload' => env('MESSENGER_MESSAGE_IMAGE_UPLOAD', true),
+            'size_limit' => env('MESSENGER_MESSAGE_IMAGE_SIZE_LIMIT', 5120),
         ],
         'thread_avatars' => [
             'upload' => env('MESSENGER_THREAD_AVATAR_UPLOAD', true),
+            'size_limit' => env('MESSENGER_THREAD_AVATAR_SIZE_LIMIT', 5120),
         ],
         'provider_avatars' => [
             'upload' => env('MESSENGER_PROVIDER_AVATAR_UPLOAD', true),
             'removal' => env('MESSENGER_PROVIDER_AVATAR_REMOVAL', true),
+            'size_limit' => env('MESSENGER_PROVIDER_AVATAR_SIZE_LIMIT', 5120),
         ],
         'default_thread_avatars' => [
             '1.png' => public_path('vendor/messenger/images/1.png'),

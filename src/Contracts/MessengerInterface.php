@@ -212,6 +212,17 @@ interface MessengerInterface
     public function setMessageImageUpload(bool $messageImageUpload);
 
     /**
+     * @return int
+     */
+    public function getMessageImageSizeLimit(): int;
+
+    /**
+     * @param int $messageImageSizeLimit
+     * @return $this
+     */
+    public function setMessageImageSizeLimit(int $messageImageSizeLimit);
+
+    /**
      * @return bool
      */
     public function isThreadAvatarUploadEnabled(): bool;
@@ -221,6 +232,17 @@ interface MessengerInterface
      * @return $this
      */
     public function setThreadAvatarUpload(bool $threadAvatarUpload);
+
+    /**
+     * @return int
+     */
+    public function getThreadAvatarSizeLimit(): int;
+
+    /**
+     * @param int $threadAvatarSizeLimit
+     * @return $this
+     */
+    public function setThreadAvatarSizeLimit(int $threadAvatarSizeLimit);
 
     /**
      * @return bool
@@ -245,6 +267,17 @@ interface MessengerInterface
     public function setMessageDocumentDownload(bool $messageDocumentDownload);
 
     /**
+     * @return int
+     */
+    public function getMessageDocumentSizeLimit(): int;
+
+    /**
+     * @param int $messageDocumentSizeLimit
+     * @return $this
+     */
+    public function setMessageDocumentSizeLimit(int $messageDocumentSizeLimit);
+
+    /**
      * @return bool
      */
     public function isProviderAvatarUploadEnabled(): bool;
@@ -265,6 +298,17 @@ interface MessengerInterface
      * @return $this
      */
     public function setProviderAvatarRemoval(bool $providerAvatarRemoval);
+
+    /**
+     * @return int
+     */
+    public function getProviderAvatarSizeLimit(): int;
+
+    /**
+     * @param int $providerAvatarSizeLimit
+     * @return $this
+     */
+    public function setProviderAvatarSizeLimit(int $providerAvatarSizeLimit);
 
     /**
      * @return bool

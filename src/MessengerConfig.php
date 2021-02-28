@@ -141,6 +141,11 @@ trait MessengerConfig
     private bool $providerAvatarRemoval;
 
     /**
+     * @var int
+     */
+    private int $providerAvatarSizeLimit;
+
+    /**
      * @var bool
      */
     private bool $messageDocumentUpload;
@@ -151,14 +156,29 @@ trait MessengerConfig
     private bool $messageDocumentDownload;
 
     /**
+     * @var int
+     */
+    private int $messageDocumentSizeLimit;
+
+    /**
      * @var bool
      */
     private bool $messageImageUpload;
 
     /**
+     * @var int
+     */
+    private int $messageImageSizeLimit;
+
+    /**
      * @var bool
      */
     private bool $threadAvatarUpload;
+
+    /**
+     * @var int
+     */
+    private int $threadAvatarSizeLimit;
 
     /**
      * @var int
@@ -479,6 +499,25 @@ trait MessengerConfig
     }
 
     /**
+     * @return int
+     */
+    public function getMessageImageSizeLimit(): int
+    {
+        return $this->messageImageSizeLimit;
+    }
+
+    /**
+     * @param int $messageImageSizeLimit
+     * @return $this
+     */
+    public function setMessageImageSizeLimit(int $messageImageSizeLimit): self
+    {
+        $this->messageImageSizeLimit = $messageImageSizeLimit;
+
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function isMessageDocumentUploadEnabled(): bool
@@ -493,6 +532,44 @@ trait MessengerConfig
     public function setMessageDocumentUpload(bool $messageDocumentUpload): self
     {
         $this->messageDocumentUpload = $messageDocumentUpload;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMessageDocumentDownloadEnabled(): bool
+    {
+        return $this->messageDocumentDownload;
+    }
+
+    /**
+     * @param bool $messageDocumentDownload
+     * @return $this
+     */
+    public function setMessageDocumentDownload(bool $messageDocumentDownload): self
+    {
+        $this->messageDocumentDownload = $messageDocumentDownload;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMessageDocumentSizeLimit(): int
+    {
+        return $this->messageDocumentSizeLimit;
+    }
+
+    /**
+     * @param int $messageDocumentSizeLimit
+     * @return $this
+     */
+    public function setMessageDocumentSizeLimit(int $messageDocumentSizeLimit): self
+    {
+        $this->messageDocumentSizeLimit = $messageDocumentSizeLimit;
 
         return $this;
     }
@@ -517,20 +594,20 @@ trait MessengerConfig
     }
 
     /**
-     * @return bool
+     * @return int
      */
-    public function isMessageDocumentDownloadEnabled(): bool
+    public function getThreadAvatarSizeLimit(): int
     {
-        return $this->messageDocumentDownload;
+        return $this->threadAvatarSizeLimit;
     }
 
     /**
-     * @param bool $messageDocumentDownload
+     * @param int $threadAvatarSizeLimit
      * @return $this
      */
-    public function setMessageDocumentDownload(bool $messageDocumentDownload): self
+    public function setThreadAvatarSizeLimit(int $threadAvatarSizeLimit): self
     {
-        $this->messageDocumentDownload = $messageDocumentDownload;
+        $this->threadAvatarSizeLimit = $threadAvatarSizeLimit;
 
         return $this;
     }
@@ -569,6 +646,25 @@ trait MessengerConfig
     public function setProviderAvatarRemoval(bool $providerAvatarRemoval): self
     {
         $this->providerAvatarRemoval = $providerAvatarRemoval;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getProviderAvatarSizeLimit(): int
+    {
+        return $this->providerAvatarSizeLimit;
+    }
+
+    /**
+     * @param int $providerAvatarSizeLimit
+     * @return $this
+     */
+    public function setProviderAvatarSizeLimit(int $providerAvatarSizeLimit): self
+    {
+        $this->providerAvatarSizeLimit = $providerAvatarSizeLimit;
 
         return $this;
     }
@@ -1064,10 +1160,14 @@ trait MessengerConfig
         $this->calling = $this->configRepo->get('messenger.calling.enabled');
         $this->providerAvatarUpload = $this->configRepo->get('messenger.files.provider_avatars.upload');
         $this->providerAvatarRemoval = $this->configRepo->get('messenger.files.provider_avatars.removal');
+        $this->providerAvatarSizeLimit = $this->configRepo->get('messenger.files.provider_avatars.size_limit');
         $this->messageImageUpload = $this->configRepo->get('messenger.files.message_images.upload');
+        $this->messageImageSizeLimit = $this->configRepo->get('messenger.files.message_images.size_limit');
         $this->messageDocumentUpload = $this->configRepo->get('messenger.files.message_documents.upload');
         $this->messageDocumentDownload = $this->configRepo->get('messenger.files.message_documents.download');
+        $this->messageDocumentSizeLimit = $this->configRepo->get('messenger.files.message_documents.size_limit');
         $this->threadAvatarUpload = $this->configRepo->get('messenger.files.thread_avatars.upload');
+        $this->threadAvatarSizeLimit = $this->configRepo->get('messenger.files.thread_avatars.size_limit');
         $this->searchPageCount = $this->configRepo->get('messenger.collections.search.page_count');
         $this->threadsIndexCount = $this->configRepo->get('messenger.collections.threads.index_count');
         $this->threadsPageCount = $this->configRepo->get('messenger.collections.threads.page_count');

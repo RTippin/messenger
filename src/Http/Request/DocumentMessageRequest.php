@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Http\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
+use RTippin\Messenger\Facades\Messenger;
 
 class DocumentMessageRequest extends FormRequest
 {
@@ -13,8 +14,10 @@ class DocumentMessageRequest extends FormRequest
      */
     public function rules(): array
     {
+        $limit = Messenger::getMessageDocumentSizeLimit();
+
         return [
-            'document' => 'required|max:10240|file|mimes:pdf,doc,ppt,xls,docx,pptx,xlsx,rar,zip,7z',
+            'document' => "required|max:{$limit}|file|mimes:pdf,doc,ppt,xls,docx,pptx,xlsx,rar,zip,7z",
             'temporary_id' => 'required|string',
         ];
     }

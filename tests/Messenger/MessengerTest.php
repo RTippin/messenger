@@ -533,6 +533,10 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame(10, $this->messenger->getAttachmentRateLimit());
         $this->assertTrue($this->messenger->isMessageEditsEnabled());
         $this->assertTrue($this->messenger->isMessageEditsViewEnabled());
+        $this->assertSame(10240, $this->messenger->getMessageDocumentSizeLimit());
+        $this->assertSame(5120, $this->messenger->getMessageImageSizeLimit());
+        $this->assertSame(5120, $this->messenger->getProviderAvatarSizeLimit());
+        $this->assertSame(5120, $this->messenger->getThreadAvatarSizeLimit());
     }
 
     /** @test */
@@ -588,6 +592,10 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->setSearchRateLimit(5);
         $this->messenger->setMessageRateLimit(5);
         $this->messenger->setAttachmentRateLimit(5);
+        $this->messenger->setMessageDocumentSizeLimit(5);
+        $this->messenger->setMessageImageSizeLimit(5);
+        $this->messenger->setProviderAvatarSizeLimit(5);
+        $this->messenger->setThreadAvatarSizeLimit(5);
         $this->messenger->setMessengerProviders([
             'user' => [
                 'model' => UserModel::class,
@@ -634,5 +642,9 @@ class MessengerTest extends MessengerTestCase
         $this->assertCount(1, $this->messenger->getMessengerProviders());
         $this->assertFalse($this->messenger->isMessageEditsEnabled());
         $this->assertFalse($this->messenger->isMessageEditsViewEnabled());
+        $this->assertSame(5, $this->messenger->getMessageDocumentSizeLimit());
+        $this->assertSame(5, $this->messenger->getMessageImageSizeLimit());
+        $this->assertSame(5, $this->messenger->getProviderAvatarSizeLimit());
+        $this->assertSame(5, $this->messenger->getThreadAvatarSizeLimit());
     }
 }
