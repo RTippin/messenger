@@ -6,6 +6,8 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\ServiceProvider;
 use RTippin\Messenger\Brokers\FriendBroker;
 use RTippin\Messenger\Commands\CallsActivityCheckCommand;
+use RTippin\Messenger\Commands\CallsDownCommand;
+use RTippin\Messenger\Commands\CallsUpCommand;
 use RTippin\Messenger\Commands\InvitesCheckCommand;
 use RTippin\Messenger\Commands\ProvidersCacheCommand;
 use RTippin\Messenger\Commands\ProvidersClearCommand;
@@ -55,6 +57,8 @@ class MessengerServiceProvider extends ServiceProvider
     {
         $this->commands([
             CallsActivityCheckCommand::class,
+            CallsDownCommand::class,
+            CallsUpCommand::class,
             InvitesCheckCommand::class,
             ProvidersCacheCommand::class,
             ProvidersClearCommand::class,

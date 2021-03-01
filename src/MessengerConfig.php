@@ -431,7 +431,7 @@ trait MessengerConfig
      */
     public function disableCallsTemporarily(int $minutesDisabled): self
     {
-        $this->cacheDriver->put('messenger:calling:down', true, now()->addMinutes($minutesDisabled));
+        $this->cacheDriver->put('messenger:calls:down', true, now()->addMinutes($minutesDisabled));
 
         return $this;
     }
@@ -442,7 +442,7 @@ trait MessengerConfig
      */
     public function isCallingTemporarilyDisabled(): bool
     {
-        return $this->cacheDriver->has('messenger:calling:down');
+        return $this->cacheDriver->has('messenger:calls:down');
     }
 
     /**
@@ -452,7 +452,7 @@ trait MessengerConfig
     public function removeTemporaryCallShutdown(): self
     {
         if ($this->isCallingTemporarilyDisabled()) {
-            $this->cacheDriver->forget('messenger:calling:down');
+            $this->cacheDriver->forget('messenger:calls:down');
         }
 
         return $this;
