@@ -546,6 +546,10 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->disableCallsTemporarily(1);
 
         $this->assertTrue($this->messenger->isCallingTemporarilyDisabled());
+
+        $this->messenger->removeTemporaryCallShutdown();
+
+        $this->assertFalse($this->messenger->isCallingTemporarilyDisabled());
     }
 
     /** @test */

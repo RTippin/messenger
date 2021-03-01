@@ -179,6 +179,11 @@ interface MessengerInterface
     public function isCallingTemporarilyDisabled(): bool;
 
     /**
+     * @return $this
+     */
+    public function removeTemporaryCallShutdown();
+
+    /**
      * @return bool
      */
     public function isCallingEnabled(): bool;

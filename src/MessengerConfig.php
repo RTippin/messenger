@@ -446,6 +446,19 @@ trait MessengerConfig
     }
 
     /**
+     * @return $this
+     * @throws InvalidArgumentException
+     */
+    public function removeTemporaryCallShutdown(): self
+    {
+        if ($this->isCallingTemporarilyDisabled()) {
+            $this->cacheDriver->forget('messenger:calling:down');
+        }
+
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function isCallingEnabled(): bool
