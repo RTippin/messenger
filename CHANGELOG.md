@@ -5,6 +5,7 @@
 
 #### Added
 - New configs to set upload limit sizes.
+- New commands to temporarily shutdown calling system and end all active calls, as well as put the system back online.
 
 ### [v0.18 (02-20-2021)]
 

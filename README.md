@@ -639,23 +639,39 @@ MESSENGER_CALLING_ENABLED=true
 # Commands
 
 - `php artisan messenger:publish` | `--force`
-    * Publish our views / js / css / config, with a force option to overwrite if already exist.
+    * Publish our views / js / css / config files.
+    * `--force` flag will publish or overwrite existing files.
 - `php artisan messenger:calls:check-activity` | `--now`
-    * Check active calls for active participants, end calls with none. Option to run immediately without pushing job to queue.
+    * Check active calls for active participants, end calls with none.
+    * `--now` flag to run immediately without dispatching jobs to queue.
+- `php artisan messenger:calls:down` | `--duration=30` | `--now`
+    * End all active calls and disable the calling system for the specified minutes (30 default).
+    * `--duration=X` flag to set timeframe in minutes for calling to be disabled.
+    * `--now` flag to run immediately without dispatching jobs to queue.
+- `php artisan messenger:calls:up`
+    * Put the call system back online if it is temporarily disabled.
 - `php artisan messenger:invites:check-valid` | `--now`
-    * Check active invites for any past expiration or max use cases and invalidate them. Option to run immediately without pushing job to queue.
+    * Check active invites for any past expiration or max use cases and invalidate them.
+    * `--now` flag to run immediately without dispatching jobs to queue.
 - `php artisan messenger:providers:cache`
     * Cache the computed provider configs for messenger.
 - `php artisan messenger:providers:clear`
     * Clear the cached provider config file.
 - `php artisan messenger:purge:documents` | `--now` | `--days=30`
-    * We will purge all soft deleted document messages that were archived past the set days (30 default). We run it through our action to remove the file from storage and message from database. Option to run immediately without pushing job to queue.
+    * We will purge all soft deleted document messages that were archived past the set days (30 default). We run it through our action to remove the files from storage and message from the database.
+    * `--days=X` flag to set how many days in the past to start at.
+    * `--now` flag to run immediately without dispatching jobs to queue.
 - `php artisan messenger:purge:images` | `--now` | `--days=30`
-    * We will purge all soft deleted image messages that were archived past the set days (30 default). We run it through our action to remove the image from storage and message from database. Option to run immediately without pushing job to queue.
+    * We will purge all soft deleted image messages that were archived past the set days (30 default). We run it through our action to remove the image from storage and message from the database.
+    * `--days=X` flag to set how many days in the past to start at.
+    * `--now` flag to run immediately without dispatching jobs to queue.
 - `php artisan messenger:purge:messages` | `--days=30`
-    * We will purge all soft deleted messages that were archived past the set days (30 default). We do not need to fire any additional events or load models into memory, just remove from table, as this is not messages that are documents or images. 
+    * We will purge all soft deleted messages that were archived past the set days (30 default). We do not need to fire any additional events or load models into memory, just remove from the table, as this is not messages that are documents or images. 
+    * `--days=X` flag to set how many days in the past to start at.
 - `php artisan messenger:purge:threads` | `--now` | `--days=30`
-    * We will purge all soft deleted threads that were archived past the set days (30 default). We run it through our action to remove the entire thread directory and sub files from storage and the thread from the database. Option to run immediately without pushing job to queue.
+    * We will purge all soft deleted threads that were archived past the set days (30 default). We run it through our action to remove the entire thread directory and sub files from storage and the thread from the database.
+    * `--days=X` flag to set how many days in the past to start at.
+    * `--now` flag to run immediately without dispatching jobs to queue.
 
 ---
 
