@@ -537,6 +537,15 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame(5120, $this->messenger->getMessageImageSizeLimit());
         $this->assertSame(5120, $this->messenger->getProviderAvatarSizeLimit());
         $this->assertSame(5120, $this->messenger->getThreadAvatarSizeLimit());
+        $this->assertFalse($this->messenger->isCallingTemporarilyDisabled());
+    }
+
+    /** @test */
+    public function messenger_calling_temporarily_disabled()
+    {
+        $this->messenger->disableCallsTemporarily(1);
+
+        $this->assertTrue($this->messenger->isCallingTemporarilyDisabled());
     }
 
     /** @test */

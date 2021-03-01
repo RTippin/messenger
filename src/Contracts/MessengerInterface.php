@@ -168,6 +168,17 @@ interface MessengerInterface
     public function setMessageEditsView(bool $messageEditsView);
 
     /**
+     * @param int $minutesDisabled
+     * @return $this
+     */
+    public function disableCallsTemporarily(int $minutesDisabled);
+
+    /**
+     * @return bool
+     */
+    public function isCallingTemporarilyDisabled(): bool;
+
+    /**
      * @return bool
      */
     public function isCallingEnabled(): bool;

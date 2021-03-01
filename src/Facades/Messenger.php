@@ -23,6 +23,8 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static setKnockKnock(bool $knockKnock)
  * @method static getKnockTimeout()
  * @method static setKnockTimeout(int $knockTimeout)
+ * @method static disableCallsTemporarily(int $minutesDisabled)
+ * @method static isCallingTemporarilyDisabled()
  * @method static isCallingEnabled()
  * @method static setCalling(bool $calling)
  * @method static setThreadInvites(bool $invites)

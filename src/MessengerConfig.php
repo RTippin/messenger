@@ -3,10 +3,12 @@
 namespace RTippin\Messenger;
 
 use Exception;
-use Illuminate\Contracts\Config\Repository;
+use Illuminate\Contracts\Cache\Repository as CacheRepository;
+use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
+use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Support\ProvidersVerification;
@@ -14,7 +16,8 @@ use RTippin\Messenger\Support\ProvidersVerification;
 /**
  * @property-read Collection $providers
  * @property-read Application $app
- * @property-read Repository $configRepo
+ * @property-read CacheRepository $cacheDriver
+ * @property-read ConfigRepository $configRepo
  * @property-read Filesystem $filesystem
  * @property-read ProvidersVerification $providersVerification
  */
@@ -420,6 +423,26 @@ trait MessengerConfig
         $this->knockTimeout = $knockTimeout;
 
         return $this;
+    }
+
+    /**
+     * @param int $minutesDisabled
+     * @return $this
+     */
+    public function disableCallsTemporarily(int $minutesDisabled): self
+    {
+        $this->cacheDriver->put('messenger:calling:down', true, now()->addMinutes($minutesDisabled));
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    public function isCallingTemporarilyDisabled(): bool
+    {
+        return $this->cacheDriver->has('messenger:calling:down');
     }
 
     /**
