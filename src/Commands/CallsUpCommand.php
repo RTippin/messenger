@@ -38,7 +38,7 @@ class CallsUpCommand extends Command
         } else {
             $messenger->removeTemporaryCallShutdown();
 
-            $this->info("Call system is now online.");
+            $this->info('Call system is now online.');
         }
     }
 }
