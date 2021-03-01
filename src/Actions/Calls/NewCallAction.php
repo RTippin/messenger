@@ -117,7 +117,8 @@ abstract class NewCallAction extends BaseMessengerAction
      */
     protected function canInitiateCall(): self
     {
-        if (! $this->messenger->isCallingEnabled()) {
+        if (! $this->messenger->isCallingEnabled()
+            || $this->messenger->isCallingTemporarilyDisabled()) {
             throw new FeatureDisabledException('Calling is currently disabled.');
         }
 

@@ -142,6 +142,19 @@ class StartCallTest extends FeatureTestCase
     }
 
     /** @test */
+    public function forbidden_to_start_call_when_temporarily_disabled()
+    {
+        Messenger::disableCallsTemporarily(1);
+
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.calls.store', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function user_can_start_call_in_private()
     {
         $this->expectsEvents([

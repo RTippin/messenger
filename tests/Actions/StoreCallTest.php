@@ -115,6 +115,18 @@ class StoreCallTest extends FeatureTestCase
     }
 
     /** @test */
+    public function store_call_throws_exception_when_calling_temporarily_disabled()
+    {
+        Messenger::disableCallsTemporarily(1);
+
+        $this->expectException(FeatureDisabledException::class);
+
+        $this->expectExceptionMessage('Calling is currently disabled.');
+
+        app(StoreCall::class)->withoutDispatches()->execute($this->private);
+    }
+
+    /** @test */
     public function store_call_fires_events()
     {
         Event::fake([

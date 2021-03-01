@@ -498,6 +498,7 @@ class Thread extends Model
     public function canCall(): bool
     {
         return Messenger::isCallingEnabled()
+            && ! Messenger::isCallingTemporarilyDisabled()
             && ! $this->isLocked()
             && ! $this->isPending()
             && $this->calling

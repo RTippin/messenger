@@ -822,6 +822,16 @@ class ThreadTest extends FeatureTestCase
     }
 
     /** @test */
+    public function cannot_start_call_when_temporarily_disabled()
+    {
+        Messenger::disableCallsTemporarily(1);
+
+        Messenger::setProvider($this->tippin);
+
+        $this->assertFalse($this->group->canCall());
+    }
+
+    /** @test */
     public function cannot_start_call_when_thread_locked()
     {
         $this->group->update([
@@ -844,8 +854,6 @@ class ThreadTest extends FeatureTestCase
 
         $this->assertFalse($this->group->canCall());
     }
-
-    /////////////////////////////
 
     /** @test */
     public function can_knock_in_threads()
