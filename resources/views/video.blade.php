@@ -1,19 +1,32 @@
 @extends('messenger::popup')
 @section('title')Video Call @endsection
 @section('content')
-    <div id="videos" class="container-fluid h-100 NS">
-        <div class="mt-2 row" id="other_videos_ctrn"></div>
-        <div id="empty_room" class="mt-2 col-12 px-0">
-            <div class="col-12 col-sm-4 bg-gradient-dark shadow-lg rounded mx-auto pt-3">
-                <div class="col-12 text-center flip-loader-container">
-                    <h5 class="text-light text-center">Waiting for others to join</h5>
-                    <div class="flip-loader"><div></div><div></div><div></div></div>
-                </div>
-            </div>
+<div id="call_status">
+    <div class="jumbotron bg-gradient-dark text-white">
+        <div class="text-center">
+            <span id="call_status_msg" class="display-4">Connecting...</span>
         </div>
-        <div class="mine_video_call NS" id="my_video_ctrn"></div>
+        <div id="call_status_body" class="text-center mt-5">
+            <div class="col-12"><div class="spinner-grow text-success" role="status"></div></div>
+        </div>
     </div>
-    <div id="hang_up" class="fixed-bottom NS">
+</div>
+<div id="empty_room" class="NS">
+    <div class="jumbotron bg-gradient-dark text-white">
+        <div class="text-center">
+            <span class="display-4">Waiting for others...</span>
+        </div>
+        <div class="text-center mt-5">
+            <div class="col-12"><div class="spinner-grow text-danger" role="status"></div></div>
+        </div>
+    </div>
+</div>
+<div id="main_call" class="NS">
+    <div id="videos" class="container-fluid h-100">
+        <div class="mt-2 row" id="other_videos_ctrn"></div>
+        <div class="mine_video_call" id="my_video_ctrn"></div>
+    </div>
+    <div id="hang_up" class="fixed-bottom">
         <nav id="FS_navbar" class="navbar fixed-bottom navbar-expand navbar-dark bg-dark">
             <div class="navbar-collapse collapse justify-content-start">
                 <ul id="video_main_nav" class="navbar-nav">
@@ -47,6 +60,7 @@
             </ul>
         </nav>
     </div>
+</div>
 @stop
 
 @push('js')
@@ -76,7 +90,7 @@
 @push('css')
     <style>
         body {
-            background: #3d9a9b;
+            background: #096162;
         }
     </style>
 @endpush

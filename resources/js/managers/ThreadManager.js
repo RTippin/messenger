@@ -2531,7 +2531,7 @@ window.ThreadManager = (function () {
                 route : Messenger.common().API + 'threads/' + opt.thread.id + '/calls',
                 data : {},
                 success : function(data){
-                    CallManager.join(data, false);
+                    CallManager.join(data);
                     NotifyManager.heartbeat();
                     Messenger.button().removeLoader()
                 },

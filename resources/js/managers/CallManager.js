@@ -28,7 +28,13 @@ window.CallManager = (function () {
         channel_status : false,
         active_profiles : [],
         heartbeat_interval : null,
-        heartbeat_retries : 0
+        heartbeat_retries : 0,
+        elements : {
+            call_status : $("#call_status"),
+            call_status_msg : $("#call_status_msg"),
+            call_status_body : $("#call_status_body"),
+            main_call : $("#main_call"),
+        }
     },
     mounted = {
         Initialize : function(arg){
@@ -48,15 +54,6 @@ window.CallManager = (function () {
                 Sockets.setupRTC();
                 return;
             }
-            Messenger.alert().Modal({
-                allow_close : false,
-                size : 'sm',
-                theme : 'success',
-                centered : true,
-                icon : 'video',
-                pre_loader : true,
-                title : 'Connecting to call session...'
-            });
             mounted.loadCall(arg.thread_id, arg.call_id, mounted.setup);
         },
         setup : function(call){
@@ -75,8 +72,6 @@ window.CallManager = (function () {
             opt.call_admin = call.options.admin;
             opt.created_at = call.created_at;
             opt.INIT_time = moment.now();
-            // opt.call_mode = arg.call_mode;
-            // opt.thread_admin = arg.thread_admin;
             mounted.setJanusInfo(call, false);
             NotifyManager.setTitle(call.meta.thread_name + ' | ' + 'Video Call');
         },
@@ -88,28 +83,16 @@ window.CallManager = (function () {
             })
         },
         joinConfirm : function(){
-            Messenger.alert().destroyModal();
-            Messenger.alert().Modal({
-                icon : 'video',
-                backdrop_ctrl : false,
-                allow_close : false,
-                centered : true,
-                size : 'md',
-                h4 : false,
-                theme : 'success',
-                title : 'Ready to connect?',
-                body : templates.join_confirm(),
-                onReady : function(){
-                    $("#call_join_confirm").one('click', mounted.checkIfJoined);
-                    $("#call_exit_confirm").one('click', function(){
-                        window.close();
-                    });
-                }
-            })
+            opt.elements.call_status_msg.html('Ready to join with '+opt._call.meta.thread_name+'?');
+            opt.elements.call_status_body.html(templates.join_confirm());
+            $("#call_join_confirm").one('click', mounted.checkIfJoined);
+            $("#call_exit_confirm").one('click', function(){
+                window.close();
+            });
         },
         checkIfJoined : function() {
             if(!opt._call.options.joined || !opt._call.options.in_call){
-                $("#join_confirm_modal").html(Messenger.alert().loader(true))
+                opt.elements.call_status_body.html(Messenger.alert().loader(true))
                 Messenger.xhr().payload({
                     route : Messenger.common().API + 'threads/' + opt._call.thread_id + '/calls/' + opt._call.id + '/join',
                     data : {},
@@ -131,10 +114,9 @@ window.CallManager = (function () {
             Sockets.heartbeat(false);
             Sockets.setupRTC();
             mounted.setConnections();
-            $("#hang_up").removeClass('NS');
-            $("#videos").removeClass('NS');
+            opt.elements.call_status.addClass('NS');
+            opt.elements.main_call.removeClass('NS');
             if(opt.call_admin) $("#end_call_nav").removeClass('NS');
-            Messenger.alert().destroyModal();
             if(opt.call_type === 1){
                 window.addEventListener("beforeunload", methods.windowClosed, false);
                 window.addEventListener("keydown", methods.checkForRefresh, false);
@@ -280,9 +262,9 @@ window.CallManager = (function () {
                     '<img class="img-fluid rounded" src="'+(data.call.thread_type === 2 ? data.call.thread_avatar.sm : data.sender.avatar.sm)+'" /></div>'
         },
         join_confirm : function() {
-            return '<div id="join_confirm_modal" class="col-12 text-center">' +
-                '<button id="call_join_confirm" type="button" title="Join" class="mx-3 mb-4 shadow-lg btn btn-circle btn-circle-xl btn-success">Join <i class="fas fa-video"></i></button>' +
-                '<button id="call_exit_confirm" type="button" title="Exit" class="mx-3 mb-4 shadow-lg btn btn-circle btn-circle-xl btn-danger">Exit <i class="fas fa-times"></i></button>' +
+            return '<div class="col-12 text-center">' +
+                '<button id="call_join_confirm" type="button" title="Join" class="mx-3 shadow-lg btn btn-circle btn-circle-xl btn-success">Join <i class="fas fa-video"></i></button>' +
+                '<button id="call_exit_confirm" type="button" title="Exit" class="mx-3 shadow-lg btn btn-circle btn-circle-xl btn-danger">Exit <i class="fas fa-times"></i></button>' +
                 '</div>';
         }
     },
@@ -347,47 +329,9 @@ window.CallManager = (function () {
                 timer : 25000
             })
         },
-        joinCall : function(call, add){
-            if(opt.processing) return;
-            opt.processing = true;
-            let complete = function () {
-                Messenger.alert().destroyModal();
-                methods.openCallWindow(call);
-                Messenger.xhr().lockout(false);
-                methods.updateMessenger(call, 'joined');
-                opt.processing = false;
-            };
-            if(add){
-                Messenger.alert().Modal({
-                    size : 'sm',
-                    icon : 'user-plus',
-                    pre_loader : true,
-                    centered : true,
-                    unlock_buttons : false,
-                    allow_close : false,
-                    backdrop_ctrl : false,
-                    title: 'Joining Call',
-                    theme: 'info',
-                    onReady : function () {
-                        Messenger.xhr().payload({
-                            route : Messenger.common().API + 'threads/' + call.thread_id + '/calls/' + call.id + '/join',
-                            data : {},
-                            success : complete,
-                            fail : function(){
-                                Messenger.alert().destroyModal();
-                                Messenger.xhr().lockout(false);
-                                opt.processing = false;
-                            },
-                            bypass : true,
-                            fail_alert : true
-                        });
-                        Messenger.xhr().lockout(true)
-                    }
-                });
-            }
-            else{
-                complete()
-            }
+        joinCall : function(call){
+            methods.openCallWindow(call);
+            methods.updateMessenger(call, 'joined');
         },
         leaveCall : function(parent, call){
             if(!parent){

@@ -632,7 +632,7 @@ window.NotifyManager = (function () {
             if(!opt.storage.active_calls || !opt.storage.active_calls.length) return;
             for(let i = 0; i < opt.storage.active_calls.length; i++) {
                 if (opt.storage.active_calls[i].id === id) {
-                    CallManager.join(opt.storage.active_calls[i], !opt.storage.active_calls[i].options.in_call);
+                    CallManager.join(opt.storage.active_calls[i]);
                     break;
                 }
             }

@@ -403,10 +403,10 @@ window.ThreadTemplates = (function () {
             if(CallManager.state().call_type === 2 || data.locked) return '';
             if(data.has_call){
                 if(data.resources.active_call.options.in_call){
-                    return '<button onclick="CallManager.join({id : \''+data.resources.active_call.id+'\', thread_id : \''+data.id+'\', type : 1}, true)"' +
+                    return '<button onclick="CallManager.join({id : \''+data.resources.active_call.id+'\', thread_id : \''+data.id+'\', type : 1})"' +
                         ' data-toggle="tooltip" title="You are in this call" data-placement="left" class="btn btn-lg btn-outline-danger video_btn pt-1 pb-0 px-2" type="button"><i class="fas fa-video fa-2x"></i></button>'
                 }
-                return '<button onclick="CallManager.join({id : \''+data.resources.active_call.id+'\', thread_id : \''+data.id+'\', type : 1}, true)" ' +
+                return '<button onclick="CallManager.join({id : \''+data.resources.active_call.id+'\', thread_id : \''+data.id+'\', type : 1})" ' +
                     'data-toggle="tooltip" title="Join call" data-placement="left" class="glowing_btn btn btn-lg btn-success video_btn pt-1 pb-0 px-2" type="button"><i class="fas fa-video fa-2x"></i></button>'
             }
             if(data.type === 1){
