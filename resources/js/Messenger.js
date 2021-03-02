@@ -227,6 +227,7 @@ window.Messenger = (function () {
         destroyModal : function(){
             $(".modal-backdrop").remove();
             $(".modal").remove();
+            $("body").removeClass('modal-open');
         },
         Modal : function(arg){
             let elm = {
