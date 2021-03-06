@@ -51,6 +51,21 @@ class GroupThreadSettingsTest extends FeatureTestCase
     }
 
     /** @test */
+    public function admin_forbidden_to_view_group_settings_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.settings', [
+            'thread' => $this->group->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function non_admin_forbidden_to_view_group_settings()
     {
         $this->actingAs($this->doe);
@@ -163,6 +178,28 @@ class GroupThreadSettingsTest extends FeatureTestCase
                 'messaging' => false,
                 'knocks' => false,
             ]);
+    }
+
+    /** @test */
+    public function forbidden_to_update_group_settings_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        $this->actingAs($this->tippin);
+
+        $this->putJson(route('api.messenger.threads.settings', [
+            'thread' => $this->group->id,
+        ]), [
+            'subject' => 'First Test Group',
+            'add_participants' => true,
+            'invitations' => true,
+            'calling' => true,
+            'messaging' => false,
+            'knocks' => false,
+        ])
+            ->assertForbidden();
     }
 
     /** @test */

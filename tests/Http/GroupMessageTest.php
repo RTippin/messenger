@@ -124,6 +124,24 @@ class GroupMessageTest extends FeatureTestCase
     }
 
     /** @test */
+    public function forbidden_to_send_message_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.messages.store', [
+            'thread' => $this->group->id,
+        ]), [
+            'message' => 'Hello!',
+            'temporary_id' => '123-456-789',
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function non_participant_forbidden_to_send_message()
     {
         $this->actingAs($this->createJaneSmith());
@@ -156,6 +174,24 @@ class GroupMessageTest extends FeatureTestCase
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',
         ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function forbidden_to_archive_message_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        $message = $this->createMessage($this->group, $this->tippin);
+
+        $this->actingAs($this->tippin);
+
+        $this->deleteJson(route('api.messenger.threads.messages.destroy', [
+            'thread' => $this->group->id,
+            'message' => $message->id,
+        ]))
             ->assertForbidden();
     }
 

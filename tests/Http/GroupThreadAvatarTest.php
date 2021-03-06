@@ -44,6 +44,23 @@ class GroupThreadAvatarTest extends FeatureTestCase
     }
 
     /** @test */
+    public function admin_forbidden_to_update_group_avatar_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        $this->actingAs($this->doe);
+
+        $this->postJson(route('api.messenger.threads.avatar.update', [
+            'thread' => $this->group->id,
+        ]), [
+            'default' => '1.png',
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function update_group_avatar_without_changes_expects_no_events()
     {
         $this->doesntExpectEvents([

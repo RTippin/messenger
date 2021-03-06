@@ -136,7 +136,9 @@ class ThreadPolicy
      */
     public function settings($user, Thread $thread)
     {
-        return $thread->isGroup() && $thread->isAdmin()
+        return $thread->isGroup()
+        && ! $thread->isLocked()
+        && $thread->isAdmin()
             ? $this->allow()
             : $this->deny('Not authorized to manage thread settings.');
     }
@@ -150,9 +152,26 @@ class ThreadPolicy
      */
     public function update($user, Thread $thread)
     {
-        return $thread->isGroup() && $thread->isAdmin()
+        return $thread->isGroup()
+        && ! $thread->isLocked()
+        && $thread->isAdmin()
             ? $this->allow()
             : $this->deny('Not authorized to update that thread.');
+    }
+
+    /**
+     * Determine whether the provider can update the model.
+     *
+     * @param $user
+     * @param Thread $thread
+     * @return mixed
+     */
+    public function mutes($user, Thread $thread)
+    {
+        return $thread->hasCurrentProvider()
+        && ! $thread->isLocked()
+            ? $this->allow()
+            : $this->deny('Not authorized to mute/unmute thread.');
     }
 
     /**
@@ -165,7 +184,8 @@ class ThreadPolicy
     public function leave($user, Thread $thread)
     {
         if ($thread->isGroup() && $thread->hasCurrentProvider()) {
-            if (! $thread->isAdmin()
+            if ($thread->isLocked()
+                || ! $thread->isAdmin()
                 || $thread->participants()->count() === 1) {
                 return $this->allow();
             }

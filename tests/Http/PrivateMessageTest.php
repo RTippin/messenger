@@ -99,6 +99,22 @@ class PrivateMessageTest extends FeatureTestCase
     }
 
     /** @test */
+    public function user_forbidden_to_send_message_when_thread_locked()
+    {
+        $this->doe->delete();
+
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.messages.store', [
+            'thread' => $this->private->id,
+        ]), [
+            'message' => 'Hello!',
+            'temporary_id' => '123-456-789',
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function user_can_send_message()
     {
         $this->expectsEvents([
@@ -234,6 +250,20 @@ class PrivateMessageTest extends FeatureTestCase
     public function recipient_forbidden_to_archive_message()
     {
         $this->actingAs($this->doe);
+
+        $this->deleteJson(route('api.messenger.threads.messages.destroy', [
+            'thread' => $this->private->id,
+            'message' => $this->message->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function forbidden_to_archive_message_when_thread_locked()
+    {
+        $this->doe->delete();
+
+        $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.messages.destroy', [
             'thread' => $this->private->id,

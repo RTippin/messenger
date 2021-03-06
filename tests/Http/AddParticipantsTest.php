@@ -86,6 +86,21 @@ class AddParticipantsTest extends FeatureTestCase
     }
 
     /** @test */
+    public function admin_forbidden_to_view_add_participants_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        $this->actingAs($this->doe);
+
+        $this->getJson(route('api.messenger.threads.add.participants', [
+            'thread' => $this->group->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function non_admin_with_permission_can_view_add_participants()
     {
         $this->group->participants()
@@ -158,6 +173,40 @@ class AddParticipantsTest extends FeatureTestCase
         ])
             ->assertSuccessful()
             ->assertJsonCount(2);
+    }
+
+    /** @test */
+    public function admin_forbidden_to_add_many_participants_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        $company = $this->createSomeCompany();
+
+        $smith = $this->createJaneSmith();
+
+        $this->createFriends($this->tippin, $smith);
+
+        $this->createFriends($this->tippin, $company);
+
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.participants.store', [
+            'thread' => $this->group->id,
+        ]), [
+            'providers' => [
+                [
+                    'id' => $smith->getKey(),
+                    'alias' => 'user',
+                ],
+                [
+                    'id' => $company->getKey(),
+                    'alias' => 'company',
+                ],
+            ],
+        ])
+            ->assertForbidden();
     }
 
     /** @test */

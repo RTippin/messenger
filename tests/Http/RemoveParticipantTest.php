@@ -84,4 +84,25 @@ class RemoveParticipantTest extends FeatureTestCase
         ]))
             ->assertSuccessful();
     }
+
+    /** @test */
+    public function admin_forbidden_to_remove_participant_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        $participant = $this->group->participants()
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
+            ->first();
+
+        $this->actingAs($this->tippin);
+
+        $this->deleteJson(route('api.messenger.threads.participants.destroy', [
+            'thread' => $this->group->id,
+            'participant' => $participant->id,
+        ]))
+            ->assertForbidden();
+    }
 }

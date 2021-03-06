@@ -116,6 +116,28 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
             ]);
     }
 
+    /** @test */
+    public function admin_forbidden_to_update_group_participant_permissions_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        $this->actingAs($this->tippin);
+
+        $this->putJson(route('api.messenger.threads.participants.update', [
+            'thread' => $this->group->id,
+            'participant' => $this->participant->id,
+        ]), [
+            'send_messages' => false,
+            'add_participants' => true,
+            'manage_invites' => true,
+            'start_calls' => true,
+            'send_knocks' => true,
+        ])
+            ->assertForbidden();
+    }
+
     /**
      * @test
      * @dataProvider permissionsValidation

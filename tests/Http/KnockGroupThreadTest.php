@@ -98,6 +98,21 @@ class KnockGroupThreadTest extends FeatureTestCase
     }
 
     /** @test */
+    public function admin_forbidden_to_knock_at_thread_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.knock', [
+            'thread' => $this->group->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function admin_forbidden_to_knock_at_thread_when_disabled_from_config()
     {
         Messenger::setKnockKnock(false);

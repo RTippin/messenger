@@ -44,6 +44,46 @@ class LeaveGroupThreadTest extends FeatureTestCase
     }
 
     /** @test */
+    public function non_admin_can_leave_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        $this->expectsEvents([
+            ThreadLeftBroadcast::class,
+            ThreadLeftEvent::class,
+        ]);
+
+        $this->actingAs($this->doe);
+
+        $this->postJson(route('api.messenger.threads.leave', [
+            'thread' => $this->group->id,
+        ]))
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function admin_can_leave_if_only_admin_but_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        $this->expectsEvents([
+            ThreadLeftBroadcast::class,
+            ThreadLeftEvent::class,
+        ]);
+
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.leave', [
+            'thread' => $this->group->id,
+        ]))
+            ->assertSuccessful();
+    }
+
+    /** @test */
     public function admin_cannot_leave_if_only_admin_and_not_only_participant()
     {
         $this->actingAs($this->tippin);

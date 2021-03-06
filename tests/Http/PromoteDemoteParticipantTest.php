@@ -162,6 +162,27 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
     }
 
     /** @test */
+    public function admin_forbidden_to_promote_participant_to_admin_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        $participant = $this->group->participants()
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
+            ->first();
+
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.participants.promote', [
+            'thread' => $this->group->id,
+            'participant' => $participant->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function admin_can_demote_admin()
     {
         $this->expectsEvents([
@@ -189,5 +210,30 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
                 'id' => $participant->id,
                 'admin' => false,
             ]);
+    }
+
+    /** @test */
+    public function admin_forbidden_to_demote_admin_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+
+        $participant = $this->group->participants()
+            ->where('owner_id', '=', $this->doe->getKey())
+            ->where('owner_type', '=', get_class($this->doe))
+            ->first();
+
+        $participant->update([
+            'admin' => true,
+        ]);
+
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.participants.demote', [
+            'thread' => $this->group->id,
+            'participant' => $participant->id,
+        ]))
+            ->assertForbidden();
     }
 }

@@ -72,6 +72,19 @@ class KnockPrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
+    public function user_forbidden_to_knock_at_thread_when_thread_locked()
+    {
+        $this->doe->delete();
+
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.knock', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function user_forbidden_to_knock_at_thread_when_awaiting_approval()
     {
         $this->private->participants()

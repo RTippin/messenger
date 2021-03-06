@@ -23,7 +23,7 @@ class MuteThread
     public function __invoke(MuteThreadAction $muteThread,
                              Thread $thread): JsonResponse
     {
-        $this->authorize('view', $thread);
+        $this->authorize('mutes', $thread);
 
         return $muteThread->execute($thread)
             ->getMessageResponse();

@@ -68,6 +68,66 @@ class MuteUnmuteThreadTest extends FeatureTestCase
     }
 
     /** @test */
+    public function forbidden_to_mute_thread_if_locked()
+    {
+        $this->doe->delete();
+
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.mute', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function forbidden_to_unmute_thread_if_locked()
+    {
+        $this->doe->delete();
+
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.unmute', [
+            'thread' => $this->private->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function forbidden_to_mute_group_thread_if_locked()
+    {
+        $group = $this->createGroupThread($this->tippin);
+
+        $group->update([
+            'lockout' => true,
+        ]);
+
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.mute', [
+            'thread' => $group->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function forbidden_to_unmute_group_thread_if_locked()
+    {
+        $group = $this->createGroupThread($this->tippin);
+
+        $group->update([
+            'lockout' => true,
+        ]);
+
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.unmute', [
+            'thread' => $group->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function participant_can_unmute_thread()
     {
         $this->expectsEvents([
