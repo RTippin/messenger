@@ -46,7 +46,7 @@ class ProviderChannelTest extends FeatureTestCase
     {
         $this->actingAs($this->tippin);
 
-        $this->post('api/broadcasting/auth', [
+        $this->postJson('api/broadcasting/auth', [
             'channel_name' => "private-messenger.unknown.{$this->tippin->getKey()}",
         ])
             ->assertForbidden();

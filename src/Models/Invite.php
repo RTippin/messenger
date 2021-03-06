@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
@@ -139,13 +140,14 @@ class Invite extends Model
     }
 
     /**
-     * @return string
+     * @return string|null
      */
-    public function getInvitationRoute(): string
+    public function getInvitationRoute(): ?string
     {
-        return route(
-            'messenger.invites.join',
-            $this->code
+        return Helpers::Route('messenger.invites.join',
+            [
+                'invite' => $this->code,
+            ]
         );
     }
 }
