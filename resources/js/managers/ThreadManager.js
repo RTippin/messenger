@@ -1263,6 +1263,7 @@ window.ThreadManager = (function () {
             opt.elements.msg_stack.prepend(messages_html);
             if(messages.length
                 && last_message !== null
+                && ! last_message.system_message
                 && ! messages[messages.length-1].system_message
                 && messages[messages.length-1].owner_id === last_message.owner_id)
             {
