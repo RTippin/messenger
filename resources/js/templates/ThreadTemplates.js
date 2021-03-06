@@ -455,7 +455,8 @@ window.ThreadTemplates = (function () {
                 '<div class="dropdown-divider"></div>\n';
         },
         thread_network_opt : function(data){
-            if(data.options.friendable && data.options.can_friend && data.provider_id !== Messenger.common().id)
+            if(data.provider_id !== Messenger.common().id && data.options.friendable
+                && (data.options.can_friend || data.options.friend_status !== 0))
             {
                 switch(data.options.friend_status){
                     case 0: return '<a class="dropdown-item network_option" onclick="FriendsManager.action({dropdown : true, provider_id : \''+data.provider_id+'\', action : \'add\', provider_alias : \''+data.provider_alias+'\'}); return false;" href="#"><i class="fas fa-user-plus"></i> Add friend</a>';
