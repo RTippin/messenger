@@ -49,6 +49,21 @@ trait MessengerConfig
     private string $webEndpoint;
 
     /**
+     * @var bool
+     */
+    private bool $webRoutes;
+
+    /**
+     * @var bool
+     */
+    private bool $providerAvatarRoutes;
+
+    /**
+     * @var bool
+     */
+    private bool $channelRoutes;
+
+    /**
      * @var string
      */
     private string $socketEndpoint;
@@ -1095,6 +1110,30 @@ trait MessengerConfig
     }
 
     /**
+     * @return bool
+     */
+    public function isWebRoutesEnabled(): bool
+    {
+        return $this->webRoutes;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isProviderAvatarRoutesEnabled(): bool
+    {
+        return $this->providerAvatarRoutes;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isChannelRoutesEnabled(): bool
+    {
+        return $this->channelRoutes;
+    }
+
+    /**
      * @return string
      */
     public function getDefaultNotFoundImage(): string
@@ -1177,6 +1216,9 @@ trait MessengerConfig
         $this->siteName = $this->configRepo->get('messenger.site_name');
         $this->apiEndpoint = '/'.$this->configRepo->get('messenger.routing.api.prefix');
         $this->webEndpoint = '/'.$this->configRepo->get('messenger.routing.web.prefix');
+        $this->webRoutes = $this->configRepo->get('messenger.routing.web.enabled');
+        $this->providerAvatarRoutes = $this->configRepo->get('messenger.routing.provider_avatar.enabled');
+        $this->channelRoutes = $this->configRepo->get('messenger.routing.channels.enabled');
         $this->socketEndpoint = $this->configRepo->get('messenger.socket_endpoint');
         $this->avatarStorage = $this->configRepo->get('messenger.storage.avatars');
         $this->threadStorage = $this->configRepo->get('messenger.storage.threads');

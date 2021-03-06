@@ -543,6 +543,21 @@ interface MessengerInterface
     /**
      * @return bool
      */
+    public function isWebRoutesEnabled(): bool;
+
+    /**
+     * @return bool
+     */
+    public function isProviderAvatarRoutesEnabled(): bool;
+
+    /**
+     * @return bool
+     */
+    public function isChannelRoutesEnabled(): bool;
+
+    /**
+     * @return bool
+     */
     public function isPushNotificationsEnabled(): bool;
 
     /**
