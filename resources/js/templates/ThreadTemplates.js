@@ -434,12 +434,15 @@ window.ThreadTemplates = (function () {
                     '           <span id="group_name_area">'+data.name+'</span></div>\n' +
                         templates.thread_resource_dropdown() +
                     (!data.locked && data.options.add_participants ? '<a class="dropdown-item" onclick="ThreadManager.group().addParticipants(); return false;" id="addParticipantLink" href="#"><i class="fas fa-user-plus"></i> Add participants</a>' : '')+
-                    '        <a class="dropdown-item" onclick="ThreadManager.group().viewParticipants(); return false;" id="viewParticipantLink" href="#"><i class="fas fa-users"></i> '+(data.options.admin ? 'Manage' : 'View')+' participants</a>\n' +
+                    '        <a class="dropdown-item" onclick="ThreadManager.group().viewParticipants(); return false;" id="viewParticipantLink" href="#"><i class="fas fa-users"></i> '+(data.options.admin && !data.locked ? 'Manage' : 'View')+' participants</a>\n' +
                     (!data.locked && data.options.invitations ? invites : '')+
                     (!data.locked && data.options.admin ? admin : '')+
                     '<div class="dropdown-divider"></div>' +
-                (data.options.muted ? '<a onclick="ThreadManager.mute().unmute(); return false;" class="dropdown-item" href="#"><i class="fas fa-volume-up"></i> Unmute</a>'
-                    : '<a onclick="ThreadManager.mute().mute(); return false;" class="dropdown-item" href="#"><i class="fas fa-volume-mute"></i> Mute</a>') +
+                (data.locked
+                        ? ''
+                        : (data.options.muted ? '<a onclick="ThreadManager.mute().unmute(); return false;" class="dropdown-item" href="#"><i class="fas fa-volume-up"></i> Unmute</a>'
+                            : '<a onclick="ThreadManager.mute().mute(); return false;" class="dropdown-item" href="#"><i class="fas fa-volume-mute"></i> Mute</a>')
+                ) +
                 '<a class="dropdown-item" onclick="ThreadManager.group().leaveGroup(); return false;" id="leaveGroupLink" href="#"><i class="fas fa-sign-out-alt"></i> Leave Group</a>'+
                     '</div>'+
                 '<button onclick="ThreadManager.load().closeOpened()" title="Close" class="btn btn-lg text-danger btn-light pt-1 pb-0 px-2 mr-1" type="button"><i class="fas fa-times fa-2x"></i></button>'+
@@ -483,8 +486,11 @@ window.ThreadTemplates = (function () {
         },
         thread_private_header : function(data){
             let base = '<div class="dropdown-divider"></div>' +
-                (data.options.muted ? '<a onclick="ThreadManager.mute().unmute(); return false;" class="dropdown-item" href="#"><i class="fas fa-volume-up"></i> Unmute</a>'
-                    : '<a onclick="ThreadManager.mute().mute(); return false;" class="dropdown-item" href="#"><i class="fas fa-volume-mute"></i> Mute</a>') +
+                (data.locked
+                        ? ''
+                        : (data.options.muted ? '<a onclick="ThreadManager.mute().unmute(); return false;" class="dropdown-item" href="#"><i class="fas fa-volume-up"></i> Unmute</a>'
+                            : '<a onclick="ThreadManager.mute().mute(); return false;" class="dropdown-item" href="#"><i class="fas fa-volume-mute"></i> Mute</a>')
+                ) +
                 '<a onclick="ThreadManager.archive().Thread(); return false;" class="dropdown-item" href="#"><i class="fas fa-trash"></i> Delete Conversation</a>' +
                 '</div>';
 
@@ -874,7 +880,7 @@ window.ThreadTemplates = (function () {
             }
             return options;
         },
-        group_participants : function(participants, admin){
+        group_participants : function(participants, admin, locked){
             let table_top = '<div class="row">\n' +
                 '    <div class="col-12">\n' +
                 '        <div class="table-responsive-sm">\n' +
@@ -905,7 +911,7 @@ window.ThreadTemplates = (function () {
                     '  <div class="dropdown float-right">\n' +
                     '    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="fas fa-cog"></i></button>\n' +
                     '    <div class="dropdown-menu dropdown-menu-right">\n' +
-                    (admin ? templates.admin_participant_options(participant) : '')+
+                    (admin && !locked ? templates.admin_participant_options(participant) : '')+
                     '<a class="dropdown-item" onclick="ThreadManager.load().createPrivate({id : \''+participant.owner.provider_id+'\', alias : \''+participant.owner.provider_alias+'\'}); return false;" href="#" title="Message"><i class="fas fa-comment"></i> Message</a>' +
                     ' <span id="network_for_'+participant.owner.provider_id+'">\n' +
                         templates.thread_network_opt(participant.owner)+

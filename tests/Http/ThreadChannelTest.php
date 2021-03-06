@@ -104,4 +104,17 @@ class ThreadChannelTest extends FeatureTestCase
                 ],
             ]);
     }
+
+    /** @test */
+    public function participant_is_forbidden_when_thread_locked()
+    {
+        $this->doe->delete();
+
+        $this->actingAs($this->tippin);
+
+        $this->postJson('/api/broadcasting/auth', [
+            'channel_name' => "presence-messenger.thread.{$this->private->id}",
+        ])
+            ->assertForbidden();
+    }
 }

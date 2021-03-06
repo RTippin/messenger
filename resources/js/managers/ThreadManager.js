@@ -578,7 +578,7 @@ window.ThreadManager = (function () {
             })
         },
         startPresence : function(full){
-            if(opt.thread.awaiting_my_approval || opt.thread.muted) return;
+            if(opt.thread.awaiting_my_approval || opt.thread.muted || opt.thread.lockout) return;
             if(full) opt.socket.chat = null;
             if(opt.socket.chat){
                 opt.socket.chat.subscribe();
@@ -2020,7 +2020,7 @@ window.ThreadManager = (function () {
                     route : Messenger.common().API + 'threads/' + opt.thread.id + '/participants',
                     success : function(data){
                         Messenger.alert().fillModal({
-                            body : ThreadTemplates.render().group_participants(data.data, opt.thread.admin),
+                            body : ThreadTemplates.render().group_participants(data.data, opt.thread.admin, opt.thread.lockout),
                             title : opt.thread.name+' Participants'
                         });
                         methods.loadDataTable($("#view_group_participants"))

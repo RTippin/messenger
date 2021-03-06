@@ -42,7 +42,9 @@ class ThreadPolicy
      */
     public function socket($user, Thread $thread)
     {
-        return $thread->hasCurrentProvider() && ! $thread->isAwaitingMyApproval()
+        return $thread->hasCurrentProvider()
+        && ! $thread->isLocked()
+        && ! $thread->isAwaitingMyApproval()
             ? $this->allow()
             : $this->deny('Not authorized join that thread.');
     }
