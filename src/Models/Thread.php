@@ -360,7 +360,7 @@ class Thread extends Model
      * @param bool $api
      * @return string|null
      */
-    public function getThreadAvatarRoute(string $size = 'sm', $api = false): string
+    public function getThreadAvatarRoute(string $size = 'sm', $api = false): ?string
     {
         return Helpers::Route(($api ? 'api.' : '').'messenger.threads.avatar.render',
             [
