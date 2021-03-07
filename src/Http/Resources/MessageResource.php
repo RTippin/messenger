@@ -59,7 +59,7 @@ class MessageResource extends JsonResource
             'thread_id' => $this->message->thread_id,
             'owner_id' => $this->message->owner_id,
             'owner_type' => $this->message->owner_type,
-            'owner' => new ProviderResource($this->message->owner),
+            'owner' => (new ProviderResource($this->message->owner))->resolve(),
             'type' => $this->message->type,
             'type_verbose' => $this->message->getTypeVerbose(),
             'system_message' => $this->message->isSystemMessage(),

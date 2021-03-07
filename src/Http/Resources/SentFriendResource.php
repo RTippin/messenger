@@ -21,9 +21,9 @@ class SentFriendResource extends JsonResource
         $friend = $this->resource;
 
         return [
-            'recipient' => new ProviderResource($friend->recipient, true, 2),
+            'recipient' => (new ProviderResource($friend->recipient, true, 2))->resolve(),
             'type_verbose' => 'SENT_FRIEND_REQUEST',
-            $this->merge($friend->withoutRelations()),
+            $this->merge($friend->withoutRelations()->toArray()),
         ];
     }
 }

@@ -62,7 +62,7 @@ class CallResource extends JsonResource
             'updated_at' => $this->call->updated_at,
             'owner_id' => $this->call->owner_id,
             'owner_type' => $this->call->owner_type,
-            'owner' => new ProviderResource($this->call->owner),
+            'owner' => (new ProviderResource($this->call->owner))->resolve(),
             'meta' => [
                 'thread_id' => $this->thread->id,
                 'thread_type' => $this->thread->type,
@@ -101,13 +101,13 @@ class CallResource extends JsonResource
     }
 
     /**
-     * @return CallParticipantCollection
+     * @return array
      */
-    private function addParticipants(): CallParticipantCollection
+    private function addParticipants(): array
     {
-        return new CallParticipantCollection(
+        return (new CallParticipantCollection(
             $this->call->participants->load('owner')
-        );
+        ))->resolve();
     }
 
     /**

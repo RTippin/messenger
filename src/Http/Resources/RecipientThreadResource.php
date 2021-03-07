@@ -42,7 +42,7 @@ class RecipientThreadResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'recipient' => new ProviderResource($this->provider, true),
+            'recipient' => (new ProviderResource($this->provider, true))->resolve(),
             'thread_id' => $this->thread
                 ? $this->thread->id
                 : null,

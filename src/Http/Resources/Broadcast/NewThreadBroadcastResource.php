@@ -66,7 +66,7 @@ class NewThreadBroadcastResource extends JsonResource
                     'avatar' => $this->thread->threadAvatar(),
                 ]),
             ],
-            'sender' => new ProviderResource($this->provider),
+            'sender' => (new ProviderResource($this->provider))->resolve(),
         ];
     }
 }

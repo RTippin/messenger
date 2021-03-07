@@ -25,7 +25,7 @@ class CallParticipantResource extends JsonResource
             'call_id' => $participant->call_id,
             'owner_id' => $participant->owner_id,
             'owner_type' => $participant->owner_type,
-            'owner' => new ProviderResource($participant->owner, true),
+            'owner' => (new ProviderResource($participant->owner, true))->resolve(),
             'created_at' => $participant->created_at,
             'updated_at' => $participant->updated_at,
             'left_call' => $participant->left_call,

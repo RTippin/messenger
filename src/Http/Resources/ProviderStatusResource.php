@@ -48,13 +48,13 @@ class ProviderStatusResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'provider' => new ProviderResource($this->provider),
+            'provider' => (new ProviderResource($this->provider))->resolve(),
             'active_calls_count' => $this->activeCallsCount(),
             'online_status' => $this->provider->onlineStatus(),
             'online_status_verbose' => Definitions::OnlineStatus[$this->provider->onlineStatus()],
             'unread_threads_count' => $this->unreadThreadsCount(),
             'pending_friends_count' => $this->pendingFriendsCount(),
-            'settings' => Messenger::getProviderMessenger($this->provider),
+            'settings' => Messenger::getProviderMessenger($this->provider)->toArray(),
         ];
     }
 

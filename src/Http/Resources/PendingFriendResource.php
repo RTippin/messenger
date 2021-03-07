@@ -21,9 +21,9 @@ class PendingFriendResource extends JsonResource
         $friend = $this->resource;
 
         return [
-            'sender' => new ProviderResource($friend->sender, true, 3),
+            'sender' => (new ProviderResource($friend->sender, true, 3))->resolve(),
             'type_verbose' => 'PENDING_FRIEND_REQUEST',
-            $this->merge($friend->withoutRelations()),
+            $this->merge($friend->withoutRelations()->toArray()),
         ];
     }
 }

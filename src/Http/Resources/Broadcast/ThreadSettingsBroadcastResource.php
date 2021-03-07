@@ -45,8 +45,8 @@ class ThreadSettingsBroadcastResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'sender' => new ProviderResource($this->provider),
-            $this->merge(new ThreadSettingsResource($this->thread)),
+            'sender' => (new ProviderResource($this->provider))->resolve(),
+            $this->merge((new ThreadSettingsResource($this->thread))->resolve()),
         ];
     }
 }

@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use RTippin\Messenger\Facades\Messenger as MessengerFacade;
 use RTippin\Messenger\Models\Messenger;
 
 class MessengerResource extends JsonResource
@@ -21,7 +22,7 @@ class MessengerResource extends JsonResource
         $messenger = $this->resource;
 
         return [
-            'owner' => new ProviderResource(\RTippin\Messenger\Facades\Messenger::getProvider()),
+            'owner' => (new ProviderResource(MessengerFacade::getProvider()))->resolve(),
             $this->merge($messenger),
         ];
     }

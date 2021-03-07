@@ -111,71 +111,70 @@ class ThreadResource extends JsonResource
     }
 
     /**
-     * @return MessageResource|null
+     * @return array|null
      */
-    private function addRecentMessage(): ?MessageResource
+    private function addRecentMessage(): ?array
     {
         if (! is_null($this->thread->recentMessage)) {
-            return new MessageResource(
+            return (new MessageResource(
                 $this->thread->recentMessage,
                 $this->thread
-            );
+            ))->resolve();
         }
 
         return null;
     }
 
     /**
-     * @return ProviderResource
+     * @return array|null
      */
-    private function addRecipient(): ProviderResource
+    private function addRecipient(): ?array
     {
-        return new ProviderResource(
+        return (new ProviderResource(
             $this->thread->recipient()->owner,
             true
-        );
+        ))->resolve();
     }
 
     /**
-     * @return CallResource
+     * @return array|null
      */
-    private function addActiveCall(): CallResource
+    private function addActiveCall(): ?array
     {
-        return new CallResource($this->thread->activeCall, $this->thread);
+        return (new CallResource($this->thread->activeCall, $this->thread))->resolve();
     }
 
     /**
-     * @return MessageCollection
+     * @return array|null
      */
-    private function addMessages(): MessageCollection
+    private function addMessages(): ?array
     {
-        return new MessageCollection(
-            app(MessageRepository::class)
-                ->getThreadMessagesIndex($this->thread),
+        return (new MessageCollection(
+            app(MessageRepository::class)->getThreadMessagesIndex($this->thread),
             $this->thread
-        );
+        ))->resolve();
     }
 
     /**
-     * @return ParticipantCollection
+     * @return array|null
      */
-    private function addParticipants(): ParticipantCollection
+    private function addParticipants(): ?array
     {
-        return new ParticipantCollection(
+        return (new ParticipantCollection(
             $this->thread->participants,
             $this->thread
-        );
+        ))->resolve();
     }
 
     /**
-     * @return CallCollection
+     * @return array|null
      */
-    private function addCalls(): CallCollection
+    private function addCalls(): ?array
     {
-        return new CallCollection(
+        return (new CallCollection(
             app(CallRepository::class)
                 ->getThreadCallsIndex($this->thread),
             $this->thread
-        );
+        ))->resolve();
     }
 }

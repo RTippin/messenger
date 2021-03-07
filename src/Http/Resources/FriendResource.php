@@ -21,9 +21,9 @@ class FriendResource extends JsonResource
         $friend = $this->resource;
 
         return [
-            'party' => new ProviderResource($friend->party, true, 1),
+            'party' => (new ProviderResource($friend->party, true, 1))->resolve(),
             'type_verbose' => 'FRIEND',
-            $this->merge($friend->withoutRelations()),
+            $this->merge($friend->withoutRelations()->toArray()),
         ];
     }
 }

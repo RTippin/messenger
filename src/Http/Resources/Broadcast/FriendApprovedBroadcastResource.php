@@ -36,8 +36,8 @@ class FriendApprovedBroadcastResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'sender' => new ProviderResource($this->friend->party),
-            $this->merge($this->friend->withoutRelations()),
+            'sender' => (new ProviderResource($this->friend->party))->resolve(),
+            $this->merge($this->friend->withoutRelations()->toArray()),
         ];
     }
 }

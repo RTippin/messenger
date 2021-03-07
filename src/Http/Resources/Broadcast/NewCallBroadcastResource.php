@@ -58,7 +58,7 @@ class NewCallBroadcastResource extends JsonResource
                     'thread_avatar' => $this->call->thread->threadAvatar(),
                 ]),
             ],
-            'sender' => new ProviderResource($this->provider),
+            'sender' => (new ProviderResource($this->provider))->resolve(),
         ];
     }
 }

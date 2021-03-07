@@ -57,7 +57,7 @@ class ThreadApprovalBroadcastResource extends JsonResource
                 'id' => $this->thread->id,
                 'approved' => $this->approved,
             ],
-            'sender' => new ProviderResource($this->provider),
+            'sender' => (new ProviderResource($this->provider))->resolve(),
         ];
     }
 }

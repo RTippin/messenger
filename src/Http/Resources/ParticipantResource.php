@@ -53,7 +53,7 @@ class ParticipantResource extends JsonResource
             'start_calls' => $this->participant->start_calls,
             'owner_id' => $this->participant->owner_id,
             'owner_type' => $this->participant->owner_type,
-            'owner' => new ProviderResource($this->participant->owner, true),
+            'owner' => (new ProviderResource($this->participant->owner, true))->resolve(),
             'created_at' => $this->participant->created_at,
             'updated_at' => $this->participant->updated_at,
             'last_read' => [

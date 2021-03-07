@@ -42,12 +42,8 @@ abstract class MessengerCollection extends ResourceCollection
     protected function safeTransformer(): array
     {
         return $this->collection
-            ->map(
-                fn ($resource) => $this->makeResource($resource)
-            )
-            ->reject(
-                fn ($resource) => is_null($resource)
-            )
+            ->map(fn ($resource) => $this->makeResource($resource))
+            ->reject(fn ($resource) => is_null($resource))
             ->toArray();
     }
 

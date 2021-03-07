@@ -46,7 +46,7 @@ class InviteResource extends JsonResource
                 fn () => $this->joinOptions($invite)
             ),
             'route' => $invite->getInvitationRoute(),
-            $this->merge($invite->withoutRelations()),
+            $this->merge($invite->withoutRelations()->toArray()),
         ];
     }
 
