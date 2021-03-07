@@ -23,7 +23,7 @@ class RateLimitersTest extends FeatureTestCase
     }
 
     /** @test */
-    public function general_api_limits_request_120_per_minute()
+    public function general_api_limits_request_1000_per_minute()
     {
         $this->actingAs($this->tippin);
 
@@ -33,9 +33,9 @@ class RateLimitersTest extends FeatureTestCase
 
         $remaining = $response->headers->get('X-RateLimit-Remaining');
 
-        $this->assertEquals(120, $limit);
+        $this->assertEquals(1000, $limit);
 
-        $this->assertEquals(119, $remaining);
+        $this->assertEquals(999, $remaining);
     }
 
     /** @test */
@@ -92,7 +92,7 @@ class RateLimitersTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_image_message_api_limits_request_10_per_minute()
+    public function store_image_message_api_limits_request_15_per_minute()
     {
         Storage::fake(Messenger::getThreadStorage('disk'));
 
@@ -111,13 +111,13 @@ class RateLimitersTest extends FeatureTestCase
 
         $remaining = $response->headers->get('X-RateLimit-Remaining');
 
-        $this->assertEquals(10, $limit);
+        $this->assertEquals(15, $limit);
 
-        $this->assertEquals(9, $remaining);
+        $this->assertEquals(14, $remaining);
     }
 
     /** @test */
-    public function store_document_message_api_limits_request_10_per_minute()
+    public function store_document_message_api_limits_request_15_per_minute()
     {
         Storage::fake(Messenger::getThreadStorage('disk'));
 
@@ -136,8 +136,8 @@ class RateLimitersTest extends FeatureTestCase
 
         $remaining = $response->headers->get('X-RateLimit-Remaining');
 
-        $this->assertEquals(10, $limit);
+        $this->assertEquals(15, $limit);
 
-        $this->assertEquals(9, $remaining);
+        $this->assertEquals(14, $remaining);
     }
 }

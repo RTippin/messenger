@@ -377,10 +377,10 @@ PushNotificationEvent::class => $data //Array
 
 ```php
 'rate_limits' => [
-    'api' => 120,       // Applies over entire API
+    'api' => 1000,       // Applies over entire API
     'search' => 45,     // Applies on search
     'message' => 60,    // Applies to sending messages per thread
-    'attachment' => 10, // Applies to uploading images/documents per thread
+    'attachment' => 15, // Applies to uploading images/documents per thread
 ],
 ```
 - You can set the rate limits for our API, including fine grain control over search, messaging, and attachment uploads. Setting a limit to `0` will remove its rate limiter entirely.

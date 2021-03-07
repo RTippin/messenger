@@ -530,10 +530,10 @@ class MessengerTest extends MessengerTestCase
         $this->assertTrue($this->messenger->isProviderAvatarUploadEnabled());
         $this->assertTrue($this->messenger->isProviderAvatarRemovalEnabled());
         $this->assertCount(2, $this->messenger->getMessengerProviders());
-        $this->assertSame(120, $this->messenger->getApiRateLimit());
+        $this->assertSame(1000, $this->messenger->getApiRateLimit());
         $this->assertSame(45, $this->messenger->getSearchRateLimit());
         $this->assertSame(60, $this->messenger->getMessageRateLimit());
-        $this->assertSame(10, $this->messenger->getAttachmentRateLimit());
+        $this->assertSame(15, $this->messenger->getAttachmentRateLimit());
         $this->assertTrue($this->messenger->isMessageEditsEnabled());
         $this->assertTrue($this->messenger->isMessageEditsViewEnabled());
         $this->assertSame(10240, $this->messenger->getMessageDocumentSizeLimit());
