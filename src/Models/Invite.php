@@ -147,7 +147,8 @@ class Invite extends Model
         return Helpers::Route('messenger.invites.join',
             [
                 'invite' => $this->code,
-            ]
+            ],
+            true
         );
     }
 }
