@@ -100,7 +100,7 @@ window.NotifyManager = (function () {
                         return;
                     }
                     Messenger.xhr().request({
-                        route : '/auth/heartbeat',
+                        route : Messenger.common().API + 'heartbeat',
                         success : function(data){
                             methods.manageHeartbeatData(data);
                             opt.settings.is_away = false;
