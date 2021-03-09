@@ -95,7 +95,6 @@ class SentFriendsTest extends FeatureTestCase
         ]);
         $this->actingAs($this->tippin);
 
-
         $this->postJson(route('api.messenger.friends.sent.store'), [
             'recipient_id' => $this->doe->getKey(),
             'recipient_alias' => 'user',

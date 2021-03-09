@@ -198,7 +198,6 @@ class InvitesTest extends FeatureTestCase
             InviteArchivedEvent::class,
         ]);
 
-
         $this->deleteJson(route('api.messenger.threads.invites.destroy', [
             'thread' => $this->group->id,
             'invite' => $this->invite->id,

@@ -180,7 +180,6 @@ class KickCallParticipantTest extends FeatureTestCase
             KickedFromCallEvent::class,
         ]);
 
-
         $this->putJson(route('api.messenger.threads.calls.participants.update', [
             'thread' => $this->group->id,
             'call' => $this->call->id,
