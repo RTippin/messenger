@@ -1,6 +1,12 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v0.20 (03-09-2021)]
+
+#### Changed
+- Allow more mime types on uploads, frontend assets updated with this as well.
+- Misc bug fixes.
+
 ### [v0.19 (02-28-2021)]
 
 #### Added
