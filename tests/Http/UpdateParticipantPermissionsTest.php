@@ -12,11 +12,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class UpdateParticipantPermissionsTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Participant $participant;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -24,11 +21,8 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-
         $this->participant = $this->group->participants()
             ->where('admin', '=', false)
             ->first();
@@ -38,12 +32,10 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
     public function user_forbidden_to_update_private_participant_permissions()
     {
         $private = $this->createPrivateThread($this->tippin, $this->doe);
-
         $participant = $private->participants()
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
             ->first();
-
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.participants.update', [
@@ -62,12 +54,12 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
     /** @test */
     public function update_group_participant_permissions_without_changes_fires_no_events()
     {
+        $this->actingAs($this->tippin);
+
         $this->doesntExpectEvents([
             ParticipantPermissionsBroadcast::class,
             ParticipantPermissionsEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.participants.update', [
             'thread' => $this->group->id,
@@ -85,12 +77,12 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
     /** @test */
     public function admin_can_update_group_participant_permissions()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             ParticipantPermissionsBroadcast::class,
             ParticipantPermissionsEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.participants.update', [
             'thread' => $this->group->id,
@@ -122,7 +114,6 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
         $this->group->update([
             'lockout' => true,
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.participants.update', [

@@ -11,17 +11,11 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class FriendsTest extends FeatureTestCase
 {
     private Friend $friend;
-
     private Friend $inverseFriend;
-
     private Friend $friendCompany;
-
     private Friend $inverseFriendCompany;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
-
     private MessengerProvider $developers;
 
     protected function setUp(): void
@@ -29,21 +23,13 @@ class FriendsTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->developers = $this->companyDevelopers();
-
         $friends = $this->createFriends($this->tippin, $this->doe);
-
         $this->friend = $friends[0];
-
         $this->inverseFriend = $friends[1];
-
         $friendsCompany = $this->createFriends($this->tippin, $this->developers);
-
         $this->friendCompany = $friendsCompany[0];
-
         $this->inverseFriendCompany = $friendsCompany[1];
     }
 
@@ -77,11 +63,11 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_remove_friend()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             FriendRemovedEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.friends.destroy', [
             'friend' => $this->friend->id,
@@ -94,11 +80,11 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_remove_company_friend()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             FriendRemovedEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.friends.destroy', [
             'friend' => $this->friendCompany->id,

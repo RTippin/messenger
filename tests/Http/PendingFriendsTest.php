@@ -15,7 +15,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class PendingFriendsTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -23,7 +22,6 @@ class PendingFriendsTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
     }
 
@@ -47,19 +45,18 @@ class PendingFriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_deny_pending_request()
     {
-        $this->expectsEvents([
-            FriendDeniedBroadcast::class,
-            FriendDeniedEvent::class,
-        ]);
-
         $pending = PendingFriend::create([
             'sender_id' => $this->tippin->getKey(),
             'sender_type' => get_class($this->tippin),
             'recipient_id' => $this->doe->getKey(),
             'recipient_type' => get_class($this->doe),
         ]);
-
         $this->actingAs($this->doe);
+
+        $this->expectsEvents([
+            FriendDeniedBroadcast::class,
+            FriendDeniedEvent::class,
+        ]);
 
         $this->deleteJson(route('api.messenger.friends.pending.destroy', [
             'pending' => $pending->id,
@@ -70,19 +67,18 @@ class PendingFriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_accept_pending_request()
     {
-        $this->expectsEvents([
-            FriendApprovedBroadcast::class,
-            FriendApprovedEvent::class,
-        ]);
-
         $pending = SentFriend::create([
             'sender_id' => $this->tippin->getKey(),
             'sender_type' => get_class($this->tippin),
             'recipient_id' => $this->doe->getKey(),
             'recipient_type' => get_class($this->doe),
         ]);
-
         $this->actingAs($this->doe);
+
+        $this->expectsEvents([
+            FriendApprovedBroadcast::class,
+            FriendApprovedEvent::class,
+        ]);
 
         $this->putJson(route('api.messenger.friends.pending.update', [
             'pending' => $pending->id,

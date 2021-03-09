@@ -11,7 +11,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class MessengerAvatarTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private string $disk;
 
     protected function setUp(): void
@@ -19,9 +18,7 @@ class MessengerAvatarTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->disk = Messenger::getAvatarStorage('disk');
-
         Storage::fake($this->disk);
     }
 
@@ -29,7 +26,6 @@ class MessengerAvatarTest extends FeatureTestCase
     public function user_forbidden_to_upload_avatar_when_disabled()
     {
         Messenger::setProviderAvatarUpload(false);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.avatar.update'), [
@@ -55,13 +51,10 @@ class MessengerAvatarTest extends FeatureTestCase
         $this->tippin->update([
             'picture' => 'avatar.jpg',
         ]);
-
         $directory = Messenger::getAvatarStorage('directory').'/user/'.$this->tippin->getKey();
-
         UploadedFile::fake()->image('avatar.jpg')->storeAs($directory, 'avatar.jpg', [
             'disk' => $this->disk,
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.avatar.destroy'))
@@ -72,7 +65,6 @@ class MessengerAvatarTest extends FeatureTestCase
     public function user_forbidden_to_remove_avatar_when_disabled()
     {
         Messenger::setProviderAvatarRemoval(false);
-
         $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.avatar.destroy'))

@@ -10,7 +10,6 @@ use RTippin\Messenger\Tests\Fixtures\OtherModel;
 class MessengerTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -18,7 +17,6 @@ class MessengerTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
     }
 
@@ -56,11 +54,10 @@ class MessengerTest extends FeatureTestCase
     /** @test */
     public function messenger_info_changes_when_set_dynamically()
     {
-        $this->actingAs($this->tippin);
-
         Messenger::setCalling(false);
         Messenger::setMessageImageUpload(false);
         Messenger::setThreadsIndexCount(50);
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.info'))
             ->assertSuccessful()
@@ -88,9 +85,7 @@ class MessengerTest extends FeatureTestCase
     public function user_has_unread_threads_count()
     {
         $this->createGroupThread($this->tippin);
-
         $this->createPrivateThread($this->tippin, $this->doe);
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.unread.threads.count'))
@@ -114,9 +109,7 @@ class MessengerTest extends FeatureTestCase
     public function user_has_one_active_call()
     {
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
-
         $call = $this->createCall($thread, $this->tippin);
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.active.calls'))

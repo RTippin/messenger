@@ -13,11 +13,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class EditMessageTest extends FeatureTestCase
 {
     private Thread $private;
-
     private Message $message;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -25,11 +22,8 @@ class EditMessageTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-
         $this->message = $this->createMessage($this->private, $this->tippin);
     }
 
@@ -71,16 +65,12 @@ class EditMessageTest extends FeatureTestCase
     public function forbidden_to_view_message_edits_when_disabled_in_config()
     {
         Messenger::setMessageEditsView(false);
-
         $this->travel(10)->minutes();
-
         $this->message->edits()->create([
             'body' => 'First Edit',
             'edited_at' => now(),
         ]);
-
         $this->message->touch();
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.history', [
@@ -94,14 +84,11 @@ class EditMessageTest extends FeatureTestCase
     public function recipient_can_view_message_edits()
     {
         $this->travel(10)->minutes();
-
         $this->message->edits()->create([
             'body' => 'First Edit',
             'edited_at' => now(),
         ]);
-
         $this->message->touch();
-
         $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.messages.history', [
@@ -121,19 +108,15 @@ class EditMessageTest extends FeatureTestCase
     public function can_view_multiple_message_edits()
     {
         $this->travel(10)->minutes();
-
         $this->message->edits()->create([
             'body' => 'First Edit',
             'edited_at' => now(),
         ]);
-
         $this->message->edits()->create([
             'body' => 'Second Edit',
             'edited_at' => now(),
         ]);
-
         $this->message->touch();
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.history', [
@@ -147,14 +130,13 @@ class EditMessageTest extends FeatureTestCase
     /** @test */
     public function owner_can_edit_message()
     {
+        $this->travel(5)->minutes();
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             MessageEditedBroadcast::class,
             MessageEditedEvent::class,
         ]);
-
-        $this->travel(5)->minutes();
-
-        $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.messages.update', [
             'thread' => $this->private->id,
@@ -188,7 +170,6 @@ class EditMessageTest extends FeatureTestCase
     public function forbidden_to_update_message_when_disabled_in_config()
     {
         Messenger::setMessageEdits(false);
-
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.messages.update', [
@@ -206,7 +187,6 @@ class EditMessageTest extends FeatureTestCase
         $this->message->update([
             'type' => 1,
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.messages.update', [
@@ -224,7 +204,6 @@ class EditMessageTest extends FeatureTestCase
         $this->message->update([
             'type' => 2,
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.messages.update', [
@@ -242,7 +221,6 @@ class EditMessageTest extends FeatureTestCase
         $this->message->update([
             'type' => 99,
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.messages.update', [
@@ -260,7 +238,6 @@ class EditMessageTest extends FeatureTestCase
         $this->private->update([
             'lockout' => true,
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.messages.update', [

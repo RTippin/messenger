@@ -15,11 +15,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class StartCallTest extends FeatureTestCase
 {
     private Thread $private;
-
     private Thread $group;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -27,11 +24,8 @@ class StartCallTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
     }
 
@@ -78,7 +72,6 @@ class StartCallTest extends FeatureTestCase
             ->update([
                 'pending' => true,
             ]);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
@@ -91,7 +84,6 @@ class StartCallTest extends FeatureTestCase
     public function forbidden_to_start_call_when_active_call_exist()
     {
         $this->createCall($this->private, $this->tippin);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
@@ -104,7 +96,6 @@ class StartCallTest extends FeatureTestCase
     public function forbidden_to_start_call_when_creating_call_timeout_exist()
     {
         Cache::put("call:{$this->private->id}:starting", true);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
@@ -119,7 +110,6 @@ class StartCallTest extends FeatureTestCase
         $this->group->update([
             'calling' => false,
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
@@ -132,7 +122,6 @@ class StartCallTest extends FeatureTestCase
     public function forbidden_to_start_call_when_disabled_from_config()
     {
         Messenger::setCalling(false);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
@@ -145,7 +134,6 @@ class StartCallTest extends FeatureTestCase
     public function forbidden_to_start_call_when_temporarily_disabled()
     {
         Messenger::disableCallsTemporarily(1);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
@@ -157,17 +145,16 @@ class StartCallTest extends FeatureTestCase
     /** @test */
     public function user_can_start_call_in_private()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             CallStartedBroadcast::class,
             CallStartedEvent::class,
         ]);
-
         $this->doesntExpectEvents([
             CallJoinedBroadcast::class,
             CallJoinedEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
             'thread' => $this->private->id,
@@ -184,17 +171,16 @@ class StartCallTest extends FeatureTestCase
     /** @test */
     public function admin_can_start_call_in_group()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             CallStartedBroadcast::class,
             CallStartedEvent::class,
         ]);
-
         $this->doesntExpectEvents([
             CallJoinedBroadcast::class,
             CallJoinedEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
             'thread' => $this->group->id,
@@ -212,18 +198,16 @@ class StartCallTest extends FeatureTestCase
             ->update([
                 'start_calls' => true,
             ]);
+        $this->actingAs($this->doe);
 
         $this->expectsEvents([
             CallStartedBroadcast::class,
             CallStartedEvent::class,
         ]);
-
         $this->doesntExpectEvents([
             CallJoinedBroadcast::class,
             CallJoinedEvent::class,
         ]);
-
-        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
             'thread' => $this->group->id,

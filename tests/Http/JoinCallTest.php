@@ -12,11 +12,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class JoinCallTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Call $call;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -24,11 +21,8 @@ class JoinCallTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-
         $this->call = $this->createCall($this->group, $this->tippin);
     }
 
@@ -62,7 +56,6 @@ class JoinCallTest extends FeatureTestCase
         $this->call->update([
             'call_ended' => now(),
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.join', [
@@ -81,7 +74,6 @@ class JoinCallTest extends FeatureTestCase
             'left_call' => now(),
             'kicked' => true,
         ]);
-
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.calls.join', [
@@ -94,12 +86,12 @@ class JoinCallTest extends FeatureTestCase
     /** @test */
     public function participant_can_join_call()
     {
+        $this->actingAs($this->doe);
+
         $this->expectsEvents([
             CallJoinedBroadcast::class,
             CallJoinedEvent::class,
         ]);
-
-        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.calls.join', [
             'thread' => $this->group->id,
@@ -118,18 +110,17 @@ class JoinCallTest extends FeatureTestCase
     /** @test */
     public function participant_can_rejoin_call()
     {
-        $this->expectsEvents([
-            CallJoinedBroadcast::class,
-            CallJoinedEvent::class,
-        ]);
-
         $this->call->participants()
             ->first()
             ->update([
                 'left_call' => now(),
             ]);
-
         $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            CallJoinedBroadcast::class,
+            CallJoinedEvent::class,
+        ]);
 
         $this->postJson(route('api.messenger.threads.calls.join', [
             'thread' => $this->group->id,

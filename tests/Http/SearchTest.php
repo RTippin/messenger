@@ -9,9 +9,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class SearchTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
-
     private MessengerProvider $developers;
 
     protected function setUp(): void
@@ -19,9 +17,7 @@ class SearchTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->developers = $this->companyDevelopers();
     }
 
@@ -111,7 +107,6 @@ class SearchTest extends FeatureTestCase
     public function search_for_user_without_messenger_returns_no_results()
     {
         $this->createJaneSmith();
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.search', [

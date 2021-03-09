@@ -13,11 +13,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class InvitesTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Invite $invite;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -25,11 +22,8 @@ class InvitesTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-
         $this->invite = $this->group->invites()
             ->create([
                 'owner_id' => $this->tippin->getKey(),
@@ -45,7 +39,6 @@ class InvitesTest extends FeatureTestCase
     public function forbidden_to_view_invites_on_private_thread()
     {
         $private = $this->createPrivateThread($this->tippin, $this->doe);
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.invites.index', [
@@ -86,7 +79,6 @@ class InvitesTest extends FeatureTestCase
             ->update([
                 'manage_invites' => true,
             ]);
-
         $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.invites.index', [
@@ -126,7 +118,6 @@ class InvitesTest extends FeatureTestCase
         $this->invite->update([
             'uses' => 1,
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.invites.index', [
@@ -140,7 +131,6 @@ class InvitesTest extends FeatureTestCase
     public function invite_ignored_when_not_deleted_and_past_expires()
     {
         $this->travel(2)->hours();
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.invites.index', [
@@ -156,7 +146,6 @@ class InvitesTest extends FeatureTestCase
         $this->group->update([
             'invitations' => false,
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.invites.index', [
@@ -180,11 +169,11 @@ class InvitesTest extends FeatureTestCase
     /** @test */
     public function admin_can_archive_invite()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             InviteArchivedEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.invites.destroy', [
             'thread' => $this->group->id,
@@ -196,10 +185,6 @@ class InvitesTest extends FeatureTestCase
     /** @test */
     public function participant_with_permission_can_archive_invite()
     {
-        $this->expectsEvents([
-            InviteArchivedEvent::class,
-        ]);
-
         $this->group->participants()
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
@@ -207,8 +192,12 @@ class InvitesTest extends FeatureTestCase
             ->update([
                 'manage_invites' => true,
             ]);
-
         $this->actingAs($this->doe);
+
+        $this->expectsEvents([
+            InviteArchivedEvent::class,
+        ]);
+
 
         $this->deleteJson(route('api.messenger.threads.invites.destroy', [
             'thread' => $this->group->id,
@@ -220,11 +209,11 @@ class InvitesTest extends FeatureTestCase
     /** @test */
     public function admin_can_create_invite()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             NewInviteEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.invites.store', [
             'thread' => $this->group->id,
@@ -242,10 +231,6 @@ class InvitesTest extends FeatureTestCase
     /** @test */
     public function participant_with_permission_can_create_invite()
     {
-        $this->expectsEvents([
-            NewInviteEvent::class,
-        ]);
-
         $this->group->participants()
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
@@ -253,8 +238,11 @@ class InvitesTest extends FeatureTestCase
             ->update([
                 'manage_invites' => true,
             ]);
-
         $this->actingAs($this->doe);
+
+        $this->expectsEvents([
+            NewInviteEvent::class,
+        ]);
 
         $this->postJson(route('api.messenger.threads.invites.store', [
             'thread' => $this->group->id,
@@ -269,7 +257,6 @@ class InvitesTest extends FeatureTestCase
     public function user_forbidden_to_create_more_invites_than_the_max_allowed_from_config()
     {
         Messenger::setThreadInvitesMaxCount(1);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.invites.store', [
@@ -285,7 +272,6 @@ class InvitesTest extends FeatureTestCase
     public function user_forbidden_to_create_invites_when_disabled_from_config()
     {
         Messenger::setThreadInvites(false);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.invites.store', [
@@ -304,7 +290,7 @@ class InvitesTest extends FeatureTestCase
      * @param $usesValue
      * @param $errors
      */
-    public function create_invite_checks_values($expiresValue, $usesValue, $errors)
+    public function create_invite_fails_validation($expiresValue, $usesValue, $errors)
     {
         $this->actingAs($this->tippin);
 

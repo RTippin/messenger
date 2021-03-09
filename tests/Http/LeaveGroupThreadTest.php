@@ -11,9 +11,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class LeaveGroupThreadTest extends FeatureTestCase
 {
     private Thread $group;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -21,21 +19,19 @@ class LeaveGroupThreadTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
     }
 
     /** @test */
     public function non_admin_can_leave()
     {
+        $this->actingAs($this->doe);
+
         $this->expectsEvents([
             ThreadLeftBroadcast::class,
             ThreadLeftEvent::class,
         ]);
-
-        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.leave', [
             'thread' => $this->group->id,
@@ -49,13 +45,12 @@ class LeaveGroupThreadTest extends FeatureTestCase
         $this->group->update([
             'lockout' => true,
         ]);
+        $this->actingAs($this->doe);
 
         $this->expectsEvents([
             ThreadLeftBroadcast::class,
             ThreadLeftEvent::class,
         ]);
-
-        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.leave', [
             'thread' => $this->group->id,
@@ -69,13 +64,12 @@ class LeaveGroupThreadTest extends FeatureTestCase
         $this->group->update([
             'lockout' => true,
         ]);
+        $this->actingAs($this->tippin);
 
         $this->expectsEvents([
             ThreadLeftBroadcast::class,
             ThreadLeftEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.leave', [
             'thread' => $this->group->id,
@@ -99,18 +93,17 @@ class LeaveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_can_leave_when_only_participant()
     {
-        $this->expectsEvents([
-            ThreadLeftBroadcast::class,
-            ThreadLeftEvent::class,
-        ]);
-
         $this->group->participants()
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
             ->first()
             ->forceDelete();
-
         $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            ThreadLeftBroadcast::class,
+            ThreadLeftEvent::class,
+        ]);
 
         $this->postJson(route('api.messenger.threads.leave', [
             'thread' => $this->group->id,
@@ -121,11 +114,6 @@ class LeaveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_can_leave_when_other_admins_exist()
     {
-        $this->expectsEvents([
-            ThreadLeftBroadcast::class,
-            ThreadLeftEvent::class,
-        ]);
-
         $this->group->participants()
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
@@ -133,8 +121,12 @@ class LeaveGroupThreadTest extends FeatureTestCase
             ->update([
                 'admin' => true,
             ]);
-
         $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            ThreadLeftBroadcast::class,
+            ThreadLeftEvent::class,
+        ]);
 
         $this->postJson(route('api.messenger.threads.leave', [
             'thread' => $this->group->id,
@@ -146,7 +138,6 @@ class LeaveGroupThreadTest extends FeatureTestCase
     public function cannot_leave_private_thread()
     {
         $private = $this->createPrivateThread($this->tippin, $this->doe);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.leave', [

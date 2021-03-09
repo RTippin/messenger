@@ -10,13 +10,9 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class ThreadsTest extends FeatureTestCase
 {
     private Thread $private;
-
     private Thread $group;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
-
     private MessengerProvider $developers;
 
     protected function setUp(): void
@@ -24,13 +20,9 @@ class ThreadsTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->developers = $this->companyDevelopers();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe, $this->developers);
-
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
     }
 
@@ -120,7 +112,6 @@ class ThreadsTest extends FeatureTestCase
     public function user_forbidden_to_view_thread_they_do_not_belong_to()
     {
         $group = $this->createGroupThread($this->doe);
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.show', [
@@ -187,7 +178,6 @@ class ThreadsTest extends FeatureTestCase
     public function unread_thread_is_unread()
     {
         $this->createMessage($this->private, $this->tippin);
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.is.unread', [
@@ -203,7 +193,6 @@ class ThreadsTest extends FeatureTestCase
     public function read_thread_is_not_unread()
     {
         $this->createMessage($this->private, $this->tippin);
-
         $this->private->participants()
             ->where('owner_id', '=', $this->tippin->getKey())
             ->where('owner_type', '=', get_class($this->tippin))
@@ -211,7 +200,6 @@ class ThreadsTest extends FeatureTestCase
             ->update([
                 'last_read' => now()->addMinute(),
             ]);
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.is.unread', [

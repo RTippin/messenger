@@ -12,11 +12,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class LeaveCallTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Call $call;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -24,11 +21,8 @@ class LeaveCallTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-
         $this->call = $this->createCall($this->group, $this->tippin);
     }
 
@@ -62,7 +56,6 @@ class LeaveCallTest extends FeatureTestCase
         $this->call->update([
             'call_ended' => now(),
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.leave', [
@@ -75,12 +68,12 @@ class LeaveCallTest extends FeatureTestCase
     /** @test */
     public function call_participant_can_leave_call()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             CallLeftBroadcast::class,
             CallLeftEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.leave', [
             'thread' => $this->group->id,

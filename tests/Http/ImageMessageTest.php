@@ -14,7 +14,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class ImageMessageTest extends FeatureTestCase
 {
     private Thread $private;
-
     private MessengerProvider $tippin;
 
     protected function setUp(): void
@@ -22,21 +21,19 @@ class ImageMessageTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->private = $this->createPrivateThread($this->tippin, $this->userDoe());
-
         Storage::fake(Messenger::getThreadStorage('disk'));
     }
 
     /** @test */
     public function user_can_send_image_message()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.images.store', [
             'thread' => $this->private->id,
@@ -62,7 +59,6 @@ class ImageMessageTest extends FeatureTestCase
     public function user_forbidden_to_send_image_message_when_disabled_from_config()
     {
         Messenger::setMessageImageUpload(false);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.images.store', [

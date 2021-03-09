@@ -12,9 +12,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class JoinWithInviteTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Invite $invite;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -22,11 +20,8 @@ class JoinWithInviteTest extends FeatureTestCase
         parent::setUp();
 
         $tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($tippin, $this->doe);
-
         $this->invite = $this->group->invites()->create([
             'owner_id' => $tippin->getKey(),
             'owner_type' => get_class($tippin),
@@ -159,11 +154,11 @@ class JoinWithInviteTest extends FeatureTestCase
     /** @test */
     public function non_participant_can_join_group_with_valid_invite()
     {
+        $this->actingAs($this->createJaneSmith());
+
         $this->expectsEvents([
             InviteUsedEvent::class,
         ]);
-
-        $this->actingAs($this->createJaneSmith());
 
         $this->postJson(route('api.messenger.invites.join', [
             'invite' => 'TEST1234',
@@ -180,7 +175,6 @@ class JoinWithInviteTest extends FeatureTestCase
         $this->group->update([
             'invitations' => false,
         ]);
-
         $this->actingAs($this->companyDevelopers());
 
         $this->postJson(route('api.messenger.invites.join', [
@@ -193,7 +187,6 @@ class JoinWithInviteTest extends FeatureTestCase
     public function forbidden_to_join_group_with_valid_invite_when_disabled_from_config()
     {
         Messenger::setThreadInvites(false);
-
         $this->actingAs($this->companyDevelopers());
 
         $this->postJson(route('api.messenger.invites.join', [
@@ -217,7 +210,6 @@ class JoinWithInviteTest extends FeatureTestCase
     public function forbidden_to_join_group_with_expired_but_not_deleted_invite()
     {
         $this->travel(2)->hours();
-
         $this->actingAs($this->companyDevelopers());
 
         $this->postJson(route('api.messenger.invites.join', [

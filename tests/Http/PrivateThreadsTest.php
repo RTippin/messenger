@@ -10,7 +10,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class PrivateThreadsTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -18,7 +17,6 @@ class PrivateThreadsTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
     }
 
@@ -32,12 +30,12 @@ class PrivateThreadsTest extends FeatureTestCase
     /** @test */
     public function creating_new_private_thread_with_non_friend_is_pending()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             NewThreadBroadcast::class,
             NewThreadEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
@@ -66,14 +64,13 @@ class PrivateThreadsTest extends FeatureTestCase
     /** @test */
     public function creating_new_private_thread_with_friend_is_not_pending()
     {
+        $this->createFriends($this->tippin, $this->doe);
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             NewThreadBroadcast::class,
             NewThreadEvent::class,
         ]);
-
-        $this->createFriends($this->tippin, $this->doe);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
@@ -86,12 +83,12 @@ class PrivateThreadsTest extends FeatureTestCase
     /** @test */
     public function creating_new_private_thread_with_non_friend_company()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             NewThreadBroadcast::class,
             NewThreadEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
@@ -121,7 +118,6 @@ class PrivateThreadsTest extends FeatureTestCase
     public function creating_new_private_forbidden_when_one_exist()
     {
         $this->createPrivateThread($this->tippin, $this->doe);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [

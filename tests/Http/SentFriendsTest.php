@@ -13,9 +13,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class SentFriendsTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
-
     private MessengerProvider $developers;
 
     protected function setUp(): void
@@ -23,9 +21,7 @@ class SentFriendsTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->developers = $this->companyDevelopers();
     }
 
@@ -49,12 +45,12 @@ class SentFriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_friend_another_user()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             FriendRequestBroadcast::class,
             FriendRequestEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.friends.sent.store'), [
             'recipient_id' => $this->doe->getKey(),
@@ -70,12 +66,12 @@ class SentFriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_friend_another_company()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             FriendRequestBroadcast::class,
             FriendRequestEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.friends.sent.store'), [
             'recipient_id' => $this->developers->getKey(),
@@ -91,14 +87,14 @@ class SentFriendsTest extends FeatureTestCase
     /** @test */
     public function user_cannot_friend_user_while_having_pending_sent()
     {
-        $this->actingAs($this->tippin);
-
         SentFriend::create([
             'sender_id' => $this->tippin->getKey(),
             'sender_type' => get_class($this->tippin),
             'recipient_id' => $this->doe->getKey(),
             'recipient_type' => get_class($this->doe),
         ]);
+        $this->actingAs($this->tippin);
+
 
         $this->postJson(route('api.messenger.friends.sent.store'), [
             'recipient_id' => $this->doe->getKey(),
@@ -110,19 +106,18 @@ class SentFriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_cancel_sent_request()
     {
-        $this->expectsEvents([
-            FriendCancelledBroadcast::class,
-            FriendCancelledEvent::class,
-        ]);
-
         $sent = SentFriend::create([
             'sender_id' => $this->tippin->getKey(),
             'sender_type' => get_class($this->tippin),
             'recipient_id' => $this->doe->getKey(),
             'recipient_type' => get_class($this->doe),
         ]);
-
         $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            FriendCancelledBroadcast::class,
+            FriendCancelledEvent::class,
+        ]);
 
         $this->deleteJson(route('api.messenger.friends.sent.destroy', [
             'sent' => $sent->id,
@@ -134,7 +129,6 @@ class SentFriendsTest extends FeatureTestCase
     public function user_cannot_friend_when_already_friends()
     {
         $this->createFriends($this->tippin, $this->doe);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.friends.sent.store'), [

@@ -26,6 +26,40 @@ class StatusHeartbeatTest extends FeatureTestCase
             ->assertStatus(405);
     }
 
+    /** @test */
+    public function messenger_heartbeat_online()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            StatusHeartbeatEvent::class,
+        ]);
+
+        $this->postJson(route('api.messenger.heartbeat'), [
+            'away' => false,
+        ])
+            ->assertSuccessful();
+
+        $this->assertSame(1, $this->tippin->onlineStatus());
+    }
+
+    /** @test */
+    public function messenger_heartbeat_away()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            StatusHeartbeatEvent::class,
+        ]);
+
+        $this->postJson(route('api.messenger.heartbeat'), [
+            'away' => true,
+        ])
+            ->assertSuccessful();
+
+        $this->assertSame(2, $this->tippin->onlineStatus());
+    }
+
     /**
      * @test
      * @dataProvider awayValidation
@@ -40,40 +74,6 @@ class StatusHeartbeatTest extends FeatureTestCase
         ])
             ->assertStatus(422)
             ->assertJsonValidationErrors('away');
-    }
-
-    /** @test */
-    public function messenger_heartbeat_online()
-    {
-        $this->expectsEvents([
-            StatusHeartbeatEvent::class,
-        ]);
-
-        $this->actingAs($this->tippin);
-
-        $this->postJson(route('api.messenger.heartbeat'), [
-            'away' => false,
-        ])
-            ->assertSuccessful();
-
-        $this->assertSame(1, $this->tippin->onlineStatus());
-    }
-
-    /** @test */
-    public function messenger_heartbeat_away()
-    {
-        $this->expectsEvents([
-            StatusHeartbeatEvent::class,
-        ]);
-
-        $this->actingAs($this->tippin);
-
-        $this->postJson(route('api.messenger.heartbeat'), [
-            'away' => true,
-        ])
-            ->assertSuccessful();
-
-        $this->assertSame(2, $this->tippin->onlineStatus());
     }
 
     public function awayValidation(): array

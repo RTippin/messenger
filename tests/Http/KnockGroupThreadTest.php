@@ -13,9 +13,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class KnockGroupThreadTest extends FeatureTestCase
 {
     private Thread $group;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -23,21 +21,19 @@ class KnockGroupThreadTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
     }
 
     /** @test */
     public function admin_can_knock_at_thread()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             KnockBroadcast::class,
             KnockEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
             'thread' => $this->group->id,
@@ -55,13 +51,12 @@ class KnockGroupThreadTest extends FeatureTestCase
             ->update([
                 'send_knocks' => true,
             ]);
+        $this->actingAs($this->doe);
 
         $this->expectsEvents([
             KnockBroadcast::class,
             KnockEvent::class,
         ]);
-
-        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.knock', [
             'thread' => $this->group->id,
@@ -73,7 +68,6 @@ class KnockGroupThreadTest extends FeatureTestCase
     public function admin_forbidden_to_knock_at_thread_when_timeout_exist()
     {
         Cache::put('knock.knock.'.$this->group->id, true);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
@@ -88,7 +82,6 @@ class KnockGroupThreadTest extends FeatureTestCase
         $this->group->update([
             'knocks' => false,
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
@@ -103,7 +96,6 @@ class KnockGroupThreadTest extends FeatureTestCase
         $this->group->update([
             'lockout' => true,
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
@@ -116,7 +108,6 @@ class KnockGroupThreadTest extends FeatureTestCase
     public function admin_forbidden_to_knock_at_thread_when_disabled_from_config()
     {
         Messenger::setKnockKnock(false);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [

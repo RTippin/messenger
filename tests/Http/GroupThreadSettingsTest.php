@@ -11,9 +11,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class GroupThreadSettingsTest extends FeatureTestCase
 {
     private Thread $group;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -21,9 +19,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
     }
 
@@ -56,7 +52,6 @@ class GroupThreadSettingsTest extends FeatureTestCase
         $this->group->update([
             'lockout' => true,
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.settings', [
@@ -74,6 +69,106 @@ class GroupThreadSettingsTest extends FeatureTestCase
             'thread' => $this->group->id,
         ]))
             ->assertForbidden();
+    }
+
+    /** @test */
+    public function update_group_settings_without_changes_expects_no_events()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->doesntExpectEvents([
+            ThreadSettingsBroadcast::class,
+            ThreadSettingsEvent::class,
+        ]);
+
+        $this->putJson(route('api.messenger.threads.settings', [
+            'thread' => $this->group->id,
+        ]), [
+            'subject' => 'First Test Group',
+            'add_participants' => true,
+            'invitations' => true,
+            'calling' => true,
+            'messaging' => true,
+            'knocks' => true,
+        ])
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function update_group_settings_expects_events_and_name_not_changed()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            ThreadSettingsBroadcast::class,
+            ThreadSettingsEvent::class,
+        ]);
+
+        $this->putJson(route('api.messenger.threads.settings', [
+            'thread' => $this->group->id,
+        ]), [
+            'subject' => 'First Test Group',
+            'add_participants' => true,
+            'invitations' => true,
+            'calling' => true,
+            'messaging' => false,
+            'knocks' => false,
+        ])
+            ->assertSuccessful()
+            ->assertJson([
+                'name' => 'First Test Group',
+                'messaging' => false,
+                'knocks' => false,
+            ]);
+    }
+
+    /** @test */
+    public function forbidden_to_update_group_settings_when_thread_locked()
+    {
+        $this->group->update([
+            'lockout' => true,
+        ]);
+        $this->actingAs($this->tippin);
+
+        $this->putJson(route('api.messenger.threads.settings', [
+            'thread' => $this->group->id,
+        ]), [
+            'subject' => 'First Test Group',
+            'add_participants' => true,
+            'invitations' => true,
+            'calling' => true,
+            'messaging' => false,
+            'knocks' => false,
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function update_group_settings_expects_events_and_name_did_change()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            ThreadSettingsBroadcast::class,
+            ThreadSettingsEvent::class,
+        ]);
+
+        $this->putJson(route('api.messenger.threads.settings', [
+            'thread' => $this->group->id,
+        ]), [
+            'subject' => 'Second Test Group',
+            'add_participants' => true,
+            'invitations' => true,
+            'calling' => true,
+            'messaging' => false,
+            'knocks' => false,
+        ])
+            ->assertSuccessful()
+            ->assertJson([
+                'name' => 'Second Test Group',
+                'messaging' => false,
+                'knocks' => false,
+            ]);
     }
 
     /**
@@ -127,107 +222,6 @@ class GroupThreadSettingsTest extends FeatureTestCase
         ])
             ->assertStatus(422)
             ->assertJsonValidationErrors('subject');
-    }
-
-    /** @test */
-    public function update_group_settings_without_changes_expects_no_events()
-    {
-        $this->doesntExpectEvents([
-            ThreadSettingsBroadcast::class,
-            ThreadSettingsEvent::class,
-        ]);
-
-        $this->actingAs($this->tippin);
-
-        $this->putJson(route('api.messenger.threads.settings', [
-            'thread' => $this->group->id,
-        ]), [
-            'subject' => 'First Test Group',
-            'add_participants' => true,
-            'invitations' => true,
-            'calling' => true,
-            'messaging' => true,
-            'knocks' => true,
-        ])
-            ->assertSuccessful();
-    }
-
-    /** @test */
-    public function update_group_settings_expects_events_and_name_not_changed()
-    {
-        $this->expectsEvents([
-            ThreadSettingsBroadcast::class,
-            ThreadSettingsEvent::class,
-        ]);
-
-        $this->actingAs($this->tippin);
-
-        $this->putJson(route('api.messenger.threads.settings', [
-            'thread' => $this->group->id,
-        ]), [
-            'subject' => 'First Test Group',
-            'add_participants' => true,
-            'invitations' => true,
-            'calling' => true,
-            'messaging' => false,
-            'knocks' => false,
-        ])
-            ->assertSuccessful()
-            ->assertJson([
-                'name' => 'First Test Group',
-                'messaging' => false,
-                'knocks' => false,
-            ]);
-    }
-
-    /** @test */
-    public function forbidden_to_update_group_settings_when_thread_locked()
-    {
-        $this->group->update([
-            'lockout' => true,
-        ]);
-
-        $this->actingAs($this->tippin);
-
-        $this->putJson(route('api.messenger.threads.settings', [
-            'thread' => $this->group->id,
-        ]), [
-            'subject' => 'First Test Group',
-            'add_participants' => true,
-            'invitations' => true,
-            'calling' => true,
-            'messaging' => false,
-            'knocks' => false,
-        ])
-            ->assertForbidden();
-    }
-
-    /** @test */
-    public function update_group_settings_expects_events_and_name_did_change()
-    {
-        $this->expectsEvents([
-            ThreadSettingsBroadcast::class,
-            ThreadSettingsEvent::class,
-        ]);
-
-        $this->actingAs($this->tippin);
-
-        $this->putJson(route('api.messenger.threads.settings', [
-            'thread' => $this->group->id,
-        ]), [
-            'subject' => 'Second Test Group',
-            'add_participants' => true,
-            'invitations' => true,
-            'calling' => true,
-            'messaging' => false,
-            'knocks' => false,
-        ])
-            ->assertSuccessful()
-            ->assertJson([
-                'name' => 'Second Test Group',
-                'messaging' => false,
-                'knocks' => false,
-            ]);
     }
 
     public function settingsValidation(): array

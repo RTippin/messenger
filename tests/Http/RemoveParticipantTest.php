@@ -11,9 +11,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class RemoveParticipantTest extends FeatureTestCase
 {
     private Thread $group;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -21,9 +19,7 @@ class RemoveParticipantTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
     }
 
@@ -31,12 +27,10 @@ class RemoveParticipantTest extends FeatureTestCase
     public function user_forbidden_to_remove_participant_from_private_thread()
     {
         $private = $this->createPrivateThread($this->tippin, $this->doe);
-
         $participant = $private->participants()
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
             ->first();
-
         $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.participants.destroy', [
@@ -53,7 +47,6 @@ class RemoveParticipantTest extends FeatureTestCase
             ->where('owner_id', '=', $this->tippin->getKey())
             ->where('owner_type', '=', get_class($this->tippin))
             ->first();
-
         $this->actingAs($this->doe);
 
         $this->deleteJson(route('api.messenger.threads.participants.destroy', [
@@ -66,17 +59,16 @@ class RemoveParticipantTest extends FeatureTestCase
     /** @test */
     public function admin_can_remove_participant()
     {
-        $this->expectsEvents([
-            ThreadLeftBroadcast::class,
-            RemovedFromThreadEvent::class,
-        ]);
-
         $participant = $this->group->participants()
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
             ->first();
-
         $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            ThreadLeftBroadcast::class,
+            RemovedFromThreadEvent::class,
+        ]);
 
         $this->deleteJson(route('api.messenger.threads.participants.destroy', [
             'thread' => $this->group->id,
@@ -91,12 +83,10 @@ class RemoveParticipantTest extends FeatureTestCase
         $this->group->update([
             'lockout' => true,
         ]);
-
         $participant = $this->group->participants()
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
             ->first();
-
         $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.participants.destroy', [

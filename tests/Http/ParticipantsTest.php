@@ -9,13 +9,9 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class ParticipantsTest extends FeatureTestCase
 {
     private Thread $private;
-
     private Thread $group;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
-
     private MessengerProvider $developers;
 
     protected function setUp(): void
@@ -23,13 +19,9 @@ class ParticipantsTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->developers = $this->companyDevelopers();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe, $this->developers);
-
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
     }
 
@@ -84,7 +76,6 @@ class ParticipantsTest extends FeatureTestCase
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
             ->first();
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.participants.show', [
@@ -107,7 +98,6 @@ class ParticipantsTest extends FeatureTestCase
             ->where('owner_id', '=', $this->developers->getKey())
             ->where('owner_type', '=', get_class($this->developers))
             ->first();
-
         $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.participants.show', [

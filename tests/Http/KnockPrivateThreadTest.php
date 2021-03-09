@@ -13,9 +13,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class KnockPrivateThreadTest extends FeatureTestCase
 {
     private Thread $private;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -23,21 +21,19 @@ class KnockPrivateThreadTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
     }
 
     /** @test */
     public function user_can_knock_at_thread()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             KnockBroadcast::class,
             KnockEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
             'thread' => $this->private->id,
@@ -49,7 +45,6 @@ class KnockPrivateThreadTest extends FeatureTestCase
     public function user_forbidden_to_knock_at_thread_when_timeout_exist()
     {
         Cache::put('knock.knock.'.$this->private->id.'.'.$this->tippin->getKey(), true);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
@@ -62,7 +57,6 @@ class KnockPrivateThreadTest extends FeatureTestCase
     public function user_forbidden_to_knock_at_thread_when_disabled_from_config()
     {
         Messenger::setKnockKnock(false);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
@@ -75,7 +69,6 @@ class KnockPrivateThreadTest extends FeatureTestCase
     public function user_forbidden_to_knock_at_thread_when_thread_locked()
     {
         $this->doe->delete();
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
@@ -94,7 +87,6 @@ class KnockPrivateThreadTest extends FeatureTestCase
             ->update([
                 'pending' => true,
             ]);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
@@ -113,7 +105,6 @@ class KnockPrivateThreadTest extends FeatureTestCase
             ->update([
                 'pending' => true,
             ]);
-
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.knock', [

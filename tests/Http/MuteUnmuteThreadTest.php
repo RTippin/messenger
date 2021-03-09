@@ -14,9 +14,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class MuteUnmuteThreadTest extends FeatureTestCase
 {
     private Thread $private;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -24,9 +22,7 @@ class MuteUnmuteThreadTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
     }
 
@@ -55,11 +51,11 @@ class MuteUnmuteThreadTest extends FeatureTestCase
     /** @test */
     public function participant_can_mute_thread()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             ParticipantMutedEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.mute', [
             'thread' => $this->private->id,
@@ -71,7 +67,6 @@ class MuteUnmuteThreadTest extends FeatureTestCase
     public function forbidden_to_mute_thread_if_locked()
     {
         $this->doe->delete();
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.mute', [
@@ -84,7 +79,6 @@ class MuteUnmuteThreadTest extends FeatureTestCase
     public function forbidden_to_unmute_thread_if_locked()
     {
         $this->doe->delete();
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.unmute', [
@@ -97,11 +91,9 @@ class MuteUnmuteThreadTest extends FeatureTestCase
     public function forbidden_to_mute_group_thread_if_locked()
     {
         $group = $this->createGroupThread($this->tippin);
-
         $group->update([
             'lockout' => true,
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.mute', [
@@ -114,11 +106,9 @@ class MuteUnmuteThreadTest extends FeatureTestCase
     public function forbidden_to_unmute_group_thread_if_locked()
     {
         $group = $this->createGroupThread($this->tippin);
-
         $group->update([
             'lockout' => true,
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.unmute', [
@@ -130,10 +120,6 @@ class MuteUnmuteThreadTest extends FeatureTestCase
     /** @test */
     public function participant_can_unmute_thread()
     {
-        $this->expectsEvents([
-            ParticipantUnMutedEvent::class,
-        ]);
-
         $this->private->participants()
             ->where('owner_id', '=', $this->tippin->getKey())
             ->where('owner_type', '=', get_class($this->tippin))
@@ -141,8 +127,11 @@ class MuteUnmuteThreadTest extends FeatureTestCase
             ->update([
                 'muted' => true,
             ]);
-
         $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            ParticipantUnMutedEvent::class,
+        ]);
 
         $this->postJson(route('api.messenger.threads.unmute', [
             'thread' => $this->private->id,
@@ -153,10 +142,6 @@ class MuteUnmuteThreadTest extends FeatureTestCase
     /** @test */
     public function mute_thread_updates_nothing_if_already_muted()
     {
-        $this->doesntExpectEvents([
-            ParticipantMutedEvent::class,
-        ]);
-
         $this->private->participants()
             ->where('owner_id', '=', $this->tippin->getKey())
             ->where('owner_type', '=', get_class($this->tippin))
@@ -164,8 +149,11 @@ class MuteUnmuteThreadTest extends FeatureTestCase
             ->update([
                 'muted' => true,
             ]);
-
         $this->actingAs($this->tippin);
+
+        $this->doesntExpectEvents([
+            ParticipantMutedEvent::class,
+        ]);
 
         $this->postJson(route('api.messenger.threads.mute', [
             'thread' => $this->private->id,
@@ -176,11 +164,11 @@ class MuteUnmuteThreadTest extends FeatureTestCase
     /** @test */
     public function unmute_thread_updates_nothing_if_not_muted()
     {
+        $this->actingAs($this->tippin);
+
         $this->doesntExpectEvents([
             ParticipantUnMutedEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.unmute', [
             'thread' => $this->private->id,
@@ -198,13 +186,12 @@ class MuteUnmuteThreadTest extends FeatureTestCase
             ->update([
                 'muted' => true,
             ]);
+        $this->actingAs($this->tippin);
 
         Event::fake([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->private->id,
@@ -220,7 +207,6 @@ class MuteUnmuteThreadTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(NewMessageEvent::class);
     }
 }

@@ -14,9 +14,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class GroupThreadAvatarTest extends FeatureTestCase
 {
     private Thread $group;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -24,9 +22,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
     }
 
@@ -49,7 +45,6 @@ class GroupThreadAvatarTest extends FeatureTestCase
         $this->group->update([
             'lockout' => true,
         ]);
-
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
@@ -63,14 +58,12 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function update_group_avatar_without_changes_expects_no_events()
     {
+        $this->actingAs($this->tippin);
+
         $this->doesntExpectEvents([
             ThreadAvatarBroadcast::class,
             ThreadAvatarEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
-
-        $this->assertSame('5.png', $this->group->image);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
             'thread' => $this->group->id,
@@ -83,12 +76,12 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function update_group_avatar_with_new_default()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             ThreadAvatarBroadcast::class,
             ThreadAvatarEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
             'thread' => $this->group->id,
@@ -106,14 +99,13 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function group_avatar_upload_stores_photo()
     {
+        Storage::fake(Messenger::getThreadStorage('disk'));
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             ThreadAvatarBroadcast::class,
             ThreadAvatarEvent::class,
         ]);
-
-        Storage::fake(Messenger::getThreadStorage('disk'));
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
             'thread' => $this->group->id,

@@ -9,9 +9,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class ThreadChannelTest extends FeatureTestCase
 {
     private Thread $private;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -19,9 +17,7 @@ class ThreadChannelTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
     }
 
@@ -29,11 +25,9 @@ class ThreadChannelTest extends FeatureTestCase
     {
         parent::getEnvironmentSetUp($app);
 
-        $config = $app->get('config');
-
         // Need to set a driver other than null
         // for broadcast routes to be utilized
-        $config->set('broadcasting.default', 'redis');
+        $app->get('config')->set('broadcasting.default', 'redis');
     }
 
     /** @test */
@@ -77,7 +71,6 @@ class ThreadChannelTest extends FeatureTestCase
             ->update([
                 'pending' => true,
             ]);
-
         $this->actingAs($this->doe);
 
         $this->postJson('/api/broadcasting/auth', [
@@ -109,7 +102,6 @@ class ThreadChannelTest extends FeatureTestCase
     public function participant_is_forbidden_when_thread_locked()
     {
         $this->doe->delete();
-
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [

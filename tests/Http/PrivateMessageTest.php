@@ -14,11 +14,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class PrivateMessageTest extends FeatureTestCase
 {
     private Thread $private;
-
     private Message $message;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -26,11 +23,8 @@ class PrivateMessageTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-
         $this->message = $this->createMessage($this->private, $this->tippin);
     }
 
@@ -102,7 +96,6 @@ class PrivateMessageTest extends FeatureTestCase
     public function user_forbidden_to_send_message_when_thread_locked()
     {
         $this->doe->delete();
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
@@ -117,12 +110,12 @@ class PrivateMessageTest extends FeatureTestCase
     /** @test */
     public function user_can_send_message()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->private->id,
@@ -148,12 +141,12 @@ class PrivateMessageTest extends FeatureTestCase
     /** @test */
     public function recipient_can_send_message()
     {
+        $this->actingAs($this->doe);
+
         $this->expectsEvents([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
-
-        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->private->id,
@@ -167,13 +160,7 @@ class PrivateMessageTest extends FeatureTestCase
     /** @test */
     public function sender_can_send_message_when_thread_awaiting_recipient_approval()
     {
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
         $doe = $this->userDoe();
-
         $this->private->participants()
             ->where('owner_id', '=', $doe->getKey())
             ->where('owner_type', '=', get_class($doe))
@@ -181,8 +168,12 @@ class PrivateMessageTest extends FeatureTestCase
             ->update([
                 'pending' => true,
             ]);
-
         $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->private->id,
@@ -217,7 +208,6 @@ class PrivateMessageTest extends FeatureTestCase
             ->update([
                 'pending' => true,
             ]);
-
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
@@ -232,12 +222,12 @@ class PrivateMessageTest extends FeatureTestCase
     /** @test */
     public function sender_can_archive_message()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             MessageArchivedBroadcast::class,
             MessageArchivedEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.messages.destroy', [
             'thread' => $this->private->id,
@@ -262,7 +252,6 @@ class PrivateMessageTest extends FeatureTestCase
     public function forbidden_to_archive_message_when_thread_locked()
     {
         $this->doe->delete();
-
         $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.messages.destroy', [

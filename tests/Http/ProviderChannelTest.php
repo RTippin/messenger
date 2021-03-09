@@ -17,7 +17,6 @@ class ProviderChannelTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->developers = $this->companyDevelopers();
     }
 
@@ -25,11 +24,9 @@ class ProviderChannelTest extends FeatureTestCase
     {
         parent::getEnvironmentSetUp($app);
 
-        $config = $app->get('config');
-
         // Need to set a driver other than null
         // for broadcast routes to be utilized
-        $config->set('broadcasting.default', 'redis');
+        $app->get('config')->set('broadcasting.default', 'redis');
     }
 
     /** @test */
@@ -77,11 +74,9 @@ class ProviderChannelTest extends FeatureTestCase
     /** @test */
     public function invalid_provider_is_forbidden()
     {
-        $invalid = new OtherModel([
+        $this->actingAs(new OtherModel([
             'id' => 404,
-        ]);
-
-        $this->actingAs($invalid);
+        ]));
 
         $this->postJson('/api/broadcasting/auth', [
             'channel_name' => 'private-messenger.user.404',

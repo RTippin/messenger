@@ -12,11 +12,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class EndCallTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Call $call;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -24,11 +21,8 @@ class EndCallTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-
         $this->call = $this->createCall($this->group, $this->tippin);
     }
 
@@ -76,7 +70,6 @@ class EndCallTest extends FeatureTestCase
             ->update([
                 'left_call' => now(),
             ]);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.end', [
@@ -94,7 +87,6 @@ class EndCallTest extends FeatureTestCase
             ->update([
                 'kicked' => true,
             ]);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.end', [
@@ -111,7 +103,6 @@ class EndCallTest extends FeatureTestCase
             'owner_id' => $this->doe->getKey(),
             'owner_type' => get_class($this->doe),
         ]);
-
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.calls.end', [
@@ -124,12 +115,12 @@ class EndCallTest extends FeatureTestCase
     /** @test */
     public function admin_can_end_call()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             CallEndedBroadcast::class,
             CallEndedEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.end', [
             'thread' => $this->group->id,
@@ -141,14 +132,13 @@ class EndCallTest extends FeatureTestCase
     /** @test */
     public function call_creator_can_end_call()
     {
+        $call = $this->createCall($this->group, $this->doe);
+        $this->actingAs($this->doe);
+
         $this->expectsEvents([
             CallEndedBroadcast::class,
             CallEndedEvent::class,
         ]);
-
-        $call = $this->createCall($this->group, $this->doe);
-
-        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.calls.end', [
             'thread' => $this->group->id,

@@ -9,13 +9,9 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class FindRecipientThreadTest extends FeatureTestCase
 {
     private Thread $private;
-
     private Thread $privateWithCompany;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
-
     private MessengerProvider $developers;
 
     protected function setUp(): void
@@ -23,31 +19,10 @@ class FindRecipientThreadTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->developers = $this->companyDevelopers();
-
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-
         $this->privateWithCompany = $this->createPrivateThread($this->tippin, $this->developers);
-    }
-
-    /**
-     * @test
-     * @dataProvider locatorValidation
-     * @param $alias
-     * @param $id
-     */
-    public function private_thread_locator_returns_not_found_on_invalid_id_or_alias($alias, $id)
-    {
-        $this->actingAs($this->tippin);
-
-        $this->getJson(route('api.messenger.privates.locate', [
-            'alias' => $alias,
-            'id' => $id,
-        ]))
-            ->assertNotFound();
     }
 
     /** @test */
@@ -94,7 +69,6 @@ class FindRecipientThreadTest extends FeatureTestCase
     public function private_thread_locator_returns_user_without_existing_thread_id()
     {
         $otherUser = $this->createJaneSmith();
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.privates.locate', [
@@ -116,7 +90,6 @@ class FindRecipientThreadTest extends FeatureTestCase
     public function private_thread_locator_returns_company_without_existing_thread_id()
     {
         $otherCompany = $this->createSomeCompany();
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.privates.locate', [
@@ -132,6 +105,23 @@ class FindRecipientThreadTest extends FeatureTestCase
                     'name' => 'Some Company',
                 ],
             ]);
+    }
+
+    /**
+     * @test
+     * @dataProvider locatorValidation
+     * @param $alias
+     * @param $id
+     */
+    public function private_thread_locator_returns_not_found_on_invalid_id_or_alias($alias, $id)
+    {
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.privates.locate', [
+            'alias' => $alias,
+            'id' => $id,
+        ]))
+            ->assertNotFound();
     }
 
     public function locatorValidation(): array

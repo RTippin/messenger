@@ -14,11 +14,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class GroupMessageTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Message $message;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -26,11 +23,8 @@ class GroupMessageTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-
         $this->message = $this->createMessage($this->group, $this->tippin);
     }
 
@@ -76,12 +70,12 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function admin_can_send_message()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->group->id,
@@ -107,12 +101,12 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function participant_can_send_message()
     {
+        $this->actingAs($this->doe);
+
         $this->expectsEvents([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
-
-        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->group->id,
@@ -129,7 +123,6 @@ class GroupMessageTest extends FeatureTestCase
         $this->group->update([
             'lockout' => true,
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
@@ -165,7 +158,6 @@ class GroupMessageTest extends FeatureTestCase
             ->update([
                 'send_messages' => false,
             ]);
-
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
@@ -183,9 +175,7 @@ class GroupMessageTest extends FeatureTestCase
         $this->group->update([
             'lockout' => true,
         ]);
-
         $message = $this->createMessage($this->group, $this->tippin);
-
         $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.messages.destroy', [
@@ -198,14 +188,13 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function participant_can_archive_own_message()
     {
+        $message = $this->createMessage($this->group, $this->doe);
+        $this->actingAs($this->doe);
+
         $this->expectsEvents([
             MessageArchivedBroadcast::class,
             MessageArchivedEvent::class,
         ]);
-
-        $message = $this->createMessage($this->group, $this->doe);
-
-        $this->actingAs($this->doe);
 
         $this->deleteJson(route('api.messenger.threads.messages.destroy', [
             'thread' => $this->group->id,
@@ -217,14 +206,13 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function admin_can_archive_another_participants_message()
     {
+        $message = $this->createMessage($this->group, $this->doe);
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             MessageArchivedBroadcast::class,
             MessageArchivedEvent::class,
         ]);
-
-        $message = $this->createMessage($this->group, $this->doe);
-
-        $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.messages.destroy', [
             'thread' => $this->group->id,
@@ -239,7 +227,6 @@ class GroupMessageTest extends FeatureTestCase
         $this->group->update([
             'messaging' => false,
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
@@ -257,7 +244,6 @@ class GroupMessageTest extends FeatureTestCase
         $this->group->update([
             'messaging' => false,
         ]);
-
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.messages.store', [

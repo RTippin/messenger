@@ -13,11 +13,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class PromoteDemoteParticipantTest extends FeatureTestCase
 {
     private Thread $private;
-
     private Thread $group;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -25,11 +22,8 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
     }
 
@@ -40,7 +34,6 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
             ->first();
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.participants.promote', [
@@ -57,7 +50,6 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
             ->first();
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.participants.demote', [
@@ -74,7 +66,6 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
             ->where('owner_id', '=', $this->tippin->getKey())
             ->where('owner_type', '=', get_class($this->tippin))
             ->first();
-
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.participants.demote', [
@@ -91,7 +82,6 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
             ->where('owner_id', '=', $this->tippin->getKey())
             ->where('owner_type', '=', get_class($this->tippin))
             ->first();
-
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.participants.promote', [
@@ -108,7 +98,6 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
             ->where('owner_id', '=', $this->tippin->getKey())
             ->where('owner_type', '=', get_class($this->tippin))
             ->first();
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.participants.promote', [
@@ -125,7 +114,6 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
             ->first();
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.participants.demote', [
@@ -138,17 +126,16 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
     /** @test */
     public function admin_can_promote_participant_to_admin()
     {
-        $this->expectsEvents([
-            PromotedAdminBroadcast::class,
-            PromotedAdminEvent::class,
-        ]);
-
         $participant = $this->group->participants()
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
             ->first();
-
         $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            PromotedAdminBroadcast::class,
+            PromotedAdminEvent::class,
+        ]);
 
         $this->postJson(route('api.messenger.threads.participants.promote', [
             'thread' => $this->group->id,
@@ -167,12 +154,10 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
         $this->group->update([
             'lockout' => true,
         ]);
-
         $participant = $this->group->participants()
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
             ->first();
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.participants.promote', [
@@ -185,21 +170,19 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
     /** @test */
     public function admin_can_demote_admin()
     {
-        $this->expectsEvents([
-            DemotedAdminBroadcast::class,
-            DemotedAdminEvent::class,
-        ]);
-
         $participant = $this->group->participants()
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
             ->first();
-
         $participant->update([
             'admin' => true,
         ]);
-
         $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            DemotedAdminBroadcast::class,
+            DemotedAdminEvent::class,
+        ]);
 
         $this->postJson(route('api.messenger.threads.participants.demote', [
             'thread' => $this->group->id,
@@ -218,16 +201,13 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
         $this->group->update([
             'lockout' => true,
         ]);
-
         $participant = $this->group->participants()
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
             ->first();
-
         $participant->update([
             'admin' => true,
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.participants.demote', [
