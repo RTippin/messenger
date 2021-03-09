@@ -15,9 +15,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class MarkParticipantReadTest extends FeatureTestCase
 {
     private Thread $private;
-
     private Participant $participant;
-
     private MessengerProvider $tippin;
 
     protected function setUp(): void
@@ -25,9 +23,7 @@ class MarkParticipantReadTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->private = $this->createPrivateThread($this->tippin, $this->userDoe());
-
         $this->participant = $this->private->participants()
             ->where('owner_id', '=', $this->tippin->getKey())
             ->where('owner_type', '=', get_class($this->tippin))
@@ -35,10 +31,9 @@ class MarkParticipantReadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function mark_participant_read_updates_participant()
+    public function it_updates_participant()
     {
         $read = now()->addMinutes(5);
-
         Carbon::setTestNow($read);
 
         app(MarkParticipantRead::class)->withoutDispatches()->execute(
@@ -53,7 +48,7 @@ class MarkParticipantReadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function mark_participant_read_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             ParticipantReadBroadcast::class,
@@ -71,14 +66,13 @@ class MarkParticipantReadTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (ParticipantsReadEvent $event) {
             return $this->participant->id === $event->participant->id;
         });
     }
 
     /** @test */
-    public function mark_participant_read_fires_no_events_when_participant_not_updated()
+    public function it_fires_no_events_if_participant_already_up_to_date()
     {
         $this->doesntExpectEvents([
             ParticipantReadBroadcast::class,
@@ -88,7 +82,6 @@ class MarkParticipantReadTest extends FeatureTestCase
         $this->participant->update([
             'last_read' => now(),
         ]);
-
         $this->travel(5)->minutes();
 
         app(MarkParticipantRead::class)->execute(
@@ -98,7 +91,7 @@ class MarkParticipantReadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function mark_participant_read_does_not_update_pending_participant()
+    public function it_does_not_update_a_pending_participant()
     {
         $this->participant->update([
             'pending' => true,
@@ -116,10 +109,9 @@ class MarkParticipantReadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function mark_participant_read_updates_participant_when_no_thread_supplied()
+    public function it_updates_participant_if_no_thread_supplied()
     {
         $read = now()->addMinutes(5);
-
         Carbon::setTestNow($read);
 
         app(MarkParticipantRead::class)->withoutDispatches()->execute($this->participant);

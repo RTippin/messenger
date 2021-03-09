@@ -19,9 +19,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class LeaveThreadTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Participant $participant;
-
     private MessengerProvider $tippin;
 
     protected function setUp(): void
@@ -29,16 +27,13 @@ class LeaveThreadTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->group = $this->createGroupThread($this->tippin);
-
         $this->participant = $this->group->participants()->first();
-
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
-    public function leave_thread_soft_deletes_participant()
+    public function it_soft_deletes_participant()
     {
         app(LeaveThread::class)->withoutDispatches()->execute($this->group);
 
@@ -48,7 +43,7 @@ class LeaveThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function leave_thread_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             ThreadLeftBroadcast::class,
@@ -63,7 +58,6 @@ class LeaveThreadTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (ThreadLeftEvent $event) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
             $this->assertSame($this->group->id, $event->thread->id);
@@ -74,7 +68,7 @@ class LeaveThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function leave_thread_event_triggers_listeners()
+    public function it_dispatches_listeners()
     {
         Bus::fake();
 
@@ -83,7 +77,6 @@ class LeaveThreadTest extends FeatureTestCase
         Bus::assertDispatched(function (CallQueuedListener $job) {
             return $job->class === ArchiveEmptyThread::class;
         });
-
         Bus::assertDispatched(function (CallQueuedListener $job) {
             return $job->class === ThreadLeftMessage::class;
         });

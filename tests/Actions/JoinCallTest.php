@@ -82,11 +82,9 @@ class JoinCallTest extends FeatureTestCase
     public function it_updates_participant_and_cache_if_rejoining()
     {
         $participant = $this->call->participants()->first();
-
         $participant->update([
             'left_call' => now(),
         ]);
-
         Messenger::setProvider($this->tippin);
 
         app(JoinCall::class)->withoutDispatches()->execute($this->call);
@@ -102,7 +100,6 @@ class JoinCallTest extends FeatureTestCase
     public function it_fires_events()
     {
         Messenger::setProvider($this->doe);
-
         Event::fake([
             CallJoinedBroadcast::class,
             CallJoinedEvent::class,

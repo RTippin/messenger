@@ -23,11 +23,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class StoreCallTest extends FeatureTestCase
 {
     private Thread $private;
-
     private Call $call;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -35,16 +32,13 @@ class StoreCallTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
-    public function store_call_stores_call_and_participant()
+    public function it_stores_call_and_participant()
     {
         app(StoreCall::class)->withoutDispatches()->execute($this->private);
 
@@ -54,7 +48,6 @@ class StoreCallTest extends FeatureTestCase
             'owner_type' => get_class($this->tippin),
             'setup_complete' => false,
         ]);
-
         $this->assertDatabaseHas('call_participants', [
             'owner_id' => $this->tippin->getKey(),
             'owner_type' => get_class($this->tippin),
@@ -63,7 +56,7 @@ class StoreCallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_call_stores_call_with_setup_true()
+    public function it_stores_call_setup_true()
     {
         app(StoreCall::class)->withoutDispatches()->execute(
             $this->private,
@@ -79,55 +72,51 @@ class StoreCallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_call_throws_exception_when_cache_lockout_key_exist()
+    public function it_throws_exception_if_cache_lockout_key_exist()
     {
         Cache::put("call:{$this->private->id}:starting", true);
 
         $this->expectException(NewCallException::class);
-
         $this->expectExceptionMessage('John Doe has a call awaiting creation.');
 
         app(StoreCall::class)->withoutDispatches()->execute($this->private);
     }
 
     /** @test */
-    public function store_call_throws_exception_when_active_call_exist_on_thread()
+    public function it_throws_exception_if_active_call_exist_on_thread()
     {
         $this->createCall($this->private, $this->tippin);
 
         $this->expectException(NewCallException::class);
-
         $this->expectExceptionMessage('John Doe already has an active call.');
 
         app(StoreCall::class)->withoutDispatches()->execute($this->private);
     }
 
     /** @test */
-    public function store_call_throws_exception_when_calling_disabled()
+    public function it_throws_exception_if_calling_disabled()
     {
         Messenger::setCalling(false);
 
         $this->expectException(FeatureDisabledException::class);
-
         $this->expectExceptionMessage('Calling is currently disabled.');
 
         app(StoreCall::class)->withoutDispatches()->execute($this->private);
     }
 
     /** @test */
-    public function store_call_throws_exception_when_calling_temporarily_disabled()
+    public function it_throws_exception_if_calling_temporarily_disabled()
     {
         Messenger::disableCallsTemporarily(1);
 
         $this->expectException(FeatureDisabledException::class);
-
         $this->expectExceptionMessage('Calling is currently disabled.');
 
         app(StoreCall::class)->withoutDispatches()->execute($this->private);
     }
 
     /** @test */
-    public function store_call_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             CallStartedBroadcast::class,
@@ -139,9 +128,7 @@ class StoreCallTest extends FeatureTestCase
         app(StoreCall::class)->execute($this->private);
 
         Event::assertNotDispatched(CallJoinedBroadcast::class);
-
         Event::assertNotDispatched(CallJoinedEvent::class);
-
         Event::assertDispatched(function (CallStartedBroadcast $event) {
             $this->assertNotContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
             $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
@@ -149,14 +136,13 @@ class StoreCallTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (CallStartedEvent $event) {
             return $this->private->id === $event->call->thread_id;
         });
     }
 
     /** @test */
-    public function store_call_triggers_listener()
+    public function it_dispatches_listeners()
     {
         Bus::fake();
 

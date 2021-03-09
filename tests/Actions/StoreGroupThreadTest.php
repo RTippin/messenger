@@ -14,7 +14,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class StoreGroupThreadTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -22,27 +21,22 @@ class StoreGroupThreadTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
-    public function store_group_without_extra_participants()
+    public function it_stores_thread_and_participant()
     {
         app(StoreGroupThread::class)->withoutDispatches()->execute([
             'subject' => 'Test Group',
         ]);
 
         $this->assertDatabaseCount('participants', 1);
-
         $this->assertDatabaseCount('threads', 1);
-
         $this->assertDatabaseHas('threads', [
             'subject' => 'Test Group',
         ]);
-
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->tippin->getKey(),
             'owner_type' => get_class($this->tippin),
@@ -51,14 +45,13 @@ class StoreGroupThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_group_stores_system_message()
+    public function it_stores_system_message()
     {
         app(StoreGroupThread::class)->withoutDispatches()->execute([
             'subject' => 'Test Group',
         ]);
 
         $this->assertDatabaseCount('messages', 1);
-
         $this->assertDatabaseHas('messages', [
             'owner_id' => $this->tippin->getKey(),
             'owner_type' => get_class($this->tippin),
@@ -68,7 +61,7 @@ class StoreGroupThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_group_with_extra_participant()
+    public function it_stores_added_participant()
     {
         $this->createFriends($this->tippin, $this->doe);
 
@@ -83,16 +76,14 @@ class StoreGroupThreadTest extends FeatureTestCase
         ]);
 
         $this->assertDatabaseCount('participants', 2);
-
         $this->assertDatabaseCount('threads', 1);
-
         $this->assertDatabaseHas('threads', [
             'subject' => 'Test Group',
         ]);
     }
 
     /** @test */
-    public function store_group_ignores_participant_if_not_friend()
+    public function it_ignores_participant_if_not_friend()
     {
         app(StoreGroupThread::class)->withoutDispatches()->execute([
             'subject' => 'Test Group',
@@ -105,17 +96,15 @@ class StoreGroupThreadTest extends FeatureTestCase
         ]);
 
         $this->assertDatabaseCount('participants', 1);
-
         $this->assertDatabaseCount('threads', 1);
     }
 
     /** @test */
-    public function store_group_without_extra_participants_fires_one_event()
+    public function it_fires_events_without_extra_participants()
     {
         $this->expectsEvents([
             NewThreadEvent::class,
         ]);
-
         $this->doesntExpectEvents([
             NewThreadBroadcast::class,
         ]);
@@ -126,18 +115,15 @@ class StoreGroupThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_group_with_multiple_providers_fires_events()
+    public function it_fires_events_with_extra_participants()
     {
         Event::fake([
             NewThreadEvent::class,
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
-
         $developers = $this->companyDevelopers();
-
         $this->createFriends($this->tippin, $this->doe);
-
         $this->createFriends($this->tippin, $developers);
 
         app(StoreGroupThread::class)->execute([
@@ -160,9 +146,7 @@ class StoreGroupThreadTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(NewThreadBroadcast::class);
-
         Event::assertDispatched(ParticipantsAddedEvent::class);
     }
 }

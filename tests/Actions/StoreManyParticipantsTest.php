@@ -18,9 +18,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class StoreManyParticipantsTest extends FeatureTestCase
 {
     private Thread $group;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -28,16 +26,13 @@ class StoreManyParticipantsTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin);
-
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
-    public function store_many_participants_ignores_non_friend()
+    public function it_ignores_non_friend()
     {
         app(StoreManyParticipants::class)->withoutDispatches()->execute(
             $this->group,
@@ -53,7 +48,7 @@ class StoreManyParticipantsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_many_participants_ignores_not_found_provider()
+    public function it_ignores_not_found_provider()
     {
         app(StoreManyParticipants::class)->withoutDispatches()->execute(
             $this->group,
@@ -69,7 +64,7 @@ class StoreManyParticipantsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_many_participants_fires_no_events_when_no_valid_providers()
+    public function it_fires_no_events_if_no_valid_providers()
     {
         $this->doesntExpectEvents([
             NewThreadBroadcast::class,
@@ -85,19 +80,18 @@ class StoreManyParticipantsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_many_participants_ignores_existing_participant()
+    public function it_ignores_existing_participant()
     {
-        $this->doesntExpectEvents([
-            NewThreadBroadcast::class,
-            ParticipantsAddedEvent::class,
-        ]);
-
         $this->group->participants()->create(array_merge(Definitions::DefaultParticipant, [
             'owner_id' => $this->doe->getKey(),
             'owner_type' => get_class($this->doe),
         ]));
-
         $this->createFriends($this->tippin, $this->doe);
+
+        $this->doesntExpectEvents([
+            NewThreadBroadcast::class,
+            ParticipantsAddedEvent::class,
+        ]);
 
         app(StoreManyParticipants::class)->execute(
             $this->group,
@@ -113,14 +107,13 @@ class StoreManyParticipantsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_many_participants_restores_participant_if_previously_soft_deleted()
+    public function it_restores_participant_if_previously_soft_deleted()
     {
         $participant = $this->group->participants()->create(array_merge(Definitions::DefaultParticipant, [
             'owner_id' => $this->doe->getKey(),
             'owner_type' => get_class($this->doe),
             'deleted_at' => now(),
         ]));
-
         $this->createFriends($this->tippin, $this->doe);
 
         app(StoreManyParticipants::class)->withoutDispatches()->execute(
@@ -134,7 +127,6 @@ class StoreManyParticipantsTest extends FeatureTestCase
         );
 
         $this->assertDatabaseCount('participants', 2);
-
         $this->assertDatabaseHas('participants', [
             'id' => $participant->id,
             'deleted_at' => null,
@@ -142,12 +134,10 @@ class StoreManyParticipantsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_many_participants_stores_participants()
+    public function it_stores_participants()
     {
         $developers = $this->companyDevelopers();
-
         $this->createFriends($this->tippin, $this->doe);
-
         $this->createFriends($this->tippin, $developers);
 
         app(StoreManyParticipants::class)->withoutDispatches()->execute(
@@ -165,13 +155,11 @@ class StoreManyParticipantsTest extends FeatureTestCase
         );
 
         $this->assertDatabaseCount('participants', 3);
-
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->doe->getKey(),
             'owner_type' => get_class($this->doe),
             'admin' => false,
         ]);
-
         $this->assertDatabaseHas('participants', [
             'owner_id' => $developers->getKey(),
             'owner_type' => get_class($developers),
@@ -180,17 +168,14 @@ class StoreManyParticipantsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_many_participants_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
-
         $developers = $this->companyDevelopers();
-
         $this->createFriends($this->tippin, $this->doe);
-
         $this->createFriends($this->tippin, $developers);
 
         app(StoreManyParticipants::class)->execute(
@@ -214,7 +199,6 @@ class StoreManyParticipantsTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (ParticipantsAddedEvent $event) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
             $this->assertSame('First Test Group', $event->thread->subject);
@@ -225,10 +209,9 @@ class StoreManyParticipantsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_many_participants_triggers_listener()
+    public function it_dispatches_listeners()
     {
         Bus::fake();
-
         $this->createFriends($this->tippin, $this->doe);
 
         app(StoreManyParticipants::class)->withoutBroadcast()->execute(

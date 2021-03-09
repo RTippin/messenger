@@ -19,11 +19,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class PromoteAdminTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Participant $participant;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -31,22 +28,17 @@ class PromoteAdminTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin);
-
-        $this->participant = $this->group->participants()
-            ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => $this->doe->getKey(),
-                'owner_type' => get_class($this->doe),
-            ]));
-
+        $this->participant = $this->group->participants()->create(array_merge(Definitions::DefaultParticipant, [
+            'owner_id' => $this->doe->getKey(),
+            'owner_type' => get_class($this->doe),
+        ]));
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
-    public function promote_admin_updates_participant()
+    public function it_updates_participant_permissions()
     {
         app(PromoteAdmin::class)->withoutDispatches()->execute(
             $this->group,
@@ -55,12 +47,17 @@ class PromoteAdminTest extends FeatureTestCase
 
         $this->assertDatabaseHas('participants', [
             'id' => $this->participant->id,
+            'add_participants' => true,
+            'manage_invites' => true,
             'admin' => true,
+            'start_calls' => true,
+            'send_knocks' => true,
+            'send_messages' => true,
         ]);
     }
 
     /** @test */
-    public function promote_admin_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             PromotedAdminBroadcast::class,
@@ -78,7 +75,6 @@ class PromoteAdminTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (PromotedAdminEvent $event) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
             $this->assertSame($this->group->id, $event->thread->id);
@@ -89,7 +85,7 @@ class PromoteAdminTest extends FeatureTestCase
     }
 
     /** @test */
-    public function promote_admin_triggers_listener()
+    public function it_dispatches_listeners()
     {
         Bus::fake();
 

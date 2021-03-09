@@ -18,11 +18,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class RemoveParticipantTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Participant $participant;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -30,21 +27,17 @@ class RemoveParticipantTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-
         $this->participant = $this->group->participants()
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
             ->first();
-
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
-    public function remove_participant_soft_deletes_participant()
+    public function it_soft_deletes_participant()
     {
         app(RemoveParticipant::class)->withoutDispatches()->execute(
             $this->group,
@@ -57,7 +50,7 @@ class RemoveParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function remove_participant_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             ThreadLeftBroadcast::class,
@@ -75,7 +68,6 @@ class RemoveParticipantTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (RemovedFromThreadEvent $event) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
             $this->assertSame($this->group->id, $event->thread->id);
@@ -86,7 +78,7 @@ class RemoveParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function remove_participant_triggers_listener()
+    public function it_dispatches_listeners()
     {
         Bus::fake();
 

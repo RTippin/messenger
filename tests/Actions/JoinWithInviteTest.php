@@ -46,7 +46,6 @@ class JoinWithInviteTest extends FeatureTestCase
         Messenger::setThreadInvites(false);
 
         $this->expectException(FeatureDisabledException::class);
-
         $this->expectExceptionMessage('Group invites are currently disabled.');
 
         app(JoinWithInvite::class)->withoutDispatches()->execute($this->invite);

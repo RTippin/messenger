@@ -19,19 +19,16 @@ class StoreInviteTest extends FeatureTestCase
         parent::setUp();
 
         $tippin = $this->userTippin();
-
         $this->group = $this->createGroupThread($tippin);
-
         Messenger::setProvider($tippin);
     }
 
     /** @test */
-    public function store_invite_throws_exception_when_disabled()
+    public function it_throws_exception_if_disabled()
     {
         Messenger::setThreadInvites(false);
 
         $this->expectException(FeatureDisabledException::class);
-
         $this->expectExceptionMessage('Group invites are currently disabled.');
 
         app(StoreInvite::class)->withoutDispatches()->execute(
@@ -44,7 +41,7 @@ class StoreInviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_invite_stores_invite()
+    public function it_stores_invite()
     {
         app(StoreInvite::class)->withoutDispatches()->execute(
             $this->group,
@@ -62,7 +59,7 @@ class StoreInviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_invite_fires_event()
+    public function it_fires_events()
     {
         Event::fake([
             NewInviteEvent::class,

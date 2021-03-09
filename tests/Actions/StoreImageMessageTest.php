@@ -19,11 +19,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class StoreImageMessageTest extends FeatureTestCase
 {
     private Thread $private;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
-
     private string $disk;
 
     protected function setUp(): void
@@ -31,25 +28,19 @@ class StoreImageMessageTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-
         $this->disk = Messenger::getThreadStorage('disk');
-
         Messenger::setProvider($this->tippin);
-
         Storage::fake($this->disk);
     }
 
     /** @test */
-    public function store_image_throws_exception_when_disabled()
+    public function it_throws_exception_if_disabled()
     {
         Messenger::setMessageImageUpload(false);
 
         $this->expectException(FeatureDisabledException::class);
-
         $this->expectExceptionMessage('Image messages are currently disabled.');
 
         app(StoreImageMessage::class)->withoutDispatches()->execute(
@@ -59,7 +50,7 @@ class StoreImageMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_image_stores_message()
+    public function it_stores_message()
     {
         app(StoreImageMessage::class)->withoutDispatches()->execute(
             $this->private,
@@ -73,7 +64,7 @@ class StoreImageMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_image_stores_image_file()
+    public function it_stores_image_file()
     {
         app(StoreImageMessage::class)->withoutDispatches()->execute(
             $this->private,
@@ -84,7 +75,7 @@ class StoreImageMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_image_sets_temporary_id_on_message()
+    public function it_sets_temporary_id_on_message()
     {
         $action = app(StoreImageMessage::class)->withoutDispatches()->execute(
             $this->private,
@@ -96,10 +87,9 @@ class StoreImageMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_image_updates_thread_and_participant_timestamps()
+    public function it_updates_thread_and_participant()
     {
         $updated = now()->addMinutes(5);
-
         Carbon::setTestNow($updated);
 
         app(StoreImageMessage::class)->withoutDispatches()->execute(
@@ -113,12 +103,10 @@ class StoreImageMessageTest extends FeatureTestCase
             ->first();
 
         $this->assertNotNull($participant->last_read);
-
         $this->assertDatabaseHas('threads', [
             'id' => $this->private->id,
             'updated_at' => $updated,
         ]);
-
         $this->assertDatabaseHas('participants', [
             'id' => $participant->id,
             'last_read' => $updated,
@@ -126,7 +114,7 @@ class StoreImageMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_image_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             NewMessageBroadcast::class,
@@ -147,7 +135,6 @@ class StoreImageMessageTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (NewMessageEvent $event) {
             return $this->private->id === $event->message->thread_id;
         });

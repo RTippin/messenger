@@ -38,7 +38,6 @@ class LeaveCallTest extends FeatureTestCase
     public function it_updates_participant()
     {
         $left = now()->addMinutes(5);
-
         Carbon::setTestNow($left);
 
         app(LeaveCall::class)->withoutDispatches()->execute(

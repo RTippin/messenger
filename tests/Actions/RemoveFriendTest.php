@@ -11,7 +11,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class RemoveFriendTest extends FeatureTestCase
 {
     private Friend $friend;
-
     private Friend $inverseFriend;
 
     protected function setUp(): void
@@ -19,42 +18,38 @@ class RemoveFriendTest extends FeatureTestCase
         parent::setUp();
 
         $friends = $this->createFriends($this->userTippin(), $this->userDoe());
-
         $this->friend = $friends[0];
-
         $this->inverseFriend = $friends[1];
     }
 
     /** @test */
-    public function remove_friend_removes_inverse_friend()
+    public function it_removes_inverse_friend()
     {
         app(RemoveFriend::class)->withoutDispatches()->execute($this->friend);
 
         $this->assertDatabaseMissing('friends', [
             'id' => $this->friend->id,
         ]);
-
         $this->assertDatabaseMissing('friends', [
             'id' => $this->inverseFriend->id,
         ]);
     }
 
     /** @test */
-    public function remove_inverse_friend_removes_friend()
+    public function it_removes_friend()
     {
         app(RemoveFriend::class)->withoutDispatches()->execute($this->inverseFriend);
 
         $this->assertDatabaseMissing('friends', [
             'id' => $this->friend->id,
         ]);
-
         $this->assertDatabaseMissing('friends', [
             'id' => $this->inverseFriend->id,
         ]);
     }
 
     /** @test */
-    public function remove_friend_fires_event()
+    public function it_fires_events()
     {
         Event::fake([
             FriendRemovedEvent::class,

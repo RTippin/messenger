@@ -17,7 +17,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class StoreFriendRequestTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -25,12 +24,11 @@ class StoreFriendRequestTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
     }
 
     /** @test */
-    public function store_friend_request_stores_sent_friend()
+    public function it_stores_sent_friend()
     {
         Messenger::setProvider($this->tippin);
 
@@ -48,7 +46,7 @@ class StoreFriendRequestTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_friend_request_fires_events()
+    public function it_fires_events()
     {
         Messenger::setProvider($this->tippin);
 
@@ -69,7 +67,6 @@ class StoreFriendRequestTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (FriendRequestEvent $event) {
             $this->assertSame($this->tippin->getKey(), $event->friend->sender_id);
             $this->assertSame($this->doe->getKey(), $event->friend->recipient_id);
@@ -79,12 +76,11 @@ class StoreFriendRequestTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_friend_throws_exception_when_provider_not_found()
+    public function it_throws_exception_if_provider_not_found()
     {
         Messenger::setProvider($this->tippin);
 
         $this->expectException(ProviderNotFoundException::class);
-
         $this->expectExceptionMessage('We were unable to locate the recipient you requested.');
 
         app(StoreFriendRequest::class)->withoutDispatches()->execute([
@@ -94,12 +90,11 @@ class StoreFriendRequestTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_friend_throws_exception_when_adding_yourself_as_friend()
+    public function it_throws_exception_if_adding_yourself()
     {
         Messenger::setProvider($this->tippin);
 
         $this->expectException(FriendException::class);
-
         $this->expectExceptionMessage('Cannot friend yourself.');
 
         app(StoreFriendRequest::class)->withoutDispatches()->execute([
@@ -109,15 +104,13 @@ class StoreFriendRequestTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_friend_throws_exception_when_already_friends()
+    public function it_throws_exception_if_already_friends()
     {
         Messenger::setProvider($this->tippin);
+        $this->createFriends($this->tippin, $this->doe);
 
         $this->expectException(FriendException::class);
-
         $this->expectExceptionMessage('You are already friends, or have a pending request with John Doe.');
-
-        $this->createFriends($this->tippin, $this->doe);
 
         app(StoreFriendRequest::class)->withoutDispatches()->execute([
             'recipient_id' => $this->doe->getKey(),
@@ -126,14 +119,9 @@ class StoreFriendRequestTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_friend_throws_exception_when_is_sent_friend()
+    public function it_throws_exception_if_sent_friend_exist()
     {
         Messenger::setProvider($this->tippin);
-
-        $this->expectException(FriendException::class);
-
-        $this->expectExceptionMessage('You are already friends, or have a pending request with John Doe.');
-
         SentFriend::create([
             'sender_id' => $this->tippin->getKey(),
             'sender_type' => get_class($this->tippin),
@@ -141,6 +129,9 @@ class StoreFriendRequestTest extends FeatureTestCase
             'recipient_type' => get_class($this->doe),
         ]);
 
+        $this->expectException(FriendException::class);
+        $this->expectExceptionMessage('You are already friends, or have a pending request with John Doe.');
+
         app(StoreFriendRequest::class)->withoutDispatches()->execute([
             'recipient_id' => $this->doe->getKey(),
             'recipient_alias' => 'user',
@@ -148,14 +139,9 @@ class StoreFriendRequestTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_friend_throws_exception_when_is_pending_friend()
+    public function it_throws_exception_if_pending_friend_exist()
     {
         Messenger::setProvider($this->tippin);
-
-        $this->expectException(FriendException::class);
-
-        $this->expectExceptionMessage('You are already friends, or have a pending request with John Doe.');
-
         PendingFriend::create([
             'sender_id' => $this->doe->getKey(),
             'sender_type' => get_class($this->doe),
@@ -163,6 +149,9 @@ class StoreFriendRequestTest extends FeatureTestCase
             'recipient_type' => get_class($this->tippin),
         ]);
 
+        $this->expectException(FriendException::class);
+        $this->expectExceptionMessage('You are already friends, or have a pending request with John Doe.');
+
         app(StoreFriendRequest::class)->withoutDispatches()->execute([
             'recipient_id' => $this->doe->getKey(),
             'recipient_alias' => 'user',
@@ -170,18 +159,14 @@ class StoreFriendRequestTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_friend_throws_exception_when_disabled_in_provider_interactions()
+    public function it_throws_exception_if_disabled_in_provider_interactions()
     {
         $providers = $this->getBaseProvidersConfig();
-
         $providers['user']['provider_interactions']['can_friend'] = false;
-
         Messenger::setMessengerProviders($providers);
-
         Messenger::setProvider($this->tippin);
 
         $this->expectException(FriendException::class);
-
         $this->expectExceptionMessage('Not authorized to add friend.');
 
         app(StoreFriendRequest::class)->withoutDispatches()->execute([

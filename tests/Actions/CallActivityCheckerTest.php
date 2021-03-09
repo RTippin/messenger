@@ -53,7 +53,6 @@ class CallActivityCheckerTest extends FeatureTestCase
     {
         $ended = now()->addMinutes(5);
         Carbon::setTestNow($ended);
-
         DB::table('call_participants')->update([
             'left_call' => now(),
         ]);
@@ -108,7 +107,6 @@ class CallActivityCheckerTest extends FeatureTestCase
         DB::table('call_participants')->update([
             'left_call' => now(),
         ]);
-
         Event::fake([
             CallEndedBroadcast::class,
             CallEndedEvent::class,

@@ -17,9 +17,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class SendKnockTest extends FeatureTestCase
 {
     private Thread $private;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -27,54 +25,47 @@ class SendKnockTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
-    public function send_knock_throws_exception_when_disabled()
+    public function it_throws_exception_if_disabled()
     {
         Messenger::setKnockKnock(false);
 
         $this->expectException(FeatureDisabledException::class);
-
         $this->expectExceptionMessage('Knocking is currently disabled.');
 
         app(SendKnock::class)->withoutDispatches()->execute($this->private);
     }
 
     /** @test */
-    public function send_knock_private_throws_exception_when_lockout_key_exist()
+    public function it_throws_exception_if_private_lockout_key_exist()
     {
         Cache::put("knock.knock.{$this->private->id}.{$this->tippin->getKey()}", true);
 
         $this->expectException(KnockException::class);
-
         $this->expectExceptionMessage('You may only knock at John Doe once every 5 minutes.');
 
         app(SendKnock::class)->withoutDispatches()->execute($this->private);
     }
 
     /** @test */
-    public function send_knock_group_throws_exception_when_lockout_key_exist()
+    public function it_throws_exception_if_group_lockout_key_exist()
     {
         $group = $this->createGroupThread($this->tippin);
-
         Cache::put("knock.knock.{$group->id}", true);
 
         $this->expectException(KnockException::class);
-
         $this->expectExceptionMessage('You may only knock at First Test Group once every 5 minutes.');
 
         app(SendKnock::class)->withoutDispatches()->execute($group);
     }
 
     /** @test */
-    public function send_knock_stores_private_thread_cache_key()
+    public function it_stores_private_cache_key()
     {
         app(SendKnock::class)->withoutDispatches()->execute($this->private);
 
@@ -82,7 +73,7 @@ class SendKnockTest extends FeatureTestCase
     }
 
     /** @test */
-    public function send_knock_stores_group_thread_cache_key()
+    public function it_stores_group_cache_key()
     {
         $group = $this->createGroupThread($this->tippin);
 
@@ -92,7 +83,7 @@ class SendKnockTest extends FeatureTestCase
     }
 
     /** @test */
-    public function send_knock_stores_no_cache_lockout_when_timeout_zero_in_config()
+    public function it_doesnt_stores_cache_key_if_timeout_zero()
     {
         Messenger::setKnockTimeout(0);
 
@@ -102,7 +93,7 @@ class SendKnockTest extends FeatureTestCase
     }
 
     /** @test */
-    public function send_knock_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             KnockBroadcast::class,
@@ -118,7 +109,6 @@ class SendKnockTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (KnockEvent $event) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
             $this->assertSame($this->private->id, $event->thread->id);

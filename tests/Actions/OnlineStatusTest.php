@@ -23,32 +23,29 @@ class OnlineStatusTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
-    public function online_status_sets_away_cache()
+    public function it_stores_away_cache_key()
     {
         app(OnlineStatus::class)->withoutDispatches()->execute(true);
 
         $this->assertTrue(Cache::has("user:online:{$this->tippin->getKey()}"));
-
         $this->assertSame('away', Cache::get("user:online:{$this->tippin->getKey()}"));
     }
 
     /** @test */
-    public function online_status_sets_online_cache()
+    public function it_stores_online_cache_key()
     {
         app(OnlineStatus::class)->withoutDispatches()->execute(false);
 
         $this->assertTrue(Cache::has("user:online:{$this->tippin->getKey()}"));
-
         $this->assertSame('online', Cache::get("user:online:{$this->tippin->getKey()}"));
     }
 
     /** @test */
-    public function online_status_sets_no_cache_when_disabled_from_config()
+    public function it_doesnt_store_cache_keys_if_disabled()
     {
         Messenger::setOnlineStatus(false);
 
@@ -58,16 +55,13 @@ class OnlineStatusTest extends FeatureTestCase
     }
 
     /** @test */
-    public function online_status_does_not_touch_provider_when_set_to_offline()
+    public function it_doesnt_touch_provider_if_provider_set_to_offline()
     {
         $before = now()->subMinutes(5);
-
         Carbon::setTestNow($before);
-
         $this->tippin->update([
             'updated_at' => $before,
         ]);
-
         Messenger::getProviderMessenger()->update([
             'online_status' => 0,
         ]);
@@ -81,10 +75,9 @@ class OnlineStatusTest extends FeatureTestCase
     }
 
     /** @test */
-    public function online_status_touches_provider()
+    public function it_touches_provider()
     {
         $before = now()->subMinutes(5);
-
         $this->tippin->update([
             'updated_at' => $before,
         ]);
@@ -95,7 +88,7 @@ class OnlineStatusTest extends FeatureTestCase
     }
 
     /** @test */
-    public function online_status_away_fires_event()
+    public function it_fires_away_events()
     {
         Event::fake([
             StatusHeartbeatEvent::class,
@@ -113,7 +106,7 @@ class OnlineStatusTest extends FeatureTestCase
     }
 
     /** @test */
-    public function online_status_online_fires_event()
+    public function it_fires_online_events()
     {
         Event::fake([
             StatusHeartbeatEvent::class,
@@ -127,7 +120,7 @@ class OnlineStatusTest extends FeatureTestCase
     }
 
     /** @test */
-    public function online_status_triggers_listener()
+    public function it_dispatches_listeners()
     {
         Bus::fake();
 
