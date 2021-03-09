@@ -12,7 +12,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class CallActivityCheckCommandTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private Thread $group;
 
     protected function setUp(): void
@@ -20,14 +19,12 @@ class CallActivityCheckCommandTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->group = $this->createGroupThread($this->tippin);
-
         Bus::fake();
     }
 
     /** @test */
-    public function call_command_does_nothing_when_no_active_calls_found()
+    public function it_does_nothing_if_no_active_calls_exist()
     {
         $this->artisan('messenger:calls:check-activity')
             ->expectsOutput('No matching active calls found.')
@@ -37,7 +34,7 @@ class CallActivityCheckCommandTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_command_does_nothing_when_calling_disabled_in_config()
+    public function it_does_nothing_if_calling_disabled()
     {
         Messenger::setCalling(false);
 
@@ -49,7 +46,7 @@ class CallActivityCheckCommandTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_command_ignores_calls_created_within_the_last_minute()
+    public function it_ignores_calls_created_within_the_last_minute()
     {
         $this->createCall($this->group, $this->tippin);
 
@@ -61,10 +58,9 @@ class CallActivityCheckCommandTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_command_dispatches_job()
+    public function it_dispatches_job()
     {
         $this->createCall($this->group, $this->tippin);
-
         $this->travel(2)->minutes();
 
         $this->artisan('messenger:calls:check-activity')
@@ -75,10 +71,9 @@ class CallActivityCheckCommandTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_command_runs_job_now()
+    public function it_runs_job_now()
     {
         $this->createCall($this->group, $this->tippin);
-
         $this->travel(2)->minutes();
 
         $this->artisan('messenger:calls:check-activity', [
@@ -91,12 +86,10 @@ class CallActivityCheckCommandTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_command_finds_multiple_calls()
+    public function it_finds_multiple_calls()
     {
         $this->createCall($this->group, $this->tippin);
-
         $this->createCall($this->group, $this->tippin);
-
         $this->travel(2)->minutes();
 
         $this->artisan('messenger:calls:check-activity')

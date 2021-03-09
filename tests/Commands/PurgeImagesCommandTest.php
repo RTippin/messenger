@@ -13,7 +13,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class PurgeImagesCommandTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private Thread $group;
 
     protected function setUp(): void
@@ -21,16 +20,13 @@ class PurgeImagesCommandTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->group = $this->createGroupThread($this->tippin);
-
         Storage::fake(Messenger::getThreadStorage('disk'));
-
         Bus::fake();
     }
 
     /** @test */
-    public function purge_command_no_archived_images_found_default()
+    public function it_doesnt_find_images()
     {
         $this->artisan('messenger:purge:images')
             ->expectsOutput('No image messages archived 30 days or greater found.')
@@ -40,7 +36,7 @@ class PurgeImagesCommandTest extends FeatureTestCase
     }
 
     /** @test */
-    public function purge_command_no_archived_images_found_with_days()
+    public function it_can_set_days()
     {
         $this->artisan('messenger:purge:images', [
             '--days' => 10,
@@ -52,7 +48,7 @@ class PurgeImagesCommandTest extends FeatureTestCase
     }
 
     /** @test */
-    public function purge_command_dispatches_job_default()
+    public function it_dispatches_job()
     {
         $this->group->messages()->create([
             'owner_id' => $this->tippin->getKey(),
@@ -70,7 +66,7 @@ class PurgeImagesCommandTest extends FeatureTestCase
     }
 
     /** @test */
-    public function purge_command_runs_job_now()
+    public function it_runs_job_now()
     {
         $this->group->messages()->create([
             'owner_id' => $this->tippin->getKey(),
@@ -90,7 +86,7 @@ class PurgeImagesCommandTest extends FeatureTestCase
     }
 
     /** @test */
-    public function purge_command_finds_multiple_archived_images()
+    public function it_finds_multiple_images()
     {
         $this->group->messages()->create([
             'owner_id' => $this->tippin->getKey(),
@@ -99,7 +95,6 @@ class PurgeImagesCommandTest extends FeatureTestCase
             'body' => 'test.png',
             'deleted_at' => now()->subDays(10),
         ]);
-
         $this->group->messages()->create([
             'owner_id' => $this->tippin->getKey(),
             'owner_type' => get_class($this->tippin),

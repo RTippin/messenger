@@ -9,7 +9,7 @@ use RTippin\Messenger\Tests\MessengerTestCase;
 class CallsUpCommandTest extends MessengerTestCase
 {
     /** @test */
-    public function up_does_nothing_when_calling_disabled_in_config()
+    public function it_does_nothing_if_calling_disabled()
     {
         Messenger::setCalling(false);
 
@@ -19,21 +19,17 @@ class CallsUpCommandTest extends MessengerTestCase
     }
 
     /** @test */
-    public function up_does_nothing_when_calling_already_up()
+    public function it_does_nothing_if_calling_already_up()
     {
-        $this->assertFalse(Cache::has('messenger:calls:down'));
-
         $this->artisan('messenger:calls:up')
             ->expectsOutput('Call system is already online.')
             ->assertExitCode(0);
     }
 
     /** @test */
-    public function up_removes_cache_lockout()
+    public function it_removes_cache_lockout_key()
     {
         Messenger::disableCallsTemporarily(1);
-
-        $this->assertTrue(Cache::has('messenger:calls:down'));
 
         $this->artisan('messenger:calls:up')
             ->expectsOutput('Call system is now online.')

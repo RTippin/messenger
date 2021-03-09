@@ -17,12 +17,11 @@ class PurgeThreadsCommandTest extends FeatureTestCase
         parent::setUp();
 
         Storage::fake(Messenger::getThreadStorage('disk'));
-
         Bus::fake();
     }
 
     /** @test */
-    public function purge_command_no_archived_threads_found_default()
+    public function it_doesnt_find_threads()
     {
         $this->artisan('messenger:purge:threads')
             ->expectsOutput('No threads archived 30 days or greater found.')
@@ -32,7 +31,7 @@ class PurgeThreadsCommandTest extends FeatureTestCase
     }
 
     /** @test */
-    public function purge_command_no_archived_threads_found_with_days()
+    public function it_can_set_days()
     {
         $this->artisan('messenger:purge:threads', [
             '--days' => 10,
@@ -44,7 +43,7 @@ class PurgeThreadsCommandTest extends FeatureTestCase
     }
 
     /** @test */
-    public function purge_command_dispatches_job_default()
+    public function it_dispatches_job()
     {
         Thread::create(array_merge(Definitions::DefaultThread, [
             'deleted_at' => now()->subMonths(2),
@@ -58,7 +57,7 @@ class PurgeThreadsCommandTest extends FeatureTestCase
     }
 
     /** @test */
-    public function purge_command_runs_job_now()
+    public function it_runs_job_now()
     {
         Thread::create(array_merge(Definitions::DefaultThread, [
             'deleted_at' => now()->subMonths(2),
@@ -74,12 +73,11 @@ class PurgeThreadsCommandTest extends FeatureTestCase
     }
 
     /** @test */
-    public function purge_command_finds_multiple_archived_threads()
+    public function it_finds_multiple_threads()
     {
         Thread::create(array_merge(Definitions::DefaultThread, [
             'deleted_at' => now()->subDays(10),
         ]));
-
         Thread::create(array_merge(Definitions::DefaultThread, [
             'deleted_at' => now()->subDays(8),
         ]));
