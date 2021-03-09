@@ -109,6 +109,9 @@ window.NotifyManager = (function () {
                             opt.settings.is_away = false;
                             broadcaster.heartBeat(true, false, false);
                             broadcaster.Echo(true);
+                        },
+                        fail : function(){
+                            window.reload();
                         }
                     });
                 }
