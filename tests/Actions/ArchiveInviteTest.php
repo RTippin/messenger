@@ -19,9 +19,7 @@ class ArchiveInviteTest extends FeatureTestCase
         parent::setUp();
 
         $tippin = $this->userTippin();
-
         $group = $this->createGroupThread($tippin);
-
         $this->invite = $group->invites()->create([
             'owner_id' => $tippin->getKey(),
             'owner_type' => get_class($tippin),
@@ -33,19 +31,18 @@ class ArchiveInviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function archive_invite_throws_exception_when_disabled()
+    public function it_throws_exception_if_disabled()
     {
         Messenger::setThreadInvites(false);
 
         $this->expectException(FeatureDisabledException::class);
-
         $this->expectExceptionMessage('Group invites are currently disabled.');
 
         app(ArchiveInvite::class)->withoutDispatches()->execute($this->invite);
     }
 
     /** @test */
-    public function archive_invite_soft_deletes_invite()
+    public function it_soft_deletes_invite()
     {
         app(ArchiveInvite::class)->withoutDispatches()->execute($this->invite);
 
@@ -55,7 +52,7 @@ class ArchiveInviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function archive_invite_fires_event()
+    public function it_fires_events()
     {
         Event::fake([
             InviteArchivedEvent::class,

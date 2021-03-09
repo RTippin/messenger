@@ -15,11 +15,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class ArchiveMessageTest extends FeatureTestCase
 {
     private Thread $private;
-
     private Message $message;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -27,18 +24,14 @@ class ArchiveMessageTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-
         $this->message = $this->createMessage($this->private, $this->tippin);
-
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
-    public function archive_message_soft_deletes_message()
+    public function it_soft_deletes_message()
     {
         app(ArchiveMessage::class)->withoutDispatches()->execute(
             $this->private,
@@ -51,7 +44,7 @@ class ArchiveMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function archive_message_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             MessageArchivedBroadcast::class,
@@ -70,7 +63,6 @@ class ArchiveMessageTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (MessageArchivedEvent $event) {
             return $this->message->id === $event->message->id;
         });

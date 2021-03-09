@@ -17,14 +17,12 @@ class CallBrokerTeardownTest extends FeatureTestCase
         parent::setUp();
 
         $tippin = $this->userTippin();
-
         $group = $this->createGroupThread($tippin);
-
         $this->call = $this->createCall($group, $tippin);
     }
 
     /** @test */
-    public function call_teardown_tears_down_call()
+    public function it_updates_call_after_teardown()
     {
         $this->mock(VideoDriver::class)
             ->shouldReceive('destroy')
@@ -39,28 +37,26 @@ class CallBrokerTeardownTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_teardown_throws_exception_if_destroy_failed()
+    public function it_throws_exception_if_destroy_failed()
     {
         $this->mock(VideoDriver::class)
             ->shouldReceive('destroy')
             ->andReturn(false);
 
         $this->expectException(CallBrokerException::class);
-
         $this->expectExceptionMessage('Teardown video provider failed.');
 
         app(CallBrokerTeardown::class)->execute($this->call);
     }
 
     /** @test */
-    public function call_teardown_throws_exception_if_call_already_torn_down()
+    public function it_throws_exception_if_call_already_torn_down()
     {
         $this->call->update([
             'teardown_complete' => true,
         ]);
 
         $this->expectException(CallBrokerException::class);
-
         $this->expectExceptionMessage('Call already torn down.');
 
         app(CallBrokerTeardown::class)->execute($this->call);

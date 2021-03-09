@@ -13,9 +13,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class AcceptFriendRequestTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
-
     private PendingFriend $pendingFriend;
 
     protected function setUp(): void
@@ -23,9 +21,7 @@ class AcceptFriendRequestTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->pendingFriend = PendingFriend::create([
             'sender_id' => $this->doe->getKey(),
             'sender_type' => get_class($this->doe),
@@ -35,7 +31,7 @@ class AcceptFriendRequestTest extends FeatureTestCase
     }
 
     /** @test */
-    public function accept_friend_stores_friends()
+    public function it_stores_friends()
     {
         app(AcceptFriendRequest::class)->withoutDispatches()->execute($this->pendingFriend);
 
@@ -45,7 +41,6 @@ class AcceptFriendRequestTest extends FeatureTestCase
             'party_id' => $this->doe->getKey(),
             'party_type' => get_class($this->doe),
         ]);
-
         $this->assertDatabaseHas('friends', [
             'owner_id' => $this->doe->getKey(),
             'owner_type' => get_class($this->doe),
@@ -55,7 +50,7 @@ class AcceptFriendRequestTest extends FeatureTestCase
     }
 
     /** @test */
-    public function accept_friend_removes_pending_friend()
+    public function it_removes_pending_friend()
     {
         app(AcceptFriendRequest::class)->withoutDispatches()->execute($this->pendingFriend);
 
@@ -65,7 +60,7 @@ class AcceptFriendRequestTest extends FeatureTestCase
     }
 
     /** @test */
-    public function accept_friend_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             FriendApprovedBroadcast::class,
@@ -80,7 +75,6 @@ class AcceptFriendRequestTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (FriendApprovedEvent $event) {
             $this->assertEquals($this->tippin->getKey(), $event->friend->owner_id);
             $this->assertEquals($this->doe->getKey(), $event->inverseFriend->owner_id);

@@ -16,11 +16,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class KickCallParticipantTest extends FeatureTestCase
 {
     private Call $call;
-
     private CallParticipant $participant;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -28,27 +25,21 @@ class KickCallParticipantTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-
         $this->call = $this->createCall($this->group, $this->tippin);
-
         $this->participant = $this->call->participants()->create([
             'owner_id' => $this->doe->getKey(),
             'owner_type' => get_class($this->doe),
             'left_call' => null,
         ]);
-
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
-    public function kick_call_participant_updates_participant()
+    public function it_updates_participant_kicked_true()
     {
         $left = now()->addMinutes(5);
-
         Carbon::setTestNow($left);
 
         app(KickCallParticipant::class)->withoutDispatches()->execute(
@@ -65,12 +56,10 @@ class KickCallParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function un_kick_call_participant_updates_participant()
+    public function it_updates_participant_kicked_false()
     {
         $left = now()->addMinutes(5);
-
         Carbon::setTestNow($left);
-
         $this->participant->update([
             'kicked' => true,
             'left_call' => $left,
@@ -90,7 +79,7 @@ class KickCallParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function kick_call_participant_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             KickedFromCallBroadcast::class,
@@ -110,7 +99,6 @@ class KickCallParticipantTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (KickedFromCallEvent $event) {
             $this->assertSame($this->call->id, $event->call->id);
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());

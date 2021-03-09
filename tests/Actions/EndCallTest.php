@@ -21,13 +21,9 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class EndCallTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Call $call;
-
     private CallParticipant $participant;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -35,21 +31,16 @@ class EndCallTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-
         $this->call = $this->createCall($this->group, $this->tippin);
-
         $this->participant = $this->call->participants()->first();
     }
 
     /** @test */
-    public function end_call_updates_call_and_active_participants()
+    public function it_updates_call_and_active_participants()
     {
         $ended = now()->addMinutes(5);
-
         Carbon::setTestNow($ended);
 
         app(EndCall::class)->withoutDispatches()->execute($this->call);
@@ -58,7 +49,6 @@ class EndCallTest extends FeatureTestCase
             'id' => $this->call->id,
             'call_ended' => $ended,
         ]);
-
         $this->assertDatabaseHas('call_participants', [
             'id' => $this->participant->id,
             'left_call' => $ended,
@@ -66,7 +56,7 @@ class EndCallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function end_call_does_nothing_if_call_already_ended()
+    public function it_does_nothing_if_call_already_ended()
     {
         $this->call->update([
             'call_ended' => now(),
@@ -81,7 +71,7 @@ class EndCallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function end_call_does_nothing_if_ending_cache_key_exist()
+    public function it_does_nothing_if_ending_cache_key_exist()
     {
         Cache::put("call:{$this->call->id}:ending", true);
 
@@ -94,7 +84,7 @@ class EndCallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function end_call_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             CallEndedBroadcast::class,
@@ -111,14 +101,13 @@ class EndCallTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (CallEndedEvent $event) {
             return $this->call->id === $event->call->id;
         });
     }
 
     /** @test */
-    public function end_call_triggers_listeners()
+    public function it_dispatches_listeners()
     {
         Bus::fake();
 
@@ -127,7 +116,6 @@ class EndCallTest extends FeatureTestCase
         Bus::assertDispatched(function (CallQueuedListener $job) {
             return $job->class === TeardownCall::class;
         });
-
         Bus::assertDispatched(function (CallQueuedListener $job) {
             return $job->class === CallEndedMessage::class;
         });

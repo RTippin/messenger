@@ -12,7 +12,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class CallBrokerSetupTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Call $call;
 
     protected function setUp(): void
@@ -20,9 +19,7 @@ class CallBrokerSetupTest extends FeatureTestCase
         parent::setUp();
 
         $tippin = $this->userTippin();
-
         $this->group = $this->createGroupThread($tippin);
-
         $this->call = $this->group->calls()->create([
             'type' => 1,
             'owner_id' => $tippin->getKey(),
@@ -38,7 +35,7 @@ class CallBrokerSetupTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_setup_updates_call()
+    public function it_updates_call_with_room_data()
     {
         $this->mock(VideoDriver::class)->shouldReceive([
             'create' => true,
@@ -65,14 +62,13 @@ class CallBrokerSetupTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_setup_throws_exception_if_setup_failed()
+    public function it_throws_exception_if_setup_failed()
     {
         $this->mock(VideoDriver::class)->shouldReceive([
             'create' => false,
         ]);
 
         $this->expectException(CallBrokerException::class);
-
         $this->expectExceptionMessage('Setup with video provider failed.');
 
         app(CallBrokerSetup::class)->execute(
@@ -82,14 +78,13 @@ class CallBrokerSetupTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_setup_throws_exception_if_call_ended()
+    public function it_throws_exception_if_call_already_ended()
     {
         $this->call->update([
             'call_ended' => now(),
         ]);
 
         $this->expectException(CallBrokerException::class);
-
         $this->expectExceptionMessage('Call does not need to be setup.');
 
         app(CallBrokerSetup::class)->execute(
@@ -99,14 +94,13 @@ class CallBrokerSetupTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_setup_throws_exception_if_call_already_setup()
+    public function it_throws_exception_if_call_already_setup()
     {
         $this->call->update([
             'setup_complete' => true,
         ]);
 
         $this->expectException(CallBrokerException::class);
-
         $this->expectExceptionMessage('Call does not need to be setup.');
 
         app(CallBrokerSetup::class)->execute(

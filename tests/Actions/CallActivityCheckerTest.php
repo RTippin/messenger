@@ -17,7 +17,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class CallActivityCheckerTest extends FeatureTestCase
 {
     private Call $privateCall;
-
     private Call $groupCall;
 
     protected function setUp(): void
@@ -25,21 +24,16 @@ class CallActivityCheckerTest extends FeatureTestCase
         parent::setUp();
 
         $tippin = $this->userTippin();
-
         $private = $this->createPrivateThread($tippin, $this->userDoe());
-
         $group = $this->createGroupThread($tippin);
-
         $this->privateCall = $this->createCall($private, $tippin);
-
         $this->groupCall = $this->createCall($group, $tippin);
     }
 
     /** @test */
-    public function checker_updates_participants_left_call_when_not_in_cache()
+    public function it_updates_participants_left_call_if_not_in_cache()
     {
         $left = now()->addMinutes(5);
-
         Carbon::setTestNow($left);
 
         app(CallActivityChecker::class)->execute(Call::active()->get());
@@ -48,7 +42,6 @@ class CallActivityCheckerTest extends FeatureTestCase
             'call_id' => $this->privateCall->id,
             'left_call' => $left,
         ]);
-
         $this->assertDatabaseHas('call_participants', [
             'call_id' => $this->groupCall->id,
             'left_call' => $left,
@@ -56,10 +49,9 @@ class CallActivityCheckerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function checker_ends_call_when_no_active_participants()
+    public function it_ends_call_if_no_active_participants()
     {
         $ended = now()->addMinutes(5);
-
         Carbon::setTestNow($ended);
 
         DB::table('call_participants')->update([
@@ -72,7 +64,6 @@ class CallActivityCheckerTest extends FeatureTestCase
             'id' => $this->privateCall->id,
             'call_ended' => $ended,
         ]);
-
         $this->assertDatabaseHas('calls', [
             'id' => $this->groupCall->id,
             'call_ended' => $ended,
@@ -80,14 +71,11 @@ class CallActivityCheckerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function checker_fires_no_events_when_everything_passes()
+    public function it_fires_no_events_if_checks_pass()
     {
         $privateParticipant = $this->privateCall->participants()->first();
-
         $groupParticipant = $this->groupCall->participants()->first();
-
         Cache::put("call:{$this->privateCall->id}:{$privateParticipant->id}", true);
-
         Cache::put("call:{$this->groupCall->id}:{$groupParticipant->id}", true);
 
         $this->doesntExpectEvents([
@@ -101,7 +89,7 @@ class CallActivityCheckerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function checker_fires_left_call_events_when_removing_inactive_participants()
+    public function it_fires_left_call_events_if_inactive_participants_removed()
     {
         Event::fake([
             CallLeftBroadcast::class,
@@ -111,12 +99,11 @@ class CallActivityCheckerTest extends FeatureTestCase
         app(CallActivityChecker::class)->execute(Call::active()->get());
 
         Event::assertDispatchedTimes(CallLeftBroadcast::class, 2);
-
         Event::assertDispatchedTimes(CallLeftEvent::class, 2);
     }
 
     /** @test */
-    public function checker_fires_call_ended_events_when_no_active_participants()
+    public function it_fires_call_ended_events_if_no_active_participants_found()
     {
         DB::table('call_participants')->update([
             'left_call' => now(),
@@ -130,7 +117,6 @@ class CallActivityCheckerTest extends FeatureTestCase
         app(CallActivityChecker::class)->execute(Call::active()->get());
 
         Event::assertDispatchedTimes(CallEndedBroadcast::class, 2);
-
         Event::assertDispatchedTimes(CallEndedEvent::class, 2);
     }
 }

@@ -13,7 +13,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class CancelFriendRequestTest extends FeatureTestCase
 {
     private MessengerProvider $doe;
-
     private SentFriend $sentFriend;
 
     protected function setUp(): void
@@ -21,9 +20,7 @@ class CancelFriendRequestTest extends FeatureTestCase
         parent::setUp();
 
         $tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->sentFriend = SentFriend::create([
             'sender_id' => $tippin->getKey(),
             'sender_type' => get_class($tippin),
@@ -33,7 +30,7 @@ class CancelFriendRequestTest extends FeatureTestCase
     }
 
     /** @test */
-    public function cancel_request_removes_sent_friend()
+    public function it_removes_sent_friend()
     {
         app(CancelFriendRequest::class)->withoutDispatches()->execute($this->sentFriend);
 
@@ -43,7 +40,7 @@ class CancelFriendRequestTest extends FeatureTestCase
     }
 
     /** @test */
-    public function user_can_cancel_sent_request()
+    public function it_fires_events()
     {
         Event::fake([
             FriendCancelledBroadcast::class,
@@ -58,7 +55,6 @@ class CancelFriendRequestTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (FriendCancelledEvent $event) {
             return $this->sentFriend->id === $event->friend->id;
         });

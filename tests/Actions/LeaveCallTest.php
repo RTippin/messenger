@@ -20,11 +20,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class LeaveCallTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Call $call;
-
     private CallParticipant $participant;
-
     private MessengerProvider $tippin;
 
     protected function setUp(): void
@@ -32,16 +29,13 @@ class LeaveCallTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->group = $this->createGroupThread($this->tippin);
-
         $this->call = $this->createCall($this->group, $this->tippin);
-
         $this->participant = $this->call->participants()->first();
     }
 
     /** @test */
-    public function leave_call_updates_participant()
+    public function it_updates_participant()
     {
         $left = now()->addMinutes(5);
 
@@ -59,7 +53,7 @@ class LeaveCallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function leave_call_removes_participant_from_cache()
+    public function it_removes_participant_key_from_cache()
     {
         Cache::put("call:{$this->call->id}:{$this->participant->id}", true);
 
@@ -72,7 +66,7 @@ class LeaveCallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function leave_call_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             CallLeftBroadcast::class,
@@ -91,14 +85,13 @@ class LeaveCallTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (CallLeftEvent $event) {
             return $this->participant->id === $event->participant->id;
         });
     }
 
     /** @test */
-    public function leave_call_triggers_listener()
+    public function it_dispatches_listeners()
     {
         Bus::fake();
 

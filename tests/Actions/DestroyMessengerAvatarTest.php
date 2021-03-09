@@ -13,9 +13,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class DestroyMessengerAvatarTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private string $directory;
-
     private string $disk;
 
     protected function setUp(): void
@@ -23,38 +21,31 @@ class DestroyMessengerAvatarTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->tippin->update([
             'picture' => 'avatar.jpg',
         ]);
-
         $this->directory = Messenger::getAvatarStorage('directory').'/user/'.$this->tippin->getKey();
-
         $this->disk = Messenger::getAvatarStorage('disk');
-
         Messenger::setProvider($this->tippin);
-
         Storage::fake($this->disk);
-
         UploadedFile::fake()->image('avatar.jpg')->storeAs($this->directory, 'avatar.jpg', [
             'disk' => $this->disk,
         ]);
     }
 
     /** @test */
-    public function destroy_avatar_throws_exception_when_disabled()
+    public function it_throws_exception_if_disabled()
     {
         Messenger::setProviderAvatarRemoval(false);
 
         $this->expectException(FeatureDisabledException::class);
-
         $this->expectExceptionMessage('Avatar removal is currently disabled.');
 
         app(DestroyMessengerAvatar::class)->execute();
     }
 
     /** @test */
-    public function destroy_avatar_updates_provider()
+    public function it_updates_provider_picture()
     {
         app(DestroyMessengerAvatar::class)->execute();
 
@@ -65,7 +56,7 @@ class DestroyMessengerAvatarTest extends FeatureTestCase
     }
 
     /** @test */
-    public function destroy_avatar_removes_file()
+    public function it_removes_image_from_disk()
     {
         app(DestroyMessengerAvatar::class)->execute();
 

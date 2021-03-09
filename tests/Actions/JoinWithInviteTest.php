@@ -19,9 +19,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class JoinWithInviteTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Invite $invite;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -29,26 +27,21 @@ class JoinWithInviteTest extends FeatureTestCase
         parent::setUp();
 
         $tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($tippin);
-
-        $this->invite = $this->group->invites()
-            ->create([
-                'owner_id' => $tippin->getKey(),
-                'owner_type' => get_class($tippin),
-                'code' => 'TEST1234',
-                'max_use' => 10,
-                'uses' => 2,
-                'expires_at' => now()->addHour(),
-            ]);
-
+        $this->invite = $this->group->invites()->create([
+            'owner_id' => $tippin->getKey(),
+            'owner_type' => get_class($tippin),
+            'code' => 'TEST1234',
+            'max_use' => 10,
+            'uses' => 2,
+            'expires_at' => now()->addHour(),
+        ]);
         Messenger::setProvider($this->doe);
     }
 
     /** @test */
-    public function join_with_invite_throws_exception_when_invites_disabled()
+    public function it_throws_exception_if_invites_disabled()
     {
         Messenger::setThreadInvites(false);
 
@@ -60,7 +53,7 @@ class JoinWithInviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function join_with_invite_stores_fresh_participant()
+    public function it_stores_participant()
     {
         app(JoinWithInvite::class)->withoutDispatches()->execute($this->invite);
 
@@ -73,7 +66,7 @@ class JoinWithInviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function join_with_invite_increments_uses()
+    public function it_increments_invite_uses()
     {
         app(JoinWithInvite::class)->withoutDispatches()->execute($this->invite);
 
@@ -84,19 +77,17 @@ class JoinWithInviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function join_with_invite_restores_soft_deleted_participant()
+    public function it_restores_soft_deleted_participant()
     {
-        $participant = $this->group->participants()
-            ->create(array_merge(Definitions::DefaultAdminParticipant, [
-                'owner_id' => $this->doe->getKey(),
-                'owner_type' => get_class($this->doe),
-                'deleted_at' => now(),
-            ]));
+        $participant = $this->group->participants()->create(array_merge(Definitions::DefaultAdminParticipant, [
+            'owner_id' => $this->doe->getKey(),
+            'owner_type' => get_class($this->doe),
+            'deleted_at' => now(),
+        ]));
 
         app(JoinWithInvite::class)->withoutDispatches()->execute($this->invite);
 
         $this->assertDatabaseCount('participants', 2);
-
         $this->assertDatabaseHas('participants', [
             'id' => $participant->id,
             'deleted_at' => null,
@@ -105,7 +96,7 @@ class JoinWithInviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function join_with_invite_fires_event()
+    public function it_fires_events()
     {
         Event::fake([
             InviteUsedEvent::class,
@@ -123,7 +114,7 @@ class JoinWithInviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function join_with_invite_triggers_listener()
+    public function it_dispatches_listeners()
     {
         Bus::fake();
 

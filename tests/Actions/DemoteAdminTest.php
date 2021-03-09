@@ -19,11 +19,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class DemoteAdminTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Participant $participant;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -31,22 +28,17 @@ class DemoteAdminTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin);
-
-        $this->participant = $this->group->participants()
-            ->create(array_merge(Definitions::DefaultAdminParticipant, [
-                'owner_id' => $this->doe->getKey(),
-                'owner_type' => get_class($this->doe),
-            ]));
-
+        $this->participant = $this->group->participants()->create(array_merge(Definitions::DefaultAdminParticipant, [
+            'owner_id' => $this->doe->getKey(),
+            'owner_type' => get_class($this->doe),
+        ]));
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
-    public function demote_admin_updates_participant()
+    public function it_updates_participant_permissions()
     {
         app(DemoteAdmin::class)->withoutDispatches()->execute(
             $this->group,
@@ -56,11 +48,16 @@ class DemoteAdminTest extends FeatureTestCase
         $this->assertDatabaseHas('participants', [
             'id' => $this->participant->id,
             'admin' => false,
+            'add_participants' => false,
+            'manage_invites' => false,
+            'start_calls' => false,
+            'send_knocks' => false,
+            'send_messages' => true,
         ]);
     }
 
     /** @test */
-    public function demote_admin_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             DemotedAdminBroadcast::class,
@@ -78,7 +75,6 @@ class DemoteAdminTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (DemotedAdminEvent $event) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
             $this->assertSame($this->group->id, $event->thread->id);
@@ -89,7 +85,7 @@ class DemoteAdminTest extends FeatureTestCase
     }
 
     /** @test */
-    public function demote_admin_triggers_listener()
+    public function it_dispatches_listeners()
     {
         Bus::fake();
 

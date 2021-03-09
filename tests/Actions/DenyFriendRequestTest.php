@@ -13,7 +13,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class DenyFriendRequestTest extends FeatureTestCase
 {
     private MessengerProvider $doe;
-
     private PendingFriend $pendingFriend;
 
     protected function setUp(): void
@@ -21,9 +20,7 @@ class DenyFriendRequestTest extends FeatureTestCase
         parent::setUp();
 
         $tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->pendingFriend = PendingFriend::create([
             'sender_id' => $this->doe->getKey(),
             'sender_type' => get_class($this->doe),
@@ -33,7 +30,7 @@ class DenyFriendRequestTest extends FeatureTestCase
     }
 
     /** @test */
-    public function deny_request_removes_pending_friend()
+    public function it_removes_pending_friend()
     {
         app(DenyFriendRequest::class)->withoutDispatches()->execute($this->pendingFriend);
 
@@ -43,7 +40,7 @@ class DenyFriendRequestTest extends FeatureTestCase
     }
 
     /** @test */
-    public function deny_request_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             FriendDeniedBroadcast::class,

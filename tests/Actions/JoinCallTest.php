@@ -16,11 +16,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class JoinCallTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Call $call;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -28,23 +25,19 @@ class JoinCallTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-
         $this->call = $this->createCall($this->group, $this->tippin);
     }
 
     /** @test */
-    public function join_call_stores_call_participant()
+    public function it_stores_call_participant()
     {
         Messenger::setProvider($this->doe);
 
         app(JoinCall::class)->withoutDispatches()->execute($this->call);
 
         $this->assertDatabaseCount('call_participants', 2);
-
         $this->assertDatabaseHas('call_participants', [
             'call_id' => $this->call->id,
             'owner_id' => $this->doe->getKey(),
@@ -54,7 +47,7 @@ class JoinCallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function join_call_sets_participant_in_cache()
+    public function it_stores_call_participant_cache_key()
     {
         Messenger::setProvider($this->doe);
 
@@ -69,7 +62,7 @@ class JoinCallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function join_call_does_not_fire_events_or_set_cache_if_already_in_call()
+    public function it_fires_no_events_or_stores_cache_key_if_already_joined()
     {
         Messenger::setProvider($this->tippin);
 
@@ -86,7 +79,7 @@ class JoinCallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function rejoin_call_updates_participant_and_cache()
+    public function it_updates_participant_and_cache_if_rejoining()
     {
         $participant = $this->call->participants()->first();
 
@@ -99,7 +92,6 @@ class JoinCallTest extends FeatureTestCase
         app(JoinCall::class)->withoutDispatches()->execute($this->call);
 
         $this->assertTrue(Cache::has("call:{$this->call->id}:{$participant->id}"));
-
         $this->assertDatabaseHas('call_participants', [
             'id' => $participant->id,
             'left_call' => null,
@@ -107,7 +99,7 @@ class JoinCallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function join_call_fires_events()
+    public function it_fires_events()
     {
         Messenger::setProvider($this->doe);
 
@@ -130,7 +122,6 @@ class JoinCallTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (CallJoinedEvent $event) use ($participant) {
             return $participant->id === $event->participant->id;
         });
