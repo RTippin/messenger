@@ -13,7 +13,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class UnmuteThreadTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Participant $participant;
 
     protected function setUp(): void
@@ -21,16 +20,13 @@ class UnmuteThreadTest extends FeatureTestCase
         parent::setUp();
 
         $tippin = $this->userTippin();
-
         $this->group = $this->createGroupThread($tippin);
-
         $this->participant = $this->group->participants()->first();
-
         Messenger::setProvider($tippin);
     }
 
     /** @test */
-    public function unmute_thread_updates_participant()
+    public function it_updates_participant()
     {
         $this->participant->update([
             'muted' => true,
@@ -45,12 +41,11 @@ class UnmuteThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function unmute_thread_fires_event()
+    public function it_fires_events()
     {
         Event::fake([
             ParticipantUnMutedEvent::class,
         ]);
-
         $this->participant->update([
             'muted' => true,
         ]);

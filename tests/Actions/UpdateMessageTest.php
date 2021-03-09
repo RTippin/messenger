@@ -17,9 +17,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class UpdateMessageTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Message $message;
-
     private MessengerProvider $tippin;
 
     protected function setUp(): void
@@ -27,21 +25,17 @@ class UpdateMessageTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->group = $this->createGroupThread($this->tippin);
-
         $this->message = $this->createMessage($this->group, $this->tippin);
-
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
-    public function update_message_throws_exception_when_disabled()
+    public function it_throws_exception_if_disabled()
     {
         Messenger::setMessageEdits(false);
 
         $this->expectException(FeatureDisabledException::class);
-
         $this->expectExceptionMessage('Edit messages are currently disabled.');
 
         app(UpdateMessage::class)->withoutDispatches()->execute(
@@ -52,10 +46,9 @@ class UpdateMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function update_message_updates_message_and_stores_edit()
+    public function it_updates_message_and_stores_edit()
     {
         $editedAt = now()->addMinutes(5);
-
         Carbon::setTestNow($editedAt);
 
         app(UpdateMessage::class)->withoutDispatches()->execute(
@@ -69,7 +62,6 @@ class UpdateMessageTest extends FeatureTestCase
             'body' => 'Edited Message',
             'updated_at' => $editedAt,
         ]);
-
         $this->assertDatabaseHas('message_edits', [
             'message_id' => $this->message->id,
             'body' => 'First Test Message',
@@ -78,7 +70,7 @@ class UpdateMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function update_message_converts_emoji_to_shortcode()
+    public function it_converts_emoji_to_shortcode()
     {
         app(UpdateMessage::class)->withoutDispatches()->execute(
             $this->group,
@@ -93,7 +85,7 @@ class UpdateMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function update_message_fires_no_events_if_message_does_not_change()
+    public function it_doesnt_fire_events_if_message_does_not_change()
     {
         $this->doesntExpectEvents([
             MessageEditedBroadcast::class,
@@ -110,13 +102,12 @@ class UpdateMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function update_message_fires_events()
+    public function it_fires_events_if_message_changed()
     {
         Event::fake([
             MessageEditedBroadcast::class,
             MessageEditedEvent::class,
         ]);
-
         $this->travel(5)->minutes();
 
         app(UpdateMessage::class)->execute(
@@ -132,7 +123,6 @@ class UpdateMessageTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (MessageEditedEvent $event) {
             $this->assertSame($this->message->id, $event->message->id);
             $this->assertSame('First Test Message', $event->originalBody);

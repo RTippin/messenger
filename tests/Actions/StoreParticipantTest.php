@@ -11,7 +11,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class StoreParticipantTest extends FeatureTestCase
 {
     private Thread $group;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -19,12 +18,11 @@ class StoreParticipantTest extends FeatureTestCase
         parent::setUp();
 
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->userTippin());
     }
 
     /** @test */
-    public function store_participant_without_supplied_attributes()
+    public function it_stores_participant_without_supplied_attributes()
     {
         app(StoreParticipant::class)->execute(
             $this->group,
@@ -41,7 +39,7 @@ class StoreParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_participant_with_admin_attributes()
+    public function it_stores_participant_with_admin_attributes()
     {
         app(StoreParticipant::class)->execute(
             $this->group,
@@ -59,7 +57,7 @@ class StoreParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_participant_with_custom_attributes()
+    public function it_stores_participant_with_custom_attributes()
     {
         app(StoreParticipant::class)->execute(
             $this->group,

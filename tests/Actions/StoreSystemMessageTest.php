@@ -14,9 +14,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class StoreSystemMessageTest extends FeatureTestCase
 {
     private Thread $group;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -24,14 +22,12 @@ class StoreSystemMessageTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
     }
 
     /** @test */
-    public function system_message_stores_message()
+    public function it_stores_message()
     {
         app(StoreSystemMessage::class)->withoutDispatches()->execute(
             $this->group,
@@ -48,10 +44,9 @@ class StoreSystemMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function system_message_updates_thread_timestamp()
+    public function it_updates_thread_timestamp()
     {
         $updated = now()->addMinutes(5);
-
         Carbon::setTestNow($updated);
 
         app(StoreSystemMessage::class)->withoutDispatches()->execute(
@@ -68,7 +63,7 @@ class StoreSystemMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function system_message_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             NewMessageBroadcast::class,
@@ -89,7 +84,6 @@ class StoreSystemMessageTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (NewMessageEvent $event) {
             return $this->group->id === $event->message->thread_id;
         });
@@ -101,7 +95,7 @@ class StoreSystemMessageTest extends FeatureTestCase
      * @param $messageString
      * @param $messageInt
      */
-    public function system_message_stores_based_on_description($messageString, $messageInt)
+    public function it_stores_message_type_using_description($messageString, $messageInt)
     {
         app(StoreSystemMessage::class)->withoutDispatches()->execute(
             $this->group,

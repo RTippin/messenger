@@ -15,9 +15,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class StoreMessageTest extends FeatureTestCase
 {
     private Thread $private;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -25,16 +23,13 @@ class StoreMessageTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
-    public function store_message_stores_message()
+    public function it_stores_message()
     {
         app(StoreMessage::class)->withoutDispatches()->execute(
             $this->private,
@@ -49,7 +44,7 @@ class StoreMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_message_converts_emoji_to_shortcode()
+    public function it_converts_emoji_to_shortcode()
     {
         app(StoreMessage::class)->withoutDispatches()->execute(
             $this->private,
@@ -64,7 +59,7 @@ class StoreMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_message_sets_temporary_id_on_message()
+    public function it_sets_temporary_id_on_message()
     {
         $action = app(StoreMessage::class)->withoutDispatches()->execute(
             $this->private,
@@ -76,10 +71,9 @@ class StoreMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_message_updates_thread_and_participant_timestamps()
+    public function it_updates_thread_and_participant()
     {
         $updated = now()->addMinutes(5);
-
         Carbon::setTestNow($updated);
 
         app(StoreMessage::class)->withoutDispatches()->execute(
@@ -96,7 +90,6 @@ class StoreMessageTest extends FeatureTestCase
             'id' => $this->private->id,
             'updated_at' => $updated,
         ]);
-
         $this->assertDatabaseHas('participants', [
             'id' => $participant->id,
             'last_read' => $updated,
@@ -104,7 +97,7 @@ class StoreMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_message_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             NewMessageBroadcast::class,
@@ -125,7 +118,6 @@ class StoreMessageTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (NewMessageEvent $event) {
             return $this->private->id === $event->message->thread_id;
         });

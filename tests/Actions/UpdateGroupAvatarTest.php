@@ -20,9 +20,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class UpdateGroupAvatarTest extends FeatureTestCase
 {
     private Thread $group;
-
     private MessengerProvider $tippin;
-
     private string $disk;
 
     protected function setUp(): void
@@ -30,31 +28,24 @@ class UpdateGroupAvatarTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->group = $this->createGroupThread($this->tippin);
-
         Messenger::setProvider($this->tippin);
-
         $this->disk = Messenger::getThreadStorage('disk');
-
         Storage::fake($this->disk);
-
         $this->group->update([
             'image' => 'avatar.jpg',
         ]);
-
         UploadedFile::fake()->image('avatar.jpg')->storeAs($this->group->getStorageDirectory().'/avatar', 'avatar.jpg', [
             'disk' => $this->disk,
         ]);
     }
 
     /** @test */
-    public function update_group_avatar_throws_exception_when_upload_disabled()
+    public function it_throws_exception_if_disabled()
     {
         Messenger::setThreadAvatarUpload(false);
 
         $this->expectException(FeatureDisabledException::class);
-
         $this->expectExceptionMessage('Group avatar uploads are currently disabled.');
 
         app(UpdateGroupAvatar::class)->withoutDispatches()->execute(
@@ -66,7 +57,7 @@ class UpdateGroupAvatarTest extends FeatureTestCase
     }
 
     /** @test */
-    public function update_group_avatar_default_updates_thread()
+    public function it_updates_default_thread_avatar()
     {
         app(UpdateGroupAvatar::class)->withoutDispatches()->execute(
             $this->group,
@@ -82,7 +73,7 @@ class UpdateGroupAvatarTest extends FeatureTestCase
     }
 
     /** @test */
-    public function update_group_avatar_default_removes_previous_uploaded_image()
+    public function it_updates_default_and_removes_existing_avatar_from_disk()
     {
         app(UpdateGroupAvatar::class)->withoutDispatches()->execute(
             $this->group,
@@ -95,12 +86,11 @@ class UpdateGroupAvatarTest extends FeatureTestCase
             'type' => 2,
             'image' => '3.png',
         ]);
-
         Storage::disk($this->disk)->assertMissing($this->group->getStorageDirectory().'/avatar/avatar.jpg');
     }
 
     /** @test */
-    public function update_group_avatar_upload_removes_previous_and_stores_new()
+    public function it_stores_avatar_and_removes_previous_from_disk()
     {
         app(UpdateGroupAvatar::class)->withoutDispatches()->execute(
             $this->group,
@@ -110,12 +100,11 @@ class UpdateGroupAvatarTest extends FeatureTestCase
         );
 
         Storage::disk($this->disk)->assertMissing($this->group->getStorageDirectory().'/avatar/avatar.jpg');
-
         Storage::disk($this->disk)->assertExists($this->group->getAvatarPath());
     }
 
     /** @test */
-    public function update_group_avatar_fires_events()
+    public function it_fires_events()
     {
         Event::fake([
             ThreadAvatarBroadcast::class,
@@ -135,7 +124,6 @@ class UpdateGroupAvatarTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (ThreadAvatarEvent $event) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
             $this->assertSame($this->group->id, $event->thread->id);
@@ -145,7 +133,7 @@ class UpdateGroupAvatarTest extends FeatureTestCase
     }
 
     /** @test */
-    public function update_group_avatar_triggers_listener()
+    public function it_dispatches_listeners()
     {
         Bus::fake();
 

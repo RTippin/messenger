@@ -17,12 +17,11 @@ class UpdateMessengerSettingsTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
-    public function messenger_settings_updates()
+    public function it_updates_messenger_settings()
     {
         app(UpdateMessengerSettings::class)->execute([
             'message_popups' => false,
@@ -46,7 +45,7 @@ class UpdateMessengerSettingsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function messenger_settings_sets_offline_cache()
+    public function it_removes_online_cache_key_if_offline()
     {
         Cache::put("user:online:{$this->tippin->getKey()}", 'online');
 
@@ -58,26 +57,24 @@ class UpdateMessengerSettingsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function messenger_settings_sets_online_cache()
+    public function it_sets_online_cache_key()
     {
         app(UpdateMessengerSettings::class)->execute([
             'online_status' => 1,
         ]);
 
         $this->assertTrue(Cache::has("user:online:{$this->tippin->getKey()}"));
-
         $this->assertSame('online', Cache::get("user:online:{$this->tippin->getKey()}"));
     }
 
     /** @test */
-    public function messenger_settings_sets_away_cache()
+    public function it_sets_away_cache_key()
     {
         app(UpdateMessengerSettings::class)->execute([
             'online_status' => 2,
         ]);
 
         $this->assertTrue(Cache::has("user:online:{$this->tippin->getKey()}"));
-
         $this->assertSame('away', Cache::get("user:online:{$this->tippin->getKey()}"));
     }
 }

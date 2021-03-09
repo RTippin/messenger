@@ -15,11 +15,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class UpdateParticipantPermissionsTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Participant $participant;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -27,20 +24,16 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-
         $this->participant = $this->group->participants()
             ->where('admin', '=', false)
             ->first();
-
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
-    public function update_permissions_updates_participant()
+    public function it_updates_participant()
     {
         app(UpdateParticipantPermissions::class)->withoutDispatches()->execute(
             $this->group,
@@ -65,7 +58,7 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function update_permissions_fires_events()
+    public function it_fires_events_when_participant_updated()
     {
         Event::fake([
             ParticipantPermissionsBroadcast::class,
@@ -90,7 +83,6 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (ParticipantPermissionsEvent $event) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
             $this->assertSame($this->group->id, $event->thread->id);
@@ -101,7 +93,7 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function update_permissions_fires_no_events_when_nothing_changed()
+    public function it_doesnt_fire_events_if_participant_not_changed()
     {
         $this->doesntExpectEvents([
             ParticipantPermissionsBroadcast::class,

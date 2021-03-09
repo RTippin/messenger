@@ -17,7 +17,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class UpdateGroupSettingsTest extends FeatureTestCase
 {
     private Thread $group;
-
     private MessengerProvider $tippin;
 
     protected function setUp(): void
@@ -25,14 +24,12 @@ class UpdateGroupSettingsTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->group = $this->createGroupThread($this->tippin);
-
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
-    public function update_group_settings_updates_thread()
+    public function it_updates_thread_settings()
     {
         app(UpdateGroupSettings::class)->withoutDispatches()->execute(
             $this->group,
@@ -57,7 +54,7 @@ class UpdateGroupSettingsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function update_group_settings_name_fires_events()
+    public function it_fires_events_if_name_changed()
     {
         Event::fake([
             ThreadSettingsBroadcast::class,
@@ -77,7 +74,6 @@ class UpdateGroupSettingsTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (ThreadSettingsEvent $event) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
             $this->assertSame($this->group->id, $event->thread->id);
@@ -88,7 +84,7 @@ class UpdateGroupSettingsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function update_group_settings_feature_fires_events()
+    public function it_fires_events_if_updated()
     {
         Event::fake([
             ThreadSettingsBroadcast::class,
@@ -113,14 +109,13 @@ class UpdateGroupSettingsTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (ThreadSettingsEvent $event) {
             return $event->nameChanged === false;
         });
     }
 
     /** @test */
-    public function update_group_settings_with_no_changes_fires_no_events()
+    public function it_doesnt_fire_events_if_not_updated()
     {
         $this->doesntExpectEvents([
             ThreadSettingsBroadcast::class,
@@ -141,7 +136,7 @@ class UpdateGroupSettingsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function update_group_settings_triggers_listener()
+    public function it_dispatches_listeners()
     {
         Bus::fake();
 
