@@ -30,6 +30,7 @@ class FileServiceTest extends TestCase
     public function it_stores_and_renames_image()
     {
         $image = UploadedFile::fake()->image('test.jpg');
+
         $name = $this->fileService->setDisk('messenger')
             ->setType('image')
             ->upload($image)
@@ -43,6 +44,7 @@ class FileServiceTest extends TestCase
     public function it_stores_and_renames_document()
     {
         $document = UploadedFile::fake()->create('test_123_rev_2.pdf', 500, 'application/pdf');
+
         $name = $this->fileService->setDisk('messenger')
             ->setType('document')
             ->upload($document)
@@ -57,6 +59,7 @@ class FileServiceTest extends TestCase
     public function it_stores_image_in_specified_directory()
     {
         $image = UploadedFile::fake()->image('test.jpg');
+
         $name = $this->fileService->setDisk('messenger')
             ->setType('image')
             ->setDirectory('test/1234')
@@ -70,6 +73,7 @@ class FileServiceTest extends TestCase
     public function it_can_name_file_with_given_name()
     {
         $document = UploadedFile::fake()->create('test_123_rev_2.pdf', 500, 'application/pdf');
+
         $name = $this->fileService->setDisk('messenger')
             ->setName('test_renamed')
             ->upload($document)
@@ -86,6 +90,7 @@ class FileServiceTest extends TestCase
         $this->expectExceptionMessage('File failed to upload.');
 
         $badFile = UploadedFile::fake()->create('undefined', 0, 'undefined');
+
         $this->fileService->setDisk('messenger')->upload($badFile);
     }
 }

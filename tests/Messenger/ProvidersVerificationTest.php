@@ -21,27 +21,25 @@ class ProvidersVerificationTest extends MessengerTestCase
     }
 
     /** @test */
-    public function empty_providers_returns_empty_collection()
+    public function it_returns_empty_collection()
     {
         $emptyResult = $this->verify->formatValidProviders([]);
 
         $this->assertInstanceOf(Collection::class, $emptyResult);
-
         $this->assertCount(0, $emptyResult->toArray());
     }
 
     /** @test */
-    public function provider_without_string_alias_key_returns_empty_collection()
+    public function it_returns_empty_collection_if_alias_not_found()
     {
         $emptyResult = $this->verify->formatValidProviders([$this->getBaseProvidersConfig()['user']]);
 
         $this->assertInstanceOf(Collection::class, $emptyResult);
-
         $this->assertCount(0, $emptyResult->toArray());
     }
 
     /** @test */
-    public function model_not_implementing_provider_ignored()
+    public function it_ignores_model_not_implementing_provider_contract()
     {
         $result = $this->verify->formatValidProviders([
             'other' => [
@@ -62,10 +60,8 @@ class ProvidersVerificationTest extends MessengerTestCase
     }
 
     /** @test */
-    public function user_passes_and_returns_formatted()
+    public function it_formats_user()
     {
-        $result = $this->verify->formatValidProviders($this->defaultUserConfig());
-
         $expected = [
             'user' => [
                 'model' => UserModel::class,
@@ -81,14 +77,14 @@ class ProvidersVerificationTest extends MessengerTestCase
             ],
         ];
 
+        $result = $this->verify->formatValidProviders($this->defaultUserConfig());
+
         $this->assertSame($expected, $result->toArray());
     }
 
     /** @test */
-    public function company_passes_and_returns_formatted()
+    public function it_formats_company()
     {
-        $result = $this->verify->formatValidProviders($this->defaultCompanyConfig());
-
         $expected = [
             'company' => [
                 'model' => CompanyModel::class,
@@ -104,18 +100,16 @@ class ProvidersVerificationTest extends MessengerTestCase
             ],
         ];
 
+        $result = $this->verify->formatValidProviders($this->defaultCompanyConfig());
+
         $this->assertSame($expected, $result->toArray());
     }
 
     /** @test */
-    public function user_and_company_pass_and_returns_formatted()
+    public function it_formats_user_and_company()
     {
         $providers['user'] = $this->defaultUserConfig()['user'];
-
         $providers['company'] = $this->defaultCompanyConfig()['company'];
-
-        $result = $this->verify->formatValidProviders($providers);
-
         $expected = [
             'user' => [
                 'model' => UserModel::class,
@@ -143,12 +137,25 @@ class ProvidersVerificationTest extends MessengerTestCase
             ],
         ];
 
+        $result = $this->verify->formatValidProviders($providers);
+
         $this->assertSame($expected, $result->toArray());
     }
 
     /** @test */
-    public function user_and_company_formats_interactions()
+    public function it_formats_user_and_company_interactions()
     {
+        $user = [
+            'can_message' => ['user'],
+            'can_search' => ['user'],
+            'can_friend' => ['company', 'user'],
+        ];
+        $company = [
+            'can_message' => ['company'],
+            'can_search' => ['user', 'company'],
+            'can_friend' => ['user', 'company'],
+        ];
+
         $result = $this->verify->formatValidProviders([
             'user' => [
                 'model' => UserModel::class,
@@ -176,26 +183,24 @@ class ProvidersVerificationTest extends MessengerTestCase
             ],
         ]);
 
-        $user = [
-            'can_message' => ['user'],
-            'can_search' => ['user'],
-            'can_friend' => ['company', 'user'],
-        ];
-
-        $company = [
-            'can_message' => ['company'],
-            'can_search' => ['user', 'company'],
-            'can_friend' => ['user', 'company'],
-        ];
-
         $this->assertSame($user, $result->toArray()['user']['provider_interactions']);
-
         $this->assertSame($company, $result->toArray()['company']['provider_interactions']);
     }
 
     /** @test */
     public function searchable_and_friendable_override_interactions()
     {
+        $user = [
+            'can_message' => ['user'],
+            'can_search' => [],
+            'can_friend' => [],
+        ];
+        $company = [
+            'can_message' => ['company'],
+            'can_search' => [],
+            'can_friend' => [],
+        ];
+
         $result = $this->verify->formatValidProviders([
             'user' => [
                 'model' => UserModel::class,
@@ -223,20 +228,7 @@ class ProvidersVerificationTest extends MessengerTestCase
             ],
         ]);
 
-        $user = [
-            'can_message' => ['user'],
-            'can_search' => [],
-            'can_friend' => [],
-        ];
-
-        $company = [
-            'can_message' => ['company'],
-            'can_search' => [],
-            'can_friend' => [],
-        ];
-
         $this->assertSame($user, $result->toArray()['user']['provider_interactions']);
-
         $this->assertSame($company, $result->toArray()['company']['provider_interactions']);
     }
 

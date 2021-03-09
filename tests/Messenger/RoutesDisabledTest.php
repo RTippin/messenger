@@ -22,11 +22,8 @@ class RoutesDisabledTest extends FeatureTestCase
         parent::getEnvironmentSetUp($app);
 
         $config = $app->get('config');
-
         $config->set('messenger.routing.web.enabled', false);
-
         $config->set('messenger.routing.provider_avatar.enabled', false);
-
         $config->set('messenger.routing.channels.enabled', false);
     }
 
@@ -42,7 +39,6 @@ class RoutesDisabledTest extends FeatureTestCase
     public function invite_web_route_null()
     {
         $group = $this->createGroupThread($this->tippin);
-
         $invite = $group->invites()->create([
             'owner_id' => $this->tippin->getKey(),
             'owner_type' => get_class($this->tippin),
@@ -66,9 +62,7 @@ class RoutesDisabledTest extends FeatureTestCase
     public function group_thread_web_route_avatar_values_null()
     {
         $group = $this->createGroupThread($this->tippin);
-
         Messenger::setProvider($this->tippin);
-
         $groupAvatar = [
             'sm' => null,
             'md' => null,
@@ -82,7 +76,6 @@ class RoutesDisabledTest extends FeatureTestCase
     public function image_message_web_route_null()
     {
         $group = $this->createGroupThread($this->tippin);
-
         $message = $group->messages()->create([
             'body' => 'test.png',
             'type' => 1,
@@ -97,7 +90,6 @@ class RoutesDisabledTest extends FeatureTestCase
     public function document_message_web_route_null()
     {
         $group = $this->createGroupThread($this->tippin);
-
         $message = $group->messages()->create([
             'body' => 'test.pdf',
             'type' => 2,

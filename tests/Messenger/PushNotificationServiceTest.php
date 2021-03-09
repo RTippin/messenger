@@ -15,13 +15,9 @@ use RTippin\Messenger\Tests\Fixtures\OtherModel;
 class PushNotificationServiceTest extends FeatureTestCase
 {
     private Thread $group;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
-
     private MessengerProvider $developers;
-
     const WITH = [
         'data' => 1234,
     ];
@@ -31,25 +27,20 @@ class PushNotificationServiceTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->developers = $this->companyDevelopers();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe, $this->developers);
     }
 
     /** @test */
-    public function notify_with_empty_collection_fires_no_event()
+    public function it_doesnt_fire_event_if_empty_collection()
     {
         Event::fake([
             PushNotificationEvent::class,
         ]);
 
-        $to = collect();
-
         app(PushNotificationService::class)
-            ->to($to)
+            ->to(collect())
             ->with(self::WITH)
             ->notify(FakeNotifyEvent::class);
 
@@ -57,18 +48,16 @@ class PushNotificationServiceTest extends FeatureTestCase
     }
 
     /** @test */
-    public function notify_with_no_valid_recipients_fires_no_event()
+    public function it_doesnt_fire_event_if_no_valid_providers()
     {
         Event::fake([
             PushNotificationEvent::class,
         ]);
 
-        $to = collect([
-            new OtherModel,
-        ]);
-
         app(PushNotificationService::class)
-            ->to($to)
+            ->to(collect([
+                new OtherModel,
+            ]))
             ->with(self::WITH)
             ->notify(FakeNotifyEvent::class);
 
@@ -76,30 +65,26 @@ class PushNotificationServiceTest extends FeatureTestCase
     }
 
     /** @test */
-    public function notify_two_provider_models()
+    public function it_fires_events_for_two_providers()
     {
         Event::fake([
             PushNotificationEvent::class,
         ]);
 
-        $to = collect([
-            $this->tippin,
-            $this->developers,
-        ]);
-
         app(PushNotificationService::class)
-            ->to($to)
+            ->to(collect([
+                $this->tippin,
+                $this->developers,
+            ]))
             ->with(self::WITH)
             ->notify(FakeNotifyEvent::class);
 
         Event::assertDispatched(function (PushNotificationEvent $event) {
             $recipients = $event->recipients->toArray();
-
             $tippin = [
                 'owner_type' => get_class($this->tippin),
                 'owner_id' => $this->tippin->getKey(),
             ];
-
             $developers = [
                 'owner_type' => get_class($this->developers),
                 'owner_id' => $this->developers->getKey(),
@@ -116,31 +101,26 @@ class PushNotificationServiceTest extends FeatureTestCase
     }
 
     /** @test */
-    public function notify_ignores_provider_models_with_devices_disabled_in_config()
+    public function it_ignores_provider_with_devices_disabled()
     {
         Event::fake([
             PushNotificationEvent::class,
         ]);
 
         $providers = $this->getBaseProvidersConfig();
-
         $providers['company']['devices'] = false;
-
         Messenger::setMessengerProviders($providers);
 
-        $to = collect([
-            $this->tippin,
-            $this->developers,
-        ]);
-
         app(PushNotificationService::class)
-            ->to($to)
+            ->to(collect([
+                $this->tippin,
+                $this->developers,
+            ]))
             ->with(self::WITH)
             ->notify(FakeNotifyEvent::class);
 
         Event::assertDispatched(function (PushNotificationEvent $event) {
             $recipients = $event->recipients->toArray();
-
             $developers = [
                 'owner_type' => get_class($this->developers),
                 'owner_id' => $this->developers->getKey(),
@@ -156,16 +136,14 @@ class PushNotificationServiceTest extends FeatureTestCase
     }
 
     /** @test */
-    public function notify_thread_participants()
+    public function it_fires_events_using_thread_participants()
     {
         Event::fake([
             PushNotificationEvent::class,
         ]);
 
-        $to = $this->group->participants()->get();
-
         app(PushNotificationService::class)
-            ->to($to)
+            ->to($this->group->participants()->get())
             ->with(self::WITH)
             ->notify(FakeNotifyEvent::class);
 
@@ -179,18 +157,14 @@ class PushNotificationServiceTest extends FeatureTestCase
     }
 
     /** @test */
-    public function notify_call_participants()
+    public function it_fires_events_using_call_participants()
     {
         Event::fake([
             PushNotificationEvent::class,
         ]);
 
-        $call = $this->createCall($this->group, $this->tippin, $this->doe);
-
-        $to = $call->participants()->get();
-
         app(PushNotificationService::class)
-            ->to($to)
+            ->to($this->createCall($this->group, $this->tippin, $this->doe)->participants()->get())
             ->with(self::WITH)
             ->notify(FakeNotifyEvent::class);
 
@@ -204,22 +178,20 @@ class PushNotificationServiceTest extends FeatureTestCase
     }
 
     /** @test */
-    public function notify_rejects_duplicate_matching_providers()
+    public function it_rejects_duplicate_matching_providers()
     {
         Event::fake([
             PushNotificationEvent::class,
         ]);
 
-        $to = collect([
-            $this->tippin,
-            $this->developers,
-            $this->tippin,
-            $this->developers,
-            $this->group->participants()->admins()->first(),
-        ]);
-
         app(PushNotificationService::class)
-            ->to($to)
+            ->to(collect([
+                $this->tippin,
+                $this->developers,
+                $this->tippin,
+                $this->developers,
+                $this->group->participants()->admins()->first(),
+            ]))
             ->with(self::WITH)
             ->notify(FakeNotifyEvent::class);
 

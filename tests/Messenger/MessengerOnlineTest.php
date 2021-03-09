@@ -28,6 +28,7 @@ class MessengerOnlineTest extends FeatureTestCase
     public function it_sets_current_provider_online_cache_key()
     {
         $this->messenger->setProvider($this->tippin);
+
         $this->messenger->setProviderToOnline();
 
         $this->assertTrue(Cache::has("user:online:{$this->tippin->getKey()}"));
@@ -49,6 +50,7 @@ class MessengerOnlineTest extends FeatureTestCase
         DB::table('messengers')->update([
             'online_status' => 2,
         ]);
+
         $this->messenger->setProviderToOnline($this->tippin);
 
         $this->assertTrue(Cache::has("user:online:{$this->tippin->getKey()}"));
@@ -61,6 +63,7 @@ class MessengerOnlineTest extends FeatureTestCase
         DB::table('messengers')->update([
             'online_status' => 0,
         ]);
+
         $this->messenger->setProviderToOnline($this->tippin);
 
         $this->assertFalse(Cache::has("user:online:{$this->tippin->getKey()}"));
@@ -70,6 +73,7 @@ class MessengerOnlineTest extends FeatureTestCase
     public function it_doesnt_set_online_cache_key_if_disabled()
     {
         $this->messenger->setOnlineStatus(false);
+
         $this->messenger->setProviderToOnline($this->tippin);
 
         $this->assertFalse(Cache::has("user:online:{$this->tippin->getKey()}"));
@@ -81,6 +85,7 @@ class MessengerOnlineTest extends FeatureTestCase
         $invalid = new OtherModel([
             'id' => 404,
         ]);
+
         $this->messenger->setProviderToOnline($invalid);
 
         $this->assertFalse(Cache::has("user:online:{$invalid->getKey()}"));
@@ -91,6 +96,7 @@ class MessengerOnlineTest extends FeatureTestCase
     {
         Cache::put("user:online:{$this->tippin->getKey()}", 'online');
         $this->messenger->setProvider($this->tippin);
+
         $this->messenger->setProviderToOffline();
 
         $this->assertFalse(Cache::has("user:online:{$this->tippin->getKey()}"));
@@ -100,6 +106,7 @@ class MessengerOnlineTest extends FeatureTestCase
     public function it_removes_given_provider_online_cache_key()
     {
         Cache::put("user:online:{$this->doe->getKey()}", 'online');
+
         $this->messenger->setProviderToOffline($this->doe);
 
         $this->assertFalse(Cache::has("user:online:{$this->doe->getKey()}"));
@@ -109,6 +116,7 @@ class MessengerOnlineTest extends FeatureTestCase
     public function it_sets_current_provider_away_cache_key()
     {
         $this->messenger->setProvider($this->tippin);
+
         $this->messenger->setProviderToAway();
 
         $this->assertTrue(Cache::has("user:online:{$this->tippin->getKey()}"));
@@ -130,6 +138,7 @@ class MessengerOnlineTest extends FeatureTestCase
         DB::table('messengers')->update([
             'online_status' => 0,
         ]);
+
         $this->messenger->setProviderToAway($this->tippin);
 
         $this->assertFalse(Cache::has("user:online:{$this->tippin->getKey()}"));
@@ -139,6 +148,7 @@ class MessengerOnlineTest extends FeatureTestCase
     public function it_doesnt_set_away_cache_key_if_disabled()
     {
         $this->messenger->setOnlineStatus(false);
+
         $this->messenger->setProviderToAway($this->tippin);
 
         $this->assertFalse(Cache::has("user:online:{$this->tippin->getKey()}"));
@@ -147,18 +157,18 @@ class MessengerOnlineTest extends FeatureTestCase
     /** @test */
     public function it_doesnt_set_away_cache_key_for_invalid_provider()
     {
-        $invalid = new OtherModel([
+        $this->messenger->setProviderToAway(new OtherModel([
             'id' => 404,
-        ]);
-        $this->messenger->setProviderToAway($invalid);
+        ]));
 
-        $this->assertFalse(Cache::has("user:online:{$invalid->getKey()}"));
+        $this->assertFalse(Cache::has('user:online:404'));
     }
 
     /** @test */
     public function it_returns_set_provider_is_online()
     {
         Cache::put("user:online:{$this->tippin->getKey()}", 'online');
+
         $this->messenger->setProvider($this->tippin);
 
         $this->assertTrue($this->messenger->isProviderOnline());

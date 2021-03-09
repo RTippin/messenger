@@ -19,85 +19,74 @@ class SearchProvidersServiceTest extends FeatureTestCase
     }
 
     /** @test */
-    public function search_returns_empty_paginator()
+    public function it_returns_empty_paginator()
     {
         $search = $this->search->paginate();
 
         $this->assertInstanceOf(LengthAwarePaginator::class, $search);
-
         $this->assertSame(0, $search->toArray()['total']);
     }
 
     /** @test */
-    public function search_returns_paginator()
+    public function it_returns_paginator()
     {
         $search = $this->search->enableSearchAllProviders()->search('Doe Dev')->paginate();
 
         $this->assertInstanceOf(LengthAwarePaginator::class, $search);
-
         $this->assertSame(2, $search->toArray()['total']);
     }
 
     /** @test */
-    public function search_returns_null_on_get_with_no_queries()
+    public function it_returns_null_on_get_with_no_queries()
     {
         $this->assertNull($this->search->search('')->get());
-
         $this->assertNull($this->search->search(null)->get());
     }
 
     /** @test */
-    public function search_returns_one_result()
+    public function it_returns_one_result()
     {
         $search = $this->search->enableSearchAllProviders()->search('Tippin')->get()->toArray();
 
         $this->assertCount(1, $search);
-
         $this->assertSame('Richard Tippin', $search[0]['owner']['name']);
     }
 
     /** @test */
-    public function search_returns_multiple_result()
+    public function it_returns_multiple_result()
     {
         $search = $this->search->enableSearchAllProviders()->search('Doe Dev')->get()->toArray();
 
         $this->assertCount(2, $search);
-
         $this->assertSame('John Doe', $search[0]['owner']['name']);
-
         $this->assertSame('Developers', $search[1]['owner']['company_name']);
     }
 
     /** @test */
-    public function search_ignores_providers_the_current_provider_is_not_allowed_to_search_for()
+    public function it_ignores_providers_the_current_provider_is_not_allowed_to_search()
     {
         $providers = $this->getBaseProvidersConfig();
-
         $providers['user']['provider_interactions']['can_search'] = false;
-
         Messenger::setMessengerProviders($providers);
-
         Messenger::setProvider($this->userTippin());
 
         $search = $this->search->search('Developers Doe')->get()->toArray();
 
         $this->assertCount(1, $search);
-
         $this->assertSame('John Doe', $search[0]['owner']['name']);
     }
 
     /** @test */
-    public function search_returns_one_result_that_matches_exact_email()
+    public function it_returns_one_result_that_matches_exact_email()
     {
         $search = $this->search->enableSearchAllProviders()->search('doe@example.net')->get()->toArray();
 
         $this->assertCount(1, $search);
-
         $this->assertSame('John Doe', $search[0]['owner']['name']);
     }
 
     /** @test */
-    public function search_removes_special_characters()
+    public function it_removes_special_characters()
     {
         $search = $this->search->search('%T<E>S`T"ING')->getSearchQuery();
 
@@ -105,7 +94,7 @@ class SearchProvidersServiceTest extends FeatureTestCase
     }
 
     /** @test */
-    public function search_takes_first_four_queries()
+    public function it_takes_first_four_queries()
     {
         $search = $this->search->search('Tippin John Doe Jane Test Foo')->getSearchQueryItems();
 
@@ -113,7 +102,7 @@ class SearchProvidersServiceTest extends FeatureTestCase
     }
 
     /** @test */
-    public function search_ignores_strings_of_length_less_than_two()
+    public function it_ignores_strings_of_length_less_than_two()
     {
         $search = $this->search->search('Ti John D Y Z')->getSearchQueryItems();
 
@@ -126,7 +115,7 @@ class SearchProvidersServiceTest extends FeatureTestCase
      * @param $query
      * @param $expected
      */
-    public function search_splits_query_by_space_or_comma_into_array($query, $expected)
+    public function it_splits_query_by_space_or_comma_into_array($query, $expected)
     {
         $search = $this->search->search($query)->getSearchQueryItems();
 
@@ -139,7 +128,7 @@ class SearchProvidersServiceTest extends FeatureTestCase
      * @param $query
      * @param $expected
      */
-    public function search_splits_query_removes_duplicates($query, $expected)
+    public function it_splits_query_removes_duplicates($query, $expected)
     {
         $search = $this->search->search($query)->getSearchQueryItems();
 
