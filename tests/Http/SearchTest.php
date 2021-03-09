@@ -225,7 +225,7 @@ class SearchTest extends FeatureTestCase
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.search', [
-            'query' => 'richard.tippin@gmail.com',
+            'query' => 'tippindev@gmail.com',
         ]))
             ->assertJsonCount(1, 'data')
             ->assertJson([
@@ -239,10 +239,10 @@ class SearchTest extends FeatureTestCase
                 'meta' => [
                     'total' => 1,
                     'search_items' => [
-                        'richard.tippin@gmail.com',
+                        'tippindev@gmail.com',
                     ],
                     'per_page' => Messenger::getSearchPageCount(),
-                    'search' => 'richard.tippin@gmail.com',
+                    'search' => 'tippindev@gmail.com',
                 ],
             ]);
     }

@@ -52,7 +52,7 @@ class FeatureTestCase extends MessengerTestCase
     {
         $tippin = $this->getModelUser()::create([
             'name' => 'Richard Tippin',
-            'email' => 'richard.tippin@gmail.com',
+            'email' => 'tippindev@gmail.com',
             'password' => 'secret',
         ]);
 

@@ -296,7 +296,7 @@ class MessengerTest extends MessengerTestCase
         $provider = new $model([
             'id' => 1,
             'name' => 'Richard Tippin',
-            'email' => 'richard.tippin@gmail.com',
+            'email' => 'tippindev@gmail.com',
             'password' => 'secret',
         ]);
 
@@ -329,7 +329,7 @@ class MessengerTest extends MessengerTestCase
         $provider = new $model([
             'id' => 1,
             'name' => 'Richard Tippin',
-            'email' => 'richard.tippin@gmail.com',
+            'email' => 'tippindev@gmail.com',
             'password' => 'secret',
         ]);
 

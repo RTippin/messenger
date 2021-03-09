@@ -20,7 +20,7 @@ trait HelperTrait
      */
     protected function userTippin()
     {
-        return $this->getModelUser()::where('email', '=', 'richard.tippin@gmail.com')->first();
+        return $this->getModelUser()::where('email', '=', 'tippindev@gmail.com')->first();
     }
 
     /**
