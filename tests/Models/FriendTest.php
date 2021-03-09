@@ -11,9 +11,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class FriendTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
-
     private Friend $friend;
 
     protected function setUp(): void
@@ -21,9 +19,7 @@ class FriendTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->friend = Friend::create([
             'owner_id' => $this->tippin->getKey(),
             'owner_type' => get_class($this->tippin),
@@ -33,7 +29,7 @@ class FriendTest extends FeatureTestCase
     }
 
     /** @test */
-    public function friend_exists()
+    public function it_exists()
     {
         $this->assertDatabaseCount('friends', 1);
         $this->assertDatabaseHas('friends', [
@@ -43,14 +39,14 @@ class FriendTest extends FeatureTestCase
     }
 
     /** @test */
-    public function friend_attributes_casted()
+    public function it_cast_attributes()
     {
         $this->assertInstanceOf(Carbon::class, $this->friend->created_at);
         $this->assertInstanceOf(Carbon::class, $this->friend->updated_at);
     }
 
     /** @test */
-    public function friend_has_relations()
+    public function it_has_relations()
     {
         $this->assertSame($this->tippin->getKey(), $this->friend->owner->getKey());
         $this->assertSame($this->doe->getKey(), $this->friend->party->getKey());
@@ -59,7 +55,7 @@ class FriendTest extends FeatureTestCase
     }
 
     /** @test */
-    public function friend_relations_return_ghost_when_not_found()
+    public function relations_return_ghost_if_not_found()
     {
         $this->friend->update([
             'owner_id' => 404,

@@ -15,11 +15,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class ParticipantTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private Thread $group;
-
     private Participant $admin;
-
     private Message $message;
 
     protected function setUp(): void
@@ -27,16 +24,13 @@ class ParticipantTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->group = $this->createGroupThread($this->tippin, $this->userDoe(), $this->companyDevelopers());
-
         $this->admin = $this->group->participants()->admins()->first();
-
         $this->message = $this->createMessage($this->group, $this->tippin);
     }
 
     /** @test */
-    public function participants_exists()
+    public function it_exists()
     {
         $this->assertDatabaseCount('participants', 3);
         $this->assertDatabaseHas('participants', [
@@ -50,7 +44,7 @@ class ParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function participant_attributes_casted()
+    public function it_cast_attributes()
     {
         $this->admin->update([
             'last_read' => now(),
@@ -71,7 +65,7 @@ class ParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function participant_has_relations()
+    public function it_has_relations()
     {
         $this->assertSame($this->tippin->getKey(), $this->admin->owner->getKey());
         $this->assertSame($this->group->id, $this->admin->thread->id);
@@ -81,7 +75,7 @@ class ParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function participant_owner_returns_ghost_when_not_found()
+    public function owner_returns_ghost_if_not_found()
     {
         $this->admin->update([
             'owner_id' => 404,
@@ -91,7 +85,7 @@ class ParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function participant_has_last_seen_message()
+    public function it_has_last_seen_message()
     {
         $this->admin->update([
             'last_read' => now()->addMinutes(10),
@@ -102,7 +96,7 @@ class ParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function participant_scope_valid_providers_ignores_company()
+    public function valid_providers_scope_ignores_company()
     {
         Messenger::setMessengerProviders(['user' => $this->getBaseProvidersConfig()['user']]);
 

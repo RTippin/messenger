@@ -11,9 +11,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class PendingFriendTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
-
     private PendingFriend $pending;
 
     protected function setUp(): void
@@ -21,9 +19,7 @@ class PendingFriendTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->pending = PendingFriend::create([
             'sender_id' => $this->tippin->getKey(),
             'sender_type' => get_class($this->tippin),
@@ -33,7 +29,7 @@ class PendingFriendTest extends FeatureTestCase
     }
 
     /** @test */
-    public function pending_friend_exists()
+    public function it_exists()
     {
         $this->assertDatabaseCount('pending_friends', 1);
         $this->assertDatabaseHas('pending_friends', [
@@ -43,14 +39,14 @@ class PendingFriendTest extends FeatureTestCase
     }
 
     /** @test */
-    public function pending_friend_attributes_casted()
+    public function it_cast_attributes()
     {
         $this->assertInstanceOf(Carbon::class, $this->pending->created_at);
         $this->assertInstanceOf(Carbon::class, $this->pending->updated_at);
     }
 
     /** @test */
-    public function pending_friend_has_relations()
+    public function it_has_relations()
     {
         $this->assertSame($this->tippin->getKey(), $this->pending->sender->getKey());
         $this->assertSame($this->doe->getKey(), $this->pending->recipient->getKey());
@@ -59,7 +55,7 @@ class PendingFriendTest extends FeatureTestCase
     }
 
     /** @test */
-    public function pending_friend_relations_return_ghost_when_not_found()
+    public function sender_and_recipient_return_ghost_if_not_found()
     {
         $this->pending->update([
             'sender_id' => 404,

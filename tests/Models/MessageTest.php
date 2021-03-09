@@ -13,9 +13,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class MessageTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private Thread $group;
-
     private Message $message;
 
     protected function setUp(): void
@@ -23,14 +21,12 @@ class MessageTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->group = $this->createGroupThread($this->tippin);
-
         $this->message = $this->createMessage($this->group, $this->tippin);
     }
 
     /** @test */
-    public function message_exists()
+    public function it_exists()
     {
         $this->assertDatabaseCount('messages', 1);
         $this->assertDatabaseHas('messages', [
@@ -52,7 +48,7 @@ class MessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function message_attributes_casted()
+    public function it_cast_attributes()
     {
         $this->message->delete();
 
@@ -63,10 +59,8 @@ class MessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function message_sets_temporary_id()
+    public function it_sets_temporary_id()
     {
-        $this->assertNull($this->message->temporaryId());
-
         $this->message->setTemporaryId('1234');
 
         $this->assertTrue($this->message->hasTemporaryId());
@@ -74,7 +68,7 @@ class MessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function message_has_relations()
+    public function it_has_relations()
     {
         $this->assertSame($this->tippin->getKey(), $this->message->owner->getKey());
         $this->assertSame($this->group->id, $this->message->thread->id);
@@ -84,7 +78,7 @@ class MessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function message_owner_returns_ghost_when_not_found()
+    public function owner_returns_ghost_if_not_found()
     {
         $this->message->update([
             'owner_id' => 404,
@@ -94,19 +88,19 @@ class MessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function message_has_storage_disk()
+    public function it_has_storage_disk()
     {
         $this->assertSame('messenger', $this->message->getStorageDisk());
     }
 
     /** @test */
-    public function message_has_storage_directory()
+    public function it_has_storage_directory()
     {
         $this->assertSame("threads/{$this->group->id}", $this->message->getStorageDirectory());
     }
 
     /** @test */
-    public function edited_message()
+    public function it_is_edited()
     {
         $this->message->update([
             'updated_at' => now()->addMinutes(10),

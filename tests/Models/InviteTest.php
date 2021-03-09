@@ -12,9 +12,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class InviteTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private Thread $group;
-
     private Invite $invite;
 
     protected function setUp(): void
@@ -22,9 +20,7 @@ class InviteTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->group = $this->createGroupThread($this->tippin);
-
         $this->invite = $this->group->invites()->create([
             'owner_id' => $this->tippin->getKey(),
             'owner_type' => get_class($this->tippin),
@@ -36,7 +32,7 @@ class InviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function invite_exists()
+    public function it_exists()
     {
         $this->assertDatabaseCount('thread_invites', 1);
         $this->assertDatabaseHas('thread_invites', [
@@ -46,7 +42,7 @@ class InviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function invite_attributes_casted()
+    public function it_cast_attributes()
     {
         $this->invite->delete();
 
@@ -59,7 +55,7 @@ class InviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function invite_has_relations()
+    public function it_has_relations()
     {
         $this->assertSame($this->tippin->getKey(), $this->invite->owner->getKey());
         $this->assertSame($this->group->id, $this->invite->thread->id);
@@ -68,7 +64,7 @@ class InviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function invite_owner_returns_ghost_when_not_found()
+    public function owner_returns_ghost_if_not_found()
     {
         $this->invite->update([
             'owner_id' => 404,
@@ -78,20 +74,20 @@ class InviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function invite_has_route()
+    public function it_has_route()
     {
         $this->assertStringContainsString('/messenger/join/TEST1234', $this->invite->getInvitationRoute());
     }
 
     /** @test */
-    public function invite_is_valid()
+    public function it_is_valid()
     {
         $this->assertTrue($this->invite->isValid());
         $this->assertSame(1, Invite::valid()->count());
     }
 
     /** @test */
-    public function invite_valid_when_uses_unlimited()
+    public function it_is_valid_if_uses_unlimited()
     {
         $this->invite->update([
             'uses' => 10000,
@@ -104,12 +100,11 @@ class InviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function invite_valid_when_never_expired()
+    public function it_is_valid_if_never_expired()
     {
         $this->invite->update([
             'expires_at' => null,
         ]);
-
         $this->travel(5)->years();
 
         $this->assertTrue($this->invite->isValid());
@@ -118,7 +113,7 @@ class InviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function invite_invalid_when_past_expiration()
+    public function it_is_invalid_if_past_expiration()
     {
         $this->travel(1)->hours();
 
@@ -128,7 +123,7 @@ class InviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function invite_invalid_when_thread_removed()
+    public function it_is_invalid_if_thread_removed()
     {
         $this->group->delete();
 
@@ -136,7 +131,7 @@ class InviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function invite_invalid_when_thread_invitations_disabled()
+    public function it_is_invalid_if_thread_invitations_disabled()
     {
         $this->group->update([
             'invitations' => false,
@@ -146,7 +141,7 @@ class InviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function invite_invalid_when_thread_locked()
+    public function it_is_invalid_if_thread_locked()
     {
         $this->group->update([
             'lockout' => true,
@@ -156,7 +151,7 @@ class InviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function invite_invalid_when_uses_equal_max_use()
+    public function it_is_invalid_if_uses_equal_max_use()
     {
         $this->invite->update([
             'uses' => 10,
@@ -168,7 +163,7 @@ class InviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function invite_invalid_when_uses_greater_than_max_use()
+    public function it_is_invalid_if_uses_greater_than_max_use()
     {
         $this->invite->update([
             'uses' => 15,

@@ -16,11 +16,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class CallTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
-
     private Thread $group;
-
     private Call $call;
 
     protected function setUp(): void
@@ -28,16 +25,13 @@ class CallTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-
         $this->call = $this->createCall($this->group, $this->tippin, $this->doe);
     }
 
     /** @test */
-    public function call_exists()
+    public function it_exists()
     {
         $this->assertDatabaseCount('calls', 1);
         $this->assertDatabaseHas('calls', [
@@ -49,7 +43,7 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_attributes_casted()
+    public function it_cast_attributes()
     {
         $this->call->update([
             'call_ended' => now(),
@@ -68,7 +62,7 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_has_relations()
+    public function it_has_relations()
     {
         $this->assertSame($this->group->id, $this->call->thread->id);
         $this->assertSame($this->tippin->getKey(), $this->call->owner->getKey());
@@ -79,7 +73,7 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_owner_returns_ghost_when_owner_not_found()
+    public function owner_returns_ghost_if_not_found()
     {
         $this->call->update([
             'owner_id' => 404,
@@ -95,7 +89,7 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_is_active()
+    public function active_boolean()
     {
         $this->assertTrue($this->call->isActive());
 
@@ -107,7 +101,7 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_is_setup()
+    public function is_setup_boolean()
     {
         $this->assertTrue($this->call->isSetup());
 
@@ -119,7 +113,7 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_is_torn_down()
+    public function is_torn_down_boolean()
     {
         $this->assertFalse($this->call->isTornDown());
 
@@ -131,7 +125,7 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_has_ended()
+    public function has_ended_boolean()
     {
         $this->assertFalse($this->call->hasEnded());
 
@@ -144,7 +138,7 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_is_video_call()
+    public function is_video_call_boolean()
     {
         $this->assertTrue($this->call->isVideoCall());
 
@@ -156,14 +150,14 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_is_group_call()
+    public function is_group_call_boolean()
     {
         $this->assertTrue($this->call->isGroupCall());
         $this->assertTrue($this->call->isGroupCall($this->group));
     }
 
     /** @test */
-    public function call_is_not_group_call()
+    public function is_not_group_call_boolean()
     {
         $private = $this->createPrivateThread($this->tippin, $this->doe);
 
@@ -174,23 +168,22 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_has_thread_name()
+    public function it_has_thread_name()
     {
         $this->assertSame('First Test Group', $this->call->name());
         $this->assertSame('First Test Group', $this->call->name($this->group));
     }
 
     /** @test */
-    public function call_has_no_current_participant_when_no_provider_set()
+    public function it_doesnt_have_current_participant_if_provider_not_set()
     {
         $this->assertNull($this->call->currentCallParticipant());
     }
 
     /** @test */
-    public function call_has_current_participant()
+    public function it_has_current_participant()
     {
         Messenger::setProvider($this->tippin);
-
         $participant = $this->call->currentCallParticipant();
 
         $this->assertSame($participant, $this->call->currentCallParticipant());
@@ -199,10 +192,9 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_has_no_admin_when_ended()
+    public function it_has_no_admin_when_ended()
     {
         Messenger::setProvider($this->tippin);
-
         $this->call->update([
             'call_ended' => now(),
         ]);
@@ -212,7 +204,7 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_admin_when_call_creator()
+    public function is_admin_if_call_creator()
     {
         Messenger::setProvider($this->tippin);
 
@@ -221,7 +213,7 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_not_admin_when_not_creator_or_group_thread_admin()
+    public function admin_false_if__not_creator_or_group_thread_admin()
     {
         Messenger::setProvider($this->doe);
 
@@ -230,14 +222,13 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_admin_when_group_admin()
+    public function is_admin_if_group_admin()
     {
         $this->group->participants()
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
             ->first()
             ->update(Definitions::DefaultAdminParticipant);
-
         Messenger::setProvider($this->doe);
 
         $this->assertTrue($this->call->isCallAdmin());
@@ -245,7 +236,7 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_has_not_been_joined_by_non_participant()
+    public function has_joined_false_if_not_joined()
     {
         Messenger::setProvider($this->companyDevelopers());
 
@@ -253,7 +244,7 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_has_been_joined_by_participant()
+    public function has_joined_true_if_joined()
     {
         Messenger::setProvider($this->doe);
 
@@ -278,7 +269,6 @@ class CallTest extends FeatureTestCase
             ->update([
                 'kicked' => true,
             ]);
-
         Messenger::setProvider($this->doe);
 
         $this->assertTrue($this->call->wasKicked());
@@ -288,7 +278,6 @@ class CallTest extends FeatureTestCase
     public function not_in_call_when_call_ended()
     {
         Messenger::setProvider($this->tippin);
-
         $this->call->update([
             'call_ended' => now(),
         ]);

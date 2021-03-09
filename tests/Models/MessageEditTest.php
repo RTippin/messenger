@@ -11,9 +11,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class MessageEditTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private Message $message;
-
     private MessageEdit $edited;
 
     protected function setUp(): void
@@ -21,11 +19,8 @@ class MessageEditTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $group = $this->createGroupThread($this->tippin);
-
         $this->message = $this->createMessage($group, $this->tippin);
-
         $this->edited = $this->message->edits()->create([
             'body' => 'EDITED',
             'edited_at' => now(),
@@ -33,7 +28,7 @@ class MessageEditTest extends FeatureTestCase
     }
 
     /** @test */
-    public function message_edit_exists()
+    public function it_exists()
     {
         $this->assertDatabaseCount('message_edits', 1);
         $this->assertDatabaseHas('message_edits', [
@@ -43,13 +38,13 @@ class MessageEditTest extends FeatureTestCase
     }
 
     /** @test */
-    public function message_edit_attributes_casted()
+    public function it_cast_attributes()
     {
         $this->assertInstanceOf(Carbon::class, $this->edited->edited_at);
     }
 
     /** @test */
-    public function message_edit_has_relation()
+    public function it_has_relation()
     {
         $this->assertSame($this->message->id, $this->edited->message->id);
         $this->assertInstanceOf(Message::class, $this->edited->message);

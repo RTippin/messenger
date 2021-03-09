@@ -12,9 +12,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class CallParticipantTest extends FeatureTestCase
 {
     private MessengerProvider $tippin;
-
     private Call $call;
-
     private CallParticipant $participant;
 
     protected function setUp(): void
@@ -22,16 +20,13 @@ class CallParticipantTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $group = $this->createGroupThread($this->tippin);
-
         $this->call = $this->createCall($group, $this->tippin);
-
         $this->participant = $this->call->participants()->first();
     }
 
     /** @test */
-    public function call_participant_exists()
+    public function it_exists()
     {
         $this->assertDatabaseCount('call_participants', 1);
         $this->assertDatabaseHas('call_participants', [
@@ -42,7 +37,7 @@ class CallParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function active_call_participant_finds_none()
+    public function active_call_participant_scope_finds_none()
     {
         $this->participant->update([
             'left_call' => now(),
@@ -52,7 +47,7 @@ class CallParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_participant_has_relations()
+    public function it_has_relations()
     {
         $this->assertSame($this->call->id, $this->participant->call->id);
         $this->assertSame($this->tippin->getKey(), $this->call->owner->getKey());
@@ -61,7 +56,7 @@ class CallParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_participant_owner_returns_ghost_when_owner_not_found()
+    public function owner_returns_ghost_if_not_found()
     {
         $this->participant->update([
             'owner_id' => 404,
@@ -71,7 +66,7 @@ class CallParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function call_participant_attributes_casted()
+    public function it_cast_attributes()
     {
         $this->assertInstanceOf(Carbon::class, $this->participant->created_at);
         $this->assertInstanceOf(Carbon::class, $this->participant->updated_at);
