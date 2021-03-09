@@ -1467,7 +1467,8 @@ window.ThreadManager = (function () {
                 'image/png',
                 'image/bmp',
                 'image/gif',
-                'image/svg+xml'
+                'image/svg+xml',
+                'image/webp',
             ],
             files = [
                 'application/pdf',
@@ -1478,11 +1479,17 @@ window.ThreadManager = (function () {
                 'application/vnd.ms-powerpoint',
                 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
                 'application/x-rar-compressed',
+                'application/x-rar',
                 'application/zip',
                 'application/x-7z-compressed',
                 'application/x-zip-compressed',
                 'application/zip-compressed',
-                'multipart/x-zip'
+                'multipart/x-zip',
+                'text/plain',
+                'text/xml',
+                'application/rtf',
+                'application/json',
+                'text/csv',
             ];
             if(images.includes(file.type)) type = 1;
             if(files.includes(file.type)) type = 2;

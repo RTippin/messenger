@@ -1159,7 +1159,7 @@ window.ThreadTemplates = (function () {
                 '                            </div>\n' +
                 '                        </form>\n' +
                 '                    </div>\n' +
-                '                    <input class="NS" multiple type="file" name="doc_file" id="doc_file" accept=".pdf, .doc, .ppt, .xls, .docx, .pptx, .xlsx, .rar, .zip">\n' +
+                '                    <input class="NS" multiple type="file" name="doc_file" id="doc_file" accept=".csv,.doc,.docx,.json,.pdf,.ppt,.pptx,.rar,.rtf,.txt,.xls,.xlsx,.xml,.zip,.7z">\n' +
                 '                    <input class="NS" multiple id="image_file" type="file" name="image_file" accept="image/*">\n' +
                 '                </div>\n' +
                 '            </div>\n' +
