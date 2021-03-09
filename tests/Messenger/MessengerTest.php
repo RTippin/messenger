@@ -41,53 +41,43 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_checks_objects_and_class_strings_for_valid_provider()
+    public function it_checks_objects_and_class_strings_for_valid_provider()
     {
         $user = $this->getModelUser();
-
         $company = $this->getModelCompany();
-
         $providerUser = new $user;
-
         $providerOtherUser = new OtherModel;
-
         $providerCompany = new $company;
 
         $this->assertTrue($this->messenger->isValidMessengerProvider($user));
         $this->assertTrue($this->messenger->isValidMessengerProvider($company));
         $this->assertTrue($this->messenger->isValidMessengerProvider($providerUser));
         $this->assertTrue($this->messenger->isValidMessengerProvider($providerCompany));
-
         $this->assertFalse($this->messenger->isValidMessengerProvider($providerOtherUser));
         $this->assertFalse($this->messenger->isValidMessengerProvider(OtherModel::class));
         $this->assertFalse($this->messenger->isValidMessengerProvider());
     }
 
     /** @test */
-    public function messenger_uses_objects_and_class_strings_and_returns_valid_provider_alias()
+    public function it_returns_valid_provider_alias_using_objects_and_class_strings()
     {
         $user = $this->getModelUser();
-
         $company = $this->getModelCompany();
-
         $providerUser = new $user;
-
         $providerOtherUser = new OtherModel;
-
         $providerCompany = new $company;
 
         $this->assertSame('user', $this->messenger->findProviderAlias($user));
         $this->assertSame('company', $this->messenger->findProviderAlias($company));
         $this->assertSame('user', $this->messenger->findProviderAlias($providerUser));
         $this->assertSame('company', $this->messenger->findProviderAlias($providerCompany));
-
         $this->assertNull($this->messenger->findProviderAlias($providerOtherUser));
         $this->assertNull($this->messenger->findProviderAlias(OtherModel::class));
         $this->assertNull($this->messenger->findProviderAlias());
     }
 
     /** @test */
-    public function messenger_uses_alias_string_to_return_valid_matching_provider_class()
+    public function it_returns_valid_provider_class_using_alias()
     {
         $this->assertSame($this->getModelUser(), $this->messenger->findAliasProvider('user'));
         $this->assertSame($this->getModelCompany(), $this->messenger->findAliasProvider('company'));
@@ -95,14 +85,11 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_allows_given_provider_objects_and_class_strings_to_be_searched()
+    public function it_allows_given_provider_objects_and_class_strings_to_be_searched()
     {
         $user = $this->getModelUser();
-
         $company = $this->getModelCompany();
-
         $providerUser = new $user;
-
         $providerCompany = new $company;
 
         $this->assertTrue($this->messenger->isProviderSearchable($user));
@@ -112,24 +99,16 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_denies_given_provider_objects_and_class_strings_to_be_searched()
+    public function it_denies_given_provider_objects_and_class_strings_to_be_searched()
     {
         $user = $this->getModelUser();
-
         $company = $this->getModelCompany();
-
         $providers = $this->getBaseProvidersConfig();
-
         $providers['user']['searchable'] = false;
-
         $providers['company']['searchable'] = false;
-
         $this->messenger->setMessengerProviders($providers);
-
         $providerUser = new $user;
-
         $providerOtherUser = new OtherModel;
-
         $providerCompany = new $company;
 
         $this->assertFalse($this->messenger->isProviderSearchable($user));
@@ -141,14 +120,11 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_allows_given_provider_objects_and_class_strings_to_be_friended()
+    public function it_allows_given_provider_objects_and_class_strings_to_be_friended()
     {
         $user = $this->getModelUser();
-
         $company = $this->getModelCompany();
-
         $providerUser = new $user;
-
         $providerCompany = new $company;
 
         $this->assertTrue($this->messenger->isProviderFriendable($user));
@@ -158,24 +134,16 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_denies_given_provider_objects_and_class_strings_to_be_friended()
+    public function it_denies_given_provider_objects_and_class_strings_to_be_friended()
     {
         $user = $this->getModelUser();
-
         $company = $this->getModelCompany();
-
         $providers = $this->getBaseProvidersConfig();
-
         $providers['user']['friendable'] = false;
-
         $providers['company']['friendable'] = false;
-
         $this->messenger->setMessengerProviders($providers);
-
         $providerUser = new $user;
-
         $providerOtherUser = new OtherModel;
-
         $providerCompany = new $company;
 
         $this->assertFalse($this->messenger->isProviderFriendable($user));
@@ -187,7 +155,7 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_returns_all_provider_classes()
+    public function it_returns_all_provider_classes()
     {
         $expected = [
             $this->getModelUser(),
@@ -198,7 +166,7 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_returns_provider_classes_that_can_be_searched()
+    public function it_returns_provider_classes_that_can_be_searched()
     {
         $expected = [
             $this->getModelUser(),
@@ -209,7 +177,7 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_returns_provider_classes_that_can_be_friended()
+    public function it_returns_provider_classes_that_can_be_friended()
     {
         $expected = [
             $this->getModelUser(),
@@ -220,7 +188,7 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_returns_provider_classes_that_have_devices()
+    public function it_returns_provider_classes_that_have_devices()
     {
         $expected = [
             $this->getModelUser(),
@@ -231,7 +199,7 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_returns_default_provider_avatar_path_using_provider_alias()
+    public function it_returns_default_provider_avatar_path_using_provider_alias()
     {
         $this->assertSame('/path/to/user.png', $this->messenger->getProviderDefaultAvatarPath('user'));
         $this->assertSame('/path/to/company.png', $this->messenger->getProviderDefaultAvatarPath('company'));
@@ -239,7 +207,7 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_resolves_ghost_user_when_requested()
+    public function it_resolves_ghost_user_when_requested()
     {
         $ghost = $this->messenger->getGhostProvider();
 
@@ -247,7 +215,7 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_resolves_ghost_user_once()
+    public function it_resolves_ghost_user_once()
     {
         $ghost = $this->messenger->getGhostProvider();
 
@@ -261,7 +229,7 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_resolves_ghost_participant_when_requested()
+    public function it_resolves_ghost_participant_when_requested()
     {
         $participant = $this->messenger->getGhostParticipant('1234');
 
@@ -269,7 +237,7 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_resolves_ghost_participant_once_unless_thread_id_changes()
+    public function it_resolves_ghost_participant_once_unless_thread_id_changes()
     {
         $participant = $this->messenger->getGhostParticipant('1234');
 
@@ -281,26 +249,29 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_throws_exception_when_setting_invalid_provider()
+    public function it_throws_exception_when_setting_invalid_provider()
     {
         $this->expectException(InvalidProviderException::class);
+        $this->expectExceptionMessage('Messenger provider not set or compatible.');
 
         $this->messenger->setProvider(new OtherModel);
     }
 
     /** @test */
-    public function messenger_sets_valid_provider()
+    public function it_sets_valid_provider()
     {
         $model = $this->getModelUser();
-
         $provider = new $model([
             'id' => 1,
             'name' => 'Richard Tippin',
             'email' => 'tippindev@gmail.com',
             'password' => 'secret',
         ]);
-
         $this->messenger->setProvider($provider);
+        $expected = [
+            $this->getModelUser(),
+            $this->getModelCompany(),
+        ];
 
         $this->assertSame($provider, $this->messenger->getProvider());
         $this->assertSame('user', $this->messenger->getProviderAlias());
@@ -311,18 +282,12 @@ class MessengerTest extends MessengerTestCase
         $this->assertTrue($this->messenger->providerHasFriends());
         $this->assertTrue($this->messenger->providerHasDevices());
         $this->assertTrue($this->messenger->isProviderSet());
-
-        $expected = [
-            $this->getModelUser(),
-            $this->getModelCompany(),
-        ];
-
         $this->assertSame($expected, $this->messenger->getFriendableForCurrentProvider());
         $this->assertSame($expected, $this->messenger->getSearchableForCurrentProvider());
     }
 
     /** @test */
-    public function messenger_unsets_provider()
+    public function it_unsets_provider()
     {
         $model = $this->getModelUser();
 
@@ -351,16 +316,12 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_allows_set_provider_to_message_given_provider_first()
+    public function it_allows_set_provider_to_message_given_provider_first()
     {
         $user = $this->getModelUser();
-
         $company = $this->getModelCompany();
-
         $providerUser = new $user;
-
         $providerCompany = new $company;
-
         $this->messenger->setProvider($providerUser);
 
         $this->assertTrue($this->messenger->canMessageProviderFirst($providerUser));
@@ -370,24 +331,16 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_denies_set_provider_to_message_given_provider_first()
+    public function it_denies_set_provider_to_message_given_provider_first()
     {
         $user = $this->getModelUser();
-
         $company = $this->getModelCompany();
-
         $providers = $this->getBaseProvidersConfig();
-
         $providers['user']['provider_interactions']['can_message'] = false;
-
         $this->messenger->setMessengerProviders($providers);
-
         $providerUser = new $user;
-
         $providerOtherUser = new OtherModel;
-
         $providerCompany = new $company;
-
         $this->messenger->setProvider($providerUser);
 
         $this->assertFalse($this->messenger->canMessageProviderFirst(OtherModel::class));
@@ -399,16 +352,12 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_allows_given_provider_to_be_searched_by_set_provider()
+    public function it_allows_given_provider_to_be_searched_by_set_provider()
     {
         $user = $this->getModelUser();
-
         $company = $this->getModelCompany();
-
         $providerUser = new $user;
-
         $providerCompany = new $company;
-
         $this->messenger->setProvider($providerUser);
 
         $this->assertTrue($this->messenger->canSearchProvider($providerUser));
@@ -418,22 +367,15 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_denies_given_provider_to_be_searched_by_set_provider()
+    public function it_denies_given_provider_to_be_searched_by_set_provider()
     {
         $user = $this->getModelUser();
-
         $company = $this->getModelCompany();
-
         $providers = $this->getBaseProvidersConfig();
-
         $providers['user']['provider_interactions']['can_search'] = false;
-
         $this->messenger->setMessengerProviders($providers);
-
         $providerOtherUser = new OtherModel;
-
         $providerCompany = new $company;
-
         $this->messenger->setProvider(new $user);
 
         $this->assertFalse($this->messenger->canSearchProvider(OtherModel::class));
@@ -444,16 +386,12 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_allows_set_provider_to_initiate_friend_request_with_given_provider()
+    public function it_allows_set_provider_to_initiate_friend_request_with_given_provider()
     {
         $user = $this->getModelUser();
-
         $company = $this->getModelCompany();
-
         $providerUser = new $user;
-
         $providerCompany = new $company;
-
         $this->messenger->setProvider($providerUser);
 
         $this->assertTrue($this->messenger->canFriendProvider($providerUser));
@@ -463,22 +401,15 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_denies_set_provider_to_initiate_friend_request_with_given_provider()
+    public function it_denies_set_provider_to_initiate_friend_request_with_given_provider()
     {
         $user = $this->getModelUser();
-
         $company = $this->getModelCompany();
-
         $providers = $this->getBaseProvidersConfig();
-
         $providers['user']['provider_interactions']['can_friend'] = false;
-
         $this->messenger->setMessengerProviders($providers);
-
         $providerOtherUser = new OtherModel;
-
         $providerCompany = new $company;
-
         $this->messenger->setProvider(new $user);
 
         $this->assertFalse($this->messenger->canFriendProvider(OtherModel::class));
@@ -489,7 +420,7 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_can_get_configs()
+    public function it_can_get_configs()
     {
         $this->assertSame('Messenger-Testbench', $this->messenger->getSiteName());
         $this->assertSame('default', $this->messenger->getBroadcastDriver());
@@ -544,7 +475,7 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_calling_temporarily_disabled()
+    public function it_can_temporarily_disable_or_enable_calling()
     {
         $this->messenger->disableCallsTemporarily(1);
 
@@ -556,7 +487,7 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_can_set_drivers()
+    public function it_can_set_drivers()
     {
         $this->assertSame('default', $this->messenger->getBroadcastDriver());
         $this->assertSame('null', $this->messenger->getVideoDriver());
@@ -576,7 +507,7 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function messenger_can_set_configs()
+    public function it_can_set_configs()
     {
         // Override config values.
         $this->messenger->setPushNotifications(true);

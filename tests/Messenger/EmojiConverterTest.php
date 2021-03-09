@@ -25,9 +25,7 @@ class EmojiConverterTest extends TestCase
      */
     public function converter_swaps_emojis_with_shortcode($string, $expected)
     {
-        $result = $this->converter->toShort($string);
-
-        $this->assertSame($expected, $result);
+        $this->assertSame($expected, $this->converter->toShort($string));
     }
 
     public function stringInputs(): array
