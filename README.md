@@ -523,7 +523,7 @@ PushNotificationEvent::class => $data //Array
 - Set a different default image to serve for a group thread, and the image used when another image is not found.
 
 ### File mime types allowed
-- Document mime types allowed: `csv, doc, docx, json, pdf, ppt, pptx, rar, rtf, txt, xls, xlsx, xml, zip, 7z`
+- Document mime types allowed: `.csv, .doc, .docx, .json, .pdf, .ppt, .pptx, .rar, .rtf, .txt, .xls, .xlsx, .xml, .zip, .7z`
 - Image / Avatar mime types allowed: `.jpg, .jpeg, .png, .bmp, .gif, .svg, .webp`
 
 ---
