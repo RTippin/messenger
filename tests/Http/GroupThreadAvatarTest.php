@@ -117,10 +117,27 @@ class GroupThreadAvatarTest extends FeatureTestCase
 
     /**
      * @test
-     * @dataProvider avatarDefaultValidation
+     * @dataProvider avatarDefaultPassesValidation
      * @param $defaultValue
      */
-    public function update_group_avatar_default_checks_values($defaultValue)
+    public function update_group_avatar_default_passes_validation($defaultValue)
+    {
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.avatar.update', [
+            'thread' => $this->group->id,
+        ]), [
+            'default' => $defaultValue,
+        ])
+            ->assertSuccessful();
+    }
+
+    /**
+     * @test
+     * @dataProvider avatarDefaultFailedValidation
+     * @param $defaultValue
+     */
+    public function update_group_avatar_default_fails_validation($defaultValue)
     {
         $this->actingAs($this->tippin);
 
@@ -135,10 +152,28 @@ class GroupThreadAvatarTest extends FeatureTestCase
 
     /**
      * @test
-     * @dataProvider avatarFileValidation
+     * @dataProvider avatarPassesValidation
      * @param $avatarValue
      */
-    public function group_avatar_upload_checks_size_and_mime($avatarValue)
+    public function group_avatar_upload_passes_validations($avatarValue)
+    {
+        Storage::fake(Messenger::getThreadStorage('disk'));
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.avatar.update', [
+            'thread' => $this->group->id,
+        ]), [
+            'image' => $avatarValue,
+        ])
+            ->assertSuccessful();
+    }
+
+    /**
+     * @test
+     * @dataProvider avatarFailedValidation
+     * @param $avatarValue
+     */
+    public function group_avatar_upload_fails_validations($avatarValue)
     {
         $this->actingAs($this->tippin);
 
@@ -151,7 +186,20 @@ class GroupThreadAvatarTest extends FeatureTestCase
             ->assertJsonValidationErrors('image');
     }
 
-    public function avatarFileValidation(): array
+    public function avatarPassesValidation(): array
+    {
+        return [
+            'Avatar can be jpeg' => [UploadedFile::fake()->create('image.jpeg', 500, 'image/jpeg')],
+            'Avatar can be png' => [UploadedFile::fake()->create('image.png', 500, 'image/png')],
+            'Avatar can be bmp' => [UploadedFile::fake()->create('image.bmp', 500, 'image/bmp')],
+            'Avatar can be gif' => [UploadedFile::fake()->create('image.gif', 500, 'image/gif')],
+            'Avatar can be svg' => [UploadedFile::fake()->create('image.svg', 500, 'image/svg+xml')],
+            'Avatar can be webp' => [UploadedFile::fake()->create('image.svg', 500, 'image/webp')],
+            'Avatar can be 5120 kb max limit' => [UploadedFile::fake()->create('image.jpg', 5120, 'image/jpeg')],
+        ];
+    }
+
+    public function avatarFailedValidation(): array
     {
         return [
             'Avatar cannot be empty' => [''],
@@ -159,12 +207,24 @@ class GroupThreadAvatarTest extends FeatureTestCase
             'Avatar cannot be null' => [null],
             'Avatar cannot be an array' => [[1, 2]],
             'Avatar cannot be a movie' => [UploadedFile::fake()->create('movie.mov', 500, 'video/quicktime')],
-            'Avatar must be under 5mb' => [UploadedFile::fake()->create('image.jpg', 6000, 'image/jpeg')],
+            'Avatar must be 5120 kb or less' => [UploadedFile::fake()->create('image.jpg', 5121, 'image/jpeg')],
             'Avatar cannot be a pdf' => [UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')],
+            'Avatar cannot be text file' => [UploadedFile::fake()->create('test.txt', 500, 'text/plain')],
         ];
     }
 
-    public function avatarDefaultValidation(): array
+    public function avatarDefaultPassesValidation(): array
+    {
+        return [
+            'Default can be 1.png' => ['1.png'],
+            'Default can be 2.png' => ['2.png'],
+            'Default can be 3.png' => ['3.png'],
+            'Default can be 4.png' => ['4.png'],
+            'Default can be 5.png' => ['5.png'],
+        ];
+    }
+
+    public function avatarDefaultFailedValidation(): array
     {
         return [
             'Default cannot be empty' => [''],

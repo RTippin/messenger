@@ -73,10 +73,25 @@ class MessengerAvatarTest extends FeatureTestCase
 
     /**
      * @test
-     * @dataProvider avatarFileValidation
+     * @dataProvider avatarPassesValidation
      * @param $avatarValue
      */
-    public function avatar_upload_checks_size_mime_and_inputs($avatarValue)
+    public function avatar_upload_passes_validation($avatarValue)
+    {
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.avatar.update'), [
+            'image' => $avatarValue,
+        ])
+            ->assertSuccessful();
+    }
+
+    /**
+     * @test
+     * @dataProvider avatarFailedValidation
+     * @param $avatarValue
+     */
+    public function avatar_upload_fails_validation($avatarValue)
     {
         $this->actingAs($this->tippin);
 
@@ -87,16 +102,30 @@ class MessengerAvatarTest extends FeatureTestCase
             ->assertJsonValidationErrors('image');
     }
 
-    public function avatarFileValidation(): array
+    public function avatarFailedValidation(): array
     {
         return [
-            'Image cannot be empty' => [''],
-            'Image cannot be integer' => [5],
-            'Image cannot be null' => [null],
-            'Image cannot be an array' => [[1, 2]],
-            'Image cannot be a movie' => [UploadedFile::fake()->create('movie.mov', 500, 'video/quicktime')],
-            'Image must be under 5mb' => [UploadedFile::fake()->create('image.jpg', 6000, 'image/jpeg')],
-            'Image cannot be a pdf' => [UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')],
+            'Avatar cannot be empty' => [''],
+            'Avatar cannot be integer' => [5],
+            'Avatar cannot be null' => [null],
+            'Avatar cannot be an array' => [[1, 2]],
+            'Avatar cannot be a movie' => [UploadedFile::fake()->create('movie.mov', 500, 'video/quicktime')],
+            'Avatar must be 5120 kb or less' => [UploadedFile::fake()->create('image.jpg', 5121, 'image/jpeg')],
+            'Avatar cannot be a pdf' => [UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')],
+            'Avatar cannot be text file' => [UploadedFile::fake()->create('test.txt', 500, 'text/plain')],
+        ];
+    }
+
+    public function avatarPassesValidation(): array
+    {
+        return [
+            'Avatar can be jpeg' => [UploadedFile::fake()->create('image.jpeg', 500, 'image/jpeg')],
+            'Avatar can be png' => [UploadedFile::fake()->create('image.png', 500, 'image/png')],
+            'Avatar can be bmp' => [UploadedFile::fake()->create('image.bmp', 500, 'image/bmp')],
+            'Avatar can be gif' => [UploadedFile::fake()->create('image.gif', 500, 'image/gif')],
+            'Avatar can be svg' => [UploadedFile::fake()->create('image.svg', 500, 'image/svg+xml')],
+            'Avatar can be webp' => [UploadedFile::fake()->create('image.svg', 500, 'image/webp')],
+            'Avatar can be 5120 kb max limit' => [UploadedFile::fake()->create('image.jpg', 5120, 'image/jpeg')],
         ];
     }
 }

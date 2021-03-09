@@ -72,10 +72,28 @@ class ImageMessageTest extends FeatureTestCase
 
     /**
      * @test
-     * @dataProvider imageValidation
+     * @dataProvider imagePassesValidation
      * @param $imageValue
      */
-    public function send_image_message_validates_image_file($imageValue)
+    public function send_image_message_upload_passes_validation($imageValue)
+    {
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.images.store', [
+            'thread' => $this->private->id,
+        ]), [
+            'image' => $imageValue,
+            'temporary_id' => '123-456-789',
+        ])
+            ->assertSuccessful();
+    }
+
+    /**
+     * @test
+     * @dataProvider imageFailedValidation
+     * @param $imageValue
+     */
+    public function send_image_message_upload_fails_validation($imageValue)
     {
         $this->actingAs($this->tippin);
 
@@ -89,7 +107,7 @@ class ImageMessageTest extends FeatureTestCase
             ->assertJsonValidationErrors('image');
     }
 
-    public function imageValidation(): array
+    public function imageFailedValidation(): array
     {
         return [
             'Image cannot be empty' => [''],
@@ -97,8 +115,22 @@ class ImageMessageTest extends FeatureTestCase
             'Image cannot be null' => [null],
             'Image cannot be an array' => [[1, 2]],
             'Image cannot be a movie' => [UploadedFile::fake()->create('movie.mov', 500, 'video/quicktime')],
-            'Image must be under 5mb' => [UploadedFile::fake()->create('image.jpg', 6000, 'image/jpeg')],
+            'Image must be 5120 kb or less' => [UploadedFile::fake()->create('image.jpg', 5121, 'image/jpeg')],
             'Image cannot be a pdf' => [UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')],
+            'Image cannot be text file' => [UploadedFile::fake()->create('test.txt', 500, 'text/plain')],
+        ];
+    }
+
+    public function imagePassesValidation(): array
+    {
+        return [
+            'Image can be jpeg' => [UploadedFile::fake()->create('image.jpeg', 500, 'image/jpeg')],
+            'Image can be png' => [UploadedFile::fake()->create('image.png', 500, 'image/png')],
+            'Image can be bmp' => [UploadedFile::fake()->create('image.bmp', 500, 'image/bmp')],
+            'Image can be gif' => [UploadedFile::fake()->create('image.gif', 500, 'image/gif')],
+            'Image can be svg' => [UploadedFile::fake()->create('image.svg', 500, 'image/svg+xml')],
+            'Image can be webp' => [UploadedFile::fake()->create('image.svg', 500, 'image/webp')],
+            'Image can be 5120 kb max limit' => [UploadedFile::fake()->create('image.jpg', 5120, 'image/jpeg')],
         ];
     }
 }
