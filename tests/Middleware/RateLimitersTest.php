@@ -18,7 +18,6 @@ class RateLimitersTest extends FeatureTestCase
         parent::setUp();
 
         $this->withMiddleware(ThrottleRequests::class);
-
         $this->tippin = $this->userTippin();
     }
 
@@ -29,26 +28,19 @@ class RateLimitersTest extends FeatureTestCase
 
         $response = $this->getJson(route('api.messenger.threads.index'));
 
-        $limit = $response->headers->get('X-Ratelimit-Limit');
-
-        $remaining = $response->headers->get('X-RateLimit-Remaining');
-
-        $this->assertEquals(1000, $limit);
-
-        $this->assertEquals(999, $remaining);
+        $this->assertEquals(1000, $response->headers->get('X-Ratelimit-Limit'));
+        $this->assertEquals(999, $response->headers->get('X-RateLimit-Remaining'));
     }
 
     /** @test */
     public function setting_limit_to_zero_results_in_unlimited_request_per_minute()
     {
         Messenger::setApiRateLimit(0);
-
         $this->actingAs($this->tippin);
 
         $response = $this->getJson(route('api.messenger.threads.index'));
 
         $this->assertFalse($response->headers->has('X-Ratelimit-Limit'));
-
         $this->assertFalse($response->headers->has('X-RateLimit-Remaining'));
     }
 
@@ -59,20 +51,14 @@ class RateLimitersTest extends FeatureTestCase
 
         $response = $this->getJson(route('api.messenger.search'));
 
-        $limit = $response->headers->get('X-Ratelimit-Limit');
-
-        $remaining = $response->headers->get('X-RateLimit-Remaining');
-
-        $this->assertEquals(45, $limit);
-
-        $this->assertEquals(44, $remaining);
+        $this->assertEquals(45, $response->headers->get('X-Ratelimit-Limit'));
+        $this->assertEquals(44, $response->headers->get('X-RateLimit-Remaining'));
     }
 
     /** @test */
     public function store_message_api_limits_request_60_per_minute()
     {
         $group = $this->createGroupThread($this->tippin);
-
         $this->actingAs($this->tippin);
 
         $response = $this->postJson(route('api.messenger.threads.messages.store', [
@@ -82,22 +68,15 @@ class RateLimitersTest extends FeatureTestCase
             'temporary_id' => '123-456-789',
         ]);
 
-        $limit = $response->headers->get('X-Ratelimit-Limit');
-
-        $remaining = $response->headers->get('X-RateLimit-Remaining');
-
-        $this->assertEquals(60, $limit);
-
-        $this->assertEquals(59, $remaining);
+        $this->assertEquals(60, $response->headers->get('X-Ratelimit-Limit'));
+        $this->assertEquals(59, $response->headers->get('X-RateLimit-Remaining'));
     }
 
     /** @test */
     public function store_image_message_api_limits_request_15_per_minute()
     {
         Storage::fake(Messenger::getThreadStorage('disk'));
-
         $group = $this->createGroupThread($this->tippin);
-
         $this->actingAs($this->tippin);
 
         $response = $this->postJson(route('api.messenger.threads.images.store', [
@@ -107,22 +86,15 @@ class RateLimitersTest extends FeatureTestCase
             'temporary_id' => '123-456-789',
         ]);
 
-        $limit = $response->headers->get('X-Ratelimit-Limit');
-
-        $remaining = $response->headers->get('X-RateLimit-Remaining');
-
-        $this->assertEquals(15, $limit);
-
-        $this->assertEquals(14, $remaining);
+        $this->assertEquals(15, $response->headers->get('X-Ratelimit-Limit'));
+        $this->assertEquals(14, $response->headers->get('X-RateLimit-Remaining'));
     }
 
     /** @test */
     public function store_document_message_api_limits_request_15_per_minute()
     {
         Storage::fake(Messenger::getThreadStorage('disk'));
-
         $group = $this->createGroupThread($this->tippin);
-
         $this->actingAs($this->tippin);
 
         $response = $this->postJson(route('api.messenger.threads.documents.store', [
@@ -132,12 +104,7 @@ class RateLimitersTest extends FeatureTestCase
             'temporary_id' => '123-456-789',
         ]);
 
-        $limit = $response->headers->get('X-Ratelimit-Limit');
-
-        $remaining = $response->headers->get('X-RateLimit-Remaining');
-
-        $this->assertEquals(15, $limit);
-
-        $this->assertEquals(14, $remaining);
+        $this->assertEquals(15, $response->headers->get('X-Ratelimit-Limit'));
+        $this->assertEquals(14, $response->headers->get('X-RateLimit-Remaining'));
     }
 }

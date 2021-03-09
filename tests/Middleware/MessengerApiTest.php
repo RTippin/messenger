@@ -12,9 +12,7 @@ class MessengerApiTest extends TestCase
     /** @test */
     public function wrapping_disabled_on_json_resource_and_json_header_is_set()
     {
-        $request = new Request;
-
-        (new MessengerApi())->handle($request, function (Request $request) {
+        (new MessengerApi())->handle(new Request, function (Request $request) {
             $this->assertNull(JsonResource::$wrap);
             $this->assertTrue($request->hasHeader('Accept'));
             $this->assertSame('application/json', $request->header('Accept'));
