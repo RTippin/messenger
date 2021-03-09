@@ -11,9 +11,7 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class ArchiveGroupThreadTest extends FeatureTestCase
 {
     private Thread $group;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -21,9 +19,7 @@ class ArchiveGroupThreadTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
     }
 
@@ -60,7 +56,6 @@ class ArchiveGroupThreadTest extends FeatureTestCase
     public function admin_forbidden_to_check_archive_group_thread_with_active_call()
     {
         $this->createCall($this->group, $this->tippin);
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.archive.check', [
@@ -72,12 +67,12 @@ class ArchiveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_can_archive_group_thread()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             ThreadArchivedBroadcast::class,
             ThreadArchivedEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.destroy', [
             'thread' => $this->group->id,
@@ -111,7 +106,6 @@ class ArchiveGroupThreadTest extends FeatureTestCase
     public function admin_forbidden_to_archive_group_thread_with_active_call()
     {
         $this->createCall($this->group, $this->tippin);
-
         $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.destroy', [

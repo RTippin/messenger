@@ -10,11 +10,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class CallChannelTest extends FeatureTestCase
 {
     private Thread $private;
-
     private Call $call;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -22,11 +19,8 @@ class CallChannelTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-
         $this->call = $this->createCall($this->private, $this->tippin);
     }
 
@@ -34,11 +28,9 @@ class CallChannelTest extends FeatureTestCase
     {
         parent::getEnvironmentSetUp($app);
 
-        $config = $app->get('config');
-
         // Need to set a driver other than null
         // for broadcast routes to be utilized
-        $config->set('broadcasting.default', 'redis');
+        $app->get('config')->set('broadcasting.default', 'redis');
     }
 
     /** @test */
@@ -102,7 +94,6 @@ class CallChannelTest extends FeatureTestCase
             ->update([
                 'kicked' => true,
             ]);
-
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
@@ -117,7 +108,6 @@ class CallChannelTest extends FeatureTestCase
         $this->call->update([
             'call_ended' => now(),
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [

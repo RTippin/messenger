@@ -11,11 +11,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class AddParticipantsTest extends FeatureTestCase
 {
     private Thread $group;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
-
     private MessengerProvider $developers;
 
     protected function setUp(): void
@@ -23,15 +20,10 @@ class AddParticipantsTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->developers = $this->companyDevelopers();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-
         $this->createFriends($this->tippin, $this->doe);
-
         $this->createFriends($this->tippin, $this->developers);
     }
 
@@ -39,7 +31,6 @@ class AddParticipantsTest extends FeatureTestCase
     public function forbidden_to_view_add_participants_on_private_thread()
     {
         $private = $this->createPrivateThread($this->tippin, $this->doe);
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.add.participants', [
@@ -76,7 +67,6 @@ class AddParticipantsTest extends FeatureTestCase
         $this->group->update([
             'add_participants' => false,
         ]);
-
         $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.add.participants', [
@@ -91,7 +81,6 @@ class AddParticipantsTest extends FeatureTestCase
         $this->group->update([
             'lockout' => true,
         ]);
-
         $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.add.participants', [
@@ -110,7 +99,6 @@ class AddParticipantsTest extends FeatureTestCase
             ->update([
                 'add_participants' => true,
             ]);
-
         $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.add.participants', [
@@ -143,19 +131,15 @@ class AddParticipantsTest extends FeatureTestCase
     public function admin_can_add_many_participants()
     {
         $company = $this->createSomeCompany();
-
         $smith = $this->createJaneSmith();
+        $this->createFriends($this->tippin, $smith);
+        $this->createFriends($this->tippin, $company);
+        $this->actingAs($this->tippin);
 
         $this->expectsEvents([
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
-
-        $this->createFriends($this->tippin, $smith);
-
-        $this->createFriends($this->tippin, $company);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.participants.store', [
             'thread' => $this->group->id,
@@ -181,15 +165,10 @@ class AddParticipantsTest extends FeatureTestCase
         $this->group->update([
             'lockout' => true,
         ]);
-
         $company = $this->createSomeCompany();
-
         $smith = $this->createJaneSmith();
-
         $this->createFriends($this->tippin, $smith);
-
         $this->createFriends($this->tippin, $company);
-
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.participants.store', [
@@ -213,12 +192,6 @@ class AddParticipantsTest extends FeatureTestCase
     public function non_admin_with_permission_can_add_participants()
     {
         $company = $this->createSomeCompany();
-
-        $this->expectsEvents([
-            NewThreadBroadcast::class,
-            ParticipantsAddedEvent::class,
-        ]);
-
         $this->group->participants()
             ->where('owner_id', '=', $this->doe->getKey())
             ->where('owner_type', '=', get_class($this->doe))
@@ -226,10 +199,13 @@ class AddParticipantsTest extends FeatureTestCase
             ->update([
                 'add_participants' => true,
             ]);
-
         $this->createFriends($this->doe, $company);
-
         $this->actingAs($this->doe);
+
+        $this->expectsEvents([
+            NewThreadBroadcast::class,
+            ParticipantsAddedEvent::class,
+        ]);
 
         $this->postJson(route('api.messenger.threads.participants.store', [
             'thread' => $this->group->id,
@@ -249,17 +225,14 @@ class AddParticipantsTest extends FeatureTestCase
     public function non_friends_are_ignored_when_adding_participants()
     {
         $smith = $this->createJaneSmith();
-
         $company = $this->createSomeCompany();
+        $this->createFriends($this->tippin, $smith);
+        $this->actingAs($this->tippin);
 
         $this->expectsEvents([
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
-
-        $this->createFriends($this->tippin, $smith);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.participants.store', [
             'thread' => $this->group->id,
@@ -283,13 +256,12 @@ class AddParticipantsTest extends FeatureTestCase
     public function no_participants_added_when_no_friends_found()
     {
         $smith = $this->createJaneSmith();
+        $this->actingAs($this->tippin);
 
         $this->doesntExpectEvents([
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.participants.store', [
             'thread' => $this->group->id,
@@ -308,12 +280,12 @@ class AddParticipantsTest extends FeatureTestCase
     /** @test */
     public function existing_participant_will_be_ignored_when_adding_participants()
     {
+        $this->actingAs($this->tippin);
+
         $this->doesntExpectEvents([
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.participants.store', [
             'thread' => $this->group->id,

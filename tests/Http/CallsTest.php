@@ -10,11 +10,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class CallsTest extends FeatureTestCase
 {
     private Thread $private;
-
     private Call $call;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -22,11 +19,8 @@ class CallsTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-
         $this->call = $this->createCall($this->private, $this->tippin);
     }
 
@@ -98,7 +92,6 @@ class CallsTest extends FeatureTestCase
         $this->call->update([
             'call_ended' => now(),
         ]);
-
         $this->actingAs($this->tippin);
 
         $request = $this->getJson(route('api.messenger.threads.calls.show', [
@@ -132,7 +125,6 @@ class CallsTest extends FeatureTestCase
     public function user_can_view_call_participant()
     {
         $participant = $this->call->participants()->first();
-
         $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.calls.participants.show', [
@@ -155,7 +147,6 @@ class CallsTest extends FeatureTestCase
                 'kicked' => true,
                 'left_call' => now(),
             ]);
-
         $this->actingAs($this->tippin);
 
         $request = $this->getJson(route('api.messenger.threads.calls.show', [
@@ -177,9 +168,7 @@ class CallsTest extends FeatureTestCase
             ]);
 
         $this->assertArrayNotHasKey('room_id', $request->json()['options']);
-
         $this->assertArrayNotHasKey('room_pin', $request->json()['options']);
-
         $this->assertArrayNotHasKey('payload', $request->json()['options']);
     }
 }

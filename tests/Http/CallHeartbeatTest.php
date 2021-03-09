@@ -10,11 +10,8 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class CallHeartbeatTest extends FeatureTestCase
 {
     private Thread $group;
-
     private Call $call;
-
     private MessengerProvider $tippin;
-
     private MessengerProvider $doe;
 
     protected function setUp(): void
@@ -22,11 +19,8 @@ class CallHeartbeatTest extends FeatureTestCase
         parent::setUp();
 
         $this->tippin = $this->userTippin();
-
         $this->doe = $this->userDoe();
-
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-
         $this->call = $this->createCall($this->group, $this->tippin);
     }
 
@@ -74,7 +68,6 @@ class CallHeartbeatTest extends FeatureTestCase
             ->update([
                 'left_call' => now(),
             ]);
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.calls.heartbeat', [
@@ -90,7 +83,6 @@ class CallHeartbeatTest extends FeatureTestCase
         $this->call->update([
             'call_ended' => now(),
         ]);
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.calls.heartbeat', [
