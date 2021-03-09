@@ -5,7 +5,7 @@
 
 #### Changed
 - Allow more mime types on uploads, frontend assets updated with this as well.
-- Misc bug fixes.
+- Misc bug fixes along with image service not resizing gif/svg/webp.
 
 ### [v0.19 (02-28-2021)]
 

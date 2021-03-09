@@ -18,6 +18,15 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class ImageRenderService
 {
     /**
+     * Extensions we do not want to send through to intervention.
+     */
+    const IGNORED_EXTENSIONS = [
+        'gif',
+        'svg',
+        'webp',
+    ];
+
+    /**
      * @var Messenger
      */
     private Messenger $messenger;
@@ -77,8 +86,9 @@ class ImageRenderService
             return $this->renderDefaultImage($alias);
         }
 
-        if (pathinfo($this->filesystemManager->disk($disk)->path($avatar), PATHINFO_EXTENSION) !== 'gif'
-            && $size !== 'lg') {
+        $extension = pathinfo($this->filesystemManager->disk($disk)->path($avatar), PATHINFO_EXTENSION);
+
+        if ($this->shouldResize($extension) && $size !== 'lg') {
             return $this->renderImageSize(
                 $this->filesystemManager->disk($disk)->get($avatar),
                 $size
@@ -109,8 +119,9 @@ class ImageRenderService
             return $this->renderDefaultImage();
         }
 
-        if (pathinfo($this->filesystemManager->disk($message->getStorageDisk())->path($message->getImagePath()), PATHINFO_EXTENSION) !== 'gif'
-            && $size !== 'lg') {
+        $extension = pathinfo($this->filesystemManager->disk($message->getStorageDisk())->path($message->getImagePath()), PATHINFO_EXTENSION);
+
+        if ($this->shouldResize($extension) && $size !== 'lg') {
             return $this->renderImageSize(
                 $this->filesystemManager
                     ->disk($message->getStorageDisk())
@@ -152,8 +163,9 @@ class ImageRenderService
             return $this->renderDefaultImage();
         }
 
-        if (pathinfo($this->filesystemManager->disk($thread->getStorageDisk())->path($thread->getAvatarPath()), PATHINFO_EXTENSION) !== 'gif'
-            && $size !== 'lg') {
+        $extension = pathinfo($this->filesystemManager->disk($thread->getStorageDisk())->path($thread->getAvatarPath()), PATHINFO_EXTENSION);
+
+        if ($this->shouldResize($extension) && $size !== 'lg') {
             return $this->renderImageSize(
                 $this->filesystemManager
                     ->disk($thread->getStorageDisk())
@@ -216,5 +228,14 @@ class ImageRenderService
         }
 
         return $this->renderDefaultImage();
+    }
+
+    /**
+     * @param string $extension
+     * @return bool
+     */
+    private function shouldResize(string $extension): bool
+    {
+        return ! in_array($extension, self::IGNORED_EXTENSIONS);
     }
 }
