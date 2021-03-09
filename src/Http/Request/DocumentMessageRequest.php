@@ -17,7 +17,7 @@ class DocumentMessageRequest extends FormRequest
         $limit = Messenger::getMessageDocumentSizeLimit();
 
         return [
-            'document' => "required|max:{$limit}|file|mimes:pdf,doc,ppt,xls,docx,pptx,xlsx,rar,zip,7z",
+            'document' => "required|max:{$limit}|file|mimes:csv,doc,docx,json,pdf,ppt,pptx,rar,rtf,txt,xls,xlsx,xml,zip,7z",
             'temporary_id' => 'required|string',
         ];
     }

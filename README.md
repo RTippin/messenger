@@ -521,6 +521,7 @@ PushNotificationEvent::class => $data //Array
 - Enable/disable the upload and download features.
 - Set upload max size limits, in kilobytes.
 - Set a different default image to serve for a group thread, and the image used when another image is not found.
+  - Document mime types allowed: `csv,doc,docx,json,pdf,ppt,pptx,rar,rtf,txt,xls,xlsx,xml,zip,7z`
 
 ---
 
