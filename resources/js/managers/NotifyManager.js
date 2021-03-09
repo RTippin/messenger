@@ -99,8 +99,11 @@ window.NotifyManager = (function () {
                         window.location.reload();
                         return;
                     }
-                    Messenger.xhr().request({
+                    Messenger.xhr().payload({
                         route : Messenger.common().API + 'heartbeat',
+                        data : {
+                            away : false
+                        },
                         success : function(data){
                             methods.manageHeartbeatData(data);
                             opt.settings.is_away = false;
