@@ -472,6 +472,10 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame(5120, $this->messenger->getProviderAvatarSizeLimit());
         $this->assertSame(5120, $this->messenger->getThreadAvatarSizeLimit());
         $this->assertFalse($this->messenger->isCallingTemporarilyDisabled());
+        $this->assertSame('csv,doc,docx,json,pdf,ppt,pptx,rar,rtf,txt,xls,xlsx,xml,zip,7z', $this->messenger->getMessageDocumentMimeTypes());
+        $this->assertSame('jpg,jpeg,png,bmp,gif,svg,webp', $this->messenger->getMessageImageMimeTypes());
+        $this->assertSame('jpg,jpeg,png,bmp,gif,svg,webp', $this->messenger->getProviderAvatarMimeTypes());
+        $this->assertSame('jpg,jpeg,png,bmp,gif,svg,webp', $this->messenger->getThreadAvatarMimeTypes());
     }
 
     /** @test */
@@ -543,6 +547,10 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->setMessageImageSizeLimit(5);
         $this->messenger->setProviderAvatarSizeLimit(5);
         $this->messenger->setThreadAvatarSizeLimit(5);
+        $this->messenger->setMessageDocumentMimeTypes('mov,mp3');
+        $this->messenger->setMessageImageMimeTypes('jpeg,png');
+        $this->messenger->setProviderAvatarMimeTypes('jpeg,png');
+        $this->messenger->setThreadAvatarMimeTypes('jpeg,png');
         $this->messenger->setMessengerProviders([
             'user' => [
                 'model' => UserModel::class,
@@ -593,5 +601,9 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame(5, $this->messenger->getMessageImageSizeLimit());
         $this->assertSame(5, $this->messenger->getProviderAvatarSizeLimit());
         $this->assertSame(5, $this->messenger->getThreadAvatarSizeLimit());
+        $this->assertSame('mov,mp3', $this->messenger->getMessageDocumentMimeTypes());
+        $this->assertSame('jpeg,png', $this->messenger->getMessageImageMimeTypes());
+        $this->assertSame('jpeg,png', $this->messenger->getProviderAvatarMimeTypes());
+        $this->assertSame('jpeg,png', $this->messenger->getThreadAvatarMimeTypes());
     }
 }

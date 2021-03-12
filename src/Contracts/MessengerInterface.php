@@ -239,6 +239,17 @@ interface MessengerInterface
     public function setMessageImageSizeLimit(int $messageImageSizeLimit);
 
     /**
+     * @return string
+     */
+    public function getMessageImageMimeTypes(): string;
+
+    /**
+     * @param string $messageImageMimeTypes
+     * @return $this
+     */
+    public function setMessageImageMimeTypes(string $messageImageMimeTypes);
+
+    /**
      * @return bool
      */
     public function isThreadAvatarUploadEnabled(): bool;
@@ -259,6 +270,17 @@ interface MessengerInterface
      * @return $this
      */
     public function setThreadAvatarSizeLimit(int $threadAvatarSizeLimit);
+
+    /**
+     * @return string
+     */
+    public function getThreadAvatarMimeTypes(): string;
+
+    /**
+     * @param string $threadAvatarMimeTypes
+     * @return $this
+     */
+    public function setThreadAvatarMimeTypes(string $threadAvatarMimeTypes);
 
     /**
      * @return bool
@@ -294,6 +316,17 @@ interface MessengerInterface
     public function setMessageDocumentSizeLimit(int $messageDocumentSizeLimit);
 
     /**
+     * @return string
+     */
+    public function getMessageDocumentMimeTypes();
+
+    /**
+     * @param string $messageDocumentMimeTypes
+     * @return $this
+     */
+    public function setMessageDocumentMimeTypes(string $messageDocumentMimeTypes);
+
+    /**
      * @return bool
      */
     public function isProviderAvatarUploadEnabled(): bool;
@@ -325,6 +358,17 @@ interface MessengerInterface
      * @return $this
      */
     public function setProviderAvatarSizeLimit(int $providerAvatarSizeLimit);
+
+    /**
+     * @return string
+     */
+    public function getProviderAvatarMimeTypes(): string;
+
+    /**
+     * @param string $providerAvatarMimeTypes
+     * @return $this
+     */
+    public function setProviderAvatarMimeTypes(string $providerAvatarMimeTypes);
 
     /**
      * @return bool

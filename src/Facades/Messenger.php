@@ -131,6 +131,14 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static setThreadAvatarSizeLimit(int $threadAvatarSizeLimit)
  * @method static getProviderAvatarSizeLimit()
  * @method static setProviderAvatarSizeLimit(int $providerAvatarSizeLimit)
+ * @method static getProviderAvatarMimeTypes()
+ * @method static setProviderAvatarMimeTypes(string $providerAvatarMimeTypes)
+ * @method static getMessageDocumentMimeTypes()
+ * @method static setMessageDocumentMimeTypes(string $messageDocumentMimeTypes)
+ * @method static getThreadAvatarMimeTypes()
+ * @method static setThreadAvatarMimeTypes(string $threadAvatarMimeTypes)
+ * @method static getMessageImageMimeTypes()
+ * @method static setMessageImageMimeTypes(string $messageImageMimeTypes)
  *
  * @mixin \RTippin\Messenger\Messenger
  * @see MessengerInterface

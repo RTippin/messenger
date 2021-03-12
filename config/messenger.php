@@ -269,19 +269,23 @@ return [
             'upload' => env('MESSENGER_MESSAGE_DOCUMENT_UPLOAD', true),
             'download' => env('MESSENGER_MESSAGE_DOCUMENT_DOWNLOAD', true),
             'size_limit' => env('MESSENGER_MESSAGE_DOCUMENT_SIZE_LIMIT', 10240),
+            'mime_types' => env('MESSENGER_MESSAGE_DOCUMENT_MIME_TYPES', 'csv,doc,docx,json,pdf,ppt,pptx,rar,rtf,txt,xls,xlsx,xml,zip,7z'),
         ],
         'message_images' => [
             'upload' => env('MESSENGER_MESSAGE_IMAGE_UPLOAD', true),
             'size_limit' => env('MESSENGER_MESSAGE_IMAGE_SIZE_LIMIT', 5120),
+            'mime_types' => env('MESSENGER_MESSAGE_IMAGE_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,svg,webp'),
         ],
         'thread_avatars' => [
             'upload' => env('MESSENGER_THREAD_AVATAR_UPLOAD', true),
             'size_limit' => env('MESSENGER_THREAD_AVATAR_SIZE_LIMIT', 5120),
+            'mime_types' => env('MESSENGER_THREAD_AVATAR_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,svg,webp'),
         ],
         'provider_avatars' => [
             'upload' => env('MESSENGER_PROVIDER_AVATAR_UPLOAD', true),
             'removal' => env('MESSENGER_PROVIDER_AVATAR_REMOVAL', true),
             'size_limit' => env('MESSENGER_PROVIDER_AVATAR_SIZE_LIMIT', 5120),
+            'mime_types' => env('MESSENGER_PROVIDER_AVATAR_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,svg,webp'),
         ],
         'default_thread_avatars' => [
             '1.png' => public_path('vendor/messenger/images/1.png'),

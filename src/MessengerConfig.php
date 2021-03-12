@@ -164,6 +164,11 @@ trait MessengerConfig
     private int $providerAvatarSizeLimit;
 
     /**
+     * @var string
+     */
+    private string $providerAvatarMimeTypes;
+
+    /**
      * @var bool
      */
     private bool $messageDocumentUpload;
@@ -179,6 +184,11 @@ trait MessengerConfig
     private int $messageDocumentSizeLimit;
 
     /**
+     * @var string
+     */
+    private string $messageDocumentMimeTypes;
+
+    /**
      * @var bool
      */
     private bool $messageImageUpload;
@@ -189,6 +199,11 @@ trait MessengerConfig
     private int $messageImageSizeLimit;
 
     /**
+     * @var string
+     */
+    private string $messageImageMimeTypes;
+
+    /**
      * @var bool
      */
     private bool $threadAvatarUpload;
@@ -197,6 +212,11 @@ trait MessengerConfig
      * @var int
      */
     private int $threadAvatarSizeLimit;
+
+    /**
+     * @var string
+     */
+    private string $threadAvatarMimeTypes;
 
     /**
      * @var int
@@ -569,6 +589,25 @@ trait MessengerConfig
     }
 
     /**
+     * @return string
+     */
+    public function getMessageImageMimeTypes(): string
+    {
+        return $this->messageImageMimeTypes;
+    }
+
+    /**
+     * @param string $messageImageMimeTypes
+     * @return $this
+     */
+    public function setMessageImageMimeTypes(string $messageImageMimeTypes): self
+    {
+        $this->messageImageMimeTypes = $messageImageMimeTypes;
+
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function isMessageDocumentUploadEnabled(): bool
@@ -626,6 +665,25 @@ trait MessengerConfig
     }
 
     /**
+     * @return string
+     */
+    public function getMessageDocumentMimeTypes(): string
+    {
+        return $this->messageDocumentMimeTypes;
+    }
+
+    /**
+     * @param string $messageDocumentMimeTypes
+     * @return $this
+     */
+    public function setMessageDocumentMimeTypes(string $messageDocumentMimeTypes): self
+    {
+        $this->messageDocumentMimeTypes = $messageDocumentMimeTypes;
+
+        return $this;
+    }
+
+    /**
      * @return bool
      */
     public function isThreadAvatarUploadEnabled(): bool
@@ -659,6 +717,25 @@ trait MessengerConfig
     public function setThreadAvatarSizeLimit(int $threadAvatarSizeLimit): self
     {
         $this->threadAvatarSizeLimit = $threadAvatarSizeLimit;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getThreadAvatarMimeTypes(): string
+    {
+        return $this->threadAvatarMimeTypes;
+    }
+
+    /**
+     * @param string $threadAvatarMimeTypes
+     * @return $this
+     */
+    public function setThreadAvatarMimeTypes(string $threadAvatarMimeTypes): self
+    {
+        $this->threadAvatarMimeTypes = $threadAvatarMimeTypes;
 
         return $this;
     }
@@ -716,6 +793,25 @@ trait MessengerConfig
     public function setProviderAvatarSizeLimit(int $providerAvatarSizeLimit): self
     {
         $this->providerAvatarSizeLimit = $providerAvatarSizeLimit;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getProviderAvatarMimeTypes(): string
+    {
+        return $this->providerAvatarMimeTypes;
+    }
+
+    /**
+     * @param string $providerAvatarMimeTypes
+     * @return $this
+     */
+    public function setProviderAvatarMimeTypes(string $providerAvatarMimeTypes): self
+    {
+        $this->providerAvatarMimeTypes = $providerAvatarMimeTypes;
 
         return $this;
     }
@@ -1239,13 +1335,17 @@ trait MessengerConfig
         $this->providerAvatarUpload = $this->configRepo->get('messenger.files.provider_avatars.upload');
         $this->providerAvatarRemoval = $this->configRepo->get('messenger.files.provider_avatars.removal');
         $this->providerAvatarSizeLimit = $this->configRepo->get('messenger.files.provider_avatars.size_limit');
+        $this->providerAvatarMimeTypes = $this->configRepo->get('messenger.files.provider_avatars.mime_types');
         $this->messageImageUpload = $this->configRepo->get('messenger.files.message_images.upload');
         $this->messageImageSizeLimit = $this->configRepo->get('messenger.files.message_images.size_limit');
+        $this->messageImageMimeTypes = $this->configRepo->get('messenger.files.message_images.mime_types');
         $this->messageDocumentUpload = $this->configRepo->get('messenger.files.message_documents.upload');
         $this->messageDocumentDownload = $this->configRepo->get('messenger.files.message_documents.download');
         $this->messageDocumentSizeLimit = $this->configRepo->get('messenger.files.message_documents.size_limit');
+        $this->messageDocumentMimeTypes = $this->configRepo->get('messenger.files.message_documents.mime_types');
         $this->threadAvatarUpload = $this->configRepo->get('messenger.files.thread_avatars.upload');
         $this->threadAvatarSizeLimit = $this->configRepo->get('messenger.files.thread_avatars.size_limit');
+        $this->threadAvatarMimeTypes = $this->configRepo->get('messenger.files.thread_avatars.mime_types');
         $this->searchPageCount = $this->configRepo->get('messenger.collections.search.page_count');
         $this->threadsIndexCount = $this->configRepo->get('messenger.collections.threads.index_count');
         $this->threadsPageCount = $this->configRepo->get('messenger.collections.threads.page_count');
