@@ -492,20 +492,24 @@ PushNotificationEvent::class => $data //Array
     'message_documents' => [
         'upload' => env('MESSENGER_MESSAGE_DOCUMENT_UPLOAD', true),
         'download' => env('MESSENGER_MESSAGE_DOCUMENT_DOWNLOAD', true),
-        'size_limit' => env('MESSENGER_MESSAGE_DOCUMENT_SIZE_LIMIT', 10240), //10MB
+        'size_limit' => env('MESSENGER_MESSAGE_DOCUMENT_SIZE_LIMIT', 10240),
+        'mime_types' => env('MESSENGER_MESSAGE_DOCUMENT_MIME_TYPES', 'csv,doc,docx,json,pdf,ppt,pptx,rar,rtf,txt,xls,xlsx,xml,zip,7z'),
     ],
     'message_images' => [
         'upload' => env('MESSENGER_MESSAGE_IMAGE_UPLOAD', true),
-        'size_limit' => env('MESSENGER_MESSAGE_IMAGE_SIZE_LIMIT', 5120), //5MB
+        'size_limit' => env('MESSENGER_MESSAGE_IMAGE_SIZE_LIMIT', 5120),
+        'mime_types' => env('MESSENGER_MESSAGE_IMAGE_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,svg,webp'),
     ],
     'thread_avatars' => [
         'upload' => env('MESSENGER_THREAD_AVATAR_UPLOAD', true),
-        'size_limit' => env('MESSENGER_THREAD_AVATAR_SIZE_LIMIT', 5120), //5MB
+        'size_limit' => env('MESSENGER_THREAD_AVATAR_SIZE_LIMIT', 5120),
+        'mime_types' => env('MESSENGER_THREAD_AVATAR_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,svg,webp'),
     ],
     'provider_avatars' => [
         'upload' => env('MESSENGER_PROVIDER_AVATAR_UPLOAD', true),
         'removal' => env('MESSENGER_PROVIDER_AVATAR_REMOVAL', true),
-        'size_limit' => env('MESSENGER_PROVIDER_AVATAR_SIZE_LIMIT', 5120), //5MB
+        'size_limit' => env('MESSENGER_PROVIDER_AVATAR_SIZE_LIMIT', 5120),
+        'mime_types' => env('MESSENGER_PROVIDER_AVATAR_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,svg,webp'),
     ],
     'default_thread_avatars' => [
         '1.png' => public_path('vendor/messenger/images/1.png'),
@@ -520,11 +524,8 @@ PushNotificationEvent::class => $data //Array
 
 - Enable/disable the upload and download features.
 - Set upload max size limits, in kilobytes.
+- Set allowed mime types on uploaded files, using the extension separated by a comma (following laravels validation rule `mime:pdf,docx`).
 - Set a different default image to serve for a group thread, and the image used when another image is not found.
-
-### File mime types allowed
-- Document mime types allowed: `.csv, .doc, .docx, .json, .pdf, .ppt, .pptx, .rar, .rtf, .txt, .xls, .xlsx, .xml, .zip, .7z`
-- Image / Avatar mime types allowed: `.jpg, .jpeg, .png, .bmp, .gif, .svg, .webp`
 
 ---
 

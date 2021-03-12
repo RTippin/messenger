@@ -3,6 +3,9 @@
 
 ### [v0.21 (03-11-2021)]
 
+#### Added
+- New configs to set mime types allowed to upload on each file type.
+
 #### Changed
 - threads, messages, participants and message_edits tables use precision 6 for timestamps now.
 
