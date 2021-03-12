@@ -115,6 +115,46 @@ class GroupThreadAvatarTest extends FeatureTestCase
             ->assertSuccessful();
     }
 
+    /** @test */
+    public function group_avatar_mime_types_can_be_overwritten()
+    {
+        Storage::fake(Messenger::getThreadStorage('disk'));
+        Messenger::setThreadAvatarMimeTypes('cr2');
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            ThreadAvatarBroadcast::class,
+            ThreadAvatarEvent::class,
+        ]);
+
+        $this->postJson(route('api.messenger.threads.avatar.update', [
+            'thread' => $this->group->id,
+        ]), [
+            'image' => UploadedFile::fake()->create('avatar.cr2', 500, 'image/x-canon-cr2'),
+        ])
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function group_avatar_size_limit_can_be_overwritten()
+    {
+        Storage::fake(Messenger::getThreadStorage('disk'));
+        Messenger::setThreadAvatarSizeLimit(20480);
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            ThreadAvatarBroadcast::class,
+            ThreadAvatarEvent::class,
+        ]);
+
+        $this->postJson(route('api.messenger.threads.avatar.update', [
+            'thread' => $this->group->id,
+        ]), [
+            'image' => UploadedFile::fake()->create('avatar.jpg', 18000, 'image/jpeg'),
+        ])
+            ->assertSuccessful();
+    }
+
     /**
      * @test
      * @dataProvider avatarDefaultPassesValidation

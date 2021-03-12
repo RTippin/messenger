@@ -56,6 +56,46 @@ class ImageMessageTest extends FeatureTestCase
     }
 
     /** @test */
+    public function image_message_mime_types_can_be_overwritten()
+    {
+        Messenger::setMessageImageMimeTypes('cr2');
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+
+        $this->postJson(route('api.messenger.threads.images.store', [
+            'thread' => $this->private->id,
+        ]), [
+            'image' => UploadedFile::fake()->create('avatar.cr2', 500, 'image/x-canon-cr2'),
+            'temporary_id' => '123-456-789',
+        ])
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function image_message_size_limit_can_be_overwritten()
+    {
+        Messenger::setMessageImageSizeLimit(20480);
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+
+        $this->postJson(route('api.messenger.threads.images.store', [
+            'thread' => $this->private->id,
+        ]), [
+            'image' => UploadedFile::fake()->create('avatar.jpg', 18000, 'image/jpeg'),
+            'temporary_id' => '123-456-789',
+        ])
+            ->assertSuccessful();
+    }
+
+    /** @test */
     public function user_forbidden_to_send_image_message_when_disabled_from_config()
     {
         Messenger::setMessageImageUpload(false);

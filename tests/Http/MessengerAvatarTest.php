@@ -46,6 +46,30 @@ class MessengerAvatarTest extends FeatureTestCase
     }
 
     /** @test */
+    public function avatar_mime_types_can_be_overwritten()
+    {
+        Messenger::setProviderAvatarMimeTypes('cr2');
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.avatar.update'), [
+            'image' => UploadedFile::fake()->create('avatar.cr2', 500, 'image/x-canon-cr2'),
+        ])
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function avatar_size_limit_can_be_overwritten()
+    {
+        Messenger::setProviderAvatarSizeLimit(20480);
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.avatar.update'), [
+            'image' => UploadedFile::fake()->create('avatar.jpg', 18000, 'image/jpeg'),
+        ])
+            ->assertSuccessful();
+    }
+
+    /** @test */
     public function user_can_remove_avatar()
     {
         $this->tippin->update([

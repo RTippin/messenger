@@ -56,6 +56,46 @@ class DocumentMessageTest extends FeatureTestCase
     }
 
     /** @test */
+    public function document_message_mime_types_can_be_overwritten()
+    {
+        Messenger::setMessageDocumentMimeTypes('mp3');
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+
+        $this->postJson(route('api.messenger.threads.documents.store', [
+            'thread' => $this->private->id,
+        ]), [
+            'document' => UploadedFile::fake()->create('song.mp3', 500, 'audio/mpeg'),
+            'temporary_id' => '123-456-789',
+        ])
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function document_message_size_limit_can_be_overwritten()
+    {
+        Messenger::setMessageDocumentSizeLimit(20480);
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+
+        $this->postJson(route('api.messenger.threads.documents.store', [
+            'thread' => $this->private->id,
+        ]), [
+            'document' => UploadedFile::fake()->create('test.pdf', 18000, 'application/pdf'),
+            'temporary_id' => '123-456-789',
+        ])
+            ->assertSuccessful();
+    }
+
+    /** @test */
     public function user_forbidden_to_send_document_message_when_disabled_from_config()
     {
         Messenger::setMessageDocumentUpload(false);

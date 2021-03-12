@@ -15,9 +15,10 @@ class ImageMessageRequest extends FormRequest
     public function rules(): array
     {
         $limit = Messenger::getMessageImageSizeLimit();
+        $mimes = Messenger::getMessageImageMimeTypes();
 
         return [
-            'image' => "required|max:{$limit}|file|image",
+            'image' => "required|max:{$limit}|file|mimes:{$mimes}",
             'temporary_id' => 'required|string',
         ];
     }
