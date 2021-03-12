@@ -24,7 +24,7 @@ class CreateThreadsTable extends Migration
             $table->boolean('messaging')->default(1);
             $table->boolean('knocks')->default(1);
             $table->boolean('lockout')->default(0);
-            $table->timestamps();
+            $table->timestamps(6);
             $table->softDeletes();
         });
     }

@@ -65,6 +65,13 @@ class Thread extends Model
     protected $table = 'threads';
 
     /**
+     * The storage format of the model's date columns.
+     *
+     * @var string
+     */
+    protected $dateFormat = 'Y-m-d H:i:s.u';
+
+    /**
      * @var bool
      */
     public $incrementing = false;

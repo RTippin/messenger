@@ -33,7 +33,7 @@ class MarkParticipantReadTest extends FeatureTestCase
     /** @test */
     public function it_updates_participant()
     {
-        $read = now()->addMinutes(5);
+        $read = now()->addMinutes(5)->format('Y-m-d H:i:s.u');
         Carbon::setTestNow($read);
 
         app(MarkParticipantRead::class)->withoutDispatches()->execute(
@@ -111,7 +111,7 @@ class MarkParticipantReadTest extends FeatureTestCase
     /** @test */
     public function it_updates_participant_if_no_thread_supplied()
     {
-        $read = now()->addMinutes(5);
+        $read = now()->addMinutes(5)->format('Y-m-d H:i:s.u');
         Carbon::setTestNow($read);
 
         app(MarkParticipantRead::class)->withoutDispatches()->execute($this->participant);

@@ -89,7 +89,7 @@ class StoreDocumentMessageTest extends FeatureTestCase
     /** @test */
     public function it_updates_thread_and_participant()
     {
-        $updated = now()->addMinutes(5);
+        $updated = now()->addMinutes(5)->format('Y-m-d H:i:s.u');
         Carbon::setTestNow($updated);
 
         app(StoreDocumentMessage::class)->withoutDispatches()->execute(

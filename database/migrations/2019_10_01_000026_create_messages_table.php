@@ -20,7 +20,7 @@ class CreateMessagesTable extends Migration
             Helpers::SchemaMorphType('owner', $table);
             $table->integer('type')->index();
             $table->text('body');
-            $table->timestamps();
+            $table->timestamps(6);
             $table->softDeletes();
             $table->index('created_at');
             $table->foreign('thread_id')

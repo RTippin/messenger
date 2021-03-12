@@ -48,7 +48,7 @@ class UpdateMessageTest extends FeatureTestCase
     /** @test */
     public function it_updates_message_and_stores_edit()
     {
-        $editedAt = now()->addMinutes(5);
+        $editedAt = now()->addMinutes(5)->format('Y-m-d H:i:s.u');
         Carbon::setTestNow($editedAt);
 
         app(UpdateMessage::class)->withoutDispatches()->execute(

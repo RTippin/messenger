@@ -26,8 +26,8 @@ class CreateParticipantsTable extends Migration
             $table->boolean('send_messages')->default(1);
             $table->boolean('add_participants')->default(0);
             $table->boolean('manage_invites')->default(0);
-            $table->timestamp('last_read')->nullable()->default(null);
-            $table->timestamps();
+            $table->timestamp('last_read', 6)->nullable()->default(null);
+            $table->timestamps(6);
             $table->softDeletes();
             $table->foreign('thread_id')
                 ->references('id')

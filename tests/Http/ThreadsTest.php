@@ -76,12 +76,12 @@ class ThreadsTest extends FeatureTestCase
             ->assertJson([
                 'data' => [
                     [
-                        'type_verbose' => 'GROUP',
-                        'name' => 'First Test Group',
-                    ],
-                    [
                         'type_verbose' => 'PRIVATE',
                         'name' => 'John Doe',
+                    ],
+                    [
+                        'type_verbose' => 'GROUP',
+                        'name' => 'First Test Group',
                     ],
                 ],
             ]);
