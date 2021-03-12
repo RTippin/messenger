@@ -1,6 +1,11 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v0.21 (03-11-2021)]
+
+#### Changed
+- threads, messages, participants and message_edits tables use precision 6 for timestamps now.
+
 ### [v0.20 (03-09-2021)]
 
 #### Changed
