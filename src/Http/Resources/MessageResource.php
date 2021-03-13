@@ -3,13 +3,11 @@
 namespace RTippin\Messenger\Http\Resources;
 
 use Exception;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Call;
-use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
@@ -157,7 +155,7 @@ class MessageResource extends JsonResource
         $names = 'added ';
 
         if (count($bodyJson) > 3) {
-            $remaining = count($bodyJson)-3;
+            $remaining = count($bodyJson) - 3;
             foreach (array_slice($bodyJson, 0, 3) as $key => $owner) {
                 $names .= "{$this->locateContentOwner($owner)->name()}, ";
             }
@@ -225,7 +223,7 @@ class MessageResource extends JsonResource
                 ->get();
 
             if ($call->participants_count > 4) {
-                $remaining = $call->participants_count-4;
+                $remaining = $call->participants_count - 4;
                 foreach ($participants as $participant) {
                     if ($participants->last()->id === $participant->id) {
                         $names .= " {$participant->owner->name()} and {$remaining} others";
