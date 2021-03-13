@@ -52,7 +52,7 @@ class ThreadAvatarMessage implements ShouldQueue
         return [
             $event->thread,
             $event->provider,
-            'updated the groups avatar',
+            'updated the avatar',
             'GROUP_AVATAR_CHANGED',
         ];
     }

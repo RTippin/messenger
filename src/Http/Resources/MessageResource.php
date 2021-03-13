@@ -156,18 +156,25 @@ class MessageResource extends JsonResource
     {
         $names = 'added ';
 
-        foreach ($bodyJson as $key => $owner) {
-            if (count($bodyJson) === 1) {
-                $names .= "{$this->locateContentOwner($owner)->name()}";
-            } elseif (count($bodyJson) > 1
-                && $key === array_key_last($bodyJson)) {
-                $names .= "and {$this->locateContentOwner($owner)->name()}";
-            } else {
+        if (count($bodyJson) > 3) {
+            $remaining = count($bodyJson)-3;
+            foreach (array_slice($bodyJson, 0, 3) as $key => $owner) {
                 $names .= "{$this->locateContentOwner($owner)->name()}, ";
+            }
+            $names .= "and {$remaining} others";
+        } else {
+            foreach ($bodyJson as $key => $owner) {
+                if (count($bodyJson) === 1) {
+                    $names .= "{$this->locateContentOwner($owner)->name()}";
+                } elseif ($key === array_key_last($bodyJson)) {
+                    $names .= "and {$this->locateContentOwner($owner)->name()}";
+                } else {
+                    $names .= "{$this->locateContentOwner($owner)->name()}, ";
+                }
             }
         }
 
-        return "{$names} to the group";
+        return $names;
     }
 
     /**
@@ -176,7 +183,7 @@ class MessageResource extends JsonResource
      */
     public function formatAdminAdded(array $bodyJson): string
     {
-        return "promoted {$this->locateContentOwner($bodyJson)->name()} to administrator";
+        return "promoted {$this->locateContentOwner($bodyJson)->name()}";
     }
 
     /**
@@ -185,7 +192,7 @@ class MessageResource extends JsonResource
      */
     public function formatAdminRemoved(array $bodyJson): string
     {
-        return "demoted {$this->locateContentOwner($bodyJson)->name()} from administrator";
+        return "demoted {$this->locateContentOwner($bodyJson)->name()}";
     }
 
     /**
@@ -206,34 +213,41 @@ class MessageResource extends JsonResource
         /** @var Call $call */
         $call = $this->thread->calls()
             ->videoCall()
-            ->with('participants.owner')
-            ->firstWhere('id', $bodyJson['call_id']);
+            ->withCount('participants')
+            ->find($bodyJson['call_id']);
 
-        if ($call) {
+        if ($call && $call->participants_count > 1) {
             $names = '';
+            $participants = $call->participants()
+                ->where('owner_id', '!=', $this->message->owner_id)
+                ->with('owner')
+                ->limit(3)
+                ->get();
 
-            /** @var CallParticipant|Collection $participants */
-            $participants = $call->participants->reject(function ($value) {
-                return $value->owner_id === $this->message->owner_id
-                    && $value->owner_type === $this->message->owner_type;
-            });
-
-            if ($participants->count()) {
+            if ($call->participants_count > 4) {
+                $remaining = $call->participants_count-4;
+                foreach ($participants as $participant) {
+                    if ($participants->last()->id === $participant->id) {
+                        $names .= " {$participant->owner->name()} and {$remaining} others";
+                    } else {
+                        $names .= " {$participant->owner->name()},";
+                    }
+                }
+            } else {
                 foreach ($participants as $participant) {
                     if ($participants->count() === 1
                         || ($participants->count() === 2
                             && $participants->first()->id === $participant->id)) {
                         $names .= "{$participant->owner->name()}";
-                    } elseif ($participants->count() > 1
-                        && $participants->last()->id === $participant->id) {
+                    } elseif ($participants->last()->id === $participant->id) {
                         $names .= " and {$participant->owner->name()}";
                     } else {
                         $names .= " {$participant->owner->name()},";
                     }
                 }
-
-                return "was in a video call with {$names}";
             }
+
+            return "was in a video call with {$names}";
         }
 
         return 'was in a video call';

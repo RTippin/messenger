@@ -52,7 +52,7 @@ class JoinedWithInviteMessage implements ShouldQueue
         return [
             $event->thread,
             $event->provider,
-            'joined the group',
+            'joined',
             'PARTICIPANT_JOINED_WITH_INVITE',
         ];
     }
