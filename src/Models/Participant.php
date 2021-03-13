@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
@@ -151,7 +152,7 @@ class Participant extends Model
         }
 
         return Message::where('thread_id', '=', $this->thread_id)
-            ->where('created_at', '<=', $this->last_read)
+            ->where('created_at', '<=', Helpers::PrecisionTime($this->last_read))
             ->latest()
             ->first();
     }

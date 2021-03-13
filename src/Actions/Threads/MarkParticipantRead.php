@@ -9,6 +9,7 @@ use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\ParticipantsReadEvent;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\Helpers;
 
 class MarkParticipantRead extends BaseMessengerAction
 {
@@ -64,7 +65,7 @@ class MarkParticipantRead extends BaseMessengerAction
             && ! $this->getParticipant()->pending
             && (! $thread
                 || is_null($this->getParticipant()->last_read)
-                || $thread->updated_at > $this->getParticipant()->last_read);
+                || Helpers::PrecisionTime($thread->updated_at) > Helpers::PrecisionTime($this->getParticipant()->last_read));
     }
 
     /**

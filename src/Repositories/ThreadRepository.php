@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\Helpers;
 
 class ThreadRepository
 {
@@ -64,7 +65,7 @@ class ThreadRepository
                 'recentMessage.owner',
                 'activeCall.participants.owner',
             ])
-            ->where('threads.updated_at', '<=', $thread->updated_at)
+            ->where('threads.updated_at', '<=', Helpers::PrecisionTime($thread->updated_at))
             ->where('threads.id', '!=', $thread->id)
             ->limit($this->messenger->getThreadsPageCount())
             ->get();

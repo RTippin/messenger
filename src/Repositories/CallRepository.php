@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Collection;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\Helpers;
 
 class CallRepository
 {
@@ -83,7 +84,7 @@ class CallRepository
             ->videoCall()
             ->with('owner')
             ->latest()
-            ->where('created_at', '<=', $call->created_at)
+            ->where('created_at', '<=', Helpers::PrecisionTime($call->created_at))
             ->where('id', '!=', $call->id)
             ->limit($this->messenger->getCallsPageCount())
             ->get();

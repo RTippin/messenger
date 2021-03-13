@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\Helpers;
 
 class ParticipantResource extends JsonResource
 {
@@ -68,7 +69,7 @@ class ParticipantResource extends JsonResource
      */
     private function lastSeenMessageId(): ?string
     {
-        if ($this->thread->updated_at <= $this->participant->last_read) {
+        if (Helpers::PrecisionTime($this->thread->updated_at) <= Helpers::PrecisionTime($this->participant->last_read)) {
             return optional($this->thread->recentMessage)->id;
         }
 

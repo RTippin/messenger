@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Support;
 
 use Exception;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Carbon;
 
 class Helpers
 {
@@ -32,6 +33,17 @@ class Helpers
         }
 
         return null;
+    }
+
+    /**
+     * @param Carbon|null $timestamp
+     * @return string|null
+     */
+    public static function PrecisionTime(?Carbon $timestamp = null): ?string
+    {
+        return is_null($timestamp)
+            ? null
+            : $timestamp->format('Y-m-d H:i:s.u');
     }
 
     /**

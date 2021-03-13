@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Collection;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\Helpers;
 
 class ImageMessageRepository
 {
@@ -49,7 +50,7 @@ class ImageMessageRepository
             ->image()
             ->latest()
             ->with('owner')
-            ->where('created_at', '<=', $message->created_at)
+            ->where('created_at', '<=', Helpers::PrecisionTime($message->created_at))
             ->where('id', '!=', $message->id)
             ->limit($this->messenger->getMessagesPageCount())
             ->get();

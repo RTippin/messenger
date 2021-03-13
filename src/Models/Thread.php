@@ -535,7 +535,7 @@ class Thread extends Model
     {
         return $this->hasCurrentProvider()
             && (is_null($this->currentParticipant()->last_read)
-                || $this->updated_at > $this->currentParticipant()->last_read);
+                || Helpers::PrecisionTime($this->updated_at) > Helpers::PrecisionTime($this->currentParticipant()->last_read));
     }
 
     /**
@@ -552,7 +552,7 @@ class Thread extends Model
         $this->unreadCountCache = is_null($this->currentParticipant()->last_read)
             ? $this->messages()->count()
             : $this->messages()
-                ->where('created_at', '>', $this->currentParticipant()->last_read)
+                ->where('created_at', '>', Helpers::PrecisionTime($this->currentParticipant()->last_read))
                 ->count();
 
         return $this->unreadCountCache;
