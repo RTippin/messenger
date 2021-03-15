@@ -279,7 +279,7 @@ return [
         'message_audio' => [
             'upload' => env('MESSENGER_MESSAGE_AUDIO_UPLOAD', true),
             'size_limit' => env('MESSENGER_MESSAGE_AUDIO_SIZE_LIMIT', 10240),
-            'mime_types' => env('MESSENGER_MESSAGE_AUDIO_MIME_TYPES', 'aac,mp3,oga,opus,wav,weba'),
+            'mime_types' => env('MESSENGER_MESSAGE_AUDIO_MIME_TYPES', 'aac,mp3,oga,wav,weba'),
         ],
         'thread_avatars' => [
             'upload' => env('MESSENGER_THREAD_AVATAR_UPLOAD', true),
