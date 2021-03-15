@@ -2,9 +2,12 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewThreadEvent;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PrivateThreadsTest extends FeatureTestCase
@@ -18,6 +21,7 @@ class PrivateThreadsTest extends FeatureTestCase
 
         $this->tippin = $this->userTippin();
         $this->doe = $this->userDoe();
+        Storage::fake(Messenger::getThreadStorage('disk'));
     }
 
     /** @test */
@@ -112,6 +116,60 @@ class PrivateThreadsTest extends FeatureTestCase
                     ],
                 ],
             ]);
+    }
+
+    /** @test */
+    public function creating_new_private_thread_with_image()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            NewThreadBroadcast::class,
+            NewThreadEvent::class,
+        ]);
+
+        $this->postJson(route('api.messenger.privates.store'), [
+            'image' => UploadedFile::fake()->image('picture.jpg'),
+            'recipient_alias' => 'user',
+            'recipient_id' => $this->doe->getKey(),
+        ])
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function creating_new_private_thread_with_document()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            NewThreadBroadcast::class,
+            NewThreadEvent::class,
+        ]);
+
+        $this->postJson(route('api.messenger.privates.store'), [
+            'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+            'recipient_alias' => 'user',
+            'recipient_id' => $this->doe->getKey(),
+        ])
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function creating_new_private_thread_with_audio()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            NewThreadBroadcast::class,
+            NewThreadEvent::class,
+        ]);
+
+        $this->postJson(route('api.messenger.privates.store'), [
+            'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
+            'recipient_alias' => 'user',
+            'recipient_id' => $this->doe->getKey(),
+        ])
+            ->assertSuccessful();
     }
 
     /** @test */

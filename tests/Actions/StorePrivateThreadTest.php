@@ -248,4 +248,21 @@ class StorePrivateThreadTest extends FeatureTestCase
         ]);
         Storage::disk(Messenger::getThreadStorage('disk'))->assertExists(Message::document()->first()->getDocumentPath());
     }
+
+    /** @test */
+    public function it_stores_audio_message()
+    {
+        Messenger::setProvider($this->tippin);
+
+        app(StorePrivateThread::class)->withoutDispatches()->execute([
+            'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
+            'recipient_alias' => 'user',
+            'recipient_id' => $this->doe->getKey(),
+        ]);
+
+        $this->assertDatabaseHas('messages', [
+            'type' => 3,
+        ]);
+        Storage::disk(Messenger::getThreadStorage('disk'))->assertExists(Message::audio()->first()->getAudioPath());
+    }
 }

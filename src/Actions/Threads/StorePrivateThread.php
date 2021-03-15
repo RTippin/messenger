@@ -6,6 +6,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use RTippin\Messenger\Actions\Messages\NewMessageAction;
+use RTippin\Messenger\Actions\Messages\StoreAudioMessage;
 use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
 use RTippin\Messenger\Actions\Messages\StoreImageMessage;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
@@ -285,6 +286,9 @@ class StorePrivateThread extends NewThreadAction
         } elseif (array_key_exists('document', $inputs)) {
             $this->messageActionType = StoreDocumentMessage::class;
             $this->messageActionKey = 'document';
+        } elseif (array_key_exists('audio', $inputs)) {
+            $this->messageActionType = StoreAudioMessage::class;
+            $this->messageActionKey = 'audio';
         }
 
         return $this;
