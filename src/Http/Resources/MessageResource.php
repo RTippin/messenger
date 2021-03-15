@@ -89,6 +89,9 @@ class MessageResource extends JsonResource
             $this->mergeWhen($this->message->isDocument(),
                 fn () => $this->linksForDocument()
             ),
+            $this->mergeWhen($this->message->isAudio(),
+                fn () => $this->linksForAudio()
+            ),
         ];
     }
 
@@ -293,6 +296,17 @@ class MessageResource extends JsonResource
                 'md' => $this->message->getImageViewRoute('md'),
                 'lg' => $this->message->getImageViewRoute('lg'),
             ],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function linksForAudio(): array
+    {
+        return [
+            'api_audio' => $this->message->getAudioDownloadRoute(true),
+            'audio' => $this->message->getAudioDownloadRoute(),
         ];
     }
 

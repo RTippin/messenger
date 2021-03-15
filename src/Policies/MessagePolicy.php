@@ -107,6 +107,20 @@ class MessagePolicy
      * @param Thread $thread
      * @return mixed
      */
+    public function createAudio($user, Thread $thread)
+    {
+        return $this->messenger->isMessageAudioUploadEnabled() && $thread->canMessage()
+            ? $this->allow()
+            : $this->deny('Not authorized to upload audio.');
+    }
+
+    /**
+     * Determine whether the provider can create models.
+     *
+     * @param $user
+     * @param Thread $thread
+     * @return mixed
+     */
     public function createImage($user, Thread $thread)
     {
         return $this->messenger->isMessageImageUploadEnabled() && $thread->canMessage()

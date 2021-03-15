@@ -40,6 +40,7 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @method static Builder|Message text()
  * @method static Builder|Message document()
  * @method static Builder|Message image()
+ * @method static Builder|Message audio()
  * @method static Builder|Message system()
  * @method static Builder|Message nonSystem()
  */
@@ -168,7 +169,7 @@ class Message extends Model
     }
 
     /**
-     * Scope a query for only image messages.
+     * Scope a query for only document messages.
      *
      * @param Builder $query
      * @return Builder
@@ -176,6 +177,17 @@ class Message extends Model
     public function scopeDocument(Builder $query): Builder
     {
         return $query->where('type', '=', 2);
+    }
+
+    /**
+     * Scope a query for only document messages.
+     *
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopeAudio(Builder $query): Builder
+    {
+        return $query->where('type', '=', 3);
     }
 
     /**
@@ -208,6 +220,14 @@ class Message extends Model
     public function getDocumentPath(): string
     {
         return "{$this->getStorageDirectory()}/documents/{$this->body}";
+    }
+
+    /**
+     * @return string
+     */
+    public function getAudioPath(): string
+    {
+        return "{$this->getStorageDirectory()}/audio/{$this->body}";
     }
 
     /**
@@ -259,6 +279,25 @@ class Message extends Model
     }
 
     /**
+     * @param bool $api
+     * @return string|null
+     */
+    public function getAudioDownloadRoute($api = false): ?string
+    {
+        if (! $this->isAudio()) {
+            return null;
+        }
+
+        return Helpers::Route(($api ? 'api.' : '').'messenger.threads.audio.download',
+            [
+                'thread' => $this->thread_id,
+                'message' => $this->id,
+                'audio' => $this->body,
+            ]
+        );
+    }
+
+    /**
      * @return string|null
      */
     public function getEditHistoryRoute(): ?string
@@ -297,7 +336,7 @@ class Message extends Model
      */
     public function isSystemMessage(): bool
     {
-        return ! in_array($this->type, [0, 1, 2]);
+        return ! in_array($this->type, [0, 1, 2, 3]);
     }
 
     /**
@@ -314,6 +353,14 @@ class Message extends Model
     public function isDocument(): bool
     {
         return $this->type === 2;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAudio(): bool
+    {
+        return $this->type === 3;
     }
 
     /**

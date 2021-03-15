@@ -38,6 +38,7 @@ class MessageTest extends FeatureTestCase
         $this->assertSame(0, Message::system()->count());
         $this->assertSame(0, Message::image()->count());
         $this->assertSame(0, Message::document()->count());
+        $this->assertSame(0, Message::audio()->count());
         $this->assertSame('MESSAGE', $this->message->getTypeVerbose());
         $this->assertTrue($this->message->isText());
         $this->assertFalse($this->message->isEdited());
@@ -122,6 +123,7 @@ class MessageTest extends FeatureTestCase
         $this->assertFalse($this->message->isSystemMessage());
         $this->assertFalse($this->message->isDocument());
         $this->assertFalse($this->message->isText());
+        $this->assertFalse($this->message->isAudio());
         $this->assertSame(1, Message::image()->count());
         $this->assertSame('IMAGE_MESSAGE', $this->message->getTypeVerbose());
         $this->assertSame("threads/{$this->group->id}/images/test.png", $this->message->getImagePath());
@@ -141,11 +143,32 @@ class MessageTest extends FeatureTestCase
         $this->assertFalse($this->message->isSystemMessage());
         $this->assertFalse($this->message->isImage());
         $this->assertFalse($this->message->isText());
+        $this->assertFalse($this->message->isAudio());
         $this->assertSame(1, Message::document()->count());
         $this->assertSame('DOCUMENT_MESSAGE', $this->message->getTypeVerbose());
         $this->assertSame("threads/{$this->group->id}/documents/test.pdf", $this->message->getDocumentPath());
         $this->assertSame("/messenger/threads/{$this->group->id}/files/{$this->message->id}/test.pdf", $this->message->getDocumentDownloadRoute());
         $this->assertSame("/api/messenger/threads/{$this->group->id}/files/{$this->message->id}/test.pdf", $this->message->getDocumentDownloadRoute(true));
+    }
+
+    /** @test */
+    public function audio_message()
+    {
+        $this->message->update([
+            'type' => 3,
+            'body' => 'test.mp3',
+        ]);
+
+        $this->assertTrue($this->message->isAudio());
+        $this->assertFalse($this->message->isDocument());
+        $this->assertFalse($this->message->isSystemMessage());
+        $this->assertFalse($this->message->isImage());
+        $this->assertFalse($this->message->isText());
+        $this->assertSame(1, Message::audio()->count());
+        $this->assertSame('AUDIO_MESSAGE', $this->message->getTypeVerbose());
+        $this->assertSame("threads/{$this->group->id}/audio/test.mp3", $this->message->getAudioPath());
+//        $this->assertSame("/messenger/threads/{$this->group->id}/files/{$this->message->id}/test.pdf", $this->message->getDocumentDownloadRoute());
+//        $this->assertSame("/api/messenger/threads/{$this->group->id}/files/{$this->message->id}/test.pdf", $this->message->getDocumentDownloadRoute(true));
     }
 
     /** @test */
@@ -160,6 +183,7 @@ class MessageTest extends FeatureTestCase
         $this->assertFalse($this->message->isDocument());
         $this->assertFalse($this->message->isImage());
         $this->assertFalse($this->message->isText());
+        $this->assertFalse($this->message->isAudio());
         $this->assertSame(1, Message::system()->count());
         $this->assertSame('GROUP_CREATED', $this->message->getTypeVerbose());
     }

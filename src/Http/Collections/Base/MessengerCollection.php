@@ -94,6 +94,10 @@ abstract class MessengerCollection extends ResourceCollection
                 return $this->thread->messages()
                     ->document()
                     ->count();
+            case 'audio':
+                return $this->thread->messages()
+                    ->audio()
+                    ->count();
             case 'calls':
                 return $this->thread->calls()
                     ->videoCall()
@@ -121,6 +125,7 @@ abstract class MessengerCollection extends ResourceCollection
                 case 'messages':
                 case 'logs':
                 case 'images':
+                case 'audio':
                 case 'documents':
                     return Messenger::getMessagesPageCount();
                 case 'calls':
@@ -140,6 +145,7 @@ abstract class MessengerCollection extends ResourceCollection
             case 'messages':
             case 'logs':
             case 'images':
+            case 'audio':
             case 'documents':
                 return Messenger::getMessagesIndexCount();
             case 'calls':
@@ -215,6 +221,13 @@ abstract class MessengerCollection extends ResourceCollection
                             'image' => $this->nextPageId(),
                         ]
                     );
+                case 'audio':
+                    return Helpers::Route('api.messenger.threads.audio.page',
+                        [
+                            'thread' => $this->thread->id,
+                            'audio' => $this->nextPageId(),
+                        ]
+                    );
                 case 'documents':
                     return Helpers::Route('api.messenger.threads.documents.page',
                         [
@@ -244,6 +257,7 @@ abstract class MessengerCollection extends ResourceCollection
                 case 'messages':
                 case 'logs':
                 case 'images':
+                case 'audio':
                 case 'documents':
                     return $this->collection->count() < Messenger::getMessagesIndexCount();
                 case 'calls':
@@ -283,6 +297,9 @@ abstract class MessengerCollection extends ResourceCollection
             break;
             case 'images':
                 $model = $this->thread->messages()->image()->oldest()->first();
+            break;
+            case 'audio':
+                $model = $this->thread->messages()->audio()->oldest()->first();
             break;
             case 'documents':
                 $model = $this->thread->messages()->document()->oldest()->first();
