@@ -1,7 +1,7 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
-### [v0.22 (03-11-2021)]
+### [v0.22 (03-15-2021)]
 
 #### Added
 - Audio message type to upload audio files.
