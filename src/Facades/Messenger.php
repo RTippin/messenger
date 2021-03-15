@@ -42,8 +42,6 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static setThreadAvatarUpload(bool $threadAvatarUpload)
  * @method static isMessageDocumentUploadEnabled()
  * @method static setMessageDocumentUpload(bool $messageDocumentUpload)
- * @method static isMessageDocumentDownloadEnabled()
- * @method static setMessageDocumentDownload(bool $messageDocumentDownload)
  * @method static isProviderAvatarUploadEnabled()
  * @method static setProviderAvatarUpload(bool $providerAvatarUpload)
  * @method static isProviderAvatarRemovalEnabled()

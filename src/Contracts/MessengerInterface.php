@@ -327,17 +327,6 @@ interface MessengerInterface
     public function setMessageDocumentUpload(bool $messageDocumentUpload);
 
     /**
-     * @return bool
-     */
-    public function isMessageDocumentDownloadEnabled(): bool;
-
-    /**
-     * @param bool $messageDocumentDownload
-     * @return $this
-     */
-    public function setMessageDocumentDownload(bool $messageDocumentDownload);
-
-    /**
      * @return int
      */
     public function getMessageDocumentSizeLimit(): int;

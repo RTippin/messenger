@@ -491,7 +491,6 @@ PushNotificationEvent::class => $data //Array
 'files' => [
     'message_documents' => [
         'upload' => env('MESSENGER_MESSAGE_DOCUMENT_UPLOAD', true),
-        'download' => env('MESSENGER_MESSAGE_DOCUMENT_DOWNLOAD', true),
         'size_limit' => env('MESSENGER_MESSAGE_DOCUMENT_SIZE_LIMIT', 10240),
         'mime_types' => env('MESSENGER_MESSAGE_DOCUMENT_MIME_TYPES', 'csv,doc,docx,json,pdf,ppt,pptx,rar,rtf,txt,xls,xlsx,xml,zip,7z'),
     ],
@@ -499,6 +498,11 @@ PushNotificationEvent::class => $data //Array
         'upload' => env('MESSENGER_MESSAGE_IMAGE_UPLOAD', true),
         'size_limit' => env('MESSENGER_MESSAGE_IMAGE_SIZE_LIMIT', 5120),
         'mime_types' => env('MESSENGER_MESSAGE_IMAGE_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,svg,webp'),
+    ],
+    'message_audio' => [
+        'upload' => env('MESSENGER_MESSAGE_AUDIO_UPLOAD', true),
+        'size_limit' => env('MESSENGER_MESSAGE_AUDIO_SIZE_LIMIT', 10240),
+        'mime_types' => env('MESSENGER_MESSAGE_AUDIO_MIME_TYPES', 'aac,mp3,oga,opus,wav,weba'),
     ],
     'thread_avatars' => [
         'upload' => env('MESSENGER_THREAD_AVATAR_UPLOAD', true),

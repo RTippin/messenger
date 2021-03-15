@@ -455,7 +455,6 @@ class MessengerTest extends MessengerTestCase
         $this->assertTrue($this->messenger->isThreadInvitesEnabled());
         $this->assertSame(3, $this->messenger->getThreadMaxInvitesCount());
         $this->assertTrue($this->messenger->isMessageDocumentUploadEnabled());
-        $this->assertTrue($this->messenger->isMessageDocumentDownloadEnabled());
         $this->assertTrue($this->messenger->isMessageImageUploadEnabled());
         $this->assertTrue($this->messenger->isMessageAudioUploadEnabled());
         $this->assertTrue($this->messenger->isThreadAvatarUploadEnabled());
@@ -535,7 +534,6 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->setThreadInvites(false);
         $this->messenger->setThreadInvitesMaxCount(5);
         $this->messenger->setMessageDocumentUpload(false);
-        $this->messenger->setMessageDocumentDownload(false);
         $this->messenger->setMessageImageUpload(false);
         $this->messenger->setMessageAudioUpload(false);
         $this->messenger->setThreadAvatarUpload(false);
@@ -591,7 +589,6 @@ class MessengerTest extends MessengerTestCase
         $this->assertFalse($this->messenger->isThreadInvitesEnabled());
         $this->assertSame(5, $this->messenger->getThreadMaxInvitesCount());
         $this->assertFalse($this->messenger->isMessageDocumentUploadEnabled());
-        $this->assertFalse($this->messenger->isMessageDocumentDownloadEnabled());
         $this->assertFalse($this->messenger->isMessageImageUploadEnabled());
         $this->assertFalse($this->messenger->isMessageAudioUploadEnabled());
         $this->assertFalse($this->messenger->isThreadAvatarUploadEnabled());

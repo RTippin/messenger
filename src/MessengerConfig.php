@@ -174,11 +174,6 @@ trait MessengerConfig
     private bool $messageDocumentUpload;
 
     /**
-     * @var bool
-     */
-    private bool $messageDocumentDownload;
-
-    /**
      * @var int
      */
     private int $messageDocumentSizeLimit;
@@ -694,25 +689,6 @@ trait MessengerConfig
     public function setMessageDocumentUpload(bool $messageDocumentUpload): self
     {
         $this->messageDocumentUpload = $messageDocumentUpload;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isMessageDocumentDownloadEnabled(): bool
-    {
-        return $this->messageDocumentDownload;
-    }
-
-    /**
-     * @param bool $messageDocumentDownload
-     * @return $this
-     */
-    public function setMessageDocumentDownload(bool $messageDocumentDownload): self
-    {
-        $this->messageDocumentDownload = $messageDocumentDownload;
 
         return $this;
     }
@@ -1415,7 +1391,6 @@ trait MessengerConfig
         $this->messageAudioSizeLimit = $this->configRepo->get('messenger.files.message_audio.size_limit');
         $this->messageAudioMimeTypes = $this->configRepo->get('messenger.files.message_audio.mime_types');
         $this->messageDocumentUpload = $this->configRepo->get('messenger.files.message_documents.upload');
-        $this->messageDocumentDownload = $this->configRepo->get('messenger.files.message_documents.download');
         $this->messageDocumentSizeLimit = $this->configRepo->get('messenger.files.message_documents.size_limit');
         $this->messageDocumentMimeTypes = $this->configRepo->get('messenger.files.message_documents.mime_types');
         $this->threadAvatarUpload = $this->configRepo->get('messenger.files.thread_avatars.upload');
