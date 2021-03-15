@@ -20,6 +20,7 @@
 - Realtime messaging between multiple models.
 - Private and group threads.
 - Permissions per participant within a group thread.
+- Send image, document or audio messages.
 - Friends system.
 - Search system.
 - Online status.
@@ -502,7 +503,7 @@ PushNotificationEvent::class => $data //Array
     'message_audio' => [
         'upload' => env('MESSENGER_MESSAGE_AUDIO_UPLOAD', true),
         'size_limit' => env('MESSENGER_MESSAGE_AUDIO_SIZE_LIMIT', 10240),
-        'mime_types' => env('MESSENGER_MESSAGE_AUDIO_MIME_TYPES', 'aac,mp3,oga,opus,wav,weba'),
+        'mime_types' => env('MESSENGER_MESSAGE_AUDIO_MIME_TYPES', 'aac,mp3,oga,wav,weba'),
     ],
     'thread_avatars' => [
         'upload' => env('MESSENGER_THREAD_AVATAR_UPLOAD', true),
@@ -667,7 +668,11 @@ MESSENGER_CALLING_ENABLED=true
 - `php artisan messenger:providers:clear`
     * Clear the cached provider config file.
 - `php artisan messenger:purge:documents` | `--now` | `--days=30`
-    * We will purge all soft deleted document messages that were archived past the set days (30 default). We run it through our action to remove the files from storage and message from the database.
+    * We will purge all soft deleted document messages that were archived past the set days (30 default). We run it through our action to remove the document file from storage and message from the database.
+    * `--days=X` flag to set how many days in the past to start at.
+    * `--now` flag to run immediately without dispatching jobs to queue.
+- `php artisan messenger:purge:audio` | `--now` | `--days=30`
+    * We will purge all soft deleted audio messages that were archived past the set days (30 default). We run it through our action to remove the audio file from storage and message from the database.
     * `--days=X` flag to set how many days in the past to start at.
     * `--now` flag to run immediately without dispatching jobs to queue.
 - `php artisan messenger:purge:images` | `--now` | `--days=30`

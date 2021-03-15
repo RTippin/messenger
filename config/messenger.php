@@ -267,7 +267,6 @@ return [
     'files' => [
         'message_documents' => [
             'upload' => env('MESSENGER_MESSAGE_DOCUMENT_UPLOAD', true),
-            'download' => env('MESSENGER_MESSAGE_DOCUMENT_DOWNLOAD', true),
             'size_limit' => env('MESSENGER_MESSAGE_DOCUMENT_SIZE_LIMIT', 10240),
             'mime_types' => env('MESSENGER_MESSAGE_DOCUMENT_MIME_TYPES', 'csv,doc,docx,json,pdf,ppt,pptx,rar,rtf,txt,xls,xlsx,xml,zip,7z'),
         ],

@@ -1,6 +1,20 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v0.22 (03-11-2021)]
+
+#### Added
+- Audio message type to upload audio files.
+~ Configs for audio files.
+- Command to purge archived audio files.
+- Routes to store/view/paginate and stream/download audio files.
+
+#### Changed
+- Updated the UI to include support for audio files in a thread.
+
+#### Removed
+- `message_documents.download` toggle in config removed.
+
 ### [v0.21 (03-11-2021)]
 
 #### Added
