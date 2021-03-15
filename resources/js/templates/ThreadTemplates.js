@@ -258,7 +258,8 @@ window.ThreadTemplates = (function () {
                 switch(data.type){
                     case 1:
                     case 2:
-                        return '<div class="h3 spinner-border text-primary" style="width: 4rem; height: 4rem;" role="status">\n' +
+                    case 3:
+                        return '<div class="h3 spinner-grow text-primary" style="width: 4rem; height: 4rem;" role="status">\n' +
                                 '  <span class="sr-only">Uploading...</span>\n' +
                                 '</div>';
                     default:
@@ -269,10 +270,12 @@ window.ThreadTemplates = (function () {
                 case 1:
                     return '<a target="_blank" href="'+data.image.lg+'">' +
                                '<img class="msg_image NS img-fluid" src="'+data.image.md+'" />' +
-                               '<div class="h3 spinner-border text-secondary" style="width: 4rem; height: 4rem;" role="status"><span class="sr-only">loading...</span></div>'+
+                               '<div class="h3 spinner-grow text-info" style="width: 4rem; height: 4rem;" role="status"><span class="sr-only">loading...</span></div>'+
                            '</a>';
                 case 2:
                     return '<a href="'+data.document+'" target="_blank"><i class="fas fa-cloud-download-alt"></i> '+data.body+'</a>';
+                case 3:
+                    return '<a href="'+data.audio+'" target="_blank"><i class="fas fa-volume-up"></i> '+data.body+'</a>';
                 default:
                     let body = methods.format_message_body(data.body);
 

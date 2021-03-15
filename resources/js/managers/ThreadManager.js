@@ -1166,7 +1166,7 @@ window.ThreadManager = (function () {
             let images = document.getElementsByClassName('msg_image'),
             emojis = document.getElementsByClassName('emojione'),
             loadImage = function (e) {
-                $(e.target).siblings('.spinner-border').remove();
+                $(e.target).siblings('.spinner-grow').remove();
                 $(e.target).removeClass('msg_image NS');
                 if(scroll) methods.threadScrollBottom(true, false);
                 if(e.type === 'error') e.target.src = '/images/image404.png';
@@ -1461,7 +1461,11 @@ window.ThreadManager = (function () {
             }
         },
         sendUploadFiles : function(file){
-            let type = false,
+            let type = {
+                number : 0,
+                input : null,
+                path : null
+            },
             images = [
                 'image/jpeg',
                 'image/png',
@@ -1469,6 +1473,13 @@ window.ThreadManager = (function () {
                 'image/gif',
                 'image/svg+xml',
                 'image/webp',
+            ],
+            audio = [
+                'audio/aac',
+                'audio/mpeg',
+                'audio/ogg',
+                'audio/wav',
+                'audio/webm',
             ],
             files = [
                 'application/pdf',
@@ -1491,9 +1502,20 @@ window.ThreadManager = (function () {
                 'application/json',
                 'text/csv',
             ];
-            if(images.includes(file.type)) type = 1;
-            if(files.includes(file.type)) type = 2;
-            if(!type){
+            if(images.includes(file.type)){
+                type.number = 1;
+                type.input = 'image';
+                type.path = '/images';
+            } else if(files.includes(file.type)){
+                type.number = 2;
+                type.input = 'document';
+                type.path = '/documents';
+            } else if(audio.includes(file.type)){
+                type.number = 3;
+                type.input = 'audio';
+                type.path = '/audio';
+            }
+            if(type.number === 0){
                 Messenger.alert().Alert({
                     title : 'File type not supported',
                     toast : true,
@@ -1501,13 +1523,13 @@ window.ThreadManager = (function () {
                 });
                 return;
             }
-            let pending = methods.makePendingMessage(type, null);
+            let pending = methods.makePendingMessage(type.number, null);
             methods.managePendingMessage('add', pending);
             let form = new FormData();
-            form.append(type === 1 ? 'image' : 'document', file);
+            form.append(type.input, file);
             form.append('temporary_id', pending.id);
             Messenger.xhr().payload({
-                route : Messenger.common().API + 'threads/' + opt.thread.id + (type === 1 ? '/images' : '/documents'),
+                route : Messenger.common().API + 'threads/' + opt.thread.id + type.path,
                 data : form,
                 success : function(x){
                     methods.managePendingMessage('completed', pending, x)
