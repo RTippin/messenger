@@ -5,10 +5,12 @@ namespace RTippin\Messenger\Http\Controllers\Actions;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\Request;
 use RTippin\Messenger\Exceptions\FileNotFoundException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DownloadMessageAudio
@@ -39,17 +41,19 @@ class DownloadMessageAudio
     }
 
     /**
-     * Download message audio.
+     * Stream message audio.
      *
+     * @param Request $request
      * @param Thread $thread
      * @param Message $message
      * @param string $audio
-     * @return StreamedResponse
-     * @throws FileNotFoundException|AuthorizationException
+     * @return BinaryFileResponse|StreamedResponse
+     * @throws AuthorizationException
      */
-    public function __invoke(Thread $thread,
+    public function __invoke(Request $request,
+                             Thread $thread,
                              Message $message,
-                             string $audio): StreamedResponse
+                             string $audio)
     {
         $this->authorize('view', [
             Message::class,
@@ -58,9 +62,37 @@ class DownloadMessageAudio
 
         $this->checkAudioExist($message, $audio);
 
+        return $request->has('stream')
+            ? $this->streamResponse($message)
+            : $this->downloadResponse($message);
+    }
+
+    /**
+     * @param Message $message
+     * @return StreamedResponse
+     */
+    private function downloadResponse(Message $message): StreamedResponse
+    {
         return $this->filesystemManager
             ->disk($message->getStorageDisk())
             ->download($message->getAudioPath());
+    }
+
+    /**
+     * @param Message $message
+     * @return BinaryFileResponse
+     */
+    private function streamResponse(Message $message): BinaryFileResponse
+    {
+        $response = new BinaryFileResponse(
+            $this->filesystemManager
+                ->disk($message->getStorageDisk())
+                ->path($message->getAudioPath())
+        );
+
+        BinaryFileResponse::trustXSendfileTypeHeader();
+
+        return $response;
     }
 
     /**

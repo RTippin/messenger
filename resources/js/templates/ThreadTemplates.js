@@ -101,7 +101,9 @@ window.ThreadTemplates = (function () {
                     case 1:
                         return '<em>'+data.resources.latest_message.owner.name+'</em> : <i class="far fa-image"></i> Sent an image';
                     case 2:
-                        return '<em>'+data.resources.latest_message.owner.name+'</em> : <i class="fas fa-cloud-download-alt"></i> Sent a file';
+                        return '<em>'+data.resources.latest_message.owner.name+'</em> : <i class="fas fa-file-download"></i> Sent a file';
+                    case 3:
+                        return '<em>'+data.resources.latest_message.owner.name+'</em> : <i class="fas fa-music"></i> Sent audio';
                     default:
                         return '<em>'+data.resources.latest_message.owner.name+'</em> : ' + (typeof emojione !== 'undefined' ? emojione.toImage(data.resources.latest_message.body) : data.resources.latest_message.body)
                 }
@@ -191,6 +193,24 @@ window.ThreadTemplates = (function () {
             }
             return html
         },
+        thread_audio : function(start, data){
+            let html = '';
+            if(start){
+                html += '<div class="inbox mx-n2"><ul id="audio_history" class="inbox messages-list">';
+            }
+            data.data.forEach(function (message) {
+                html += templates.audio_item(message)
+            });
+            if(start){
+                html += '</ul></div>';
+            }
+            if(!data.meta.final_page){
+                html += '<div id="audio_paginate_btn" class="col-12 text-center mt-4"><hr>' +
+                    '<button onclick="ThreadManager.load().threadAudio(true, \''+data.meta.next_page_id+'\')" type="button" class="btn btn-primary">Load More <i class="fas fa-arrow-alt-circle-down"></i></button>' +
+                    '</div>';
+            }
+            return html
+        },
         message_edit_history : function(data){
             let html = '<div class="mx-n2"><ul id="edit_history">';
             data.forEach(function (message) {
@@ -210,7 +230,17 @@ window.ThreadTemplates = (function () {
                 '<a target="_blank" href="'+data.document+'">' +
                 '<div class="media"><div class="media-left media-middle"><img src="'+data.owner.avatar.sm+'" class="media-object rounded-circle thread-list-avatar avatar-is-offline" /></div>' +
                 '<div class="media-body thread_body_li"><div class="header d-inline"><small><div class="float-right date"><time class="timeago" datetime="'+data.created_at+'">'+Messenger.format().makeTimeAgo(data.created_at)+'</time></div></small>' +
-                '<div class="from font-weight-bold">'+data.owner.name+'</div></div><div class="description"><em><i class="fas fa-cloud-download-alt"></i> '+data.body+'</em></div></div></div></a></li>'
+                '<div class="from font-weight-bold">'+data.owner.name+'</div></div><div class="description"><em><i class="fas fa-file-download"></i> '+data.body+'</em></div></div></div></a></li>'
+        },
+        audio_item : function(data){
+            return '<li title="'+Messenger.format().escapeHtml(data.owner.name)+' on '+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="thread_list_item mb-2">' +
+                '<div class="thread-list-status"><span class="shadow-sm badge badge-pill badge-success">Audio <i class="fas fa-music"></i></span></div> '+
+                '<a target="_blank" href="'+data.audio+'">' +
+                '<div class="media"><div class="media-left media-middle"><img src="'+data.owner.avatar.sm+'" class="media-object rounded-circle thread-list-avatar avatar-is-offline" /></div>' +
+                '<div class="media-body thread_body_li"><div class="header d-inline"><small><div class="float-right date"><time class="timeago" datetime="'+data.created_at+'">'+Messenger.format().makeTimeAgo(data.created_at)+'</time></div></small>' +
+                '<div class="from font-weight-bold">'+data.owner.name+'</div></div><div class="description"><em><i class="fas fa-music"></i> '+data.body+'</em></div></div></div></a>' +
+                '<div class="col-12 text-center"><audio controls preload="none"><source src="'+data.audio+'?stream=true"></audio></div>' +
+                '</li>'
         },
         messenger_search_friend : function(profile){
             switch(profile.options.friend_status){
@@ -273,9 +303,12 @@ window.ThreadTemplates = (function () {
                                '<div class="h3 spinner-grow text-info" style="width: 4rem; height: 4rem;" role="status"><span class="sr-only">loading...</span></div>'+
                            '</a>';
                 case 2:
-                    return '<a href="'+data.document+'" target="_blank"><i class="fas fa-cloud-download-alt"></i> '+data.body+'</a>';
+                    return '<a href="'+data.document+'" target="_blank"><i class="fas fa-file-download"></i> '+data.body+'</a>';
                 case 3:
-                    return '<a href="'+data.audio+'" target="_blank"><i class="fas fa-volume-up"></i> '+data.body+'</a>';
+                    return '<a href="'+data.audio+'" target="_blank"><i class="fas fa-volume-up"></i> '+data.body+'</a><hr>' +
+                        '<audio controls preload="none">\n' +
+                        '  <source src="'+data.audio+'?stream=true">\n' +
+                        '</audio>';
                 default:
                     let body = methods.format_message_body(data.body);
 
@@ -322,7 +355,7 @@ window.ThreadTemplates = (function () {
         documents_message :function(data){
             return '<div class="col text-center">' +
                 '<a target="_blank" href="'+data.document+'">' +
-                '<h4><i class="fas fa-cloud-download-alt"></i> '+data.body+'</h4></a>'+
+                '<h4><i class="fas fa-file-download"></i> '+data.body+'</h4></a>'+
                 Messenger.format().escapeHtml(data.owner.name)+' on '+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+
                 '</div><hr>';
         },
@@ -457,6 +490,7 @@ window.ThreadTemplates = (function () {
             return '<div class="dropdown-divider"></div>' +
                 '<a onclick="ThreadManager.load().threadDocuments(); return false;" class="dropdown-item" href="#"><i class="fas fa-file-alt"></i> Documents</a>' +
                 '<a onclick="ThreadManager.load().threadImages(); return false;" class="dropdown-item" href="#"><i class="fas fa-images"></i> Images</a>' +
+                '<a onclick="ThreadManager.load().threadAudio(); return false;" class="dropdown-item" href="#"><i class="fas fa-music"></i> Audio</a>' +
                 '<a onclick="ThreadManager.load().threadLogs(); return false;" class="dropdown-item" href="#"><i class="fas fa-database"></i> Logs</a>' +
                 '<div class="dropdown-divider"></div>\n';
         },
@@ -1158,11 +1192,13 @@ window.ThreadTemplates = (function () {
                 '                                <div class="form-group form-group-xs-nm">\n' +
                 '                                    <button id="file_upload_btn" data-toggle="tooltip" title="Upload File(s)" data-placement="top" class="btn btn-sm btn-light" onclick="$(\'#doc_file\').trigger(\'click\');" type="button"><i class="fas fa-paperclip"></i></button>\n' +
                 '                                    <button id="image_upload_btn" data-toggle="tooltip" title="Upload Image(s)" data-placement="top" class="mx-1 btn btn-sm btn-light" onclick="$(\'#image_file\').trigger(\'click\');" type="button"><i class="far fa-image"></i></button>\n' +
+                '                                    <button id="audio_upload_btn" data-toggle="tooltip" title="Upload Audio" data-placement="top" class="btn btn-sm btn-light" onclick="$(\'#audio_file\').trigger(\'click\');" type="button"><i class="fas fa-music"></i></button>\n' +
                 '                                </div>\n' +
                 '                            </div>\n' +
                 '                        </form>\n' +
                 '                    </div>\n' +
                 '                    <input class="NS" multiple type="file" name="doc_file" id="doc_file" accept=".csv,.doc,.docx,.json,.pdf,.ppt,.pptx,.rar,.rtf,.txt,.xls,.xlsx,.xml,.zip,.7z">\n' +
+                '                    <input class="NS" multiple type="file" name="audio_file" id="audio_file" accept=".aac,.mp3,.oga,.wav,.weba">\n' +
                 '                    <input class="NS" multiple id="image_file" type="file" name="image_file" accept="image/*">\n' +
                 '                </div>\n' +
                 '            </div>\n' +

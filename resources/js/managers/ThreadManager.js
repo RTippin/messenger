@@ -72,6 +72,7 @@ window.ThreadManager = (function () {
             msg_panel : null,
             doc_file : null,
             img_file : null,
+            audio_file : null,
             data_table : null,
             emoji_editor : null,
             emoji : null,
@@ -124,6 +125,7 @@ window.ThreadManager = (function () {
                 opt.elements.msg_panel = $(".chat-body");
                 opt.elements.doc_file = $("#doc_file");
                 opt.elements.img_file = $("#image_file");
+                opt.elements.audio_file = $("#audio_file");
             }
             if([1,2,3].includes(arg.type)){
                 if(arg.type === 3) opt.storage.temp_data = arg.temp_data;
@@ -302,6 +304,7 @@ window.ThreadManager = (function () {
                     msg_panel : null,
                     doc_file : null,
                     img_file : null,
+                    audio_file : null,
                     data_table : null,
                     emoji_editor : null,
                     emoji : null,
@@ -352,6 +355,7 @@ window.ThreadManager = (function () {
                     opt.elements.msg_panel.scroll(mounted.msgPanelScroll);
                     opt.elements.img_file.change(mounted.imageChange);
                     opt.elements.doc_file.change(mounted.documentChange);
+                    opt.elements.audio_file.change(mounted.audioChange);
                     opt.elements.emoji_editor.on('paste', methods.pasteImage);
                     opt.elements.form.keydown(mounted.formKeydown);
                     opt.elements.form.on('input keyup', methods.manageSendMessageButton);
@@ -366,6 +370,7 @@ window.ThreadManager = (function () {
                     opt.elements.msg_panel.click(mounted.msgPanelClick);
                     opt.elements.img_file.change(mounted.imageChange);
                     opt.elements.doc_file.change(mounted.documentChange);
+                    opt.elements.audio_file.change(mounted.audioChange);
                     opt.elements.form.keydown(mounted.formKeydown);
                     opt.elements.form.on('input keyup', methods.manageSendMessageButton);
                     opt.elements.form.on('submit', mounted.stopDefault);
@@ -393,6 +398,7 @@ window.ThreadManager = (function () {
                         opt.elements.msg_panel.off('scroll', mounted.msgPanelScroll);
                         opt.elements.img_file.off('change', mounted.imageChange);
                         opt.elements.doc_file.off('change', mounted.documentChange);
+                        opt.elements.audio_file.off('change', mounted.audioChange);
                         opt.elements.emoji_editor.off('paste', methods.pasteImage);
                         opt.elements.form.off('keydown', mounted.formKeydown);
                         opt.elements.form.off('input keyup', methods.manageSendMessageButton);
@@ -409,6 +415,7 @@ window.ThreadManager = (function () {
                         opt.elements.msg_panel.off('click', mounted.msgPanelClick);
                         opt.elements.img_file.off('change', mounted.imageChange);
                         opt.elements.doc_file.off('change', mounted.documentChange);
+                        opt.elements.audio_file.off('change', mounted.audioChange);
                         opt.elements.form.off('keydown', mounted.formKeydown);
                         opt.elements.form.off('input keyup', methods.manageSendMessageButton);
                         opt.elements.form.off('submit', mounted.stopDefault);
@@ -556,6 +563,22 @@ window.ThreadManager = (function () {
                     if(!opt.thread.messaging) return;
                     Messenger.button().addLoader({id : '#file_upload_btn'});
                     new_forms.newPrivate(2);
+                break;
+            }
+        },
+        audioChange : function(){
+            switch (opt.thread.type) {
+                case 1:
+                case 2:
+                    if(opt.thread.lockout || !opt.thread.messaging) return;
+                    let input = document.getElementById('audio_file'), files = input.files;
+                    ([...files]).forEach(methods.sendUploadFiles);
+                    input.value = '';
+                break;
+                case 3:
+                    if(!opt.thread.messaging) return;
+                    Messenger.button().addLoader({id : '#audio_upload_btn'});
+                    new_forms.newPrivate(3);
                 break;
             }
         },
@@ -2493,6 +2516,9 @@ window.ThreadManager = (function () {
                 case 2:
                     form.append('document', $('#doc_file')[0].files[0]);
                 break;
+                case 3:
+                    form.append('audio', $('#audio_file')[0].files[0]);
+                break;
             }
             form.append('recipient_id', opt.storage.temp_data.provider_id);
             form.append('recipient_alias', opt.storage.temp_data.provider_alias);
@@ -2801,6 +2827,41 @@ window.ThreadManager = (function () {
                             Messenger.alert().fillModal({
                                 title : opt.thread.name+' Shared Documents',
                                 body : data.data.length ? ThreadTemplates.render().thread_documents(true, data) : '<h3 class="text-center mt-2"><span class="badge badge-pill badge-secondary"><i class="fas fa-file-alt"></i> No Documents</span></h3>'
+                            });
+                        }
+                    })
+                }
+            })
+        },
+        threadAudio : function(paginate, page){
+            if(!opt.thread.id) return;
+            if(paginate){
+                $("#audio_paginate_btn").html(Messenger.alert().loader(true));
+                Messenger.xhr().request({
+                    route : Messenger.common().API+'threads/'+opt.thread.id+'/audio/page/' + page,
+                    success : function(data){
+                        $("#audio_paginate_btn").remove();
+                        $("#audio_history").append(ThreadTemplates.render().thread_audio(false, data))
+                    }
+                })
+                return;
+            }
+            Messenger.alert().Modal({
+                size : 'lg',
+                backdrop_ctrl : false,
+                overflow : true,
+                theme : 'dark',
+                icon : 'music',
+                title: 'Loading Audio...',
+                pre_loader: true,
+                h4: false,
+                onReady: function () {
+                    Messenger.xhr().request({
+                        route : Messenger.common().API+'threads/'+opt.thread.id+'/audio',
+                        success : function(data){
+                            Messenger.alert().fillModal({
+                                title : opt.thread.name+' Shared Audio',
+                                body : data.data.length ? ThreadTemplates.render().thread_audio(true, data) : '<h3 class="text-center mt-2"><span class="badge badge-pill badge-secondary"><i class="fas fa-music"></i> No Audio</span></h3>'
                             });
                         }
                     })
