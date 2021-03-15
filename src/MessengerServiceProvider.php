@@ -12,6 +12,7 @@ use RTippin\Messenger\Commands\InvitesCheckCommand;
 use RTippin\Messenger\Commands\ProvidersCacheCommand;
 use RTippin\Messenger\Commands\ProvidersClearCommand;
 use RTippin\Messenger\Commands\PublishCommand;
+use RTippin\Messenger\Commands\PurgeAudioCommand;
 use RTippin\Messenger\Commands\PurgeDocumentsCommand;
 use RTippin\Messenger\Commands\PurgeImagesCommand;
 use RTippin\Messenger\Commands\PurgeMessagesCommand;
@@ -63,6 +64,7 @@ class MessengerServiceProvider extends ServiceProvider
             ProvidersCacheCommand::class,
             ProvidersClearCommand::class,
             PublishCommand::class,
+            PurgeAudioCommand::class,
             PurgeDocumentsCommand::class,
             PurgeImagesCommand::class,
             PurgeMessagesCommand::class,
