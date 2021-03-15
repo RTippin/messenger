@@ -64,6 +64,13 @@
   "recipient_alias": "user"
 }
 ```
+```json
+{
+  "audio": "(binary)",
+  "recipient_id": "922f8476-c5f4-4024-8ba2-1a0d1cd22d71",
+  "recipient_alias": "user"
+}
+```
 #### Response:
 ```json
 {
