@@ -103,7 +103,7 @@ window.ThreadTemplates = (function () {
                     case 2:
                         return '<em>'+data.resources.latest_message.owner.name+'</em> : <i class="fas fa-file-download"></i> Sent a file';
                     case 3:
-                        return '<em>'+data.resources.latest_message.owner.name+'</em> : <i class="fas fa-music"></i> Sent audio';
+                        return '<em>'+data.resources.latest_message.owner.name+'</em> : <i class="fas fa-music"></i> Sent an audio file';
                     default:
                         return '<em>'+data.resources.latest_message.owner.name+'</em> : ' + (typeof emojione !== 'undefined' ? emojione.toImage(data.resources.latest_message.body) : data.resources.latest_message.body)
                 }
@@ -289,7 +289,7 @@ window.ThreadTemplates = (function () {
                     case 1:
                     case 2:
                     case 3:
-                        return '<div class="h3 spinner-grow text-primary" style="width: 4rem; height: 4rem;" role="status">\n' +
+                        return '<div class="h3 spinner-grow text-danger" style="width: 4rem; height: 4rem;" role="status">\n' +
                                 '  <span class="sr-only">Uploading...</span>\n' +
                                 '</div>';
                     default:
