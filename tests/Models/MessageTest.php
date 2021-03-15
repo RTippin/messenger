@@ -167,8 +167,8 @@ class MessageTest extends FeatureTestCase
         $this->assertSame(1, Message::audio()->count());
         $this->assertSame('AUDIO_MESSAGE', $this->message->getTypeVerbose());
         $this->assertSame("threads/{$this->group->id}/audio/test.mp3", $this->message->getAudioPath());
-//        $this->assertSame("/messenger/threads/{$this->group->id}/files/{$this->message->id}/test.pdf", $this->message->getDocumentDownloadRoute());
-//        $this->assertSame("/api/messenger/threads/{$this->group->id}/files/{$this->message->id}/test.pdf", $this->message->getDocumentDownloadRoute(true));
+        $this->assertSame("/messenger/threads/{$this->group->id}/audio/{$this->message->id}/test.mp3", $this->message->getAudioDownloadRoute());
+        $this->assertSame("/api/messenger/threads/{$this->group->id}/audio/{$this->message->id}/test.mp3", $this->message->getAudioDownloadRoute(true));
     }
 
     /** @test */

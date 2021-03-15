@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use RTippin\Messenger\Http\Controllers\Actions\CallHeartbeat;
 use RTippin\Messenger\Http\Controllers\Actions\DemoteAdmin;
+use RTippin\Messenger\Http\Controllers\Actions\DownloadMessageAudio;
 use RTippin\Messenger\Http\Controllers\Actions\DownloadMessageFile;
 use RTippin\Messenger\Http\Controllers\Actions\EndCall;
 use RTippin\Messenger\Http\Controllers\Actions\FilterAddParticipants;
@@ -25,6 +26,7 @@ use RTippin\Messenger\Http\Controllers\Actions\ThreadArchiveState;
 use RTippin\Messenger\Http\Controllers\Actions\ThreadLoader;
 use RTippin\Messenger\Http\Controllers\Actions\UnmuteThread;
 use RTippin\Messenger\Http\Controllers\Actions\UnreadThreadsCount;
+use RTippin\Messenger\Http\Controllers\AudioMessageController;
 use RTippin\Messenger\Http\Controllers\CallController;
 use RTippin\Messenger\Http\Controllers\CallParticipantController;
 use RTippin\Messenger\Http\Controllers\DocumentMessageController;
@@ -88,9 +90,11 @@ Route::name('api.messenger.')->group(function () {
         Route::get('logs/page/{log}', [SystemMessageController::class, 'paginate'])->name('logs.page');
         Route::get('images/page/{image}', [ImageMessageController::class, 'paginate'])->name('images.page');
         Route::get('documents/page/{document}', [DocumentMessageController::class, 'paginate'])->name('documents.page');
+        Route::get('audio/page/{audio}', [AudioMessageController::class, 'paginate'])->name('audio.page');
         //Common
         Route::get('gallery/{message}/{size}/{image}', RenderMessageImage::class)->name('gallery.render');
         Route::get('files/{message}/{file}', DownloadMessageFile::class)->name('files.download');
+        Route::get('audio/{message}/{audio}', DownloadMessageAudio::class)->name('audio.download');
         Route::get('load/{relations?}', ThreadLoader::class)->name('loader');
         Route::get('logs', [SystemMessageController::class, 'index'])->name('logs');
         Route::get('mark-read', MarkThreadRead::class)->name('mark.read');
@@ -120,6 +124,7 @@ Route::name('api.messenger.')->group(function () {
     Route::apiResource('threads.messages', MessageController::class);
     Route::apiResource('threads.images', ImageMessageController::class)->only(['index', 'store']);
     Route::apiResource('threads.documents', DocumentMessageController::class)->only(['index', 'store']);
+    Route::apiResource('threads.audio', AudioMessageController::class)->only(['index', 'store']);
     Route::apiResource('threads.invites', InviteController::class)->only(['index', 'store', 'destroy']);
     Route::apiResource('threads.calls', CallController::class)->except(['update', 'destroy']);
     Route::prefix('threads/{thread}/calls/{call}')->name('threads.calls.')->group(function () {
