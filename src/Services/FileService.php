@@ -172,6 +172,7 @@ class FileService
             case 'image':
                 return uniqid('img_', true).".{$extension}";
             case 'document':
+            case 'sound':
                 return $this->getOriginalName($file).'_'.now()->timestamp.".{$extension}";
         }
 

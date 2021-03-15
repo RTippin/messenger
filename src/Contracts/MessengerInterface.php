@@ -252,6 +252,39 @@ interface MessengerInterface
     /**
      * @return bool
      */
+    public function isMessageAudioUploadEnabled(): bool;
+
+    /**
+     * @param bool $messageAudioUpload
+     * @return $this
+     */
+    public function setMessageAudioUpload(bool $messageAudioUpload);
+
+    /**
+     * @return int
+     */
+    public function getMessageAudioSizeLimit(): int;
+
+    /**
+     * @param int $messageAudioSizeLimit
+     * @return $this
+     */
+    public function setMessageAudioSizeLimit(int $messageAudioSizeLimit);
+
+    /**
+     * @return string
+     */
+    public function getMessageAudioMimeTypes(): string;
+
+    /**
+     * @param string $messageAudioMimeTypes
+     * @return $this
+     */
+    public function setMessageAudioMimeTypes(string $messageAudioMimeTypes);
+
+    /**
+     * @return bool
+     */
     public function isThreadAvatarUploadEnabled(): bool;
 
     /**

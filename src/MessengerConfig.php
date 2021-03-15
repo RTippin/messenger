@@ -206,6 +206,21 @@ trait MessengerConfig
     /**
      * @var bool
      */
+    private bool $messageAudioUpload;
+
+    /**
+     * @var int
+     */
+    private int $messageAudioSizeLimit;
+
+    /**
+     * @var string
+     */
+    private string $messageAudioMimeTypes;
+
+    /**
+     * @var bool
+     */
     private bool $threadAvatarUpload;
 
     /**
@@ -603,6 +618,63 @@ trait MessengerConfig
     public function setMessageImageMimeTypes(string $messageImageMimeTypes): self
     {
         $this->messageImageMimeTypes = $messageImageMimeTypes;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMessageAudioUploadEnabled(): bool
+    {
+        return $this->messageAudioUpload;
+    }
+
+    /**
+     * @param bool $messageAudioUpload
+     * @return $this
+     */
+    public function setMessageAudioUpload(bool $messageAudioUpload): self
+    {
+        $this->messageAudioUpload = $messageAudioUpload;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMessageAudioSizeLimit(): int
+    {
+        return $this->messageAudioSizeLimit;
+    }
+
+    /**
+     * @param int $messageAudioSizeLimit
+     * @return $this
+     */
+    public function setMessageAudioSizeLimit(int $messageAudioSizeLimit): self
+    {
+        $this->messageAudioSizeLimit = $messageAudioSizeLimit;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessageAudioMimeTypes(): string
+    {
+        return $this->messageAudioMimeTypes;
+    }
+
+    /**
+     * @param string $messageAudioMimeTypes
+     * @return $this
+     */
+    public function setMessageAudioMimeTypes(string $messageAudioMimeTypes): self
+    {
+        $this->messageAudioMimeTypes = $messageAudioMimeTypes;
 
         return $this;
     }
@@ -1339,6 +1411,9 @@ trait MessengerConfig
         $this->messageImageUpload = $this->configRepo->get('messenger.files.message_images.upload');
         $this->messageImageSizeLimit = $this->configRepo->get('messenger.files.message_images.size_limit');
         $this->messageImageMimeTypes = $this->configRepo->get('messenger.files.message_images.mime_types');
+        $this->messageAudioUpload = $this->configRepo->get('messenger.files.message_audio.upload');
+        $this->messageAudioSizeLimit = $this->configRepo->get('messenger.files.message_audio.size_limit');
+        $this->messageAudioMimeTypes = $this->configRepo->get('messenger.files.message_audio.mime_types');
         $this->messageDocumentUpload = $this->configRepo->get('messenger.files.message_documents.upload');
         $this->messageDocumentDownload = $this->configRepo->get('messenger.files.message_documents.download');
         $this->messageDocumentSizeLimit = $this->configRepo->get('messenger.files.message_documents.size_limit');

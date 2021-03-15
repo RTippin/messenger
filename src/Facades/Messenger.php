@@ -139,6 +139,12 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static setThreadAvatarMimeTypes(string $threadAvatarMimeTypes)
  * @method static getMessageImageMimeTypes()
  * @method static setMessageImageMimeTypes(string $messageImageMimeTypes)
+ * @method static isMessageAudioUploadEnabled()
+ * @method static setMessageAudioUpload(bool $messageAudioUpload)
+ * @method static getMessageAudioSizeLimit()
+ * @method static setMessageAudioSizeLimit(int $messageAudioSizeLimit)
+ * @method static getMessageAudioMimeTypes()
+ * @method static setMessageAudioMimeTypes(string $messageAudioMimeTypes)
  *
  * @mixin \RTippin\Messenger\Messenger
  * @see MessengerInterface

@@ -276,6 +276,11 @@ return [
             'size_limit' => env('MESSENGER_MESSAGE_IMAGE_SIZE_LIMIT', 5120),
             'mime_types' => env('MESSENGER_MESSAGE_IMAGE_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,svg,webp'),
         ],
+        'message_audio' => [
+            'upload' => env('MESSENGER_MESSAGE_AUDIO_UPLOAD', true),
+            'size_limit' => env('MESSENGER_MESSAGE_AUDIO_SIZE_LIMIT', 10240),
+            'mime_types' => env('MESSENGER_MESSAGE_AUDIO_MIME_TYPES', 'aac,mp3,oga,opus,wav,weba'),
+        ],
         'thread_avatars' => [
             'upload' => env('MESSENGER_THREAD_AVATAR_UPLOAD', true),
             'size_limit' => env('MESSENGER_THREAD_AVATAR_SIZE_LIMIT', 5120),

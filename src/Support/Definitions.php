@@ -19,6 +19,7 @@ class Definitions
         0 => 'MESSAGE',
         1 => 'IMAGE_MESSAGE',
         2 => 'DOCUMENT_MESSAGE',
+        3 => 'SOUND_MESSAGE',
         88 => 'PARTICIPANT_JOINED_WITH_INVITE',
         90 => 'VIDEO_CALL',
         91 => 'GROUP_AVATAR_CHANGED',
