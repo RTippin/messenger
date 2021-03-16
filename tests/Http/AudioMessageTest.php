@@ -170,6 +170,7 @@ class AudioMessageTest extends FeatureTestCase
             'Audio can be oga' => [UploadedFile::fake()->create('test.oga', 500, 'audio/ogg')],
             'Audio can be wav' => [UploadedFile::fake()->create('test.wav', 500, 'audio/wav')],
             'Audio can be weba' => [UploadedFile::fake()->create('test.weba', 500, 'audio/webm')],
+            'Audio can be webm' => [UploadedFile::fake()->create('test.webm', 500, 'audio/webm')],
         ];
     }
 }
