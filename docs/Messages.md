@@ -224,7 +224,7 @@
 }
 ```
 ---
-### PUT `/api/messenger/threads/{thread}/messages` | *api.messenger.threads.messages.update*
+### PUT `/api/messenger/threads/{thread}/messages/{message}` | *api.messenger.threads.messages.update*
 #### Payload:
 ```json
 {
