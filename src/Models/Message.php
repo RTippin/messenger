@@ -52,6 +52,11 @@ class Message extends Model
     use Uuids;
 
     /**
+     * Message types that are not system messages.
+     */
+    const NonSystemTypes = [0, 1, 2, 3];
+
+    /**
      * The database table used by the model.
      *
      * @var string
@@ -143,7 +148,7 @@ class Message extends Model
      */
     public function scopeNonSystem(Builder $query): Builder
     {
-        return $query->whereIn('type', [0, 1, 2]);
+        return $query->whereIn('type', self::NonSystemTypes);
     }
 
     /**
@@ -154,7 +159,7 @@ class Message extends Model
      */
     public function scopeSystem(Builder $query): Builder
     {
-        return $query->whereNotIn('type', [0, 1, 2]);
+        return $query->whereNotIn('type', self::NonSystemTypes);
     }
 
     /**
@@ -336,7 +341,7 @@ class Message extends Model
      */
     public function isSystemMessage(): bool
     {
-        return ! in_array($this->type, [0, 1, 2, 3]);
+        return ! in_array($this->type, self::NonSystemTypes);
     }
 
     /**
