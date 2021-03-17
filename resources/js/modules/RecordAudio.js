@@ -60,7 +60,7 @@ window.RecordAudio = (function () {
             opt.elements.visualizerCtx = opt.elements.visualizer.getContext("2d");
             opt.elements.visualizer.width = opt.elements.visualizer.parentElement.offsetWidth-10;
             opt.audio.stream = stream;
-            opt.audio.recorder = new MediaRecorder(opt.audio.stream, {type : 'webm'});
+            opt.audio.recorder = new MediaRecorder(opt.audio.stream, {mimeType : 'audio/webm'});
             opt.audio.recorder.onstop = methods.stopped;
             opt.audio.recorder.ondataavailable = function(e) {
                 opt.audio.chunks.push(e.data);
