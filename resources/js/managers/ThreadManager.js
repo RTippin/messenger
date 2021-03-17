@@ -1526,7 +1526,11 @@ window.ThreadManager = (function () {
             let pending = methods.makePendingMessage(type.number, null);
             methods.managePendingMessage('add', pending);
             let form = new FormData();
-            form.append(type.input, file);
+            if(audioMessage === true){
+                form.append(type.input, file, 'voice_message.webm');
+            }else {
+                form.append(type.input, file);
+            }
             form.append('temporary_id', pending.id);
             Messenger.xhr().payload({
                 route : Messenger.common().API + 'threads/' + opt.thread.id + type.path,
