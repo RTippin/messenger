@@ -1190,16 +1190,13 @@ window.ThreadTemplates = (function () {
                 '                            </div>\n' +
                 '                            <div class="col-12 my-1">\n' +
                 '                                <div class="form-group form-group-xs-nm">\n' +
-                '                                    <button id="file_upload_btn" data-toggle="tooltip" title="Upload File(s)" data-placement="top" class="btn btn-sm btn-light" onclick="$(\'#doc_file\').trigger(\'click\');" type="button"><i class="fas fa-paperclip"></i></button>\n' +
-                '                                    <button id="image_upload_btn" data-toggle="tooltip" title="Upload Image(s)" data-placement="top" class="mx-1 btn btn-sm btn-light" onclick="$(\'#image_file\').trigger(\'click\');" type="button"><i class="far fa-image"></i></button>\n' +
-                '                                    <button id="audio_upload_btn" data-toggle="tooltip" title="Upload Audio" data-placement="top" class="btn btn-sm btn-light" onclick="$(\'#audio_file\').trigger(\'click\');" type="button"><i class="fas fa-music"></i></button>\n' +
+                '                                    <button id="file_upload_btn" data-toggle="tooltip" title="Upload File(s)" data-placement="top" class="btn btn-sm btn-light" onclick="$(\'#doc_file\').trigger(\'click\');" type="button"><i class="fas fa-plus-circle"></i></button>\n' +
+                '                                    <button id="record_audio_message_btn" data-toggle="tooltip" title="Record Audio Message" data-placement="top" class="mx-1 btn btn-sm btn-light" type="button"><i class="fas fa-microphone"></i></button>\n' +
                 '                                </div>\n' +
                 '                            </div>\n' +
                 '                        </form>\n' +
                 '                    </div>\n' +
-                '                    <input class="NS" multiple type="file" name="doc_file" id="doc_file" accept=".csv,.doc,.docx,.json,.pdf,.ppt,.pptx,.rar,.rtf,.txt,.xls,.xlsx,.xml,.zip,.7z">\n' +
-                '                    <input class="NS" multiple type="file" name="audio_file" id="audio_file" accept=".aac,.mp3,.oga,.wav,.weba">\n' +
-                '                    <input class="NS" multiple id="image_file" type="file" name="image_file" accept="image/*">\n' +
+                '                    <input class="NS" multiple type="file" name="doc_file" id="doc_file" accept=".csv,.doc,.docx,.json,.pdf,.ppt,.pptx,.rar,.rtf,.txt,.xls,.xlsx,.xml,.zip,.7z,.aac,.mp3,.oga,.wav,.weba,webm,image/*">\n' +
                 '                </div>\n' +
                 '            </div>\n' +
                 '        </div>\n' +

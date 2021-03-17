@@ -71,5 +71,5 @@ import {FriendsManager} from './managers/FriendsManager';
 import {ThreadManager} from './managers/ThreadManager';
 import {ThreadTemplates} from './templates/ThreadTemplates';
 import {MessengerSettings} from './modules/MessengerSettings';
+import {RecordAudio} from './modules/RecordAudio';
 import {InviteJoin} from './modules/InviteJoin';
-

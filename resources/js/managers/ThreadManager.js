@@ -71,8 +71,7 @@ window.ThreadManager = (function () {
             messenger_search_results : null,
             msg_panel : null,
             doc_file : null,
-            img_file : null,
-            audio_file : null,
+            record_audio_message_btn : null,
             data_table : null,
             emoji_editor : null,
             emoji : null,
@@ -124,8 +123,7 @@ window.ThreadManager = (function () {
                 opt.elements.new_msg_alert = $("#new_message_alert");
                 opt.elements.msg_panel = $(".chat-body");
                 opt.elements.doc_file = $("#doc_file");
-                opt.elements.img_file = $("#image_file");
-                opt.elements.audio_file = $("#audio_file");
+                opt.elements.record_audio_message_btn = $("#record_audio_message_btn");
             }
             if([1,2,3].includes(arg.type)){
                 if(arg.type === 3) opt.storage.temp_data = arg.temp_data;
@@ -303,8 +301,7 @@ window.ThreadManager = (function () {
                     messenger_search_results : null,
                     msg_panel : null,
                     doc_file : null,
-                    img_file : null,
-                    audio_file : null,
+                    record_audio_message_btn : null,
                     data_table : null,
                     emoji_editor : null,
                     emoji : null,
@@ -353,9 +350,8 @@ window.ThreadManager = (function () {
                     }, 180000);
                     opt.elements.msg_panel.click(mounted.msgPanelClick);
                     opt.elements.msg_panel.scroll(mounted.msgPanelScroll);
-                    opt.elements.img_file.change(mounted.imageChange);
                     opt.elements.doc_file.change(mounted.documentChange);
-                    opt.elements.audio_file.change(mounted.audioChange);
+                    opt.elements.record_audio_message_btn.click(mounted.audioMessage);
                     opt.elements.emoji_editor.on('paste', methods.pasteImage);
                     opt.elements.form.keydown(mounted.formKeydown);
                     opt.elements.form.on('input keyup', methods.manageSendMessageButton);
@@ -368,9 +364,8 @@ window.ThreadManager = (function () {
                 case 3:
                     opt.elements.emoji_editor.prop('disabled', false);
                     opt.elements.msg_panel.click(mounted.msgPanelClick);
-                    opt.elements.img_file.change(mounted.imageChange);
                     opt.elements.doc_file.change(mounted.documentChange);
-                    opt.elements.audio_file.change(mounted.audioChange);
+                    opt.elements.record_audio_message_btn.click(mounted.audioMessage);
                     opt.elements.form.keydown(mounted.formKeydown);
                     opt.elements.form.on('input keyup', methods.manageSendMessageButton);
                     opt.elements.form.on('submit', mounted.stopDefault);
@@ -396,9 +391,8 @@ window.ThreadManager = (function () {
                     try{
                         opt.elements.msg_panel.off('click', mounted.msgPanelClick);
                         opt.elements.msg_panel.off('scroll', mounted.msgPanelScroll);
-                        opt.elements.img_file.off('change', mounted.imageChange);
                         opt.elements.doc_file.off('change', mounted.documentChange);
-                        opt.elements.audio_file.off('change', mounted.audioChange);
+                        opt.elements.record_audio_message_btn.off('click', mounted.audioMessage);
                         opt.elements.emoji_editor.off('paste', methods.pasteImage);
                         opt.elements.form.off('keydown', mounted.formKeydown);
                         opt.elements.form.off('input keyup', methods.manageSendMessageButton);
@@ -413,9 +407,8 @@ window.ThreadManager = (function () {
                 case 3:
                     try{
                         opt.elements.msg_panel.off('click', mounted.msgPanelClick);
-                        opt.elements.img_file.off('change', mounted.imageChange);
                         opt.elements.doc_file.off('change', mounted.documentChange);
-                        opt.elements.audio_file.off('change', mounted.audioChange);
+                        opt.elements.record_audio_message_btn.off('click', mounted.audioMessage);
                         opt.elements.form.off('keydown', mounted.formKeydown);
                         opt.elements.form.off('input keyup', methods.manageSendMessageButton);
                         opt.elements.form.off('submit', mounted.stopDefault);
@@ -495,7 +488,7 @@ window.ThreadManager = (function () {
                     methods.isTyping();
                 break;
                 case 3:
-                    if(e.keyCode === 13) new_forms.newPrivate(0);
+                    if(e.keyCode === 13) new_forms.newPrivate(false);
                 break;
             }
         },
@@ -534,21 +527,9 @@ window.ThreadManager = (function () {
             methods.threadScrollBottom(true, false);
             methods.markRead()
         },
-        imageChange : function(){
-            switch (opt.thread.type) {
-                case 1:
-                case 2:
-                    if(opt.thread.lockout || !opt.thread.messaging) return;
-                    let input = document.getElementById('image_file'), files = input.files;
-                    ([...files]).forEach(methods.sendUploadFiles);
-                    input.value = '';
-                break;
-                case 3:
-                    if(!opt.thread.messaging) return;
-                    Messenger.button().addLoader({id : '#image_upload_btn'});
-                    new_forms.newPrivate(1);
-                break;
-            }
+        audioMessage : function(){
+            if(opt.thread.lockout || !opt.thread.messaging) return;
+            RecordAudio.open();
         },
         documentChange : function(){
             switch (opt.thread.type) {
@@ -562,23 +543,7 @@ window.ThreadManager = (function () {
                 case 3:
                     if(!opt.thread.messaging) return;
                     Messenger.button().addLoader({id : '#file_upload_btn'});
-                    new_forms.newPrivate(2);
-                break;
-            }
-        },
-        audioChange : function(){
-            switch (opt.thread.type) {
-                case 1:
-                case 2:
-                    if(opt.thread.lockout || !opt.thread.messaging) return;
-                    let input = document.getElementById('audio_file'), files = input.files;
-                    ([...files]).forEach(methods.sendUploadFiles);
-                    input.value = '';
-                break;
-                case 3:
-                    if(!opt.thread.messaging) return;
-                    Messenger.button().addLoader({id : '#audio_upload_btn'});
-                    new_forms.newPrivate(3);
+                    new_forms.newPrivate(true);
                 break;
             }
         },
@@ -762,6 +727,15 @@ window.ThreadManager = (function () {
             }
             methods.updateThread(data, false, false, true);
             if(Messenger.common().id !== data.owner_id) NotifyManager.sound('message')
+        },
+        audioMessage : function(audio){
+            if(opt.thread.id){
+                if(opt.thread.type === 3){
+                    new_forms.newPrivate(false, true, audio);
+                } else {
+                    methods.sendUploadFiles(audio, false, true);
+                }
+            }
         },
         callStatus : function(data, action){
             methods.threadCallStatus(data, action)
@@ -1483,7 +1457,7 @@ window.ThreadManager = (function () {
                 methods.manageSendMessageButton()
             }
         },
-        sendUploadFiles : function(file){
+        sendUploadFiles : function(file, getType, audioMessage){
             let type = {
                 number : 0,
                 input : null,
@@ -1545,6 +1519,9 @@ window.ThreadManager = (function () {
                     theme : 'warning'
                 });
                 return;
+            }
+            if(getType === true){
+                return type.input;
             }
             let pending = methods.makePendingMessage(type.number, null);
             methods.managePendingMessage('add', pending);
@@ -2498,27 +2475,22 @@ window.ThreadManager = (function () {
                 bypass : true
             })
         },
-        newPrivate : function(action){
+        newPrivate : function(isFile, voiceMessage, audio){
             if(opt.states.lock) return;
             let form = new FormData(),
                 message_contents = (opt.elements.emoji
                     ? opt.elements.emoji.data("emojioneArea").getText()
                     : opt.elements.emoji_editor.val());
-            switch (action) {
-                case 0:
-                    if(!message_contents.trim().length) return;
-                    form.append('message', message_contents);
-                    opt.elements.emoji ? opt.elements.emoji_editor.empty().focus() : opt.elements.emoji_editor.val('').focus();
-                break;
-                case 1:
-                    form.append('image', $('#image_file')[0].files[0]);
-                break;
-                case 2:
-                    form.append('document', $('#doc_file')[0].files[0]);
-                break;
-                case 3:
-                    form.append('audio', $('#audio_file')[0].files[0]);
-                break;
+            if(isFile === true){
+                let file = $('#doc_file')[0].files[0];
+                let type = methods.sendUploadFiles(file, true);
+                form.append(type, file);
+            } else if(voiceMessage === true) {
+                form.append('audio', audio, 'voice_message.webm');
+            } else {
+                if(!message_contents.trim().length) return;
+                form.append('message', message_contents);
+                opt.elements.emoji ? opt.elements.emoji_editor.empty().focus() : opt.elements.emoji_editor.val('').focus();
             }
             form.append('recipient_id', opt.storage.temp_data.provider_id);
             form.append('recipient_alias', opt.storage.temp_data.provider_alias);
