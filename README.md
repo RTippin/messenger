@@ -11,6 +11,11 @@
 
 ---
 
+### Notice - Alpha Release
+- Until the official v1 release, many breaking changes may be made to this package. I will document the changes in the changelog as best as I can.
+
+---
+
 ### Prerequisites
 - PHP >= 7.4
 - Laravel >= 8.x
@@ -33,14 +38,21 @@
 - Many features can be toggled within our config.
 - All in one system ready to plug into any laravel app. You may even choose to utilize only our API, and disable the web routes and published frontend assets.
 
-### Notes / upcoming
+### Upcoming
+- Message reactions.
+- Message replies.
+- Video message type.
+- Optional payload column for messages to allow extra data passed.
+- Route params for API results / better pagination.
+- React / Vue frontend.
+- Configurable friend driver.
+- Resizing and saving images when uploaded instead of on the fly.
+
+### Notes
 - If our event listeners are enabled in your config, the queue your worker must use is `messenger`, as all listeners are queued on that channel.
 - Our included commands that push a job also use the `messenger` queue channel.
 - If you enable calling, we support an included [Janus Media Server][link-janus-server] driver, which you will still need to install the media server yourself.
 - To configure your own 3rd party video provider, checkout our VideoDriver you will need to implement with your own video implementation, and add to our configs [`drivers`][link-config-drivers] section. Then you set the calling driver to your new implementation from our configs [`calling`][link-config-calling] section.
-- A React frontend will be in the works.
-- Extending the Friends system to be a swappable driver.
-- Included frontend uses socket.io / laravel-echo. Future release will expand options.
 - Read through our config file before migrating!
 
 ### Messenger Demo
