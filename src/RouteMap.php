@@ -32,10 +32,6 @@ trait RouteMap
         $router = $this->app->make(Router::class);
 
         $router->aliasMiddleware(
-            'messenger.api',
-            MessengerApi::class
-        );
-        $router->aliasMiddleware(
             'messenger.provider',
             SetMessengerProvider::class
         );

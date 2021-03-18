@@ -20,6 +20,7 @@ use RTippin\Messenger\Commands\PurgeThreadsCommand;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
+use RTippin\Messenger\Http\Middleware\MessengerApi;
 
 class MessengerServiceProvider extends ServiceProvider
 {
@@ -152,14 +153,15 @@ class MessengerServiceProvider extends ServiceProvider
     }
 
     /**
-     * Sanitize user defined middleware in case not array.
+     * Prepend our API middleware, merge additional
+     * middleware, append throttle middleware.
      *
      * @param $middleware
      * @return array
      */
     protected function mergeApiMiddleware($middleware): array
     {
-        $merged = array_merge(['messenger.api'], is_array($middleware) ? $middleware : [$middleware]);
+        $merged = array_merge([MessengerApi::class], is_array($middleware) ? $middleware : [$middleware]);
 
         array_push($merged, 'throttle:messenger-api');
 
