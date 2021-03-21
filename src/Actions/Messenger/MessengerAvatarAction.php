@@ -58,8 +58,8 @@ abstract class MessengerAvatarAction extends BaseMessengerAction
      */
     protected function updateProviderAvatar(?string $file): void
     {
-        $this->messenger->getProvider()->update([
+        $this->messenger->getProvider()->forceFill([
             $this->messenger->getProvider()->getAvatarColumn() => $file,
-        ]);
+        ])->save();
     }
 }
