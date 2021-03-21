@@ -31,7 +31,6 @@
     "janus-gateway": "git://github.com/meetecho/janus-gateway.git",
     "laravel-echo": "^1.8.0",
     "moment": "^2.27.0",
-    "pusher-js": "^4.4.0",
     "simplebar": "^5.2.1",
     "socket.io-client": "^2.3.0",
     "toastr": "^2.1.4",

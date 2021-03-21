@@ -9,7 +9,7 @@ window.ThreadTemplates = (function () {
             if(Messenger.common().mobile){
                 html = '<a class="youtube_thumb_view" target="_blank" href="https://www.youtube.com/watch?v=$1">' +
                     '<img class="msg_image NS img-fluid" src="https://img.youtube.com/vi/$1/hqdefault.jpg" />' +
-                    '<div class="h3 spinner-border text-secondary" style="width: 4rem; height: 4rem;" role="status"><span class="sr-only">loading...</span></div><span class="yt_logo_place"></span>'+
+                    '<div class="h3 spinner-grow text-info" style="width: 4rem; height: 4rem;" role="status"><span class="sr-only">loading...</span></div><span class="yt_logo_place"></span>'+
                     '</a>';
             }
             return body.replace(regExp, html);
