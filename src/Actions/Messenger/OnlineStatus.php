@@ -49,7 +49,7 @@ class OnlineStatus extends BaseMessengerAction
     public function execute(...$parameters): self
     {
         $this->setOnlineStatus($parameters[0])
-            ->touchProvider()
+            ->updateLastActiveTime()
             ->fireEvents($parameters[0]);
 
         return $this;
@@ -73,11 +73,13 @@ class OnlineStatus extends BaseMessengerAction
     /**
      * @return $this
      */
-    private function touchProvider(): self
+    private function updateLastActiveTime(): self
     {
         if ($this->messenger->isOnlineStatusEnabled()
             && $this->messenger->getProviderMessenger()->online_status !== 0) {
-            $this->messenger->getProvider()->touch();
+            $this->messenger->getProvider()->forceFill([
+                $this->messenger->getProvider()->getLastActiveColumn() => now(),
+            ])->save();
         }
 
         return $this;

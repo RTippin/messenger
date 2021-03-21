@@ -31,14 +31,16 @@ class GhostUser extends Eloquent
         'slug' => 'ghost',
         'picture' => null,
         'email' => 'ghost@example.org',
+        'created_at' => null,
+        'updated_at' => null,
     ];
 
     /**
-     * @return null
+     * @return string
      */
-    public function lastActiveDateTime()
+    public function getLastActiveColumn(): string
     {
-        return null;
+        return 'updated_at';
     }
 
     /**

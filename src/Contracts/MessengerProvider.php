@@ -13,14 +13,6 @@ use Illuminate\Database\Eloquent\Model;
 interface MessengerProvider
 {
     /**
-     * Return a last active time from your model. We usually use updated_at
-     * as we touch your provider model when the heartbeat endpoint is hit.
-     *
-     * @return Carbon|string|null
-     */
-    public function lastActiveDateTime();
-
-    /**
      * Format and return your provider name here.
      * ex: $this->first . ' ' . $this->last.
      *
@@ -34,6 +26,15 @@ interface MessengerProvider
      * @return string
      */
     public function getAvatarColumn();
+
+    /**
+     * The column name your provider has in the database that we will use to
+     * show last active, and touch / update timestamp when using our online
+     * heartbeat. This should be a timestamp column.
+     *
+     * @return string
+     */
+    public function getLastActiveColumn(): string;
 
     /**
      * Get the route of the avatar for your provider. We will call this

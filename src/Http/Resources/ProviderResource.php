@@ -193,7 +193,7 @@ class ProviderResource extends JsonResource
     {
         if (Messenger::isOnlineStatusEnabled()) {
             return $friendStatus === 1
-                ? $this->provider->lastActiveDateTime()
+                ? $this->provider->{$this->provider->getLastActiveColumn()}
                 : null;
         }
 

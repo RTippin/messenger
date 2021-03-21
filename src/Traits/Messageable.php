@@ -65,6 +65,18 @@ trait Messageable
     }
 
     /**
+     * The column name your provider has in the database that we will use to
+     * show last active, and touch / update timestamp when using our online
+     * heartbeat. This should be a timestamp column.
+     *
+     * @return string
+     */
+    public function getLastActiveColumn(): string
+    {
+        return 'updated_at';
+    }
+
+    /**
      * Get the route of the avatar for your provider. We will call this
      * from our resource classes using sm/md/lg .
      *
@@ -109,16 +121,5 @@ trait Messageable
     public function onlineStatusVerbose(): string
     {
         return Str::lower(Definitions::OnlineStatus[$this->onlineStatus()]);
-    }
-
-    /**
-     * Return a last active time from your model. We usually use updated_at
-     * as we touch your provider model when the heartbeat endpoint is hit.
-     *
-     * @return mixed
-     */
-    public function lastActiveDateTime()
-    {
-        return $this->updated_at;
     }
 }
