@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Contracts;
 
-use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 
 /**
