@@ -112,6 +112,22 @@ class MessageTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_has_reply_to_message()
+    {
+        $replyMessage = $this->group->messages()->create([
+            'body' => 'First Reply Message',
+            'type' => 0,
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => get_class($this->tippin),
+            'reply_to_id' => $this->message->id,
+        ]);
+
+        $this->assertNull($this->message->replyTo);
+        $this->assertInstanceOf(Message::class, $replyMessage->replyTo);
+        $this->assertSame($this->message->id, $replyMessage->replyTo->id);
+    }
+
+    /** @test */
     public function image_message()
     {
         $this->message->update([

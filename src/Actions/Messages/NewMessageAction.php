@@ -11,6 +11,7 @@ use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Http\Resources\MessageResource;
+use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Support\Definitions;
 use Throwable;
 
@@ -30,6 +31,11 @@ abstract class NewMessageAction extends BaseMessengerAction
      * @var DatabaseManager
      */
     protected DatabaseManager $database;
+
+    /**
+     * @var Message|null
+     */
+    protected ?Message $replyingTo = null;
 
     /**
      * @var bool
@@ -53,6 +59,21 @@ abstract class NewMessageAction extends BaseMessengerAction
     }
 
     /**
+     * @param string|null $replyToId
+     * @return $this
+     */
+    protected function setReplyingToMessage(?string $replyToId = null): self
+    {
+        if (! is_null($replyToId)
+            && ! is_null($message = $this->getThread()->messages()->with('owner')->find($replyToId))
+            && ! $message->isSystemMessage()) {
+            $this->replyingTo = $message;
+        }
+
+        return $this;
+    }
+
+    /**
      * @param MessengerProvider $owner
      * @param string $type
      * @param string $body
@@ -63,12 +84,10 @@ abstract class NewMessageAction extends BaseMessengerAction
     protected function handleTransactions(MessengerProvider $owner,
                                           string $type,
                                           string $body,
-                                          string $temporaryId = null): self
+                                          ?string $temporaryId = null): self
     {
         if ($this->isChained()) {
-            $this->executeTransactions(
-                $owner, $type, $body, $temporaryId
-            );
+            $this->executeTransactions($owner, $type, $body, $temporaryId);
         } else {
             $this->database->transaction(fn () => $this->executeTransactions($owner, $type, $body, $temporaryId), 5);
         }
@@ -84,7 +103,9 @@ abstract class NewMessageAction extends BaseMessengerAction
     protected function generateResource(): self
     {
         $this->setJsonResource(new MessageResource(
-                $this->getMessage(), $this->getThread()
+                $this->getMessage(),
+                $this->getThread(),
+                true
             )
         );
 
@@ -129,11 +150,9 @@ abstract class NewMessageAction extends BaseMessengerAction
     private function executeTransactions(MessengerProvider $owner,
                                          string $type,
                                          string $body,
-                                         string $temporaryId = null): void
+                                         ?string $temporaryId): void
     {
-        $this->storeMessage(
-            $owner, $type, $body, $temporaryId
-        );
+        $this->storeMessage($owner, $type, $body, $temporaryId);
 
         if ($this->shouldExecuteChains()) {
             $this->getThread()->touch();
@@ -159,7 +178,7 @@ abstract class NewMessageAction extends BaseMessengerAction
     private function storeMessage(MessengerProvider $owner,
                                   string $type,
                                   string $body,
-                                  string $temporaryId = null): self
+                                  ?string $temporaryId): self
     {
         $this->setMessage(
             $this->getThread()
@@ -169,10 +188,12 @@ abstract class NewMessageAction extends BaseMessengerAction
                     'owner_id' => $owner->getKey(),
                     'owner_type' => get_class($owner),
                     'body' => $body,
+                    'reply_to_id' => optional($this->replyingTo)->id,
                 ])
                 ->setRelations([
                     'owner' => $owner,
                     'thread' => $this->getThread(),
+                    'replyTo' => $this->replyingTo,
                 ])
                 ->setTemporaryId($temporaryId)
         );

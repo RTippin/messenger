@@ -16,6 +16,7 @@ class MessageRequest extends FormRequest
         return [
             'message' => 'required|string',
             'temporary_id' => 'required|string',
+            'reply_to_id' => 'nullable|string',
         ];
     }
 }

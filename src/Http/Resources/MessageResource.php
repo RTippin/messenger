@@ -30,17 +30,26 @@ class MessageResource extends JsonResource
     protected Thread $thread;
 
     /**
+     * @var bool
+     */
+    protected bool $addReplyToMessage;
+
+    /**
      * MessageResource constructor.
      *
      * @param Message $message
      * @param Thread $thread
+     * @param bool $addReplyToMessage
      */
-    public function __construct(Message $message, Thread $thread)
+    public function __construct(Message $message,
+                                Thread $thread,
+                                bool $addReplyToMessage = false)
     {
         parent::__construct($message);
 
         $this->thread = $thread;
         $this->message = $message;
+        $this->addReplyToMessage = $addReplyToMessage;
     }
 
     /**
@@ -91,6 +100,9 @@ class MessageResource extends JsonResource
             ),
             $this->mergeWhen($this->message->isAudio(),
                 fn () => $this->linksForAudio()
+            ),
+            $this->mergeWhen($this->addReplyToMessage && ! is_null($this->message->reply_to_id),
+                fn () => $this->addReplyToMessage()
             ),
         ];
     }
@@ -147,6 +159,22 @@ class MessageResource extends JsonResource
     public function decodeBodyJson()
     {
         return json_decode($this->message->body, true);
+    }
+
+    /**
+     * @return array
+     */
+    public function addReplyToMessage(): array
+    {
+        return [
+            'reply_to_id' => $this->message->reply_to_id,
+            'reply_to' => ! is_null($this->message->replyTo)
+                ? (new MessageResource(
+                    $this->message->replyTo,
+                    $this->thread
+                ))->resolve()
+                : null,
+        ];
     }
 
     /**

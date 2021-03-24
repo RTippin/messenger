@@ -95,8 +95,7 @@ class ImageMessageController extends Controller
 
         return $storeImageMessage->execute(
             $thread,
-            $request->file('image'),
-            $request->input('temporary_id')
+            $request->validated()
         )->getJsonResource();
     }
 }

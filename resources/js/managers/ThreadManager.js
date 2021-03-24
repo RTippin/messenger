@@ -11,6 +11,8 @@ window.ThreadManager = (function () {
             admin : false,
             pending : false,
             muted : false,
+            replying : false,
+            reply_to_id : null,
             awaiting_my_approval : false,
             created_at : null,
             messages_unread : false,
@@ -79,7 +81,8 @@ window.ThreadManager = (function () {
             the_thread : null,
             msg_stack : null,
             pending_msg_stack : null,
-            new_msg_alert : null
+            new_msg_alert : null,
+            reply_message_alert : null,
         }
     },
     mounted = {
@@ -121,6 +124,7 @@ window.ThreadManager = (function () {
                 opt.elements.emoji = $("#emojionearea");
                 opt.elements.form = $("#thread_form");
                 opt.elements.new_msg_alert = $("#new_message_alert");
+                opt.elements.reply_message_alert = $("#reply_message_alert");
                 opt.elements.msg_panel = $(".chat-body");
                 opt.elements.doc_file = $("#doc_file");
                 opt.elements.record_audio_message_btn = $("#record_audio_message_btn");
@@ -241,6 +245,8 @@ window.ThreadManager = (function () {
                     admin : false,
                     pending : false,
                     muted : false,
+                    replying : false,
+                    reply_to_id : null,
                     awaiting_my_approval : false,
                     created_at : null,
                     messages_unread : false,
@@ -309,7 +315,8 @@ window.ThreadManager = (function () {
                     the_thread : null,
                     msg_stack : null,
                     pending_msg_stack : null,
-                    new_msg_alert : null
+                    new_msg_alert : null,
+                    reply_message_alert : null,
                 }
             })
         },
@@ -357,6 +364,7 @@ window.ThreadManager = (function () {
                     opt.elements.form.on('input keyup', methods.manageSendMessageButton);
                     opt.elements.form.on('submit', mounted.stopDefault);
                     opt.elements.new_msg_alert.click(mounted.newMsgAlertClick);
+                    opt.elements.reply_message_alert.click(methods.resetReplying);
                     opt.elements.message_container.click(mounted.clickMarkRead);
                     if(Messenger.common().mobile) opt.elements.emoji_editor.click(mounted.inputClickScroll);
                     if(!Messenger.common().mobile) opt.elements.emoji_editor.focus();
@@ -398,6 +406,7 @@ window.ThreadManager = (function () {
                         opt.elements.form.off('input keyup', methods.manageSendMessageButton);
                         opt.elements.form.off('submit', mounted.stopDefault);
                         opt.elements.new_msg_alert.off('click', mounted.newMsgAlertClick);
+                        opt.elements.reply_message_alert.off('click', methods.resetReplying);
                         opt.elements.message_container.off('click', mounted.clickMarkRead);
                         if(Messenger.common().mobile) opt.elements.emoji_editor.off('click', mounted.inputClickScroll);
                     }catch (e) {
@@ -1192,9 +1201,14 @@ window.ThreadManager = (function () {
                     if(key !== 0
                         && opt.storage.messages[key-1].owner_id === value.owner_id
                         && ! opt.storage.messages[key-1].system_message
+                        && ! value.hasOwnProperty('reply_to')
                         && Messenger.format().timeDiffInUnit(value.created_at, opt.storage.messages[key-1].created_at, 'minutes') < 30
                     ){
                         messages_html += ThreadTemplates.render().my_message_grouped(value);
+                        return;
+                    }
+                    if(value.hasOwnProperty('reply_to')){
+                        messages_html += ThreadTemplates.render().my_message_reply(value);
                         return;
                     }
                     messages_html += ThreadTemplates.render().my_message(value);
@@ -1203,9 +1217,14 @@ window.ThreadManager = (function () {
                 if(key !== 0
                     && opt.storage.messages[key-1].owner_id === value.owner_id
                     && ! opt.storage.messages[key-1].system_message
+                    && ! value.hasOwnProperty('reply_to')
                     && Messenger.format().timeDiffInUnit(value.created_at, opt.storage.messages[key-1].created_at, 'minutes') < 30
                 ){
                     messages_html += ThreadTemplates.render().message_grouped(value);
+                    return;
+                }
+                if(value.hasOwnProperty('reply_to')){
+                    messages_html += ThreadTemplates.render().message_reply(value);
                     return;
                 }
                 messages_html += ThreadTemplates.render().message(value)
@@ -1239,9 +1258,14 @@ window.ThreadManager = (function () {
                     if(key !== 0
                         && messages[key-1].owner_id === value.owner_id
                         && ! messages[key-1].system_message
+                        && ! value.hasOwnProperty('reply_to')
                         && Messenger.format().timeDiffInUnit(value.created_at, messages[key-1].created_at, 'minutes') < 30
                     ){
                         messages_html += ThreadTemplates.render().my_message_grouped(value);
+                        return;
+                    }
+                    if(value.hasOwnProperty('reply_to')){
+                        messages_html += ThreadTemplates.render().my_message_reply(value);
                         return;
                     }
                     messages_html += ThreadTemplates.render().my_message(value);
@@ -1250,9 +1274,14 @@ window.ThreadManager = (function () {
                 if(key !== 0
                     && messages[key-1].owner_id === value.owner_id
                     && ! messages[key-1].system_message
+                    && ! value.hasOwnProperty('reply_to')
                     && Messenger.format().timeDiffInUnit(value.created_at, messages[key-1].created_at, 'minutes') < 30
                 ){
                     messages_html += ThreadTemplates.render().message_grouped(value);
+                    return;
+                }
+                if(value.hasOwnProperty('reply_to')){
+                    messages_html += ThreadTemplates.render().message_reply(value);
                     return;
                 }
                 messages_html += ThreadTemplates.render().message(value)
@@ -1262,6 +1291,8 @@ window.ThreadManager = (function () {
                 && last_message !== null
                 && ! last_message.system_message
                 && ! messages[messages.length-1].system_message
+                && ! last_message.hasOwnProperty('reply_to')
+                && ! messages[messages.length-1].hasOwnProperty('reply_to')
                 && messages[messages.length-1].owner_id === last_message.owner_id)
             {
                 let replace_html = last_message.owner_id === Messenger.common().id
@@ -1439,12 +1470,17 @@ window.ThreadManager = (function () {
                 opt.elements.emoji ? opt.elements.emoji_editor.empty().focus() : opt.elements.emoji_editor.val('').focus();
                 let pending = methods.makePendingMessage(0, message_contents);
                 methods.managePendingMessage('add', pending);
+                let formData = {
+                    message : message_contents,
+                    temporary_id : pending.id
+                };
+                if(opt.thread.replying){
+                    formData.reply_to_id = opt.thread.reply_to_id;
+                    methods.resetReplying();
+                }
                 Messenger.xhr().payload({
                     route : Messenger.common().API + 'threads/' + opt.thread.id + '/messages',
-                    data : {
-                        message : message_contents,
-                        temporary_id : pending.id
-                    },
+                    data : formData,
                     success : function(x){
                         methods.managePendingMessage('completed', pending, x);
                     },
@@ -1532,6 +1568,10 @@ window.ThreadManager = (function () {
                 form.append(type.input, file);
             }
             form.append('temporary_id', pending.id);
+            if(opt.thread.replying){
+                form.append('reply_to_id', opt.thread.reply_to_id);
+                methods.resetReplying();
+            }
             Messenger.xhr().payload({
                 route : Messenger.common().API + 'threads/' + opt.thread.id + type.path,
                 data : form,
@@ -1641,6 +1681,9 @@ window.ThreadManager = (function () {
             methods.updateBobbleHead(msg.owner_id, msg.id);
             if(msg.system_message){
                 opt.elements.msg_stack.append(ThreadTemplates.render().system_message(msg));
+            }
+            else if(msg.hasOwnProperty('reply_to')){
+                msg.owner_id === Messenger.common().id ? opt.elements.msg_stack.append(ThreadTemplates.render().my_message_reply(msg)) : opt.elements.msg_stack.append(ThreadTemplates.render().message_reply(msg));
             }
             else if(opt.storage.messages.length > 1
                 && opt.storage.messages[1].owner_id === msg.owner_id
@@ -1896,8 +1939,7 @@ window.ThreadManager = (function () {
             if(!opt.thread.id) return;
             let messageStorage = methods.locateStorageItem({type : 'message', id : arg.id}), i = messageStorage.index, msg = $("#message_"+arg.id);
             if (messageStorage.found && opt.storage.messages[i].owner_id === Messenger.common().id){
-                msg.find('.message-body').addClass('shadow-warning');
-                msg.find('.message_hover_opt').removeClass('NS');
+                msg.find('.message-body').addClass('shadow-success');
                 Messenger.alert().Modal({
                     icon : 'edit',
                     theme : 'dark',
@@ -1918,11 +1960,33 @@ window.ThreadManager = (function () {
                         methods.updateMessage(arg)
                     },
                     onClosed : function(){
-                        msg.find('.message-body').removeClass('shadow-warning');
-                        msg.find('.message_hover_opt').addClass('NS')
+                        msg.find('.message-body').removeClass('shadow-success');
                     }
                 });
             }
+        },
+        replyToMessage : function(arg){
+            if(!opt.thread.id) return;
+            if(opt.thread.replying){
+                methods.resetReplying();
+            }
+            let messageStorage = methods.locateStorageItem({type : 'message', id : arg.id}), i = messageStorage.index, msg = $("#message_"+arg.id);
+            if (messageStorage.found && ! opt.storage.messages[i].system_message){
+                msg.find('.message-body').addClass('shadow-primary');
+                opt.elements.reply_message_alert.show();
+                opt.elements.reply_message_alert.html(ThreadTemplates.render().thread_replying_message_alert(opt.storage.messages[i].owner.name));
+                opt.thread.replying = true;
+                opt.thread.reply_to_id = arg.id;
+            }
+        },
+        resetReplying : function(){
+            if(!opt.thread.id || !opt.thread.replying) return;
+            let msg = $("#message_"+opt.thread.reply_to_id);
+            opt.elements.reply_message_alert.hide();
+            opt.elements.reply_message_alert.html('');
+            opt.thread.replying = false;
+            opt.thread.reply_to_id = null;
+            msg.find('.message-body').removeClass('shadow-primary');
         },
         updateMessage : function(arg){
             let textarea = $("#edit_message_textarea");
@@ -1948,6 +2012,9 @@ window.ThreadManager = (function () {
                 opt.storage.messages[i] = message;
             }
             if(msg.length){
+                if(message.hasOwnProperty('reply_to')){
+                    msg.replaceWith(message.owner_id === Messenger.common().id ? ThreadTemplates.render().my_message_reply(message) : ThreadTemplates.render().message_reply(message))
+                }
                 msg.find('.message-text').html(ThreadTemplates.render().message_body(message))
             }
         }
@@ -1957,7 +2024,6 @@ window.ThreadManager = (function () {
             if(!opt.thread.id) return;
             let msg = $("#message_"+arg.id);
             msg.find('.message-body').addClass('shadow-warning');
-            msg.find('.message_hover_opt').removeClass('NS');
             Messenger.alert().Modal({
                 size : 'sm',
                 body : false,
@@ -1988,7 +2054,6 @@ window.ThreadManager = (function () {
                 },
                 onClosed : function(){
                     msg.find('.message-body').removeClass('shadow-warning');
-                    msg.find('.message_hover_opt').addClass('NS')
                 }
             });
         },
@@ -3005,6 +3070,7 @@ window.ThreadManager = (function () {
             return archive
         },
         editMessage : methods.editMessage,
+        reply : methods.replyToMessage,
         mute : function(){
             return Mute;
         },

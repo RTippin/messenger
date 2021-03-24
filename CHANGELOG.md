@@ -1,6 +1,14 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v0.23 (03-24-2021)]
+
+#### Added
+- Message replies.
+
+#### Changed
+- All store message actions accept params as array now instead of individual params.
+
 ### [v0.22 (03-15-2021)]
 
 #### Added

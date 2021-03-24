@@ -45,7 +45,9 @@ class StoreDocumentMessageTest extends FeatureTestCase
 
         app(StoreDocumentMessage::class)->withoutDispatches()->execute(
             $this->private,
-            UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')
+            [
+                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+            ]
         );
     }
 
@@ -54,7 +56,9 @@ class StoreDocumentMessageTest extends FeatureTestCase
     {
         app(StoreDocumentMessage::class)->withoutDispatches()->execute(
             $this->private,
-            UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')
+            [
+                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+            ]
         );
 
         $this->assertDatabaseHas('messages', [
@@ -68,7 +72,9 @@ class StoreDocumentMessageTest extends FeatureTestCase
     {
         app(StoreDocumentMessage::class)->withoutDispatches()->execute(
             $this->private,
-            UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')
+            [
+                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+            ]
         );
 
         Storage::disk($this->disk)->assertExists(Message::document()->first()->getDocumentPath());
@@ -79,11 +85,34 @@ class StoreDocumentMessageTest extends FeatureTestCase
     {
         $action = app(StoreDocumentMessage::class)->withoutDispatches()->execute(
             $this->private,
-            UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
-            '123-456-789'
+            [
+                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+                'temporary_id' => '123-456-789',
+            ]
         );
 
         $this->assertSame('123-456-789', $action->getMessage()->temporaryId());
+    }
+
+    /** @test */
+    public function it_can_reply_to_existing_message()
+    {
+        $message = $this->createMessage($this->private, $this->tippin);
+
+        app(StoreDocumentMessage::class)->withoutDispatches()->execute(
+            $this->private,
+            [
+                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+                'temporary_id' => '123-456-789',
+                'reply_to_id' => $message->id,
+            ]
+        );
+
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $this->private->id,
+            'type' => 2,
+            'reply_to_id' => $message->id,
+        ]);
     }
 
     /** @test */
@@ -94,7 +123,9 @@ class StoreDocumentMessageTest extends FeatureTestCase
 
         app(StoreDocumentMessage::class)->withoutDispatches()->execute(
             $this->private,
-            UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')
+            [
+                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+            ]
         );
 
         $participant = $this->private->participants()
@@ -122,8 +153,10 @@ class StoreDocumentMessageTest extends FeatureTestCase
 
         app(StoreDocumentMessage::class)->execute(
             $this->private,
-            UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
-            '123-456-789'
+            [
+                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+                'temporary_id' => '123-456-789',
+            ]
         );
 
         Event::assertDispatched(function (NewMessageBroadcast $event) {

@@ -24,7 +24,14 @@
     position: absolute;
     bottom : 80px;
     width: calc(100% - 15px);
-    z-index: 2;
+    z-index: 1000;
+}
+
+#reply_message_alert{
+    position: absolute;
+    bottom : 80px;
+    width: calc(100% - 15px);
+    z-index: 1000;
 }
 
 .bobble-zone{

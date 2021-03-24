@@ -175,7 +175,8 @@
 ```json
 {
   "message" : "Testing :100:",
-  "temporary_id" : "34e70b00-3917-11eb-985e-e58d0602db52"
+  "temporary_id" : "34e70b00-3917-11eb-985e-e58d0602db52",
+  "reply_to_id" : "nullable|string" //message ID you are replying to
 }
 ```
 #### Response:

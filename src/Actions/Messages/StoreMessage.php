@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Actions\Messages;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use RTippin\Messenger\Contracts\BroadcastDriver;
+use RTippin\Messenger\Http\Request\MessageRequest;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Support\EmojiConverter;
@@ -53,21 +54,20 @@ class StoreMessage extends NewMessageAction
      *
      * @param mixed ...$parameters
      * @var Thread[0]
-     * @var string[1]
-     * @var string|null[2]
+     * @var MessageRequest[1]
      * @return $this
      * @throws Throwable
      */
     public function execute(...$parameters): self
     {
-        $this->setThread($parameters[0]);
-
-        $this->handleTransactions(
-            $this->messenger->getProvider(),
-            'MESSAGE',
-            $this->converter->toShort($parameters[1]),
-            $parameters[2] ?? null
-        )
+        $this->setThread($parameters[0])
+            ->setReplyingToMessage($parameters[1]['reply_to_id'] ?? null)
+            ->handleTransactions(
+                $this->messenger->getProvider(),
+                'MESSAGE',
+                $this->converter->toShort($parameters[1]['message']),
+                $parameters[1]['temporary_id'] ?? null
+            )
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();

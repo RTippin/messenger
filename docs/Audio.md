@@ -65,7 +65,8 @@
 ```json
 {
   "audio" : "(binary)",
-  "temporary_id" : "adb9c9b0-3916-11eb-985e-e58d0602db52"
+  "temporary_id" : "adb9c9b0-3916-11eb-985e-e58d0602db52",
+  "reply_to_id" : "nullable|string" //message ID you are replying to
 }
 ```
 #### Response:

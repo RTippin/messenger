@@ -100,8 +100,7 @@ class MessageController extends Controller
 
         return $storeMessage->execute(
             $thread,
-            $request->input('message'),
-            $request->input('temporary_id')
+            $request->validated()
         )->getJsonResource();
     }
 
@@ -121,7 +120,7 @@ class MessageController extends Controller
             $thread,
         ]);
 
-        return new MessageResource($message, $thread);
+        return new MessageResource($message, $thread, true);
     }
 
     /**

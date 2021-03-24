@@ -45,7 +45,9 @@ class StoreAudioMessageTest extends FeatureTestCase
 
         app(StoreAudioMessage::class)->withoutDispatches()->execute(
             $this->private,
-            UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg')
+            [
+                'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
+            ]
         );
     }
 
@@ -54,7 +56,9 @@ class StoreAudioMessageTest extends FeatureTestCase
     {
         app(StoreAudioMessage::class)->withoutDispatches()->execute(
             $this->private,
-            UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg')
+            [
+                'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
+            ]
         );
 
         $this->assertDatabaseHas('messages', [
@@ -68,7 +72,9 @@ class StoreAudioMessageTest extends FeatureTestCase
     {
         app(StoreAudioMessage::class)->withoutDispatches()->execute(
             $this->private,
-            UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg')
+            [
+                'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
+            ]
         );
 
         Storage::disk($this->disk)->assertExists(Message::audio()->first()->getAudioPath());
@@ -79,11 +85,34 @@ class StoreAudioMessageTest extends FeatureTestCase
     {
         $action = app(StoreAudioMessage::class)->withoutDispatches()->execute(
             $this->private,
-            UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
-            '123-456-789'
+            [
+                'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
+                'temporary_id' => '123-456-789',
+            ]
         );
 
         $this->assertSame('123-456-789', $action->getMessage()->temporaryId());
+    }
+
+    /** @test */
+    public function it_can_reply_to_existing_message()
+    {
+        $message = $this->createMessage($this->private, $this->tippin);
+
+        app(StoreAudioMessage::class)->withoutDispatches()->execute(
+            $this->private,
+            [
+                'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
+                'temporary_id' => '123-456-789',
+                'reply_to_id' => $message->id,
+            ]
+        );
+
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $this->private->id,
+            'type' => 3,
+            'reply_to_id' => $message->id,
+        ]);
     }
 
     /** @test */
@@ -94,7 +123,9 @@ class StoreAudioMessageTest extends FeatureTestCase
 
         app(StoreAudioMessage::class)->withoutDispatches()->execute(
             $this->private,
-            UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg')
+            [
+                'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
+            ]
         );
 
         $participant = $this->private->participants()
@@ -122,8 +153,10 @@ class StoreAudioMessageTest extends FeatureTestCase
 
         app(StoreAudioMessage::class)->execute(
             $this->private,
-            UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
-            '123-456-789'
+            [
+                'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
+                'temporary_id' => '123-456-789',
+            ]
         );
 
         Event::assertDispatched(function (NewMessageBroadcast $event) {

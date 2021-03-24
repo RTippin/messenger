@@ -33,7 +33,9 @@ class StoreMessageTest extends FeatureTestCase
     {
         app(StoreMessage::class)->withoutDispatches()->execute(
             $this->private,
-            'Hello World'
+            [
+                'message' => 'Hello World',
+            ]
         );
 
         $this->assertDatabaseHas('messages', [
@@ -48,7 +50,9 @@ class StoreMessageTest extends FeatureTestCase
     {
         app(StoreMessage::class)->withoutDispatches()->execute(
             $this->private,
-            '👍 hello 💩'
+            [
+                'message' => '👍 hello 💩',
+            ]
         );
 
         $this->assertDatabaseHas('messages', [
@@ -63,11 +67,105 @@ class StoreMessageTest extends FeatureTestCase
     {
         $action = app(StoreMessage::class)->withoutDispatches()->execute(
             $this->private,
-            'Hello World',
-            '123-456-789'
+            [
+                'message' => 'Hello World',
+                'temporary_id' => '123-456-789',
+            ]
         );
 
         $this->assertSame('123-456-789', $action->getMessage()->temporaryId());
+    }
+
+    /** @test */
+    public function it_can_reply_to_existing_message()
+    {
+        $message = $this->createMessage($this->private, $this->tippin);
+
+        app(StoreMessage::class)->withoutDispatches()->execute(
+            $this->private,
+            [
+                'message' => 'Replying',
+                'temporary_id' => '123-456-789',
+                'reply_to_id' => $message->id,
+            ]
+        );
+
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $this->private->id,
+            'type' => 0,
+            'body' => 'Replying',
+            'reply_to_id' => $message->id,
+        ]);
+    }
+
+    /** @test */
+    public function it_will_not_add_reply_if_system_message()
+    {
+        $system = $this->private->messages()->create([
+            'body' => 'System Message',
+            'type' => 93,
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => get_class($this->tippin),
+        ]);
+
+        app(StoreMessage::class)->withoutDispatches()->execute(
+            $this->private,
+            [
+                'message' => 'Replying',
+                'temporary_id' => '123-456-789',
+                'reply_to_id' => $system->id,
+            ]
+        );
+
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $this->private->id,
+            'type' => 0,
+            'body' => 'Replying',
+            'reply_to_id' => null,
+        ]);
+    }
+
+    /** @test */
+    public function it_will_not_add_reply_if_message_not_found()
+    {
+        app(StoreMessage::class)->withoutDispatches()->execute(
+            $this->private,
+            [
+                'message' => 'Replying',
+                'temporary_id' => '123-456-789',
+                'reply_to_id' => 404,
+            ]
+        );
+
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $this->private->id,
+            'type' => 0,
+            'body' => 'Replying',
+            'reply_to_id' => null,
+        ]);
+    }
+
+    /** @test */
+    public function it_will_not_add_reply_if_message_from_another_thread()
+    {
+        $group = $this->createGroupThread($this->tippin);
+        $message = $this->createMessage($group, $this->tippin);
+
+        app(StoreMessage::class)->withoutDispatches()->execute(
+            $this->private,
+            [
+                'message' => 'Replying',
+                'temporary_id' => '123-456-789',
+                'reply_to_id' => $message->id,
+            ]
+        );
+
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $this->private->id,
+            'type' => 0,
+            'body' => 'Replying',
+            'reply_to_id' => null,
+        ]);
     }
 
     /** @test */
@@ -78,7 +176,9 @@ class StoreMessageTest extends FeatureTestCase
 
         app(StoreMessage::class)->withoutDispatches()->execute(
             $this->private,
-            'Hello World'
+            [
+                'message' => 'Hello World',
+            ]
         );
 
         $participant = $this->private->participants()
@@ -106,8 +206,10 @@ class StoreMessageTest extends FeatureTestCase
 
         app(StoreMessage::class)->execute(
             $this->private,
-            'Hello World',
-            '123-456-789'
+            [
+                'message' => 'Hello World',
+                'temporary_id' => '123-456-789',
+            ]
         );
 
         Event::assertDispatched(function (NewMessageBroadcast $event) {

@@ -227,7 +227,9 @@ class StorePrivateThread extends NewThreadAction
     {
         return [
             $this->getThread(),
-            $inputs[$this->messageActionKey],
+            [
+                $this->messageActionKey => $inputs[$this->messageActionKey],
+            ],
         ];
     }
 

@@ -62,7 +62,7 @@ class MessageCollection extends MessengerCollection
     protected function makeResource($message): ?array
     {
         try {
-            return (new MessageResource($message, $this->thread))->resolve();
+            return (new MessageResource($message, $this->thread, true))->resolve();
         } catch (Exception $e) {
             report($e);
         } catch (Throwable $t) {

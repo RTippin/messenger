@@ -45,7 +45,9 @@ class StoreImageMessageTest extends FeatureTestCase
 
         app(StoreImageMessage::class)->withoutDispatches()->execute(
             $this->private,
-            UploadedFile::fake()->image('picture.jpg')
+            [
+                'image' => UploadedFile::fake()->image('picture.jpg'),
+            ]
         );
     }
 
@@ -54,7 +56,9 @@ class StoreImageMessageTest extends FeatureTestCase
     {
         app(StoreImageMessage::class)->withoutDispatches()->execute(
             $this->private,
-            UploadedFile::fake()->image('picture.jpg')
+            [
+                'image' => UploadedFile::fake()->image('picture.jpg'),
+            ]
         );
 
         $this->assertDatabaseHas('messages', [
@@ -68,7 +72,9 @@ class StoreImageMessageTest extends FeatureTestCase
     {
         app(StoreImageMessage::class)->withoutDispatches()->execute(
             $this->private,
-            UploadedFile::fake()->image('picture.jpg')
+            [
+                'image' => UploadedFile::fake()->image('picture.jpg'),
+            ]
         );
 
         Storage::disk($this->disk)->assertExists(Message::image()->first()->getImagePath());
@@ -79,11 +85,34 @@ class StoreImageMessageTest extends FeatureTestCase
     {
         $action = app(StoreImageMessage::class)->withoutDispatches()->execute(
             $this->private,
-            UploadedFile::fake()->image('picture.jpg'),
-            '123-456-789'
+            [
+                'image' => UploadedFile::fake()->image('picture.jpg'),
+                'temporary_id' => '123-456-789',
+            ]
         );
 
         $this->assertSame('123-456-789', $action->getMessage()->temporaryId());
+    }
+
+    /** @test */
+    public function it_can_reply_to_existing_message()
+    {
+        $message = $this->createMessage($this->private, $this->tippin);
+
+        app(StoreImageMessage::class)->withoutDispatches()->execute(
+            $this->private,
+            [
+                'image' => UploadedFile::fake()->image('picture.jpg'),
+                'temporary_id' => '123-456-789',
+                'reply_to_id' => $message->id,
+            ]
+        );
+
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $this->private->id,
+            'type' => 1,
+            'reply_to_id' => $message->id,
+        ]);
     }
 
     /** @test */
@@ -94,7 +123,9 @@ class StoreImageMessageTest extends FeatureTestCase
 
         app(StoreImageMessage::class)->withoutDispatches()->execute(
             $this->private,
-            UploadedFile::fake()->image('picture.jpg')
+            [
+                'image' => UploadedFile::fake()->image('picture.jpg'),
+            ]
         );
 
         $participant = $this->private->participants()
@@ -123,8 +154,10 @@ class StoreImageMessageTest extends FeatureTestCase
 
         app(StoreImageMessage::class)->execute(
             $this->private,
-            UploadedFile::fake()->image('picture.jpg'),
-            '123-456-789'
+            [
+                'image' => UploadedFile::fake()->image('picture.jpg'),
+                'temporary_id' => '123-456-789',
+            ]
         );
 
         Event::assertDispatched(function (NewMessageBroadcast $event) {

@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use RTippin\Messenger\Contracts\MessengerProvider;
@@ -27,12 +28,14 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @property string $owner_id
  * @property int $type
  * @property string $body
+ * @property string $reply_to_id
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \RTippin\Messenger\Models\Thread $thread
  * @property-read Model|MessengerProvider $owner
  * @property-read \RTippin\Messenger\Models\MessageEdit $edits
+ * @property-read \RTippin\Messenger\Models\Message $replyTo
  * @method static \Illuminate\Database\Query\Builder|Message onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|Message withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Message withoutTrashed()
@@ -127,6 +130,18 @@ class Message extends Model
     public function edits()
     {
         return $this->hasMany(MessageEdit::class);
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function replyTo(): HasOne
+    {
+        return $this->hasOne(
+            Message::class,
+            'id',
+            'reply_to_id'
+        );
     }
 
     /**

@@ -94,8 +94,7 @@ class DocumentMessageController extends Controller
 
         return $storeDocumentMessage->execute(
             $thread,
-            $request->file('document'),
-            $request->input('temporary_id')
+            $request->validated()
         )->getJsonResource();
     }
 }

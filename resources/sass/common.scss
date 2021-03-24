@@ -61,7 +61,22 @@ body, wrapper {
 }
 
 .shadow-warning {
-  box-shadow: 0 0 8px 5px #dc3545;
+  box-shadow: 0 0 8px 5px #dc3545 !important;
+  z-index: 999;
+}
+
+.shadow-success {
+  box-shadow: 0 0 8px 5px #38c172 !important;
+  z-index: 999;
+}
+
+.shadow-primary {
+  box-shadow: 0 0 8px 5px #2677dd !important;
+  z-index: 999;
+}
+
+.message-reply-highlight {
+  box-shadow: 0 0 8px 1px #20c997;
   z-index: 999;
 }
 

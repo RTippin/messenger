@@ -40,7 +40,6 @@
 
 ### Upcoming
 - Message reactions.
-- Message replies.
 - Video message type.
 - Optional payload column for messages to allow extra data passed.
 - Route params for API results / better pagination.

@@ -8,6 +8,7 @@ use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\UploadFailedException;
+use RTippin\Messenger\Http\Request\DocumentMessageRequest;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\FileService;
@@ -56,8 +57,7 @@ class StoreDocumentMessage extends NewMessageAction
      *
      * @param mixed ...$parameters
      * @var Thread[0]
-     * @var UploadedFile[1]
-     * @var string|null[2]
+     * @var DocumentMessageRequest[1]
      * @return $this
      * @throws Throwable|FeatureDisabledException|UploadFailedException
      */
@@ -65,16 +65,14 @@ class StoreDocumentMessage extends NewMessageAction
     {
         $this->isDocumentUploadEnabled();
 
-        $this->setThread($parameters[0]);
-
-        $file = $this->upload($parameters[1]);
-
-        $this->handleTransactions(
-            $this->messenger->getProvider(),
-            'DOCUMENT_MESSAGE',
-            $file,
-            $parameters[2] ?? null
-        )
+        $this->setThread($parameters[0])
+            ->setReplyingToMessage($parameters[1]['reply_to_id'] ?? null)
+            ->handleTransactions(
+                $this->messenger->getProvider(),
+                'DOCUMENT_MESSAGE',
+                $this->upload($parameters[1]['document']),
+                $parameters[1]['temporary_id'] ?? null
+            )
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();

@@ -20,6 +20,7 @@ class DocumentMessageRequest extends FormRequest
         return [
             'document' => "required|max:{$limit}|file|mimes:{$mimes}",
             'temporary_id' => 'required|string',
+            'reply_to_id' => 'nullable|string',
         ];
     }
 }

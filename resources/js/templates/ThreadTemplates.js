@@ -14,7 +14,10 @@ window.ThreadTemplates = (function () {
             }
             return body.replace(regExp, html);
         },
-        format_message_body : function(body){
+        format_message_body : function(body, skipExtra){
+            if(skipExtra === true){
+                return (typeof emojione !== 'undefined' ? emojione.toImage(body) : body)
+            }
             return (typeof emojione !== 'undefined' ? methods.makeLinks(methods.makeYoutube(emojione.toImage(body))) : methods.makeLinks(methods.makeYoutube(body)))
         },
         switch_mobile_view : function (power) {
@@ -221,7 +224,7 @@ window.ThreadTemplates = (function () {
         },
         message_edit_item : function(data){
             return '<li title="Edited on '+moment(Messenger.format().makeUtcLocal(data.edited_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="thread_list_item mb-2">' +
-                methods.format_message_body(data.body) +
+                methods.format_message_body(data.body, true) +
                 '</li>'
         },
         document_item : function(data){
@@ -283,8 +286,8 @@ window.ThreadTemplates = (function () {
                 templates.thread_body(data) +
                 '</div></div></div></a></li>'
         },
-        message_body : function(data, pending){
-            if(pending){
+        message_body : function(data, pending, reply){
+            if(pending === true){
                 switch(data.type){
                     case 1:
                     case 2:
@@ -294,6 +297,18 @@ window.ThreadTemplates = (function () {
                                 '</div>';
                     default:
                         return (typeof emojione !== 'undefined' ? emojione.toImage(data.body) : data.body)
+                }
+            }
+            if(reply === true){
+                switch(data.type){
+                    case 1:
+                        return '<i class="far fa-image"></i> Sent an image';
+                    case 2:
+                        return '<i class="fas fa-file-download"></i> Sent a file';
+                    case 3:
+                        return '<i class="fas fa-music"></i> Sent an audio file';
+                    default:
+                        return methods.format_message_body(data.body, true);
                 }
             }
             switch(data.type){
@@ -315,15 +330,19 @@ window.ThreadTemplates = (function () {
                     return data.edited ? body + ' <span onclick="ThreadManager.load().messageEdits(\''+data.edited_history_route+'\')" class="pointer_area"><small class="font-weight-bold text-muted" title="Edited on '+moment(Messenger.format().makeUtcLocal(data.updated_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'">(edited)</small></span>' : body;
             }
         },
-        message_archive : function(data, grouped){
-            if(!ThreadManager.state().thread_lockout && ThreadManager.state().thread_admin){
-                return '<div onclick="ThreadManager.archive().Message({id : \''+data.id+'\'})" class="message_hover_opt message_hover_group_opt float-left ml-0 pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS"><i title="Delete Message" class="fas fa-trash"></i></div>'
-            }
-            return '';
-        },
-        my_message_archive : function(data, grouped){
+        message_options : function(data, grouped){
+            let options = '';
             if(!ThreadManager.state().thread_lockout){
-                let edit = '<div onclick="ThreadManager.editMessage({id : \''+data.id+'\'})" class="message_hover_opt float-right mr-0 pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS"><i title="Edit Message" class="fas fa-edit"></i></div>';
+                if(ThreadManager.state().thread_admin){
+                    options += '<div onclick="ThreadManager.archive().Message({id : \''+data.id+'\'})" class="message_hover_opt float-left ml-0 pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS"><i title="Delete Message" class="fas fa-trash"></i></div>';
+                }
+                options += '<div onclick="ThreadManager.reply({id : \''+data.id+'\'})" class="message_hover_opt float-left ml-'+(ThreadManager.state().thread_admin ? '1' : '0')+' pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS"><i title="Reply" class="fas fa-reply"></i></div>';
+            }
+            return options;
+        },
+        my_message_options : function(data, grouped){
+            if(!ThreadManager.state().thread_lockout){
+                let edit = '<div onclick="ThreadManager.editMessage({id : \''+data.id+'\'})" class="message_hover_opt float-right mr-0 pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS"><i title="Edit Message" class="fas fa-pen"></i></div>';
                 return (data.type === 0 ? edit : '') +
                     '<div onclick="ThreadManager.archive().Message({id : \''+data.id+'\'})" class="message_hover_opt float-right mr-1 pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS"><i title="Delete Message" class="fas fa-trash"></i></div>'
             }
@@ -352,24 +371,24 @@ window.ThreadTemplates = (function () {
                 Messenger.format().escapeHtml(data.owner.name)+' on '+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+
                 '</a></div><hr>'
         },
-        documents_message :function(data){
-            return '<div class="col text-center">' +
-                '<a target="_blank" href="'+data.document+'">' +
-                '<h4><i class="fas fa-file-download"></i> '+data.body+'</h4></a>'+
-                Messenger.format().escapeHtml(data.owner.name)+' on '+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+
-                '</div><hr>';
-        },
         my_message : function(data){
             return '<div id="message_'+data.id+'" class="message my-message"><div class="message-body"><div class="message-body-inner"><div class="message-info">' +
                 '<h5> <i class="far fa-clock"></i><time title="'+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="timeago" datetime="'+data.created_at+'">'+Messenger.format().makeTimeAgo(data.created_at)+'</time></h5></div><hr><div class="message-text">' +
                 templates.message_body(data, false) +
-                '</div></div></div>'+templates.my_message_archive(data, false)+'<div class="clearfix"></div></div>'
+                '</div></div></div>'+templates.my_message_options(data, false)+'<div class="clearfix"></div></div>'
         },
         my_message_grouped : function(data){
             return '<div id="message_'+data.id+'" class="message grouped-message my-message"><div class="message-body"><div class="message-body-inner">' +
                 '<div title="'+Messenger.format().escapeHtml(data.owner.name)+' on '+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="message-text pt-2">' +
                 templates.message_body(data, false) +
-                '</div></div></div>'+templates.my_message_archive(data, true)+'<div class="clearfix"></div></div>'
+                '</div></div></div>'+templates.my_message_options(data, true)+'<div class="clearfix"></div></div>'
+        },
+        my_message_reply : function(data){
+            return '<div id="message_'+data.id+'" class="message my-message"><div class="message-body"><div class="message-body-inner"><div class="message-info">' +
+                '<h5> <i class="far fa-clock"></i><time title="'+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="timeago" datetime="'+data.created_at+'">'+Messenger.format().makeTimeAgo(data.created_at)+'</time></h5></div><hr><div class="message-text">' +
+                templates.message_reply_item(data) +
+                templates.message_body(data, false) +
+                '</div></div></div>'+templates.my_message_options(data, false)+'<div class="clearfix"></div></div>'
         },
         message : function(data){
             return '<div id="message_'+data.id+'" class="message info"><a '+(data.owner.route ? '' : 'onclick="return false;"')+' ' +
@@ -377,13 +396,36 @@ window.ThreadTemplates = (function () {
                 '<div class="message-body"><div class="message-body-inner"><div class="message-info">' +
                 '<h4>'+data.owner.name+'</h4><h5> <i class="far fa-clock"></i><time title="'+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="timeago" datetime="'+data.created_at+'">'+Messenger.format().makeTimeAgo(data.created_at)+'</time></h5></div><hr><div class="message-text">' +
                 templates.message_body(data, false) +
-                '</div></div></div>' +templates.message_archive(data, false)+ '<div class="clearfix"></div></div>'
+                '</div></div></div>' +templates.message_options(data, false)+ '<div class="clearfix"></div></div>'
         },
         message_grouped : function(data){
             return '<div id="message_'+data.id+'" class="message grouped-message info"><div class="message-body"><div class="message-body-inner">' +
                 '<div title="'+Messenger.format().escapeHtml(data.owner.name)+' on '+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="message-text pt-2">' +
                 templates.message_body(data, false) +
-                '</div></div></div> '+templates.message_archive(data, true)+' <div class="clearfix"></div></div>'
+                '</div></div></div> '+templates.message_options(data, true)+' <div class="clearfix"></div></div>'
+        },
+        message_reply : function(data){
+            return '<div id="message_'+data.id+'" class="message info"><a '+(data.owner.route ? '' : 'onclick="return false;"')+' ' +
+                'href="'+(data.owner.route ? data.owner.route : '#')+'" target="_blank"><img title="'+Messenger.format().escapeHtml(data.owner.name)+'" class="rounded-circle message-avatar" src="'+data.owner.avatar.sm+'"></a>' +
+                '<div class="message-body '+templates.message_reply_highlight(data)+'"><div class="message-body-inner"><div class="message-info">' +
+                '<h4>'+data.owner.name+'</h4><h5> <i class="far fa-clock"></i><time title="'+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="timeago" datetime="'+data.created_at+'">'+Messenger.format().makeTimeAgo(data.created_at)+'</time></h5></div><hr><div class="message-text">' +
+                templates.message_reply_item(data) +
+                templates.message_body(data, false) +
+                '</div></div></div>' +templates.message_options(data, false)+ '<div class="clearfix"></div></div>'
+        },
+        message_reply_item : function(data){
+            let msg = '<footer class="blockquote-footer text-light">Replying to unknown</footer>';
+            if(data.hasOwnProperty('reply_to') && data.reply_to !== null){
+                msg = '<p class="mb-0">'+templates.message_body(data.reply_to, false, true)+'</p><footer class="blockquote-footer text-light">Replying to '+data.reply_to.owner.name+'</footer>';
+            }
+            return '<blockquote class="pl-2 mb-1 border-left border-info">'+msg+'</blockquote><hr>';
+        },
+        message_reply_highlight : function(data){
+            return data.hasOwnProperty('reply_to')
+                && data.reply_to !== null
+                && data.reply_to.owner_id === Messenger.common().id
+                ? 'message-reply-highlight'
+                : '';
         },
         loading_history : function(){
             return '<div id="loading_history_marker" class="system-message pt-0 mt-n4 w-100 text-center"> ' +
@@ -614,6 +656,9 @@ window.ThreadTemplates = (function () {
         },
         thread_new_message_alert : function(){
             return '<div class="text-center h6 font-weight-bold"><div class="py-2 alert alert-primary border-info shadow" role="alert">You have new messages <i class="fas fa-level-down-alt"></i></div></div>'
+        },
+        thread_replying_message_alert : function(name){
+            return '<div class="text-center h6 font-weight-bold"><div class="py-2 alert alert-dark border-secondary shadow" role="alert"><i class="fas fa-reply"></i> Replying to '+name+' <span class="float-right"><i class="fas fa-times-circle"></i></span></div></div>'
         },
         group_settings : function(settings){
             return '<form id="group_settings_form" action="javascript:ThreadManager.group().saveSettings()">\n' +
@@ -1177,6 +1222,7 @@ window.ThreadTemplates = (function () {
                 '               <div id="new_message_alert" class="pointer_area NS">' +
                                 templates.thread_new_message_alert() +
                 '               </div>'+
+                '               <div id="reply_message_alert" class="pointer_area NS"></div>'+
                 '            </div>\n' +
                 '            <div class="chat-footer">\n' +
                                 templates.disabled_overlay_check(data, creating)+

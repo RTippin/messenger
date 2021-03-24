@@ -152,7 +152,9 @@ class UpdateMessage extends BaseMessengerAction
     private function generateResource(): self
     {
         $this->setJsonResource(new MessageResource(
-                $this->getMessage(), $this->getThread()
+                $this->getMessage(),
+                $this->getThread(),
+                true
             )
         );
 
