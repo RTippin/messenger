@@ -2015,7 +2015,9 @@ window.ThreadManager = (function () {
                 if(message.hasOwnProperty('reply_to')){
                     msg.replaceWith(message.owner_id === Messenger.common().id ? ThreadTemplates.render().my_message_reply(message) : ThreadTemplates.render().message_reply(message))
                 }
-                msg.find('.message-text').html(ThreadTemplates.render().message_body(message))
+                else{
+                    msg.find('.message-text').html(ThreadTemplates.render().message_body(message))
+                }
             }
         }
     },
