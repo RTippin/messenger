@@ -5,6 +5,7 @@
 
 #### Added
 - Message replies.
+- reply_to_id column on the messages table.
 
 #### Changed
 - All store message actions accept params as array now instead of individual params.
