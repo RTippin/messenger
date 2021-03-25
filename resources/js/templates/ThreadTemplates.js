@@ -302,11 +302,11 @@ window.ThreadTemplates = (function () {
             if(reply === true){
                 switch(data.type){
                     case 1:
-                        return '<i class="far fa-image"></i> Sent an image';
+                        return '<a target="_blank" href="'+data.image.lg+'"><i class="far fa-image"></i> Sent an image</a>';
                     case 2:
-                        return '<i class="fas fa-file-download"></i> Sent a file';
+                        return '<a href="'+data.document+'" target="_blank"><i class="fas fa-file-download"></i> Sent a file</a>';
                     case 3:
-                        return '<i class="fas fa-music"></i> Sent an audio file';
+                        return '<a href="'+data.audio+'" target="_blank"><i class="fas fa-music"></i> Sent an audio file</a>';
                     default:
                         return methods.format_message_body(data.body, true);
                 }
