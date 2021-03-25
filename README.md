@@ -26,6 +26,7 @@
 - Private and group threads.
 - Permissions per participant within a group thread.
 - Send image, document or audio messages.
+- Message replies and edits.
 - Friends system.
 - Search system.
 - Online status.
