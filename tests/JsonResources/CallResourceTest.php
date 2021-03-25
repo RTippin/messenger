@@ -33,8 +33,6 @@ class CallResourceTest extends FeatureTestCase
     {
         $resource = (new CallResource($this->call, $this->group))->resolve();
 
-        dump($resource);
-
         $this->assertSame($this->call->id, $resource['id']);
         $this->assertTrue($resource['active']);
         $this->assertSame(1, $resource['type']);
