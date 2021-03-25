@@ -37,5 +37,8 @@
     "uuid": "^3.4.0",
     "vanilla-lazyload": "^15.2.0",
     "webrtc-adapter": "^7.6.3"
+  },
+  "resolutions": {
+    "is-svg": "^4.2.0"
   }
 }
