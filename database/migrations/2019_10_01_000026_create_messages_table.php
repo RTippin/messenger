@@ -20,7 +20,7 @@ class CreateMessagesTable extends Migration
             Helpers::SchemaMorphType('owner', $table);
             $table->integer('type')->index();
             $table->text('body');
-            $table->uuid('reply_to_id')->nullable();
+            $table->uuid('reply_to_id')->nullable()->index();
             $table->timestamps(6);
             $table->softDeletes();
             $table->index('created_at');
@@ -29,12 +29,6 @@ class CreateMessagesTable extends Migration
                 ->on('threads')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
-        });
-
-        Schema::table('messages', function (Blueprint $table) {
-            $table->foreign('reply_to_id')
-                ->references('id')
-                ->on('messages');
         });
     }
 

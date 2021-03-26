@@ -128,6 +128,24 @@ class MessageTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_doesnt_have_reply_when_reply_message_deleted()
+    {
+        $replyMessage = $this->group->messages()->create([
+            'body' => 'First Reply Message',
+            'type' => 0,
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => get_class($this->tippin),
+            'reply_to_id' => $this->message->id,
+        ]);
+        $this->message->forceDelete();
+
+        $this->assertDatabaseMissing('messages', [
+            'id' => $this->message->id,
+        ]);
+        $this->assertNull($replyMessage->replyTo);
+    }
+
+    /** @test */
     public function image_message()
     {
         $this->message->update([
