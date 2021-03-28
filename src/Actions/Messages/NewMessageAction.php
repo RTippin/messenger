@@ -68,6 +68,8 @@ abstract class NewMessageAction extends BaseMessengerAction
             && ! is_null($message = $this->getThread()->messages()->with('owner')->find($replyToId))
             && ! $message->isSystemMessage()) {
             $this->replyingTo = $message;
+        } else {
+            $this->replyingTo = null;
         }
 
         return $this;
