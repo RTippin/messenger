@@ -6,7 +6,7 @@ use Illuminate\Support\Collection;
 use JoyPixels\Client;
 use RTippin\Messenger\Contracts\EmojiInterface;
 
-class EmojiConverter implements EmojiInterface
+class Emoji implements EmojiInterface
 {
     /**
      * @var Client
@@ -14,7 +14,7 @@ class EmojiConverter implements EmojiInterface
     private Client $joyPixelClient;
 
     /**
-     * EmojiConverter constructor.
+     * Emoji constructor.
      *
      * @param Client $joyPixelClient
      */

@@ -5,10 +5,10 @@ namespace RTippin\Messenger\Actions\Messages;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use RTippin\Messenger\Contracts\BroadcastDriver;
+use RTippin\Messenger\Contracts\EmojiInterface;
 use RTippin\Messenger\Http\Request\MessageRequest;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Support\EmojiConverter;
 use Throwable;
 
 class StoreMessage extends NewMessageAction
@@ -19,9 +19,9 @@ class StoreMessage extends NewMessageAction
     private Messenger $messenger;
 
     /**
-     * @var EmojiConverter
+     * @var EmojiInterface
      */
-    private EmojiConverter $converter;
+    private EmojiInterface $emoji;
 
     /**
      * StoreMessage constructor.
@@ -30,13 +30,13 @@ class StoreMessage extends NewMessageAction
      * @param DatabaseManager $database
      * @param Dispatcher $dispatcher
      * @param Messenger $messenger
-     * @param EmojiConverter $converter
+     * @param EmojiInterface $emoji
      */
     public function __construct(BroadcastDriver $broadcaster,
                                 DatabaseManager $database,
                                 Dispatcher $dispatcher,
                                 Messenger $messenger,
-                                EmojiConverter $converter)
+                                EmojiInterface $emoji)
     {
         parent::__construct(
             $broadcaster,
@@ -45,7 +45,7 @@ class StoreMessage extends NewMessageAction
         );
 
         $this->messenger = $messenger;
-        $this->converter = $converter;
+        $this->emoji = $emoji;
     }
 
     /**
@@ -65,7 +65,7 @@ class StoreMessage extends NewMessageAction
             ->handleTransactions(
                 $this->messenger->getProvider(),
                 'MESSAGE',
-                $this->converter->toShort($parameters[1]['message']),
+                $this->emoji->toShort($parameters[1]['message']),
                 $parameters[1]['temporary_id'] ?? null
             )
             ->generateResource()

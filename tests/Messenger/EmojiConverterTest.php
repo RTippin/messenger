@@ -2,19 +2,18 @@
 
 namespace RTippin\Messenger\Tests\Messenger;
 
-use JoyPixels\Client;
-use Orchestra\Testbench\TestCase;
-use RTippin\Messenger\Support\EmojiConverter;
+use RTippin\Messenger\Contracts\EmojiInterface;
+use RTippin\Messenger\Tests\MessengerTestCase;
 
-class EmojiConverterTest extends TestCase
+class EmojiConverterTest extends MessengerTestCase
 {
-    private EmojiConverter $converter;
+    private EmojiInterface $emoji;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->converter = new EmojiConverter(new Client);
+        $this->emoji = app(EmojiInterface::class);
     }
 
     /**
@@ -25,8 +24,8 @@ class EmojiConverterTest extends TestCase
      */
     public function it_verifies_emoji_exist($string, $string2)
     {
-        $this->assertTrue($this->converter->verifyHasEmoji($string));
-        $this->assertTrue($this->converter->verifyHasEmoji($string2));
+        $this->assertTrue($this->emoji->verifyHasEmoji($string));
+        $this->assertTrue($this->emoji->verifyHasEmoji($string2));
     }
 
     /**
@@ -36,7 +35,7 @@ class EmojiConverterTest extends TestCase
      */
     public function it_verifies_emoji_doesnt_exist($string)
     {
-        $this->assertFalse($this->converter->verifyHasEmoji($string));
+        $this->assertFalse($this->emoji->verifyHasEmoji($string));
     }
 
     /**
@@ -47,7 +46,7 @@ class EmojiConverterTest extends TestCase
      */
     public function it_returns_valid_emojis_as_shortcode_array($string, $expected)
     {
-        $this->assertSame($expected, $this->converter->getValidEmojiShortcodes($string));
+        $this->assertSame($expected, $this->emoji->getValidEmojiShortcodes($string));
     }
 
     /**
@@ -57,7 +56,7 @@ class EmojiConverterTest extends TestCase
      */
     public function it_returns_empty_shortcode_array_if_no_valid_emojis($string)
     {
-        $this->assertCount(0, $this->converter->getValidEmojiShortcodes($string));
+        $this->assertCount(0, $this->emoji->getValidEmojiShortcodes($string));
     }
 
     /**
@@ -68,7 +67,7 @@ class EmojiConverterTest extends TestCase
      */
     public function converter_swaps_emojis_with_shortcode($string, $expected)
     {
-        $this->assertSame($expected, $this->converter->toShort($string));
+        $this->assertSame($expected, $this->emoji->toShort($string));
     }
 
     public function stringInputs(): array

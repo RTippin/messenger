@@ -3,23 +3,23 @@
 namespace RTippin\Messenger\Rules;
 
 use Illuminate\Contracts\Validation\Rule;
-use RTippin\Messenger\Support\EmojiConverter;
+use RTippin\Messenger\Contracts\EmojiInterface;
 
 class HasEmoji implements Rule
 {
     /**
-     * @var EmojiConverter
+     * @var EmojiInterface
      */
-    private EmojiConverter $converter;
+    private EmojiInterface $emoji;
 
     /**
      * HasEmoji constructor.
      *
-     * @param EmojiConverter $converter
+     * @param EmojiInterface $emoji
      */
-    public function __construct(EmojiConverter $converter)
+    public function __construct(EmojiInterface $emoji)
     {
-        $this->converter = $converter;
+        $this->emoji = $emoji;
     }
 
     /**
@@ -31,7 +31,7 @@ class HasEmoji implements Rule
      */
     public function passes($attribute, $value): bool
     {
-        return $this->converter->verifyHasEmoji($value);
+        return $this->emoji->verifyHasEmoji($value);
     }
 
     /**

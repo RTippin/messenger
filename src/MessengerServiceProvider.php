@@ -18,9 +18,11 @@ use RTippin\Messenger\Commands\PurgeImagesCommand;
 use RTippin\Messenger\Commands\PurgeMessagesCommand;
 use RTippin\Messenger\Commands\PurgeThreadsCommand;
 use RTippin\Messenger\Contracts\BroadcastDriver;
+use RTippin\Messenger\Contracts\EmojiInterface;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Http\Middleware\MessengerApi;
+use RTippin\Messenger\Support\Emoji;
 
 class MessengerServiceProvider extends ServiceProvider
 {
@@ -117,6 +119,10 @@ class MessengerServiceProvider extends ServiceProvider
         $this->app->singleton(
             FriendDriver::class,
             FriendBroker::class
+        );
+        $this->app->singleton(
+            EmojiInterface::class,
+            Emoji::class
         );
         $this->app->singleton(
             BroadcastDriver::class,

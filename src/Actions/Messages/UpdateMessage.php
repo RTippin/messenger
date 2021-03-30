@@ -7,13 +7,14 @@ use Illuminate\Database\DatabaseManager;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\MessageEditedBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
+use RTippin\Messenger\Contracts\EmojiInterface;
 use RTippin\Messenger\Events\MessageEditedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Resources\MessageResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Support\EmojiConverter;
+use RTippin\Messenger\Support\Emoji;
 use Throwable;
 
 class UpdateMessage extends BaseMessengerAction
@@ -39,9 +40,9 @@ class UpdateMessage extends BaseMessengerAction
     private Messenger $messenger;
 
     /**
-     * @var EmojiConverter
+     * @var EmojiInterface
      */
-    private EmojiConverter $converter;
+    private EmojiInterface $emoji;
 
     /**
      * @var string
@@ -55,19 +56,19 @@ class UpdateMessage extends BaseMessengerAction
      * @param DatabaseManager $database
      * @param Dispatcher $dispatcher
      * @param Messenger $messenger
-     * @param EmojiConverter $converter
+     * @param EmojiInterface $emoji
      */
     public function __construct(BroadcastDriver $broadcaster,
                                 DatabaseManager $database,
                                 Dispatcher $dispatcher,
                                 Messenger $messenger,
-                                EmojiConverter $converter)
+                                EmojiInterface $emoji)
     {
         $this->broadcaster = $broadcaster;
         $this->database = $database;
         $this->dispatcher = $dispatcher;
         $this->messenger = $messenger;
-        $this->converter = $converter;
+        $this->emoji = $emoji;
     }
 
     /**
@@ -128,7 +129,7 @@ class UpdateMessage extends BaseMessengerAction
      */
     private function executeTransactions(string $body): self
     {
-        if ($this->getMessage()->body !== $newBody = $this->converter->toShort($body)) {
+        if ($this->getMessage()->body !== $newBody = $this->emoji->toShort($body)) {
             $this->originalBody = $this->getMessage()->body;
 
             $this->getMessage()->update([
