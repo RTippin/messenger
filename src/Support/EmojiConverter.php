@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Support;
 
+use Illuminate\Support\Collection;
 use JoyPixels\Client;
 
 class EmojiConverter
@@ -32,12 +33,32 @@ class EmojiConverter
     /**
      * @param string $string
      * @return bool
-     * TODO
      */
-    public function verify(string $string): bool
+    public function verifyHasEmoji(string $string): bool
     {
-//        $test = preg_replace_callback('/'.$this->joyPixelClient->ignoredRegexp.'|'.$this->joyPixelClient->unicodeRegexp.'/ui', array($this, 'toShortCallback'), $string);
+        return count($this->getValidEmojiShortcodes($string)) > 0;
+    }
 
-        return true;
+    /**
+     * @param string $string
+     * @return array
+     */
+    public function getValidEmojiShortcodes(string $string): array
+    {
+        preg_match_all('/:([^:]+):/', $this->toShort($string), $match);
+
+        return (new Collection($match[0]))
+            ->reject(fn (string $code) => ! $this->checkShortcodeExist($code))
+            ->values()
+            ->toArray();
+    }
+
+    /**
+     * @param string $shortcode
+     * @return bool
+     */
+    private function checkShortcodeExist(string $shortcode): bool
+    {
+        return array_key_exists($shortcode, $this->joyPixelClient->getRuleset()->getShortcodeReplace());
     }
 }
