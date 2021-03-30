@@ -10,10 +10,12 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\ThreadFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Support\Helpers;
+use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
 
@@ -44,6 +46,7 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @property-read \RTippin\Messenger\Models\Message|null $recentMessage
  * @method static Builder|Thread group()
  * @method static Builder|Thread private()
+ * @method static Builder|Thread hasProvider(string $relation, MessengerProvider $provider)
  * @method static \Illuminate\Database\Query\Builder|Thread onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|Thread withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Thread withoutTrashed()
@@ -56,6 +59,7 @@ class Thread extends Model
     use SoftDeletes;
     use Uuids;
     use HasEagerLimit;
+    use ScopesProvider;
 
     /**
      * The database table used by the model.
@@ -286,7 +290,7 @@ class Thread extends Model
                     ->first();
             } else {
                 $recipient = $this->participants()
-                    ->where('id', '!=', $this->currentParticipant()->id)
+                    ->notProvider(Messenger::getProvider())
                     ->first();
             }
         }
@@ -314,8 +318,7 @@ class Thread extends Model
                 ->first();
         } else {
             $this->currentParticipantCache = $this->participants()
-                ->where('owner_id', Messenger::getProviderId())
-                ->where('owner_type', Messenger::getProviderClass())
+                ->forProvider(Messenger::getProvider())
                 ->first();
         }
 

@@ -23,6 +23,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read \RTippin\Messenger\Models\Message $message
  * @mixin Model|\Eloquent
  * @method static Builder|MessageReaction forProvider(MessengerProvider $provider)
+ * @method static Builder|MessageReaction notProvider(MessengerProvider $provider)
  * @method static Builder|MessageReaction reaction(string $reaction)
  */
 class MessageReaction extends Model

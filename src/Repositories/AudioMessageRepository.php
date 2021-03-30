@@ -16,7 +16,7 @@ class AudioMessageRepository
     protected Messenger $messenger;
 
     /**
-     * ImageMessageRepository constructor.
+     * AudioMessageRepository constructor.
      *
      * @param Messenger $messenger
      */

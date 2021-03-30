@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Repositories;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Messenger;
@@ -17,31 +16,13 @@ class PrivateThreadRepository
     protected Messenger $messenger;
 
     /**
-     * @var ThreadRepository
-     */
-    private ThreadRepository $threadRepository;
-
-    /**
      * PrivateThreadRepository constructor.
      *
      * @param Messenger $messenger
-     * @param ThreadRepository $threadRepository
      */
-    public function __construct(Messenger $messenger,
-                                ThreadRepository $threadRepository)
+    public function __construct(Messenger $messenger)
     {
         $this->messenger = $messenger;
-        $this->threadRepository = $threadRepository;
-    }
-
-    /**
-     * @return Thread|Builder
-     */
-    public function getProviderPrivateThreadsBuilder(): Builder
-    {
-        return $this->threadRepository
-            ->getProviderThreadsBuilder()
-            ->private();
     }
 
     /**
@@ -51,11 +32,10 @@ class PrivateThreadRepository
     public function getProviderPrivateThreadWithRecipient(MessengerProvider $recipient = null): ?Thread
     {
         if ($this->messenger->isValidMessengerProvider($recipient)) {
-            return $this->getProviderPrivateThreadsBuilder()
-                ->whereHas('participants',
-                fn (Builder $query) => $query->where('owner_id', '=', $recipient->getKey())
-                    ->where('owner_type', '=', get_class($recipient))
-            )->first();
+            return Thread::hasProvider('participants', $this->messenger->getProvider())
+                ->private()
+                ->hasProvider('participants', $recipient)
+                ->first();
         }
 
         return null;
@@ -66,7 +46,8 @@ class PrivateThreadRepository
      */
     public function getProviderPrivateThreadsIndex(): Collection
     {
-        return $this->getProviderPrivateThreadsBuilder()
+        return Thread::hasProvider('participants', $this->messenger->getProvider())
+            ->private()
             ->latest('updated_at')
             ->with([
                 'participants.owner',
@@ -83,7 +64,8 @@ class PrivateThreadRepository
      */
     public function getProviderPrivateThreadsPage(Thread $thread): Collection
     {
-        return $this->getProviderPrivateThreadsBuilder()
+        return Thread::hasProvider('participants', $this->messenger->getProvider())
+            ->private()
             ->latest('updated_at')
             ->with([
                 'participants.owner',
@@ -101,7 +83,8 @@ class PrivateThreadRepository
      */
     public function getProviderOldestPrivateThread(): ?Thread
     {
-        return $this->getProviderPrivateThreadsBuilder()
+        return Thread::hasProvider('participants', $this->messenger->getProvider())
+            ->private()
             ->oldest('updated_at')
             ->first();
     }

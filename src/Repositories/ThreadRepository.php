@@ -26,22 +26,11 @@ class ThreadRepository
     }
 
     /**
-     * @return Thread|Builder
-     */
-    public function getProviderThreadsBuilder(): Builder
-    {
-        return Thread::whereHas('participants',
-            fn (Builder $query) => $query->where('owner_id', '=', $this->messenger->getProviderId())
-                ->where('owner_type', '=', $this->messenger->getProviderClass())
-        );
-    }
-
-    /**
      * @return Collection
      */
     public function getProviderThreadsIndex(): Collection
     {
-        return $this->getProviderThreadsBuilder()
+        return Thread::hasProvider('participants', $this->messenger->getProvider())
             ->latest('updated_at')
             ->with([
                 'participants.owner',
@@ -58,7 +47,7 @@ class ThreadRepository
      */
     public function getProviderThreadsPage(Thread $thread): Collection
     {
-        return $this->getProviderThreadsBuilder()
+        return Thread::hasProvider('participants', $this->messenger->getProvider())
             ->latest('updated_at')
             ->with([
                 'participants.owner',
@@ -76,8 +65,7 @@ class ThreadRepository
      */
     public function getProviderThreadsWithActiveCallsBuilder(): Builder
     {
-        return $this->getProviderThreadsBuilder()
-            ->has('activeCall');
+        return Thread::hasProvider('participants', $this->messenger->getProvider())->has('activeCall');
     }
 
     /**
@@ -85,8 +73,7 @@ class ThreadRepository
      */
     public function getProviderThreadsWithActiveCalls(): Collection
     {
-        return $this->getProviderThreadsWithActiveCallsBuilder()
-            ->get();
+        return $this->getProviderThreadsWithActiveCallsBuilder()->get();
     }
 
     /**
@@ -94,7 +81,7 @@ class ThreadRepository
      */
     public function getProviderOldestThread(): ?Thread
     {
-        return $this->getProviderThreadsBuilder()
+        return Thread::hasProvider('participants', $this->messenger->getProvider())
             ->oldest('updated_at')
             ->first();
     }

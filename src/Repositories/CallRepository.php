@@ -17,21 +17,13 @@ class CallRepository
     protected Messenger $messenger;
 
     /**
-     * @var ThreadRepository
-     */
-    private ThreadRepository $threadRepository;
-
-    /**
      * CallRepository constructor.
      *
      * @param Messenger $messenger
-     * @param ThreadRepository $threadRepository
      */
-    public function __construct(Messenger $messenger,
-                                ThreadRepository $threadRepository)
+    public function __construct(Messenger $messenger)
     {
         $this->messenger = $messenger;
-        $this->threadRepository = $threadRepository;
     }
 
     /**
@@ -39,10 +31,7 @@ class CallRepository
      */
     public function getProviderCallsBuilder(): Builder
     {
-        return Call::videoCall()->whereHas('participants',
-            fn (Builder $query) => $query->where('owner_id', '=', $this->messenger->getProviderId())
-                ->where('owner_type', '=', $this->messenger->getProviderClass())
-        );
+        return Call::videoCall()->hasProvider('participants', $this->messenger->getProvider());
     }
 
     /**
@@ -51,7 +40,7 @@ class CallRepository
     public function getProviderAllActiveCalls(): Collection
     {
         return Call::active()->whereIn('thread_id',
-            $this->threadRepository->getProviderThreadsBuilder()
+            Thread::hasProvider('participants', $this->messenger->getProvider())
                 ->pluck('id')
                 ->toArray()
         )

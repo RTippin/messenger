@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Repositories;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
@@ -16,31 +15,13 @@ class GroupThreadRepository
     private Messenger $messenger;
 
     /**
-     * @var ThreadRepository
-     */
-    private ThreadRepository $threadRepository;
-
-    /**
      * GroupThreadRepository constructor.
      *
      * @param Messenger $messenger
-     * @param ThreadRepository $threadRepository
      */
-    public function __construct(Messenger $messenger,
-                                ThreadRepository $threadRepository)
+    public function __construct(Messenger $messenger)
     {
         $this->messenger = $messenger;
-        $this->threadRepository = $threadRepository;
-    }
-
-    /**
-     * @return Thread|Builder
-     */
-    public function getProviderGroupThreadsBuilder(): Builder
-    {
-        return $this->threadRepository
-            ->getProviderThreadsBuilder()
-            ->group();
     }
 
     /**
@@ -48,7 +29,8 @@ class GroupThreadRepository
      */
     public function getProviderGroupThreadsIndex(): Collection
     {
-        return $this->getProviderGroupThreadsBuilder()
+        return Thread::hasProvider('participants', $this->messenger->getProvider())
+            ->group()
             ->latest('updated_at')
             ->with([
                 'participants.owner',
@@ -65,7 +47,8 @@ class GroupThreadRepository
      */
     public function getProviderGroupThreadsPage(Thread $thread): Collection
     {
-        return $this->getProviderGroupThreadsBuilder()
+        return Thread::hasProvider('participants', $this->messenger->getProvider())
+            ->group()
             ->latest('updated_at')
             ->with([
                 'participants.owner',
@@ -83,7 +66,8 @@ class GroupThreadRepository
      */
     public function getProviderOldestGroupThread(): ?Thread
     {
-        return $this->getProviderGroupThreadsBuilder()
+        return Thread::hasProvider('participants', $this->messenger->getProvider())
+            ->group()
             ->oldest('updated_at')
             ->first();
     }

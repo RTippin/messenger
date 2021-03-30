@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Helpers;
+use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
@@ -40,6 +41,8 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static \Illuminate\Database\Query\Builder|Participant withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Participant withoutTrashed()
  * @mixin Model|\Eloquent
+ * @method static Builder|Participant forProvider(MessengerProvider $provider)
+ * @method static Builder|Participant notProvider(MessengerProvider $provider)
  * @method static Builder|Participant admins()
  * @method static Builder|Participant validProviders()
  * @method static Builder|Participant notMuted()
@@ -50,6 +53,7 @@ class Participant extends Model
 {
     use SoftDeletes;
     use Uuids;
+    use ScopesProvider;
 
     /**
      * The database table used by the model.

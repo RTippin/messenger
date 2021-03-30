@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Definitions;
+use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
@@ -35,6 +36,9 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read Model|MessengerProvider $owner
  * @method static Builder|Call videoCall()
  * @method static Builder|Call active()
+ * @method static Builder|Call hasProvider(string $relation, MessengerProvider $provider)
+ * @method static Builder|Call forProvider(MessengerProvider $provider)
+ * @method static Builder|Call notProvider(MessengerProvider $provider)
  * @property string|null $payload
  * @property int $setup_complete
  * @property int $teardown_complete
@@ -42,6 +46,7 @@ use RTippin\Messenger\Traits\Uuids;
 class Call extends Model
 {
     use Uuids;
+    use ScopesProvider;
 
     /**
      * The database table used by the model.

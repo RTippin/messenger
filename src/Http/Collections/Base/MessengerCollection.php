@@ -65,43 +65,25 @@ abstract class MessengerCollection extends ResourceCollection
     {
         switch ($this->collectionType) {
             case 'threads':
-                return app(ThreadRepository::class)
-                    ->getProviderThreadsBuilder()
-                    ->count();
+                return Thread::hasProvider('participants', Messenger::getProvider())->count();
             case 'groups':
-                return app(GroupThreadRepository::class)
-                    ->getProviderGroupThreadsBuilder()
-                    ->count();
+                return Thread::hasProvider('participants', Messenger::getProvider())->group()->count();
             case 'privates':
-                return app(PrivateThreadRepository::class)
-                    ->getProviderPrivateThreadsBuilder()
-                    ->count();
+                return Thread::hasProvider('participants', Messenger::getProvider())->private()->count();
             case 'participants':
-                return $this->thread->participants()
-                    ->count();
+                return $this->thread->participants()->count();
             case 'messages':
-                return $this->thread->messages()
-                    ->count();
+                return $this->thread->messages()->count();
             case 'logs':
-                return $this->thread->messages()
-                    ->system()
-                    ->count();
+                return $this->thread->messages()->system()->count();
             case 'images':
-                return $this->thread->messages()
-                    ->image()
-                    ->count();
+                return $this->thread->messages()->image()->count();
             case 'documents':
-                return $this->thread->messages()
-                    ->document()
-                    ->count();
+                return $this->thread->messages()->document()->count();
             case 'audio':
-                return $this->thread->messages()
-                    ->audio()
-                    ->count();
+                return $this->thread->messages()->audio()->count();
             case 'calls':
-                return $this->thread->calls()
-                    ->videoCall()
-                    ->count();
+                return $this->thread->calls()->videoCall()->count();
             default:
                 return 0;
         }

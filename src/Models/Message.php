@@ -16,6 +16,7 @@ use RTippin\Messenger\Database\Factories\MessageFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Support\Helpers;
+use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
 
@@ -43,6 +44,8 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @method static \Illuminate\Database\Query\Builder|Message withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Message withoutTrashed()
  * @mixin Model|\Eloquent
+ * @method static Builder|Message forProvider(MessengerProvider $provider)
+ * @method static Builder|Message notProvider(MessengerProvider $provider)
  * @method static Builder|Message text()
  * @method static Builder|Message document()
  * @method static Builder|Message image()
@@ -56,6 +59,7 @@ class Message extends Model
     use SoftDeletes;
     use HasEagerLimit;
     use Uuids;
+    use ScopesProvider;
 
     /**
      * Message types that are not system messages.

@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Repositories;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
@@ -24,16 +23,6 @@ class MessageRepository
     public function __construct(Messenger $messenger)
     {
         $this->messenger = $messenger;
-    }
-
-    /**
-     * @return Builder
-     */
-    public function getProviderMessagesBuilder(): Builder
-    {
-        return Message::nonSystem()
-            ->where('owner_id', '=', $this->messenger->getProviderId())
-            ->where('owner_type', '=', $this->messenger->getProviderClass());
     }
 
     /**
