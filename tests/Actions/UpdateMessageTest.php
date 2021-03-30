@@ -60,6 +60,7 @@ class UpdateMessageTest extends FeatureTestCase
         $this->assertDatabaseHas('messages', [
             'id' => $this->message->id,
             'body' => 'Edited Message',
+            'edited' => true,
             'updated_at' => $editedAt,
         ]);
         $this->assertDatabaseHas('message_edits', [

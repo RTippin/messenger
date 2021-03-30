@@ -1,6 +1,14 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v0.24]
+
+#### Added
+- bool `edited` column on messages table.
+
+#### Changed
+- Message edits go by bool `edited` and not `updated_at` column now.
+
 ### [v0.23 (03-24-2021)]
 
 #### Added

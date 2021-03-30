@@ -105,6 +105,7 @@ class MessageTest extends FeatureTestCase
     {
         $this->message->update([
             'updated_at' => now()->addMinutes(10),
+            'edited' => true,
         ]);
 
         $this->assertTrue($this->message->isEdited());

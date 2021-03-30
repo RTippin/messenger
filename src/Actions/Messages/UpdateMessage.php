@@ -128,13 +128,14 @@ class UpdateMessage extends BaseMessengerAction
      */
     private function executeTransactions(string $body): self
     {
-        $this->originalBody = $this->getMessage()->body;
+        if ($this->getMessage()->body !== $newBody = $this->converter->toShort($body)) {
+            $this->originalBody = $this->getMessage()->body;
 
-        $this->getMessage()->update([
-            'body' => $this->converter->toShort($body),
-        ]);
+            $this->getMessage()->update([
+                'body' => $newBody,
+                'edited' => true,
+            ]);
 
-        if ($this->getMessage()->wasChanged()) {
             $this->getMessage()->edits()->create([
                 'body' => $this->originalBody,
                 'edited_at' => $this->getMessage()->updated_at,

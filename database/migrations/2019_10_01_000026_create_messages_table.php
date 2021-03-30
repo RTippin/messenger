@@ -21,6 +21,7 @@ class CreateMessagesTable extends Migration
             $table->integer('type')->index();
             $table->text('body');
             $table->uuid('reply_to_id')->nullable()->index();
+            $table->boolean('edited')->default(0);
             $table->timestamps(6);
             $table->softDeletes();
             $table->index('created_at');

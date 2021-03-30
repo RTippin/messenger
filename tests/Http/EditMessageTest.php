@@ -88,7 +88,9 @@ class EditMessageTest extends FeatureTestCase
             'body' => 'First Edit',
             'edited_at' => now(),
         ]);
-        $this->message->touch();
+        $this->message->update([
+            'edited' => true,
+        ]);
         $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.messages.history', [
@@ -116,7 +118,9 @@ class EditMessageTest extends FeatureTestCase
             'body' => 'Second Edit',
             'edited_at' => now(),
         ]);
-        $this->message->touch();
+        $this->message->update([
+            'edited' => true,
+        ]);
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.history', [

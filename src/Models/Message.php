@@ -29,6 +29,7 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @property int $type
  * @property string $body
  * @property string $reply_to_id
+ * @property bool $edited
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -100,6 +101,7 @@ class Message extends Model
      */
     protected $casts = [
         'type' => 'integer',
+        'edited' => 'integer',
     ];
 
     /**
@@ -339,8 +341,7 @@ class Message extends Model
      */
     public function isEdited(): bool
     {
-        return $this->isText()
-            && $this->created_at < $this->updated_at;
+        return $this->isText() && $this->edited;
     }
 
     /**
