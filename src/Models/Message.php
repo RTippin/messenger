@@ -138,7 +138,7 @@ class Message extends Model
     }
 
     /**
-     * @return HasMany|MessageReaction[]
+     * @return HasMany|MessageReaction
      */
     public function reactions()
     {

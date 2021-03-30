@@ -2,11 +2,13 @@
 
 namespace RTippin\Messenger\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
@@ -20,10 +22,13 @@ use RTippin\Messenger\Traits\Uuids;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property-read \RTippin\Messenger\Models\Message $message
  * @mixin Model|\Eloquent
+ * @method static Builder|MessageReaction forProvider(MessengerProvider $provider)
+ * @method static Builder|MessageReaction reaction(string $reaction)
  */
 class MessageReaction extends Model
 {
     use Uuids;
+    use ScopesProvider;
 
     /**
      * The database table used by the model.
@@ -88,5 +93,17 @@ class MessageReaction extends Model
         return $this->morphTo()->withDefault(function () {
             return Messenger::getGhostProvider();
         });
+    }
+
+    /**
+     * Scope a query for matching reactions.
+     *
+     * @param Builder $query
+     * @param string $reaction
+     * @return Builder
+     */
+    public function scopeReaction(Builder $query, string $reaction): Builder
+    {
+        return $query->where('reaction', '=', $reaction);
     }
 }
