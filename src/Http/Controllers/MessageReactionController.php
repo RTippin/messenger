@@ -16,7 +16,6 @@ class MessageReactionController
 
     /**
      * Display a listing of the message reactions.
-     *
      */
     public function index()
     {
@@ -47,7 +46,6 @@ class MessageReactionController
 
     /**
      * Remove the specified resource from storage.
-     *
      */
     public function destroy()
     {

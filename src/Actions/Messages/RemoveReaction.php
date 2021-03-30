@@ -2,7 +2,9 @@
 
 namespace RTippin\Messenger\Actions\Messages;
 
-class RemoveReaction extends MessageReactionAction
+use RTippin\Messenger\Actions\BaseMessengerAction;
+
+class RemoveReaction extends BaseMessengerAction
 {
     /**
      * @inheritDoc
