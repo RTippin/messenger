@@ -31,6 +31,37 @@ class EmojiConverterTest extends TestCase
 
     /**
      * @test
+     * @dataProvider doesntHaveEmojiStrings
+     * @param $string
+     */
+    public function it_verifies_emoji_doesnt_exist($string)
+    {
+        $this->assertFalse($this->converter->verifyHasEmoji($string));
+    }
+
+    /**
+     * @test
+     * @dataProvider hasShortcodeResponse
+     * @param $string
+     * @param $expected
+     */
+    public function it_returns_valid_emojis_as_shortcode_array($string, $expected)
+    {
+        $this->assertSame($expected, $this->converter->getValidEmojiShortcodes($string));
+    }
+
+    /**
+     * @test
+     * @dataProvider doesntHaveEmojiStrings
+     * @param $string
+     */
+    public function it_returns_empty_shortcode_array_if_no_valid_emojis($string)
+    {
+        $this->assertCount(0, $this->converter->getValidEmojiShortcodes($string));
+    }
+
+    /**
+     * @test
      * @dataProvider stringInputs
      * @param $string
      * @param $expected
@@ -62,6 +93,25 @@ class EmojiConverterTest extends TestCase
             ['👍👎👍👎Yes👍', ':thumbsup::thumbsdown::thumbsup::thumbsdown:Yes:thumbsup:'],
             ['Spacing 💀 is 💀 preserved.💀', 'Spacing :skull: is :skull: preserved.:skull:'],
             ["\u{1F480}", ':skull:'],
+        ];
+    }
+
+    public function doesntHaveEmojiStrings(): array
+    {
+        return [
+            ['Test string. No emoji to see here.'],
+            [''],
+            ["This may be a long sentence. We're quite excited! 123 %$^"],
+            [':fake: :4040404: :notfound:'],
+        ];
+    }
+
+    public function hasShortcodeResponse(): array
+    {
+        return [
+            ['We are 😀', [':grinning:']],
+            ['Poop. 💩💩💩💩', [':poop:',':poop:',':poop:',':poop:']],
+            ['Spacing 💀 is 💀 preserved.💀 :notfound::undefined::poop:', [':skull:',':skull:',':skull:',':poop:']],
         ];
     }
 }

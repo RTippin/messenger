@@ -35,6 +35,7 @@ use RTippin\Messenger\Http\Controllers\GroupThreadController;
 use RTippin\Messenger\Http\Controllers\ImageMessageController;
 use RTippin\Messenger\Http\Controllers\InviteController;
 use RTippin\Messenger\Http\Controllers\MessageController;
+use RTippin\Messenger\Http\Controllers\MessageReactionController;
 use RTippin\Messenger\Http\Controllers\MessengerController;
 use RTippin\Messenger\Http\Controllers\ParticipantController;
 use RTippin\Messenger\Http\Controllers\PendingFriendController;
@@ -122,6 +123,7 @@ Route::name('api.messenger.')->group(function () {
         Route::post('demote', DemoteAdmin::class)->name('demote');
     });
     Route::apiResource('threads.messages', MessageController::class);
+    Route::apiResource('threads.messages.reactions', MessageReactionController::class)->only(['index', 'store', 'destroy']);
     Route::apiResource('threads.images', ImageMessageController::class)->only(['index', 'store']);
     Route::apiResource('threads.documents', DocumentMessageController::class)->only(['index', 'store']);
     Route::apiResource('threads.audio', AudioMessageController::class)->only(['index', 'store']);

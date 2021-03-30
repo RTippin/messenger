@@ -3,6 +3,8 @@
 namespace RTippin\Messenger\Http\Controllers;
 
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
+use RTippin\Messenger\Http\Request\MessageReactionRequest;
 
 class MessageReactionController
 {
@@ -19,11 +21,12 @@ class MessageReactionController
 
     /**
      * Store a newly created resource in storage.
-     *
+     * @param MessageReactionRequest $request
      */
-    public function store()
+    public function store(MessageReactionRequest $request)
     {
         //TODO
+        return new JsonResponse(['test' => $request->validated()]);
     }
 
     /**

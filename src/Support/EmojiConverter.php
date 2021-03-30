@@ -4,8 +4,9 @@ namespace RTippin\Messenger\Support;
 
 use Illuminate\Support\Collection;
 use JoyPixels\Client;
+use RTippin\Messenger\Contracts\EmojiInterface;
 
-class EmojiConverter
+class EmojiConverter implements EmojiInterface
 {
     /**
      * @var Client
@@ -14,6 +15,7 @@ class EmojiConverter
 
     /**
      * EmojiConverter constructor.
+     *
      * @param Client $joyPixelClient
      */
     public function __construct(Client $joyPixelClient)
@@ -22,8 +24,7 @@ class EmojiConverter
     }
 
     /**
-     * @param string $message
-     * @return string
+     * @inheritDoc
      */
     public function toShort(string $message): string
     {
@@ -31,8 +32,7 @@ class EmojiConverter
     }
 
     /**
-     * @param string $string
-     * @return bool
+     * @inheritDoc
      */
     public function verifyHasEmoji(string $string): bool
     {
@@ -40,8 +40,7 @@ class EmojiConverter
     }
 
     /**
-     * @param string $string
-     * @return array
+     * @inheritDoc
      */
     public function getValidEmojiShortcodes(string $string): array
     {
