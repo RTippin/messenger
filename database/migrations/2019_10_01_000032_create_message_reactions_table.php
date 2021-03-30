@@ -5,7 +5,7 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use RTippin\Messenger\Support\Helpers;
 
-class CreateMessagesTable extends Migration
+class CreateMessageReactionsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,21 +14,15 @@ class CreateMessagesTable extends Migration
      */
     public function up()
     {
-        Schema::create('messages', function (Blueprint $table) {
+        Schema::create('message_reactions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('thread_id');
+            $table->uuid('message_id');
             Helpers::SchemaMorphType('owner', $table);
-            $table->integer('type')->index();
-            $table->text('body');
-            $table->uuid('reply_to_id')->nullable()->index();
-            $table->boolean('edited')->default(0);
-            $table->boolean('reacted')->default(0);
-            $table->timestamps(6);
-            $table->softDeletes();
-            $table->index('created_at');
-            $table->foreign('thread_id')
+            $table->string('reaction');
+            $table->timestamp('created_at', 6);
+            $table->foreign('message_id')
                 ->references('id')
-                ->on('threads')
+                ->on('messages')
                 ->onDelete('cascade')
                 ->onUpdate('cascade');
         });
@@ -41,6 +35,6 @@ class CreateMessagesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('messages');
+        Schema::dropIfExists('message_reactions');
     }
 }

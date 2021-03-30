@@ -30,12 +30,14 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @property string $body
  * @property string $reply_to_id
  * @property bool $edited
+ * @property bool $reacted
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \RTippin\Messenger\Models\Thread $thread
  * @property-read Model|MessengerProvider $owner
  * @property-read \RTippin\Messenger\Models\MessageEdit $edits
+ * @property-read \RTippin\Messenger\Models\MessageReaction $reactions
  * @property-read \RTippin\Messenger\Models\Message $replyTo
  * @method static \Illuminate\Database\Query\Builder|Message onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|Message withTrashed()
@@ -101,7 +103,8 @@ class Message extends Model
      */
     protected $casts = [
         'type' => 'integer',
-        'edited' => 'integer',
+        'edited' => 'boolean',
+        'reacted' => 'boolean',
     ];
 
     /**
@@ -132,6 +135,14 @@ class Message extends Model
     public function edits()
     {
         return $this->hasMany(MessageEdit::class);
+    }
+
+    /**
+     * @return HasMany|MessageReaction[]
+     */
+    public function reactions()
+    {
+        return $this->hasMany(MessageReaction::class);
     }
 
     /**
@@ -342,6 +353,14 @@ class Message extends Model
     public function isEdited(): bool
     {
         return $this->isText() && $this->edited;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isReacted(): bool
+    {
+        return ! $this->isSystemMessage() && $this->reacted;
     }
 
     /**

@@ -42,6 +42,7 @@ class MessageTest extends FeatureTestCase
         $this->assertSame('MESSAGE', $this->message->getTypeVerbose());
         $this->assertTrue($this->message->isText());
         $this->assertFalse($this->message->isEdited());
+        $this->assertFalse($this->message->isReacted());
         $this->assertFalse($this->message->isSystemMessage());
         $this->assertFalse($this->message->isImage());
         $this->assertFalse($this->message->isDocument());
@@ -76,6 +77,7 @@ class MessageTest extends FeatureTestCase
         $this->assertInstanceOf(Thread::class, $this->message->thread);
         $this->assertInstanceOf(MessengerProvider::class, $this->message->owner);
         $this->assertInstanceOf(Collection::class, $this->message->edits);
+        $this->assertInstanceOf(Collection::class, $this->message->reactions);
     }
 
     /** @test */
