@@ -12,6 +12,7 @@ use RTippin\Messenger\Exceptions\ReactionException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
+use Throwable;
 
 class AddReaction extends BaseMessengerAction
 {
@@ -75,16 +76,51 @@ class AddReaction extends BaseMessengerAction
      * @var Message[1]
      * @var string[2]
      * @return $this
-     * @throws FeatureDisabledException|ReactionException
+     * @throws FeatureDisabledException|ReactionException|Throwable
      */
     public function execute(...$parameters): self
     {
         $this->setThread($parameters[0])
             ->setMessage($parameters[1])
             ->prepareReaction($parameters[2])
-            ->canReact();
+            ->canReact()
+            ->handleTransactions();
 
         return $this;
+    }
+
+    /**
+     * @return $this
+     * @throws Throwable
+     */
+    private function handleTransactions(): self
+    {
+        if ($this->isChained()) {
+            $this->storeReaction();
+        } else {
+            $this->database->transaction(fn () => $this->storeReaction(), 5);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Store reaction. Mark message as reacted to.
+     */
+    private function storeReaction(): void
+    {
+        $this->getMessage()->reactions()->create([
+            'owner_id' => $this->messenger->getProviderId(),
+            'owner_type' => $this->messenger->getProviderClass(),
+            'reaction' => $this->reaction,
+            'created_at' => now(),
+        ]);
+
+        if (! $this->getMessage()->isReacted()) {
+            $this->getMessage()->update([
+                'reacted' => true,
+            ]);
+        }
     }
 
     /**
@@ -127,5 +163,32 @@ class AddReaction extends BaseMessengerAction
                 ->forProvider($this->messenger->getProvider())
                 ->reaction($this->reaction)
                 ->count() > 0;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function fireBroadcast(): self
+    {
+//        if ($this->shouldFireBroadcast()) {
+//            $this->broadcaster
+//                ->toOthersInThread($this->getThread())
+//                ->with([])
+//                ->broadcast();
+//        }
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function fireEvents(): self
+    {
+//        if ($this->shouldFireEvents()) {
+//            $this->dispatcher->dispatch();
+//        }
+
+        return $this;
     }
 }

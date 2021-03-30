@@ -23,7 +23,7 @@ trait ScopesProvider
                                      string $morph = 'owner',
                                      bool $not = false): Builder
     {
-        return $query->where($this->concatBuilder($morph), $not ? '!=' : '=' , get_class($provider).$provider->getKey());
+        return $query->where($this->concatBuilder($morph), $not ? '!=' : '=', get_class($provider).$provider->getKey());
     }
 
     /**

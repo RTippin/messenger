@@ -76,4 +76,23 @@ class AddReactionTest extends FeatureTestCase
             ':joy:'
         );
     }
+
+    /** @test */
+    public function it_stores_reaction_and_marks_messages_reacted()
+    {
+        app(AddReaction::class)->withoutDispatches()->execute(
+            $this->group,
+            $this->message,
+            ':joy:'
+        );
+
+        $this->assertDatabaseHas('message_reactions', [
+            'message_id' => $this->message->id,
+            'reaction' => ':joy:',
+        ]);
+        $this->assertDatabaseHas('messages', [
+            'id' => $this->message->id,
+            'reacted' => true,
+        ]);
+    }
 }
