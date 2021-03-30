@@ -36,6 +36,5 @@ class MessageReactionTest extends FeatureTestCase
             'reaction' => ':joy:',
         ])
             ->assertSuccessful();
-
     }
 }

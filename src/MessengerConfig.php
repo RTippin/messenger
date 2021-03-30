@@ -136,6 +136,11 @@ trait MessengerConfig
     /**
      * @var bool
      */
+    private bool $messageReactions;
+
+    /**
+     * @var bool
+     */
     private bool $messageEditsView;
 
     /**
@@ -428,6 +433,25 @@ trait MessengerConfig
     public function setMessageEditsView(bool $messageEditsView): self
     {
         $this->messageEditsView = $messageEditsView;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMessageReactionsEnabled(): bool
+    {
+        return $this->messageReactions;
+    }
+
+    /**
+     * @param bool $messageReactions
+     * @return $this
+     */
+    public function setMessageReactions(bool $messageReactions): self
+    {
+        $this->messageReactions = $messageReactions;
 
         return $this;
     }
@@ -1375,6 +1399,7 @@ trait MessengerConfig
         $this->knockTimeout = $this->configRepo->get('messenger.knocks.timeout');
         $this->messageEdits = $this->configRepo->get('messenger.message_edits.enabled');
         $this->messageEditsView = $this->configRepo->get('messenger.message_edits.history_view');
+        $this->messageReactions = $this->configRepo->get('messenger.message_reactions.enabled');
         $this->threadInvites = $this->configRepo->get('messenger.invites.enabled');
         $this->threadInvitesMax = $this->configRepo->get('messenger.invites.max_per_thread');
         $this->onlineStatus = $this->configRepo->get('messenger.online_status.enabled');

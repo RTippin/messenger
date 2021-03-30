@@ -2,9 +2,13 @@
 
 namespace RTippin\Messenger\Http\Controllers;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use RTippin\Messenger\Http\Request\MessageReactionRequest;
+use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\MessageReaction;
+use RTippin\Messenger\Models\Thread;
 
 class MessageReactionController
 {
@@ -21,11 +25,23 @@ class MessageReactionController
 
     /**
      * Store a newly created resource in storage.
+     *
      * @param MessageReactionRequest $request
+     * @param Thread $thread
+     * @param Message $message
+     * @return JsonResponse
+     * @throws AuthorizationException
      */
-    public function store(MessageReactionRequest $request)
+    public function store(MessageReactionRequest $request,
+                          Thread $thread,
+                          Message $message)
     {
-        //TODO
+        $this->authorize('create', [
+            MessageReaction::class,
+            $thread,
+            $message,
+        ]);
+
         return new JsonResponse(['test' => $request->validated()]);
     }
 

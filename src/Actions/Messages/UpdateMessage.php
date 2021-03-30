@@ -14,7 +14,6 @@ use RTippin\Messenger\Http\Resources\MessageResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Support\Emoji;
 use Throwable;
 
 class UpdateMessage extends BaseMessengerAction

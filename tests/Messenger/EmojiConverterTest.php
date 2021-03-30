@@ -109,8 +109,8 @@ class EmojiConverterTest extends MessengerTestCase
     {
         return [
             ['We are 😀', [':grinning:']],
-            ['Poop. 💩💩💩💩', [':poop:',':poop:',':poop:',':poop:']],
-            ['Spacing 💀 is 💀 preserved.💀 :notfound::undefined::poop:', [':skull:',':skull:',':skull:',':poop:']],
+            ['Poop. 💩💩💩💩', [':poop:', ':poop:', ':poop:', ':poop:']],
+            ['Spacing 💀 is 💀 preserved.💀 :notfound::undefined::poop:', [':skull:', ':skull:', ':skull:', ':poop:']],
         ];
     }
 }

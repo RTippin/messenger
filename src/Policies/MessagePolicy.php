@@ -138,8 +138,7 @@ class MessagePolicy
      */
     public function update($user, Message $message, Thread $thread)
     {
-        return $thread->hasCurrentProvider()
-        && ! $thread->isLocked()
+        return ! $thread->isLocked()
         && $message->isText()
         && $this->messenger->isMessageEditsEnabled()
         && (string) $this->messenger->getProviderId() === (string) $message->owner_id
@@ -158,8 +157,7 @@ class MessagePolicy
      */
     public function delete($user, Message $message, Thread $thread)
     {
-        return $thread->hasCurrentProvider()
-        && ! $thread->isLocked()
+        return ! $thread->isLocked()
         && ! $message->isSystemMessage()
         && (((string) $this->messenger->getProviderId() === (string) $message->owner_id
                 && $this->messenger->getProviderClass() === $message->owner_type)

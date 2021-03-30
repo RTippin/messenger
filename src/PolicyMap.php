@@ -10,6 +10,7 @@ use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\MessageReaction;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\PendingFriend;
 use RTippin\Messenger\Models\SentFriend;
@@ -19,6 +20,7 @@ use RTippin\Messenger\Policies\CallPolicy;
 use RTippin\Messenger\Policies\FriendPolicy;
 use RTippin\Messenger\Policies\InvitePolicy;
 use RTippin\Messenger\Policies\MessagePolicy;
+use RTippin\Messenger\Policies\MessageReactionPolicy;
 use RTippin\Messenger\Policies\ParticipantPolicy;
 use RTippin\Messenger\Policies\PendingFriendPolicy;
 use RTippin\Messenger\Policies\SentFriendPolicy;
@@ -40,6 +42,7 @@ trait PolicyMap
         Thread::class => ThreadPolicy::class,
         Participant::class => ParticipantPolicy::class,
         Message::class => MessagePolicy::class,
+        MessageReaction::class => MessageReactionPolicy::class,
         Invite::class => InvitePolicy::class,
         Friend::class => FriendPolicy::class,
         PendingFriend::class => PendingFriendPolicy::class,

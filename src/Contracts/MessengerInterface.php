@@ -168,6 +168,17 @@ interface MessengerInterface
     public function setMessageEditsView(bool $messageEditsView);
 
     /**
+     * @return bool
+     */
+    public function isMessageReactionsEnabled(): bool;
+
+    /**
+     * @param bool $messageReactions
+     * @return $this
+     */
+    public function setMessageReactions(bool $messageReactions);
+
+    /**
      * @param int $minutesDisabled
      * @return $this
      */
