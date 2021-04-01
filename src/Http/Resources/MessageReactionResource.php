@@ -53,7 +53,7 @@ class MessageReactionResource extends JsonResource
             'owner_type' => $this->reaction->owner_type,
             'owner' => (new ProviderResource($this->reaction->owner))->resolve(),
             'message' => $this->when(! is_null($this->message),
-                fn() => $this->addMessage()
+                fn () => $this->addMessage()
             ),
         ];
     }
