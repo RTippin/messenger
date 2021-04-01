@@ -5,12 +5,15 @@ namespace RTippin\Messenger\Actions\Messages;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use RTippin\Messenger\Actions\BaseMessengerAction;
+use RTippin\Messenger\Broadcasting\ReactionAddedBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\EmojiInterface;
+use RTippin\Messenger\Events\ReactionAddedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\ReactionException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\MessageReaction;
 use RTippin\Messenger\Models\Thread;
 use Throwable;
 
@@ -42,9 +45,14 @@ class AddReaction extends BaseMessengerAction
     private EmojiInterface $emoji;
 
     /**
+     * @var MessageReaction
+     */
+    private MessageReaction $reaction;
+
+    /**
      * @var string|null
      */
-    private ?string $reaction;
+    private ?string $react;
 
     /**
      * AddReaction constructor.
@@ -84,7 +92,9 @@ class AddReaction extends BaseMessengerAction
             ->setMessage($parameters[1])
             ->prepareReaction($parameters[2])
             ->canReact()
-            ->handleTransactions();
+            ->handleTransactions()
+            ->fireBroadcast()
+            ->fireEvents();
 
         return $this;
     }
@@ -105,25 +115,6 @@ class AddReaction extends BaseMessengerAction
     }
 
     /**
-     * Store reaction. Mark message as reacted to.
-     */
-    private function storeReaction(): void
-    {
-        $this->getMessage()->reactions()->create([
-            'owner_id' => $this->messenger->getProviderId(),
-            'owner_type' => $this->messenger->getProviderClass(),
-            'reaction' => $this->reaction,
-            'created_at' => now(),
-        ]);
-
-        if (! $this->getMessage()->reacted) {
-            $this->getMessage()->update([
-                'reacted' => true,
-            ]);
-        }
-    }
-
-    /**
      * Set our reaction to the first valid emoji, or null if none found.
      *
      * @param string $reaction
@@ -131,7 +122,7 @@ class AddReaction extends BaseMessengerAction
      */
     private function prepareReaction(string $reaction): self
     {
-        $this->reaction = $this->emoji->getValidEmojiShortcodes($reaction)[0] ?? null;
+        $this->react = $this->emoji->getValidEmojiShortcodes($reaction)[0] ?? null;
 
         return $this;
     }
@@ -144,7 +135,7 @@ class AddReaction extends BaseMessengerAction
     {
         if (! $this->messenger->isMessageReactionsEnabled()) {
             throw new FeatureDisabledException('Message reactions are currently disabled.');
-        } elseif (is_null($this->reaction)) {
+        } elseif (is_null($this->react)) {
             throw new ReactionException('No valid reactions found.');
         } elseif ($this->hasExistingReaction()) {
             throw new ReactionException('You have already used that reaction.');
@@ -163,7 +154,7 @@ class AddReaction extends BaseMessengerAction
         return $this->getMessage()
                 ->reactions()
                 ->forProvider($this->messenger->getProvider())
-                ->reaction($this->reaction)
+                ->reaction($this->react)
                 ->exists();
     }
 
@@ -178,7 +169,7 @@ class AddReaction extends BaseMessengerAction
     {
         return $this->getMessage()
                 ->reactions()
-                ->reaction($this->reaction)
+                ->reaction($this->react)
                 ->exists()
             || $this->getMessage()
                 ->reactions()
@@ -187,16 +178,37 @@ class AddReaction extends BaseMessengerAction
     }
 
     /**
+     * Generate the message resource.
+     *
+     * @return $this
+     */
+    private function generateResource(): self
+    {
+//        $this->setJsonResource(new MessageResource(
+//                $this->getMessage(),
+//                $this->getThread(),
+//                true
+//            )
+//        );
+
+        return $this;
+    }
+
+    /**
      * @return $this
      */
     protected function fireBroadcast(): self
     {
-//        if ($this->shouldFireBroadcast()) {
-//            $this->broadcaster
-//                ->toOthersInThread($this->getThread())
-//                ->with([])
-//                ->broadcast();
-//        }
+        if ($this->shouldFireBroadcast()) {
+            $this->broadcaster
+                ->toPresence($this->getThread())
+                ->with([])
+                ->broadcast(ReactionAddedBroadcast::class);
+
+//            if ($this->getMessage()->owner->isNot($this->messenger->getProvider())) {
+//
+//            }
+        }
 
         return $this;
     }
@@ -206,10 +218,31 @@ class AddReaction extends BaseMessengerAction
      */
     protected function fireEvents(): self
     {
-//        if ($this->shouldFireEvents()) {
-//            $this->dispatcher->dispatch();
-//        }
+        if ($this->shouldFireEvents()) {
+            $this->dispatcher->dispatch(new ReactionAddedEvent(
+                $this->reaction
+            ));
+        }
 
         return $this;
+    }
+
+    /**
+     * Store reaction. Mark message as reacted to.
+     */
+    private function storeReaction(): void
+    {
+        $this->reaction = $this->getMessage()->reactions()->create([
+            'owner_id' => $this->messenger->getProviderId(),
+            'owner_type' => $this->messenger->getProviderClass(),
+            'reaction' => $this->react,
+            'created_at' => now(),
+        ]);
+
+        if (! $this->getMessage()->reacted) {
+            $this->getMessage()->update([
+                'reacted' => true,
+            ]);
+        }
     }
 }

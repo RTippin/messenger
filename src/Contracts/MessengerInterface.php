@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Contracts;
 
+use Illuminate\Database\Eloquent\Model;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Messenger as MessengerModel;
@@ -741,7 +742,7 @@ interface MessengerInterface
     /**
      * Get the current Messenger Provider.
      *
-     * @return MessengerProvider|null
+     * @return MessengerProvider|Model|null
      */
     public function getProvider(): ?MessengerProvider;
 

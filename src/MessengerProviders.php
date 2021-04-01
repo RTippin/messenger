@@ -3,6 +3,7 @@
 namespace RTippin\Messenger;
 
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\Eloquent\Model;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Models\GhostUser;
@@ -171,7 +172,7 @@ trait MessengerProviders
     /**
      * Get the current Messenger Provider.
      *
-     * @return MessengerProvider|null
+     * @return MessengerProvider|Model|null
      */
     public function getProvider(): ?MessengerProvider
     {
