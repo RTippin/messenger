@@ -3,10 +3,13 @@
 namespace RTippin\Messenger\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Database\Factories\MessageReactionFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
@@ -28,6 +31,7 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class MessageReaction extends Model
 {
+    use HasFactory;
     use Uuids;
     use ScopesProvider;
 
@@ -106,5 +110,15 @@ class MessageReaction extends Model
     public function scopeReaction(Builder $query, string $reaction): Builder
     {
         return $query->where('reaction', '=', $reaction);
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return Factory
+     */
+    protected static function newFactory()
+    {
+        return MessageReactionFactory::new();
     }
 }

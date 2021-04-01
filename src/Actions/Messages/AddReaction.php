@@ -116,7 +116,7 @@ class AddReaction extends BaseMessengerAction
             'created_at' => now(),
         ]);
 
-        if (! $this->getMessage()->isReacted()) {
+        if (! $this->getMessage()->reacted) {
             $this->getMessage()->update([
                 'reacted' => true,
             ]);
@@ -148,6 +148,8 @@ class AddReaction extends BaseMessengerAction
             throw new ReactionException('No valid reactions found.');
         } elseif ($this->hasExistingReaction()) {
             throw new ReactionException('You have already used that reaction.');
+        } elseif (! $this->canAddNewReaction()) {
+            throw new ReactionException('We appreciate the enthusiasm, but there are already too many reactions on this message.');
         }
 
         return $this;
@@ -162,7 +164,26 @@ class AddReaction extends BaseMessengerAction
                 ->reactions()
                 ->forProvider($this->messenger->getProvider())
                 ->reaction($this->reaction)
-                ->count() > 0;
+                ->exists();
+    }
+
+    /**
+     * See if someone else used the pending emoji. If yes, we are
+     * good to go. If no, we check if adding the emoji goes over
+     * max unique limit per message.
+     *
+     * @return bool
+     */
+    private function canAddNewReaction(): bool
+    {
+        return $this->getMessage()
+                ->reactions()
+                ->reaction($this->reaction)
+                ->exists()
+            || $this->getMessage()
+                ->reactions()
+                ->distinct()
+                ->count('reaction') < $this->messenger->getMessageReactionsMax();
     }
 
     /**
