@@ -139,6 +139,11 @@ trait MessengerConfig
     private bool $messageReactions;
 
     /**
+     * @var int
+     */
+    private int $messageReactionsMax;
+
+    /**
      * @var bool
      */
     private bool $messageEditsView;
@@ -452,6 +457,25 @@ trait MessengerConfig
     public function setMessageReactions(bool $messageReactions): self
     {
         $this->messageReactions = $messageReactions;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMessageReactionsMax(): int
+    {
+        return $this->messageReactionsMax;
+    }
+
+    /**
+     * @param int $messageReactionsMax
+     * @return $this
+     */
+    public function setMessageReactionsMax(int $messageReactionsMax): self
+    {
+        $this->messageReactionsMax = $messageReactionsMax;
 
         return $this;
     }
@@ -1400,6 +1424,7 @@ trait MessengerConfig
         $this->messageEdits = $this->configRepo->get('messenger.message_edits.enabled');
         $this->messageEditsView = $this->configRepo->get('messenger.message_edits.history_view');
         $this->messageReactions = $this->configRepo->get('messenger.message_reactions.enabled');
+        $this->messageReactionsMax = $this->configRepo->get('messenger.message_reactions.max_unique');
         $this->threadInvites = $this->configRepo->get('messenger.invites.enabled');
         $this->threadInvitesMax = $this->configRepo->get('messenger.invites.max_per_thread');
         $this->onlineStatus = $this->configRepo->get('messenger.online_status.enabled');

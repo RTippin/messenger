@@ -179,6 +179,17 @@ interface MessengerInterface
     public function setMessageReactions(bool $messageReactions);
 
     /**
+     * @return int
+     */
+    public function getMessageReactionsMax(): int;
+
+    /**
+     * @param int $messageReactionsMax
+     * @return $this
+     */
+    public function setMessageReactionsMax(int $messageReactionsMax);
+
+    /**
      * @param int $minutesDisabled
      * @return $this
      */

@@ -38,6 +38,8 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static setMessageEditsView(bool $messageEditsView)
  * @method static setMessageReactions(bool $messageReactions)
  * @method static isMessageReactionsEnabled()
+ * @method static getMessageReactionsMax()
+ * @method static setMessageReactionsMax(int $messageReactionsMax)
  * @method static isMessageImageUploadEnabled()
  * @method static setMessageImageUpload(bool $messageImageUpload)
  * @method static isThreadAvatarUploadEnabled()

@@ -322,11 +322,14 @@ return [
     | Message Reactions
     |--------------------------------------------------------------------------
     |
-    | Enable or disable the message reactions feature.
+    | Enable or disable the message reactions feature and the max unique allowed
+    | per message. This feature behaves similar to discord, where a single user
+    | may react to a single message more than once with different emotes.
     |
     */
     'message_reactions' => [
         'enabled' => env('MESSENGER_MESSAGE_REACTIONS_ENABLED', true),
+        'max_unique' => env('MESSENGER_MESSAGE_REACTIONS_MAX_UNIQUE', 10),
     ],
 
     /*

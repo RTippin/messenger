@@ -468,6 +468,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertTrue($this->messenger->isMessageEditsEnabled());
         $this->assertTrue($this->messenger->isMessageEditsViewEnabled());
         $this->assertTrue($this->messenger->isMessageReactionsEnabled());
+        $this->assertSame(10, $this->messenger->getMessageReactionsMax());
         $this->assertSame(10240, $this->messenger->getMessageDocumentSizeLimit());
         $this->assertSame(10240, $this->messenger->getMessageAudioSizeLimit());
         $this->assertSame(5120, $this->messenger->getMessageImageSizeLimit());
@@ -543,6 +544,7 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->setMessageEdits(false);
         $this->messenger->setMessageEditsView(false);
         $this->messenger->setMessageReactions(false);
+        $this->messenger->setMessageReactionsMax(5);
         $this->messenger->setApiRateLimit(5);
         $this->messenger->setSearchRateLimit(5);
         $this->messenger->setMessageRateLimit(5);
@@ -604,6 +606,8 @@ class MessengerTest extends MessengerTestCase
         $this->assertFalse($this->messenger->isMessageEditsEnabled());
         $this->assertFalse($this->messenger->isMessageEditsViewEnabled());
         $this->assertFalse($this->messenger->isMessageEditsEnabled());
+        $this->assertFalse($this->messenger->isMessageReactionsEnabled());
+        $this->assertSame(5, $this->messenger->getMessageReactionsMax());
         $this->assertSame(5, $this->messenger->getMessageDocumentSizeLimit());
         $this->assertSame(5, $this->messenger->getMessageImageSizeLimit());
         $this->assertSame(5, $this->messenger->getMessageAudioSizeLimit());
