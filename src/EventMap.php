@@ -12,6 +12,7 @@ use RTippin\Messenger\Events\DemotedAdminEvent;
 use RTippin\Messenger\Events\InviteUsedEvent;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Events\PromotedAdminEvent;
+use RTippin\Messenger\Events\ReactionAddedEvent;
 use RTippin\Messenger\Events\RemovedFromThreadEvent;
 use RTippin\Messenger\Events\StatusHeartbeatEvent;
 use RTippin\Messenger\Events\ThreadArchivedEvent;
@@ -23,6 +24,7 @@ use RTippin\Messenger\Listeners\CallEndedMessage;
 use RTippin\Messenger\Listeners\DemotedAdminMessage;
 use RTippin\Messenger\Listeners\EndCallIfEmpty;
 use RTippin\Messenger\Listeners\JoinedWithInviteMessage;
+use RTippin\Messenger\Listeners\MessageReacted;
 use RTippin\Messenger\Listeners\ParticipantsAddedMessage;
 use RTippin\Messenger\Listeners\PromotedAdminMessage;
 use RTippin\Messenger\Listeners\RemovedFromThreadMessage;
@@ -66,6 +68,9 @@ trait EventMap
         ],
         PromotedAdminEvent::class => [
             PromotedAdminMessage::class,
+        ],
+        ReactionAddedEvent::class => [
+            MessageReacted::class,
         ],
         RemovedFromThreadEvent::class => [
             RemovedFromThreadMessage::class,

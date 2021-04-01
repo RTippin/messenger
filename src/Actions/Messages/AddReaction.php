@@ -11,6 +11,7 @@ use RTippin\Messenger\Contracts\EmojiInterface;
 use RTippin\Messenger\Events\ReactionAddedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\ReactionException;
+use RTippin\Messenger\Http\Resources\MessageReactionResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
@@ -93,6 +94,7 @@ class AddReaction extends BaseMessengerAction
             ->prepareReaction($parameters[2])
             ->canReact()
             ->handleTransactions()
+            ->generateResource()
             ->fireBroadcast()
             ->fireEvents();
 
@@ -178,18 +180,15 @@ class AddReaction extends BaseMessengerAction
     }
 
     /**
-     * Generate the message resource.
+     * Generate the reaction resource.
      *
      * @return $this
      */
     private function generateResource(): self
     {
-//        $this->setJsonResource(new MessageResource(
-//                $this->getMessage(),
-//                $this->getThread(),
-//                true
-//            )
-//        );
+        $this->setJsonResource(new MessageReactionResource(
+            $this->reaction,
+        ));
 
         return $this;
     }
@@ -197,17 +196,13 @@ class AddReaction extends BaseMessengerAction
     /**
      * @return $this
      */
-    protected function fireBroadcast(): self
+    private function fireBroadcast(): self
     {
         if ($this->shouldFireBroadcast()) {
             $this->broadcaster
                 ->toPresence($this->getThread())
-                ->with([])
+                ->with($this->getJsonResource()->resolve())
                 ->broadcast(ReactionAddedBroadcast::class);
-
-//            if ($this->getMessage()->owner->isNot($this->messenger->getProvider())) {
-//
-//            }
         }
 
         return $this;
@@ -216,11 +211,12 @@ class AddReaction extends BaseMessengerAction
     /**
      * @return $this
      */
-    protected function fireEvents(): self
+    private function fireEvents(): self
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ReactionAddedEvent(
-                $this->reaction
+                $this->reaction->withoutRelations(),
+                $this->messenger->getProvider()->is($this->getMessage()->owner)
             ));
         }
 
@@ -232,12 +228,18 @@ class AddReaction extends BaseMessengerAction
      */
     private function storeReaction(): void
     {
-        $this->reaction = $this->getMessage()->reactions()->create([
-            'owner_id' => $this->messenger->getProviderId(),
-            'owner_type' => $this->messenger->getProviderClass(),
-            'reaction' => $this->react,
-            'created_at' => now(),
-        ]);
+        $this->reaction = $this->getMessage()
+            ->reactions()
+            ->create([
+                'owner_id' => $this->messenger->getProviderId(),
+                'owner_type' => $this->messenger->getProviderClass(),
+                'reaction' => $this->react,
+                'created_at' => now(),
+            ])
+            ->setRelations([
+                'owner' => $this->messenger->getProvider(),
+                'message' => $this->getMessage(),
+            ]);
 
         if (! $this->getMessage()->reacted) {
             $this->getMessage()->update([

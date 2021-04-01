@@ -24,6 +24,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string $reaction
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property-read \RTippin\Messenger\Models\Message $message
+ * @property-read Model|MessengerProvider $owner
  * @mixin Model|\Eloquent
  * @method static Builder|MessageReaction forProvider(MessengerProvider $provider)
  * @method static Builder|MessageReaction notProvider(MessengerProvider $provider)

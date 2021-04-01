@@ -3,13 +3,17 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Database\Eloquent\Factories\Sequence;
+use Illuminate\Events\CallQueuedListener;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Messages\AddReaction;
+use RTippin\Messenger\Broadcasting\ReactionAddedBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ReactionAddedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\ReactionException;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Listeners\MessageReacted;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
 use RTippin\Messenger\Models\Thread;
@@ -135,8 +139,10 @@ class AddReactionTest extends FeatureTestCase
     public function it_fires_events()
     {
         Event::fake([
+            ReactionAddedBroadcast::class,
             ReactionAddedEvent::class,
         ]);
+        Bus::fake();
 
         app(AddReaction::class)->execute(
             $this->group,
@@ -144,15 +150,33 @@ class AddReactionTest extends FeatureTestCase
             ':joy:'
         );
 
-//        Event::assertDispatched(function (MessageArchivedBroadcast $event) {
-//            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
-//            $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
-//            $this->assertSame($this->message->id, $event->broadcastWith()['message_id']);
-//
-//            return true;
-//        });
+        Event::assertDispatched(function (ReactionAddedBroadcast $event) {
+            $this->assertContains('presence-messenger.thread.'.$this->group->id, $event->broadcastOn());
+            $this->assertSame($this->message->id, $event->broadcastWith()['message_id']);
+            $this->assertSame(':joy:', $event->broadcastWith()['reaction']);
+
+            return true;
+        });
         Event::assertDispatched(function (ReactionAddedEvent $event) {
             return $this->message->id === $event->reaction->message_id;
+        });
+        Bus::assertNotDispatched(CallQueuedListener::class);
+    }
+
+    /** @test */
+    public function it_dispatches_listeners_if_not_message_owner()
+    {
+        Bus::fake();
+        Messenger::setProvider($this->doe);
+
+        app(AddReaction::class)->execute(
+            $this->group,
+            $this->message,
+            ':joy:'
+        );
+
+        Bus::assertDispatched(function (CallQueuedListener $job) {
+            return $job->class === MessageReacted::class;
         });
     }
 }
