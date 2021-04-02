@@ -1,12 +1,12 @@
 <?php
 
-namespace RTippin\Messenger\Support;
+namespace RTippin\Messenger\Services;
 
 use Illuminate\Support\Collection;
 use JoyPixels\Client;
 use RTippin\Messenger\Contracts\EmojiInterface;
 
-class Emoji implements EmojiInterface
+class EmojiService implements EmojiInterface
 {
     /**
      * @var Client

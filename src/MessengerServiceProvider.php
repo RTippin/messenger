@@ -22,7 +22,7 @@ use RTippin\Messenger\Contracts\EmojiInterface;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Http\Middleware\MessengerApi;
-use RTippin\Messenger\Support\Emoji;
+use RTippin\Messenger\Services\EmojiService;
 
 class MessengerServiceProvider extends ServiceProvider
 {
@@ -122,7 +122,7 @@ class MessengerServiceProvider extends ServiceProvider
         );
         $this->app->singleton(
             EmojiInterface::class,
-            Emoji::class
+            EmojiService::class
         );
         $this->app->singleton(
             BroadcastDriver::class,
