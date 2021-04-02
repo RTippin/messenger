@@ -4,10 +4,13 @@
 ### [v0.24]
 
 #### Added
-- bool `edited` column on messages table.
+- bool `edited` and `reacted` columns on messages table.
+- Message reactions feature. New table `message_reactions`.
+- New events/broadcast/listeners for reactions feature.
 
 #### Changed
 - Message edits go by bool `edited` and not `updated_at` column now.
+- Emoji converter is not an interface/service.
 
 ### [v0.23 (03-24-2021)]
 

@@ -26,7 +26,7 @@
 - Private and group threads.
 - Permissions per participant within a group thread.
 - Send image, document or audio messages.
-- Message replies and edits.
+- Message reactions, replies and edits.
 - Friends system.
 - Search system.
 - Online status.
@@ -40,13 +40,12 @@
 - All in one system ready to plug into any laravel app. You may even choose to utilize only our API, and disable the web routes and published frontend assets.
 
 ### Upcoming
-- Message reactions.
-- Video message type.
-- Optional payload column for messages to allow extra data passed.
 - Route params for API results / better pagination.
+- Resizing and saving images when uploaded instead of on the fly.
+- Optional payload column for messages to allow extra data passed.
+- Video message type.
 - React / Vue frontend.
 - Configurable friend driver.
-- Resizing and saving images when uploaded instead of on the fly.
 
 ### Notes
 - If our event listeners are enabled in your config, the queue your worker must use is `messenger`, as all listeners are queued on that channel.
@@ -416,6 +415,24 @@ PushNotificationEvent::class => $data //Array
 
 ---
 
+### Message Reactions
+
+***Default:***
+
+```php
+'message_reactions' => [
+    'enabled' => env('MESSENGER_MESSAGE_REACTIONS_ENABLED', true),
+    'max_unique' => env('MESSENGER_MESSAGE_REACTIONS_MAX_UNIQUE', 10),
+],
+```
+
+- Allow message reactions on individual messages.
+- Set the max unique allowed per message.
+  - This feature behaves similar to discord, where a single user may react to a single message more than once with different emotes.
+  - Message reactions will be stored in the `message_reactions` table.
+
+---
+
 ### Group Invites
 
 ***Default:***
@@ -580,6 +597,12 @@ ParticipantsAddedEvent::class => [
 PromotedAdminEvent::class => [
     PromotedAdminMessage::class,
 ],
+ReactionAddedEvent::class => [
+    MessageReacted::class,
+],
+ReactionRemovedEvent::class => [
+    MessageUnReacted::class,
+],
 RemovedFromThreadEvent::class => [
     RemovedFromThreadMessage::class,
 ],
@@ -731,6 +754,8 @@ NewThreadBroadcast::class => 'new.thread',
 ParticipantPermissionsBroadcast::class => 'permissions.updated',
 ParticipantReadBroadcast::class => 'thread.read',
 PromotedAdminBroadcast::class => 'promoted.admin',
+ReactionAddedBroadcast::class => 'reaction.added',
+ReactionRemovedBroadcast::class => 'reaction.removed',
 ThreadApprovalBroadcast::class => 'thread.approval',
 ThreadArchivedBroadcast::class => 'thread.archived',
 ThreadLeftBroadcast::class => 'thread.left',
@@ -761,6 +786,8 @@ Echo.private('messenger.user.1')
   .listen('.friend.denied', friendDenied)
   .listen('.call.kicked', callKicked)
   .listen('.thread.read', threadRead)
+  .listen('.reaction.added', reactionAdded)
+  .listen('.reaction.removed', reactionRemoved)
 ```
 
 - Most data your client side will receive will be done through the user/providers private channel. Broadcast such as messages, calls, friend request, knocks, and more will be transmitted over the `ProviderChannel`. To subscribe to this channel, follow the below example using the `alias` of the provider you set in your providers config:
@@ -771,6 +798,8 @@ Echo.private('messenger.user.1')
 
 ```php
 MessageEditedBroadcast::class => 'message.edited',
+ReactionAddedBroadcast::class => 'reaction.added',
+ReactionRemovedBroadcast::class => 'reaction.removed',
 ThreadAvatarBroadcast::class => 'thread.avatar',
 ThreadSettingsBroadcast::class => 'thread.settings',
 ```
@@ -780,9 +809,11 @@ ThreadSettingsBroadcast::class => 'thread.settings',
 ```js
 //Presence
 Echo.join('messenger.thread.1234-5678')
-  .listen('.thread.settings', methods.groupSettingsState)
-  .listen('.thread.avatar', methods.groupAvatarState)
-  .listen('.message.edited', methods.renderUpdatedMessage)
+  .listen('.thread.settings', groupSettingsState)
+  .listen('.thread.avatar', groupAvatarState)
+  .listen('.message.edited', renderUpdatedMessage)
+  .listen('.reaction.added', reactionAdded)
+  .listen('.reaction.removed', reactionRemoved)
 ```
 
 - While inside a thread, you will want to subscribe to the `ThreadChannel` presence channel. This is where realtime, client to client events are broadcast. Typing, seen message, online status are all client to client and this is a great channel to utilize for this. The backend will broadcast a select few events over presence, such as when the groups settings are updated, or group avatar changed, or a user edited their message. This lets anyone currently in the thread know to update their UI! See example below for channel format to subscribe on:
