@@ -2,10 +2,12 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use RTippin\Messenger\Broadcasting\ReactionAddedBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ReactionAddedEvent;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\MessageReaction;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -75,6 +77,61 @@ class MessageReactionTest extends FeatureTestCase
                 'owner' => [
                     'name' => 'Richard Tippin',
                     'provider_id' => $this->tippin->getKey(),
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function participant_can_view_reacts()
+    {
+        MessageReaction::factory()
+            ->for($this->message)
+            ->for($this->tippin, 'owner')
+            ->state(new Sequence(
+                ['reaction' => ':one:'],
+                ['reaction' => ':two:'],
+                ['reaction' => ':three:'],
+                ['reaction' => ':four:'],
+                ['reaction' => ':five:'],
+            ))
+            ->count(5)
+            ->create();
+        MessageReaction::factory()
+            ->for($this->message)
+            ->for($this->doe, 'owner')
+            ->state(new Sequence(
+                ['reaction' => ':one:'],
+                ['reaction' => ':two:'],
+                ['reaction' => ':three:'],
+                ['reaction' => ':four:'],
+                ['reaction' => ':five:'],
+                ['reaction' => ':six:'],
+            ))
+            ->count(6)
+            ->create();
+
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.messages.reactions.index', [
+            'thread' => $this->private->id,
+            'message' => $this->message->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJsonCount(6, 'data')
+            ->assertJsonStructure([
+                'data' => [
+                    ':one:',
+                    ':two:',
+                    ':three:',
+                    ':four:',
+                    ':five:',
+                    ':six:',
+                ]
+            ])
+            ->assertJson([
+                'meta' => [
+                    'total' => 11,
+                    'total_unique' => 6,
                 ],
             ]);
     }

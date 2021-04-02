@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Http\Collections\MessageReactionCollection;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Message;
@@ -32,24 +33,24 @@ class MessageResource extends JsonResource
     /**
      * @var bool
      */
-    protected bool $addReplyToMessage;
+    protected bool $addRelatedItems;
 
     /**
      * MessageResource constructor.
      *
      * @param Message $message
      * @param Thread $thread
-     * @param bool $addReplyToMessage
+     * @param bool $addRelatedItems
      */
     public function __construct(Message $message,
                                 Thread $thread,
-                                bool $addReplyToMessage = false)
+                                bool $addRelatedItems = false)
     {
         parent::__construct($message);
 
         $this->thread = $thread;
         $this->message = $message;
-        $this->addReplyToMessage = $addReplyToMessage;
+        $this->addRelatedItems = $addRelatedItems;
     }
 
     /**
@@ -72,6 +73,7 @@ class MessageResource extends JsonResource
             'system_message' => $this->message->isSystemMessage(),
             'body' => $this->formatMessageBody(),
             'edited' => $this->message->isEdited(),
+            'reacted' => $this->message->isReacted(),
             'created_at' => $this->message->created_at,
             'updated_at' => $this->message->updated_at,
             'meta' => [
@@ -92,6 +94,9 @@ class MessageResource extends JsonResource
             'edited_history_route' => $this->when($this->message->isEdited(),
                 fn () => $this->message->getEditHistoryRoute()
             ),
+            'reactions' => $this->when($this->addRelatedItems && $this->message->isReacted(),
+                fn () => $this->addReactions()
+            ),
             $this->mergeWhen($this->message->isImage(),
                 fn () => $this->linksForImage()
             ),
@@ -101,7 +106,7 @@ class MessageResource extends JsonResource
             $this->mergeWhen($this->message->isAudio(),
                 fn () => $this->linksForAudio()
             ),
-            $this->mergeWhen($this->addReplyToMessage && ! is_null($this->message->reply_to_id),
+            $this->mergeWhen($this->addRelatedItems && ! is_null($this->message->reply_to_id),
                 fn () => $this->addReplyToMessage()
             ),
         ];
@@ -175,6 +180,16 @@ class MessageResource extends JsonResource
                 ))->resolve()
                 : null,
         ];
+    }
+
+    /**
+     * @return array
+     */
+    public function addReactions(): array
+    {
+        return (new MessageReactionCollection(
+            $this->message->reactions()->with('owner')->get()
+        ))->resolve();
     }
 
     /**

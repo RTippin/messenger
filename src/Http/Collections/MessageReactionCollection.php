@@ -4,12 +4,19 @@ namespace RTippin\Messenger\Http\Collections;
 
 use Exception;
 use Illuminate\Http\Request;
-use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
+use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Collection;
 use RTippin\Messenger\Http\Resources\MessageReactionResource;
+use RTippin\Messenger\Models\MessageReaction;
 use Throwable;
 
-class MessageReactionCollection extends MessengerCollection
+class MessageReactionCollection extends ResourceCollection
 {
+    /**
+     * @var Collection
+     */
+    private Collection $transformed;
+
     /**
      * Transform the resource collection into an array.
      *
@@ -19,13 +26,38 @@ class MessageReactionCollection extends MessengerCollection
      */
     public function toArray($request): array
     {
-        return $this->safeTransformer();
+        $this->safeTransformer();
+
+        return [
+            'data' => $this->condenseReactions(),
+            'meta' => [
+                'total' => $this->collection->count(),
+                'total_unique' => $this->collection->uniqueStrict('reaction')->count(),
+            ],
+        ];
     }
 
     /**
-     * @inheritDoc
+     * Transform the collection to resources, safe guarding against
+     * breaking the entire collection should one resource fail.
+     *
+     * @return void
      */
-    protected function makeResource($reaction): ?array
+    private function safeTransformer(): void
+    {
+        $this->transformed = $this->collection
+            ->map(fn ($reaction) => $this->makeResource($reaction))
+            ->reject(fn ($reaction) => is_null($reaction));
+    }
+
+    /**
+     * We go ahead and attempt to create and resolve each individual
+     * resource, returning null should one fail.
+     *
+     * @param MessageReaction $reaction
+     * @return array|null
+     */
+    private function makeResource(MessageReaction $reaction): ?array
     {
         try {
             return (new MessageReactionResource($reaction))->resolve();
@@ -36,5 +68,19 @@ class MessageReactionCollection extends MessengerCollection
         }
 
         return null;
+    }
+
+    /**
+     * @return array
+     */
+    private function condenseReactions(): array
+    {
+        return $this->transformed
+            ->uniqueStrict('reaction')
+            ->pluck('reaction')
+            ->mapWithKeys(fn ($reaction) => [
+                $reaction => $this->transformed->reject(fn ($react) => $react['reaction'] !== $reaction)->values()
+            ])
+            ->toArray();
     }
 }

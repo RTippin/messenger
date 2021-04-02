@@ -34,7 +34,9 @@ class MessageReactionController
             $thread,
         ]);
 
-        return new MessageReactionCollection($message->reactions);
+        return new MessageReactionCollection(
+            $message->reactions()->with('owner')->get()
+        );
     }
 
     /**
