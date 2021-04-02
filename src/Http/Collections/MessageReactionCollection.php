@@ -79,7 +79,7 @@ class MessageReactionCollection extends ResourceCollection
             ->uniqueStrict('reaction')
             ->pluck('reaction')
             ->mapWithKeys(fn ($reaction) => [
-                $reaction => $this->transformed->reject(fn ($react) => $react['reaction'] !== $reaction)->values()
+                $reaction => $this->transformed->reject(fn ($react) => $react['reaction'] !== $reaction)->values(),
             ])
             ->toArray();
     }

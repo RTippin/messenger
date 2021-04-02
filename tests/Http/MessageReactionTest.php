@@ -126,7 +126,7 @@ class MessageReactionTest extends FeatureTestCase
                     ':four:',
                     ':five:',
                     ':six:',
-                ]
+                ],
             ])
             ->assertJson([
                 'meta' => [
