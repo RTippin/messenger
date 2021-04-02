@@ -4,7 +4,9 @@ namespace RTippin\Messenger\Http\Controllers;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 use RTippin\Messenger\Actions\Messages\AddReaction;
+use RTippin\Messenger\Actions\Messages\RemoveReaction;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\ReactionException;
 use RTippin\Messenger\Http\Collections\MessageReactionCollection;
@@ -40,7 +42,7 @@ class MessageReactionController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a new reaction for the given message.
      *
      * @param MessageReactionRequest $request
      * @param AddReaction $addReaction
@@ -68,10 +70,30 @@ class MessageReactionController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified reaction from the given message.
+     *
+     * @param RemoveReaction $removeReaction
+     * @param Thread $thread
+     * @param Message $message
+     * @param MessageReaction $reaction
+     * @return JsonResponse
+     * @throws AuthorizationException|Throwable
      */
-    public function destroy()
+    public function destroy(RemoveReaction $removeReaction,
+                            Thread $thread,
+                            Message $message,
+                            MessageReaction $reaction): JsonResponse
     {
-        //TODO
+        $this->authorize('delete', [
+            MessageReaction::class,
+            $reaction,
+            $thread,
+        ]);
+
+        return $removeReaction->execute(
+            $thread,
+            $message,
+            $reaction
+        )->getMessageResponse();
     }
 }

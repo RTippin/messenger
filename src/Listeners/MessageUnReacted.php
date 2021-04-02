@@ -3,12 +3,12 @@
 namespace RTippin\Messenger\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use RTippin\Messenger\Broadcasting\ReactionAddedBroadcast;
+use RTippin\Messenger\Broadcasting\ReactionRemovedBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
-use RTippin\Messenger\Events\ReactionAddedEvent;
-use RTippin\Messenger\Http\Resources\MessageReactionResource;
+use RTippin\Messenger\Events\ReactionRemovedEvent;
+use RTippin\Messenger\Models\Message;
 
-class MessageReacted implements ShouldQueue
+class MessageUnReacted implements ShouldQueue
 {
     /**
      * @var BroadcastDriver
@@ -35,36 +35,37 @@ class MessageReacted implements ShouldQueue
     /**
      * Handle the event.
      *
-     * @param ReactionAddedEvent $event
+     * @param ReactionRemovedEvent $event
      * @return void
      */
-    public function handle(ReactionAddedEvent $event): void
+    public function handle(ReactionRemovedEvent $event): void
     {
         $this->broadcaster
-            ->to($event->reaction->message->owner)
+            ->to(Message::findOrFail($event->reaction['message_id'])->owner)
             ->with($this->generateBroadcastResource($event))
-            ->broadcast(ReactionAddedBroadcast::class);
+            ->broadcast(ReactionRemovedBroadcast::class);
     }
 
     /**
-     * @param ReactionAddedEvent $event
+     * @param ReactionRemovedEvent $event
      * @return array
      */
-    private function generateBroadcastResource(ReactionAddedEvent $event): array
+    private function generateBroadcastResource(ReactionRemovedEvent $event): array
     {
-        return (new MessageReactionResource(
-            $event->reaction,
-            $event->reaction->message
-        ))->resolve();
+        return [
+            'message_id' => $event->reaction['message_id'],
+            'reaction_id' => $event->reaction['id'],
+            'reaction' => $event->reaction['reaction'],
+        ];
     }
 
     /**
      * Determine whether the listener should be queued.
      *
-     * @param ReactionAddedEvent $event
+     * @param ReactionRemovedEvent $event
      * @return bool
      */
-    public function shouldQueue(ReactionAddedEvent $event): bool
+    public function shouldQueue(ReactionRemovedEvent $event): bool
     {
         return ! $event->isMessageOwner;
     }

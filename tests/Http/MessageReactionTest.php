@@ -4,8 +4,10 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use RTippin\Messenger\Broadcasting\ReactionAddedBroadcast;
+use RTippin\Messenger\Broadcasting\ReactionRemovedBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ReactionAddedEvent;
+use RTippin\Messenger\Events\ReactionRemovedEvent;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
 use RTippin\Messenger\Models\Thread;
@@ -134,5 +136,68 @@ class MessageReactionTest extends FeatureTestCase
                     'total_unique' => 6,
                 ],
             ]);
+    }
+
+    /** @test */
+    public function user_can_remove_own_reaction()
+    {
+        $reaction = MessageReaction::factory()
+            ->for($this->message)
+            ->for($this->tippin, 'owner')
+            ->create();
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            ReactionRemovedBroadcast::class,
+            ReactionRemovedEvent::class,
+        ]);
+
+        $this->deleteJson(route('api.messenger.threads.messages.reactions.destroy', [
+            'thread' => $this->private->id,
+            'message' => $this->message->id,
+            'reaction' => $reaction->id,
+        ]))
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function user_forbidden_to_remove_unowned_reaction()
+    {
+        $reaction = MessageReaction::factory()
+            ->for($this->message)
+            ->for($this->doe, 'owner')
+            ->create();
+        $this->actingAs($this->tippin);
+
+        $this->deleteJson(route('api.messenger.threads.messages.reactions.destroy', [
+            'thread' => $this->private->id,
+            'message' => $this->message->id,
+            'reaction' => $reaction->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function user_can_remove_unowned_reaction_when_group_admin()
+    {
+        $group = $this->createGroupThread($this->tippin, $this->doe);
+        $message = $this->createMessage($group, $this->tippin);
+        $reaction = MessageReaction::factory()
+            ->for($message)
+            ->for($this->doe, 'owner')
+            ->create();
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            ReactionRemovedBroadcast::class,
+            ReactionRemovedEvent::class,
+        ]);
+
+        $this->deleteJson(route('api.messenger.threads.messages.reactions.destroy', [
+            'thread' => $group->id,
+            'message' => $message->id,
+            'reaction' => $reaction->id,
+        ]))
+            ->assertSuccessful();
     }
 }

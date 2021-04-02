@@ -107,10 +107,10 @@ class AddReaction extends BaseMessengerAction
      */
     private function handleTransactions(): self
     {
-        if ($this->isChained()) {
+        if ($this->isChained() || $this->getMessage()->reacted) {
             $this->storeReaction();
         } else {
-            $this->database->transaction(fn () => $this->storeReaction(), 5);
+            $this->database->transaction(fn () => $this->storeReaction(), 3);
         }
 
         return $this;
