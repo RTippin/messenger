@@ -259,7 +259,7 @@ class MessageReactionTest extends FeatureTestCase
             'Invalid if shortcode spaced' => [': poop :'],
             'Cannot be empty' => [''],
             'Cannot be null' => [null],
-            'Cannot be array' => [[0,1]],
+            'Cannot be array' => [[0, 1]],
             'Cannot be integer' => [1],
             'Cannot be boolean' => [false],
         ];
