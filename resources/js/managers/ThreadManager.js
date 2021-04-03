@@ -638,6 +638,9 @@ window.ThreadManager = (function () {
             .listen('.thread.settings', methods.groupSettingsState)
             .listen('.thread.avatar', methods.groupAvatarState)
             .listen('.message.edited', methods.renderUpdatedMessage)
+            .listen('.reaction.added', (data) => console.log(data))
+            .listen('.reaction.removed', (data) => console.log(data))
+
         }
     },
     Health = {

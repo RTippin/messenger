@@ -371,6 +371,9 @@ window.ThreadTemplates = (function () {
                 Messenger.format().escapeHtml(data.owner.name)+' on '+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+
                 '</a></div><hr>'
         },
+        message_reactions : function(){
+
+        },
         my_message : function(data){
             return '<div id="message_'+data.id+'" class="message my-message"><div class="message-body"><div class="message-body-inner"><div class="message-info">' +
                 '<h5> <i class="far fa-clock"></i><time title="'+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="timeago" datetime="'+data.created_at+'">'+Messenger.format().makeTimeAgo(data.created_at)+'</time></h5></div><hr><div class="message-text">' +
