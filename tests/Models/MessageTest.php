@@ -7,6 +7,7 @@ use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\MessageReaction;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -58,6 +59,8 @@ class MessageTest extends FeatureTestCase
         $this->assertInstanceOf(Carbon::class, $this->message->updated_at);
         $this->assertInstanceOf(Carbon::class, $this->message->deleted_at);
         $this->assertSame(0, $this->message->type);
+        $this->assertFalse($this->message->edited);
+        $this->assertFalse($this->message->reacted);
     }
 
     /** @test */
@@ -146,6 +149,23 @@ class MessageTest extends FeatureTestCase
             'id' => $this->message->id,
         ]);
         $this->assertNull($replyMessage->replyTo);
+    }
+
+    /** @test */
+    public function it_has_reactions()
+    {
+        $this->message->update([
+            'reacted' => true,
+        ]);
+        MessageReaction::factory()
+            ->for($this->message)
+            ->for($this->tippin, 'owner')
+            ->create([
+                'reaction' => ':joy:',
+            ]);
+
+        $this->assertCount(1, $this->message->reactions()->get());
+        $this->assertTrue($this->message->isReacted());
     }
 
     /** @test */

@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Tests\Messenger;
 use RTippin\Messenger\Contracts\EmojiInterface;
 use RTippin\Messenger\Tests\MessengerTestCase;
 
-class EmojiConverterTest extends MessengerTestCase
+class EmojiServiceTest extends MessengerTestCase
 {
     private EmojiInterface $emoji;
 
@@ -80,7 +80,9 @@ class EmojiConverterTest extends MessengerTestCase
             ['Poop. 💩💩💩💩', 'Poop. :poop::poop::poop::poop:'],
             ['👍👎👍👎Yes👍', ':thumbsup::thumbsdown::thumbsup::thumbsdown:Yes:thumbsup:'],
             ['Spacing 💀 is 💀 preserved.💀', 'Spacing :skull: is :skull: preserved.:skull:'],
+            ['Spacing :) is still preserved >.<', 'Spacing :slight_smile: is still preserved :persevere:'],
             ["\u{1F480}", ':skull:'],
+            ['testing :) ascii', 'testing :slight_smile: ascii'],
         ];
     }
 
@@ -91,7 +93,9 @@ class EmojiConverterTest extends MessengerTestCase
             ['Poop. 💩💩💩💩', 'Poop. :poop::poop::poop::poop:'],
             ['👍👎👍👎Yes👍', ':thumbsup::thumbsdown::thumbsup::thumbsdown:Yes:thumbsup:'],
             ['Spacing 💀 is 💀 preserved.💀', 'Spacing :skull: is :skull: preserved.:skull:'],
+            ['Spacing :) is still preserved >.<', 'Spacing :slight_smile: is still preserved :persevere:'],
             ["\u{1F480}", ':skull:'],
+            [':)', ':slight_smile:'],
         ];
     }
 
@@ -111,6 +115,8 @@ class EmojiConverterTest extends MessengerTestCase
             ['We are 😀', [':grinning:']],
             ['Poop. 💩💩💩💩', [':poop:', ':poop:', ':poop:', ':poop:']],
             ['Spacing 💀 is 💀 preserved.💀 :notfound::undefined::poop:', [':skull:', ':skull:', ':skull:', ':poop:']],
+            [':)', [':slight_smile:']],
+            ['>.< lol :)', [':persevere:', ':slight_smile:']],
         ];
     }
 }

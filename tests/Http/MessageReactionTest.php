@@ -200,4 +200,68 @@ class MessageReactionTest extends FeatureTestCase
         ]))
             ->assertSuccessful();
     }
+
+    /**
+     * @test
+     * @dataProvider passesEmojiValidation
+     * @param $string
+     */
+    public function it_passes_validating_has_valid_emoji($string)
+    {
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.messages.reactions.store', [
+            'thread' => $this->private->id,
+            'message' => $this->message->id,
+        ]), [
+            'reaction' => $string,
+        ])
+            ->assertSuccessful();
+    }
+
+    /**
+     * @test
+     * @dataProvider failsEmojiValidation
+     * @param $string
+     */
+    public function it_fails_validating_has_valid_emoji($string)
+    {
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.messages.reactions.store', [
+            'thread' => $this->private->id,
+            'message' => $this->message->id,
+        ]), [
+            'reaction' => $string,
+        ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('reaction');
+    }
+
+    public function passesEmojiValidation(): array
+    {
+        return [
+            'Basic emoji shortcode' => [':poop:'],
+            'Basic emoji utf8' => ['💩'],
+            'Basic unicode emoji (:x:)' => ["\xE2\x9D\x8C"],
+            'Basic ascii emoji' => [':)'],
+            'Emoji found within string' => ['I tried to break :poop:'],
+            'Emoji found within string after failed emoji' => ['I tried to break :unknown: :poop:'],
+            'Multiple emojis it will pick first' => ['💩 :poop: 😁'],
+        ];
+    }
+
+    public function failsEmojiValidation(): array
+    {
+        return [
+            'Unknown emoji shortcode' => [':unknown:'],
+            'String with no emojis' => ['I have no emojis'],
+            'Invalid if shortcode spaced' => [': poop :'],
+            'Cannot be empty' => [''],
+            'Cannot be null' => [null],
+            'Cannot be array' => [[0,1]],
+            'Cannot be integer' => [1],
+            'Cannot be boolean' => [false],
+        ];
+    }
 }

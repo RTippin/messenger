@@ -139,6 +139,8 @@ trait HelperTrait
             'type' => 0,
             'owner_id' => $owner->getKey(),
             'owner_type' => get_class($owner),
+            'edited' => false,
+            'reacted' => false,
         ]);
     }
 
