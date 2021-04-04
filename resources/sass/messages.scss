@@ -271,6 +271,48 @@
     padding: 0;
 }
 
+.message-reactions {
+    position: relative;
+    width: 100%;
+}
+
+.message-reactions .reactions-body {
+    max-width: calc(100% - 94px);
+    position: relative;
+    width: auto;
+    float: left;
+    //background-color: #cfd8dc;
+    //border-radius: 15px;
+    //border: 1px solid #dbe3e8;
+    margin: -15px 10px 9px 15px;
+    color: #263238;
+    z-index: 999;
+    //box-shadow: 0 0 4px 1px #20c997;
+}
+
+.message-reactions .reactions-body span {
+    box-shadow: 0 0 3px 1px #20c997;
+}
+
+.message-reactions img.emojione{
+    height : 16px;
+    //margin-top: -3px;
+}
+
+.message-reactions.my-reactions .reactions-body{
+    float: right;
+    //background-color: #fff;
+    margin: -15px 15px 9px 5px;
+    max-width: calc(100% - 54px);
+}
+
+.message-reactions.grouped-reactions{
+    padding-left: 40px;
+}
+
+.message-reactions.grouped-reactions.my-reactions{
+    padding-left: 0;
+}
 
 .message {
     position: relative;

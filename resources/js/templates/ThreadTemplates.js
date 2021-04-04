@@ -371,27 +371,42 @@ window.ThreadTemplates = (function () {
                 Messenger.format().escapeHtml(data.owner.name)+' on '+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+
                 '</a></div><hr>'
         },
-        message_reactions : function(){
-
+        message_reactions : function(message, mine, grouped){
+            if(message.reacted){
+                let html = '<div class="clearfix"></div><div class="message-reactions '+(grouped ? "" : "grouped-reactions")+' '+(mine ? "my-reactions" : "")+' info"><div class="reactions-body px-1">';
+                for(const reaction in message.reactions.data){
+                    if(message.reactions.data.hasOwnProperty(reaction)){
+                        html += '<span class="badge badge-dark mr-1 px-1">'+methods.format_message_body(reaction, true)+'<strong>'+message.reactions.data[reaction].length+'</strong></span>';
+                    }
+                }
+                return html+'</div></div>';
+            }
+            return '';
         },
         my_message : function(data){
             return '<div id="message_'+data.id+'" class="message my-message"><div class="message-body"><div class="message-body-inner"><div class="message-info">' +
                 '<h5> <i class="far fa-clock"></i><time title="'+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="timeago" datetime="'+data.created_at+'">'+Messenger.format().makeTimeAgo(data.created_at)+'</time></h5></div><hr><div class="message-text">' +
                 templates.message_body(data, false) +
-                '</div></div></div>'+templates.my_message_options(data, false)+'<div class="clearfix"></div></div>'
+                '</div></div></div>'+templates.my_message_options(data, false)+
+                '<div class="reactions">'+templates.message_reactions(data, true, false)+
+                '</div><div class="clearfix"></div></div>'
         },
         my_message_grouped : function(data){
             return '<div id="message_'+data.id+'" class="message grouped-message my-message"><div class="message-body"><div class="message-body-inner">' +
                 '<div title="'+Messenger.format().escapeHtml(data.owner.name)+' on '+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="message-text pt-2">' +
                 templates.message_body(data, false) +
-                '</div></div></div>'+templates.my_message_options(data, true)+'<div class="clearfix"></div></div>'
+                '</div></div></div>'+templates.my_message_options(data, true)+
+                '<div class="reactions">'+templates.message_reactions(data, true, true)+
+                '</div><div class="clearfix"></div></div>'
         },
         my_message_reply : function(data){
             return '<div id="message_'+data.id+'" class="message my-message"><div class="message-body"><div class="message-body-inner"><div class="message-info">' +
                 '<h5> <i class="far fa-clock"></i><time title="'+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="timeago" datetime="'+data.created_at+'">'+Messenger.format().makeTimeAgo(data.created_at)+'</time></h5></div><hr><div class="message-text">' +
                 templates.message_reply_item(data) +
                 templates.message_body(data, false) +
-                '</div></div></div>'+templates.my_message_options(data, false)+'<div class="clearfix"></div></div>'
+                '</div></div></div>'+templates.my_message_options(data, false)+
+                '<div class="reactions">'+templates.message_reactions(data, true, false)+
+                '</div><div class="clearfix"></div></div>'
         },
         message : function(data){
             return '<div id="message_'+data.id+'" class="message info"><a '+(data.owner.route ? '' : 'onclick="return false;"')+' ' +
@@ -399,13 +414,17 @@ window.ThreadTemplates = (function () {
                 '<div class="message-body"><div class="message-body-inner"><div class="message-info">' +
                 '<h4>'+data.owner.name+'</h4><h5> <i class="far fa-clock"></i><time title="'+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="timeago" datetime="'+data.created_at+'">'+Messenger.format().makeTimeAgo(data.created_at)+'</time></h5></div><hr><div class="message-text">' +
                 templates.message_body(data, false) +
-                '</div></div></div>' +templates.message_options(data, false)+ '<div class="clearfix"></div></div>'
+                '</div></div></div>' +templates.message_options(data, false)+
+                '<div class="reactions">'+templates.message_reactions(data, false, false)+
+                '</div><div class="clearfix"></div></div>'
         },
         message_grouped : function(data){
             return '<div id="message_'+data.id+'" class="message grouped-message info"><div class="message-body"><div class="message-body-inner">' +
                 '<div title="'+Messenger.format().escapeHtml(data.owner.name)+' on '+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="message-text pt-2">' +
                 templates.message_body(data, false) +
-                '</div></div></div> '+templates.message_options(data, true)+' <div class="clearfix"></div></div>'
+                '</div></div></div> '+templates.message_options(data, true)+
+                '<div class="reactions">'+templates.message_reactions(data, false, true)+
+                '</div><div class="clearfix"></div></div>'
         },
         message_reply : function(data){
             return '<div id="message_'+data.id+'" class="message info"><a '+(data.owner.route ? '' : 'onclick="return false;"')+' ' +
@@ -414,7 +433,9 @@ window.ThreadTemplates = (function () {
                 '<h4>'+data.owner.name+'</h4><h5> <i class="far fa-clock"></i><time title="'+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'" class="timeago" datetime="'+data.created_at+'">'+Messenger.format().makeTimeAgo(data.created_at)+'</time></h5></div><hr><div class="message-text">' +
                 templates.message_reply_item(data) +
                 templates.message_body(data, false) +
-                '</div></div></div>' +templates.message_options(data, false)+ '<div class="clearfix"></div></div>'
+                '</div></div></div>' +templates.message_options(data, false)+
+                '<div class="reactions">'+templates.message_reactions(data, false, false)+
+                '</div><div class="clearfix"></div></div>'
         },
         message_reply_item : function(data){
             let msg = '<footer class="blockquote-footer text-light">Replying to unknown</footer>';

@@ -126,6 +126,18 @@ li.thread_list_item:hover{
   box-shadow: 0 0 5px 1px $gray-550 !important;
 }
 
+.message-reactions.my-reactions .reactions-body {
+  //background-color: $my-message !important;
+  //border: 1px solid $my-message !important;
+  color: $gray-200 !important;
+}
+
+.message-reactions .reactions-body {
+  //background-color: $other-message !important;
+  //border: 1px solid $other-message !important;
+  color: $gray-200 !important;
+}
+
 .message.my-message:after {
   border-left: 12px solid $my-message !important;
 }
