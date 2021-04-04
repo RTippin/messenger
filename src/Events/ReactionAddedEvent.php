@@ -23,11 +23,9 @@ class ReactionAddedEvent
      * Create a new event instance.
      *
      * @param MessageReaction $reaction
-     * @param bool $isMessageOwner
      */
-    public function __construct(MessageReaction $reaction, bool $isMessageOwner)
+    public function __construct(MessageReaction $reaction)
     {
         $this->reaction = $reaction;
-        $this->isMessageOwner = $isMessageOwner;
     }
 }

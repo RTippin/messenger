@@ -3,8 +3,6 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Database\Eloquent\Factories\Sequence;
-use Illuminate\Events\CallQueuedListener;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Messages\AddReaction;
 use RTippin\Messenger\Broadcasting\ReactionAddedBroadcast;
@@ -13,7 +11,6 @@ use RTippin\Messenger\Events\ReactionAddedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\ReactionException;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Listeners\MessageReacted;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
 use RTippin\Messenger\Models\Thread;
@@ -142,7 +139,6 @@ class AddReactionTest extends FeatureTestCase
             ReactionAddedBroadcast::class,
             ReactionAddedEvent::class,
         ]);
-        Bus::fake();
 
         app(AddReaction::class)->execute(
             $this->group,
@@ -157,16 +153,19 @@ class AddReactionTest extends FeatureTestCase
 
             return true;
         });
+        Event::assertDispatchedTimes(ReactionAddedBroadcast::class, 1);
         Event::assertDispatched(function (ReactionAddedEvent $event) {
             return $this->message->id === $event->reaction->message_id;
         });
-        Bus::assertNotDispatched(CallQueuedListener::class);
     }
 
     /** @test */
-    public function it_dispatches_listeners_if_not_message_owner()
+    public function it_fires_multiple_events_if_not_message_owner()
     {
-        Bus::fake();
+        Event::fake([
+            ReactionAddedBroadcast::class,
+            ReactionAddedEvent::class,
+        ]);
         Messenger::setProvider($this->doe);
 
         app(AddReaction::class)->execute(
@@ -174,9 +173,9 @@ class AddReactionTest extends FeatureTestCase
             $this->message,
             ':joy:'
         );
-
-        Bus::assertDispatched(function (CallQueuedListener $job) {
-            return $job->class === MessageReacted::class;
+        Event::assertDispatchedTimes(ReactionAddedBroadcast::class, 2);
+        Event::assertDispatched(function (ReactionAddedEvent $event) {
+            return $this->message->id === $event->reaction->message_id;
         });
     }
 }

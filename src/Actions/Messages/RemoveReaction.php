@@ -128,6 +128,13 @@ class RemoveReaction extends BaseMessengerAction
                 ->toPresence($this->getThread())
                 ->with($this->generateBroadcastResource())
                 ->broadcast(ReactionRemovedBroadcast::class);
+
+            if ($this->messenger->getProvider()->isNot($this->getMessage()->owner)) {
+                $this->broadcaster
+                    ->to($this->getMessage()->owner)
+                    ->with($this->generateBroadcastResource())
+                    ->broadcast(ReactionRemovedBroadcast::class);
+            }
         }
 
         return $this;
@@ -141,8 +148,7 @@ class RemoveReaction extends BaseMessengerAction
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ReactionRemovedEvent(
                 $this->messenger->getProvider()->withoutRelations(),
-                $this->reaction->toArray(),
-                $this->messenger->getProvider()->is($this->getMessage()->owner)
+                $this->reaction->toArray()
             ));
         }
 

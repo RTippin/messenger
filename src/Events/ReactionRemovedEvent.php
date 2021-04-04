@@ -20,23 +20,14 @@ class ReactionRemovedEvent
     public array $reaction;
 
     /**
-     * @var bool
-     */
-    public bool $isMessageOwner;
-
-    /**
      * Create a new event instance.
      *
      * @param MessengerProvider $provider
      * @param array $reaction
-     * @param bool $isMessageOwner
      */
-    public function __construct(MessengerProvider $provider,
-                                array $reaction,
-                                bool $isMessageOwner)
+    public function __construct(MessengerProvider $provider, array $reaction)
     {
         $this->provider = $provider;
         $this->reaction = $reaction;
-        $this->isMessageOwner = $isMessageOwner;
     }
 }

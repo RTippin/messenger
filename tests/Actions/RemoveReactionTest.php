@@ -2,15 +2,12 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Illuminate\Events\CallQueuedListener;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Messages\RemoveReaction;
 use RTippin\Messenger\Broadcasting\ReactionRemovedBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ReactionRemovedEvent;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Listeners\MessageUnReacted;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
 use RTippin\Messenger\Models\Thread;
@@ -88,7 +85,6 @@ class RemoveReactionTest extends FeatureTestCase
             ReactionRemovedBroadcast::class,
             ReactionRemovedEvent::class,
         ]);
-        Bus::fake();
 
         app(RemoveReaction::class)->execute(
             $this->group,
@@ -103,16 +99,19 @@ class RemoveReactionTest extends FeatureTestCase
 
             return true;
         });
+        Event::assertDispatchedTimes(ReactionRemovedBroadcast::class, 1);
         Event::assertDispatched(function (ReactionRemovedEvent $event) {
             return $this->reaction->id === $event->reaction['id'];
         });
-        Bus::assertNotDispatched(CallQueuedListener::class);
     }
 
     /** @test */
-    public function it_dispatches_listeners_if_not_message_owner()
+    public function it_fires_multiple_events_if_not_message_owner()
     {
-        Bus::fake();
+        Event::fake([
+            ReactionRemovedBroadcast::class,
+            ReactionRemovedEvent::class,
+        ]);
         Messenger::setProvider($this->doe);
 
         app(RemoveReaction::class)->execute(
@@ -121,8 +120,9 @@ class RemoveReactionTest extends FeatureTestCase
             $this->reaction
         );
 
-        Bus::assertDispatched(function (CallQueuedListener $job) {
-            return $job->class === MessageUnReacted::class;
+        Event::assertDispatchedTimes(ReactionRemovedBroadcast::class, 2);
+        Event::assertDispatched(function (ReactionRemovedEvent $event) {
+            return $this->reaction->id === $event->reaction['id'];
         });
     }
 }

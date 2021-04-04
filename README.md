@@ -597,12 +597,6 @@ ParticipantsAddedEvent::class => [
 PromotedAdminEvent::class => [
     PromotedAdminMessage::class,
 ],
-ReactionAddedEvent::class => [
-    MessageReacted::class,
-],
-ReactionRemovedEvent::class => [
-    MessageUnReacted::class,
-],
 RemovedFromThreadEvent::class => [
     RemovedFromThreadMessage::class,
 ],

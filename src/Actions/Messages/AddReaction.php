@@ -194,6 +194,17 @@ class AddReaction extends BaseMessengerAction
     }
 
     /**
+     * @return array
+     */
+    private function generateBroadcastResource(): array
+    {
+        return (new MessageReactionResource(
+            $this->reaction,
+            $this->getMessage()
+        ))->resolve();
+    }
+
+    /**
      * @return $this
      */
     private function fireBroadcast(): self
@@ -203,6 +214,13 @@ class AddReaction extends BaseMessengerAction
                 ->toPresence($this->getThread())
                 ->with($this->getJsonResource()->resolve())
                 ->broadcast(ReactionAddedBroadcast::class);
+
+            if ($this->messenger->getProvider()->isNot($this->getMessage()->owner)) {
+                $this->broadcaster
+                    ->to($this->getMessage()->owner)
+                    ->with($this->generateBroadcastResource())
+                    ->broadcast(ReactionAddedBroadcast::class);
+            }
         }
 
         return $this;
@@ -215,8 +233,7 @@ class AddReaction extends BaseMessengerAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ReactionAddedEvent(
-                $this->reaction->withoutRelations(),
-                $this->messenger->getProvider()->is($this->getMessage()->owner)
+                $this->reaction->withoutRelations()
             ));
         }
 
