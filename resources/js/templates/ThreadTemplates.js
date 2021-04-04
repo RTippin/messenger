@@ -376,7 +376,7 @@ window.ThreadTemplates = (function () {
                 let html = '<div class="clearfix"></div><div class="message-reactions '+(grouped ? "" : "grouped-reactions")+' '+(mine ? "my-reactions" : "")+' info"><div class="reactions-body px-1">';
                 for(const reaction in message.reactions.data){
                     if(message.reactions.data.hasOwnProperty(reaction)){
-                        html += '<span class="badge badge-dark mr-1 px-1">'+methods.format_message_body(reaction, true)+'<strong>'+message.reactions.data[reaction].length+'</strong></span>';
+                        html += '<span class="react-badge badge badge-dark mr-1 px-1">'+methods.format_message_body(reaction, true)+'<span class="ml-1 font-weight-bold">'+message.reactions.data[reaction].length+'</span></span>';
                     }
                 }
                 return html+'</div></div>';
