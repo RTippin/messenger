@@ -1991,6 +1991,7 @@ window.ThreadManager = (function () {
             }
         },
         addNewReaction : function(arg){
+            if(!opt.thread.id) return;
             Messenger.xhr().payload({
                 route : Messenger.common().API + 'threads/' + opt.thread.id + '/messages/' + arg.message_id + '/reactions',
                 data : {
@@ -1999,10 +2000,19 @@ window.ThreadManager = (function () {
                 fail_alert : true
             });
         },
-        removeMyReaction : function(arg){
+        removeReaction : function(arg, removeLi){
+            if(!opt.thread.id) return;
             Messenger.xhr().payload({
                 route : Messenger.common().API + 'threads/' + opt.thread.id + '/messages/' + arg.message_id + '/reactions/'+arg.id,
                 data : {},
+                success : function(){
+                    if(removeLi === true){
+                        let reactLi = $("#react_li_item_"+arg.id);
+                        if(reactLi.length){
+                            reactLi.remove()
+                        }
+                    }
+                },
                 fail_alert : true
             }, 'delete');
         },
@@ -2062,7 +2072,8 @@ window.ThreadManager = (function () {
             let msg = $("#message_"+message.id);
             if(msg.length){
                 msg.find('.reactions').html(ThreadTemplates.render().message_reactions(message, msg.hasClass('my-message'), msg.hasClass('grouped-message')));
-                methods.threadScrollBottom(false, false)
+                methods.threadScrollBottom(false, false);
+                PageListeners.listen().tooltips()
             }
         }
     },
@@ -2919,6 +2930,30 @@ window.ThreadManager = (function () {
                 }
             })
         },
+        messageReactions : function(messageId){
+            if(!opt.thread.id) return;
+            Messenger.alert().Modal({
+                size : 'md',
+                backdrop_ctrl : false,
+                overflow : true,
+                theme : 'dark',
+                icon : 'grin-tongue',
+                title: 'Loading Reactions...',
+                pre_loader: true,
+                h4: false,
+                onReady: function () {
+                    Messenger.xhr().request({
+                        route : Messenger.common().API+'threads/'+opt.thread.id+'/messages/'+messageId+'/reactions',
+                        success : function(data){
+                            Messenger.alert().fillModal({
+                                title : 'Reactions',
+                                body : ThreadTemplates.render().show_message_reactions(data)
+                            });
+                        }
+                    })
+                }
+            })
+        },
         threadAudio : function(paginate, page){
             if(!opt.thread.id) return;
             if(paginate){
@@ -3117,7 +3152,7 @@ window.ThreadManager = (function () {
         editMessage : methods.editMessage,
         reply : methods.replyToMessage,
         addNewReaction : methods.addNewReaction,
-        removeMyReaction : methods.removeMyReaction,
+        removeReaction : methods.removeReaction,
         mute : function(){
             return Mute;
         },

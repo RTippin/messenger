@@ -333,20 +333,41 @@ window.ThreadTemplates = (function () {
         message_options : function(data, grouped){
             let options = '';
             if(!ThreadManager.state().thread_lockout){
-                if(ThreadManager.state().thread_admin){
-                    options += '<div onclick="ThreadManager.archive().Message({id : \''+data.id+'\'})" class="message_hover_opt float-left ml-0 pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS"><i title="Delete Message" class="fas fa-trash"></i></div>';
-                }
-                options += '<div onclick="ThreadManager.reply({id : \''+data.id+'\'})" class="message_hover_opt float-left ml-'+(ThreadManager.state().thread_admin ? '1' : '0')+' pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS"><i title="Reply" class="fas fa-reply"></i></div>';
+                options += '<div onclick="EmojiPicker.addReaction(\''+data.id+'\')" class="message_hover_opt float-left ml-0 pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS"><i title="React" class="fas fa-grin"></i></div>';
+                options += '<div onclick="ThreadManager.reply({id : \''+data.id+'\'})" class="message_hover_opt float-left ml-2 pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS"><i title="Reply" class="fas fa-reply"></i></div>';
+                options += '<div class="dropdown">\n' +
+                    '<div id="msg_options_'+data.id+'" class="message_hover_opt float-left ml-2 pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i title="Options" class="fas fa-ellipsis-v"></i></div>'+
+                    '  <div class="dropdown-menu" aria-labelledby="msg_options_'+data.id+'">\n' +
+                    '<a onclick="EmojiPicker.addReaction(\''+data.id+'\'); return false;" class="dropdown-item" href="#"><i class="fas fa-grin"></i> React</a>'+
+                    '<a onclick="ThreadManager.reply({id : \''+data.id+'\'}); return false;" class="dropdown-item" href="#"><i class="fas fa-reply"></i> Reply</a>'+
+                    '<a onclick="ThreadManager.load().messageReactions(\''+data.id+'\'); return false;" class="dropdown-item" href="#"><i class="fas fa-grin-tongue"></i> View Reactions</a>'+
+                    (ThreadManager.state().thread_admin
+                        ? '<a onclick="ThreadManager.archive().Message({id : \''+data.id+'\'}); return false;" class="dropdown-item" href="#"><i class="fas fa-trash"></i> Delete</a>'
+                        : '') +
+                    '  </div>\n' +
+                    '</div>';
             }
             return options;
         },
         my_message_options : function(data, grouped){
+            let options = '';
             if(!ThreadManager.state().thread_lockout){
-                let edit = '<div onclick="ThreadManager.editMessage({id : \''+data.id+'\'})" class="message_hover_opt float-right mr-0 pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS"><i title="Edit Message" class="fas fa-pen"></i></div>';
-                return (data.type === 0 ? edit : '') +
-                    '<div onclick="ThreadManager.archive().Message({id : \''+data.id+'\'})" class="message_hover_opt float-right mr-1 pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS"><i title="Delete Message" class="fas fa-trash"></i></div>'
+                options += '<div onclick="EmojiPicker.addReaction(\''+data.id+'\')" class="message_hover_opt float-right mr-0 pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS"><i title="React" class="fas fa-grin"></i></div>';
+                options += '<div onclick="ThreadManager.reply({id : \''+data.id+'\'})" class="message_hover_opt float-right mr-2 pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS"><i title="Reply" class="fas fa-reply"></i></div>';
+                options += '<div class="dropdown">\n' +
+                    '<div id="msg_options_'+data.id+'" class="message_hover_opt float-right mr-2 pt-'+(grouped ? '0' : '2')+' h6 text-secondary pointer_area NS" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"><i title="Options" class="fas fa-ellipsis-v"></i></div>'+
+                    '  <div class="dropdown-menu" aria-labelledby="msg_options_'+data.id+'">\n' +
+                    (data.type === 0
+                        ? '<a onclick="ThreadManager.editMessage({id : \''+data.id+'\'}); return false;" class="dropdown-item" href="#"><i class="fas fa-pen"></i> Edit</a>'
+                        : '') +
+                    '<a onclick="EmojiPicker.addReaction(\''+data.id+'\'); return false;" class="dropdown-item" href="#"><i class="fas fa-grin"></i> React</a>'+
+                    '<a onclick="ThreadManager.reply({id : \''+data.id+'\'}); return false;" class="dropdown-item" href="#"><i class="fas fa-reply"></i> Reply</a>'+
+                    '<a onclick="ThreadManager.load().messageReactions(\''+data.id+'\'); return false;" class="dropdown-item" href="#"><i class="fas fa-grin-tongue"></i> View Reactions</a>'+
+                    '<a onclick="ThreadManager.archive().Message({id : \''+data.id+'\'}); return false;" class="dropdown-item" href="#"><i class="fas fa-trash"></i> Delete</a>'+
+                    '  </div>\n' +
+                    '</div>';
             }
-            return '';
+            return options;
         },
         pending_message : function(data){
             return '<div id="pending_message_'+data.id+'" class="message my-message"><div class="message-body"><div class="message-body-inner"><div class="message-info">' +
@@ -380,11 +401,33 @@ window.ThreadTemplates = (function () {
                             return reactors.owner.provider_id === Messenger.common().id
                                 && reactors.owner.provider_alias === Messenger.common().model;
                         });
+                        let names = '';
+                        let reactionCount = message.reactions.data[reaction].length;
+                        for(let y = 0; y < reactionCount; y++) {
+                            if(y === 0){
+                                names += message.reactions.data[reaction][y].owner.name;
+                            }
+                            else if(y === 1 && reactionCount === 2){
+                                names += ' and '+message.reactions.data[reaction][y].owner.name;
+                            }
+                            else if(y === 2){
+                                if(reactionCount === 3){
+                                    names += ' and '+message.reactions.data[reaction][y].owner.name;
+                                } else {
+                                    names += ', '+message.reactions.data[reaction][y].owner.name+' and '+(reactionCount-3)+' others';
+                                }
+                                break;
+                            } else {
+                                names += ', '+message.reactions.data[reaction][y].owner.name;
+                            }
+                        }
                         if(reactedByMe){
-                            html += '<span onclick="ThreadManager.removeMyReaction({message_id : \''+message.id+'\', id : \''+reactedByMe.id+'\'})" class="reacted-by-me badge badge-light mr-1 px-1 pointer_area">'+methods.format_message_body(reaction, true)+
+                            html += '<span data-toggle="tooltip" title="'+names+'" data-placement="top" onclick="ThreadManager.removeReaction({message_id : \''+message.id+'\', id : \''+reactedByMe.id+'\'})" ' +
+                                'class="reacted-by-me badge badge-light mr-1 px-1 pointer_area">'+methods.format_message_body(reaction, true)+
                                 '<span class="ml-1 font-weight-bold text-primary">'+message.reactions.data[reaction].length+'</span></span>';
                         } else {
-                            html += '<span onclick="ThreadManager.addNewReaction({message_id : \''+message.id+'\', emoji : \''+reaction+'\'})" class="badge badge-light mr-1 px-1 pointer_area">'+methods.format_message_body(reaction, true)+
+                            html += '<span data-toggle="tooltip" title="'+names+'" data-placement="top" onclick="ThreadManager.addNewReaction({message_id : \''+message.id+'\', emoji : \''+reaction+'\'})"' +
+                                'class="badge badge-light mr-1 px-1 pointer_area">'+methods.format_message_body(reaction, true)+
                                 '<span class="ml-1 font-weight-bold">'+message.reactions.data[reaction].length+'</span></span>';
                         }
                     }
@@ -392,6 +435,26 @@ window.ThreadTemplates = (function () {
                 return html+'</div></div>';
             }
             return '';
+        },
+        show_message_reactions : function(data){
+            if(data.meta.total === 0){
+                return '<div class="text-center h3"><i class="fas fa-frown"></i> No reactions</div>';
+            }
+            let html = '';
+            for(const reaction in data.data){
+                if(data.data.hasOwnProperty(reaction)){
+                    html += '<div class="row mr-1"><div class="col-4 text-center p-0">'+methods.format_message_body(reaction, true)+'</div><div class="col-8 p-0"><ul class="list-unstyled">';
+                    data.data[reaction].forEach(function (reactor) {
+                        html += '<li class="thread_list_item" id="react_li_item_'+reactor.id+'"><div class="d-inline"><img height="20" width="20" class="rounded-circle" src="'+reactor.owner.avatar.sm+'"/> '+reactor.owner.name+'</div>'+
+                            ((ThreadManager.state().thread_admin || (reactor.owner.provider_id === Messenger.common().id && reactor.owner.provider_alias === Messenger.common().model))
+                                ? '<div onclick="ThreadManager.removeReaction({message_id : \''+reactor.message_id+'\', id : \''+reactor.id+'\'}, true)" class="float-right h6 pointer_area mt-0 mr-1 text-danger"><i title="Remove" class="fas fa-times"></i></div>'
+                                : '')+
+                            '</li><div class="clearfix"></div>'
+                    });
+                    html += '</ul></div></div><hr class="my-1">';
+                }
+            }
+            return html;
         },
         my_message : function(data){
             return '<div id="message_'+data.id+'" class="message my-message"><div class="message-body"><div class="message-body-inner"><div class="message-info">' +
@@ -1270,8 +1333,8 @@ window.ThreadTemplates = (function () {
                 '                            </div>\n' +
                 '                            <div class="col-12 my-1">\n' +
                 '                                <div class="float-left">\n' +
-                '                                    <button id="file_upload_btn" data-toggle="tooltip" title="Upload File(s)" data-placement="top" class="btn btn-sm btn-light" onclick="$(\'#doc_file\').trigger(\'click\');" type="button"><i class="fas fa-plus-circle"></i></button>\n' +
-                '                                    <button id="record_audio_message_btn" data-toggle="tooltip" title="Record Audio Message" data-placement="top" class="mx-1 btn btn-sm btn-light" type="button"><i class="fas fa-microphone"></i></button>\n' +
+                '                                    <button style="font-size: 18px; line-height: 0;" id="file_upload_btn" data-toggle="tooltip" title="Upload File(s)" data-placement="top" class="p-1 btn btn-sm btn-light" onclick="$(\'#doc_file\').trigger(\'click\');" type="button"><i class="fas fa-plus-circle"></i></button>\n' +
+                '                                    <button style="font-size: 18px; line-height: 0;" id="record_audio_message_btn" data-toggle="tooltip" title="Record Audio Message" data-placement="top" class="p-1 mx-1 btn btn-sm btn-light" type="button"><i class="fas fa-microphone"></i></button>\n' +
                 '                                </div>\n' +
                 '                                <div class="float-right">\n' +
                 '                                    <button style="font-size: 18px; line-height: 0;" id="add_emoji_btn" data-toggle="tooltip" title="Add emoji" data-placement="top" class="p-1 btn btn-sm btn-light" type="button"><i class="fas fa-grin"></i></button>\n' +

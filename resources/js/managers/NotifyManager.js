@@ -219,8 +219,7 @@ window.NotifyManager = (function () {
             .listen('.promoted.admin', methods.promotedAdmin)
             .listen('.demoted.admin', methods.demotedAdmin)
             .listen('.permissions.updated', methods.permissionsUpdated)
-            // .listen('.reaction.added', (data) => console.log(data))
-            // .listen('.reaction.removed', (data) => console.log(data))
+            .listen('.reaction.added', methods.incomingReact)
         },
         heartBeat : function(state, check, gather){
             let payload = function(){
@@ -368,6 +367,22 @@ window.NotifyManager = (function () {
                     timeOut : 5000
                 }
             })
+        },
+        incomingReact : function(data){
+            if(!opt.settings.notifications) return;
+            if(!Messenger.common().modules.includes('ThreadManager') || ThreadManager.state().thread_id !== data.message.thread_id){
+                Messenger.alert().Alert({
+                    title : emojione.toImage(data.reaction),
+                    body : data.owner.name+' reacted to your message',
+                    toast : true,
+                    theme : 'info',
+                    toast_options : {
+                        timeOut : 5000
+                    }
+                });
+                methods.togglePageTitle(data.owner.name+' reacted...');
+                methods.playAlertSound('notify');
+            }
         },
         incomingKnok : function(data){
             if(!opt.settings.notifications) return;
