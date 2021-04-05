@@ -8,11 +8,13 @@
 - Events/broadcast for reactions feature.
 - bool `edited` and `reacted` columns on messages table.
 - New providers scope using concat() on polymorph keys.
+- Custom rule to verify an emoji exist in string.
 
 #### Changed
 - Message edits go by bool `edited` and not `updated_at` column now.
 - Emoji converter is now an interface/service.
 - New emoji picker added to the included UI.
+- Emoji converter is now a service/interface.
 
 ### [v0.23 (03-24-2021)]
 
