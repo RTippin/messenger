@@ -605,8 +605,8 @@ window.ThreadManager = (function () {
             .listen('.thread.settings', methods.groupSettingsState)
             .listen('.thread.avatar', methods.groupAvatarState)
             .listen('.message.edited', methods.renderUpdatedMessage)
-            .listen('.reaction.added', (data) => console.log(data))
-            .listen('.reaction.removed', (data) => console.log(data))
+            .listen('.reaction.added', methods.updateNewReaction)
+            .listen('.reaction.removed', methods.updateRemoveReaction)
 
         }
     },
@@ -1989,6 +1989,81 @@ window.ThreadManager = (function () {
                     msg.find('.message-text').html(ThreadTemplates.render().message_body(message))
                 }
             }
+        },
+        addNewReaction : function(arg){
+            Messenger.xhr().payload({
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/messages/' + arg.message_id + '/reactions',
+                data : {
+                    reaction : arg.emoji
+                },
+                fail_alert : true
+            });
+        },
+        removeMyReaction : function(arg){
+            Messenger.xhr().payload({
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/messages/' + arg.message_id + '/reactions/'+arg.id,
+                data : {},
+                fail_alert : true
+            }, 'delete');
+        },
+        updateNewReaction : function(reaction){
+            let messageStorage = methods.locateStorageItem({type : 'message', id : reaction.message_id}),
+                i = messageStorage.index;
+            if (messageStorage.found){
+                if(opt.storage.messages[i].hasOwnProperty('reactions')){
+                    if(opt.storage.messages[i].reactions.data.hasOwnProperty(reaction.reaction)){
+                        opt.storage.messages[i].reactions.data[reaction.reaction].push(reaction);
+                    } else {
+                        opt.storage.messages[i].reactions.data[reaction.reaction] = [reaction];
+                        opt.storage.messages[i].reactions.meta.total_unique = Object.keys(opt.storage.messages[i].reactions.data).length;
+                    }
+                    opt.storage.messages[i].reactions.meta.total = opt.storage.messages[i].reactions.meta.total+1;
+                } else {
+                    opt.storage.messages[i].reacted = true;
+                    opt.storage.messages[i].reactions = {
+                        data : {},
+                        meta : {
+                            total : 1,
+                            total_unique : 1
+                        }
+                    };
+                    opt.storage.messages[i].reactions.data[reaction.reaction] = [reaction];
+                }
+                methods.drawReactions(opt.storage.messages[i])
+            }
+        },
+        updateRemoveReaction : function(reaction){
+            let messageStorage = methods.locateStorageItem({type : 'message', id : reaction.message_id}),
+                i = messageStorage.index;
+            if (messageStorage.found && opt.storage.messages[i].hasOwnProperty('reactions')){
+                if(opt.storage.messages[i].reactions.data.hasOwnProperty(reaction.reaction)){
+                    for(let y = 0; y < opt.storage.messages[i].reactions.data[reaction.reaction].length; y++) {
+                        if (opt.storage.messages[i].reactions.data[reaction.reaction][y].id === reaction.id) {
+                            opt.storage.messages[i].reactions.data[reaction.reaction].splice(y, 1);
+                            break;
+                        }
+                    }
+                    if(!opt.storage.messages[i].reactions.data[reaction.reaction].length){
+                        delete opt.storage.messages[i].reactions.data[reaction.reaction];
+                    }
+                    let unique = Object.keys(opt.storage.messages[i].reactions.data).length;
+                    if(!unique){
+                        delete opt.storage.messages[i].reactions;
+                        opt.storage.messages[i].reacted = false;
+                    } else {
+                        opt.storage.messages[i].reactions.meta.total_unique = unique;
+                        opt.storage.messages[i].reactions.meta.total = opt.storage.messages[i].reactions.meta.total-1;
+                    }
+                }
+                methods.drawReactions(opt.storage.messages[i])
+            }
+        },
+        drawReactions : function(message){
+            let msg = $("#message_"+message.id);
+            if(msg.length){
+                msg.find('.reactions').html(ThreadTemplates.render().message_reactions(message, msg.hasClass('my-message'), msg.hasClass('grouped-message')));
+                methods.threadScrollBottom(false, false)
+            }
         }
     },
     archive = {
@@ -3041,6 +3116,8 @@ window.ThreadManager = (function () {
         },
         editMessage : methods.editMessage,
         reply : methods.replyToMessage,
+        addNewReaction : methods.addNewReaction,
+        removeMyReaction : methods.removeMyReaction,
         mute : function(){
             return Mute;
         },

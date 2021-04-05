@@ -12,15 +12,20 @@ window.EmojiPicker = (function () {
     methods = {
         addReaction : function(messageId){
             let message = document.getElementById('message_'+messageId).getElementsByClassName('message-body')[0];
+            message.classList.add('shadow-primary');
             let picker = new EmojiButton({
                 theme: Messenger.common().dark_mode ? 'dark' : 'light',
             });
             picker.showPicker(message);
             picker.on('emoji', selection => {
-                console.log(selection);
+                ThreadManager.addNewReaction({
+                    message_id : messageId,
+                    emoji : selection.emoji
+                });
             });
             picker.on('hidden', () => {
-                picker.destroyPicker()
+                picker.destroyPicker();
+                message.classList.remove('shadow-primary');
             });
         },
         addMessage : function(){

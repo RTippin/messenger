@@ -3954,11 +3954,8 @@ window.NotifyManager = function () {
       }
 
       opt.socket.private_channel = opt.socket.Echo["private"]('messenger.' + Messenger.common().model + '.' + id);
-      opt.socket.private_channel.listen('.new.message', methods.incomingMessage).listen('.thread.archived', methods.threadLeft).listen('.message.archived', methods.messagePurged).listen('.knock.knock', methods.incomingKnok).listen('.new.thread', methods.newThread).listen('.thread.approval', methods.threadApproval).listen('.thread.left', methods.threadLeft).listen('.incoming.call', methods.incomingCall).listen('.joined.call', methods.callJoined).listen('.left.call', methods.callLeft).listen('.call.ended', methods.callEnded).listen('.friend.request', methods.friendRequest).listen('.friend.approved', methods.friendApproved).listen('.friend.cancelled', methods.friendCancelled).listen('.promoted.admin', methods.promotedAdmin).listen('.demoted.admin', methods.demotedAdmin).listen('.permissions.updated', methods.permissionsUpdated).listen('.reaction.added', function (data) {
-        return console.log(data);
-      }).listen('.reaction.removed', function (data) {
-        return console.log(data);
-      });
+      opt.socket.private_channel.listen('.new.message', methods.incomingMessage).listen('.thread.archived', methods.threadLeft).listen('.message.archived', methods.messagePurged).listen('.knock.knock', methods.incomingKnok).listen('.new.thread', methods.newThread).listen('.thread.approval', methods.threadApproval).listen('.thread.left', methods.threadLeft).listen('.incoming.call', methods.incomingCall).listen('.joined.call', methods.callJoined).listen('.left.call', methods.callLeft).listen('.call.ended', methods.callEnded).listen('.friend.request', methods.friendRequest).listen('.friend.approved', methods.friendApproved).listen('.friend.cancelled', methods.friendCancelled).listen('.promoted.admin', methods.promotedAdmin).listen('.demoted.admin', methods.demotedAdmin).listen('.permissions.updated', methods.permissionsUpdated); // .listen('.reaction.added', (data) => console.log(data))
+      // .listen('.reaction.removed', (data) => console.log(data))
     },
     heartBeat: function heartBeat(state, check, gather) {
       var payload = function payload() {
@@ -5281,11 +5278,7 @@ window.ThreadManager = function () {
       }).listenForWhisper('read', function (message) {
         methods.updateBobbleHead(message.provider_id, message.message_id);
         methods.drawBobbleHeads();
-      }).listen('.thread.settings', methods.groupSettingsState).listen('.thread.avatar', methods.groupAvatarState).listen('.message.edited', methods.renderUpdatedMessage).listen('.reaction.added', function (data) {
-        return console.log(data);
-      }).listen('.reaction.removed', function (data) {
-        return console.log(data);
-      });
+      }).listen('.thread.settings', methods.groupSettingsState).listen('.thread.avatar', methods.groupAvatarState).listen('.message.edited', methods.renderUpdatedMessage).listen('.reaction.added', methods.updateNewReaction).listen('.reaction.removed', methods.updateRemoveReaction);
     }
   },
       Health = {
@@ -6816,6 +6809,96 @@ window.ThreadManager = function () {
           msg.find('.message-text').html(ThreadTemplates.render().message_body(message));
         }
       }
+    },
+    addNewReaction: function addNewReaction(arg) {
+      Messenger.xhr().payload({
+        route: Messenger.common().API + 'threads/' + opt.thread.id + '/messages/' + arg.message_id + '/reactions',
+        data: {
+          reaction: arg.emoji
+        },
+        fail_alert: true
+      });
+    },
+    removeMyReaction: function removeMyReaction(arg) {
+      Messenger.xhr().payload({
+        route: Messenger.common().API + 'threads/' + opt.thread.id + '/messages/' + arg.message_id + '/reactions/' + arg.id,
+        data: {},
+        fail_alert: true
+      }, 'delete');
+    },
+    updateNewReaction: function updateNewReaction(reaction) {
+      var messageStorage = methods.locateStorageItem({
+        type: 'message',
+        id: reaction.message_id
+      }),
+          i = messageStorage.index;
+
+      if (messageStorage.found) {
+        if (opt.storage.messages[i].hasOwnProperty('reactions')) {
+          if (opt.storage.messages[i].reactions.data.hasOwnProperty(reaction.reaction)) {
+            opt.storage.messages[i].reactions.data[reaction.reaction].push(reaction);
+          } else {
+            opt.storage.messages[i].reactions.data[reaction.reaction] = [reaction];
+            opt.storage.messages[i].reactions.meta.total_unique = Object.keys(opt.storage.messages[i].reactions.data).length;
+          }
+
+          opt.storage.messages[i].reactions.meta.total = opt.storage.messages[i].reactions.meta.total + 1;
+        } else {
+          opt.storage.messages[i].reacted = true;
+          opt.storage.messages[i].reactions = {
+            data: {},
+            meta: {
+              total: 1,
+              total_unique: 1
+            }
+          };
+          opt.storage.messages[i].reactions.data[reaction.reaction] = [reaction];
+        }
+
+        methods.drawReactions(opt.storage.messages[i]);
+      }
+    },
+    updateRemoveReaction: function updateRemoveReaction(reaction) {
+      var messageStorage = methods.locateStorageItem({
+        type: 'message',
+        id: reaction.message_id
+      }),
+          i = messageStorage.index;
+
+      if (messageStorage.found && opt.storage.messages[i].hasOwnProperty('reactions')) {
+        if (opt.storage.messages[i].reactions.data.hasOwnProperty(reaction.reaction)) {
+          for (var y = 0; y < opt.storage.messages[i].reactions.data[reaction.reaction].length; y++) {
+            if (opt.storage.messages[i].reactions.data[reaction.reaction][y].id === reaction.id) {
+              opt.storage.messages[i].reactions.data[reaction.reaction].splice(y, 1);
+              break;
+            }
+          }
+
+          if (!opt.storage.messages[i].reactions.data[reaction.reaction].length) {
+            delete opt.storage.messages[i].reactions.data[reaction.reaction];
+          }
+
+          var unique = Object.keys(opt.storage.messages[i].reactions.data).length;
+
+          if (!unique) {
+            delete opt.storage.messages[i].reactions;
+            opt.storage.messages[i].reacted = false;
+          } else {
+            opt.storage.messages[i].reactions.meta.total_unique = unique;
+            opt.storage.messages[i].reactions.meta.total = opt.storage.messages[i].reactions.meta.total - 1;
+          }
+        }
+
+        methods.drawReactions(opt.storage.messages[i]);
+      }
+    },
+    drawReactions: function drawReactions(message) {
+      var msg = $("#message_" + message.id);
+
+      if (msg.length) {
+        msg.find('.reactions').html(ThreadTemplates.render().message_reactions(message, msg.hasClass('my-message'), msg.hasClass('grouped-message')));
+        methods.threadScrollBottom(false, false);
+      }
     }
   },
       _archive = {
@@ -7954,6 +8037,8 @@ window.ThreadManager = function () {
     },
     editMessage: methods.editMessage,
     reply: methods.replyToMessage,
+    addNewReaction: methods.addNewReaction,
+    removeMyReaction: methods.removeMyReaction,
     mute: function mute() {
       return Mute;
     },
@@ -8011,15 +8096,20 @@ window.EmojiPicker = function () {
       methods = {
     addReaction: function addReaction(messageId) {
       var message = document.getElementById('message_' + messageId).getElementsByClassName('message-body')[0];
+      message.classList.add('shadow-primary');
       var picker = new _joeattardi_emoji_button__WEBPACK_IMPORTED_MODULE_0__.EmojiButton({
         theme: Messenger.common().dark_mode ? 'dark' : 'light'
       });
       picker.showPicker(message);
       picker.on('emoji', function (selection) {
-        console.log(selection);
+        ThreadManager.addNewReaction({
+          message_id: messageId,
+          emoji: selection.emoji
+        });
       });
       picker.on('hidden', function () {
         picker.destroyPicker();
+        message.classList.remove('shadow-primary');
       });
     },
     addMessage: function addMessage() {
@@ -8935,19 +9025,23 @@ window.ThreadTemplates = function () {
     },
     message_reactions: function message_reactions(message, mine, grouped) {
       if (message.reacted) {
-        var html = '<div class="clearfix"></div><div class="message-reactions ' + (grouped ? "" : "grouped-reactions") + ' ' + (mine ? "my-reactions" : "") + ' info"><div class="reactions-body px-1">';
+        var html = '<div class="clearfix"></div><div class="message-reactions ' + (grouped ? "" : "grouped-reactions") + ' ' + (mine ? "my-reactions" : "") + '"><div class="reactions-body px-1">';
 
         for (var reaction in message.reactions.data) {
           if (message.reactions.data.hasOwnProperty(reaction)) {
             var reactedByMe = message.reactions.data[reaction].find(function (reactors) {
               return reactors.owner.provider_id === Messenger.common().id && reactors.owner.provider_alias === Messenger.common().model;
             });
-            html += '<span class="' + (reactedByMe ? 'reacted-by-me' : '') + ' badge badge-light mr-1 px-1">' + methods.format_message_body(reaction, true) + (message.reactions.data[reaction].length > 1 ? '<span class="ml-1 font-weight-bold ' + (reactedByMe ? 'text-primary' : '') + '">' + message.reactions.data[reaction].length + '</span>' : '') + '</span>';
+
+            if (reactedByMe) {
+              html += '<span onclick="ThreadManager.removeMyReaction({message_id : \'' + message.id + '\', id : \'' + reactedByMe.id + '\'})" class="reacted-by-me badge badge-light mr-1 px-1 pointer_area">' + methods.format_message_body(reaction, true) + '<span class="ml-1 font-weight-bold text-primary">' + message.reactions.data[reaction].length + '</span></span>';
+            } else {
+              html += '<span onclick="ThreadManager.addNewReaction({message_id : \'' + message.id + '\', emoji : \'' + reaction + '\'})" class="badge badge-light mr-1 px-1 pointer_area">' + methods.format_message_body(reaction, true) + '<span class="ml-1 font-weight-bold">' + message.reactions.data[reaction].length + '</span></span>';
+            }
           }
         }
 
-        html += '</div></div>';
-        return html;
+        return html + '</div></div>';
       }
 
       return '';

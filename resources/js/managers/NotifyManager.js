@@ -219,8 +219,8 @@ window.NotifyManager = (function () {
             .listen('.promoted.admin', methods.promotedAdmin)
             .listen('.demoted.admin', methods.demotedAdmin)
             .listen('.permissions.updated', methods.permissionsUpdated)
-            .listen('.reaction.added', (data) => console.log(data))
-            .listen('.reaction.removed', (data) => console.log(data))
+            // .listen('.reaction.added', (data) => console.log(data))
+            // .listen('.reaction.removed', (data) => console.log(data))
         },
         heartBeat : function(state, check, gather){
             let payload = function(){

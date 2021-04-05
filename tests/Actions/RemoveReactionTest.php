@@ -94,7 +94,7 @@ class RemoveReactionTest extends FeatureTestCase
 
         Event::assertDispatched(function (ReactionRemovedBroadcast $event) {
             $this->assertContains('presence-messenger.thread.'.$this->group->id, $event->broadcastOn());
-            $this->assertSame($this->reaction->id, $event->broadcastWith()['reaction_id']);
+            $this->assertSame($this->reaction->id, $event->broadcastWith()['id']);
             $this->assertSame(':joy:', $event->broadcastWith()['reaction']);
 
             return true;

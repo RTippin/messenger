@@ -112,8 +112,8 @@ class RemoveReaction extends BaseMessengerAction
     private function generateBroadcastResource(): array
     {
         return [
+            'id' => $this->reaction->id,
             'message_id' => $this->getMessage()->id,
-            'reaction_id' => $this->reaction->id,
             'reaction' => $this->reaction->reaction,
         ];
     }
