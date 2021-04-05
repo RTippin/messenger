@@ -1,16 +1,18 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
-### [v0.24]
+### [v0.24 (04-05-2021)]
 
 #### Added
-- bool `edited` and `reacted` columns on messages table.
 - Message reactions feature. New table `message_reactions`.
-- New events/broadcast/listeners for reactions feature.
+- Events/broadcast for reactions feature.
+- bool `edited` and `reacted` columns on messages table.
+- New providers scope using concat() on polymorph keys.
 
 #### Changed
 - Message edits go by bool `edited` and not `updated_at` column now.
-- Emoji converter is not an interface/service.
+- Emoji converter is now an interface/service.
+- New emoji picker added to the included UI.
 
 ### [v0.23 (03-24-2021)]
 
