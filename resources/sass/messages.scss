@@ -281,13 +281,13 @@
     position: relative;
     width: auto;
     float: left;
-    margin: -15px 10px 9px 15px;
+    margin: -15px 10px 15px 15px;
     color: #263238;
     z-index: 999;
 }
 
-.message-reactions .reactions-body .react-badge {
-    box-shadow: 0 0 3px 1px #20c997;
+.message-reactions .reactions-body .reacted-by-me {
+    box-shadow: 0 0 3px 1px #2677dd;
 }
 
 .message-reactions img.emojione{
@@ -296,16 +296,11 @@
 
 .message-reactions.my-reactions .reactions-body{
     float: right;
-    margin: -15px 15px 9px 5px;
     max-width: calc(100% - 54px);
 }
 
 .message-reactions.grouped-reactions{
     padding-left: 40px;
-}
-
-.message-reactions.grouped-reactions.my-reactions{
-    padding-left: 0;
 }
 
 .message {
@@ -555,6 +550,10 @@
 
 .message:hover .message_hover_opt {
     display: block;
+}
+
+.emojionearea-picker{
+    z-index: 1000 !important;
 }
 
 .emojionearea .emojionearea-editor:empty::before {

@@ -131,27 +131,20 @@ window.ThreadManager = (function () {
             }
             if([1,2,3].includes(arg.type)){
                 if(arg.type === 3) opt.storage.temp_data = arg.temp_data;
-                if(Messenger.common().mobile){
-                    opt.elements.emoji_editor = opt.elements.emoji;
-                    opt.elements.emoji = null;
-                    mounted.startWatchdog();
+                if(typeof $.fn.emojioneArea !== 'undefined'){
+                    mounted.loadEmoji()
                 }
                 else{
-                    if(typeof $.fn.emojioneArea !== 'undefined'){
-                        mounted.loadEmoji()
-                    }
-                    else{
-                        Messenger.xhr().script({
-                            file : [window.location.protocol, '//', window.location.host].join('') + '/vendor/messenger/Emoji.js',
-                            success : mounted.loadEmoji,
-                            fail : function(){
-                                opt.elements.emoji_editor = opt.elements.emoji;
-                                opt.elements.emoji_editor.addClass('pr-special-btn');
-                                opt.elements.emoji = null;
-                                mounted.startWatchdog()
-                            }
-                        })
-                    }
+                    Messenger.xhr().script({
+                        file : [window.location.protocol, '//', window.location.host].join('') + '/vendor/messenger/Emoji.js',
+                        success : mounted.loadEmoji,
+                        fail : function(){
+                            opt.elements.emoji_editor = opt.elements.emoji;
+                            opt.elements.emoji_editor.addClass('pr-special-btn');
+                            opt.elements.emoji = null;
+                            mounted.startWatchdog()
+                        }
+                    })
                 }
             }
             if(arg.type === 4) mounted.startWatchdog();
@@ -340,6 +333,7 @@ window.ThreadManager = (function () {
                     spellcheck : true
                 }
             });
+            ReactionPicker.ready()
         },
         timeAgo : function(){
             $("time.timeago").each(function () {

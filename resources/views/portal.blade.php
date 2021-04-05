@@ -38,4 +38,5 @@
         @push('Messenger-modules')
             ThreadTemplates : {src : 'ThreadTemplates.js'},
             MessengerSettings : {src : 'MessengerSettings.js'},
+            ReactionPicker : {src : 'ReactionPicker.js'},
         @endpush
