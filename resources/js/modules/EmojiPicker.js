@@ -3,10 +3,6 @@ import { EmojiButton } from '@joeattardi/emoji-button';
 window.EmojiPicker = (function () {
     var opt = {
         lock : true,
-        using : false,
-        elements : {
-
-        },
     },
     mounted = {
         Initialize : function () {
@@ -17,13 +13,10 @@ window.EmojiPicker = (function () {
         addReaction : function(messageId){
             let message = document.getElementById('message_'+messageId).getElementsByClassName('message-body')[0];
             let picker = new EmojiButton({
-                theme: 'dark',
-                autoHide : false,
+                theme: Messenger.common().dark_mode ? 'dark' : 'light',
             });
             picker.showPicker(message);
             picker.on('emoji', selection => {
-                // `selection` object has an `emoji` property
-                // containing the selected emoji
                 console.log(selection);
             });
             picker.on('hidden', () => {
@@ -31,19 +24,27 @@ window.EmojiPicker = (function () {
             });
         },
         addMessage : function(){
-
+            let input = document.getElementById('message_text_input');
+            let picker = new EmojiButton({
+                theme: Messenger.common().dark_mode ? 'dark' : 'light',
+                autoHide : false,
+                position: 'top-end'
+            });
+            picker.showPicker(input);
+            picker.on('emoji', selection => {
+                let curPos = input.selectionStart;
+                let curVal = input.value;
+                input.value = curVal.slice(0,curPos)+selection.emoji+curVal.slice(curPos)
+            });
+            picker.on('hidden', () => {
+                picker.destroyPicker()
+            });
         }
-    },
-    templates = {
-
     };
     return {
         init : mounted.Initialize,
         addReaction : methods.addReaction,
         addMessage : methods.addMessage,
-        state : function(){
-            return opt;
-        },
         lock : function(arg){
             if(typeof arg === 'boolean') opt.lock = arg
         }

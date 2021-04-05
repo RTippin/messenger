@@ -17,6 +17,7 @@ window.Messenger = (function () {
         mobile : false,
         teapot : 0,
         modal_close : null,
+        dark_mode : true,
         css : {
             base : null,
             dark : null
@@ -43,6 +44,7 @@ window.Messenger = (function () {
                 opt.SOCKET = arg.common.socket_endpoint;
                 opt.APP_NAME = arg.common.app_name;
                 opt.mobile = arg.common.mobile;
+                opt.dark_mode = arg.common.dark_mode;
                 if('base_css' in arg.common) opt.css.base = arg.common.base_css;
                 if('dark_css' in arg.common) opt.css.dark = arg.common.dark_css;
                 if('websockets' in arg.common) opt.websockets = arg.common.websockets;
@@ -128,7 +130,7 @@ window.Messenger = (function () {
             };
             return text.replace(/[&<>"']/g, function(m) { return map[m]; })
         },
-        focusEnd : function (elm, editable) {
+        focusEnd : function (elm) {
             if(!elm) return;
             elm.focus();
             if(elm.value){
@@ -635,6 +637,7 @@ window.Messenger = (function () {
                 link  = document.createElement('link');
             link.rel  = 'stylesheet';
             link.href = (dark ? opt.css.dark : opt.css.base);
+            opt.dark_mode = dark;
             head.prepend(link);
             link.onload = function () {
                 og.remove();
@@ -690,6 +693,7 @@ window.Messenger = (function () {
                 mobile : opt.mobile,
                 csrf_token: opt.csrf_token,
                 websockets : opt.websockets,
+                dark_mode : opt.dark_mode,
                 env : opt.env
             };
         },

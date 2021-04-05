@@ -1274,7 +1274,7 @@ window.ThreadTemplates = (function () {
                 '                                    <button id="record_audio_message_btn" data-toggle="tooltip" title="Record Audio Message" data-placement="top" class="mx-1 btn btn-sm btn-light" type="button"><i class="fas fa-microphone"></i></button>\n' +
                 '                                </div>\n' +
                 '                                <div class="float-right">\n' +
-                '                                    <button style="font-size: 18px; line-height: 0;" id="emoji_message_btn" data-toggle="tooltip" title="Add emoji" data-placement="top" class="p-1 btn btn-sm btn-light" type="button"><i class="fas fa-grin"></i></button>\n' +
+                '                                    <button style="font-size: 18px; line-height: 0;" id="add_emoji_btn" data-toggle="tooltip" title="Add emoji" data-placement="top" class="p-1 btn btn-sm btn-light" type="button"><i class="fas fa-grin"></i></button>\n' +
                 '                                </div>\n' +
                 '                            </div>\n' +
                 '                        </form>\n' +

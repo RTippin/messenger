@@ -74,6 +74,7 @@ window.ThreadManager = (function () {
             msg_panel : null,
             doc_file : null,
             record_audio_message_btn : null,
+            add_emoji_btn : null,
             data_table : null,
             message_text_input : null,
             form : null,
@@ -127,6 +128,7 @@ window.ThreadManager = (function () {
                 opt.elements.msg_panel = $(".chat-body");
                 opt.elements.doc_file = $("#doc_file");
                 opt.elements.record_audio_message_btn = $("#record_audio_message_btn");
+                opt.elements.add_emoji_btn = $("#add_emoji_btn");
             }
             if([1,2,3].includes(arg.type)){
                 if(arg.type === 3) opt.storage.temp_data = arg.temp_data;
@@ -294,6 +296,7 @@ window.ThreadManager = (function () {
                     pending_msg_stack : null,
                     new_msg_alert : null,
                     reply_message_alert : null,
+                    add_emoji_btn : null,
                 }
             })
         },
@@ -315,6 +318,7 @@ window.ThreadManager = (function () {
                     opt.elements.msg_panel.scroll(mounted.msgPanelScroll);
                     opt.elements.doc_file.change(mounted.documentChange);
                     opt.elements.record_audio_message_btn.click(mounted.audioMessage);
+                    opt.elements.add_emoji_btn.click(mounted.showEmojiPicker);
                     opt.elements.message_text_input.on('paste', methods.pasteImage);
                     opt.elements.form.keydown(mounted.formKeydown);
                     opt.elements.form.on('input keyup', methods.manageSendMessageButton);
@@ -330,6 +334,7 @@ window.ThreadManager = (function () {
                     opt.elements.msg_panel.click(mounted.msgPanelClick);
                     opt.elements.doc_file.change(mounted.documentChange);
                     opt.elements.record_audio_message_btn.click(mounted.audioMessage);
+                    opt.elements.add_emoji_btn.click(mounted.showEmojiPicker);
                     opt.elements.form.keydown(mounted.formKeydown);
                     opt.elements.form.on('input keyup', methods.manageSendMessageButton);
                     opt.elements.form.on('submit', mounted.stopDefault);
@@ -357,6 +362,7 @@ window.ThreadManager = (function () {
                         opt.elements.msg_panel.off('scroll', mounted.msgPanelScroll);
                         opt.elements.doc_file.off('change', mounted.documentChange);
                         opt.elements.record_audio_message_btn.off('click', mounted.audioMessage);
+                        opt.elements.add_emoji_btn.off('click', mounted.showEmojiPicker);
                         opt.elements.message_text_input.off('paste', methods.pasteImage);
                         opt.elements.form.off('keydown', mounted.formKeydown);
                         opt.elements.form.off('input keyup', methods.manageSendMessageButton);
@@ -374,6 +380,7 @@ window.ThreadManager = (function () {
                         opt.elements.msg_panel.off('click', mounted.msgPanelClick);
                         opt.elements.doc_file.off('change', mounted.documentChange);
                         opt.elements.record_audio_message_btn.off('click', mounted.audioMessage);
+                        opt.elements.add_emoji_btn.off('click', mounted.showEmojiPicker);
                         opt.elements.form.off('keydown', mounted.formKeydown);
                         opt.elements.form.off('input keyup', methods.manageSendMessageButton);
                         opt.elements.form.off('submit', mounted.stopDefault);
@@ -463,7 +470,7 @@ window.ThreadManager = (function () {
         msgPanelClick : function(e){
             if(opt.thread.type === 7){
                 let focus_input = document.getElementById('messenger_search_profiles');
-                Messenger.format().focusEnd(focus_input, false);
+                Messenger.format().focusEnd(focus_input);
                 return;
             }
             let focus_input = document.getElementById('message_text_input');
@@ -480,7 +487,7 @@ window.ThreadManager = (function () {
                     Messenger.format().focusEnd(focus_input);
                 break;
                 case 4:
-                    if(e.target.id === 'msg_thread_new_group') Messenger.format().focusEnd(document.getElementById('subject'), false);
+                    if(e.target.id === 'msg_thread_new_group') Messenger.format().focusEnd(document.getElementById('subject'));
                 break;
             }
         },
@@ -495,6 +502,10 @@ window.ThreadManager = (function () {
         audioMessage : function(){
             if(opt.thread.lockout || !opt.thread.messaging) return;
             RecordAudio.open();
+        },
+        showEmojiPicker : function(){
+            if(opt.thread.lockout || !opt.thread.messaging) return;
+            EmojiPicker.addMessage()
         },
         documentChange : function(){
             switch (opt.thread.type) {

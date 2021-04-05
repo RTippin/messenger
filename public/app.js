@@ -2003,6 +2003,7 @@ window.Messenger = function () {
     mobile: false,
     teapot: 0,
     modal_close: null,
+    dark_mode: true,
     css: {
       base: null,
       dark: null
@@ -2031,6 +2032,7 @@ window.Messenger = function () {
         opt.SOCKET = arg.common.socket_endpoint;
         opt.APP_NAME = arg.common.app_name;
         opt.mobile = arg.common.mobile;
+        opt.dark_mode = arg.common.dark_mode;
         if ('base_css' in arg.common) opt.css.base = arg.common.base_css;
         if ('dark_css' in arg.common) opt.css.dark = arg.common.dark_css;
         if ('websockets' in arg.common) opt.websockets = arg.common.websockets;
@@ -2123,7 +2125,7 @@ window.Messenger = function () {
         return map[m];
       });
     },
-    focusEnd: function focusEnd(elm, editable) {
+    focusEnd: function focusEnd(elm) {
       if (!elm) return;
       elm.focus();
 
@@ -2675,6 +2677,7 @@ window.Messenger = function () {
           link = document.createElement('link');
       link.rel = 'stylesheet';
       link.href = dark ? opt.css.dark : opt.css.base;
+      opt.dark_mode = dark;
       head.prepend(link);
 
       link.onload = function () {
@@ -2731,6 +2734,7 @@ window.Messenger = function () {
         mobile: opt.mobile,
         csrf_token: opt.csrf_token,
         websockets: opt.websockets,
+        dark_mode: opt.dark_mode,
         env: opt.env
       };
     },
@@ -4693,6 +4697,7 @@ window.ThreadManager = function () {
       msg_panel: null,
       doc_file: null,
       record_audio_message_btn: null,
+      add_emoji_btn: null,
       data_table: null,
       message_text_input: null,
       form: null,
@@ -4755,6 +4760,7 @@ window.ThreadManager = function () {
         opt.elements.msg_panel = $(".chat-body");
         opt.elements.doc_file = $("#doc_file");
         opt.elements.record_audio_message_btn = $("#record_audio_message_btn");
+        opt.elements.add_emoji_btn = $("#add_emoji_btn");
       }
 
       if ([1, 2, 3].includes(arg.type)) {
@@ -4940,7 +4946,8 @@ window.ThreadManager = function () {
           msg_stack: null,
           pending_msg_stack: null,
           new_msg_alert: null,
-          reply_message_alert: null
+          reply_message_alert: null,
+          add_emoji_btn: null
         }
       });
     },
@@ -4962,6 +4969,7 @@ window.ThreadManager = function () {
           opt.elements.msg_panel.scroll(mounted.msgPanelScroll);
           opt.elements.doc_file.change(mounted.documentChange);
           opt.elements.record_audio_message_btn.click(mounted.audioMessage);
+          opt.elements.add_emoji_btn.click(mounted.showEmojiPicker);
           opt.elements.message_text_input.on('paste', methods.pasteImage);
           opt.elements.form.keydown(mounted.formKeydown);
           opt.elements.form.on('input keyup', methods.manageSendMessageButton);
@@ -4978,6 +4986,7 @@ window.ThreadManager = function () {
           opt.elements.msg_panel.click(mounted.msgPanelClick);
           opt.elements.doc_file.change(mounted.documentChange);
           opt.elements.record_audio_message_btn.click(mounted.audioMessage);
+          opt.elements.add_emoji_btn.click(mounted.showEmojiPicker);
           opt.elements.form.keydown(mounted.formKeydown);
           opt.elements.form.on('input keyup', methods.manageSendMessageButton);
           opt.elements.form.on('submit', mounted.stopDefault);
@@ -5007,6 +5016,7 @@ window.ThreadManager = function () {
             opt.elements.msg_panel.off('scroll', mounted.msgPanelScroll);
             opt.elements.doc_file.off('change', mounted.documentChange);
             opt.elements.record_audio_message_btn.off('click', mounted.audioMessage);
+            opt.elements.add_emoji_btn.off('click', mounted.showEmojiPicker);
             opt.elements.message_text_input.off('paste', methods.pasteImage);
             opt.elements.form.off('keydown', mounted.formKeydown);
             opt.elements.form.off('input keyup', methods.manageSendMessageButton);
@@ -5026,6 +5036,7 @@ window.ThreadManager = function () {
             opt.elements.msg_panel.off('click', mounted.msgPanelClick);
             opt.elements.doc_file.off('change', mounted.documentChange);
             opt.elements.record_audio_message_btn.off('click', mounted.audioMessage);
+            opt.elements.add_emoji_btn.off('click', mounted.showEmojiPicker);
             opt.elements.form.off('keydown', mounted.formKeydown);
             opt.elements.form.off('input keyup', methods.manageSendMessageButton);
             opt.elements.form.off('submit', mounted.stopDefault);
@@ -5125,7 +5136,7 @@ window.ThreadManager = function () {
       if (opt.thread.type === 7) {
         var _focus_input = document.getElementById('messenger_search_profiles');
 
-        Messenger.format().focusEnd(_focus_input, false);
+        Messenger.format().focusEnd(_focus_input);
         return;
       }
 
@@ -5146,7 +5157,7 @@ window.ThreadManager = function () {
           break;
 
         case 4:
-          if (e.target.id === 'msg_thread_new_group') Messenger.format().focusEnd(document.getElementById('subject'), false);
+          if (e.target.id === 'msg_thread_new_group') Messenger.format().focusEnd(document.getElementById('subject'));
           break;
       }
     },
@@ -5161,6 +5172,10 @@ window.ThreadManager = function () {
     audioMessage: function audioMessage() {
       if (opt.thread.lockout || !opt.thread.messaging) return;
       RecordAudio.open();
+    },
+    showEmojiPicker: function showEmojiPicker() {
+      if (opt.thread.lockout || !opt.thread.messaging) return;
+      EmojiPicker.addMessage();
     },
     documentChange: function documentChange() {
       switch (opt.thread.type) {
@@ -7986,9 +8001,7 @@ __webpack_require__.r(__webpack_exports__);
 
 window.EmojiPicker = function () {
   var opt = {
-    lock: true,
-    using: false,
-    elements: {}
+    lock: true
   },
       mounted = {
     Initialize: function Initialize() {
@@ -7999,29 +8012,38 @@ window.EmojiPicker = function () {
     addReaction: function addReaction(messageId) {
       var message = document.getElementById('message_' + messageId).getElementsByClassName('message-body')[0];
       var picker = new _joeattardi_emoji_button__WEBPACK_IMPORTED_MODULE_0__.EmojiButton({
-        theme: 'dark',
-        autoHide: false
+        theme: Messenger.common().dark_mode ? 'dark' : 'light'
       });
       picker.showPicker(message);
       picker.on('emoji', function (selection) {
-        // `selection` object has an `emoji` property
-        // containing the selected emoji
         console.log(selection);
       });
       picker.on('hidden', function () {
         picker.destroyPicker();
       });
     },
-    addMessage: function addMessage() {}
-  },
-      templates = {};
+    addMessage: function addMessage() {
+      var input = document.getElementById('message_text_input');
+      var picker = new _joeattardi_emoji_button__WEBPACK_IMPORTED_MODULE_0__.EmojiButton({
+        theme: Messenger.common().dark_mode ? 'dark' : 'light',
+        autoHide: false,
+        position: 'top-end'
+      });
+      picker.showPicker(input);
+      picker.on('emoji', function (selection) {
+        var curPos = input.selectionStart;
+        var curVal = input.value;
+        input.value = curVal.slice(0, curPos) + selection.emoji + curVal.slice(curPos);
+      });
+      picker.on('hidden', function () {
+        picker.destroyPicker();
+      });
+    }
+  };
   return {
     init: mounted.Initialize,
     addReaction: methods.addReaction,
     addMessage: methods.addMessage,
-    state: function state() {
-      return opt;
-    },
     lock: function lock(arg) {
       if (typeof arg === 'boolean') opt.lock = arg;
     }
@@ -9291,7 +9313,7 @@ window.ThreadTemplates = function () {
       return '<form id="edit_message_form" action="javascript:void(0)">\n' + '<div class="form-row mx-n2 rounded bg-light text-dark py-3 px-2 shadow-sm">\n' + '    <div class="col-12 mb-0">\n' + '         <textarea id="edit_message_textarea" style="resize: none;" rows="6" class="form-control font-weight-bold shadow-sm">' + body + '</textarea>' + '     </div>\n' + '</div>' + '</form>';
     },
     thread_base: function thread_base(data, creating) {
-      return '<div class="card messages-panel mt-1">\n' + '    <div class="message-body" id="thread_' + (creating ? '' : data.id) + '">\n' + '        <div class="message-chat">\n' + '            <div id="msg_thread_' + (creating ? '' : data.id) + '" class="chat-body pb-0 mb-0">\n' + '               <div id="messages_container_' + (creating ? '' : data.id) + '">' + (creating ? templates.thread_new_fill(data) : templates.loader()) + '</div>\n' + '               <div id="pending_messages" class="w-100"></div>\n' + '               <div id="seen-by_final" class="seen-by-final w-100 bobble-zone"></div>\n' + '               <div id="new_message_alert" class="pointer_area NS">' + templates.thread_new_message_alert() + '               </div>' + '               <div id="reply_message_alert" class="pointer_area NS"></div>' + '            </div>\n' + '            <div class="chat-footer">\n' + templates.disabled_overlay_check(data, creating) + '                <div class="card bg-light mb-0 border-0">\n' + '                    <div class="col-12 mt-3 px-0">\n' + '                        <form class="form-inline w-100" id="thread_form">\n' + '                            <div class="col-12">\n' + '                                <div class="form-group form-group-xs-nm">\n' + '                                    <input disabled autocomplete="off" autocorrect="on" spellcheck="true" type="text" title="message" name="message_alt" id="message_text_input" class="form-control w-100 pr-special-btn"/>\n' + '                                </div>\n' + '                            </div>\n' + '                            <div class="col-12 my-1">\n' + '                                <div class="float-left">\n' + '                                    <button id="file_upload_btn" data-toggle="tooltip" title="Upload File(s)" data-placement="top" class="btn btn-sm btn-light" onclick="$(\'#doc_file\').trigger(\'click\');" type="button"><i class="fas fa-plus-circle"></i></button>\n' + '                                    <button id="record_audio_message_btn" data-toggle="tooltip" title="Record Audio Message" data-placement="top" class="mx-1 btn btn-sm btn-light" type="button"><i class="fas fa-microphone"></i></button>\n' + '                                </div>\n' + '                                <div class="float-right">\n' + '                                    <button style="font-size: 18px; line-height: 0;" id="emoji_message_btn" data-toggle="tooltip" title="Add emoji" data-placement="top" class="p-1 btn btn-sm btn-light" type="button"><i class="fas fa-grin"></i></button>\n' + '                                </div>\n' + '                            </div>\n' + '                        </form>\n' + '                    </div>\n' + '                    <input class="NS" multiple type="file" name="doc_file" id="doc_file" accept=".csv,.doc,.docx,.json,.pdf,.ppt,.pptx,.rar,.rtf,.txt,.xls,.xlsx,.xml,.zip,.7z,.aac,.mp3,.oga,.wav,.weba,webm,image/*">\n' + '                </div>\n' + '            </div>\n' + '        </div>\n' + '    </div>\n' + '</div>';
+      return '<div class="card messages-panel mt-1">\n' + '    <div class="message-body" id="thread_' + (creating ? '' : data.id) + '">\n' + '        <div class="message-chat">\n' + '            <div id="msg_thread_' + (creating ? '' : data.id) + '" class="chat-body pb-0 mb-0">\n' + '               <div id="messages_container_' + (creating ? '' : data.id) + '">' + (creating ? templates.thread_new_fill(data) : templates.loader()) + '</div>\n' + '               <div id="pending_messages" class="w-100"></div>\n' + '               <div id="seen-by_final" class="seen-by-final w-100 bobble-zone"></div>\n' + '               <div id="new_message_alert" class="pointer_area NS">' + templates.thread_new_message_alert() + '               </div>' + '               <div id="reply_message_alert" class="pointer_area NS"></div>' + '            </div>\n' + '            <div class="chat-footer">\n' + templates.disabled_overlay_check(data, creating) + '                <div class="card bg-light mb-0 border-0">\n' + '                    <div class="col-12 mt-3 px-0">\n' + '                        <form class="form-inline w-100" id="thread_form">\n' + '                            <div class="col-12">\n' + '                                <div class="form-group form-group-xs-nm">\n' + '                                    <input disabled autocomplete="off" autocorrect="on" spellcheck="true" type="text" title="message" name="message_alt" id="message_text_input" class="form-control w-100 pr-special-btn"/>\n' + '                                </div>\n' + '                            </div>\n' + '                            <div class="col-12 my-1">\n' + '                                <div class="float-left">\n' + '                                    <button id="file_upload_btn" data-toggle="tooltip" title="Upload File(s)" data-placement="top" class="btn btn-sm btn-light" onclick="$(\'#doc_file\').trigger(\'click\');" type="button"><i class="fas fa-plus-circle"></i></button>\n' + '                                    <button id="record_audio_message_btn" data-toggle="tooltip" title="Record Audio Message" data-placement="top" class="mx-1 btn btn-sm btn-light" type="button"><i class="fas fa-microphone"></i></button>\n' + '                                </div>\n' + '                                <div class="float-right">\n' + '                                    <button style="font-size: 18px; line-height: 0;" id="add_emoji_btn" data-toggle="tooltip" title="Add emoji" data-placement="top" class="p-1 btn btn-sm btn-light" type="button"><i class="fas fa-grin"></i></button>\n' + '                                </div>\n' + '                            </div>\n' + '                        </form>\n' + '                    </div>\n' + '                    <input class="NS" multiple type="file" name="doc_file" id="doc_file" accept=".csv,.doc,.docx,.json,.pdf,.ppt,.pptx,.rar,.rtf,.txt,.xls,.xlsx,.xml,.zip,.7z,.aac,.mp3,.oga,.wav,.weba,webm,image/*">\n' + '                </div>\n' + '            </div>\n' + '        </div>\n' + '    </div>\n' + '</div>';
     },
     disabled_overlay_check: function disabled_overlay_check(data, creating) {
       if (creating) {
