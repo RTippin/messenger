@@ -152,6 +152,16 @@ window.Messenger = (function () {
             setTimeout(function () {
                 btn.removeClass('btn-success').addClass('btn-primary').html('<i class="far fa-copy"></i> Copy');
             }, 2000)
+        },
+        shortcodeToImage : function(body){
+            return typeof joypixels !== 'undefined'
+                ? joypixels.toImage(body)
+                : body;
+        },
+        shortcodeToUnicode : function(body){
+            return typeof joypixels !== 'undefined'
+                ? joypixels.shortnameToUnicode(body)
+                : body;
         }
     },
     buttons = {

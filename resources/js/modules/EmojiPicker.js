@@ -44,12 +44,31 @@ window.EmojiPicker = (function () {
             picker.on('hidden', () => {
                 picker.destroyPicker()
             });
+        },
+        editMessage : function(){
+            let input = document.getElementById('edit_message_textarea');
+            let btn = document.getElementById('edit_message_emoji_btn');
+            let picker = new EmojiButton({
+                theme: Messenger.common().dark_mode ? 'dark' : 'light',
+                autoHide : false,
+                position: 'bottom-end'
+            });
+            picker.showPicker(btn);
+            picker.on('emoji', selection => {
+                let curPos = input.selectionStart;
+                let curVal = input.value;
+                input.value = curVal.slice(0,curPos)+selection.emoji+curVal.slice(curPos)
+            });
+            picker.on('hidden', () => {
+                picker.destroyPicker()
+            });
         }
     };
     return {
         init : mounted.Initialize,
         addReaction : methods.addReaction,
         addMessage : methods.addMessage,
+        editMessage : methods.editMessage,
         lock : function(arg){
             if(typeof arg === 'boolean') opt.lock = arg
         }

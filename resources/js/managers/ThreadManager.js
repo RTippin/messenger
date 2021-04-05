@@ -479,7 +479,22 @@ window.ThreadManager = (function () {
                 case 2:
                     if(opt.thread.lockout || !opt.thread.messaging) return;
                     let elm_class = $(e.target).attr('class');
-                    if (elm_class === 'message-text' || elm_class === 'message-text pt-2' || elm_class === 'fas fa-trash' || Messenger.common().mobile) return;
+                    let ignore = [
+                        'message-text',
+                        'message-text pt-2',
+                        'fas fa-trash',
+                        'fas fa-grin',
+                        'dropdown-item',
+                        'fas fa-ellipsis-v',
+                        'fas fa-grin-tongue',
+                        'fas fa-reply',
+                        'fas fa-pen',
+                        'joypixels',
+                        'ml-1 font-weight-bold text-primary',
+                        'badge badge-light mr-1 px-1 pointer_area',
+                        'reacted-by-me badge badge-light mr-1 px-1 pointer_area'
+                    ];
+                    if (ignore.includes(elm_class) || Messenger.common().mobile) return;
                     Messenger.format().focusEnd(focus_input);
                 break;
                 case 3:
@@ -1140,7 +1155,7 @@ window.ThreadManager = (function () {
         },
         imageLoadListener : function(scroll){
             let images = document.getElementsByClassName('msg_image'),
-            emojis = document.getElementsByClassName('emojione'),
+            emojis = document.getElementsByClassName('joypixels'),
             loadImage = function (e) {
                 $(e.target).siblings('.spinner-grow').remove();
                 $(e.target).removeClass('msg_image NS');
@@ -1917,13 +1932,14 @@ window.ThreadManager = (function () {
                     h4: false,
                     backdrop_ctrl : false,
                     unlock_buttons : false,
-                    body : ThreadTemplates.render().edit_message(opt.storage.messages[i].body),
+                    body : ThreadTemplates.render().edit_message(Messenger.format().shortcodeToUnicode(opt.storage.messages[i].body)),
                     cb_btn_txt : 'Update',
                     cb_btn_icon : 'edit',
                     cb_btn_theme : 'success',
                     onReady : function(){
                         setTimeout(function () {
                             $("#edit_message_textarea").focus();
+                            PageListeners.listen().tooltips();
                         }, 500)
                     },
                     callback : function(){
@@ -1940,13 +1956,17 @@ window.ThreadManager = (function () {
             if(opt.thread.replying){
                 methods.resetReplying();
             }
-            let messageStorage = methods.locateStorageItem({type : 'message', id : arg.id}), i = messageStorage.index, msg = $("#message_"+arg.id);
+            let messageStorage = methods.locateStorageItem({type : 'message', id : arg.id}),
+                i = messageStorage.index,
+                msg = $("#message_"+arg.id),
+                focus_input = document.getElementById('message_text_input');
             if (messageStorage.found && ! opt.storage.messages[i].system_message){
                 msg.find('.message-body').addClass('shadow-primary');
                 opt.elements.reply_message_alert.show();
                 opt.elements.reply_message_alert.html(ThreadTemplates.render().thread_replying_message_alert(opt.storage.messages[i].owner.name));
                 opt.thread.replying = true;
                 opt.thread.reply_to_id = arg.id;
+                Messenger.format().focusEnd(focus_input);
             }
         },
         resetReplying : function(){
@@ -2946,7 +2966,7 @@ window.ThreadManager = (function () {
                         route : Messenger.common().API+'threads/'+opt.thread.id+'/messages/'+messageId+'/reactions',
                         success : function(data){
                             Messenger.alert().fillModal({
-                                title : 'Reactions',
+                                title : 'Message Reactions',
                                 body : ThreadTemplates.render().show_message_reactions(data)
                             });
                         }

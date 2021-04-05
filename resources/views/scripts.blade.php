@@ -1,7 +1,7 @@
 <script src="{{ asset(mix('app.js', 'vendor/messenger')) }}"></script>
 @stack('js')
 @if(auth()->check())
-<script src="https://cdn.jsdelivr.net/npm/emojione@4.0.0/lib/js/emojione.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/emoji-toolkit@6.5.1/lib/js/joypixels.min.js"></script>
 @endif
 <script>
 @if(auth()->check())

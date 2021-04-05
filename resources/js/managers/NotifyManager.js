@@ -346,7 +346,7 @@ window.NotifyManager = (function () {
             let body = null;
             switch(data.type){
                 case 0:
-                    body = data.body.length > 45 ? emojione.toImage(data.body.substring(0, 42) + "...") : emojione.toImage(data.body);
+                    body = data.body.length > 45 ? Messenger.format().shortcodeToImage(data.body.substring(0, 42) + "...") : Messenger.format().shortcodeToImage(data.body);
                 break;
                 case 1:
                     body = "Sent an image";
@@ -372,7 +372,7 @@ window.NotifyManager = (function () {
             if(!opt.settings.notifications) return;
             if(!Messenger.common().modules.includes('ThreadManager') || ThreadManager.state().thread_id !== data.message.thread_id){
                 Messenger.alert().Alert({
-                    title : emojione.toImage(data.reaction),
+                    title : Messenger.format().shortcodeToImage(data.reaction),
                     body : data.owner.name+' reacted to your message',
                     toast : true,
                     theme : 'info',

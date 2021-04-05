@@ -16,9 +16,9 @@ window.ThreadTemplates = (function () {
         },
         format_message_body : function(body, skipExtra){
             if(skipExtra === true){
-                return (typeof emojione !== 'undefined' ? emojione.toImage(body) : body)
+                return Messenger.format().shortcodeToImage(body)
             }
-            return (typeof emojione !== 'undefined' ? methods.makeLinks(methods.makeYoutube(emojione.toImage(body))) : methods.makeLinks(methods.makeYoutube(body)))
+            return methods.makeLinks(methods.makeYoutube(Messenger.format().shortcodeToImage(body)));
         },
         switch_mobile_view : function (power) {
             let nav = $("#FS_navbar"), main_section = $("#FS_main_section"), msg_sidebar = $("#message_sidebar_container"), msg_content = $("#message_content_container");
@@ -108,7 +108,7 @@ window.ThreadTemplates = (function () {
                     case 3:
                         return '<em>'+data.resources.latest_message.owner.name+'</em> : <i class="fas fa-music"></i> Sent an audio file';
                     default:
-                        return '<em>'+data.resources.latest_message.owner.name+'</em> : ' + (typeof emojione !== 'undefined' ? emojione.toImage(data.resources.latest_message.body) : data.resources.latest_message.body)
+                        return '<em>'+data.resources.latest_message.owner.name+'</em> : ' + Messenger.format().shortcodeToImage(data.resources.latest_message.body)
                 }
             }
             return '';
@@ -296,7 +296,7 @@ window.ThreadTemplates = (function () {
                                 '  <span class="sr-only">Uploading...</span>\n' +
                                 '</div>';
                     default:
-                        return (typeof emojione !== 'undefined' ? emojione.toImage(data.body) : data.body)
+                        return Messenger.format().shortcodeToImage(data.body)
                 }
             }
             if(reply === true){
@@ -443,7 +443,7 @@ window.ThreadTemplates = (function () {
             let html = '';
             for(const reaction in data.data){
                 if(data.data.hasOwnProperty(reaction)){
-                    html += '<div class="row mr-1"><div class="col-4 text-center p-0">'+methods.format_message_body(reaction, true)+'</div><div class="col-8 p-0"><ul class="list-unstyled">';
+                    html += '<div class="row mr-1"><div class="col-4 text-center p-0 my-1">'+methods.format_message_body(reaction, true)+'</div><div class="col-8 p-0"><ul class="list-unstyled mb-1">';
                     data.data[reaction].forEach(function (reactor) {
                         html += '<li class="thread_list_item" id="react_li_item_'+reactor.id+'"><div class="d-inline"><img height="20" width="20" class="rounded-circle" src="'+reactor.owner.avatar.sm+'"/> '+reactor.owner.name+'</div>'+
                             ((ThreadManager.state().thread_admin || (reactor.owner.provider_id === Messenger.common().id && reactor.owner.provider_alias === Messenger.common().model))
@@ -451,7 +451,7 @@ window.ThreadTemplates = (function () {
                                 : '')+
                             '</li><div class="clearfix"></div>'
                     });
-                    html += '</ul></div></div><hr class="my-1">';
+                    html += '</ul></div></div><hr class="my-2">';
                 }
             }
             return html;
@@ -764,7 +764,7 @@ window.ThreadTemplates = (function () {
                 '        <div class="input-group-prepend">\n' +
                 '            <div class="input-group-text"><i class="fas fa-edit"></i></div>\n' +
                 '         </div>\n' +
-                '         <input maxlength="50" class="form-control font-weight-bold shadow-sm" id="g_s_group_subject" placeholder="Group Name" name="subject" required value="'+settings.name+'">' +
+                '         <input autocomplete="off" maxlength="50" class="form-control font-weight-bold shadow-sm" id="g_s_group_subject" placeholder="Group Name" name="subject-'+Date.now()+'" required value="'+settings.name+'">' +
                 '     </div>\n' +
                 '</div>'+
                 '    <hr>\n' +
@@ -1176,7 +1176,7 @@ window.ThreadTemplates = (function () {
                 '                        <form class="form-inline w-100 needs-validation" action="javascript:ThreadManager.newForms().newGroup()" id="new_group_form" novalidate>\n' +
                 '                            <div class="col-12">\n' +
                 '                            <div class="input-group">\n' +
-                '                                <input minlength="3" maxlength="50" class="form-control" id="subject" placeholder="Name the group conversation" name="subject" autocomplete="off" required>\n' +
+                '                                <input minlength="3" maxlength="50" class="form-control" id="subject" placeholder="Name the group conversation" name="subject-'+Date.now()+'" autocomplete="off" required>\n' +
                 '                                <div class="input-group-append">\n' +
                 '                                    <button id="make_thread_btn" class="btn btn-primary"><i class="fas fa-edit"></i> Create</button>\n' +
                 '                                </div>\n' +
@@ -1305,7 +1305,8 @@ window.ThreadTemplates = (function () {
                 '    <div class="col-12 mb-0">\n' +
                 '         <textarea id="edit_message_textarea" style="resize: none;" rows="6" class="form-control font-weight-bold shadow-sm">'+body+'</textarea>' +
                 '     </div>\n' +
-                '</div>'+
+                '</div>' +
+                '<button onclick="EmojiPicker.editMessage()" style="font-size: 18px; line-height: 0;" data-toggle="tooltip" title="Add emoji" data-placement="top" id="edit_message_emoji_btn" type="button" class="float-right mr-n2 mt-1 p-1 btn btn-sm btn-light"><i class="fas fa-grin"></i></button>'+
                 '</form>'
         },
         thread_base : function(data, creating){
@@ -1325,10 +1326,10 @@ window.ThreadTemplates = (function () {
                                 templates.disabled_overlay_check(data, creating)+
                 '                <div class="card bg-light mb-0 border-0">\n' +
                 '                    <div class="col-12 mt-3 px-0">\n' +
-                '                        <form class="form-inline w-100" id="thread_form">\n' +
+                '                        <form autocomplete="off" class="form-inline w-100" id="thread_form">\n' +
                 '                            <div class="col-12">\n' +
                 '                                <div class="form-group form-group-xs-nm">\n' +
-                '                                    <input disabled autocomplete="off" autocorrect="on" spellcheck="true" type="text" title="message" name="message_alt" id="message_text_input" class="form-control w-100 pr-special-btn"/>\n' +
+                '                                    <input disabled autocomplete="off" spellcheck="true" type="text" title="message" name="message_txt_'+Date.now()+'" id="message_text_input" class="form-control w-100 pr-special-btn"/>\n' +
                 '                                </div>\n' +
                 '                            </div>\n' +
                 '                            <div class="col-12 my-1">\n' +
