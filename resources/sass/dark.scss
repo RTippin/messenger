@@ -200,49 +200,6 @@ li.thread_list_item:hover{
   color: $gray-200 !important;
 }
 
-div.emojionearea.form-control {
-  background-color: $gray-700 !important;
-  border-color: $gray-900 !important;
-}
-
-.emojionearea-search input {
-  background-color: $gray-700 !important;
-  color : $white !important;
-}
-
-div.emojionearea.form-control.focused {
-  box-shadow: 0 0 3px 1px $cyan !important;
-}
-
-.emojionearea-editor{
-  color : $white !important;
-}
-
-.emojionearea-picker {
-  background-color: $gray-700 !important;
-}
-
-.emojionearea-filters {
-  background-color: $gray-700 !important;
-}
-
-.emojionearea-filters .emojionearea-filter {
-  background-color: $gray-700 !important;
-}
-
-.emojionearea-tones-panel {
-  background-color: $gray-700 !important;
-}
-
-.emojionearea-tones-radio {
-  background-color: $gray-700 !important;
-}
-
-.emojionearea-category-title{
-  background-color: $gray-650 !important;
-  color: $white !important;
-}
-
 .chat-body::-webkit-scrollbar-track {
   background-color: $gray-700!important;
 }

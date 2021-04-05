@@ -73,4 +73,4 @@ import {ThreadTemplates} from './templates/ThreadTemplates';
 import {MessengerSettings} from './modules/MessengerSettings';
 import {RecordAudio} from './modules/RecordAudio';
 import {InviteJoin} from './modules/InviteJoin';
-import {ReactionPicker} from './modules/ReactionPicker';
+import {EmojiPicker} from './modules/EmojiPicker';

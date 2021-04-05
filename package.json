@@ -23,11 +23,11 @@
     "vue-template-compiler": "^2.6.11"
   },
   "dependencies": {
+    "@joeattardi/emoji-button": "^4.6.0",
     "autolinker": "^2.2.2",
     "bootstrap": "^4.5.0",
     "datatables.net": "^1.10.21",
     "datatables.net-bs4": "^1.10.21",
-    "emojionearea": "^3.4.2",
     "janus-gateway": "git://github.com/meetecho/janus-gateway.git",
     "laravel-echo": "^1.8.0",
     "moment": "^2.27.0",

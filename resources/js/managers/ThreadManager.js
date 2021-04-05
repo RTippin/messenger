@@ -75,8 +75,7 @@ window.ThreadManager = (function () {
             doc_file : null,
             record_audio_message_btn : null,
             data_table : null,
-            emoji_editor : null,
-            emoji : null,
+            message_text_input : null,
             form : null,
             the_thread : null,
             msg_stack : null,
@@ -121,7 +120,7 @@ window.ThreadManager = (function () {
             PageListeners.listen().disposeTooltips();
             opt.thread.type = arg.type;
             if([1,2,3,4].includes(arg.type)){
-                opt.elements.emoji = $("#emojionearea");
+                opt.elements.message_text_input = $("#message_text_input");
                 opt.elements.form = $("#thread_form");
                 opt.elements.new_msg_alert = $("#new_message_alert");
                 opt.elements.reply_message_alert = $("#reply_message_alert");
@@ -131,21 +130,7 @@ window.ThreadManager = (function () {
             }
             if([1,2,3].includes(arg.type)){
                 if(arg.type === 3) opt.storage.temp_data = arg.temp_data;
-                if(typeof $.fn.emojioneArea !== 'undefined'){
-                    mounted.loadEmoji()
-                }
-                else{
-                    Messenger.xhr().script({
-                        file : [window.location.protocol, '//', window.location.host].join('') + '/vendor/messenger/Emoji.js',
-                        success : mounted.loadEmoji,
-                        fail : function(){
-                            opt.elements.emoji_editor = opt.elements.emoji;
-                            opt.elements.emoji_editor.addClass('pr-special-btn');
-                            opt.elements.emoji = null;
-                            mounted.startWatchdog()
-                        }
-                    })
-                }
+                mounted.startWatchdog()
             }
             if(arg.type === 4) mounted.startWatchdog();
             if(arg.type === 5 && !Messenger.common().mobile) opt.elements.message_container.html(ThreadTemplates.render().empty_base());
@@ -302,8 +287,7 @@ window.ThreadManager = (function () {
                     doc_file : null,
                     record_audio_message_btn : null,
                     data_table : null,
-                    emoji_editor : null,
-                    emoji : null,
+                    message_text_input : null,
                     form : null,
                     the_thread : null,
                     msg_stack : null,
@@ -312,28 +296,6 @@ window.ThreadManager = (function () {
                     reply_message_alert : null,
                 }
             })
-        },
-        loadEmoji : function(){
-            opt.elements.emoji.emojioneArea({
-                pickerPosition: "top",
-                saveEmojisAs : "shortname",
-                filtersPosition: "bottom",
-                search: true,
-                tonesStyle: "radio",
-                autocomplete: false,
-                events: {
-                    ready : function(){
-                        if(!opt.thread.lockout && opt.thread.messaging) this.enable();
-                        document.getElementsByClassName('emojionearea-editor')[0].id = 'emoji_input_area';
-                        opt.elements.emoji_editor = $('.emojionearea-editor');
-                        mounted.startWatchdog()
-                    }
-                },
-                attributes: {
-                    spellcheck : true
-                }
-            });
-            ReactionPicker.ready()
         },
         timeAgo : function(){
             $("time.timeago").each(function () {
@@ -344,7 +306,7 @@ window.ThreadManager = (function () {
             switch(opt.thread.type){
                 case 1:
                 case 2:
-                    if(!opt.thread.lockout && opt.thread.messaging) opt.elements.emoji_editor.prop('disabled', false);
+                    if(!opt.thread.lockout && opt.thread.messaging) opt.elements.message_text_input.prop('disabled', false);
                     opt.timers.remove_typing_interval = setInterval(methods.removeTypers, 1000);
                     opt.timers.bobble_refresh_interval = setInterval(function() {
                         if(!opt.storage.active_profiles.length && !NotifyManager.sockets().forced_disconnect) LoadIn.bobbleHeads()
@@ -353,25 +315,25 @@ window.ThreadManager = (function () {
                     opt.elements.msg_panel.scroll(mounted.msgPanelScroll);
                     opt.elements.doc_file.change(mounted.documentChange);
                     opt.elements.record_audio_message_btn.click(mounted.audioMessage);
-                    opt.elements.emoji_editor.on('paste', methods.pasteImage);
+                    opt.elements.message_text_input.on('paste', methods.pasteImage);
                     opt.elements.form.keydown(mounted.formKeydown);
                     opt.elements.form.on('input keyup', methods.manageSendMessageButton);
                     opt.elements.form.on('submit', mounted.stopDefault);
                     opt.elements.new_msg_alert.click(mounted.newMsgAlertClick);
                     opt.elements.reply_message_alert.click(methods.resetReplying);
                     opt.elements.message_container.click(mounted.clickMarkRead);
-                    if(Messenger.common().mobile) opt.elements.emoji_editor.click(mounted.inputClickScroll);
-                    if(!Messenger.common().mobile) opt.elements.emoji_editor.focus();
+                    if(Messenger.common().mobile) opt.elements.message_text_input.click(mounted.inputClickScroll);
+                    if(!Messenger.common().mobile) opt.elements.message_text_input.focus();
                 break;
                 case 3:
-                    opt.elements.emoji_editor.prop('disabled', false);
+                    opt.elements.message_text_input.prop('disabled', false);
                     opt.elements.msg_panel.click(mounted.msgPanelClick);
                     opt.elements.doc_file.change(mounted.documentChange);
                     opt.elements.record_audio_message_btn.click(mounted.audioMessage);
                     opt.elements.form.keydown(mounted.formKeydown);
                     opt.elements.form.on('input keyup', methods.manageSendMessageButton);
                     opt.elements.form.on('submit', mounted.stopDefault);
-                    if(!Messenger.common().mobile) opt.elements.emoji_editor.focus();
+                    if(!Messenger.common().mobile) opt.elements.message_text_input.focus();
                 break;
                 case 4:
                     let subject = document.getElementById('subject');
@@ -395,14 +357,14 @@ window.ThreadManager = (function () {
                         opt.elements.msg_panel.off('scroll', mounted.msgPanelScroll);
                         opt.elements.doc_file.off('change', mounted.documentChange);
                         opt.elements.record_audio_message_btn.off('click', mounted.audioMessage);
-                        opt.elements.emoji_editor.off('paste', methods.pasteImage);
+                        opt.elements.message_text_input.off('paste', methods.pasteImage);
                         opt.elements.form.off('keydown', mounted.formKeydown);
                         opt.elements.form.off('input keyup', methods.manageSendMessageButton);
                         opt.elements.form.off('submit', mounted.stopDefault);
                         opt.elements.new_msg_alert.off('click', mounted.newMsgAlertClick);
                         opt.elements.reply_message_alert.off('click', methods.resetReplying);
                         opt.elements.message_container.off('click', mounted.clickMarkRead);
-                        if(Messenger.common().mobile) opt.elements.emoji_editor.off('click', mounted.inputClickScroll);
+                        if(Messenger.common().mobile) opt.elements.message_text_input.off('click', mounted.inputClickScroll);
                     }catch (e) {
                         console.log(e);
                     }
@@ -504,18 +466,18 @@ window.ThreadManager = (function () {
                 Messenger.format().focusEnd(focus_input, false);
                 return;
             }
-            let focus_input = (opt.elements.emoji ? document.getElementById('emoji_input_area') : document.getElementById('emojionearea'));
+            let focus_input = document.getElementById('message_text_input');
             switch (opt.thread.type) {
                 case 1:
                 case 2:
                     if(opt.thread.lockout || !opt.thread.messaging) return;
                     let elm_class = $(e.target).attr('class');
                     if (elm_class === 'message-text' || elm_class === 'message-text pt-2' || elm_class === 'fas fa-trash' || Messenger.common().mobile) return;
-                    Messenger.format().focusEnd(focus_input, !!opt.elements.emoji);
+                    Messenger.format().focusEnd(focus_input);
                 break;
                 case 3:
                     if(!opt.thread.messaging) return;
-                    Messenger.format().focusEnd(focus_input, !!opt.elements.emoji);
+                    Messenger.format().focusEnd(focus_input);
                 break;
                 case 4:
                     if(e.target.id === 'msg_thread_new_group') Messenger.format().focusEnd(document.getElementById('subject'), false);
@@ -913,14 +875,14 @@ window.ThreadManager = (function () {
                 opt.elements.drag_drop_zone.fadeOut('fast');
                 let files = e.dataTransfer.files;
                 ([...files]).forEach(methods.sendUploadFiles);
-                opt.elements.emoji_editor.focus()
+                opt.elements.message_text_input.focus()
             }
         },
         manageSendMessageButton : function(){
-            let btn = $("#inline_send_msg_btn"), message_contents = (opt.elements.emoji ? opt.elements.emoji.data("emojioneArea").getText() : opt.elements.emoji_editor.val());
+            let btn = $("#inline_send_msg_btn"), message_contents = opt.elements.message_text_input.val();
             if(message_contents.trim().length){
                 if(!btn.length){
-                    opt.elements.emoji ? $(".emojionearea-editor").after(ThreadTemplates.render().send_msg_btn(true)) : opt.elements.emoji_editor.after(ThreadTemplates.render().send_msg_btn(false))
+                    opt.elements.message_text_input.after(ThreadTemplates.render().send_msg_btn(false))
                 }
             }
             else{
@@ -1452,7 +1414,7 @@ window.ThreadManager = (function () {
                             document.getElementById("paste_canvas").toBlob(function(blob){
                                 methods.sendUploadFiles(blob);
                                 $(".modal").modal('hide');
-                                opt.elements.emoji_editor.focus()
+                                opt.elements.message_text_input.focus()
                             }, 'image/png')
                         }
                     });
@@ -1462,9 +1424,9 @@ window.ThreadManager = (function () {
         },
         sendMessage : function(){
             if(!opt.thread.id || opt.thread.lockout || !opt.thread.messaging) return;
-            let message_contents = (opt.elements.emoji ? opt.elements.emoji.data("emojioneArea").getText() : opt.elements.emoji_editor.val());
+            let message_contents = opt.elements.message_text_input.val();
             if(message_contents.trim().length) {
-                opt.elements.emoji ? opt.elements.emoji_editor.empty().focus() : opt.elements.emoji_editor.val('').focus();
+                opt.elements.message_text_input.val('').focus();
                 let pending = methods.makePendingMessage(0, message_contents);
                 methods.managePendingMessage('add', pending);
                 let formData = {
@@ -2546,9 +2508,7 @@ window.ThreadManager = (function () {
         newPrivate : function(isFile, voiceMessage, audio){
             if(opt.states.lock) return;
             let form = new FormData(),
-                message_contents = (opt.elements.emoji
-                    ? opt.elements.emoji.data("emojioneArea").getText()
-                    : opt.elements.emoji_editor.val());
+                message_contents = opt.elements.message_text_input.val();
             if(isFile === true){
                 let file = $('#doc_file')[0].files[0];
                 let type = methods.sendUploadFiles(file, true);
@@ -2558,7 +2518,7 @@ window.ThreadManager = (function () {
             } else {
                 if(!message_contents.trim().length) return;
                 form.append('message', message_contents);
-                opt.elements.emoji ? opt.elements.emoji_editor.empty().focus() : opt.elements.emoji_editor.val('').focus();
+                opt.elements.message_text_input.val('').focus();
             }
             form.append('recipient_id', opt.storage.temp_data.provider_id);
             form.append('recipient_alias', opt.storage.temp_data.provider_alias);

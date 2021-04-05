@@ -131,16 +131,7 @@ window.Messenger = (function () {
         focusEnd : function (elm, editable) {
             if(!elm) return;
             elm.focus();
-            if(editable){
-                let range, selection;
-                range = document.createRange();
-                range.selectNodeContents(elm);
-                range.collapse(false);
-                selection = window.getSelection();
-                selection.removeAllRanges();
-                selection.addRange(range);
-            }
-            else if(elm.value){
+            if(elm.value){
                 elm.setSelectionRange(elm.value.length, elm.value.length)
             }
         },

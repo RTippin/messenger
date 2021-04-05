@@ -1,8 +1,5 @@
 @extends('messenger::app')
 @section('title'){{messenger()->getProvider()->name()}} - {{messenger()->getSiteName()}} @endsection
-@push('css')<link href="{{ asset('vendor/messenger/emoji.css') }}" rel="stylesheet">
-
-@endpush
 @section('content')
 <div class="container-fluid mt-n3">
     <div id="messenger_container" class="row inbox main-inbox d-flex">

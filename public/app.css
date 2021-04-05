@@ -14002,13 +14002,16 @@ body, wrapper {
   padding: 0;
 }
 
+.emoji-picker__wrapper {
+  z-index: 1000 !important;
+}
+
 .message-reactions {
   position: relative;
   width: 100%;
 }
 
 .message-reactions .reactions-body {
-  max-width: calc(100% - 94px);
   position: relative;
   width: auto;
   float: left;
@@ -14027,7 +14030,6 @@ body, wrapper {
 
 .message-reactions.my-reactions .reactions-body {
   float: right;
-  max-width: calc(100% - 54px);
 }
 
 .message-reactions.grouped-reactions {
@@ -14283,32 +14285,8 @@ body, wrapper {
   display: block;
 }
 
-.emojionearea-picker {
-  z-index: 1000 !important;
-}
-
-.emojionearea .emojionearea-editor:empty::before {
-  content: attr(placeholder);
-  display: block;
-  color: #bbb;
-  padding-top: 1em;
-}
-
-.emojionearea .emojionearea-button {
-  border-radius: 50%;
-  background-color: #fff !important;
-}
-
-#emojionearea {
+#message_text_input {
   height: 34px;
-}
-
-.emojionearea-button {
-  margin-top: 35px;
-}
-
-.emojionearea .emojionearea-editor {
-  margin-right: 15px;
 }
 
 .pr-special-btn {

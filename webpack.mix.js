@@ -24,7 +24,6 @@ mix.webpackConfig({
     .setPublicPath('public')
     .js('resources/js/app.js', 'public')
     .js('resources/js/janus/JanusServer.js', 'public')
-    .scripts('resources/js/modules/Emoji.js', 'public/Emoji.js')
     .sass('resources/sass/app.scss', 'public')
     .sass('resources/sass/dark.scss', 'public')
     .version();

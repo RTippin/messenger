@@ -1265,13 +1265,16 @@ window.ThreadTemplates = (function () {
                 '                        <form class="form-inline w-100" id="thread_form">\n' +
                 '                            <div class="col-12">\n' +
                 '                                <div class="form-group form-group-xs-nm">\n' +
-                '                                    <input disabled autocomplete="off" autocorrect="on" spellcheck="true" type="text" title="message" name="message_alt" id="emojionearea" class="form-control w-100 '+(Messenger.common().mobile ? 'pr-special-btn' : '')+'"/>\n' +
+                '                                    <input disabled autocomplete="off" autocorrect="on" spellcheck="true" type="text" title="message" name="message_alt" id="message_text_input" class="form-control w-100 pr-special-btn"/>\n' +
                 '                                </div>\n' +
                 '                            </div>\n' +
                 '                            <div class="col-12 my-1">\n' +
-                '                                <div class="form-group form-group-xs-nm">\n' +
+                '                                <div class="float-left">\n' +
                 '                                    <button id="file_upload_btn" data-toggle="tooltip" title="Upload File(s)" data-placement="top" class="btn btn-sm btn-light" onclick="$(\'#doc_file\').trigger(\'click\');" type="button"><i class="fas fa-plus-circle"></i></button>\n' +
                 '                                    <button id="record_audio_message_btn" data-toggle="tooltip" title="Record Audio Message" data-placement="top" class="mx-1 btn btn-sm btn-light" type="button"><i class="fas fa-microphone"></i></button>\n' +
+                '                                </div>\n' +
+                '                                <div class="float-right">\n' +
+                '                                    <button style="font-size: 18px; line-height: 0;" id="emoji_message_btn" data-toggle="tooltip" title="Add emoji" data-placement="top" class="p-1 btn btn-sm btn-light" type="button"><i class="fas fa-grin"></i></button>\n' +
                 '                                </div>\n' +
                 '                            </div>\n' +
                 '                        </form>\n' +
