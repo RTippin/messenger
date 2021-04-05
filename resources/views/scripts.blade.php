@@ -56,7 +56,7 @@
             socket_endpoint : '{{messenger()->getSocketEndpoint()}}',
             base_css : '{{ asset(mix('app.css', 'vendor/messenger')) }}',
             dark_css : '{{ asset(mix('dark.css', 'vendor/messenger')) }}',
-            dark_mode : {{messenger()->getProviderMessenger()->dark_mode ? 'true' :  'false'}},
+            dark_mode : true,
             mobile : false,
         },
         modules : {
