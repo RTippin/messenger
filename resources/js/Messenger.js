@@ -653,6 +653,9 @@ window.Messenger = (function () {
                 og.remove();
                 this.id = 'main_css'
             }
+            if(opt.modules.includes('EmojiPicker')){
+                EmojiPicker.updateThemes(dark);
+            }
         }
     },
     forms = {
