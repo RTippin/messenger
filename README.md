@@ -42,6 +42,7 @@
 ### Upcoming
 - Route params for API results / better pagination.
 - Resizing and saving images when uploaded instead of on the fly.
+- Deny call option for private calls.
 - Optional payload column for messages to allow extra data passed.
 - Video message type.
 - React / Vue frontend.
@@ -158,16 +159,9 @@ class User extends Authenticatable implements MessengerProvider
 }
 ```
 
-- When provider avatar upload/removal is enabled, we assume you have a `picture` column that is `string/nullable` on that providers table. You may overwrite the column name on your model using the below method, should your column be named differently.
+---
 
-***Example:***
-
-```php
-public function getAvatarColumn(): string
-{
-    return 'avatar';
-}
-```
+#### Providers name
 
 - To grab your providers name, our default returns the 'name' column from your model, stripping tags and making words uppercase. You may overwrite the way the name on your model is returned using the below method.
 
@@ -178,6 +172,38 @@ public function name(): string
 {
     return strip_tags(ucwords($this->first." ".$this->last));
 }
+```
+
+---
+
+#### Providers avatar column
+
+- When provider avatar upload/removal is enabled, we use the default `string/nullable` : `picture` column on that provider models table.
+  - You may overwrite the column name on your model using the below method, should your column be named differently.
+
+***Example:***
+
+```php
+public function getAvatarColumn(): string
+{
+    return 'avatar';
+}
+```
+
+---
+
+#### Providers last active column
+
+- When online status is enabled, we use the default `timestamp` : `updated_at` column on that provider models table. This is used to show when a provider was last active, and is the column we will update when you use the messenger status heartbeat. 
+  - You may overwrite the column name on your model using the below method, should your column be named differently.
+
+***Example:***
+
+```php
+    public function getLastActiveColumn(): string
+    {
+        return 'last_active';
+    }
 ```
 
 ---

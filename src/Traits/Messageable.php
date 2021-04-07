@@ -9,8 +9,6 @@ use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Support\Helpers;
 
 /**
- * App\Traits\Messageable.
- *
  * @mixin Model
  * @noinspection SpellCheckingInspection
  */
