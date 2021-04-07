@@ -369,11 +369,10 @@ window.NotifyManager = (function () {
             })
         },
         incomingReact : function(data){
-            if(!opt.settings.notifications) return;
+            if(!opt.settings.notifications || CallManager.state().initialized) return;
             if(!Messenger.common().modules.includes('ThreadManager') || ThreadManager.state().thread_id !== data.message.thread_id){
                 Messenger.alert().Alert({
-                    title : Messenger.format().shortcodeToImage(data.reaction),
-                    body : data.owner.name+' reacted to your message',
+                    title : Messenger.format().shortcodeToImage(data.reaction)+' '+data.owner.name+' reacted',
                     toast : true,
                     theme : 'info',
                     toast_options : {

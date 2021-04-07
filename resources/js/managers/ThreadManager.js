@@ -1306,6 +1306,7 @@ window.ThreadManager = (function () {
                 opt.thread.history_id = data.meta.next_page_id;
             }
             opt.thread.history_loading = false;
+            PageListeners.listen().tooltips()
         },
         initializeRecentMessages : function(reset) {
             let onLoad = function (data) {
@@ -1938,7 +1939,7 @@ window.ThreadManager = (function () {
                     cb_btn_theme : 'success',
                     onReady : function(){
                         setTimeout(function () {
-                            $("#edit_message_textarea").focus();
+                            Messenger.format().focusEnd(document.getElementById('edit_message_textarea'));
                             PageListeners.listen().tooltips();
                         }, 500)
                     },

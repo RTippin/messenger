@@ -421,13 +421,14 @@ window.ThreadTemplates = (function () {
                                 names += ', '+message.reactions.data[reaction][y].owner.name;
                             }
                         }
+                        names += ' reacted with '+reaction;
                         if(reactedByMe){
                             html += '<span data-toggle="tooltip" title="'+names+'" data-placement="top" onclick="ThreadManager.removeReaction({message_id : \''+message.id+'\', id : \''+reactedByMe.id+'\'})" ' +
-                                'class="reacted-by-me badge badge-light mr-1 px-1 pointer_area">'+methods.format_message_body(reaction, true)+
+                                'class="reaction-badge reacted-by-me badge badge-light px-1 pointer_area">'+methods.format_message_body(reaction, true)+
                                 '<span class="ml-1 font-weight-bold text-primary">'+message.reactions.data[reaction].length+'</span></span>';
                         } else {
                             html += '<span data-toggle="tooltip" title="'+names+'" data-placement="top" onclick="ThreadManager.addNewReaction({message_id : \''+message.id+'\', emoji : \''+reaction+'\'})"' +
-                                'class="badge badge-light mr-1 px-1 pointer_area">'+methods.format_message_body(reaction, true)+
+                                'class="reaction-badge badge badge-light px-1 pointer_area">'+methods.format_message_body(reaction, true)+
                                 '<span class="ml-1 font-weight-bold">'+message.reactions.data[reaction].length+'</span></span>';
                         }
                     }

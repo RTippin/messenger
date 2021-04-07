@@ -290,7 +290,7 @@
 }
 
 .message-reactions .reactions-body .reacted-by-me {
-    box-shadow: 0 0 3px 1px #2677dd;
+    box-shadow: 0 0 2px 1px #2677dd;
 }
 
 .message-reactions img.joypixels{
@@ -299,11 +299,14 @@
 
 .message-reactions.my-reactions .reactions-body{
     float: right;
-    //max-width: calc(100% - 54px);
 }
 
 .message-reactions.grouped-reactions{
     padding-left: 40px;
+}
+
+.message-reactions .reactions-body .reaction-badge{
+    margin-right: 2px;
 }
 
 .message {
@@ -553,6 +556,10 @@
 
 .message:hover .message_hover_opt {
     display: block;
+}
+
+.message_hover_opt .fas:hover {
+    text-shadow: 0 1px 3px #adb5bd;
 }
 
 #message_text_input{
