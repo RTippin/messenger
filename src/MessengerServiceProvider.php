@@ -4,6 +4,7 @@ namespace RTippin\Messenger;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\ServiceProvider;
+use LogicException;
 use RTippin\Messenger\Brokers\FriendBroker;
 use RTippin\Messenger\Commands\CallsActivityCheckCommand;
 use RTippin\Messenger\Commands\CallsDownCommand;
@@ -135,30 +136,6 @@ class MessengerServiceProvider extends ServiceProvider
     }
 
     /**
-     * Get the driver set in config for our services broadcasting feature.
-     *
-     * @return string
-     */
-    protected function getBroadcastImplementation(): string
-    {
-        $alias = $this->app['config']->get('messenger.broadcasting.driver');
-
-        return $this->app['config']->get('messenger.drivers.broadcasting')[$alias ?? 'null'];
-    }
-
-    /**
-     * Get the driver set in config for our services video feature.
-     *
-     * @return string
-     */
-    protected function getVideoImplementation(): string
-    {
-        $alias = $this->app['config']->get('messenger.calling.driver');
-
-        return $this->app['config']->get('messenger.drivers.calling')[$alias ?? 'null'];
-    }
-
-    /**
      * Prepend our API middleware, merge additional
      * middleware, append throttle middleware.
      *
@@ -172,5 +149,49 @@ class MessengerServiceProvider extends ServiceProvider
         array_push($merged, 'throttle:messenger-api');
 
         return $merged;
+    }
+
+    /**
+     * Get the driver set in config for our services broadcasting feature.
+     *
+     * @return string
+     */
+    private function getBroadcastImplementation(): string
+    {
+        $broadcastDrivers = $this->app['config']->get('messenger.drivers.broadcasting');
+        $alias = $this->app['config']->get('messenger.broadcasting.driver') ?? 'null';
+
+        if (! array_key_exists($alias, $broadcastDrivers)) {
+            $this->throwDriverNotExist($alias);
+        }
+
+        return $broadcastDrivers[$alias];
+    }
+
+    /**
+     * Get the driver set in config for our services video feature.
+     *
+     * @return string
+     * @throws LogicException
+     */
+    private function getVideoImplementation(): string
+    {
+        $videoDrivers = $this->app['config']->get('messenger.drivers.calling');
+        $alias = $this->app['config']->get('messenger.calling.driver') ?? 'null';
+
+        if (! array_key_exists($alias, $videoDrivers)) {
+            $this->throwDriverNotExist($alias);
+        }
+
+        return $videoDrivers[$alias];
+    }
+
+    /**
+     * @param string $driverName
+     * @throws LogicException
+     */
+    private function throwDriverNotExist(string $driverName)
+    {
+        throw new LogicException("The {$driverName} driver does not exist.");
     }
 }

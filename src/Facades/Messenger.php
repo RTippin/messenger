@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use RTippin\Messenger\Contracts\MessengerInterface;
 
 /**
  * @method static setProvider($provider = null)
@@ -149,7 +148,7 @@ use RTippin\Messenger\Contracts\MessengerInterface;
  * @method static setMessageAudioMimeTypes(string $messageAudioMimeTypes)
  *
  * @mixin \RTippin\Messenger\Messenger
- * @see MessengerInterface
+ * @see \RTippin\Messenger\Messenger
  */
 class Messenger extends Facade
 {

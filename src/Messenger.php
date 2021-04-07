@@ -6,14 +6,13 @@ use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
-use RTippin\Messenger\Contracts\MessengerInterface;
 use RTippin\Messenger\Support\ProvidersVerification;
 
 /**
  * Laravel Messenger System.
  * Created by: Richard Tippin.
  */
-final class Messenger implements MessengerInterface
+final class Messenger
 {
     use MessengerProviders;
     use MessengerConfig;
