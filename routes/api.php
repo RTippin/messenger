@@ -8,6 +8,7 @@ use RTippin\Messenger\Http\Controllers\Actions\DownloadMessageFile;
 use RTippin\Messenger\Http\Controllers\Actions\EndCall;
 use RTippin\Messenger\Http\Controllers\Actions\FilterAddParticipants;
 use RTippin\Messenger\Http\Controllers\Actions\FindRecipientThread;
+use RTippin\Messenger\Http\Controllers\Actions\IgnoreCall;
 use RTippin\Messenger\Http\Controllers\Actions\IsThreadUnread;
 use RTippin\Messenger\Http\Controllers\Actions\JoinCall;
 use RTippin\Messenger\Http\Controllers\Actions\JoinGroupInvite;
@@ -133,6 +134,7 @@ Route::name('api.messenger.')->group(function () {
         Route::post('join', JoinCall::class)->name('join');
         Route::post('leave', LeaveCall::class)->name('leave');
         Route::post('end', EndCall::class)->name('end');
+        Route::post('ignore', IgnoreCall::class)->name('ignore');
         Route::get('heartbeat', CallHeartbeat::class)->name('heartbeat');
     });
     Route::apiResource('threads.calls.participants', CallParticipantController::class)->except(['store', 'destroy']);

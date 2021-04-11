@@ -30,7 +30,7 @@
 - Friends system.
 - Search system.
 - Online status.
-- Provider avatars, group thread avatars, message attachments (images, documents etc).
+- Provider avatars, group thread avatars.
 - Calling / Group Calling.
 - Group thread invitation links (like discord).
 - All actions are protected behind policies.
@@ -42,7 +42,6 @@
 ### Upcoming
 - Route params for API results / better pagination.
 - Resizing and saving images when uploaded instead of on the fly.
-- Deny call option for private calls.
 - Optional payload column for messages to allow extra data passed.
 - Video message type.
 - React / Vue frontend.

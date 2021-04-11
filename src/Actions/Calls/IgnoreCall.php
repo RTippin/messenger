@@ -75,7 +75,6 @@ class IgnoreCall extends BaseMessengerAction
 
         $this->fireBroadcast()->fireEvents();
 
-
         if ($this->getThread()->isPrivate()) {
             $this->endCall();
         }
