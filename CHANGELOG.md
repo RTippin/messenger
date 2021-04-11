@@ -1,7 +1,7 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
-### [v0.25]
+### [v0.25 (04-10-2021)]
 
 #### Added
 - Ignore call option. When ignoring a private call, it will also end the call.

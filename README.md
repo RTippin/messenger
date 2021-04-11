@@ -757,6 +757,7 @@ $broadcaster->channel('messenger.{alias}.{id}', ProviderChannel::class); // Priv
 
 ```php
 CallEndedBroadcast::class => 'call.ended',
+CallIgnoredBroadcast::class => 'call.ignored',
 CallJoinedBroadcast::class => 'joined.call',
 CallLeftBroadcast::class => 'left.call',
 CallStartedBroadcast::class => 'incoming.call',
@@ -794,6 +795,7 @@ Echo.private('messenger.user.1')
   .listen('.thread.left', threadLeft)
   .listen('.incoming.call', incomingCall)
   .listen('.joined.call', callJoined)
+  .listen('.ignored.call', callIgnored)
   .listen('.left.call', callLeft)
   .listen('.call.ended', callEnded)
   .listen('.friend.request', friendRequest)
