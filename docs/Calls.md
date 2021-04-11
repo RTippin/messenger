@@ -130,6 +130,19 @@
 }
 ```
 ---
+### POST `/api/messenger/threads/{thread}/calls/{call}/ignore` | *api.messenger.threads.calls.ignore*
+#### Payload:
+```json
+{}
+```
+#### Response:
+```json
+{
+  "message": "success"
+}
+```
+
+---
 ### GET `/api/messenger/threads/{thread}/calls/{call}` | *api.messenger.threads.calls.show*
 #### Response:
 ```json
