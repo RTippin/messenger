@@ -24,7 +24,7 @@ class EndCall extends BaseMessengerAction
     /**
      * @var Repository
      */
-    protected Repository $cacheDriver;
+    private Repository $cacheDriver;
 
     /**
      * @var DatabaseManager
@@ -114,7 +114,7 @@ class EndCall extends BaseMessengerAction
     }
 
     /**
-     * Update the call with the information we received from our video provider.
+     * Mark the call as ended and all active participants as left.
      */
     private function endCall(): void
     {

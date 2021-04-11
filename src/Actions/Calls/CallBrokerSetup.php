@@ -38,9 +38,11 @@ class CallBrokerSetup extends BaseMessengerAction
     {
         $this->setThread($parameters[0])
             ->setCall($parameters[1]->fresh())
-            ->checkCallNeedsToBeSetup()
-            ->setupCallWithProvider()
-            ->updateCall();
+            ->checkCallNeedsToBeSetup();
+
+        if ($this->getCall()->isActive()) {
+            $this->setupCallWithProvider()->updateCall();
+        }
 
         return $this;
     }
@@ -51,7 +53,7 @@ class CallBrokerSetup extends BaseMessengerAction
      */
     private function checkCallNeedsToBeSetup(): self
     {
-        if (! $this->getCall()->isActive() || $this->getCall()->isSetup()) {
+        if ($this->getCall()->isSetup()) {
             $this->throwSetupFailed('Call does not need to be setup.');
         }
 

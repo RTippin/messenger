@@ -120,11 +120,29 @@ class CallPolicy
     {
         return $thread->hasCurrentProvider()
         && $call->isActive()
-        && $call->isCallAdmin($thread)
         && $call->isInCall()
         && ! $call->wasKicked()
+        && ($call->isCallAdmin($thread)
+            || $thread->isPrivate())
             ? $this->allow()
             : $this->deny('Not authorized to end that session.');
+    }
+
+    /**
+     * Determine whether the provider can deny the call.
+     *
+     * @param $user
+     * @param Thread $thread
+     * @param Call $call
+     * @return mixed
+     */
+    public function ignore($user, Call $call, Thread $thread)
+    {
+        return $thread->hasCurrentProvider()
+        && $call->isActive()
+        && ! $call->hasJoinedCall()
+            ? $this->allow()
+            : $this->deny('Not authorized to ignore that session.');
     }
 
     /**

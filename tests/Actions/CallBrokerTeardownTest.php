@@ -48,17 +48,4 @@ class CallBrokerTeardownTest extends FeatureTestCase
 
         app(CallBrokerTeardown::class)->execute($this->call);
     }
-
-    /** @test */
-    public function it_throws_exception_if_call_already_torn_down()
-    {
-        $this->call->update([
-            'teardown_complete' => true,
-        ]);
-
-        $this->expectException(CallBrokerException::class);
-        $this->expectExceptionMessage('Call already torn down.');
-
-        app(CallBrokerTeardown::class)->execute($this->call);
-    }
 }

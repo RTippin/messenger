@@ -34,10 +34,11 @@ class CallBrokerTeardown extends BaseMessengerAction
      */
     public function execute(...$parameters): self
     {
-        $this->setCall($parameters[0]->fresh())
-            ->checkCallNeedsTearingDown()
-            ->teardownCallWithProvider()
-            ->updateCall();
+        $this->setCall($parameters[0]->fresh());
+
+        if (! $this->getCall()->isTornDown()) {
+            $this->teardownCallWithProvider()->updateCall();
+        }
 
         return $this;
     }
@@ -48,32 +49,10 @@ class CallBrokerTeardown extends BaseMessengerAction
     private function teardownCallWithProvider(): self
     {
         if (! $this->videoDriver->destroy($this->getCall())) {
-            $this->throwTeardownFailed('Teardown video provider failed.');
+            throw new CallBrokerException('Teardown video provider failed.');
         }
 
         return $this;
-    }
-
-    /**
-     * @return $this
-     * @throws CallBrokerException
-     */
-    private function checkCallNeedsTearingDown(): self
-    {
-        if ($this->getCall()->isTornDown()) {
-            $this->throwTeardownFailed('Call already torn down.');
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param string $message
-     * @throws CallBrokerException
-     */
-    private function throwTeardownFailed(string $message): void
-    {
-        throw new CallBrokerException($message);
     }
 
     /**

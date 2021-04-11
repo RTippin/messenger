@@ -247,9 +247,11 @@ class Call extends Model
             return true;
         }
 
-        return $thread
-                ? $thread->isAdmin()
-                : $this->thread->isAdmin();
+        if (! is_null($thread)) {
+            return $thread->isAdmin() || $thread->isPrivate();
+        }
+
+        return $this->thread->isAdmin() || $this->thread->isPrivate();
     }
 
     /**

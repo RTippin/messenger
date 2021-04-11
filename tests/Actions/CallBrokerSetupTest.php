@@ -78,22 +78,6 @@ class CallBrokerSetupTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_throws_exception_if_call_already_ended()
-    {
-        $this->call->update([
-            'call_ended' => now(),
-        ]);
-
-        $this->expectException(CallBrokerException::class);
-        $this->expectExceptionMessage('Call does not need to be setup.');
-
-        app(CallBrokerSetup::class)->execute(
-            $this->group,
-            $this->call
-        );
-    }
-
-    /** @test */
     public function it_throws_exception_if_call_already_setup()
     {
         $this->call->update([
