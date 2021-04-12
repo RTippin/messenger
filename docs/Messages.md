@@ -177,6 +177,7 @@
   "message" : "Testing :100:",
   "temporary_id" : "34e70b00-3917-11eb-985e-e58d0602db52",
   "reply_to_id" : "nullable|string" //message ID you are replying to
+  "extra" : "nullable|array" //extra data you can store on the message to be returned as json with message
 }
 ```
 #### Response:
@@ -279,6 +280,14 @@
 ```
 ---
 ### DELETE `/api/messenger/threads/{thread}/messages/{message}` | *api.messenger.threads.messages.destroy*
+#### Response:
+```json
+{
+  "message": "success"
+}
+```
+---
+### DELETE `/api/messenger/threads/{thread}/messages/{message}/embeds` | *api.messenger.threads.messages.embeds.destroy*
 #### Response:
 ```json
 {

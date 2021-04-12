@@ -37,12 +37,12 @@
 - Scheduled commands for automation cleanup and checks.
 - Queued event listeners.
 - Many features can be toggled within our config.
+- Optional extra payload when sending messages to allow custom json to be stored with the message.
 - All in one system ready to plug into any laravel app. You may even choose to utilize only our API, and disable the web routes and published frontend assets.
 
 ### Upcoming
 - Route params for API results / better pagination.
 - Resizing and saving images when uploaded instead of on the fly.
-- Optional payload column for messages to allow extra data passed.
 - Video message type.
 - React / Vue frontend.
 - Configurable friend driver.
@@ -818,6 +818,7 @@ Echo.private('messenger.user.1')
 ***Presence Channel Broadcast:***
 
 ```php
+EmbedsRemovedBroadcast::class => 'embeds.removed',
 MessageEditedBroadcast::class => 'message.edited',
 ReactionAddedBroadcast::class => 'reaction.added',
 ReactionRemovedBroadcast::class => 'reaction.removed',
@@ -835,6 +836,7 @@ Echo.join('messenger.thread.1234-5678')
   .listen('.message.edited', renderUpdatedMessage)
   .listen('.reaction.added', reactionAdded)
   .listen('.reaction.removed', reactionRemoved)
+  .listen('.embeds.removed', embedsRemoved)
 ```
 
 - While inside a thread, you will want to subscribe to the `ThreadChannel` presence channel. This is where realtime, client to client events are broadcast. Typing, seen message, online status are all client to client and this is a great channel to utilize for this. The backend will broadcast a select few events over presence, such as when the groups settings are updated, or group avatar changed, or a user edited their message. This lets anyone currently in the thread know to update their UI! See example below for channel format to subscribe on:

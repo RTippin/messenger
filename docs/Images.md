@@ -75,6 +75,7 @@
   "image" : "(binary)",
   "temporary_id" : "33234580-3918-11eb-985e-e58d0602db52",
   "reply_to_id" : "nullable|string" //message ID you are replying to
+  "extra" : "nullable|array" //extra data you can store on the message to be returned as json with message
 }
 ```
 #### Response:

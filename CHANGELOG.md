@@ -1,6 +1,15 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v0.26 (04-12-2021)]
+
+#### Added
+- bool column `embeds` and nullable/text column `extra` on `messages` table.
+- Optional extra payload when sending messages to allow custom json to be stored with the message.
+
+#### Changed
+- Renamed action class UpdateMessage to EditMessage.
+
 ### [v0.25 (04-10-2021)]
 
 #### Added

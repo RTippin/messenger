@@ -67,6 +67,7 @@
   "audio" : "(binary)",
   "temporary_id" : "adb9c9b0-3916-11eb-985e-e58d0602db52",
   "reply_to_id" : "nullable|string" //message ID you are replying to
+  "extra" : "nullable|array" //extra data you can store on the message to be returned as json with message
 }
 ```
 #### Response:

@@ -47,28 +47,32 @@
 {
   "message": "Hello!",
   "recipient_id": "922f8476-c5f4-4024-8ba2-1a0d1cd22d71",
-  "recipient_alias": "user"
+  "recipient_alias": "user",
+  "extra" : "nullable|array" //extra data you can store on the message to be returned as json with message
 }
 ```
 ```json
 {
   "image": "(binary)",
   "recipient_id": "922f8476-c5f4-4024-8ba2-1a0d1cd22d71",
-  "recipient_alias": "user"
+  "recipient_alias": "user",
+  "extra" : "nullable|array" //extra data you can store on the message to be returned as json with message
 }
 ```
 ```json
 {
   "document": "(binary)",
   "recipient_id": "922f8476-c5f4-4024-8ba2-1a0d1cd22d71",
-  "recipient_alias": "user"
+  "recipient_alias": "user",
+  "extra" : "nullable|array" //extra data you can store on the message to be returned as json with message
 }
 ```
 ```json
 {
   "audio": "(binary)",
   "recipient_id": "922f8476-c5f4-4024-8ba2-1a0d1cd22d71",
-  "recipient_alias": "user"
+  "recipient_alias": "user",
+  "extra" : "nullable|array" //extra data you can store on the message to be returned as json with message
 }
 ```
 #### Response:
