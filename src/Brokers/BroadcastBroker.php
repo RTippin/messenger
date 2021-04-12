@@ -19,6 +19,7 @@ use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\ParticipantRepository;
 use RTippin\Messenger\Services\PushNotificationService;
 use RTippin\Messenger\Traits\ChecksReflection;
+use Throwable;
 
 class BroadcastBroker implements BroadcastDriver
 {
@@ -313,10 +314,7 @@ class BroadcastBroker implements BroadcastDriver
                     ->setResource($this->with)
                     ->setChannels($channels->values()->toArray())
             );
-        } catch (BroadcastException $e) {
-            //continue on
-        } catch (BindingResolutionException $e) {
-            report($e);
+        } catch (BroadcastException | BindingResolutionException | Throwable $e) {
             //continue on
         }
     }
