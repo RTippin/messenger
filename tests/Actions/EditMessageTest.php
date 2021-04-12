@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
-use RTippin\Messenger\Actions\Messages\UpdateMessage;
+use RTippin\Messenger\Actions\Messages\EditMessage;
 use RTippin\Messenger\Broadcasting\MessageEditedBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\MessageEditedEvent;
@@ -14,7 +14,7 @@ use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
-class UpdateMessageTest extends FeatureTestCase
+class EditMessageTest extends FeatureTestCase
 {
     private Thread $group;
     private Message $message;
@@ -38,7 +38,7 @@ class UpdateMessageTest extends FeatureTestCase
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Edit messages are currently disabled.');
 
-        app(UpdateMessage::class)->withoutDispatches()->execute(
+        app(EditMessage::class)->withoutDispatches()->execute(
             $this->group,
             $this->message,
             'Edited Message'
@@ -51,7 +51,7 @@ class UpdateMessageTest extends FeatureTestCase
         $editedAt = now()->addMinutes(5)->format('Y-m-d H:i:s.u');
         Carbon::setTestNow($editedAt);
 
-        app(UpdateMessage::class)->withoutDispatches()->execute(
+        app(EditMessage::class)->withoutDispatches()->execute(
             $this->group,
             $this->message,
             'Edited Message'
@@ -73,7 +73,7 @@ class UpdateMessageTest extends FeatureTestCase
     /** @test */
     public function it_converts_emoji_to_shortcode()
     {
-        app(UpdateMessage::class)->withoutDispatches()->execute(
+        app(EditMessage::class)->withoutDispatches()->execute(
             $this->group,
             $this->message,
             'Edited 👍'
@@ -93,7 +93,7 @@ class UpdateMessageTest extends FeatureTestCase
             MessageEditedEvent::class,
         ]);
 
-        app(UpdateMessage::class)->execute(
+        app(EditMessage::class)->execute(
             $this->group,
             $this->message,
             'First Test Message'
@@ -111,7 +111,7 @@ class UpdateMessageTest extends FeatureTestCase
         ]);
         $this->travel(5)->minutes();
 
-        app(UpdateMessage::class)->execute(
+        app(EditMessage::class)->execute(
             $this->group,
             $this->message,
             'Edited Message'

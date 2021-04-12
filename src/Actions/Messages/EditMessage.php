@@ -16,7 +16,7 @@ use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use Throwable;
 
-class UpdateMessage extends BaseMessengerAction
+class EditMessage extends BaseMessengerAction
 {
     /**
      * @var BroadcastDriver

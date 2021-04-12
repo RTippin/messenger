@@ -9,7 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use RTippin\Messenger\Actions\Messages\ArchiveMessage;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
-use RTippin\Messenger\Actions\Messages\UpdateMessage;
+use RTippin\Messenger\Actions\Messages\EditMessage;
 use RTippin\Messenger\Http\Collections\MessageCollection;
 use RTippin\Messenger\Http\Collections\MessageEditCollection;
 use RTippin\Messenger\Http\Request\EditMessageRequest;
@@ -146,14 +146,14 @@ class MessageController extends Controller
      * Update the specified resource.
      *
      * @param EditMessageRequest $request
-     * @param UpdateMessage $updateMessage
+     * @param EditMessage $editMessage
      * @param Thread $thread
      * @param Message $message
      * @return MessageResource
      * @throws AuthorizationException|Throwable
      */
     public function update(EditMessageRequest $request,
-                           UpdateMessage $updateMessage,
+                           EditMessage $editMessage,
                            Thread $thread,
                            Message $message): MessageResource
     {
@@ -162,7 +162,7 @@ class MessageController extends Controller
             $thread,
         ]);
 
-        return $updateMessage->execute(
+        return $editMessage->execute(
             $thread,
             $message,
             $request->input('message')
