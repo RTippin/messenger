@@ -95,6 +95,25 @@ class StoreAudioMessageTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_can_add_extra_data_on_message()
+    {
+        app(StoreAudioMessage::class)->withoutDispatches()->execute(
+            $this->private,
+            [
+                'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
+                'temporary_id' => '123-456-789',
+                'extra' => ['test' => true],
+            ]
+        );
+
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $this->private->id,
+            'type' => 3,
+            'extra' => '{"test":true}',
+        ]);
+    }
+
+    /** @test */
     public function it_can_reply_to_existing_message()
     {
         $message = $this->createMessage($this->private, $this->tippin);

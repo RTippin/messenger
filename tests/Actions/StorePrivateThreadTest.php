@@ -265,4 +265,22 @@ class StorePrivateThreadTest extends FeatureTestCase
         ]);
         Storage::disk(Messenger::getThreadStorage('disk'))->assertExists(Message::audio()->first()->getAudioPath());
     }
+
+    /** @test */
+    public function it_can_add_extra_data_on_message()
+    {
+        Messenger::setProvider($this->tippin);
+
+        app(StorePrivateThread::class)->withoutDispatches()->execute([
+            'message' => 'Extra',
+            'recipient_alias' => 'user',
+            'recipient_id' => $this->doe->getKey(),
+            'extra' => ['test' => true],
+        ]);
+
+        $this->assertDatabaseHas('messages', [
+            'type' => 0,
+            'extra' => '{"test":true}',
+        ]);
+    }
 }

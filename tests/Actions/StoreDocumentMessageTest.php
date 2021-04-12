@@ -95,6 +95,25 @@ class StoreDocumentMessageTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_can_add_extra_data_on_message()
+    {
+        app(StoreDocumentMessage::class)->withoutDispatches()->execute(
+            $this->private,
+            [
+                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+                'temporary_id' => '123-456-789',
+                'extra' => ['test' => true],
+            ]
+        );
+
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $this->private->id,
+            'type' => 2,
+            'extra' => '{"test":true}',
+        ]);
+    }
+
+    /** @test */
     public function it_can_reply_to_existing_message()
     {
         $message = $this->createMessage($this->private, $this->tippin);

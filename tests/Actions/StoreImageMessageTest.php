@@ -95,6 +95,25 @@ class StoreImageMessageTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_can_add_extra_data_on_message()
+    {
+        app(StoreImageMessage::class)->withoutDispatches()->execute(
+            $this->private,
+            [
+                'image' => UploadedFile::fake()->image('picture.jpg'),
+                'temporary_id' => '123-456-789',
+                'extra' => ['test' => true],
+            ]
+        );
+
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $this->private->id,
+            'type' => 1,
+            'extra' => '{"test":true}',
+        ]);
+    }
+
+    /** @test */
     public function it_can_reply_to_existing_message()
     {
         $message = $this->createMessage($this->private, $this->tippin);

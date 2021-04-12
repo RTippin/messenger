@@ -80,7 +80,7 @@ abstract class NewMessageAction extends BaseMessengerAction
      * @param string $type
      * @param string $body
      * @param string|null $temporaryId
-     * @param string|null $extra
+     * @param array|null $extra
      * @return $this
      * @throws Throwable
      */
@@ -88,7 +88,7 @@ abstract class NewMessageAction extends BaseMessengerAction
                                           string $type,
                                           string $body,
                                           ?string $temporaryId = null,
-                                          ?string $extra = null): self
+                                          ?array $extra = null): self
     {
         if ($this->isChained()) {
             $this->executeTransactions($owner, $type, $body, $temporaryId, $extra);
@@ -150,13 +150,13 @@ abstract class NewMessageAction extends BaseMessengerAction
      * @param string $type
      * @param string $body
      * @param string|null $temporaryId
-     * @param string|null $extra
+     * @param array|null $extra
      */
     private function executeTransactions(MessengerProvider $owner,
                                          string $type,
                                          string $body,
                                          ?string $temporaryId,
-                                         ?string $extra): void
+                                         ?array $extra): void
     {
         $this->storeMessage($owner, $type, $body, $temporaryId, $extra);
 
@@ -179,14 +179,14 @@ abstract class NewMessageAction extends BaseMessengerAction
      * @param string $type
      * @param string $body
      * @param string|null $temporaryId
-     * @param string|null $extra
+     * @param array|null $extra
      * @return $this
      */
     private function storeMessage(MessengerProvider $owner,
                                   string $type,
                                   string $body,
                                   ?string $temporaryId,
-                                  ?string $extra): self
+                                  ?array $extra): self
     {
         $this->setMessage(
             $this->getThread()

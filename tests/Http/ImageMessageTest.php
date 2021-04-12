@@ -56,6 +56,40 @@ class ImageMessageTest extends FeatureTestCase
     }
 
     /** @test */
+    public function user_can_send_image_message_with_extra()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+
+        $this->postJson(route('api.messenger.threads.images.store', [
+            'thread' => $this->private->id,
+        ]), [
+            'image' => UploadedFile::fake()->image('picture.jpg'),
+            'temporary_id' => '123-456-789',
+            'extra' => ['test' => true],
+        ])
+            ->assertSuccessful()
+            ->assertJson([
+                'thread_id' => $this->private->id,
+                'temporary_id' => '123-456-789',
+                'type' => 1,
+                'type_verbose' => 'IMAGE_MESSAGE',
+                'extra' => [
+                    'test' => true,
+                ],
+                'owner' => [
+                    'provider_id' => $this->tippin->getKey(),
+                    'provider_alias' => 'user',
+                    'name' => 'Richard Tippin',
+                ],
+            ]);
+    }
+
+    /** @test */
     public function image_message_mime_types_can_be_overwritten()
     {
         Messenger::setMessageImageMimeTypes('cr2');

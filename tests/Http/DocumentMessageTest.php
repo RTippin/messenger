@@ -56,6 +56,40 @@ class DocumentMessageTest extends FeatureTestCase
     }
 
     /** @test */
+    public function user_can_send_document_message_with_extra()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+
+        $this->postJson(route('api.messenger.threads.documents.store', [
+            'thread' => $this->private->id,
+        ]), [
+            'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+            'temporary_id' => '123-456-789',
+            'extra' => ['test' => true],
+        ])
+            ->assertSuccessful()
+            ->assertJson([
+                'thread_id' => $this->private->id,
+                'temporary_id' => '123-456-789',
+                'type' => 2,
+                'type_verbose' => 'DOCUMENT_MESSAGE',
+                'extra' => [
+                    'test' => true,
+                ],
+                'owner' => [
+                    'provider_id' => $this->tippin->getKey(),
+                    'provider_alias' => 'user',
+                    'name' => 'Richard Tippin',
+                ],
+            ]);
+    }
+
+    /** @test */
     public function document_message_mime_types_can_be_overwritten()
     {
         Messenger::setMessageDocumentMimeTypes('mp3');

@@ -139,6 +139,41 @@ class PrivateMessageTest extends FeatureTestCase
     }
 
     /** @test */
+    public function user_can_send_message_with_extra()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+
+        $this->postJson(route('api.messenger.threads.messages.store', [
+            'thread' => $this->private->id,
+        ]), [
+            'message' => 'Hello!',
+            'temporary_id' => '123-456-789',
+            'extra' => ['test' => true],
+        ])
+            ->assertSuccessful()
+            ->assertJson([
+                'thread_id' => $this->private->id,
+                'temporary_id' => '123-456-789',
+                'type' => 0,
+                'type_verbose' => 'MESSAGE',
+                'body' => 'Hello!',
+                'extra' => [
+                    'test' => true,
+                ],
+                'owner' => [
+                    'provider_id' => $this->tippin->getKey(),
+                    'provider_alias' => 'user',
+                    'name' => 'Richard Tippin',
+                ],
+            ]);
+    }
+
+    /** @test */
     public function recipient_can_send_message()
     {
         $this->actingAs($this->doe);
@@ -284,6 +319,28 @@ class PrivateMessageTest extends FeatureTestCase
             ]);
     }
 
+    /**
+     * @test
+     * @dataProvider messageExtraValidation
+     * @param $extraValue
+     */
+    public function send_message_validates_extra($extraValue)
+    {
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.messages.store', [
+            'thread' => $this->private->id,
+        ]), [
+            'message' => 'test',
+            'temporary_id' => '1234',
+            'extra' => $extraValue,
+        ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors([
+                'extra',
+            ]);
+    }
+
     public function messageValidation(): array
     {
         return [
@@ -292,6 +349,15 @@ class PrivateMessageTest extends FeatureTestCase
             'Fields cannot be boolean' => [true, true],
             'Fields cannot be null' => [null, null],
             'Fields cannot be an array' => [[1, 2], [1, 2]],
+        ];
+    }
+
+    public function messageExtraValidation(): array
+    {
+        return [
+            'Cannot be string' => ['yes'],
+            'Cannot be boolean' => [true],
+            'Cannot be integer' => [5],
         ];
     }
 }

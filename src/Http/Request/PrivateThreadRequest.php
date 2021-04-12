@@ -19,6 +19,7 @@ class PrivateThreadRequest extends FormRequest
             'recipient_id' => ['required', new IntegerOrString],
             'recipient_alias' => 'required|string',
             'message' => 'required_without_all:document,image,audio|string',
+            'extra' => 'nullable|array',
         ];
 
         if (Messenger::isMessageDocumentUploadEnabled()) {

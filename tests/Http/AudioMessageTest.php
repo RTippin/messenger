@@ -56,6 +56,40 @@ class AudioMessageTest extends FeatureTestCase
     }
 
     /** @test */
+    public function user_can_send_audio_message_with_extra()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->expectsEvents([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+
+        $this->postJson(route('api.messenger.threads.audio.store', [
+            'thread' => $this->private->id,
+        ]), [
+            'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
+            'temporary_id' => '123-456-789',
+            'extra' => ['test' => true],
+        ])
+            ->assertSuccessful()
+            ->assertJson([
+                'thread_id' => $this->private->id,
+                'temporary_id' => '123-456-789',
+                'type' => 3,
+                'type_verbose' => 'AUDIO_MESSAGE',
+                'extra' => [
+                    'test' => true,
+                ],
+                'owner' => [
+                    'provider_id' => $this->tippin->getKey(),
+                    'provider_alias' => 'user',
+                    'name' => 'Richard Tippin',
+                ],
+            ]);
+    }
+
+    /** @test */
     public function audio_message_mime_types_can_be_overwritten()
     {
         Messenger::setMessageAudioMimeTypes('3gpp');

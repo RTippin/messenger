@@ -17,7 +17,7 @@ class MessageRequest extends FormRequest
             'message' => 'required|string',
             'temporary_id' => 'required|string',
             'reply_to_id' => 'nullable|string',
-            'extra' => 'nullable|json',
+            'extra' => 'nullable|array',
         ];
     }
 }
