@@ -94,6 +94,7 @@ Route::name('api.messenger.')->group(function () {
         Route::get('documents/page/{document}', [DocumentMessageController::class, 'paginate'])->name('documents.page');
         Route::get('audio/page/{audio}', [AudioMessageController::class, 'paginate'])->name('audio.page');
         //Common
+        Route::delete('messages/{message}/embeds', [MessageController::class, 'removeEmbeds'])->name('messages.embeds.destroy');
         Route::get('gallery/{message}/{size}/{image}', RenderMessageImage::class)->name('gallery.render');
         Route::get('files/{message}/{file}', DownloadMessageFile::class)->name('files.download');
         Route::get('audio/{message}/{audio}', DownloadMessageAudio::class)->name('audio.download');

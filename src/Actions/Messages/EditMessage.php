@@ -49,7 +49,7 @@ class EditMessage extends BaseMessengerAction
     private string $originalBody;
 
     /**
-     * StoreMessage constructor.
+     * EditMessage constructor.
      *
      * @param BroadcastDriver $broadcaster
      * @param DatabaseManager $database

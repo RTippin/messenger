@@ -148,6 +148,25 @@ class MessagePolicy
     }
 
     /**
+     * Determine whether the provider can remove embeds from the model.
+     *
+     * @param $user
+     * @param Message $message
+     * @param Thread $thread
+     * @return mixed
+     */
+    public function removeEmbeds($user, Message $message, Thread $thread)
+    {
+        return ! $thread->isLocked()
+        && $message->showEmbeds()
+        && (((string) $this->messenger->getProviderId() === (string) $message->owner_id
+                && $this->messenger->getProviderClass() === $message->owner_type)
+            || $thread->isAdmin())
+            ? $this->allow()
+            : $this->deny('Not authorized to remove embeds from message.');
+    }
+
+    /**
      * Determine whether the provider can delete the model.
      *
      * @param $user

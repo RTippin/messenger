@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Routing\Controller;
 use RTippin\Messenger\Actions\Messages\ArchiveMessage;
+use RTippin\Messenger\Actions\Messages\RemoveEmbeds;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
 use RTippin\Messenger\Actions\Messages\EditMessage;
 use RTippin\Messenger\Http\Collections\MessageCollection;
@@ -167,6 +168,28 @@ class MessageController extends Controller
             $message,
             $request->input('message')
         )->getJsonResource();
+    }
+
+    /**
+     * @param RemoveEmbeds $removeEmbeds
+     * @param Thread $thread
+     * @param Message $message
+     * @return JsonResponse
+     * @throws AuthorizationException
+     */
+    public function removeEmbeds(RemoveEmbeds $removeEmbeds,
+                                 Thread $thread,
+                                 Message $message): JsonResponse
+    {
+        $this->authorize('removeEmbeds', [
+            $message,
+            $thread,
+        ]);
+
+        return $removeEmbeds->execute(
+            $thread,
+            $message
+        )->getMessageResponse();
     }
 
     /**
