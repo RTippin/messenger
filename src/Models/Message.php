@@ -382,6 +382,14 @@ class Message extends Model
     /**
      * @return bool
      */
+    public function showEmbeds(): bool
+    {
+        return $this->isText() && $this->embeds;
+    }
+
+    /**
+     * @return bool
+     */
     public function isSystemMessage(): bool
     {
         return ! in_array($this->type, self::NonSystemTypes);

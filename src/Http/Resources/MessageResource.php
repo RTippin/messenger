@@ -74,7 +74,7 @@ class MessageResource extends JsonResource
             'body' => $this->formatMessageBody(),
             'edited' => $this->message->isEdited(),
             'reacted' => $this->message->isReacted(),
-            'embeds' => $this->message->embeds,
+            'embeds' => $this->message->showEmbeds(),
             'extra' => $this->message->extra,
             'created_at' => $this->message->created_at,
             'updated_at' => $this->message->updated_at,

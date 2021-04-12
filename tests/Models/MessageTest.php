@@ -42,6 +42,7 @@ class MessageTest extends FeatureTestCase
         $this->assertSame(0, Message::audio()->count());
         $this->assertSame('MESSAGE', $this->message->getTypeVerbose());
         $this->assertTrue($this->message->isText());
+        $this->assertTrue($this->message->showEmbeds());
         $this->assertFalse($this->message->isEdited());
         $this->assertFalse($this->message->isReacted());
         $this->assertFalse($this->message->isSystemMessage());
@@ -61,6 +62,7 @@ class MessageTest extends FeatureTestCase
         $this->assertSame(0, $this->message->type);
         $this->assertFalse($this->message->edited);
         $this->assertFalse($this->message->reacted);
+        $this->assertTrue($this->message->embeds);
     }
 
     /** @test */

@@ -141,6 +141,7 @@ trait HelperTrait
             'owner_type' => get_class($owner),
             'edited' => false,
             'reacted' => false,
+            'embeds' => true,
         ]);
     }
 
