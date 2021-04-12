@@ -71,7 +71,8 @@ class StoreAudioMessage extends NewMessageAction
                 $this->messenger->getProvider(),
                 'AUDIO_MESSAGE',
                 $this->upload($parameters[1]['audio']),
-                $parameters[1]['temporary_id'] ?? null
+                $parameters[1]['temporary_id'] ?? null,
+                $parameters[1]['extra'] ?? null
             )
             ->generateResource()
             ->fireBroadcast()

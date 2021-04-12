@@ -21,6 +21,7 @@ class ImageMessageRequest extends FormRequest
             'image' => "required|max:{$limit}|file|mimes:{$mimes}",
             'temporary_id' => 'required|string',
             'reply_to_id' => 'nullable|string',
+            'extra' => 'nullable|json',
         ];
     }
 }

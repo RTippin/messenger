@@ -80,18 +80,20 @@ abstract class NewMessageAction extends BaseMessengerAction
      * @param string $type
      * @param string $body
      * @param string|null $temporaryId
+     * @param string|null $extra
      * @return $this
      * @throws Throwable
      */
     protected function handleTransactions(MessengerProvider $owner,
                                           string $type,
                                           string $body,
-                                          ?string $temporaryId = null): self
+                                          ?string $temporaryId = null,
+                                          ?string $extra = null): self
     {
         if ($this->isChained()) {
-            $this->executeTransactions($owner, $type, $body, $temporaryId);
+            $this->executeTransactions($owner, $type, $body, $temporaryId, $extra);
         } else {
-            $this->database->transaction(fn () => $this->executeTransactions($owner, $type, $body, $temporaryId), 5);
+            $this->database->transaction(fn () => $this->executeTransactions($owner, $type, $body, $temporaryId, $extra), 5);
         }
 
         return $this;
@@ -148,13 +150,15 @@ abstract class NewMessageAction extends BaseMessengerAction
      * @param string $type
      * @param string $body
      * @param string|null $temporaryId
+     * @param string|null $extra
      */
     private function executeTransactions(MessengerProvider $owner,
                                          string $type,
                                          string $body,
-                                         ?string $temporaryId): void
+                                         ?string $temporaryId,
+                                         ?string $extra): void
     {
-        $this->storeMessage($owner, $type, $body, $temporaryId);
+        $this->storeMessage($owner, $type, $body, $temporaryId, $extra);
 
         if ($this->shouldExecuteChains()) {
             $this->getThread()->touch();
@@ -175,12 +179,14 @@ abstract class NewMessageAction extends BaseMessengerAction
      * @param string $type
      * @param string $body
      * @param string|null $temporaryId
+     * @param string|null $extra
      * @return $this
      */
     private function storeMessage(MessengerProvider $owner,
                                   string $type,
                                   string $body,
-                                  ?string $temporaryId): self
+                                  ?string $temporaryId,
+                                  ?string $extra): self
     {
         $this->setMessage(
             $this->getThread()
@@ -191,6 +197,7 @@ abstract class NewMessageAction extends BaseMessengerAction
                     'owner_type' => get_class($owner),
                     'body' => $body,
                     'reply_to_id' => optional($this->replyingTo)->id,
+                    'extra' => $extra,
                 ])
                 ->setRelations([
                     'owner' => $owner,

@@ -66,7 +66,8 @@ class StoreMessage extends NewMessageAction
                 $this->messenger->getProvider(),
                 'MESSAGE',
                 $this->emoji->toShort($parameters[1]['message']),
-                $parameters[1]['temporary_id'] ?? null
+                $parameters[1]['temporary_id'] ?? null,
+                $parameters[1]['extra'] ?? null
             )
             ->generateResource()
             ->fireBroadcast()

@@ -23,6 +23,8 @@ class CreateMessagesTable extends Migration
             $table->uuid('reply_to_id')->nullable()->index();
             $table->boolean('edited')->default(0);
             $table->boolean('reacted')->default(0);
+            $table->boolean('embeds')->default(1);
+            $table->text('extra')->nullable()->default(null);
             $table->timestamps(6);
             $table->softDeletes();
             $table->index('created_at');

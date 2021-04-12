@@ -71,7 +71,8 @@ class StoreImageMessage extends NewMessageAction
                 $this->messenger->getProvider(),
                 'IMAGE_MESSAGE',
                 $this->upload($parameters[1]['image']),
-                $parameters[1]['temporary_id'] ?? null
+                $parameters[1]['temporary_id'] ?? null,
+                $parameters[1]['extra'] ?? null
             )
             ->generateResource()
             ->fireBroadcast()

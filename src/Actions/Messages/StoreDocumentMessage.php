@@ -71,7 +71,8 @@ class StoreDocumentMessage extends NewMessageAction
                 $this->messenger->getProvider(),
                 'DOCUMENT_MESSAGE',
                 $this->upload($parameters[1]['document']),
-                $parameters[1]['temporary_id'] ?? null
+                $parameters[1]['temporary_id'] ?? null,
+                $parameters[1]['extra'] ?? null
             )
             ->generateResource()
             ->fireBroadcast()

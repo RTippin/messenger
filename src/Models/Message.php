@@ -32,6 +32,8 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @property string $reply_to_id
  * @property bool $edited
  * @property bool $reacted
+ * @property bool $embeds
+ * @property string $extra
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -109,6 +111,8 @@ class Message extends Model
         'type' => 'integer',
         'edited' => 'boolean',
         'reacted' => 'boolean',
+        'embeds' => 'boolean',
+        'extra' => 'array',
     ];
 
     /**
