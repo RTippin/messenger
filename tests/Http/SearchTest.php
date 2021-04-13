@@ -2,25 +2,11 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class SearchTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
-    private MessengerProvider $developers;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->developers = $this->companyDevelopers();
-    }
-
     /** @test */
     public function guest_is_unauthorized()
     {

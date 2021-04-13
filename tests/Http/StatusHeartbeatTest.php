@@ -2,21 +2,11 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\StatusHeartbeatEvent;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StatusHeartbeatTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->tippin = $this->userTippin();
-    }
-
     /** @test */
     public function messenger_heartbeat_must_be_a_post()
     {

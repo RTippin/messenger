@@ -11,7 +11,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class CallParticipantTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
     private Call $call;
     private CallParticipant $participant;
 
@@ -19,7 +18,6 @@ class CallParticipantTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         $group = $this->createGroupThread($this->tippin);
         $this->call = $this->createCall($group, $this->tippin);
         $this->participant = $this->call->participants()->first();

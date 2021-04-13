@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\ParticipantReadBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ParticipantsReadEvent;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -11,15 +10,11 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class MarkThreadReadTest extends FeatureTestCase
 {
     private Thread $private;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
         $this->createMessage($this->private, $this->tippin);
     }
@@ -66,8 +61,7 @@ class MarkThreadReadTest extends FeatureTestCase
     public function read_participant_can_mark_read_and_nothing_changes()
     {
         $this->private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'last_read' => now(),
@@ -90,8 +84,7 @@ class MarkThreadReadTest extends FeatureTestCase
     public function pending_thread_awaiting_participant_approval_will_change_nothing()
     {
         $this->private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'pending' => true,
@@ -113,8 +106,7 @@ class MarkThreadReadTest extends FeatureTestCase
     public function pending_thread_awaiting_other_participant_approval_can_mark_read()
     {
         $this->private->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'pending' => true,

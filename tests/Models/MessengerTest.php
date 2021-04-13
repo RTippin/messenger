@@ -10,14 +10,12 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class MessengerTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
     private Messenger $messengerModel;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         $this->messengerModel = MessengerFacade::getProviderMessenger($this->tippin);
     }
 

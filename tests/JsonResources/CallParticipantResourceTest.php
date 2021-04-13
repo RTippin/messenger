@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\JsonResources;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Http\Resources\CallParticipantResource;
 use RTippin\Messenger\Models\Call;
@@ -15,13 +14,11 @@ class CallParticipantResourceTest extends FeatureTestCase
     private Thread $group;
     private Call $call;
     private CallParticipant $callParticipant;
-    private MessengerProvider $tippin;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         $this->group = $this->createGroupThread($this->tippin);
         $this->call = $this->createCall($this->group, $this->tippin);
         $this->callParticipant = $this->call->participants()->first();

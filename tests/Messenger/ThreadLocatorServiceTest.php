@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Messenger;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Exceptions\ProviderNotFoundException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
@@ -13,17 +12,11 @@ class ThreadLocatorServiceTest extends FeatureTestCase
 {
     private ThreadLocatorService $locator;
     private Thread $private;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
-    private MessengerProvider $developers;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->developers = $this->companyDevelopers();
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
         $this->locator = app(ThreadLocatorService::class);
         Messenger::setProvider($this->tippin);

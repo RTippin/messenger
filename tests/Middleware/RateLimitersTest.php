@@ -5,20 +5,16 @@ namespace RTippin\Messenger\Tests\Middleware;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Storage;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class RateLimitersTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->withMiddleware(ThrottleRequests::class);
-        $this->tippin = $this->userTippin();
     }
 
     /** @test */

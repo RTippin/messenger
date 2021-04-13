@@ -3,14 +3,12 @@
 namespace RTippin\Messenger\Tests\Models;
 
 use Illuminate\Support\Carbon;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageEdit;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class MessageEditTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
     private Message $message;
     private MessageEdit $edited;
 
@@ -21,10 +19,7 @@ class MessageEditTest extends FeatureTestCase
         $this->tippin = $this->userTippin();
         $group = $this->createGroupThread($this->tippin);
         $this->message = $this->createMessage($group, $this->tippin);
-        $this->edited = $this->message->edits()->create([
-            'body' => 'EDITED',
-            'edited_at' => now(),
-        ]);
+        $this->edited = MessageEdit::factory()->for($this->message)->create();
     }
 
     /** @test */

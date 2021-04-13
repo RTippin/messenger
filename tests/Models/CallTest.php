@@ -15,8 +15,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class CallTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
     private Thread $group;
     private Call $call;
 
@@ -24,8 +22,6 @@ class CallTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
         $this->call = $this->createCall($this->group, $this->tippin, $this->doe);
     }
@@ -225,8 +221,7 @@ class CallTest extends FeatureTestCase
     public function is_admin_if_group_admin()
     {
         $this->group->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update(Definitions::DefaultAdminParticipant);
         Messenger::setProvider($this->doe);
@@ -263,8 +258,7 @@ class CallTest extends FeatureTestCase
     public function call_participant_was_kicked()
     {
         $this->call->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'kicked' => true,
@@ -298,8 +292,7 @@ class CallTest extends FeatureTestCase
     public function participant_is_not_in_call()
     {
         $this->call->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'left_call' => now(),

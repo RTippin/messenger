@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Http;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use RTippin\Messenger\Broadcasting\ReactionAddedBroadcast;
 use RTippin\Messenger\Broadcasting\ReactionRemovedBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ReactionAddedEvent;
 use RTippin\Messenger\Events\ReactionRemovedEvent;
 use RTippin\Messenger\Models\Message;
@@ -17,15 +16,11 @@ class MessageReactionTest extends FeatureTestCase
 {
     private Thread $private;
     private Message $message;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
         $this->message = $this->createMessage($this->private, $this->tippin);
     }
@@ -88,7 +83,7 @@ class MessageReactionTest extends FeatureTestCase
     {
         MessageReaction::factory()
             ->for($this->message)
-            ->for($this->tippin, 'owner')
+            ->owner($this->tippin)
             ->state(new Sequence(
                 ['reaction' => ':one:'],
                 ['reaction' => ':two:'],
@@ -100,7 +95,7 @@ class MessageReactionTest extends FeatureTestCase
             ->create();
         MessageReaction::factory()
             ->for($this->message)
-            ->for($this->doe, 'owner')
+            ->owner($this->doe)
             ->state(new Sequence(
                 ['reaction' => ':one:'],
                 ['reaction' => ':two:'],
@@ -143,7 +138,7 @@ class MessageReactionTest extends FeatureTestCase
     {
         $reaction = MessageReaction::factory()
             ->for($this->message)
-            ->for($this->tippin, 'owner')
+            ->owner($this->tippin)
             ->create();
         $this->actingAs($this->tippin);
 
@@ -165,7 +160,7 @@ class MessageReactionTest extends FeatureTestCase
     {
         $reaction = MessageReaction::factory()
             ->for($this->message)
-            ->for($this->doe, 'owner')
+            ->owner($this->doe)
             ->create();
         $this->actingAs($this->tippin);
 
@@ -184,7 +179,7 @@ class MessageReactionTest extends FeatureTestCase
         $message = $this->createMessage($group, $this->tippin);
         $reaction = MessageReaction::factory()
             ->for($message)
-            ->for($this->doe, 'owner')
+            ->owner($this->doe)
             ->create();
         $this->actingAs($this->tippin);
 

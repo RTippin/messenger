@@ -11,7 +11,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class InviteTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
     private Thread $group;
     private Invite $invite;
 
@@ -19,7 +18,6 @@ class InviteTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         $this->group = $this->createGroupThread($this->tippin);
         $this->invite = Invite::factory()
             ->for($this->group)

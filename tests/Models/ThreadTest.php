@@ -15,16 +15,12 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class ThreadTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
     private Thread $group;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
     }
 
@@ -330,7 +326,7 @@ class ThreadTest extends FeatureTestCase
     public function is_muted()
     {
         $this->group->participants()
-            ->admins()
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'muted' => true,
@@ -344,7 +340,7 @@ class ThreadTest extends FeatureTestCase
     public function group_is_not_pending()
     {
         $this->group->participants()
-            ->admins()
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'pending' => true,
@@ -359,8 +355,7 @@ class ThreadTest extends FeatureTestCase
     {
         $private = $this->createPrivateThread($this->tippin, $this->doe);
         $private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'pending' => true,
@@ -376,8 +371,7 @@ class ThreadTest extends FeatureTestCase
     {
         $private = $this->createPrivateThread($this->tippin, $this->doe);
         $private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'pending' => true,
@@ -425,8 +419,7 @@ class ThreadTest extends FeatureTestCase
     {
         $private = $this->createPrivateThread($this->tippin, $this->doe);
         $private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'pending' => true,
@@ -454,8 +447,7 @@ class ThreadTest extends FeatureTestCase
     public function cannot_message_if_participant_disabled_and_not_admin()
     {
         $this->group->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'send_messages' => false,
@@ -521,8 +513,7 @@ class ThreadTest extends FeatureTestCase
     public function non_admin_with_permission_can_add_participants()
     {
         $this->group->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'add_participants' => true,
@@ -570,8 +561,7 @@ class ThreadTest extends FeatureTestCase
     public function non_admin_with_permission_can_invite_participants()
     {
         $this->group->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'manage_invites' => true,
@@ -585,7 +575,7 @@ class ThreadTest extends FeatureTestCase
     public function can_invite_participants_if_participant_disabled_but_is_admin()
     {
         $this->group->participants()
-            ->admins()
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'manage_invites' => false,
@@ -702,7 +692,7 @@ class ThreadTest extends FeatureTestCase
     public function can_start_call_if_participant_disabled_but_is_admin()
     {
         $this->group->participants()
-            ->admins()
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'start_calls' => false,
@@ -717,8 +707,7 @@ class ThreadTest extends FeatureTestCase
     {
         $private = $this->createPrivateThread($this->tippin, $this->doe);
         $private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'start_calls' => false,
@@ -733,8 +722,7 @@ class ThreadTest extends FeatureTestCase
     {
         $private = $this->createPrivateThread($this->tippin, $this->doe);
         $private->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'pending' => true,
@@ -806,7 +794,7 @@ class ThreadTest extends FeatureTestCase
     public function can_knock_if_participant_disabled_but_is_admin()
     {
         $this->group->participants()
-            ->admins()
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'send_knocks' => false,
@@ -821,8 +809,7 @@ class ThreadTest extends FeatureTestCase
     {
         $private = $this->createPrivateThread($this->tippin, $this->doe);
         $private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'send_knocks' => false,
@@ -837,8 +824,7 @@ class ThreadTest extends FeatureTestCase
     {
         $private = $this->createPrivateThread($this->tippin, $this->doe);
         $private->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'pending' => true,
@@ -899,7 +885,7 @@ class ThreadTest extends FeatureTestCase
     public function is_unread_if_last_read_less_than_thread_last_updated()
     {
         $this->group->participants()
-            ->admins()
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'last_read' => now(),
@@ -916,7 +902,7 @@ class ThreadTest extends FeatureTestCase
     public function not_unread_if_last_read_greater_than_thread_last_updated()
     {
         $this->group->participants()
-            ->admins()
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'last_read' => now()->addHour(),
@@ -958,7 +944,7 @@ class ThreadTest extends FeatureTestCase
         $this->createMessage($this->group, $this->tippin);
         $this->travel(1)->minutes();
         $this->group->participants()
-            ->admins()
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'last_read' => now(),
@@ -986,7 +972,7 @@ class ThreadTest extends FeatureTestCase
     {
         $this->createMessage($this->group, $this->tippin);
         $this->group->participants()
-            ->admins()
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'last_read' => now()->addHour(),

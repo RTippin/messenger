@@ -4,20 +4,17 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class MessengerAvatarTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
     private string $disk;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         $this->disk = Messenger::getAvatarStorage('disk');
         Storage::fake($this->disk);
     }

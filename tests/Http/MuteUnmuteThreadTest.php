@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Events\ParticipantMutedEvent;
 use RTippin\Messenger\Events\ParticipantUnMutedEvent;
@@ -14,15 +13,11 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class MuteUnmuteThreadTest extends FeatureTestCase
 {
     private Thread $private;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
     }
 
@@ -121,8 +116,7 @@ class MuteUnmuteThreadTest extends FeatureTestCase
     public function participant_can_unmute_thread()
     {
         $this->private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'muted' => true,
@@ -143,8 +137,7 @@ class MuteUnmuteThreadTest extends FeatureTestCase
     public function mute_thread_updates_nothing_if_already_muted()
     {
         $this->private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'muted' => true,
@@ -180,8 +173,7 @@ class MuteUnmuteThreadTest extends FeatureTestCase
     public function muted_participant_receives_no_broadcast()
     {
         $this->private->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'muted' => true,

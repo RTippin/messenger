@@ -15,9 +15,6 @@ use RTippin\Messenger\Tests\Fixtures\OtherModel;
 class PushNotificationServiceTest extends FeatureTestCase
 {
     private Thread $group;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
-    private MessengerProvider $developers;
     const WITH = [
         'data' => 1234,
     ];
@@ -26,9 +23,6 @@ class PushNotificationServiceTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->developers = $this->companyDevelopers();
         $this->group = $this->createGroupThread($this->tippin, $this->doe, $this->developers);
     }
 

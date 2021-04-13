@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -10,17 +9,11 @@ class ParticipantsTest extends FeatureTestCase
 {
     private Thread $private;
     private Thread $group;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
-    private MessengerProvider $developers;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->developers = $this->companyDevelopers();
         $this->group = $this->createGroupThread($this->tippin, $this->doe, $this->developers);
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
     }
@@ -73,8 +66,7 @@ class ParticipantsTest extends FeatureTestCase
     public function user_can_view_private_participant()
     {
         $participant = $this->private->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first();
         $this->actingAs($this->tippin);
 
@@ -95,8 +87,7 @@ class ParticipantsTest extends FeatureTestCase
     public function user_can_view_group_participant()
     {
         $participant = $this->group->participants()
-            ->where('owner_id', '=', $this->developers->getKey())
-            ->where('owner_type', '=', get_class($this->developers))
+            ->forProvider($this->developers)
             ->first();
         $this->actingAs($this->doe);
 

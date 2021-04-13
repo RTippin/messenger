@@ -5,22 +5,16 @@ namespace RTippin\Messenger\Tests\Http;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PrivateThreadsTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         Storage::fake(Messenger::getThreadStorage('disk'));
     }
 
@@ -97,7 +91,7 @@ class PrivateThreadsTest extends FeatureTestCase
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
             'recipient_alias' => 'company',
-            'recipient_id' => $this->companyDevelopers()->getKey(),
+            'recipient_id' => $this->developers->getKey(),
         ])
             ->assertSuccessful()
             ->assertJson([

@@ -13,7 +13,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class MessageTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
     private Thread $group;
     private Message $message;
 
@@ -21,7 +20,6 @@ class MessageTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         $this->group = $this->createGroupThread($this->tippin);
         $this->message = $this->createMessage($this->group, $this->tippin);
     }
@@ -138,13 +136,7 @@ class MessageTest extends FeatureTestCase
     /** @test */
     public function it_doesnt_have_reply_when_reply_message_deleted()
     {
-        $replyMessage = $this->group->messages()->create([
-            'body' => 'First Reply Message',
-            'type' => 0,
-            'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
-            'reply_to_id' => $this->message->id,
-        ]);
+        $replyMessage = Message::factory()->for($this->group)->owner($this->tippin)->create(['reply_to_id' => $this->message->id]);
         $this->message->forceDelete();
 
         $this->assertDatabaseMissing('messages', [
@@ -161,7 +153,7 @@ class MessageTest extends FeatureTestCase
         ]);
         MessageReaction::factory()
             ->for($this->message)
-            ->for($this->tippin, 'owner')
+            ->owner($this->tippin)
             ->create([
                 'reaction' => ':joy:',
             ]);

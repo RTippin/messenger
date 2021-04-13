@@ -2,20 +2,10 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class MessengerSettingsTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->tippin = $this->userTippin();
-    }
-
     /** @test */
     public function messenger_created_when_called_from_user_without_messenger()
     {

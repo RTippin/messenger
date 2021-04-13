@@ -14,7 +14,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class ParticipantTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
     private Thread $group;
     private Participant $admin;
     private Message $message;
@@ -23,9 +22,8 @@ class ParticipantTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->group = $this->createGroupThread($this->tippin, $this->userDoe(), $this->companyDevelopers());
-        $this->admin = $this->group->participants()->admins()->first();
+        $this->group = $this->createGroupThread($this->tippin, $this->doe, $this->developers);
+        $this->admin = $this->group->participants()->forProvider($this->tippin)->first();
         $this->message = $this->createMessage($this->group, $this->tippin);
     }
 

@@ -10,16 +10,12 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PendingFriendTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
     private PendingFriend $pending;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->pending = PendingFriend::factory()->providers($this->tippin, $this->doe)->create();
     }
 

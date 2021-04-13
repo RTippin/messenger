@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Http;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
@@ -16,15 +15,11 @@ class ReplyToMessageTest extends FeatureTestCase
 {
     private Thread $private;
     private Message $message;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
         $this->message = $this->createMessage($this->private, $this->doe);
     }
@@ -32,13 +27,13 @@ class ReplyToMessageTest extends FeatureTestCase
     /** @test */
     public function user_can_view_message_with_reply()
     {
-        $replying = $this->private->messages()->create([
-            'body' => 'Reply',
-            'type' => 0,
-            'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
-            'reply_to_id' => $this->message->id,
-        ]);
+        $replying = Message::factory()
+            ->for($this->private)
+            ->owner($this->tippin)
+            ->create([
+                'body' => 'Reply',
+                'reply_to_id' => $this->message->id
+            ]);
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.show', [
@@ -72,13 +67,13 @@ class ReplyToMessageTest extends FeatureTestCase
     /** @test */
     public function reply_to_resource_omitted_when_reply_not_found()
     {
-        $replying = $this->private->messages()->create([
-            'body' => 'Reply',
-            'type' => 0,
-            'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
-            'reply_to_id' => '404',
-        ]);
+        $replying = Message::factory()
+            ->for($this->private)
+            ->owner($this->tippin)
+            ->create([
+                'body' => 'Reply',
+                'reply_to_id' => '404'
+            ]);
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.show', [

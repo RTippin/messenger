@@ -2,24 +2,11 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
 
 class ProviderChannelTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-
-    private MessengerProvider $developers;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->tippin = $this->userTippin();
-        $this->developers = $this->companyDevelopers();
-    }
-
     protected function getEnvironmentSetUp($app): void
     {
         parent::getEnvironmentSetUp($app);

@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\MessengerBroadcast;
 use RTippin\Messenger\Brokers\BroadcastBroker;
 use RTippin\Messenger\Contracts\BroadcastDriver;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\PushNotificationEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
@@ -17,9 +16,6 @@ use RTippin\Messenger\Tests\Fixtures\OtherModel;
 class BroadcastDriverTest extends FeatureTestCase
 {
     private Thread $group;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
-    private MessengerProvider $developers;
     const WITH = [
         'data' => 1234,
     ];
@@ -28,9 +24,6 @@ class BroadcastDriverTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->developers = $this->companyDevelopers();
         $this->group = $this->createGroupThread($this->tippin, $this->doe, $this->developers);
     }
 

@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\MessageArchivedBroadcast;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\MessageArchivedEvent;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Models\Message;
@@ -15,15 +14,11 @@ class PrivateMessageTest extends FeatureTestCase
 {
     private Thread $private;
     private Message $message;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
         $this->message = $this->createMessage($this->private, $this->tippin);
     }
@@ -195,10 +190,8 @@ class PrivateMessageTest extends FeatureTestCase
     /** @test */
     public function sender_can_send_message_when_thread_awaiting_recipient_approval()
     {
-        $doe = $this->userDoe();
         $this->private->participants()
-            ->where('owner_id', '=', $doe->getKey())
-            ->where('owner_type', '=', get_class($doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'pending' => true,
@@ -222,7 +215,7 @@ class PrivateMessageTest extends FeatureTestCase
     /** @test */
     public function non_participant_forbidden_to_send_message()
     {
-        $this->actingAs($this->companyDevelopers());
+        $this->actingAs($this->developers);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $this->private->id,
@@ -237,8 +230,7 @@ class PrivateMessageTest extends FeatureTestCase
     public function recipient_forbidden_to_send_message_when_thread_awaiting_approval_on_them()
     {
         $this->private->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'pending' => true,

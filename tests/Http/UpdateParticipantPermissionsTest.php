@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\ParticipantPermissionsBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ParticipantPermissionsEvent;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
@@ -13,8 +12,6 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
 {
     private Thread $group;
     private Participant $participant;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
@@ -23,9 +20,7 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
         $this->tippin = $this->userTippin();
         $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->participant = $this->group->participants()
-            ->where('admin', '=', false)
-            ->first();
+        $this->participant = $this->group->participants()->forProvider($this->doe)->first();
     }
 
     /** @test */
@@ -33,8 +28,7 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
     {
         $private = $this->createPrivateThread($this->tippin, $this->doe);
         $participant = $private->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first();
         $this->actingAs($this->tippin);
 

@@ -2,15 +2,12 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class ThreadChannelTest extends FeatureTestCase
 {
     private Thread $private;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
@@ -65,8 +62,7 @@ class ThreadChannelTest extends FeatureTestCase
     public function pending_participant_forbidden()
     {
         $this->private->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'pending' => true,

@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Broadcasting\KnockBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\KnockEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
@@ -13,15 +12,11 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class KnockGroupThreadTest extends FeatureTestCase
 {
     private Thread $group;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
     }
 
@@ -45,8 +40,7 @@ class KnockGroupThreadTest extends FeatureTestCase
     public function non_admin_with_permission_can_knock_at_thread()
     {
         $this->group->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'send_knocks' => true,

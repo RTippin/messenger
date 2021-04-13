@@ -3,16 +3,12 @@
 namespace RTippin\Messenger\Tests\Models;
 
 use Illuminate\Support\Carbon;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
-use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class MessageReactionTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-    private Thread $group;
     private Message $message;
     private MessageReaction $reaction;
 
@@ -20,12 +16,11 @@ class MessageReactionTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->group = $this->createGroupThread($this->tippin);
-        $this->message = $this->createMessage($this->group, $this->tippin);
+        $group = $this->createGroupThread($this->tippin);
+        $this->message = $this->createMessage($group, $this->tippin);
         $this->reaction = MessageReaction::factory()
             ->for($this->message)
-            ->for($this->tippin, 'owner')
+            ->owner($this->tippin)
             ->create([
                 'reaction' => ':joy:',
             ]);

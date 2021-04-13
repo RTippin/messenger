@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Http;
 use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Broadcasting\CallJoinedBroadcast;
 use RTippin\Messenger\Broadcasting\CallStartedBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallJoinedEvent;
 use RTippin\Messenger\Events\CallStartedEvent;
 use RTippin\Messenger\Facades\Messenger;
@@ -16,15 +15,11 @@ class StartCallTest extends FeatureTestCase
 {
     private Thread $private;
     private Thread $group;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
     }
@@ -66,8 +61,7 @@ class StartCallTest extends FeatureTestCase
     public function forbidden_to_start_call_on_pending_private()
     {
         $this->private->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'pending' => true,
@@ -192,8 +186,7 @@ class StartCallTest extends FeatureTestCase
     public function participant_with_permission_can_start_call_in_group()
     {
         $this->group->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'start_calls' => true,

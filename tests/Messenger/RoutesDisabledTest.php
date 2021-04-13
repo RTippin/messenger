@@ -2,22 +2,12 @@
 
 namespace RTippin\Messenger\Tests\Messenger;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class RoutesDisabledTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->tippin = $this->userTippin();
-    }
-
     protected function getEnvironmentSetUp($app): void
     {
         parent::getEnvironmentSetUp($app);

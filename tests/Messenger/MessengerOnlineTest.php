@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Messenger;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
@@ -12,15 +11,11 @@ use RTippin\Messenger\Tests\Fixtures\OtherModel;
 class MessengerOnlineTest extends FeatureTestCase
 {
     private Messenger $messenger;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->messenger = app(Messenger::class);
     }
 

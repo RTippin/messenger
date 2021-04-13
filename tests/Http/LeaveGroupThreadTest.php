@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ThreadLeftEvent;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -11,15 +10,11 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class LeaveGroupThreadTest extends FeatureTestCase
 {
     private Thread $group;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
     }
 
@@ -94,8 +89,7 @@ class LeaveGroupThreadTest extends FeatureTestCase
     public function admin_can_leave_when_only_participant()
     {
         $this->group->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->forceDelete();
         $this->actingAs($this->tippin);
@@ -115,8 +109,7 @@ class LeaveGroupThreadTest extends FeatureTestCase
     public function admin_can_leave_when_other_admins_exist()
     {
         $this->group->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'admin' => true,

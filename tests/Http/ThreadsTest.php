@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -11,17 +10,11 @@ class ThreadsTest extends FeatureTestCase
 {
     private Thread $private;
     private Thread $group;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
-    private MessengerProvider $developers;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->developers = $this->companyDevelopers();
         $this->group = $this->createGroupThread($this->tippin, $this->doe, $this->developers);
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
     }
@@ -194,8 +187,7 @@ class ThreadsTest extends FeatureTestCase
     {
         $this->createMessage($this->private, $this->tippin);
         $this->private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'last_read' => now()->addMinute(),

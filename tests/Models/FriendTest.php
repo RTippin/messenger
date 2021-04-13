@@ -10,22 +10,13 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class FriendTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
     private Friend $friend;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->friend = Friend::create([
-            'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
-            'party_id' => $this->doe->getKey(),
-            'party_type' => get_class($this->doe),
-        ]);
+        $this->friend = Friend::factory()->providers($this->tippin, $this->doe)->create();
     }
 
     /** @test */
