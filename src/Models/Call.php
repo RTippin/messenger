@@ -4,11 +4,14 @@ namespace RTippin\Messenger\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Database\Factories\CallFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Traits\ScopesProvider;
@@ -45,6 +48,7 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class Call extends Model
 {
+    use HasFactory;
     use Uuids;
     use ScopesProvider;
 
@@ -297,5 +301,15 @@ class Call extends Model
         }
 
         return ! is_null($this->currentCallParticipant()->left_call);
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return Factory
+     */
+    protected static function newFactory(): Factory
+    {
+        return CallFactory::new();
     }
 }

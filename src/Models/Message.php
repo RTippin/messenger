@@ -453,7 +453,7 @@ class Message extends Model
      *
      * @return Factory
      */
-    protected static function newFactory()
+    protected static function newFactory(): Factory
     {
         return MessageFactory::new();
     }

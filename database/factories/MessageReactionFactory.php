@@ -20,7 +20,7 @@ class MessageReactionFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
             'reaction' => app(EmojiInterface::class)->toShort($this->faker->emoji),

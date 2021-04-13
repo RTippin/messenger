@@ -566,7 +566,7 @@ class Thread extends Model
      *
      * @return Factory
      */
-    protected static function newFactory()
+    protected static function newFactory(): Factory
     {
         return ThreadFactory::new();
     }

@@ -3,17 +3,17 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Support\Definitions;
 
-class ThreadFactory extends Factory
+class ParticipantFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Thread::class;
+    protected $model = Participant::class;
 
     /**
      * Define the model's default state.
@@ -22,37 +22,31 @@ class ThreadFactory extends Factory
      */
     public function definition(): array
     {
-        return Definitions::DefaultThread;
+        return Definitions::DefaultParticipant;
     }
 
     /**
-     * Indicate thread is a group.
+     * Indicate participant is admin.
      *
      * @return Factory
      */
-    public function group(): Factory
+    public function admin(): Factory
     {
         return $this->state(function (array $attributes) {
-            return [
-                'type' => 2,
-                'subject' => $this->faker->company,
-                'image' => rand(1, 5).'.png',
-                'add_participants' => true,
-                'invitations' => true,
-            ];
+            return Definitions::DefaultAdminParticipant;
         });
     }
 
     /**
-     * Indicate thread is locked.
+     * Indicate participant is pending.
      *
      * @return Factory
      */
-    public function locked(): Factory
+    public function pending(): Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'lockout' => true,
+                'pending' => true,
             ];
         });
     }

@@ -19,11 +19,87 @@ class MessageFactory extends Factory
      *
      * @return array
      */
-    public function definition()
+    public function definition(): array
     {
         return [
             'type' => 0,
             'body' => $this->faker->realText(rand(10, 200), rand(1, 4)),
+            'edited' => false,
+            'reacted' => false,
+            'embeds' => true,
         ];
+    }
+
+    /**
+     * Indicate message is an image.
+     *
+     * @return Factory
+     */
+    public function image(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'type' => 1,
+                'body' => 'picture.jpg',
+            ];
+        });
+    }
+
+    /**
+     * Indicate message is a document.
+     *
+     * @return Factory
+     */
+    public function document(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'type' => 2,
+                'body' => 'document.pdf',
+            ];
+        });
+    }
+
+    /**
+     * Indicate message is audio.
+     *
+     * @return Factory
+     */
+    public function audio(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'type' => 3,
+                'body' => 'sound.mp3',
+            ];
+        });
+    }
+
+    /**
+     * Indicate message is edited.
+     *
+     * @return Factory
+     */
+    public function edited(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'edited' => true,
+            ];
+        });
+    }
+
+    /**
+     * Indicate message is an image.
+     *
+     * @return Factory
+     */
+    public function reacted(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'reacted' => true,
+            ];
+        });
     }
 }
