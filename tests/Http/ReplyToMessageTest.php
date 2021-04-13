@@ -32,7 +32,7 @@ class ReplyToMessageTest extends FeatureTestCase
             ->owner($this->tippin)
             ->create([
                 'body' => 'Reply',
-                'reply_to_id' => $this->message->id
+                'reply_to_id' => $this->message->id,
             ]);
         $this->actingAs($this->tippin);
 
@@ -72,7 +72,7 @@ class ReplyToMessageTest extends FeatureTestCase
             ->owner($this->tippin)
             ->create([
                 'body' => 'Reply',
-                'reply_to_id' => '404'
+                'reply_to_id' => '404',
             ]);
         $this->actingAs($this->tippin);
 

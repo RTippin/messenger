@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Messenger;
 
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\MessengerBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\PushNotificationEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
