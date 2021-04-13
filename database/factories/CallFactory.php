@@ -34,7 +34,7 @@ class CallFactory extends Factory
     }
 
     /**
-     * Indicate participant is pending.
+     * Indicate call is setup.
      *
      * @return Factory
      */
@@ -52,7 +52,7 @@ class CallFactory extends Factory
     }
 
     /**
-     * Indicate participant is pending.
+     * Indicate call has ended.
      *
      * @return Factory
      */

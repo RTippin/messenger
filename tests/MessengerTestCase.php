@@ -32,11 +32,8 @@ class MessengerTestCase extends TestCase
         $config = $app->get('config');
 
         $config->set('messenger.provider_uuids', self::UseUUID);
-
         $config->set('messenger.calling.enabled', true);
-
         $config->set('messenger.providers', $this->getBaseProvidersConfig());
-
         $config->set('messenger.site_name', 'Messenger-Testbench');
     }
 

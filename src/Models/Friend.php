@@ -2,9 +2,12 @@
 
 namespace RTippin\Messenger\Models;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Database\Factories\FriendFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Traits\Uuids;
 
@@ -24,6 +27,7 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class Friend extends Model
 {
+    use HasFactory;
     use Uuids;
 
     /**
@@ -64,5 +68,15 @@ class Friend extends Model
         return $this->morphTo()->withDefault(function () {
             return Messenger::getGhostProvider();
         });
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return Factory
+     */
+    protected static function newFactory(): Factory
+    {
+        return FriendFactory::new();
     }
 }

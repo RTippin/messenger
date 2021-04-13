@@ -4,10 +4,11 @@ namespace RTippin\Messenger\Tests;
 
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Call;
+use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Tests\Fixtures\CompanyModel;
 use RTippin\Messenger\Tests\Fixtures\CompanyModelUuid;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
@@ -63,113 +64,86 @@ trait HelperTrait
         ]);
     }
 
-    protected function createFriends(MessengerProvider $one, MessengerProvider $two): array
+    protected function createFriends($one, $two): array
     {
         return [
-            Friend::create([
-                'owner_id' => $one->getKey(),
-                'owner_type' => get_class($one),
-                'party_id' => $two->getKey(),
-                'party_type' => get_class($two),
-            ]),
-            Friend::create([
-                'owner_id' => $two->getKey(),
-                'owner_type' => get_class($two),
-                'party_id' => $one->getKey(),
-                'party_type' => get_class($one),
-            ]),
+            Friend::factory()->providers($one, $two)->create(),
+            Friend::factory()->providers($two, $one)->create(),
         ];
     }
 
-    protected function createPrivateThread(MessengerProvider $one, MessengerProvider $two, bool $pending = false): Thread
+    protected function createPrivateThread($one, $two, bool $pending = false): Thread
     {
-        $private = Thread::create(Definitions::DefaultThread);
+        $private = Thread::factory()->create();
 
-        $private->participants()
-            ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => $one->getKey(),
-                'owner_type' => get_class($one),
+        Participant::factory()
+            ->for($private)
+            ->for($one, 'owner')
+            ->create([
                 'pending' => $pending,
-            ]));
+            ]);
 
-        $private->participants()
-            ->create(array_merge(Definitions::DefaultParticipant, [
-                'owner_id' => $two->getKey(),
-                'owner_type' => get_class($two),
-            ]));
+        Participant::factory()
+            ->for($private)
+            ->for($two, 'owner')
+            ->create();
 
         return $private;
     }
 
-    protected function createGroupThread(MessengerProvider $admin, ...$participants): Thread
+    protected function createGroupThread($admin, ...$participants): Thread
     {
-        $group = Thread::create([
-            'type' => 2,
-            'subject' => 'First Test Group',
-            'image' => '5.png',
-            'add_participants' => true,
-            'invitations' => true,
-            'calling' => true,
-            'knocks' => true,
-            'messaging' => true,
-            'lockout' => false,
-        ]);
+        $group = Thread::factory()
+            ->group()
+            ->create([
+                'subject' => 'First Test Group',
+                'image' => '5.png',
+            ]);
 
-        $group->participants()
-            ->create(array_merge(Definitions::DefaultAdminParticipant, [
-                'owner_id' => $admin->getKey(),
-                'owner_type' => get_class($admin),
-            ]));
+        Participant::factory()
+            ->for($group)
+            ->for($admin, 'owner')
+            ->admin()
+            ->create();
 
         foreach ($participants as $participant) {
-            $group->participants()
-                ->create(array_merge(Definitions::DefaultParticipant, [
-                    'owner_id' => $participant->getKey(),
-                    'owner_type' => get_class($participant),
-                ]));
+            Participant::factory()
+                ->for($group)
+                ->for($participant, 'owner')
+                ->create();
         }
 
         return $group;
     }
 
-    protected function createMessage(Thread $thread, MessengerProvider $owner): Message
+    protected function createMessage($thread, $owner): Message
     {
-        return $thread->messages()->create([
-            'body' => 'First Test Message',
-            'type' => 0,
-            'owner_id' => $owner->getKey(),
-            'owner_type' => get_class($owner),
-            'edited' => false,
-            'reacted' => false,
-            'embeds' => true,
-        ]);
+        return Message::factory()
+            ->for($thread)
+            ->for($owner, 'owner')
+            ->create([
+                'body' => 'First Test Message',
+            ]);
     }
 
-    protected function createCall(Thread $thread, MessengerProvider $owner, ...$participants): Call
+    protected function createCall($thread, $owner, ...$participants): Call
     {
-        $call = $thread->calls()->create([
-            'type' => 1,
-            'owner_id' => $owner->getKey(),
-            'owner_type' => get_class($owner),
-            'call_ended' => null,
-            'setup_complete' => true,
-            'teardown_complete' => false,
-            'room_id' => '123456789',
-            'room_pin' => 'PIN',
-            'room_secret' => 'SECRET',
-            'payload' => 'PAYLOAD',
-        ]);
+        $call = Call::factory()
+            ->for($thread)
+            ->for($owner, 'owner')
+            ->setup()
+            ->create();
 
-        $call->participants()->create([
-            'owner_id' => $owner->getKey(),
-            'owner_type' => get_class($owner),
-        ]);
+        CallParticipant::factory()
+            ->for($call)
+            ->for($owner, 'owner')
+            ->create();
 
         foreach ($participants as $participant) {
-            $call->participants()->create([
-                'owner_id' => $participant->getKey(),
-                'owner_type' => get_class($participant),
-            ]);
+            CallParticipant::factory()
+                ->for($call)
+                ->for($participant, 'owner')
+                ->create();
         }
 
         return $call;

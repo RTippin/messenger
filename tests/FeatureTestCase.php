@@ -13,15 +13,11 @@ class FeatureTestCase extends MessengerTestCase
         parent::setUp();
 
         $this->loadMigrationsFrom(__DIR__.'/Fixtures/migrations');
-
         $this->artisan('migrate', [
             '--database' => 'testbench',
         ])->run();
-
         $this->storeBaseUsers();
-
         $this->storeBaseCompanies();
-
         $this->withoutMiddleware(ThrottleRequests::class);
     }
 
@@ -39,7 +35,6 @@ class FeatureTestCase extends MessengerTestCase
         $config = $app->get('config');
 
         $config->set('database.default', 'testbench');
-
         $config->set('database.connections.testbench', [
             'driver' => 'sqlite',
             'database' => ':memory:',

@@ -3,10 +3,13 @@
 namespace RTippin\Messenger\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Database\Factories\CallParticipantFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Traits\Uuids;
 
@@ -29,6 +32,7 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class CallParticipant extends Model
 {
+    use HasFactory;
     use Uuids;
 
     /**
@@ -94,5 +98,15 @@ class CallParticipant extends Model
     public function scopeInCall(Builder $query): Builder
     {
         return $query->whereNull('left_call');
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return Factory
+     */
+    protected static function newFactory(): Factory
+    {
+        return CallParticipantFactory::new();
     }
 }
