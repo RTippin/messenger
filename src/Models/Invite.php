@@ -3,11 +3,14 @@
 namespace RTippin\Messenger\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Database\Factories\InviteFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\Uuids;
@@ -37,6 +40,7 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class Invite extends Model
 {
+    use HasFactory;
     use Uuids;
     use SoftDeletes;
 
@@ -150,5 +154,15 @@ class Invite extends Model
             ],
             true
         );
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return Factory
+     */
+    protected static function newFactory(): Factory
+    {
+        return InviteFactory::new();
     }
 }

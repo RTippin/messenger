@@ -21,14 +21,15 @@ class InviteTest extends FeatureTestCase
 
         $this->tippin = $this->userTippin();
         $this->group = $this->createGroupThread($this->tippin);
-        $this->invite = $this->group->invites()->create([
-            'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
-            'code' => 'TEST1234',
-            'max_use' => 10,
-            'uses' => 1,
-            'expires_at' => now()->addMinutes(5),
-        ]);
+        $this->invite = Invite::factory()
+            ->for($this->group)
+            ->owner($this->tippin)
+            ->expires(now()->addMinutes(5))
+            ->testing()
+            ->create([
+                'max_use' => 10,
+                'uses' => 1,
+            ]);
     }
 
     /** @test */

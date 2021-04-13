@@ -2,9 +2,12 @@
 
 namespace RTippin\Messenger\Models;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Database\Factories\MessengerFactory;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
@@ -28,6 +31,7 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class Messenger extends Model
 {
+    use HasFactory;
     use Uuids;
 
     /**
@@ -43,12 +47,12 @@ class Messenger extends Model
      * @var array
      */
     protected $attributes = [
-        'message_popups' => 1,
-        'message_sound' => 1,
-        'call_ringtone_sound' => 1,
-        'notify_sound' => 1,
+        'message_popups' => true,
+        'message_sound' => true,
+        'call_ringtone_sound' => true,
+        'notify_sound' => true,
         'online_status' => 1,
-        'dark_mode' => 1,
+        'dark_mode' => true,
         'ip' => null,
         'timezone' => null,
     ];
@@ -96,5 +100,15 @@ class Messenger extends Model
     public function owner()
     {
         return $this->morphTo();
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return Factory
+     */
+    protected static function newFactory(): Factory
+    {
+        return MessengerFactory::new();
     }
 }

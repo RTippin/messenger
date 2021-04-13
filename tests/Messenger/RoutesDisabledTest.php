@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Messenger;
 
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class RoutesDisabledTest extends FeatureTestCase
@@ -39,14 +40,7 @@ class RoutesDisabledTest extends FeatureTestCase
     public function invite_web_route_null()
     {
         $group = $this->createGroupThread($this->tippin);
-        $invite = $group->invites()->create([
-            'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
-            'code' => 'TEST1234',
-            'max_use' => 10,
-            'uses' => 0,
-            'expires_at' => null,
-        ]);
+        $invite = Invite::factory()->for($group)->owner($this->tippin)->create();
 
         $this->assertNull($invite->getInvitationRoute());
     }

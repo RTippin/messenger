@@ -75,14 +75,12 @@ trait HelperTrait
     protected function createPrivateThread($one, $two, bool $pending = false): Thread
     {
         $private = Thread::factory()->create();
-
         Participant::factory()
             ->for($private)
             ->for($one, 'owner')
             ->create([
                 'pending' => $pending,
             ]);
-
         Participant::factory()
             ->for($private)
             ->for($two, 'owner')
@@ -99,7 +97,6 @@ trait HelperTrait
                 'subject' => 'First Test Group',
                 'image' => '5.png',
             ]);
-
         Participant::factory()
             ->for($group)
             ->for($admin, 'owner')
@@ -133,7 +130,6 @@ trait HelperTrait
             ->for($owner, 'owner')
             ->setup()
             ->create();
-
         CallParticipant::factory()
             ->for($call)
             ->for($owner, 'owner')

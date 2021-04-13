@@ -50,22 +50,13 @@ class FeatureTestCase extends MessengerTestCase
             'email' => 'tippindev@gmail.com',
             'password' => 'secret',
         ]);
-
         $doe = $this->getModelUser()::create([
             'name' => 'John Doe',
             'email' => 'doe@example.net',
             'password' => 'secret',
         ]);
-
-        MessengerModel::create([
-            'owner_id' => $tippin->getKey(),
-            'owner_type' => get_class($tippin),
-        ]);
-
-        MessengerModel::create([
-            'owner_id' => $doe->getKey(),
-            'owner_type' => get_class($doe),
-        ]);
+        MessengerModel::factory()->provider($tippin)->create();
+        MessengerModel::factory()->provider($doe)->create();
     }
 
     private function storeBaseCompanies(): void
@@ -75,10 +66,6 @@ class FeatureTestCase extends MessengerTestCase
             'company_email' => 'developers@example.net',
             'password' => 'secret',
         ]);
-
-        MessengerModel::create([
-            'owner_id' => $developers->getKey(),
-            'owner_type' => get_class($developers),
-        ]);
+        MessengerModel::factory()->provider($developers)->create();
     }
 }

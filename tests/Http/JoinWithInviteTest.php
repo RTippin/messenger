@@ -22,14 +22,12 @@ class JoinWithInviteTest extends FeatureTestCase
         $tippin = $this->userTippin();
         $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($tippin, $this->doe);
-        $this->invite = $this->group->invites()->create([
-            'owner_id' => $tippin->getKey(),
-            'owner_type' => get_class($tippin),
-            'code' => 'TEST1234',
-            'max_use' => 1,
-            'uses' => 0,
-            'expires_at' => now()->addHour(),
-        ]);
+        $this->invite = Invite::factory()
+            ->for($this->group)
+            ->owner($tippin)
+            ->expires(now()->addHour())
+            ->testing()
+            ->create(['max_use' => 1]);
     }
 
     /** @test */
