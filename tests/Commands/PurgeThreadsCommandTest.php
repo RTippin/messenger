@@ -2,12 +2,12 @@
 
 namespace RTippin\Messenger\Tests\Commands;
 
+use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\PurgeThreads;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PurgeThreadsCommandTest extends FeatureTestCase
@@ -45,9 +45,7 @@ class PurgeThreadsCommandTest extends FeatureTestCase
     /** @test */
     public function it_dispatches_job()
     {
-        Thread::create(array_merge(Definitions::DefaultThread, [
-            'deleted_at' => now()->subMonths(2),
-        ]));
+        Thread::factory()->create(['deleted_at' => now()->subMonths(2)]);
 
         $this->artisan('messenger:purge:threads')
             ->expectsOutput('1 threads archived 30 days or greater found. Purging dispatched!')
@@ -59,9 +57,7 @@ class PurgeThreadsCommandTest extends FeatureTestCase
     /** @test */
     public function it_runs_job_now()
     {
-        Thread::create(array_merge(Definitions::DefaultThread, [
-            'deleted_at' => now()->subMonths(2),
-        ]));
+        Thread::factory()->create(['deleted_at' => now()->subMonths(2)]);
 
         $this->artisan('messenger:purge:threads', [
             '--now' => true,
@@ -75,12 +71,13 @@ class PurgeThreadsCommandTest extends FeatureTestCase
     /** @test */
     public function it_finds_multiple_threads()
     {
-        Thread::create(array_merge(Definitions::DefaultThread, [
-            'deleted_at' => now()->subDays(10),
-        ]));
-        Thread::create(array_merge(Definitions::DefaultThread, [
-            'deleted_at' => now()->subDays(8),
-        ]));
+        Thread::factory()
+            ->state(new Sequence(
+                ['deleted_at' => now()->subDays(8)],
+                ['deleted_at' => now()->subDays(10)],
+            ))
+            ->count(2)
+            ->create();
 
         $this->artisan('messenger:purge:threads', [
             '--days' => 7,

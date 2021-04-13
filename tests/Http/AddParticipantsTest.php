@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -11,17 +10,11 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class AddParticipantsTest extends FeatureTestCase
 {
     private Thread $group;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
-    private MessengerProvider $developers;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->developers = $this->companyDevelopers();
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
         $this->createFriends($this->tippin, $this->doe);
         $this->createFriends($this->tippin, $this->developers);
@@ -93,8 +86,7 @@ class AddParticipantsTest extends FeatureTestCase
     public function non_admin_with_permission_can_view_add_participants()
     {
         $this->group->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'add_participants' => true,
@@ -193,8 +185,7 @@ class AddParticipantsTest extends FeatureTestCase
     {
         $company = $this->createSomeCompany();
         $this->group->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'add_participants' => true,

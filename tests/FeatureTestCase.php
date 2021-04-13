@@ -2,6 +2,8 @@
 
 namespace RTippin\Messenger\Tests;
 
+use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\MessengerProvider;
@@ -9,9 +11,20 @@ use RTippin\Messenger\Models\Messenger as MessengerModel;
 
 class FeatureTestCase extends MessengerTestCase
 {
-    protected MessengerProvider $tippin;
-    protected MessengerProvider $doe;
-    protected MessengerProvider $developers;
+    /**
+     * @var MessengerProvider|Model|Authenticatable
+     */
+    protected $tippin;
+
+    /**
+     * @var MessengerProvider|Model|Authenticatable
+     */
+    protected $doe;
+
+    /**
+     * @var MessengerProvider|Model|Authenticatable
+     */
+    protected $developers;
 
     protected function setUp(): void
     {

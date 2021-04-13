@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -11,15 +10,11 @@ class CallChannelTest extends FeatureTestCase
 {
     private Thread $private;
     private Call $call;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
         $this->call = $this->createCall($this->private, $this->tippin);
     }

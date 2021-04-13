@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests\Commands;
 
 use Illuminate\Support\Facades\Bus;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\CheckCallsActivity;
 use RTippin\Messenger\Models\Thread;
@@ -11,14 +10,12 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class CallActivityCheckCommandTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
     private Thread $group;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         $this->group = $this->createGroupThread($this->tippin);
         Bus::fake();
     }

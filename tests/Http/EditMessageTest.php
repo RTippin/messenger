@@ -3,10 +3,10 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\MessageEditedBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\MessageEditedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\MessageEdit;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -14,15 +14,11 @@ class EditMessageTest extends FeatureTestCase
 {
     private Thread $private;
     private Message $message;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
         $this->message = $this->createMessage($this->private, $this->tippin);
     }
@@ -66,10 +62,7 @@ class EditMessageTest extends FeatureTestCase
     {
         Messenger::setMessageEditsView(false);
         $this->travel(10)->minutes();
-        $this->message->edits()->create([
-            'body' => 'First Edit',
-            'edited_at' => now(),
-        ]);
+        MessageEdit::factory()->for($this->message)->create();
         $this->message->touch();
         $this->actingAs($this->tippin);
 
@@ -84,10 +77,7 @@ class EditMessageTest extends FeatureTestCase
     public function recipient_can_view_message_edits()
     {
         $this->travel(10)->minutes();
-        $this->message->edits()->create([
-            'body' => 'First Edit',
-            'edited_at' => now(),
-        ]);
+        MessageEdit::factory()->for($this->message)->create(['body' => 'First Edit']);
         $this->message->update([
             'edited' => true,
         ]);
@@ -110,14 +100,8 @@ class EditMessageTest extends FeatureTestCase
     public function can_view_multiple_message_edits()
     {
         $this->travel(10)->minutes();
-        $this->message->edits()->create([
-            'body' => 'First Edit',
-            'edited_at' => now(),
-        ]);
-        $this->message->edits()->create([
-            'body' => 'Second Edit',
-            'edited_at' => now(),
-        ]);
+        MessageEdit::factory()->for($this->message)->count(2)->create();
+
         $this->message->update([
             'edited' => true,
         ]);

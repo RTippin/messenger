@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Commands;
 
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Bus;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\ArchiveInvalidInvites;
 use RTippin\Messenger\Models\Invite;
@@ -13,14 +12,12 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class InvitesCheckCommandTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
     private Thread $group;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         $this->group = $this->createGroupThread($this->tippin);
         Bus::fake();
     }

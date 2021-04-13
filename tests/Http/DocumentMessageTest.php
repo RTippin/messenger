@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Http;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
@@ -14,14 +13,12 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class DocumentMessageTest extends FeatureTestCase
 {
     private Thread $private;
-    private MessengerProvider $tippin;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->private = $this->createPrivateThread($this->tippin, $this->userDoe());
+        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
         Storage::fake(Messenger::getThreadStorage('disk'));
     }
 

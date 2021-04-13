@@ -2,8 +2,11 @@
 
 namespace RTippin\Messenger\Models;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use RTippin\Messenger\Database\Factories\MessageEditFactory;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
@@ -18,6 +21,7 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class MessageEdit extends Model
 {
+    use HasFactory;
     use Uuids;
 
     /**
@@ -73,5 +77,15 @@ class MessageEdit extends Model
             'message_id',
             'id'
         );
+    }
+
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return Factory
+     */
+    protected static function newFactory(): Factory
+    {
+        return MessageEditFactory::new();
     }
 }

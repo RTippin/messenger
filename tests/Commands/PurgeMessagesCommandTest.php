@@ -2,13 +2,13 @@
 
 namespace RTippin\Messenger\Tests\Commands;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
+use Illuminate\Database\Eloquent\Factories\Sequence;
+use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PurgeMessagesCommandTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
     private Thread $group;
 
     protected function setUp(): void
@@ -40,13 +40,10 @@ class PurgeMessagesCommandTest extends FeatureTestCase
     /** @test */
     public function it_removes_message()
     {
-        $message = $this->group->messages()->create([
-            'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
-            'type' => 0,
-            'body' => 'test',
-            'deleted_at' => now()->subMonths(2),
-        ]);
+        $message = Message::factory()
+            ->for($this->group)
+            ->owner($this->tippin)
+            ->create(['deleted_at' => now()->subMonths(2)]);
 
         $this->artisan('messenger:purge:messages')
             ->expectsOutput('1 messages archived 30 days or greater have been purged!')
@@ -60,20 +57,15 @@ class PurgeMessagesCommandTest extends FeatureTestCase
     /** @test */
     public function it_removes_multiple_messages()
     {
-        $this->group->messages()->create([
-            'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
-            'type' => 0,
-            'body' => 'test',
-            'deleted_at' => now()->subDays(10),
-        ]);
-        $this->group->messages()->create([
-            'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
-            'type' => 0,
-            'body' => 'test',
-            'deleted_at' => now()->subDays(8),
-        ]);
+        Message::factory()
+            ->for($this->group)
+            ->owner($this->tippin)
+            ->state(new Sequence(
+                ['deleted_at' => now()->subDays(8)],
+                ['deleted_at' => now()->subDays(10)],
+            ))
+            ->count(2)
+            ->create();
 
         $this->artisan('messenger:purge:messages', [
             '--days' => 7,
