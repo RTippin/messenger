@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Facades\Messenger;
@@ -11,19 +10,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class GroupThreadsTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-
-    private MessengerProvider $doe;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->tippin = $this->userTippin();
-
-        $this->doe = $this->userDoe();
-    }
-
     /** @test */
     public function guest_is_unauthorized()
     {
@@ -102,15 +88,14 @@ class GroupThreadsTest extends FeatureTestCase
     /** @test */
     public function store_group_without_extra_participants()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             NewThreadEvent::class,
         ]);
-
         $this->doesntExpectEvents([
             NewThreadBroadcast::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.groups.store'), [
             'subject' => 'Test Group',
@@ -139,16 +124,15 @@ class GroupThreadsTest extends FeatureTestCase
     /** @test */
     public function store_group_with_extra_participants_will_ignore_participant_if_not_friend()
     {
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             NewThreadEvent::class,
         ]);
-
         $this->doesntExpectEvents([
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.groups.store'), [
             'subject' => 'Test Group',
@@ -183,15 +167,14 @@ class GroupThreadsTest extends FeatureTestCase
     /** @test */
     public function store_group_with_one_added_participant_that_is_friend()
     {
+        $this->createFriends($this->tippin, $this->doe);
+        $this->actingAs($this->tippin);
+
         $this->expectsEvents([
             NewThreadEvent::class,
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
-
-        $this->createFriends($this->tippin, $this->doe);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.groups.store'), [
             'subject' => 'Test Group Participants',
@@ -226,19 +209,15 @@ class GroupThreadsTest extends FeatureTestCase
     /** @test */
     public function store_group_with_multiple_providers_added_as_participants_that_are_friends()
     {
-        $developers = $this->companyDevelopers();
+        $this->createFriends($this->tippin, $this->doe);
+        $this->createFriends($this->tippin, $this->developers);
+        $this->actingAs($this->tippin);
 
         $this->expectsEvents([
             NewThreadEvent::class,
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
-
-        $this->createFriends($this->tippin, $this->doe);
-
-        $this->createFriends($this->tippin, $developers);
-
-        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.groups.store'), [
             'subject' => 'Test Many Participants',
@@ -248,7 +227,7 @@ class GroupThreadsTest extends FeatureTestCase
                     'alias' => 'user',
                 ],
                 [
-                    'id' => $developers->getKey(),
+                    'id' => $this->developers->getKey(),
                     'alias' => 'company',
                 ],
             ],

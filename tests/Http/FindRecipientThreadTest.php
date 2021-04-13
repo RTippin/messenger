@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -10,17 +9,11 @@ class FindRecipientThreadTest extends FeatureTestCase
 {
     private Thread $private;
     private Thread $privateWithCompany;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
-    private MessengerProvider $developers;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->developers = $this->companyDevelopers();
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
         $this->privateWithCompany = $this->createPrivateThread($this->tippin, $this->developers);
     }

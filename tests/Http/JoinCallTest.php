@@ -3,9 +3,9 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\CallJoinedBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallJoinedEvent;
 use RTippin\Messenger\Models\Call;
+use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -13,15 +13,11 @@ class JoinCallTest extends FeatureTestCase
 {
     private Thread $group;
     private Call $call;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
         $this->call = $this->createCall($this->group, $this->tippin);
     }
@@ -68,12 +64,12 @@ class JoinCallTest extends FeatureTestCase
     /** @test */
     public function kicked_participant_forbidden_to_rejoin_call()
     {
-        $this->call->participants()->create([
-            'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
-            'left_call' => now(),
-            'kicked' => true,
-        ]);
+        CallParticipant::factory()
+            ->for($this->call)
+            ->owner($this->doe)
+            ->kicked()
+            ->left()
+            ->create();
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.calls.join', [

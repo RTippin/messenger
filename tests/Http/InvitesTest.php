@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\InviteArchivedEvent;
 use RTippin\Messenger\Events\NewInviteEvent;
 use RTippin\Messenger\Facades\Messenger;
@@ -14,24 +13,20 @@ class InvitesTest extends FeatureTestCase
 {
     private Thread $group;
     private Invite $invite;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->invite = $this->group->invites()
+        $this->invite = Invite::factory()
+            ->for($this->group)
+            ->owner($this->tippin)
+            ->testing()
+            ->expires(now()->addHour())
             ->create([
-                'owner_id' => $this->tippin->getKey(),
-                'owner_type' => get_class($this->tippin),
-                'code' => 'TEST1234',
                 'max_use' => 1,
                 'uses' => 0,
-                'expires_at' => now()->addHour(),
             ]);
     }
 
@@ -73,8 +68,7 @@ class InvitesTest extends FeatureTestCase
     public function participant_with_permission_can_view_invites()
     {
         $this->group->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'manage_invites' => true,
@@ -186,8 +180,7 @@ class InvitesTest extends FeatureTestCase
     public function participant_with_permission_can_archive_invite()
     {
         $this->group->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'manage_invites' => true,
@@ -231,8 +224,7 @@ class InvitesTest extends FeatureTestCase
     public function participant_with_permission_can_create_invite()
     {
         $this->group->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'manage_invites' => true,

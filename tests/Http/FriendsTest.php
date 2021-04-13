@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Contracts\FriendDriver;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\FriendRemovedEvent;
 use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -14,17 +13,11 @@ class FriendsTest extends FeatureTestCase
     private Friend $inverseFriend;
     private Friend $friendCompany;
     private Friend $inverseFriendCompany;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
-    private MessengerProvider $developers;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->developers = $this->companyDevelopers();
         $friends = $this->createFriends($this->tippin, $this->doe);
         $this->friend = $friends[0];
         $this->inverseFriend = $friends[1];

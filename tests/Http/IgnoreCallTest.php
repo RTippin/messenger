@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\CallEndedBroadcast;
 use RTippin\Messenger\Broadcasting\CallIgnoredBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallEndedEvent;
 use RTippin\Messenger\Events\CallIgnoredEvent;
 use RTippin\Messenger\Models\Call;
@@ -15,15 +14,11 @@ class IgnoreCallTest extends FeatureTestCase
 {
     private Thread $group;
     private Call $call;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
         $this->call = $this->createCall($this->group, $this->tippin);
     }

@@ -3,9 +3,9 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\CallEndedBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallEndedEvent;
 use RTippin\Messenger\Models\Call;
+use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -13,15 +13,11 @@ class EndCallTest extends FeatureTestCase
 {
     private Thread $group;
     private Call $call;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
         $this->call = $this->createCall($this->group, $this->tippin);
     }
@@ -99,10 +95,7 @@ class EndCallTest extends FeatureTestCase
     /** @test */
     public function non_call_admin_participant_forbidden_to_end_call()
     {
-        $this->call->participants()->create([
-            'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
-        ]);
+        CallParticipant::factory()->for($this->call)->owner($this->doe)->create();
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.calls.end', [

@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\MessageArchivedBroadcast;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\MessageArchivedEvent;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Models\Message;
@@ -15,15 +14,11 @@ class GroupMessageTest extends FeatureTestCase
 {
     private Thread $group;
     private Message $message;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
         $this->message = $this->createMessage($this->group, $this->tippin);
     }
@@ -152,8 +147,7 @@ class GroupMessageTest extends FeatureTestCase
     public function participant_forbidden_to_send_message_without_proper_permission()
     {
         $this->group->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first()
             ->update([
                 'send_messages' => false,

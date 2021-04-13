@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\InviteUsedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Invite;
@@ -13,18 +12,15 @@ class JoinWithInviteTest extends FeatureTestCase
 {
     private Thread $group;
     private Invite $invite;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->group = $this->createGroupThread($tippin, $this->doe);
+        $this->group = $this->createGroupThread($this->tippin, $this->doe);
         $this->invite = Invite::factory()
             ->for($this->group)
-            ->owner($tippin)
+            ->owner($this->tippin)
             ->expires(now()->addHour())
             ->testing()
             ->create(['max_use' => 1]);

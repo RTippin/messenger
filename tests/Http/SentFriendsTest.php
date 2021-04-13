@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Broadcasting\FriendCancelledBroadcast;
 use RTippin\Messenger\Broadcasting\FriendRequestBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\FriendCancelledEvent;
 use RTippin\Messenger\Events\FriendRequestEvent;
 use RTippin\Messenger\Models\SentFriend;
@@ -12,19 +11,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class SentFriendsTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
-    private MessengerProvider $developers;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->developers = $this->companyDevelopers();
-    }
-
     /** @test */
     public function guest_is_unauthorized()
     {
