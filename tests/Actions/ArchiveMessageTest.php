@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Messages\ArchiveMessage;
 use RTippin\Messenger\Broadcasting\MessageArchivedBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\MessageArchivedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
@@ -16,15 +15,11 @@ class ArchiveMessageTest extends FeatureTestCase
 {
     private Thread $private;
     private Message $message;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
         $this->message = $this->createMessage($this->private, $this->tippin);
         Messenger::setProvider($this->tippin);

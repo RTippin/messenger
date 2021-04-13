@@ -24,10 +24,21 @@ class InviteFactory extends Factory
     {
         return [
             'code' => Str::random(6),
-            'max_use' => rand(0,10),
+            'max_use' => rand(0, 10),
             'uses' => 0,
             'expires_at' => null,
         ];
+    }
+
+    /**
+     * Owner relation to add.
+     *
+     * @param $owner
+     * @return Factory
+     */
+    public function owner($owner): Factory
+    {
+        return $this->for($owner, 'owner');
     }
 
     /**
@@ -57,16 +68,5 @@ class InviteFactory extends Factory
                 'code' => 'TEST1234',
             ];
         });
-    }
-
-    /**
-     * Owner relation to add.
-     *
-     * @param $owner
-     * @return Factory
-     */
-    public function owner($owner): Factory
-    {
-        return $this->for($owner, 'owner');
     }
 }

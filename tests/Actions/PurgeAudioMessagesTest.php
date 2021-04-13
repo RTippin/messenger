@@ -19,27 +19,16 @@ class PurgeAudioMessagesTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
-        $group = $this->createGroupThread($tippin);
+        $group = $this->createGroupThread($this->tippin);
         $this->disk = Messenger::getThreadStorage('disk');
         Storage::fake($this->disk);
-        $this->audio1 = $group->messages()->create([
-            'owner_id' => $tippin->getKey(),
-            'owner_type' => get_class($tippin),
-            'type' => 3,
-            'body' => 'test.mp3',
-        ]);
+        $this->audio1 = Message::factory()->for($group)->owner($this->tippin)->audio()->create(['body' => 'test.mp3']);
         UploadedFile::fake()
             ->create('test.mp3', 500, 'audio/mpeg')
             ->storeAs($group->getStorageDirectory().'/audio', 'test.mp3', [
                 'disk' => $this->disk,
             ]);
-        $this->audio2 = $group->messages()->create([
-            'owner_id' => $tippin->getKey(),
-            'owner_type' => get_class($tippin),
-            'type' => 3,
-            'body' => 'foo.mp3',
-        ]);
+        $this->audio2 = Message::factory()->for($group)->owner($this->tippin)->audio()->create(['body' => 'foo.mp3']);
         UploadedFile::fake()
             ->create('foo.mp3', 500, 'audio/mpeg')
             ->storeAs($group->getStorageDirectory().'/audio', 'foo.mp3', [

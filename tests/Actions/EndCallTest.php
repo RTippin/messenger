@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Calls\EndCall;
 use RTippin\Messenger\Broadcasting\CallEndedBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallEndedEvent;
 use RTippin\Messenger\Listeners\CallEndedMessage;
 use RTippin\Messenger\Listeners\TeardownCall;
@@ -23,15 +22,11 @@ class EndCallTest extends FeatureTestCase
     private Thread $group;
     private Call $call;
     private CallParticipant $participant;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
         $this->call = $this->createCall($this->group, $this->tippin);
         $this->participant = $this->call->participants()->first();

@@ -5,23 +5,19 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Friends\CancelFriendRequest;
 use RTippin\Messenger\Broadcasting\FriendCancelledBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\FriendCancelledEvent;
 use RTippin\Messenger\Models\SentFriend;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class CancelFriendRequestTest extends FeatureTestCase
 {
-    private MessengerProvider $doe;
     private SentFriend $sentFriend;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->sentFriend = SentFriend::factory()->providers($tippin, $this->doe)->create();
+        $this->sentFriend = SentFriend::factory()->providers($this->tippin, $this->doe)->create();
     }
 
     /** @test */

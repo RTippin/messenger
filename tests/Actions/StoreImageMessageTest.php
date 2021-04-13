@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Messages\StoreImageMessage;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
@@ -19,16 +18,12 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class StoreImageMessageTest extends FeatureTestCase
 {
     private Thread $private;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
     private string $disk;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
         $this->disk = Messenger::getThreadStorage('disk');
         Messenger::setProvider($this->tippin);
@@ -147,10 +142,7 @@ class StoreImageMessageTest extends FeatureTestCase
             ]
         );
 
-        $participant = $this->private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
-            ->first();
+        $participant = $this->private->participants()->forProvider($this->tippin)->first();
 
         $this->assertNotNull($participant->last_read);
         $this->assertDatabaseHas('threads', [

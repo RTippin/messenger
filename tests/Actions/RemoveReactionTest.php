@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Messages\RemoveReaction;
 use RTippin\Messenger\Broadcasting\ReactionRemovedBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ReactionRemovedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
@@ -18,22 +17,14 @@ class RemoveReactionTest extends FeatureTestCase
     private Thread $group;
     private Message $message;
     private MessageReaction $reaction;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->message = $this->createMessage($this->group, $this->tippin);
-        $this->message->update(['reacted' => true]);
-        $this->reaction = MessageReaction::factory()
-            ->for($this->message)
-            ->for($this->tippin, 'owner')
-            ->create(['reaction' => ':joy:']);
+        $this->message = Message::factory()->for($this->group)->owner($this->tippin)->reacted()->create();
+        $this->reaction = MessageReaction::factory()->for($this->message)->owner($this->tippin)->create(['reaction' => ':joy:']);
         Messenger::setProvider($this->tippin);
     }
 
@@ -42,7 +33,7 @@ class RemoveReactionTest extends FeatureTestCase
     {
         $reaction = MessageReaction::factory()
             ->for($this->message)
-            ->for($this->tippin, 'owner')
+            ->owner($this->tippin)
             ->create(['reaction' => ':poop:']);
 
         app(RemoveReaction::class)->withoutDispatches()->execute(

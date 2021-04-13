@@ -19,26 +19,15 @@ class PurgeImageMessagesTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
-        $group = $this->createGroupThread($tippin);
+        $group = $this->createGroupThread($this->tippin);
         $this->disk = Messenger::getThreadStorage('disk');
         Storage::fake($this->disk);
-        $this->image1 = $group->messages()->create([
-            'owner_id' => $tippin->getKey(),
-            'owner_type' => get_class($tippin),
-            'type' => 1,
-            'body' => 'picture.jpg',
-        ]);
+        $this->image1 = Message::factory()->for($group)->owner($this->tippin)->image()->create();
         UploadedFile::fake()->image('picture.jpg')
             ->storeAs($group->getStorageDirectory().'/images', 'picture.jpg', [
                 'disk' => $this->disk,
             ]);
-        $this->image2 = $group->messages()->create([
-            'owner_id' => $tippin->getKey(),
-            'owner_type' => get_class($tippin),
-            'type' => 1,
-            'body' => 'foo.jpg',
-        ]);
+        $this->image2 = Message::factory()->for($group)->owner($this->tippin)->image()->create(['body' => 'foo.jpg']);
         UploadedFile::fake()->image('foo.jpg')
             ->storeAs($group->getStorageDirectory().'/images', 'foo.jpg', [
                 'disk' => $this->disk,

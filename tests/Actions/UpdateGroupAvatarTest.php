@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Threads\UpdateGroupAvatar;
 use RTippin\Messenger\Broadcasting\ThreadAvatarBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ThreadAvatarEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
@@ -20,14 +19,12 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class UpdateGroupAvatarTest extends FeatureTestCase
 {
     private Thread $group;
-    private MessengerProvider $tippin;
     private string $disk;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         $this->group = $this->createGroupThread($this->tippin);
         Messenger::setProvider($this->tippin);
         $this->disk = Messenger::getThreadStorage('disk');

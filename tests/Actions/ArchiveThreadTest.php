@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\ArchiveThread;
 use RTippin\Messenger\Broadcasting\ThreadArchivedBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ThreadArchivedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Listeners\ThreadArchivedMessage;
@@ -17,15 +16,11 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class ArchiveThreadTest extends FeatureTestCase
 {
     private Thread $private;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
         Messenger::setProvider($this->tippin);
     }

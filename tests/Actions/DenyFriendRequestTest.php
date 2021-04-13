@@ -5,23 +5,19 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Friends\DenyFriendRequest;
 use RTippin\Messenger\Broadcasting\FriendDeniedBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\FriendDeniedEvent;
 use RTippin\Messenger\Models\PendingFriend;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class DenyFriendRequestTest extends FeatureTestCase
 {
-    private MessengerProvider $doe;
     private PendingFriend $pendingFriend;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->pendingFriend = PendingFriend::factory()->providers($this->doe, $tippin)->create();
+        $this->pendingFriend = PendingFriend::factory()->providers($this->doe, $this->tippin)->create();
     }
 
     /** @test */

@@ -6,7 +6,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Calls\KickCallParticipant;
 use RTippin\Messenger\Broadcasting\KickedFromCallBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\KickedFromCallEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Call;
@@ -17,22 +16,14 @@ class KickCallParticipantTest extends FeatureTestCase
 {
     private Call $call;
     private CallParticipant $participant;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->call = $this->createCall($this->group, $this->tippin);
-        $this->participant = $this->call->participants()->create([
-            'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
-            'left_call' => null,
-        ]);
+        $group = $this->createGroupThread($this->tippin, $this->doe);
+        $this->call = $this->createCall($group, $this->tippin);
+        $this->participant = CallParticipant::factory()->for($this->call)->owner($this->doe)->create();
         Messenger::setProvider($this->tippin);
     }
 

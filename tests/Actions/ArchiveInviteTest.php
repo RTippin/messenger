@@ -18,9 +18,8 @@ class ArchiveInviteTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
-        $group = $this->createGroupThread($tippin);
-        $this->invite = Invite::factory()->for($group)->owner($tippin)->create();
+        $group = $this->createGroupThread($this->tippin);
+        $this->invite = Invite::factory()->for($group)->owner($this->tippin)->create();
     }
 
     /** @test */

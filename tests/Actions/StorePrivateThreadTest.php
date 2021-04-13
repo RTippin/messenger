@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Threads\StorePrivateThread;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Exceptions\NewThreadException;
@@ -19,15 +18,10 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StorePrivateThreadTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         Storage::fake(Messenger::getThreadStorage('disk'));
     }
 

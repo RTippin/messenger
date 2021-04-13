@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Messages\AddReaction;
 use RTippin\Messenger\Broadcasting\ReactionAddedBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ReactionAddedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\ReactionException;
@@ -20,15 +19,11 @@ class AddReactionTest extends FeatureTestCase
 {
     private Thread $group;
     private Message $message;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
         $this->message = $this->createMessage($this->group, $this->tippin);
         Messenger::setProvider($this->tippin);
@@ -67,7 +62,7 @@ class AddReactionTest extends FeatureTestCase
     {
         MessageReaction::factory()
             ->for($this->message)
-            ->for($this->tippin, 'owner')
+            ->owner($this->tippin)
             ->create([
                 'reaction' => ':joy:',
             ]);
@@ -87,7 +82,7 @@ class AddReactionTest extends FeatureTestCase
     {
         MessageReaction::factory()
             ->for($this->message)
-            ->for($this->tippin, 'owner')
+            ->owner($this->tippin)
             ->state(new Sequence(
                 ['reaction' => ':one:'],
                 ['reaction' => ':two:'],

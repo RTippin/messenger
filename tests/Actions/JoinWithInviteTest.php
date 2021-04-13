@@ -6,30 +6,26 @@ use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Invites\JoinWithInvite;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\InviteUsedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Listeners\JoinedWithInviteMessage;
 use RTippin\Messenger\Models\Invite;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class JoinWithInviteTest extends FeatureTestCase
 {
     private Thread $group;
     private Invite $invite;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->group = $this->createGroupThread($tippin);
-        $this->invite = Invite::factory()->for($this->group)->owner($tippin)->create(['uses' => 2]);
+        $this->group = $this->createGroupThread($this->tippin);
+        $this->invite = Invite::factory()->for($this->group)->owner($this->tippin)->create(['uses' => 2]);
         Messenger::setProvider($this->doe);
     }
 
@@ -71,11 +67,7 @@ class JoinWithInviteTest extends FeatureTestCase
     /** @test */
     public function it_restores_soft_deleted_participant()
     {
-        $participant = $this->group->participants()->create(array_merge(Definitions::DefaultAdminParticipant, [
-            'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
-            'deleted_at' => now(),
-        ]));
+        $participant = Participant::factory()->for($this->group)->owner($this->doe)->create(['deleted_at' => now()]);
 
         app(JoinWithInvite::class)->withoutDispatches()->execute($this->invite);
 

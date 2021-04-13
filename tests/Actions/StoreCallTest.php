@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Calls\StoreCall;
 use RTippin\Messenger\Broadcasting\CallJoinedBroadcast;
 use RTippin\Messenger\Broadcasting\CallStartedBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallJoinedEvent;
 use RTippin\Messenger\Events\CallStartedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
@@ -24,15 +23,11 @@ class StoreCallTest extends FeatureTestCase
 {
     private Thread $private;
     private Call $call;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
         Messenger::setProvider($this->tippin);
     }

@@ -77,13 +77,13 @@ trait HelperTrait
         $private = Thread::factory()->create();
         Participant::factory()
             ->for($private)
-            ->for($one, 'owner')
+            ->owner($one)
             ->create([
                 'pending' => $pending,
             ]);
         Participant::factory()
             ->for($private)
-            ->for($two, 'owner')
+            ->owner($two)
             ->create();
 
         return $private;
@@ -99,14 +99,14 @@ trait HelperTrait
             ]);
         Participant::factory()
             ->for($group)
-            ->for($admin, 'owner')
+            ->owner($admin)
             ->admin()
             ->create();
 
         foreach ($participants as $participant) {
             Participant::factory()
                 ->for($group)
-                ->for($participant, 'owner')
+                ->owner($participant)
                 ->create();
         }
 
@@ -117,7 +117,7 @@ trait HelperTrait
     {
         return Message::factory()
             ->for($thread)
-            ->for($owner, 'owner')
+            ->owner($owner)
             ->create([
                 'body' => 'First Test Message',
             ]);
@@ -127,18 +127,18 @@ trait HelperTrait
     {
         $call = Call::factory()
             ->for($thread)
-            ->for($owner, 'owner')
+            ->owner($owner)
             ->setup()
             ->create();
         CallParticipant::factory()
             ->for($call)
-            ->for($owner, 'owner')
+            ->owner($owner)
             ->create();
 
         foreach ($participants as $participant) {
             CallParticipant::factory()
                 ->for($call)
-                ->for($participant, 'owner')
+                ->owner($participant)
                 ->create();
         }
 

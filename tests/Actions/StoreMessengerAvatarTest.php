@@ -6,14 +6,12 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Messenger\StoreMessengerAvatar;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreMessengerAvatarTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
     private string $directory;
     private string $disk;
 
@@ -21,7 +19,6 @@ class StoreMessengerAvatarTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         $this->directory = Messenger::getAvatarStorage('directory').'/user/'.$this->tippin->getKey();
         $this->disk = Messenger::getAvatarStorage('disk');
         Messenger::setProvider($this->tippin);

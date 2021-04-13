@@ -6,7 +6,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Calls\JoinCall;
 use RTippin\Messenger\Broadcasting\CallJoinedBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallJoinedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Call;
@@ -17,15 +16,11 @@ class JoinCallTest extends FeatureTestCase
 {
     private Thread $group;
     private Call $call;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
         $this->call = $this->createCall($this->group, $this->tippin);
     }

@@ -4,10 +4,15 @@ namespace RTippin\Messenger\Tests;
 
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Cache;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Messenger as MessengerModel;
 
 class FeatureTestCase extends MessengerTestCase
 {
+    protected MessengerProvider $tippin;
+    protected MessengerProvider $doe;
+    protected MessengerProvider $developers;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -45,27 +50,27 @@ class FeatureTestCase extends MessengerTestCase
 
     private function storeBaseUsers(): void
     {
-        $tippin = $this->getModelUser()::create([
+        $this->tippin = $this->getModelUser()::create([
             'name' => 'Richard Tippin',
             'email' => 'tippindev@gmail.com',
             'password' => 'secret',
         ]);
-        $doe = $this->getModelUser()::create([
+        $this->doe = $this->getModelUser()::create([
             'name' => 'John Doe',
             'email' => 'doe@example.net',
             'password' => 'secret',
         ]);
-        MessengerModel::factory()->provider($tippin)->create();
-        MessengerModel::factory()->provider($doe)->create();
+        MessengerModel::factory()->owner($this->tippin)->create();
+        MessengerModel::factory()->owner($this->doe)->create();
     }
 
     private function storeBaseCompanies(): void
     {
-        $developers = $this->getModelCompany()::create([
+        $this->developers = $this->getModelCompany()::create([
             'company_name' => 'Developers',
             'company_email' => 'developers@example.net',
             'password' => 'secret',
         ]);
-        MessengerModel::factory()->provider($developers)->create();
+        MessengerModel::factory()->owner($this->developers)->create();
     }
 }

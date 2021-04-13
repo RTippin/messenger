@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\LeaveThread;
 use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ThreadLeftEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Listeners\ArchiveEmptyThread;
@@ -20,13 +19,11 @@ class LeaveThreadTest extends FeatureTestCase
 {
     private Thread $group;
     private Participant $participant;
-    private MessengerProvider $tippin;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         $this->group = $this->createGroupThread($this->tippin);
         $this->participant = $this->group->participants()->first();
         Messenger::setProvider($this->tippin);

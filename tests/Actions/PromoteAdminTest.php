@@ -7,33 +7,24 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\PromoteAdmin;
 use RTippin\Messenger\Broadcasting\PromotedAdminBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\PromotedAdminEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Listeners\PromotedAdminMessage;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PromoteAdminTest extends FeatureTestCase
 {
     private Thread $group;
     private Participant $participant;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin);
-        $this->participant = $this->group->participants()->create(array_merge(Definitions::DefaultParticipant, [
-            'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
-        ]));
+        $this->participant = Participant::factory()->for($this->group)->owner($this->doe)->create();
         Messenger::setProvider($this->tippin);
     }
 

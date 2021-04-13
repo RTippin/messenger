@@ -7,26 +7,21 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\StoreManyParticipants;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Listeners\ParticipantsAddedMessage;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreManyParticipantsTest extends FeatureTestCase
 {
     private Thread $group;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin);
         Messenger::setProvider($this->tippin);
     }
@@ -82,10 +77,7 @@ class StoreManyParticipantsTest extends FeatureTestCase
     /** @test */
     public function it_ignores_existing_participant()
     {
-        $this->group->participants()->create(array_merge(Definitions::DefaultParticipant, [
-            'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
-        ]));
+        Participant::factory()->for($this->group)->owner($this->doe)->create();
         $this->createFriends($this->tippin, $this->doe);
 
         $this->doesntExpectEvents([
@@ -109,11 +101,7 @@ class StoreManyParticipantsTest extends FeatureTestCase
     /** @test */
     public function it_restores_participant_if_previously_soft_deleted()
     {
-        $participant = $this->group->participants()->create(array_merge(Definitions::DefaultParticipant, [
-            'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
-            'deleted_at' => now(),
-        ]));
+        $participant = Participant::factory()->for($this->group)->owner($this->doe)->create(['deleted_at' => now()]);
         $this->createFriends($this->tippin, $this->doe);
 
         app(StoreManyParticipants::class)->withoutDispatches()->execute(
@@ -174,9 +162,8 @@ class StoreManyParticipantsTest extends FeatureTestCase
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
-        $developers = $this->companyDevelopers();
         $this->createFriends($this->tippin, $this->doe);
-        $this->createFriends($this->tippin, $developers);
+        $this->createFriends($this->tippin, $this->developers);
 
         app(StoreManyParticipants::class)->execute(
             $this->group,
@@ -186,15 +173,15 @@ class StoreManyParticipantsTest extends FeatureTestCase
                     'alias' => 'user',
                 ],
                 [
-                    'id' => $developers->getKey(),
+                    'id' => $this->developers->getKey(),
                     'alias' => 'company',
                 ],
             ],
         );
 
-        Event::assertDispatched(function (NewThreadBroadcast $event) use ($developers) {
+        Event::assertDispatched(function (NewThreadBroadcast $event) {
             $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
-            $this->assertContains('private-messenger.company.'.$developers->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.company.'.$this->developers->getKey(), $event->broadcastOn());
             $this->assertContains('First Test Group', $event->broadcastWith()['thread']);
 
             return true;

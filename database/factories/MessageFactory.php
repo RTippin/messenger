@@ -31,6 +31,17 @@ class MessageFactory extends Factory
     }
 
     /**
+     * Owner relation to add.
+     *
+     * @param $owner
+     * @return Factory
+     */
+    public function owner($owner): Factory
+    {
+        return $this->for($owner, 'owner');
+    }
+
+    /**
      * Indicate message is an image.
      *
      * @return Factory

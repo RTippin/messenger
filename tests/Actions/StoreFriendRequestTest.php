@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Friends\StoreFriendRequest;
 use RTippin\Messenger\Broadcasting\FriendRequestBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\FriendRequestEvent;
 use RTippin\Messenger\Exceptions\FriendException;
 use RTippin\Messenger\Exceptions\ProviderNotFoundException;
@@ -16,17 +15,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreFriendRequestTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-    }
-
     /** @test */
     public function it_stores_sent_friend()
     {

@@ -6,24 +6,20 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreMessageTest extends FeatureTestCase
 {
     private Thread $private;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->private = $this->createPrivateThread($this->tippin, $this->doe);
         Messenger::setProvider($this->tippin);
     }
@@ -121,11 +117,9 @@ class StoreMessageTest extends FeatureTestCase
     /** @test */
     public function it_will_not_add_reply_if_system_message()
     {
-        $system = $this->private->messages()->create([
+        $system = Message::factory()->for($this->private)->owner($this->tippin)->create([
             'body' => 'System Message',
             'type' => 93,
-            'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
         ]);
 
         app(StoreMessage::class)->withoutDispatches()->execute(
@@ -201,10 +195,7 @@ class StoreMessageTest extends FeatureTestCase
             ]
         );
 
-        $participant = $this->private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
-            ->first();
+        $participant = $this->private->participants()->forProvider($this->tippin)->first();
 
         $this->assertDatabaseHas('threads', [
             'id' => $this->private->id,

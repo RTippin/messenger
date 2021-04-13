@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\UpdateGroupSettings;
 use RTippin\Messenger\Broadcasting\ThreadSettingsBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ThreadSettingsEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Listeners\ThreadNameMessage;
@@ -17,13 +16,11 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class UpdateGroupSettingsTest extends FeatureTestCase
 {
     private Thread $group;
-    private MessengerProvider $tippin;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         $this->group = $this->createGroupThread($this->tippin);
         Messenger::setProvider($this->tippin);
     }

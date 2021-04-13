@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Messenger\OnlineStatus;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\StatusHeartbeatEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Listeners\StoreMessengerIp;
@@ -16,13 +15,10 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class OnlineStatusTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         Messenger::setProvider($this->tippin);
     }
 

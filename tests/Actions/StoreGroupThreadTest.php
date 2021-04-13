@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\StoreGroupThread;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Facades\Messenger;
@@ -13,15 +12,10 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreGroupThreadTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         Messenger::setProvider($this->tippin);
     }
 
@@ -122,9 +116,8 @@ class StoreGroupThreadTest extends FeatureTestCase
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
-        $developers = $this->companyDevelopers();
         $this->createFriends($this->tippin, $this->doe);
-        $this->createFriends($this->tippin, $developers);
+        $this->createFriends($this->tippin, $this->developers);
 
         app(StoreGroupThread::class)->execute([
             'subject' => 'Test Many Participants',
@@ -134,7 +127,7 @@ class StoreGroupThreadTest extends FeatureTestCase
                     'alias' => 'user',
                 ],
                 [
-                    'id' => $developers->getKey(),
+                    'id' => $this->developers->getKey(),
                     'alias' => 'company',
                 ],
             ],

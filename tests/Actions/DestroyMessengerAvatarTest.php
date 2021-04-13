@@ -5,14 +5,12 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Messenger\DestroyMessengerAvatar;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class DestroyMessengerAvatarTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
     private string $directory;
     private string $disk;
 
@@ -20,7 +18,6 @@ class DestroyMessengerAvatarTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         $this->tippin->update([
             'picture' => 'avatar.jpg',
         ]);

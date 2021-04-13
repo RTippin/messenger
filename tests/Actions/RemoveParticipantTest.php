@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\RemoveParticipant;
 use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\RemovedFromThreadEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Listeners\RemovedFromThreadMessage;
@@ -19,20 +18,13 @@ class RemoveParticipantTest extends FeatureTestCase
 {
     private Thread $group;
     private Participant $participant;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->participant = $this->group->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
-            ->first();
+        $this->participant = $this->group->participants()->forProvider($this->doe)->first();
         Messenger::setProvider($this->tippin);
     }
 

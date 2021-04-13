@@ -12,11 +12,10 @@ class CallHeartbeatTest extends FeatureTestCase
     /** @test */
     public function it_stores_call_participant_key_in_cache()
     {
-        $tippin = $this->userTippin();
-        $group = $this->createGroupThread($tippin);
-        $call = $this->createCall($group, $tippin);
+        $group = $this->createGroupThread($this->tippin);
+        $call = $this->createCall($group, $this->tippin);
         $participant = $call->participants()->first();
-        Messenger::setProvider($tippin);
+        Messenger::setProvider($this->tippin);
 
         app(CallHeartbeat::class)->execute($call);
 

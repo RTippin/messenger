@@ -5,23 +5,18 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Friends\AcceptFriendRequest;
 use RTippin\Messenger\Broadcasting\FriendApprovedBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\FriendApprovedEvent;
 use RTippin\Messenger\Models\PendingFriend;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class AcceptFriendRequestTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
     private PendingFriend $pendingFriend;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->pendingFriend = PendingFriend::factory()->providers($this->doe, $this->tippin)->create();
     }
 

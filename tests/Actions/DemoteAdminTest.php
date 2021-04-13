@@ -7,33 +7,24 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\DemoteAdmin;
 use RTippin\Messenger\Broadcasting\DemotedAdminBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\DemotedAdminEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Listeners\DemotedAdminMessage;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class DemoteAdminTest extends FeatureTestCase
 {
     private Thread $group;
     private Participant $participant;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin);
-        $this->participant = $this->group->participants()->create(array_merge(Definitions::DefaultAdminParticipant, [
-            'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
-        ]));
+        $this->participant = Participant::factory()->for($this->group)->owner($this->doe)->admin()->create();
         Messenger::setProvider($this->tippin);
     }
 

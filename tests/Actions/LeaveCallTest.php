@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Calls\LeaveCall;
 use RTippin\Messenger\Broadcasting\CallLeftBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallLeftEvent;
 use RTippin\Messenger\Listeners\EndCallIfEmpty;
 use RTippin\Messenger\Models\Call;
@@ -22,13 +21,11 @@ class LeaveCallTest extends FeatureTestCase
     private Thread $group;
     private Call $call;
     private CallParticipant $participant;
-    private MessengerProvider $tippin;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         $this->group = $this->createGroupThread($this->tippin);
         $this->call = $this->createCall($this->group, $this->tippin);
         $this->participant = $this->call->participants()->first();

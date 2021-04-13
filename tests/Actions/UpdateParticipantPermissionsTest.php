@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\UpdateParticipantPermissions;
 use RTippin\Messenger\Broadcasting\ParticipantPermissionsBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ParticipantPermissionsEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Participant;
@@ -16,19 +15,13 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
 {
     private Thread $group;
     private Participant $participant;
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
         $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->participant = $this->group->participants()
-            ->where('admin', '=', false)
-            ->first();
+        $this->participant = $this->group->participants()->forProvider($this->doe)->first();
         Messenger::setProvider($this->tippin);
     }
 

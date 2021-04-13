@@ -19,9 +19,8 @@ class PurgeThreadsTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
-        $this->private = $this->createPrivateThread($tippin, $this->userDoe());
-        $this->group = $this->createGroupThread($tippin);
+        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
+        $this->group = $this->createGroupThread($this->tippin);
         $this->disk = Messenger::getThreadStorage('disk');
         Storage::fake($this->disk);
     }

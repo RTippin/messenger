@@ -20,10 +20,9 @@ class MuteThreadTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
-        $this->group = $this->createGroupThread($tippin);
+        $this->group = $this->createGroupThread($this->tippin);
         $this->participant = $this->group->participants()->first();
-        Messenger::setProvider($tippin);
+        Messenger::setProvider($this->tippin);
     }
 
     /** @test */

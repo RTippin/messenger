@@ -34,6 +34,17 @@ class CallFactory extends Factory
     }
 
     /**
+     * Owner relation to add.
+     *
+     * @param $owner
+     * @return Factory
+     */
+    public function owner($owner): Factory
+    {
+        return $this->for($owner, 'owner');
+    }
+
+    /**
      * Indicate call is setup.
      *
      * @return Factory

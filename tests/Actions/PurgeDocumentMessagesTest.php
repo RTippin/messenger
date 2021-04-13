@@ -19,27 +19,16 @@ class PurgeDocumentMessagesTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
-        $group = $this->createGroupThread($tippin);
+        $group = $this->createGroupThread($this->tippin);
         $this->disk = Messenger::getThreadStorage('disk');
         Storage::fake($this->disk);
-        $this->document1 = $group->messages()->create([
-            'owner_id' => $tippin->getKey(),
-            'owner_type' => get_class($tippin),
-            'type' => 2,
-            'body' => 'test.pdf',
-        ]);
+        $this->document1 = Message::factory()->for($group)->owner($this->tippin)->document()->create(['body' => 'test.pdf']);
         UploadedFile::fake()
             ->create('test.pdf', 500, 'application/pdf')
             ->storeAs($group->getStorageDirectory().'/documents', 'test.pdf', [
                 'disk' => $this->disk,
             ]);
-        $this->document2 = $group->messages()->create([
-            'owner_id' => $tippin->getKey(),
-            'owner_type' => get_class($tippin),
-            'type' => 2,
-            'body' => 'foo.pdf',
-        ]);
+        $this->document2 = Message::factory()->for($group)->owner($this->tippin)->document()->create(['body' => 'foo.pdf']);
         UploadedFile::fake()
             ->create('foo.pdf', 500, 'application/pdf')
             ->storeAs($group->getStorageDirectory().'/documents', 'foo.pdf', [

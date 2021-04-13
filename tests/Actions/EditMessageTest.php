@@ -6,7 +6,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Messages\EditMessage;
 use RTippin\Messenger\Broadcasting\MessageEditedBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\MessageEditedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
@@ -18,13 +17,11 @@ class EditMessageTest extends FeatureTestCase
 {
     private Thread $group;
     private Message $message;
-    private MessengerProvider $tippin;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         $this->group = $this->createGroupThread($this->tippin);
         $this->message = $this->createMessage($this->group, $this->tippin);
         Messenger::setProvider($this->tippin);

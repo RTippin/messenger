@@ -6,7 +6,6 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Threads\MarkParticipantRead;
 use RTippin\Messenger\Broadcasting\ParticipantReadBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ParticipantsReadEvent;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
@@ -16,18 +15,13 @@ class MarkParticipantReadTest extends FeatureTestCase
 {
     private Thread $private;
     private Participant $participant;
-    private MessengerProvider $tippin;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         $this->private = $this->createPrivateThread($this->tippin, $this->userDoe());
-        $this->participant = $this->private->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
-            ->first();
+        $this->participant = $this->private->participants()->forProvider($this->tippin)->first();
     }
 
     /** @test */

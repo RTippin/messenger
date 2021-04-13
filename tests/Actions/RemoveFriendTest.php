@@ -17,7 +17,7 @@ class RemoveFriendTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $friends = $this->createFriends($this->userTippin(), $this->userDoe());
+        $friends = $this->createFriends($this->tippin, $this->doe);
         $this->friend = $friends[0];
         $this->inverseFriend = $friends[1];
     }

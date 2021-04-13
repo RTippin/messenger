@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Calls\IgnoreCall;
 use RTippin\Messenger\Broadcasting\CallEndedBroadcast;
 use RTippin\Messenger\Broadcasting\CallIgnoredBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\CallEndedEvent;
 use RTippin\Messenger\Events\CallIgnoredEvent;
 use RTippin\Messenger\Facades\Messenger;
@@ -15,17 +14,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class IgnoreCallTest extends FeatureTestCase
 {
-    private MessengerProvider $tippin;
-    private MessengerProvider $doe;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-    }
-
     /** @test */
     public function it_keeps_call_active_if_ignoring_group_call()
     {

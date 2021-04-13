@@ -27,11 +27,11 @@ class MessengerFactory extends Factory
     /**
      * Owner relation to add.
      *
-     * @param $provider
+     * @param $owner
      * @return Factory
      */
-    public function provider($provider): Factory
+    public function owner($owner): Factory
     {
-        return $this->for($provider, 'owner');
+        return $this->for($owner, 'owner');
     }
 }

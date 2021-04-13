@@ -18,9 +18,8 @@ class StoreInviteTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
-        $this->group = $this->createGroupThread($tippin);
-        Messenger::setProvider($tippin);
+        $this->group = $this->createGroupThread($this->tippin);
+        Messenger::setProvider($this->tippin);
     }
 
     /** @test */

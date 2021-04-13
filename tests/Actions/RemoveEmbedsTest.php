@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Messages\RemoveEmbeds;
 use RTippin\Messenger\Broadcasting\EmbedsRemovedBroadcast;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\EmbedsRemovedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
@@ -16,13 +15,11 @@ class RemoveEmbedsTest extends FeatureTestCase
 {
     private Thread $group;
     private Message $message;
-    private MessengerProvider $tippin;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->tippin = $this->userTippin();
         $this->group = $this->createGroupThread($this->tippin);
         $this->message = $this->createMessage($this->group, $this->tippin);
         Messenger::setProvider($this->tippin);

@@ -18,20 +18,8 @@ class CallBrokerSetupTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
-        $this->group = $this->createGroupThread($tippin);
-        $this->call = $this->group->calls()->create([
-            'type' => 1,
-            'owner_id' => $tippin->getKey(),
-            'owner_type' => get_class($tippin),
-            'call_ended' => null,
-            'setup_complete' => false,
-            'teardown_complete' => false,
-            'room_id' => null,
-            'room_pin' => null,
-            'room_secret' => null,
-            'payload' => null,
-        ]);
+        $this->group = $this->createGroupThread($this->tippin);
+        $this->call = Call::factory()->for($this->group)->owner($this->tippin)->create();
     }
 
     /** @test */

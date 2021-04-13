@@ -23,11 +23,10 @@ class CallActivityCheckerTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
-        $private = $this->createPrivateThread($tippin, $this->userDoe());
-        $group = $this->createGroupThread($tippin);
-        $this->privateCall = $this->createCall($private, $tippin);
-        $this->groupCall = $this->createCall($group, $tippin);
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
+        $group = $this->createGroupThread($this->tippin);
+        $this->privateCall = $this->createCall($private, $this->tippin);
+        $this->groupCall = $this->createCall($group, $this->tippin);
     }
 
     /** @test */

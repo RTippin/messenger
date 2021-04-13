@@ -16,9 +16,8 @@ class CallBrokerTeardownTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $tippin = $this->userTippin();
-        $group = $this->createGroupThread($tippin);
-        $this->call = $this->createCall($group, $tippin);
+        $group = $this->createGroupThread($this->tippin);
+        $this->call = Call::factory()->for($group)->owner($this->tippin)->create();
     }
 
     /** @test */

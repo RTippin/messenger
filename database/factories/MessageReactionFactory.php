@@ -27,4 +27,15 @@ class MessageReactionFactory extends Factory
             'created_at' => now(),
         ];
     }
+
+    /**
+     * Owner relation to add.
+     *
+     * @param $owner
+     * @return Factory
+     */
+    public function owner($owner): Factory
+    {
+        return $this->for($owner, 'owner');
+    }
 }
