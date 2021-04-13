@@ -21,12 +21,7 @@ class CancelFriendRequestTest extends FeatureTestCase
 
         $tippin = $this->userTippin();
         $this->doe = $this->userDoe();
-        $this->sentFriend = SentFriend::create([
-            'sender_id' => $tippin->getKey(),
-            'sender_type' => get_class($tippin),
-            'recipient_id' => $this->doe->getKey(),
-            'recipient_type' => get_class($this->doe),
-        ]);
+        $this->sentFriend = SentFriend::factory()->providers($tippin, $this->doe)->create();
     }
 
     /** @test */

@@ -20,12 +20,7 @@ class PendingFriendTest extends FeatureTestCase
 
         $this->tippin = $this->userTippin();
         $this->doe = $this->userDoe();
-        $this->pending = PendingFriend::create([
-            'sender_id' => $this->tippin->getKey(),
-            'sender_type' => get_class($this->tippin),
-            'recipient_id' => $this->doe->getKey(),
-            'recipient_type' => get_class($this->doe),
-        ]);
+        $this->pending = PendingFriend::factory()->providers($this->tippin, $this->doe)->create();
     }
 
     /** @test */

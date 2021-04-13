@@ -3,16 +3,16 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use RTippin\Messenger\Models\Friend;
+use RTippin\Messenger\Models\SentFriend;
 
-class FriendFactory extends Factory
+class SentFriendFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Friend::class;
+    protected $model = SentFriend::class;
 
     /**
      * Define the model's default state.
@@ -25,15 +25,15 @@ class FriendFactory extends Factory
     }
 
     /**
-     * Owner and party relations to add.
+     * Sender and recipient relations to add.
      *
-     * @param $owner
-     * @param $party
+     * @param $sender
+     * @param $recipient
      * @return Factory
      */
-    public function providers($owner, $party): Factory
+    public function providers($sender, $recipient): Factory
     {
-        return $this->for($owner, 'owner')
-            ->for($party, 'party');
+        return $this->for($sender, 'sender')
+            ->for($recipient, 'recipient');
     }
 }

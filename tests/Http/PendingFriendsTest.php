@@ -9,7 +9,6 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\FriendApprovedEvent;
 use RTippin\Messenger\Events\FriendDeniedEvent;
 use RTippin\Messenger\Models\PendingFriend;
-use RTippin\Messenger\Models\SentFriend;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PendingFriendsTest extends FeatureTestCase
@@ -45,12 +44,7 @@ class PendingFriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_deny_pending_request()
     {
-        $pending = PendingFriend::create([
-            'sender_id' => $this->tippin->getKey(),
-            'sender_type' => get_class($this->tippin),
-            'recipient_id' => $this->doe->getKey(),
-            'recipient_type' => get_class($this->doe),
-        ]);
+        $pending = PendingFriend::factory()->providers($this->tippin, $this->doe)->create();
         $this->actingAs($this->doe);
 
         $this->expectsEvents([
@@ -67,12 +61,7 @@ class PendingFriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_accept_pending_request()
     {
-        $pending = SentFriend::create([
-            'sender_id' => $this->tippin->getKey(),
-            'sender_type' => get_class($this->tippin),
-            'recipient_id' => $this->doe->getKey(),
-            'recipient_type' => get_class($this->doe),
-        ]);
+        $pending = PendingFriend::factory()->providers($this->tippin, $this->doe)->create();
         $this->actingAs($this->doe);
 
         $this->expectsEvents([

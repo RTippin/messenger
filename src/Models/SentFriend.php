@@ -2,6 +2,9 @@
 
 namespace RTippin\Messenger\Models;
 
+use Illuminate\Database\Eloquent\Factories\Factory;
+use RTippin\Messenger\Database\Factories\SentFriendFactory;
+
 /**
  * App\Models\Friend\SentFriend.
  *
@@ -10,5 +13,13 @@ namespace RTippin\Messenger\Models;
  */
 class SentFriend extends PendingFriend
 {
-    //
+    /**
+     * Create a new factory instance for the model.
+     *
+     * @return Factory
+     */
+    protected static function newFactory(): Factory
+    {
+        return SentFriendFactory::new();
+    }
 }

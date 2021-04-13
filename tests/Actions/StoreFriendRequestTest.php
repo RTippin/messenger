@@ -122,12 +122,7 @@ class StoreFriendRequestTest extends FeatureTestCase
     public function it_throws_exception_if_sent_friend_exist()
     {
         Messenger::setProvider($this->tippin);
-        SentFriend::create([
-            'sender_id' => $this->tippin->getKey(),
-            'sender_type' => get_class($this->tippin),
-            'recipient_id' => $this->doe->getKey(),
-            'recipient_type' => get_class($this->doe),
-        ]);
+        SentFriend::factory()->providers($this->tippin, $this->doe)->create();
 
         $this->expectException(FriendException::class);
         $this->expectExceptionMessage('You are already friends, or have a pending request with John Doe.');
@@ -142,12 +137,7 @@ class StoreFriendRequestTest extends FeatureTestCase
     public function it_throws_exception_if_pending_friend_exist()
     {
         Messenger::setProvider($this->tippin);
-        PendingFriend::create([
-            'sender_id' => $this->doe->getKey(),
-            'sender_type' => get_class($this->doe),
-            'recipient_id' => $this->tippin->getKey(),
-            'recipient_type' => get_class($this->tippin),
-        ]);
+        PendingFriend::factory()->providers($this->doe, $this->tippin)->create();
 
         $this->expectException(FriendException::class);
         $this->expectExceptionMessage('You are already friends, or have a pending request with John Doe.');

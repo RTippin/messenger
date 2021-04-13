@@ -22,12 +22,7 @@ class AcceptFriendRequestTest extends FeatureTestCase
 
         $this->tippin = $this->userTippin();
         $this->doe = $this->userDoe();
-        $this->pendingFriend = PendingFriend::create([
-            'sender_id' => $this->doe->getKey(),
-            'sender_type' => get_class($this->doe),
-            'recipient_id' => $this->tippin->getKey(),
-            'recipient_type' => get_class($this->tippin),
-        ]);
+        $this->pendingFriend = PendingFriend::factory()->providers($this->doe, $this->tippin)->create();
     }
 
     /** @test */

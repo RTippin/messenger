@@ -21,12 +21,7 @@ class DenyFriendRequestTest extends FeatureTestCase
 
         $tippin = $this->userTippin();
         $this->doe = $this->userDoe();
-        $this->pendingFriend = PendingFriend::create([
-            'sender_id' => $this->doe->getKey(),
-            'sender_type' => get_class($this->doe),
-            'recipient_id' => $tippin->getKey(),
-            'recipient_type' => get_class($tippin),
-        ]);
+        $this->pendingFriend = PendingFriend::factory()->providers($this->doe, $tippin)->create();
     }
 
     /** @test */
