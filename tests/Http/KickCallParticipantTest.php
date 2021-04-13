@@ -58,8 +58,7 @@ class KickCallParticipantTest extends FeatureTestCase
     public function non_call_participant_forbidden_to_kick_call_participant()
     {
         $this->call->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
+            ->forProvider($this->tippin)
             ->first()
             ->update([
                 'left_call' => now(),
@@ -97,8 +96,7 @@ class KickCallParticipantTest extends FeatureTestCase
         $private = $this->createPrivateThread($this->tippin, $this->doe);
         $call = $this->createCall($private, $this->tippin, $this->doe);
         $participant = $call->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
+            ->forProvider($this->doe)
             ->first();
         $this->actingAs($this->tippin);
 
@@ -137,8 +135,7 @@ class KickCallParticipantTest extends FeatureTestCase
     {
         $call = $this->createCall($this->group, $this->doe, $this->tippin);
         $participant = $call->participants()
-            ->where('owner_id', '=', $this->tippin->getKey())
-            ->where('owner_type', '=', get_class($this->tippin))
+            ->forProvider($this->tippin)
             ->first();
         $this->actingAs($this->doe);
 

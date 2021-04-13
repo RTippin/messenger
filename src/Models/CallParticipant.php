@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\CallParticipantFactory;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
@@ -28,12 +29,16 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read Model|MessengerProvider $owner
  * @property int $kicked
  * @method static \Illuminate\Database\Eloquent\Builder|CallParticipant whereKicked($value)
- * @method static Builder|Call inCall()
+ * @method static Builder|CallParticipant inCall()
+ * @method static Builder|CallParticipant hasProvider(string $relation, MessengerProvider $provider)
+ * @method static Builder|CallParticipant forProvider(MessengerProvider $provider)
+ * @method static Builder|CallParticipant notProvider(MessengerProvider $provider)
  */
 class CallParticipant extends Model
 {
     use HasFactory;
     use Uuids;
+    use ScopesProvider;
 
     /**
      * The database table used by the model.
