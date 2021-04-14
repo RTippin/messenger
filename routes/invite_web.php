@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use RTippin\Messenger\Http\Controllers\InviteController;
 use RTippin\Messenger\Http\Controllers\ViewPortalController;
 
 /*
@@ -11,3 +12,4 @@ use RTippin\Messenger\Http\Controllers\ViewPortalController;
 */
 
 Route::get('join/{invite}', [ViewPortalController::class, 'showJoinWithInvite'])->name('messenger.invites.join');
+Route::get('join/{invite:code}/avatar/{size}/{image}', [InviteController::class, 'renderAvatar'])->name('messenger.invites.avatar.render');

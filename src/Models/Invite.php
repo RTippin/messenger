@@ -157,6 +157,35 @@ class Invite extends Model
     }
 
     /**
+     * @param string $size
+     * @param bool $api
+     * @return string|null
+     */
+    public function getInvitationAvatarRoute(string $size = 'sm', $api = false): ?string
+    {
+        return Helpers::Route(($api ? 'api.' : '').'messenger.invites.avatar.render',
+            [
+                'invite' => $this->code,
+                'size' => $size,
+                'image' => $this->thread->image,
+            ]
+        );
+    }
+
+    /**
+     * @param bool $api
+     * @return array
+     */
+    public function inviteAvatar($api = false): array
+    {
+        return [
+            'sm' => $this->getInvitationAvatarRoute('sm', $api),
+            'md' => $this->getInvitationAvatarRoute('md', $api),
+            'lg' => $this->getInvitationAvatarRoute('lg', $api),
+        ];
+    }
+
+    /**
      * Create a new factory instance for the model.
      *
      * @return Factory

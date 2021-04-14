@@ -63,6 +63,8 @@ class InviteResource extends JsonResource
             'in_thread' => $isValid ? $this->isAlreadyInThread($invite) : false,
             'thread_name' => $isValid ? $invite->thread->name() : null,
             'is_valid' => $isValid,
+            'api_avatar' => $invite->inviteAvatar(true),
+            'avatar' => $invite->inviteAvatar(),
         ];
     }
 

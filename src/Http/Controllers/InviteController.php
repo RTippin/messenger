@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Http\Controllers;
 
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use RTippin\Messenger\Actions\Invites\ArchiveInvite;
@@ -13,6 +14,9 @@ use RTippin\Messenger\Http\Request\InviteRequest;
 use RTippin\Messenger\Http\Resources\InviteResource;
 use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Services\ImageRenderService;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class InviteController
 {
@@ -75,6 +79,33 @@ class InviteController
     public function show(Invite $invite): InviteResource
     {
         return new InviteResource($invite, true);
+    }
+
+    /**
+     * Render invites group avatar.
+     *
+     * @param ImageRenderService $service
+     * @param Invite $invite
+     * @param string $size
+     * @param string $image
+     * @return StreamedResponse|BinaryFileResponse
+     * @throws AuthorizationException
+     * @throws FileNotFoundException
+     */
+    public function renderAvatar(ImageRenderService $service,
+                             Invite $invite,
+                             string $size,
+                             string $image)
+    {
+        if (! $invite->isValid()) {
+            throw new AuthorizationException('Not authorized to view invite avatar.');
+        }
+
+        return $service->renderGroupAvatar(
+            $invite->thread,
+            $size,
+            $image
+        );
     }
 
     /**
