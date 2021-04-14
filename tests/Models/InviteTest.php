@@ -83,14 +83,14 @@ class InviteTest extends FeatureTestCase
     {
 
         $inviteAvatar = [
-            'sm' => "/messenger/join/TEST1234/avatar/sm/5.png",
-            'md' => "/messenger/join/TEST1234/avatar/md/5.png",
-            'lg' => "/messenger/join/TEST1234/avatar/lg/5.png",
+            'sm' => '/messenger/join/TEST1234/avatar/sm/5.png',
+            'md' => '/messenger/join/TEST1234/avatar/md/5.png',
+            'lg' => '/messenger/join/TEST1234/avatar/lg/5.png',
         ];
         $inviteAvatarApi = [
-            'sm' => "/api/messenger/join/TEST1234/avatar/sm/5.png",
-            'md' => "/api/messenger/join/TEST1234/avatar/md/5.png",
-            'lg' => "/api/messenger/join/TEST1234/avatar/lg/5.png",
+            'sm' => '/api/messenger/join/TEST1234/avatar/sm/5.png',
+            'md' => '/api/messenger/join/TEST1234/avatar/md/5.png',
+            'lg' => '/api/messenger/join/TEST1234/avatar/lg/5.png',
         ];
 
         $this->assertSame($inviteAvatar, $this->invite->inviteAvatar());
