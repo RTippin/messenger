@@ -46,6 +46,7 @@
 - Video message type.
 - React / Vue frontend.
 - Configurable friend driver.
+- Language file support.
 
 ### Notes
 - If our event listeners are enabled in your config, the queue your worker must use is `messenger`, as all listeners are queued on that channel.
