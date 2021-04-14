@@ -18,10 +18,10 @@ class DocumentMessageRequest extends FormRequest
         $mimes = Messenger::getMessageDocumentMimeTypes();
 
         return [
-            'document' => "required|max:{$limit}|file|mimes:{$mimes}",
-            'temporary_id' => 'required|string',
-            'reply_to_id' => 'nullable|string',
-            'extra' => 'nullable|array',
+            'document' => ['required', "max:$limit", 'file', "mimes:$mimes"],
+            'temporary_id' => ['required', 'string'],
+            'reply_to_id' => ['nullable', 'string'],
+            'extra' => ['nullable', 'array'],
         ];
     }
 }

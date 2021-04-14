@@ -14,7 +14,7 @@ class ThreadApprovalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'approve' => 'required|boolean',
+            'approve' => ['required', 'boolean'],
         ];
     }
 }

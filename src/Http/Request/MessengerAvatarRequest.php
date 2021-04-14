@@ -18,7 +18,7 @@ class MessengerAvatarRequest extends FormRequest
         $mimes = Messenger::getProviderAvatarMimeTypes();
 
         return [
-            'image' => "required|max:{$limit}|file|mimes:{$mimes}",
+            'image' => ['required', "max:$limit", 'file', "mimes:$mimes"],
         ];
     }
 }

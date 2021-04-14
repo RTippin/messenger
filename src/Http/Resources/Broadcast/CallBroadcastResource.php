@@ -11,7 +11,7 @@ class CallBroadcastResource extends JsonResource
     /**
      * @var Call
      */
-    protected Call $call;
+    private Call $call;
 
     /**
      * CallBroadcastResource constructor.
@@ -30,7 +30,6 @@ class CallBroadcastResource extends JsonResource
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {

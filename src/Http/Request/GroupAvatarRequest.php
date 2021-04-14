@@ -20,12 +20,8 @@ class GroupAvatarRequest extends FormRequest
         $mimes = Messenger::getThreadAvatarMimeTypes();
 
         return [
-            'image' => "required_without:default|file|max:{$limit}|mimes:{$mimes}",
-            'default' => [
-                'required_without:image',
-                'string',
-                Rule::in(Definitions::DefaultGroupAvatars),
-            ],
+            'image' => ['required_without:default', 'file', "max:$limit", "mimes:$mimes"],
+            'default' => ['required_without:image', 'string', Rule::in(Definitions::DefaultGroupAvatars)],
         ];
     }
 }

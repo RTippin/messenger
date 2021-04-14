@@ -14,12 +14,12 @@ class ThreadSettingsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subject' => 'required|string|min:3',
-            'add_participants' => 'required|boolean',
-            'invitations' => 'required|boolean',
-            'calling' => 'required|boolean',
-            'messaging' => 'required|boolean',
-            'knocks' => 'required|boolean',
+            'subject' => ['required', 'string', 'min:3'],
+            'add_participants' => ['required', 'boolean'],
+            'invitations' => ['required', 'boolean'],
+            'calling' => ['required', 'boolean'],
+            'messaging' => ['required', 'boolean'],
+            'knocks' => ['required', 'boolean'],
         ];
     }
 }

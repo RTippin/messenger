@@ -17,10 +17,11 @@ class RecipientThreadResource extends JsonResource
     /**
      * @var Thread|null
      */
-    protected ?Thread $thread;
+    private ?Thread $thread;
 
     /**
      * RecipientThreadResource constructor.
+     *
      * @param MessengerProvider $provider
      * @param Thread|null $thread
      */
@@ -37,7 +38,6 @@ class RecipientThreadResource extends JsonResource
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {

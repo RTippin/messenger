@@ -14,10 +14,10 @@ class MessageRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'message' => 'required|string',
-            'temporary_id' => 'required|string',
-            'reply_to_id' => 'nullable|string',
-            'extra' => 'nullable|array',
+            'message' => ['required', 'string'],
+            'temporary_id' => ['required', 'string'],
+            'reply_to_id' => ['nullable', 'string'],
+            'extra' => ['nullable', 'array'],
         ];
     }
 }

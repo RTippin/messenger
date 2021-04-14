@@ -14,11 +14,11 @@ class ParticipantPermissionsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'start_calls' => 'required|boolean',
-            'send_knocks' => 'required|boolean',
-            'send_messages' => 'required|boolean',
-            'add_participants' => 'required|boolean',
-            'manage_invites' => 'required|boolean',
+            'start_calls' => ['required', 'boolean'],
+            'send_knocks' => ['required', 'boolean'],
+            'send_messages' => ['required', 'boolean'],
+            'add_participants' => ['required', 'boolean'],
+            'manage_invites' => ['required', 'boolean'],
         ];
     }
 }

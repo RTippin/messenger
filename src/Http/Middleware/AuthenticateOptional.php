@@ -17,7 +17,6 @@ class AuthenticateOptional extends Middleware
      * @param Closure $next
      * @param string[] ...$guards
      * @return mixed
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function handle($request, Closure $next, ...$guards)
     {
@@ -34,7 +33,6 @@ class AuthenticateOptional extends Middleware
      * Get the path the user should be redirected to when they are not authenticated.
      *
      * @param Request $request
-     * @noinspection PhpMissingParamTypeInspection
      * @return RedirectResponse|void
      */
     protected function redirectTo($request)

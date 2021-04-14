@@ -18,10 +18,10 @@ class ImageMessageRequest extends FormRequest
         $mimes = Messenger::getMessageImageMimeTypes();
 
         return [
-            'image' => "required|max:{$limit}|file|mimes:{$mimes}",
-            'temporary_id' => 'required|string',
-            'reply_to_id' => 'nullable|string',
-            'extra' => 'nullable|array',
+            'image' => ['required', "max:$limit", 'file', "mimes:$mimes"],
+            'temporary_id' => ['required', 'string'],
+            'reply_to_id' => ['nullable', 'string'],
+            'extra' => ['nullable', 'array'],
         ];
     }
 }

@@ -31,7 +31,6 @@ class InviteResource extends JsonResource
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {
@@ -60,7 +59,7 @@ class InviteResource extends JsonResource
 
         return [
             'messenger_auth' => Messenger::isProviderSet(),
-            'in_thread' => $isValid ? $this->isAlreadyInThread($invite) : false,
+            'in_thread' => $isValid && $this->isAlreadyInThread($invite),
             'thread_name' => $isValid ? $invite->thread->name() : null,
             'is_valid' => $isValid,
             'api_avatar' => $isValid ? $invite->inviteAvatar(true) : null,
@@ -74,8 +73,6 @@ class InviteResource extends JsonResource
      */
     private function isAlreadyInThread(Invite $invite): bool
     {
-        return Messenger::isProviderSet()
-            ? $invite->thread->hasCurrentProvider()
-            : false;
+        return Messenger::isProviderSet() && $invite->thread->hasCurrentProvider();
     }
 }

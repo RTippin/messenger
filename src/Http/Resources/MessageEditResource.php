@@ -13,10 +13,10 @@ class MessageEditResource extends JsonResource
      *
      * @var MessageEdit
      */
-    protected MessageEdit $message;
+    private MessageEdit $message;
 
     /**
-     * MessageResource constructor.
+     * MessageEditResource constructor.
      *
      * @param MessageEdit $message
      */
@@ -32,7 +32,6 @@ class MessageEditResource extends JsonResource
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {

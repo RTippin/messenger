@@ -17,23 +17,19 @@ use RTippin\Messenger\Models\Thread;
 class MessageResource extends JsonResource
 {
     /**
-     * The message instance.
-     *
      * @var Message
      */
-    protected Message $message;
+    private Message $message;
 
     /**
-     * The Thread instance.
-     *
      * @var Thread
      */
-    protected Thread $thread;
+    private Thread $thread;
 
     /**
      * @var bool
      */
-    protected bool $addRelatedItems;
+    private bool $addRelatedItems;
 
     /**
      * MessageResource constructor.
@@ -58,7 +54,6 @@ class MessageResource extends JsonResource
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {
@@ -129,12 +124,12 @@ class MessageResource extends JsonResource
             switch ($this->message->type) {
                 case 90:
                     return $this->formatVideoCall($bodyJson);
-                case 88: //participant joined with invite link
-                case 91: //group avatar updated
-                case 92: //group archived
-                case 93: //created group
-                case 94: //renamed group
-                case 97: //participant left group
+                case 88: // participant joined with invite link
+                case 91: // group avatar updated
+                case 92: // group archived
+                case 93: // created group
+                case 94: // renamed group
+                case 97: // participant left group
                     return $this->sanitizedBody();
                 case 95:
                     return $this->formatAdminRemoved($bodyJson);
@@ -204,10 +199,10 @@ class MessageResource extends JsonResource
 
         if (count($bodyJson) > 3) {
             $remaining = count($bodyJson) - 3;
-            foreach (array_slice($bodyJson, 0, 3) as $key => $owner) {
+            foreach (array_slice($bodyJson, 0, 3) as $owner) {
                 $names .= "{$this->locateContentOwner($owner)->name()}, ";
             }
-            $names .= "and {$remaining} others";
+            $names .= "and $remaining others";
         } else {
             foreach ($bodyJson as $key => $owner) {
                 if (count($bodyJson) === 1) {
@@ -265,7 +260,7 @@ class MessageResource extends JsonResource
         if ($call && $call->participants_count > 1) {
             $names = '';
             $participants = $call->participants()
-                ->where('owner_id', '!=', $this->message->owner_id)
+                ->notProvider($this->message->owner)
                 ->with('owner')
                 ->limit(3)
                 ->get();
@@ -274,7 +269,7 @@ class MessageResource extends JsonResource
                 $remaining = $call->participants_count - 4;
                 foreach ($participants as $participant) {
                     if ($participants->last()->id === $participant->id) {
-                        $names .= " {$participant->owner->name()} and {$remaining} others";
+                        $names .= " {$participant->owner->name()} and $remaining others";
                     } else {
                         $names .= " {$participant->owner->name()},";
                     }
@@ -293,7 +288,7 @@ class MessageResource extends JsonResource
                 }
             }
 
-            return "was in a video call with {$names}";
+            return "was in a video call with $names";
         }
 
         return 'was in a video call';

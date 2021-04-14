@@ -14,8 +14,8 @@ class InviteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'expires' => 'required|integer|between:0,8',
-            'uses' => 'required|integer|between:0,100',
+            'expires' => ['required', 'integer', 'between:0,8'],
+            'uses' => ['required', 'integer', 'between:0,100'],
         ];
     }
 }

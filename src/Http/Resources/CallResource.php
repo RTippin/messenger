@@ -13,17 +13,17 @@ class CallResource extends JsonResource
     /**
      * @var bool
      */
-    protected bool $addParticipants;
+    private bool $addParticipants;
 
     /**
      * @var Call
      */
-    protected Call $call;
+    private Call $call;
 
     /**
      * @var Thread
      */
-    protected Thread $thread;
+    private Thread $thread;
 
     /**
      * CallResource constructor.
@@ -48,7 +48,6 @@ class CallResource extends JsonResource
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {

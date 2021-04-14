@@ -12,10 +12,10 @@ class FriendApprovedBroadcastResource extends JsonResource
     /**
      * @var Friend
      */
-    protected Friend $friend;
+    private Friend $friend;
 
     /**
-     * FriendRequestBroadcastResource constructor.
+     * FriendApprovedBroadcastResource constructor.
      *
      * @param Friend $friend
      */
@@ -31,7 +31,6 @@ class FriendApprovedBroadcastResource extends JsonResource
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {

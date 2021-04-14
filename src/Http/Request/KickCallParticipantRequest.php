@@ -14,7 +14,7 @@ class KickCallParticipantRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'kicked' => 'required|boolean',
+            'kicked' => ['required', 'boolean'],
         ];
     }
 }

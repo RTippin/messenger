@@ -13,12 +13,12 @@ class NewThreadBroadcastResource extends JsonResource
     /**
      * @var MessengerProvider
      */
-    protected MessengerProvider $provider;
+    private MessengerProvider $provider;
 
     /**
      * @var Thread
      */
-    protected Thread $thread;
+    private Thread $thread;
 
     /**
      * @var bool
@@ -48,7 +48,6 @@ class NewThreadBroadcastResource extends JsonResource
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {

@@ -16,22 +16,22 @@ class ThreadResource extends JsonResource
     /**
      * @var Thread
      */
-    protected Thread $thread;
+    private Thread $thread;
 
     /**
      * @var false
      */
-    protected bool $addParticipants;
+    private bool $addParticipants;
 
     /**
      * @var false
      */
-    protected bool $addMessages;
+    private bool $addMessages;
 
     /**
      * @var false
      */
-    protected bool $addCalls;
+    private bool $addCalls;
 
     /**
      * ThreadResource constructor.
@@ -58,7 +58,6 @@ class ThreadResource extends JsonResource
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {

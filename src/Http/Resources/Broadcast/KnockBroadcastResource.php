@@ -13,12 +13,12 @@ class KnockBroadcastResource extends JsonResource
     /**
      * @var MessengerProvider
      */
-    protected MessengerProvider $provider;
+    private MessengerProvider $provider;
 
     /**
      * @var Thread
      */
-    protected Thread $thread;
+    private Thread $thread;
 
     /**
      * KnockBroadcastResource constructor.
@@ -40,7 +40,6 @@ class KnockBroadcastResource extends JsonResource
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {

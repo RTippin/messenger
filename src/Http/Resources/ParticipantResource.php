@@ -13,17 +13,17 @@ class ParticipantResource extends JsonResource
     /**
      * @var Thread
      */
-    protected Thread $thread;
+    private Thread $thread;
 
     /**
      * @var Participant
      */
-    protected Participant $participant;
+    private Participant $participant;
 
     /**
      * ParticipantResource constructor.
      *
-     * @param $participant
+     * @param Participant $participant
      * @param Thread $thread
      */
     public function __construct(Participant $participant, Thread $thread)
@@ -39,7 +39,6 @@ class ParticipantResource extends JsonResource
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {

@@ -10,16 +10,14 @@ use RTippin\Messenger\Models\MessageReaction;
 class MessageReactionResource extends JsonResource
 {
     /**
-     * The message instance.
-     *
      * @var MessageReaction
      */
-    protected MessageReaction $reaction;
+    private MessageReaction $reaction;
 
     /**
      * @var Message|null
      */
-    protected ?Message $message;
+    private ?Message $message;
 
     /**
      * MessageReactionResource constructor.
@@ -40,7 +38,6 @@ class MessageReactionResource extends JsonResource
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {

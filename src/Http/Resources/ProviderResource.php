@@ -11,30 +11,27 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Definitions;
 
-/**
- * @property-read Model|MessengerProvider $provider
- */
 class ProviderResource extends JsonResource
 {
     /**
      * @var Model|MessengerProvider
      */
-    protected $provider;
+    private $provider;
 
     /**
      * @var bool
      */
-    protected bool $addOptions;
+    private bool $addOptions;
 
     /**
      * @var null|int
      */
-    protected ?int $forceFriendStatus;
+    private ?int $forceFriendStatus;
 
     /**
      * @var bool
      */
-    protected bool $addBaseModel;
+    private bool $addBaseModel;
 
     /**
      * ProviderResource constructor.
@@ -64,7 +61,6 @@ class ProviderResource extends JsonResource
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {

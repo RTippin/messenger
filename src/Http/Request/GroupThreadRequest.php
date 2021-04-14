@@ -15,9 +15,9 @@ class GroupThreadRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subject' => 'required|string|min:3',
-            'providers' => 'nullable|array|min:1',
-            'providers.*.alias' => 'required_with:providers|string',
+            'subject' => ['required', 'string', 'min:3'],
+            'providers' => ['nullable', 'array', 'min:1'],
+            'providers.*.alias' => ['required_with:providers', 'string'],
             'providers.*.id' => ['required_with:providers', new IntegerOrString],
         ];
     }

@@ -13,12 +13,12 @@ class NewCallBroadcastResource extends JsonResource
     /**
      * @var MessengerProvider
      */
-    protected MessengerProvider $provider;
+    private MessengerProvider $provider;
 
     /**
      * @var Call
      */
-    protected Call $call;
+    private Call $call;
 
     /**
      * NewCallBroadcastResource constructor.
@@ -39,7 +39,6 @@ class NewCallBroadcastResource extends JsonResource
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {

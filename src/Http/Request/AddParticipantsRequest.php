@@ -15,8 +15,8 @@ class AddParticipantsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'providers' => 'required|array|min:1',
-            'providers.*.alias' => 'required|string',
+            'providers' => ['required', 'array', 'min:1'],
+            'providers.*.alias' => ['required', 'string'],
             'providers.*.id' => ['required', new IntegerOrString],
         ];
     }
