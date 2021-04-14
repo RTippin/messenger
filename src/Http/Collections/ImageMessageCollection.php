@@ -37,7 +37,6 @@ class ImageMessageCollection extends MessengerCollection
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {
@@ -59,10 +58,10 @@ class ImageMessageCollection extends MessengerCollection
     /**
      * @inheritDoc
      */
-    protected function makeResource($message): ?array
+    protected function makeResource($resource): ?array
     {
         try {
-            return (new MessageResource($message, $this->thread, true))->resolve();
+            return (new MessageResource($resource, $this->thread, true))->resolve();
         } catch (Exception $e) {
             report($e);
         } catch (Throwable $t) {

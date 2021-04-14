@@ -72,7 +72,7 @@ class ParticipantController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store one or many new participants.
      *
      * @param AddParticipantsRequest $request
      * @param StoreManyParticipants $storeManyParticipants
@@ -96,7 +96,7 @@ class ParticipantController
     }
 
     /**
-     * Display the specified resource.
+     * Display the participant.
      *
      * @param Thread $thread
      * @param Participant $participant
@@ -117,7 +117,7 @@ class ParticipantController
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the participants permissions.
      *
      * @param ParticipantPermissionsRequest $request
      * @param UpdateParticipantPermissions $permissions
@@ -144,7 +144,7 @@ class ParticipantController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the participant.
      *
      * @param RemoveParticipant $removeParticipant
      * @param Thread $thread

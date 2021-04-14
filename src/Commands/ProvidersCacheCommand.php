@@ -59,7 +59,7 @@ class ProvidersCacheCommand extends Command
      * @throws LogicException
      * @noinspection PhpIncludeInspection
      */
-    public function handle()
+    public function handle(): void
     {
         $this->call('messenger:providers:clear');
 

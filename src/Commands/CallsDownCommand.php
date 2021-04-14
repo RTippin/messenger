@@ -49,7 +49,7 @@ class CallsDownCommand extends Command
             if ($count > 0) {
                 Call::active()->chunk(100, fn (Collection $calls) => $this->dispatchJob($calls));
 
-                $this->info("{$count} active calls found. End calls {$message}!");
+                $this->info("$count active calls found. End calls $message!");
             } else {
                 $this->info('No active calls to end found.');
             }
@@ -60,8 +60,9 @@ class CallsDownCommand extends Command
 
     /**
      * @param Collection $calls
+     * @return void
      */
-    private function dispatchJob(Collection $calls)
+    private function dispatchJob(Collection $calls): void
     {
         $this->option('now')
             ? EndCalls::dispatchSync($calls)

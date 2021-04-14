@@ -46,7 +46,7 @@ class ProvidersClearCommand extends Command
      *
      * @return void
      */
-    public function handle()
+    public function handle(): void
     {
         $this->files->delete($this->laravel->bootstrapPath('cache/messenger.php'));
 

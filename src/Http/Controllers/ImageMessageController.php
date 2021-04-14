@@ -28,7 +28,7 @@ class ImageMessageController extends Controller
     }
 
     /**
-     * Display a listing of the most recent images.
+     * Display a listing of the most recent image files.
      *
      * @param ImageMessageRepository $repository
      * @param Thread $thread
@@ -50,7 +50,7 @@ class ImageMessageController extends Controller
     }
 
     /**
-     * Display log history pagination.
+     * Display image history pagination.
      *
      * @param ImageMessageRepository $repository
      * @param Thread $thread
@@ -76,7 +76,7 @@ class ImageMessageController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Upload a new image message.
      *
      * @param ImageMessageRequest $request
      * @param StoreImageMessage $storeImageMessage

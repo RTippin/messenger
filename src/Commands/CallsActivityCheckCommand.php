@@ -44,7 +44,7 @@ class CallsActivityCheckCommand extends Command
                     ->where('created_at', '<', now()->subMinute())
                     ->chunk(100, fn (Collection $calls) => $this->dispatchJob($calls));
 
-                $this->info("{$count} active calls found. Call activity checks {$message}!");
+                $this->info("$count active calls found. Call activity checks $message!");
             } else {
                 $this->info('No matching active calls found.');
             }
@@ -53,8 +53,9 @@ class CallsActivityCheckCommand extends Command
 
     /**
      * @param Collection $calls
+     * @return void
      */
-    private function dispatchJob(Collection $calls)
+    private function dispatchJob(Collection $calls): void
     {
         $this->option('now')
             ? CheckCallsActivity::dispatchSync($calls)

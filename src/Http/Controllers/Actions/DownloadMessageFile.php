@@ -66,8 +66,9 @@ class DownloadMessageFile
     /**
      * @param Message $message
      * @param string $fileNameChallenge
+     * @return void
      */
-    private function checkFileExist(Message $message, string $fileNameChallenge)
+    private function checkFileExist(Message $message, string $fileNameChallenge): void
     {
         if (! $message->isDocument()
             || $fileNameChallenge !== $message->body

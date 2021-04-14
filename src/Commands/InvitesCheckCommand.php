@@ -35,7 +35,6 @@ class InvitesCheckCommand extends Command
     {
         // Grab any invites where the expires_at has passed, or where the max_use
         // is not 0 (no limit) and the uses is equal or greater than its max_use
-
         if (! $messenger->isThreadInvitesEnabled()) {
             $this->info('Thread invites are currently disabled.');
         } else {
@@ -45,7 +44,7 @@ class InvitesCheckCommand extends Command
             if ($count > 0) {
                 Invite::invalid()->with('thread')->chunk(100, fn (Collection $invites) => $this->dispatchJob($invites));
 
-                $this->info("{$count} invalid invites found. Archive invites {$message}");
+                $this->info("$count invalid invites found. Archive invites $message");
             } else {
                 $this->info('No invalid invites found.');
             }
@@ -53,9 +52,10 @@ class InvitesCheckCommand extends Command
     }
 
     /**
-     * @param $invites
+     * @param Collection $invites
+     * @return void
      */
-    private function dispatchJob(Collection $invites)
+    private function dispatchJob(Collection $invites): void
     {
         $this->option('now')
             ? ArchiveInvalidInvites::dispatchSync($invites)

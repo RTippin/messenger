@@ -15,7 +15,6 @@ class MessageEditCollection extends MessengerCollection
      *
      * @param Request $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {
@@ -25,10 +24,10 @@ class MessageEditCollection extends MessengerCollection
     /**
      * @inheritDoc
      */
-    protected function makeResource($edit): ?array
+    protected function makeResource($resource): ?array
     {
         try {
-            return (new MessageEditResource($edit))->resolve();
+            return (new MessageEditResource($resource))->resolve();
         } catch (Exception $e) {
             report($e);
         } catch (Throwable $t) {

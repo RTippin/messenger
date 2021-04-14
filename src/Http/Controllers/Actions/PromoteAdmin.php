@@ -14,7 +14,7 @@ class PromoteAdmin
     use AuthorizesRequests;
 
     /**
-     * Promote admin privilege from participant.
+     * Promote participant to admin.
      *
      * @param PromoteAdminAction $promoteAdmin
      * @param Thread $thread

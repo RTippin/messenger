@@ -31,6 +31,8 @@ class MessengerController
     }
 
     /**
+     * Display the messenger system settings.
+     *
      * @return array
      */
     public function index(): array
@@ -39,6 +41,8 @@ class MessengerController
     }
 
     /**
+     * Display the providers messenger.
+     *
      * @return MessengerResource
      */
     public function settings(): MessengerResource
@@ -49,6 +53,8 @@ class MessengerController
     }
 
     /**
+     * Display a listing of the providers active calls.
+     *
      * @param ThreadRepository $threadRepository
      * @return ActiveCallCollection
      */
@@ -60,6 +66,8 @@ class MessengerController
     }
 
     /**
+     * Update the providers messenger settings.
+     *
      * @param MessengerSettingsRequest $request
      * @param UpdateMessengerSettings $updateMessengerSettings
      * @return MessengerResource
@@ -77,6 +85,8 @@ class MessengerController
     }
 
     /**
+     * Update the providers avatar.
+     *
      * @param MessengerAvatarRequest $request
      * @param StoreMessengerAvatar $storeMessengerAvatar
      * @return MessengerResource
@@ -93,6 +103,8 @@ class MessengerController
     }
 
     /**
+     * Remove the providers avatar.
+     *
      * @param DestroyMessengerAvatar $destroyMessengerAvatar
      * @return MessengerResource
      * @throws FeatureDisabledException

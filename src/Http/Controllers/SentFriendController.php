@@ -21,7 +21,7 @@ class SentFriendController
     use AuthorizesRequests;
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the providers sent friend request.
      *
      * @param FriendDriver $repository
      * @return SentFriendCollection
@@ -37,7 +37,8 @@ class SentFriendController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a new friend request.
+     *
      * @param FriendRequest $request
      * @param StoreFriendRequest $storeFriendRequest
      * @return SentFriendResource
@@ -54,7 +55,7 @@ class SentFriendController
     }
 
     /**
-     * Display the specified resource.
+     * Display the sent friend request.
      *
      * @param SentFriend $sent
      * @return SentFriendResource
@@ -68,7 +69,7 @@ class SentFriendController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Cancel the sent friend request.
      *
      * @param CancelFriendRequest $cancelFriendRequest
      * @param SentFriend $sent

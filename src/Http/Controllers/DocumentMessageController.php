@@ -27,7 +27,7 @@ class DocumentMessageController extends Controller
     }
 
     /**
-     * Display a listing of the most recent documents.
+     * Display a listing of the most recent document files.
      *
      * @param DocumentMessageRepository $repository
      * @param Thread $thread
@@ -75,7 +75,7 @@ class DocumentMessageController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Upload a new document file message.
      *
      * @param DocumentMessageRequest $request
      * @param StoreDocumentMessage $storeDocumentMessage

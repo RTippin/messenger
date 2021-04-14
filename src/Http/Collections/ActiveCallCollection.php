@@ -26,7 +26,6 @@ class ActiveCallCollection extends MessengerCollection
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {
@@ -36,12 +35,11 @@ class ActiveCallCollection extends MessengerCollection
     /**
      * @inheritDoc
      */
-    protected function makeResource($thread): ?array
+    protected function makeResource($resource): ?array
     {
         try {
-            /** @var Thread $thread */
-
-            return (new CallResource($thread->activeCall, $thread))->resolve();
+            /** @var Thread $resource */
+            return (new CallResource($resource->activeCall, $resource))->resolve();
         } catch (Exception $e) {
             report($e);
         } catch (Throwable $t) {

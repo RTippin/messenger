@@ -17,7 +17,7 @@ class PrivateThreadController
     use AuthorizesRequests;
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the most recent private threads.
      *
      * @param PrivateThreadRepository $repository
      * @return PrivateThreadCollection
@@ -53,6 +53,8 @@ class PrivateThreadController
     }
 
     /**
+     * Store a new private thread.
+     *
      * @param PrivateThreadRequest $request
      * @param StorePrivateThread $storePrivateThread
      * @return ThreadResource

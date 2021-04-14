@@ -98,8 +98,9 @@ class DownloadMessageAudio
     /**
      * @param Message $message
      * @param string $audioNameChallenge
+     * @return void
      */
-    private function checkAudioExist(Message $message, string $audioNameChallenge)
+    private function checkAudioExist(Message $message, string $audioNameChallenge): void
     {
         if (! $message->isAudio()
             || $audioNameChallenge !== $message->body

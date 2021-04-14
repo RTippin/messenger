@@ -15,7 +15,6 @@ class SentFriendCollection extends MessengerCollection
      *
      * @param Request $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {
@@ -25,10 +24,10 @@ class SentFriendCollection extends MessengerCollection
     /**
      * @inheritDoc
      */
-    protected function makeResource($sent): ?array
+    protected function makeResource($resource): ?array
     {
         try {
-            return (new SentFriendResource($sent))->resolve();
+            return (new SentFriendResource($resource))->resolve();
         } catch (Exception $e) {
             report($e);
         } catch (Throwable $t) {

@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Http\Request;
 use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use RTippin\Messenger\Http\Resources\ProviderResource;
+use RTippin\Messenger\Models\Messenger;
 use Throwable;
 
 class SearchCollection extends MessengerCollection
@@ -50,7 +51,6 @@ class SearchCollection extends MessengerCollection
      *
      * @param Request $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {
@@ -62,7 +62,6 @@ class SearchCollection extends MessengerCollection
      *
      * @param Request $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function with($request): array
     {
@@ -77,10 +76,11 @@ class SearchCollection extends MessengerCollection
     /**
      * @inheritDoc
      */
-    protected function makeResource($messenger): ?array
+    protected function makeResource($resource): ?array
     {
         try {
-            return (new ProviderResource($messenger->owner, $this->addOptions))->resolve();
+            /** @var Messenger $resource */
+            return (new ProviderResource($resource->owner, $this->addOptions))->resolve();
         } catch (Exception $e) {
             report($e);
         } catch (Throwable $t) {

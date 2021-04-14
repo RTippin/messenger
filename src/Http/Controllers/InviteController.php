@@ -23,7 +23,7 @@ class InviteController
     use AuthorizesRequests;
 
     /**
-     * Display a listing of the resource.
+     * Display all invites for the group thread.
      *
      * @param Thread $thread
      * @return InviteCollection
@@ -47,7 +47,7 @@ class InviteController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a new group invite.
      *
      * @param InviteRequest $request
      * @param StoreInvite $storeInvite
@@ -109,7 +109,7 @@ class InviteController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the group invite.
      *
      * @param ArchiveInvite $archiveInvite
      * @param Thread $thread

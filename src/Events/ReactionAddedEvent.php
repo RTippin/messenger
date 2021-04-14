@@ -15,11 +15,6 @@ class ReactionAddedEvent
     public MessageReaction $reaction;
 
     /**
-     * @var bool
-     */
-    public bool $isMessageOwner;
-
-    /**
      * Create a new event instance.
      *
      * @param MessageReaction $reaction

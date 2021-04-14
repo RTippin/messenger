@@ -17,7 +17,7 @@ class ThreadController
     use AuthorizesRequests;
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the most recent updated threads.
      *
      * @param ThreadRepository $repository
      * @return ThreadCollection
@@ -52,7 +52,7 @@ class ThreadController
     }
 
     /**
-     * Display the specified resource.
+     * Display the thread.
      *
      * @param Thread $thread
      * @return ThreadResource
@@ -70,7 +70,7 @@ class ThreadController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the thread.
      *
      * @param ArchiveThread $archiveThread
      * @param Thread $thread

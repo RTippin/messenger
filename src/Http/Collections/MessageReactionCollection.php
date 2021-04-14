@@ -22,7 +22,6 @@ class MessageReactionCollection extends ResourceCollection
      *
      * @param Request $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {

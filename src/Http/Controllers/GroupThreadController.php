@@ -25,7 +25,7 @@ class GroupThreadController
     use AuthorizesRequests;
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the most recent group threads.
      *
      * @param GroupThreadRepository $repository
      * @return GroupThreadCollection
@@ -75,7 +75,7 @@ class GroupThreadController
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the group settings.
      *
      * @param ThreadSettingsRequest $request
      * @param UpdateGroupSettings $updateGroupSettings
@@ -96,6 +96,8 @@ class GroupThreadController
     }
 
     /**
+     * Update the group avatar.
+     *
      * @param GroupAvatarRequest $request
      * @param UpdateGroupAvatar $updateGroupAvatar
      * @param Thread $thread
@@ -115,7 +117,7 @@ class GroupThreadController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a new group thread.
      *
      * @param GroupThreadRequest $request
      * @param StoreGroupThread $storeGroupThread

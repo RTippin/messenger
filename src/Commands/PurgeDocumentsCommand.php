@@ -48,7 +48,7 @@ class PurgeDocumentsCommand extends Command
 
             $message = $this->option('now') ? 'completed!' : 'dispatched!';
 
-            $this->info("{$count} document messages archived {$this->option('days')} days or greater found. Purging {$message}");
+            $this->info("$count document messages archived {$this->option('days')} days or greater found. Purging $message");
         } else {
             $this->info("No document messages archived {$this->option('days')} days or greater found.");
         }

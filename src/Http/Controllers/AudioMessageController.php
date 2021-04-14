@@ -20,7 +20,7 @@ class AudioMessageController extends Controller
     use AuthorizesRequests;
 
     /**
-     * ImageMessageController constructor.
+     * AudioMessageController constructor.
      */
     public function __construct()
     {
@@ -28,7 +28,7 @@ class AudioMessageController extends Controller
     }
 
     /**
-     * Display a listing of the most recent images.
+     * Display a listing of the most recent audio files.
      *
      * @param AudioMessageRepository $repository
      * @param Thread $thread
@@ -76,7 +76,7 @@ class AudioMessageController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a new audio message.
      *
      * @param AudioMessageRequest $request
      * @param StoreAudioMessage $storeAudioMessage

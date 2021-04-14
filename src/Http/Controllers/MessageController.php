@@ -56,7 +56,7 @@ class MessageController extends Controller
     }
 
     /**
-     * Display message pagination.
+     * Display message history pagination.
      *
      * @param MessageRepository $repository
      * @param Thread $thread
@@ -82,7 +82,7 @@ class MessageController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Store a new message.
      *
      * @param MessageRequest $request
      * @param StoreMessage $storeMessage
@@ -106,7 +106,7 @@ class MessageController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the message.
      *
      * @param Thread $thread
      * @param Message $message
@@ -125,7 +125,7 @@ class MessageController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the message edits.
      *
      * @param Thread $thread
      * @param Message $message
@@ -144,7 +144,7 @@ class MessageController extends Controller
     }
 
     /**
-     * Update the specified resource.
+     * Update the message body.
      *
      * @param EditMessageRequest $request
      * @param EditMessage $editMessage
@@ -171,6 +171,8 @@ class MessageController extends Controller
     }
 
     /**
+     * Remove embeds from message.
+     *
      * @param RemoveEmbeds $removeEmbeds
      * @param Thread $thread
      * @param Message $message
@@ -193,7 +195,7 @@ class MessageController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the message.
      *
      * @param ArchiveMessage $archiveMessage
      * @param Thread $thread

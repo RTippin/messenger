@@ -35,9 +35,7 @@ class ThreadLoader
         $this->authorize('view', $thread);
 
         if ($relations) {
-            return $this->withRelations(
-                $thread, $relations
-            );
+            return $this->withRelations($thread, $relations);
         }
 
         return new ThreadResource(

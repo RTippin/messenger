@@ -17,7 +17,7 @@ class FriendController
     use AuthorizesRequests;
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the providers friends.
      *
      * @param FriendDriver $repository
      * @return FriendCollection
@@ -33,7 +33,7 @@ class FriendController
     }
 
     /**
-     * Display the specified resource.
+     * Display the friend.
      *
      * @param Friend $friend
      * @return FriendResource
@@ -47,7 +47,7 @@ class FriendController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the friend.
      *
      * @param RemoveFriend $removeFriend
      * @param Friend $friend

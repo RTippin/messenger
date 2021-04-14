@@ -33,7 +33,6 @@ class PrivateThreadCollection extends MessengerCollection
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {
@@ -55,10 +54,10 @@ class PrivateThreadCollection extends MessengerCollection
     /**
      * @inheritDoc
      */
-    protected function makeResource($thread): ?array
+    protected function makeResource($resource): ?array
     {
         try {
-            return (new ThreadResource($thread))->resolve();
+            return (new ThreadResource($resource))->resolve();
         } catch (Exception $e) {
             report($e);
         } catch (Throwable $t) {

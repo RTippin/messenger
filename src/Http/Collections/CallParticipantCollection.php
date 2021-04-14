@@ -15,7 +15,6 @@ class CallParticipantCollection extends MessengerCollection
      *
      * @param Request $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {
@@ -25,10 +24,10 @@ class CallParticipantCollection extends MessengerCollection
     /**
      * @inheritDoc
      */
-    protected function makeResource($participant): ?array
+    protected function makeResource($resource): ?array
     {
         try {
-            return (new CallParticipantResource($participant))->resolve();
+            return (new CallParticipantResource($resource))->resolve();
         } catch (Exception $e) {
             report($e);
         } catch (Throwable $t) {

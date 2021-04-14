@@ -36,7 +36,7 @@ class SystemMessageController
     }
 
     /**
-     * Display system message pagination.
+     * Display system message history pagination.
      *
      * @param SystemMessageRepository $repository
      * @param Thread $thread

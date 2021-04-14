@@ -48,7 +48,7 @@ class PurgeImagesCommand extends Command
 
             $message = $this->option('now') ? 'completed!' : 'dispatched!';
 
-            $this->info("{$count} image messages archived {$this->option('days')} days or greater found. Purging {$message}");
+            $this->info("$count image messages archived {$this->option('days')} days or greater found. Purging $message");
         } else {
             $this->info("No image messages archived {$this->option('days')} days or greater found.");
         }

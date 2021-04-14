@@ -19,7 +19,7 @@ class CallController
     use AuthorizesRequests;
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the most recent calls.
      *
      * @param CallRepository $repository
      * @param Thread $thread
@@ -67,7 +67,7 @@ class CallController
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Start a new call.
      *
      * @param StoreCall $storeCall
      * @param Thread $thread
@@ -87,7 +87,7 @@ class CallController
     }
 
     /**
-     * Display the specified resource.
+     * Display the call.
      *
      * @param Thread $thread
      * @param Call $call

@@ -15,6 +15,6 @@ class FileNotFoundException extends NotFoundHttpException
     {
         $name = $fileName ?? 'unknown file';
 
-        parent::__construct("File not found: {$name}.");
+        parent::__construct("File not found: $name.");
     }
 }

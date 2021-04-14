@@ -18,7 +18,7 @@ class CallParticipantController
     use AuthorizesRequests;
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the calls participants.
      *
      * @param Thread $thread
      * @param Call $call
@@ -39,7 +39,7 @@ class CallParticipantController
     }
 
     /**
-     * Display the specified resource.
+     * Display the call  participant.
      *
      * @param Thread $thread
      * @param Call $call

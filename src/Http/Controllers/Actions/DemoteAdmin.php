@@ -14,7 +14,7 @@ class DemoteAdmin
     use AuthorizesRequests;
 
     /**
-     * Demote admin privilege from participant.
+     * Demote participant from admin.
      *
      * @param DemoteAdminAction $demoteAdmin
      * @param Thread $thread

@@ -30,7 +30,6 @@ class InviteCollection extends MessengerCollection
      *
      * @param  Request  $request
      * @return array
-     * @noinspection PhpMissingParamTypeInspection
      */
     public function toArray($request): array
     {
@@ -46,10 +45,10 @@ class InviteCollection extends MessengerCollection
     /**
      * @inheritDoc
      */
-    protected function makeResource($invite): ?array
+    protected function makeResource($resource): ?array
     {
         try {
-            return (new InviteResource($invite))->resolve();
+            return (new InviteResource($resource))->resolve();
         } catch (Exception $e) {
             report($e);
         } catch (Throwable $t) {

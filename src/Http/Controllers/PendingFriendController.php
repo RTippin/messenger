@@ -20,7 +20,7 @@ class PendingFriendController
     use AuthorizesRequests;
 
     /**
-     * Display a listing of the resource.
+     * Display a listing of the providers pending friends.
      *
      * @param FriendDriver $repository
      * @return PendingFriendCollection
@@ -36,7 +36,7 @@ class PendingFriendController
     }
 
     /**
-     * Display the specified resource.
+     * Display the pending friend.
      *
      * @param PendingFriend $pending
      * @return PendingFriendResource
@@ -50,7 +50,7 @@ class PendingFriendController
     }
 
     /**
-     * Update the specified resource in storage.
+     * Accept the pending friend request.
      *
      * @param AcceptFriendRequest $acceptFriendRequest
      * @param PendingFriend $pending
@@ -67,7 +67,7 @@ class PendingFriendController
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Deny the pending friend request.
      *
      * @param DenyFriendRequest $denyFriendRequest
      * @param PendingFriend $pending

@@ -22,9 +22,7 @@ class FindRecipientThread
                              string $alias,
                              string $id): RecipientThreadResource
     {
-        $locator->setAlias($alias)
-            ->setId($id)
-            ->locate();
+        $locator->setAlias($alias)->setId($id)->locate();
 
         if (! $locator->getRecipient()) {
             $locator->throwNotFoundError();
