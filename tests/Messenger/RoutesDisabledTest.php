@@ -36,6 +36,15 @@ class RoutesDisabledTest extends FeatureTestCase
     }
 
     /** @test */
+    public function invite_web_avatar_route_null()
+    {
+        $group = $this->createGroupThread($this->tippin);
+        $invite = Invite::factory()->for($group)->owner($this->tippin)->create();
+
+        $this->assertNull($invite->getInvitationAvatarRoute());
+    }
+
+    /** @test */
     public function provider_avatar_routes_null()
     {
         $this->assertNull($this->tippin->getAvatarRoute());

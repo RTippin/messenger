@@ -149,7 +149,17 @@
     "messenger_auth": true,
     "in_thread": false,
     "thread_name": "Test Party!",
-    "is_valid": true
+    "is_valid": true,
+    "api_avatar": {
+      "sm": "/api/messenger/join/ZAJOR26J/avatar/sm/img_607623be2e2f65.12992837.gif",
+      "md": "/api/messenger/join/ZAJOR26J/avatar/md/img_607623be2e2f65.12992837.gif",
+      "lg": "/api/messenger/join/ZAJOR26J/avatar/lg/img_607623be2e2f65.12992837.gif"
+    },
+    "avatar": {
+      "sm": "/messenger/join/ZAJOR26J/avatar/sm/img_607623be2e2f65.12992837.gif",
+      "md": "/messenger/join/ZAJOR26J/avatar/md/img_607623be2e2f65.12992837.gif",
+      "lg": "/messenger/join/ZAJOR26J/avatar/lg/img_607623be2e2f65.12992837.gif"
+    }
   },
   "route": "http://localhost:8000/messenger/join/ZAJOR26J",
   "id": "92315b42-d57e-461a-91fb-e5eb9f1f2ca9",

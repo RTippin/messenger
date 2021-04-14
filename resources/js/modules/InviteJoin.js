@@ -112,9 +112,12 @@ window.InviteJoin = (function () {
         },
         header : function(){
             return '<div class="float-right d-none d-sm-block pl-2">\n' +
-                ' <img class="pl-2" id="FSlog" height="95" src="'+[window.location.protocol, '//', window.location.host].join('')+'/vendor/messenger/images/messenger.png">\n' +
+                ' <img onclick="Messenger.alert().showAvatar(\''+opt.invite.options.thread_name+'\', \''+opt.invite.options.avatar.lg+'\')" class="pl-2 rounded-circle pointer_area" id="FSlog" height="105" src="'+opt.invite.options.avatar.sm+'">\n' +
                 ' </div>' +
-                '<h1 class="display-4"><i class="fas fa-users"></i>'+opt.invite.options.thread_name+'</h1>\n' +
+                '<h1 class="display-4"><i class="fas fa-users"></i> '+opt.invite.options.thread_name+'</h1>\n' +
+                '<div class="text-center d-block d-sm-none mt-4">\n' +
+                ' <img onclick="Messenger.alert().showAvatar(\''+opt.invite.options.thread_name+'\', \''+opt.invite.options.avatar.lg+'\')" class="pl-2 rounded-circle pointer_area" id="FSlog" height="75" src="'+opt.invite.options.avatar.sm+'">\n' +
+                ' </div>' +
                 ' <p class="h3 mt-4">\n' +
                 '  <i class="far fa-dot-circle"></i>\n' +
                     templates.message()+

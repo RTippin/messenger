@@ -79,6 +79,25 @@ class InviteTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_has_avatar_routes()
+    {
+
+        $inviteAvatar = [
+            'sm' => "/messenger/join/TEST1234/avatar/sm/5.png",
+            'md' => "/messenger/join/TEST1234/avatar/md/5.png",
+            'lg' => "/messenger/join/TEST1234/avatar/lg/5.png",
+        ];
+        $inviteAvatarApi = [
+            'sm' => "/api/messenger/join/TEST1234/avatar/sm/5.png",
+            'md' => "/api/messenger/join/TEST1234/avatar/md/5.png",
+            'lg' => "/api/messenger/join/TEST1234/avatar/lg/5.png",
+        ];
+
+        $this->assertSame($inviteAvatar, $this->invite->inviteAvatar());
+        $this->assertSame($inviteAvatarApi, $this->invite->inviteAvatar(true));
+    }
+
+    /** @test */
     public function it_is_valid()
     {
         $this->assertTrue($this->invite->isValid());

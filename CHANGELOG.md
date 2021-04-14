@@ -7,6 +7,7 @@
 - bool column `embeds` and nullable/text column `extra` on `messages` table.
 - Optional extra payload when sending messages to allow custom json to be stored with the message.
 - More extensive model factories.
+- New routes for viewing group avatar when joining with an invitation.
 
 #### Changed
 - Renamed action class UpdateMessage to EditMessage.
