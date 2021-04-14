@@ -14,7 +14,7 @@ class CallRepository
     /**
      * @var Messenger
      */
-    protected Messenger $messenger;
+    private Messenger $messenger;
 
     /**
      * CallRepository constructor.

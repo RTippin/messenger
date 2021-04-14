@@ -13,7 +13,7 @@ class PrivateThreadRepository
     /**
      * @var Messenger
      */
-    protected Messenger $messenger;
+    private Messenger $messenger;
 
     /**
      * PrivateThreadRepository constructor.

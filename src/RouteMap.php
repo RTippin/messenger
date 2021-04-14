@@ -43,6 +43,7 @@ trait RouteMap
 
     /**
      * Register all routes used by messenger.
+     *
      * @throws BindingResolutionException
      */
     protected function registerRoutes(): void

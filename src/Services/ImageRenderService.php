@@ -78,7 +78,7 @@ class ImageRenderService
                                          string $size,
                                          string $image)
     {
-        $avatar = "{$this->messenger->getAvatarStorage('directory')}/{$alias}/{$id}/{$image}";
+        $avatar = "{$this->messenger->getAvatarStorage('directory')}/$alias/$id/$image";
 
         $disk = $this->messenger->getAvatarStorage('disk');
 
@@ -181,9 +181,9 @@ class ImageRenderService
 
     /**
      * @param string|null $alias
-     * @return BinaryFileResponse|Response
+     * @return BinaryFileResponse
      */
-    private function renderDefaultImage($alias = null)
+    private function renderDefaultImage($alias = null): BinaryFileResponse
     {
         $default = $alias
             ? $this->messenger->getProviderDefaultAvatarPath($alias)

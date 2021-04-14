@@ -89,8 +89,7 @@ class ThreadLocatorService
      */
     public function locate(): self
     {
-        $this->locateRecipient()
-            ->locateThread();
+        $this->locateRecipient()->locateThread();
 
         return $this;
     }
@@ -120,7 +119,7 @@ class ThreadLocatorService
     }
 
     /**
-     * @noinspection PhpParamsInspection
+     * @return $this
      */
     private function locateRecipient(): self
     {
@@ -142,13 +141,10 @@ class ThreadLocatorService
     /**
      * Locate private thread current provider has with recipient.
      *
-     * @return $this
+     * @return void
      */
-    private function locateThread(): self
+    private function locateThread(): void
     {
-        $this->thread = $this->privateThreadRepository
-            ->getProviderPrivateThreadWithRecipient($this->recipient);
-
-        return $this;
+        $this->thread = $this->privateThreadRepository->getProviderPrivateThreadWithRecipient($this->recipient);
     }
 }

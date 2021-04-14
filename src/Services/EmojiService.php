@@ -46,7 +46,7 @@ class EmojiService implements EmojiInterface
      */
     public function getValidEmojiShortcodes(string $string): array
     {
-        //Get all phrases between each instance of two colons (:emoji:)
+        // Get all phrases between each instance of two colons (:emoji:)
         preg_match_all('/:([^:]+):/', $this->toShort($string), $matches);
 
         return (new Collection($matches[0]))

@@ -31,9 +31,7 @@ class HasEmoji implements Rule
      */
     public function passes($attribute, $value): bool
     {
-        return is_string($value)
-            ? $this->emoji->verifyHasEmoji($value)
-            : false;
+        return is_string($value) && $this->emoji->verifyHasEmoji($value);
     }
 
     /**

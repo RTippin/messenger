@@ -18,22 +18,22 @@ class PushNotificationService
     /**
      * @var Messenger
      */
-    protected Messenger $messenger;
+    private Messenger $messenger;
 
     /**
      * @var array
      */
-    protected array $with = [];
+    private array $with = [];
 
     /**
      * @var Collection|null
      */
-    protected ?Collection $recipients = null;
+    private ?Collection $recipients = null;
 
     /**
      * @var Application
      */
-    protected Application $app;
+    private Application $app;
 
     /**
      * @var Dispatcher
@@ -112,7 +112,7 @@ class PushNotificationService
      * @param string $abstract
      * @return string|null
      */
-    protected function getBroadcastAs(string $abstract): ?string
+    private function getBroadcastAs(string $abstract): ?string
     {
         try {
             return $this->app
@@ -132,7 +132,7 @@ class PushNotificationService
      *
      * @return Collection
      */
-    protected function extractValidProviders(): Collection
+    private function extractValidProviders(): Collection
     {
         return $this->recipients
             ->map(fn ($recipient) => $this->extractProvider($recipient))
@@ -146,7 +146,7 @@ class PushNotificationService
      * @param mixed $recipient
      * @return array
      */
-    protected function extractProvider($recipient): array
+    private function extractProvider($recipient): array
     {
         $abstract = is_object($recipient)
             ? get_class($recipient)
@@ -160,7 +160,6 @@ class PushNotificationService
         if (in_array($abstract, $participants)
             && $this->messenger->isValidMessengerProvider($recipient->owner_type)) {
             /** @var Participant|CallParticipant $recipient */
-
             return [
                 'owner_type' => $recipient->owner_type,
                 'owner_id' => $recipient->owner_id,
@@ -170,7 +169,6 @@ class PushNotificationService
         if (! in_array($abstract, $participants)
             && $this->messenger->isValidMessengerProvider($recipient)) {
             /** @var MessengerProvider $recipient */
-
             return [
                 'owner_type' => get_class($recipient),
                 'owner_id' => $recipient->getKey(),
@@ -184,7 +182,7 @@ class PushNotificationService
      * @param string $broadcastAs
      * @param Collection $recipients
      */
-    protected function dispatchNotification(string $broadcastAs, Collection $recipients): void
+    private function dispatchNotification(string $broadcastAs, Collection $recipients): void
     {
         $this->dispatcher->dispatch(new PushNotificationEvent(
             $broadcastAs,

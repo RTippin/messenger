@@ -200,6 +200,6 @@ class MessengerServiceProvider extends ServiceProvider
      */
     private function throwDriverNotExist(string $driverName)
     {
-        throw new LogicException("The {$driverName} driver does not exist.");
+        throw new LogicException("The $driverName driver does not exist.");
     }
 }

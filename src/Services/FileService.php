@@ -138,18 +138,16 @@ class FileService
 
     /**
      * @param UploadedFile $file
-     * @return string
+     * @return void
      * @throws UploadFailedException
      */
-    private function fileUpload(UploadedFile $file): ?string
+    private function fileUpload(UploadedFile $file): void
     {
         $this->name = $this->nameFile($file);
 
         if (! $this->storeFile($file)) {
             $this->uploadFailed();
         }
-
-        return $this->name;
     }
 
     /**
@@ -165,15 +163,15 @@ class FileService
         }
 
         if (! is_null($this->name)) {
-            return "{$this->getName()}.{$extension}";
+            return "{$this->getName()}.$extension";
         }
 
         switch ($this->type) {
             case 'image':
-                return uniqid('img_', true).".{$extension}";
+                return uniqid('img_', true).".$extension";
             case 'document':
             case 'audio':
-                return $this->getOriginalName($file).'_'.now()->timestamp.".{$extension}";
+                return $this->getOriginalName($file).'_'.now()->timestamp.".$extension";
         }
 
         return $this->getOriginalName($file).$extension;

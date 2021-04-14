@@ -13,7 +13,7 @@ class ParticipantRepository
     /**
      * @var Messenger
      */
-    protected Messenger $messenger;
+    private Messenger $messenger;
 
     /**
      * ParticipantRepository constructor.

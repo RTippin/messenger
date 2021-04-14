@@ -89,7 +89,7 @@ trait Messageable
                 'alias' => Messenger::findProviderAlias($this),
                 'id' => $this->getKey(),
                 'size' => $size,
-                'image' => $this->{$this->getAvatarColumn()} ? $this->{$this->getAvatarColumn()} : 'default.png',
+                'image' => $this->{$this->getAvatarColumn()} ?: 'default.png',
             ]
         );
     }

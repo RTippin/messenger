@@ -13,7 +13,7 @@ class AudioMessageRepository
     /**
      * @var Messenger
      */
-    protected Messenger $messenger;
+    private Messenger $messenger;
 
     /**
      * AudioMessageRepository constructor.

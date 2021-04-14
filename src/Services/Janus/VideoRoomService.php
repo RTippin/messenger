@@ -30,6 +30,7 @@ class VideoRoomService
 
     /**
      * VideoRoomService constructor.
+     *
      * @param ConfigRepository $configRepo
      * @param JanusServer $janus
      */
@@ -37,30 +38,22 @@ class VideoRoomService
     {
         $this->janus = $janus;
         $this->configRepo = $configRepo;
-        $this->boot();
-    }
-
-    /**
-     * Boot up the plugin.
-     */
-    private function boot(): void
-    {
         $this->PLUGIN_ADMIN_KEY = $this->configRepo->get('janus.video_room_secret');
     }
 
     /**
      * Create our initial session and handle for this plugin.
+     *
      * @return JanusServer
      */
     private function setup(): JanusServer
     {
-        return $this->janus
-            ->connect()
-            ->attach(self::PLUGIN);
+        return $this->janus->connect()->attach(self::PLUGIN);
     }
 
     /**
      * Check if the plugin response we expect is valid.
+     *
      * @param string $success
      * @return bool
      */
@@ -72,6 +65,7 @@ class VideoRoomService
 
     /**
      * List all Video Rooms we have in this janus server.
+     *
      * @return array
      */
     public function list(): array
@@ -91,6 +85,7 @@ class VideoRoomService
 
     /**
      * Check if janus has a video room with ID.
+     *
      * @param int $room
      * @return bool
      */
@@ -113,6 +108,7 @@ class VideoRoomService
     /**
      * Create a new video room, set flags to override defaults
      * ex: ['publishers' => 10, 'bitrate' => 1024000].
+     *
      * @param array $params
      * @param bool $pin
      * @param bool $secret
@@ -147,9 +143,7 @@ class VideoRoomService
             }
         }
 
-        $this->setup()
-            ->sendMessage($create)
-            ->disconnect();
+        $this->setup()->sendMessage($create)->disconnect();
 
         if ($this->isValidPluginResponse('created')) {
             return [
@@ -166,6 +160,7 @@ class VideoRoomService
 
     /**
      * Edit params of a given video room.
+     *
      * @param int $room
      * @param array $params
      * @return bool
@@ -184,9 +179,7 @@ class VideoRoomService
             }
         }
 
-        $this->setup()
-            ->sendMessage($edit)
-            ->disconnect();
+        $this->setup()->sendMessage($edit)->disconnect();
 
         if ($this->isValidPluginResponse('edited')) {
             return true;
@@ -199,6 +192,7 @@ class VideoRoomService
 
     /**
      * Configure whether to check tokens or add/remove people who can join a room.
+     *
      * @param int $room
      * @param string $action
      * @param array $allowed
@@ -214,7 +208,7 @@ class VideoRoomService
             'request' => 'allowed',
             'room' => $room,
             'action' => $action,
-            'secret' => isset($secret) ? $secret : '',
+            'secret' => $secret ?? '',
             'allowed' => $allowed,
         ])
         ->disconnect();
@@ -230,6 +224,7 @@ class VideoRoomService
 
     /**
      * Kick a participant from a room using their private janus participant ID.
+     *
      * @param int $room
      * @param int $participantID
      * @param string|null $secret
@@ -242,7 +237,7 @@ class VideoRoomService
         $this->setup()->sendMessage([
             'request' => 'kick',
             'room' => $room,
-            'secret' => isset($secret) ? $secret : '',
+            'secret' => $secret ?? '',
             'id' => $participantID,
         ])->disconnect();
 
@@ -257,7 +252,7 @@ class VideoRoomService
 
     /**
      * Get a list of the participants in a specific room.
-     * @param $room
+     * @param int $room
      * @return array
      */
     public function listParticipants(int $room): array
@@ -278,16 +273,17 @@ class VideoRoomService
 
     /**
      * Tell janus to destroy a room given the room ID and secret.
+     *
      * @param int|null $room
      * @param string|null $secret
      * @return bool
      */
-    public function destroy(int $room = null, string $secret = null): bool
+    public function destroy(int $room = null, ?string $secret = null): bool
     {
         $this->setup()->sendMessage([
             'request' => 'destroy',
             'room' => $room,
-            'secret' => $secret ? $secret : '',
+            'secret' => $secret ?: '',
         ])->disconnect();
 
         if ($this->isValidPluginResponse('destroyed')) {

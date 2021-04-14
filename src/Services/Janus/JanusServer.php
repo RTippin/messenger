@@ -101,6 +101,7 @@ class JanusServer
 
     /**
      * JanusServer constructor.
+     *
      * @param ConfigRepository $configRepo
      * @param HttpClient $httpClient
      * @param Logger $logger
@@ -130,6 +131,7 @@ class JanusServer
 
     /**
      * Log an API error if logging enabled.
+     *
      * @param null $data
      * @param null $route
      * @return void
@@ -147,6 +149,7 @@ class JanusServer
 
     /**
      * Log error from the loaded plugin method if logging enabled.
+     *
      * @param string $action
      * @param array $extra
      * @return void
@@ -164,9 +167,10 @@ class JanusServer
 
     /**
      * Retrieve the janus server instance details.
-     * @return array|bool|mixed
+     *
+     * @return array
      */
-    public function serverInfo()
+    public function serverInfo(): array
     {
         $this->janusAPI(null, 'info', false, false);
 
@@ -175,6 +179,7 @@ class JanusServer
 
     /**
      * Ping janus to see if it is alive.
+     *
      * @return array
      */
     public function serverPing(): array
@@ -201,6 +206,7 @@ class JanusServer
     /**
      * Set the Janus configs defaulted in the constructor and class properties
      * Use property name as key => value.
+     *
      * @param array|null $config
      * @return $this
      */
@@ -219,6 +225,7 @@ class JanusServer
 
     /**
      * Set the configs in the constructor back to defaults.
+     *
      * @return $this
      */
     public function resetConfig(): self
@@ -235,6 +242,7 @@ class JanusServer
 
     /**
      * Easily set debug at any part of a chain.
+     *
      * @param bool $debug
      * @return $this
      */
@@ -247,15 +255,17 @@ class JanusServer
 
     /**
      * Return the response from a plugin.
-     * @return array|string
+     *
+     * @return array
      */
-    public function getPluginResponse()
+    public function getPluginResponse(): array
     {
         return $this->pluginResponse;
     }
 
     /**
      * Connect with janus to set the session ID for this cycle.
+     *
      * @return $this
      */
     public function connect(): self
@@ -266,9 +276,7 @@ class JanusServer
             'apisecret' => $this->apiSecret,
         ]);
 
-        $this->sessionId = isset($this->apiResponse['data']['id'])
-            ? $this->apiResponse['data']['id']
-            : null;
+        $this->sessionId = $this->apiResponse['data']['id'] ?? null;
 
         return $this;
     }
@@ -276,6 +284,7 @@ class JanusServer
     /**
      * Attach to the janus plugin to get a handle ID. All request
      * in this cycle will go to this plugin unless you call detach.
+     *
      * @param string $plugin
      * @return $this
      */
@@ -305,6 +314,7 @@ class JanusServer
 
     /**
      * Detach from the current plugin/handle.
+     *
      * @return $this
      */
     public function detach(): self
@@ -326,6 +336,7 @@ class JanusServer
 
     /**
      * Disconnect from janus, destroying our session and handle/plugin.
+     *
      * @return $this
      */
     public function disconnect(): self
@@ -349,6 +360,7 @@ class JanusServer
 
     /**
      * Send janus our message to the plugin.
+     *
      * @param array $message
      * @param string|null $jsep
      * @return $this
@@ -374,8 +386,7 @@ class JanusServer
             return $this;
         }
 
-        $this->janusAPI($this->pluginPayload)
-            ->setPluginResponse();
+        $this->janusAPI($this->pluginPayload)->setPluginResponse();
 
         return $this;
     }
@@ -401,14 +412,14 @@ class JanusServer
             'apisecret' => $this->apiSecret,
         ];
 
-        $this->janusAPI($this->pluginPayload)
-            ->setPluginResponse();
+        $this->janusAPI($this->pluginPayload)->setPluginResponse();
 
         return $this;
     }
 
     /**
      * Make POST/GET to janus, append session or handle ID if they exist.
+     *
      * @param array $data
      * @param string|null $route
      * @param bool $admin
@@ -474,9 +485,10 @@ class JanusServer
 
     /**
      * Called after plugin message to extract plugin data response.
-     * @return array
+     *
+     * @return void
      */
-    private function setPluginResponse(): array
+    private function setPluginResponse(): void
     {
         if (isset($this->apiResponse['plugindata']['plugin'])
             && $this->apiResponse['plugindata']['plugin'] === $this->plugin
@@ -485,12 +497,11 @@ class JanusServer
         } else {
             $this->pluginResponse = [];
         }
-
-        return $this->pluginResponse;
     }
 
     /**
      * Start micro timer for API interaction.
+     *
      * @return void
      */
     private function trackServerLatency(): void
@@ -500,6 +511,7 @@ class JanusServer
 
     /**
      * Finish and calculate milliseconds for API call.
+     *
      * @return void
      */
     private function reportServerLatency(): void

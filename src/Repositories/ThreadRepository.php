@@ -13,7 +13,7 @@ class ThreadRepository
     /**
      * @var Messenger
      */
-    protected Messenger $messenger;
+    private Messenger $messenger;
 
     /**
      * ThreadRepository constructor.

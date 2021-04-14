@@ -13,7 +13,7 @@ class DocumentMessageRepository
     /**
      * @var Messenger
      */
-    protected Messenger $messenger;
+    private Messenger $messenger;
 
     /**
      * DocumentMessageRepository constructor.

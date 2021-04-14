@@ -22,7 +22,7 @@ trait Search
     {
         return $query->where(function (Builder $query) use ($searchItems) {
             foreach ($searchItems as $item) {
-                $query->orWhere('name', 'LIKE', "%{$item}%");
+                $query->orWhere('name', 'LIKE', "%$item%");
             }
         })->orWhere('email', '=', $search);
     }

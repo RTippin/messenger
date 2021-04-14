@@ -13,7 +13,7 @@ class MessageRepository
     /**
      * @var Messenger
      */
-    protected Messenger $messenger;
+    private Messenger $messenger;
 
     /**
      * MessageRepository constructor.

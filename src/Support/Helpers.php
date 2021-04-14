@@ -24,7 +24,7 @@ class Helpers
             try {
                 return app('url')->route(
                     $name,
-                    $parameters ? $parameters : [],
+                    $parameters ?: [],
                     $absolute
                 );
             } catch (Exception $e) {
