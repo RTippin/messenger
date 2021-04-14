@@ -244,7 +244,7 @@ class Message extends Model
      */
     public function getStorageDirectory(): string
     {
-        return Messenger::getThreadStorage('directory')."/{$this->thread_id}";
+        return Messenger::getThreadStorage('directory')."/$this->thread_id";
     }
 
     /**
@@ -252,7 +252,7 @@ class Message extends Model
      */
     public function getImagePath(): string
     {
-        return "{$this->getStorageDirectory()}/images/{$this->body}";
+        return "{$this->getStorageDirectory()}/images/$this->body";
     }
 
     /**
@@ -260,7 +260,7 @@ class Message extends Model
      */
     public function getDocumentPath(): string
     {
-        return "{$this->getStorageDirectory()}/documents/{$this->body}";
+        return "{$this->getStorageDirectory()}/documents/$this->body";
     }
 
     /**
@@ -268,7 +268,7 @@ class Message extends Model
      */
     public function getAudioPath(): string
     {
-        return "{$this->getStorageDirectory()}/audio/{$this->body}";
+        return "{$this->getStorageDirectory()}/audio/$this->body";
     }
 
     /**

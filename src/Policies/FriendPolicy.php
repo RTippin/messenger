@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Friend;
 
@@ -26,24 +27,24 @@ class FriendPolicy
     }
 
     /**
-     * Determine whether the provider view any models.
+     * Determine whether the provider can view friends.
      *
      * @param $user
-     * @return mixed
+     * @return Response
      */
-    public function viewAny($user)
+    public function viewAny($user): Response
     {
         return $this->allow();
     }
 
     /**
-     * Determine whether the provider can view the model.
+     * Determine whether the provider can view a friend.
      *
      * @param $user
      * @param Friend $friend
-     * @return mixed
+     * @return Response
      */
-    public function view($user, Friend $friend)
+    public function view($user, Friend $friend): Response
     {
         return ($this->messenger->providerHasFriends()
             && (string) $this->messenger->getProviderId() === (string) $friend->owner_id
@@ -53,13 +54,13 @@ class FriendPolicy
     }
 
     /**
-     * Determine whether the provider can delete the model.
+     * Determine whether the provider can delete the friend.
      *
      * @param $user
      * @param Friend $friend
-     * @return mixed
+     * @return Response
      */
-    public function delete($user, Friend $friend)
+    public function delete($user, Friend $friend): Response
     {
         return ($this->messenger->providerHasFriends()
             && (string) $this->messenger->getProviderId() === (string) $friend->owner_id

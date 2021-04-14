@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\PendingFriend;
 
@@ -26,12 +27,12 @@ class PendingFriendPolicy
     }
 
     /**
-     * Determine whether the provider can view any models.
+     * Determine whether the provider can view pending friends.
      *
      * @param $user
-     * @return mixed
+     * @return Response
      */
-    public function viewAny($user)
+    public function viewAny($user): Response
     {
         return $this->messenger->providerHasFriends()
             ? $this->allow()
@@ -39,13 +40,13 @@ class PendingFriendPolicy
     }
 
     /**
-     * Determine whether the provider can view the model.
+     * Determine whether the provider can view the pending friend.
      *
      * @param $user
      * @param PendingFriend $pending
-     * @return mixed
+     * @return Response
      */
-    public function view($user, PendingFriend $pending)
+    public function view($user, PendingFriend $pending): Response
     {
         return ($this->messenger->providerHasFriends()
             && (string) $this->messenger->getProviderId() === (string) $pending->recipient_id
@@ -55,13 +56,13 @@ class PendingFriendPolicy
     }
 
     /**
-     * Determine whether the provider can update the model.
+     * Determine whether the provider can accept the pending friend.
      *
      * @param $user
      * @param PendingFriend $pending
-     * @return mixed
+     * @return Response
      */
-    public function update($user, PendingFriend $pending)
+    public function update($user, PendingFriend $pending): Response
     {
         return ($this->messenger->providerHasFriends()
             && (string) $this->messenger->getProviderId() === (string) $pending->recipient_id
@@ -71,13 +72,13 @@ class PendingFriendPolicy
     }
 
     /**
-     * Determine whether the provider can delete the model.
+     * Determine whether the provider can deny the pending friend.
      *
      * @param $user
      * @param PendingFriend $pending
-     * @return mixed
+     * @return Response
      */
-    public function delete($user, PendingFriend $pending)
+    public function delete($user, PendingFriend $pending): Response
     {
         return ($this->messenger->providerHasFriends()
             && (string) $this->messenger->getProviderId() === (string) $pending->recipient_id

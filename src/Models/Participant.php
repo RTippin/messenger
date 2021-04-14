@@ -32,6 +32,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property bool $send_knocks
  * @property bool $send_messages
  * @property bool $add_participants
+ * @property bool $manage_invites
  * @property \Illuminate\Support\Carbon|null $last_read
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -50,7 +51,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static Builder|Participant validProviders()
  * @method static Builder|Participant notMuted()
  * @method static Builder|Participant notPending()
- * @property int $manage_invites
  */
 class Participant extends Model
 {

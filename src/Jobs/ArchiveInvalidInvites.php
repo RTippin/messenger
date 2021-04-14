@@ -25,7 +25,7 @@ class ArchiveInvalidInvites implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param $invites
+     * @param Collection $invites
      */
     public function __construct(Collection $invites)
     {
@@ -39,7 +39,7 @@ class ArchiveInvalidInvites implements ShouldQueue
      * @return void
      * @throws Exception|FeatureDisabledException
      */
-    public function handle(ArchiveInvite $archiveInvite)
+    public function handle(ArchiveInvite $archiveInvite): void
     {
         $this->invites
             ->reject(fn (Invite $invite) => $invite->isValid())

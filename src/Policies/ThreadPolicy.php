@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 use RTippin\Messenger\Models\Thread;
 
 class ThreadPolicy
@@ -10,23 +11,23 @@ class ThreadPolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the can view any models.
+     * Determine whether the can view threads.
      *
-     * @return mixed
+     * @return Response
      */
-    public function viewAny()
+    public function viewAny(): Response
     {
         return $this->allow();
     }
 
     /**
-     * Determine whether the provider can view the model.
+     * Determine whether the provider can view the thread.
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function view($user, Thread $thread)
+    public function view($user, Thread $thread): Response
     {
         return $thread->hasCurrentProvider()
             ? $this->allow()
@@ -34,13 +35,13 @@ class ThreadPolicy
     }
 
     /**
-     * Determine whether the provider can join thread socket channel.
+     * Determine whether the provider can join the thread socket channel.
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function socket($user, Thread $thread)
+    public function socket($user, Thread $thread): Response
     {
         return $thread->hasCurrentProvider()
         && ! $thread->isLocked()
@@ -54,37 +55,39 @@ class ThreadPolicy
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function approval($user, Thread $thread)
+    public function approval($user, Thread $thread): Response
     {
-        return $thread->hasCurrentProvider() && $thread->isAwaitingMyApproval()
+        return $thread->hasCurrentProvider()
+        && $thread->isAwaitingMyApproval()
             ? $this->allow()
             : $this->deny('Not authorized to accept or deny a request.');
     }
 
     /**
-     * Determine whether the provider can view the model.
+     * Determine whether the provider can use a group thread method.
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function groupMethod($user, Thread $thread)
+    public function groupMethod($user, Thread $thread): Response
     {
-        return $thread->isGroup() && $thread->hasCurrentProvider()
+        return $thread->isGroup()
+        && $thread->hasCurrentProvider()
             ? $this->allow()
             : $this->deny('Not authorized to view that thread.');
     }
 
     /**
-     * Determine whether the provider can view the model.
+     * Determine whether the provider can add group participants.
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function addParticipants($user, Thread $thread)
+    public function addParticipants($user, Thread $thread): Response
     {
         return $thread->canAddParticipants()
             ? $this->allow()
@@ -96,9 +99,9 @@ class ThreadPolicy
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function sendKnock($user, Thread $thread)
+    public function sendKnock($user, Thread $thread): Response
     {
         return $thread->canKnock()
             ? $this->allow()
@@ -106,13 +109,13 @@ class ThreadPolicy
     }
 
     /**
-     * Determine whether the provider can view the model.
+     * Determine whether the provider can use a private thread method.
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function privateMethod($user, Thread $thread)
+    public function privateMethod($user, Thread $thread): Response
     {
         return $thread->isPrivate() && $thread->hasCurrentProvider()
             ? $this->allow()
@@ -120,23 +123,23 @@ class ThreadPolicy
     }
 
     /**
-     * Determine whether the provider can create models.
+     * Determine whether the provider can create a thread.
      *
-     * @return mixed
+     * @return Response
      */
-    public function create()
+    public function create(): Response
     {
         return $this->allow();
     }
 
     /**
-     * Determine whether the provider can update the model.
+     * Determine whether the provider can manage the group thread settings.
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function settings($user, Thread $thread)
+    public function settings($user, Thread $thread): Response
     {
         return $thread->isGroup()
         && ! $thread->isLocked()
@@ -146,13 +149,13 @@ class ThreadPolicy
     }
 
     /**
-     * Determine whether the provider can update the model.
+     * Determine whether the provider can update the thread.
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function update($user, Thread $thread)
+    public function update($user, Thread $thread): Response
     {
         return $thread->isGroup()
         && ! $thread->isLocked()
@@ -162,13 +165,13 @@ class ThreadPolicy
     }
 
     /**
-     * Determine whether the provider can update the model.
+     * Determine whether the provider can mute or unmute the thread.
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function mutes($user, Thread $thread)
+    public function mutes($user, Thread $thread): Response
     {
         return $thread->hasCurrentProvider()
         && ! $thread->isLocked()
@@ -181,9 +184,9 @@ class ThreadPolicy
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function leave($user, Thread $thread)
+    public function leave($user, Thread $thread): Response
     {
         if ($thread->isGroup() && $thread->hasCurrentProvider()) {
             if ($thread->isLocked()
@@ -201,13 +204,13 @@ class ThreadPolicy
     }
 
     /**
-     * Determine whether the provider can delete the model.
+     * Determine whether the provider can delete the thread.
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function delete($user, Thread $thread)
+    public function delete($user, Thread $thread): Response
     {
         if ($thread->hasCurrentProvider()) {
             if ($thread->hasActiveCall()) {

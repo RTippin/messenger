@@ -30,7 +30,7 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @property bool $calling
  * @property bool $messaging
  * @property bool $knocks
- * @property int $lockout
+ * @property bool $lockout
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
@@ -104,6 +104,7 @@ class Thread extends Model
         'messaging' => 'boolean',
         'knocks' => 'boolean',
         'type' => 'integer',
+        'lockout' => 'boolean',
     ];
 
     /**
@@ -232,7 +233,7 @@ class Thread extends Model
      */
     public function getStorageDirectory(): string
     {
-        return Messenger::getThreadStorage('directory')."/{$this->id}";
+        return Messenger::getThreadStorage('directory')."/$this->id";
     }
 
     /**
@@ -240,7 +241,7 @@ class Thread extends Model
      */
     public function getAvatarPath(): string
     {
-        return "{$this->getStorageDirectory()}/avatar/{$this->image}";
+        return "{$this->getStorageDirectory()}/avatar/$this->image";
     }
 
     /**
@@ -330,9 +331,7 @@ class Thread extends Model
      */
     public function hasCurrentProvider(): bool
     {
-        return is_null($this->currentParticipant())
-            ? false
-            : true;
+        return ! is_null($this->currentParticipant());
     }
 
     /**

@@ -25,7 +25,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string|int $owner_id
  * @property string $owner_type
  * @property int $type
- * @property int $mode
  * @property int|null $room_id
  * @property string|null $room_pin
  * @property string|null $room_secret
@@ -43,8 +42,8 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static Builder|Call forProvider(MessengerProvider $provider, string $morph = 'owner')
  * @method static Builder|Call notProvider(MessengerProvider $provider, string $morph = 'owner')
  * @property string|null $payload
- * @property int $setup_complete
- * @property int $teardown_complete
+ * @property bool $setup_complete
+ * @property bool $teardown_complete
  */
 class Call extends Model
 {

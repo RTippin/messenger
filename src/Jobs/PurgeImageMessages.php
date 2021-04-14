@@ -22,7 +22,7 @@ class PurgeImageMessages implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param $images
+     * @param Collection $images
      */
     public function __construct(Collection $images)
     {
@@ -35,7 +35,7 @@ class PurgeImageMessages implements ShouldQueue
      * @param PurgeImageMessagesAction $purgeImages
      * @return void
      */
-    public function handle(PurgeImageMessagesAction $purgeImages)
+    public function handle(PurgeImageMessagesAction $purgeImages): void
     {
         $purgeImages->execute($this->images);
     }

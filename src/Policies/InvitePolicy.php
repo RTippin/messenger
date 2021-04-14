@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Models\Thread;
@@ -27,13 +28,13 @@ class InvitePolicy
     }
 
     /**
-     * Determine whether the provider can view any models.
+     * Determine whether the provider can view thread invites.
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function viewAny($user, Thread $thread)
+    public function viewAny($user, Thread $thread): Response
     {
         return $thread->canInviteParticipants()
             ? $this->allow()
@@ -41,13 +42,13 @@ class InvitePolicy
     }
 
     /**
-     * Determine whether the provider can create models.
+     * Determine whether the provider can create a thread invite.
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function create($user, Thread $thread)
+    public function create($user, Thread $thread): Response
     {
         if (! $thread->canInviteParticipants()) {
             return $this->deny('Not authorized to create thread invite.');
@@ -60,13 +61,13 @@ class InvitePolicy
     }
 
     /**
-     * Determine whether the provider can delete the model.
+     * Determine whether the provider can delete the invite.
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function delete($user, Thread $thread)
+    public function delete($user, Thread $thread): Response
     {
         return $thread->canInviteParticipants()
             ? $this->allow()
@@ -74,13 +75,13 @@ class InvitePolicy
     }
 
     /**
-     * Determine whether the provider can delete the model.
+     * Determine whether the provider can join using the invite.
      *
      * @param $user
      * @param Invite $code
-     * @return mixed
+     * @return Response
      */
-    public function join($user, Invite $code)
+    public function join($user, Invite $code): Response
     {
         return $code->isValid()
         && $code->thread->canJoinWithInvite()

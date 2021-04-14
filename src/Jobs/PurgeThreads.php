@@ -22,7 +22,7 @@ class PurgeThreads implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param $threads
+     * @param Collection $threads
      */
     public function __construct(Collection $threads)
     {
@@ -35,7 +35,7 @@ class PurgeThreads implements ShouldQueue
      * @param PurgeThreadsAction $purgeThreads
      * @return void
      */
-    public function handle(PurgeThreadsAction $purgeThreads)
+    public function handle(PurgeThreadsAction $purgeThreads): void
     {
         $purgeThreads->execute($this->threads);
     }

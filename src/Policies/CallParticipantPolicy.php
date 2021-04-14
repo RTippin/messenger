@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
 
@@ -11,13 +12,13 @@ class CallParticipantPolicy
     use HandlesAuthorization;
 
     /**
-     * Determine whether the provider can view any models.
+     * Determine whether the provider can view call participants.
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function viewAny($user, Thread $thread)
+    public function viewAny($user, Thread $thread): Response
     {
         return $thread->hasCurrentProvider()
             ? $this->allow()
@@ -25,13 +26,13 @@ class CallParticipantPolicy
     }
 
     /**
-     * Determine whether the provider can view the model.
+     * Determine whether the provider can view the call participant.
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function view($user, Thread $thread)
+    public function view($user, Thread $thread): Response
     {
         return $thread->hasCurrentProvider()
             ? $this->allow()
@@ -39,14 +40,14 @@ class CallParticipantPolicy
     }
 
     /**
-     * Determine whether the provider can update the model.
+     * Determine whether the provider can update the call participant.
      *
      * @param $user
      * @param Thread $thread
      * @param Call $call
-     * @return mixed
+     * @return Response
      */
-    public function update($user, Thread $thread, Call $call)
+    public function update($user, Thread $thread, Call $call): Response
     {
         return $thread->hasCurrentProvider()
         && $thread->isGroup()

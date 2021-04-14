@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\SentFriend;
 
@@ -26,12 +27,12 @@ class SentFriendPolicy
     }
 
     /**
-     * Determine whether the provider can view any models.
+     * Determine whether the provider can view sent friend request.
      *
      * @param $user
-     * @return mixed
+     * @return Response
      */
-    public function viewAny($user)
+    public function viewAny($user): Response
     {
         return $this->messenger->providerHasFriends()
             ? $this->allow()
@@ -39,13 +40,13 @@ class SentFriendPolicy
     }
 
     /**
-     * Determine whether the provider can view the model.
+     * Determine whether the provider can view the sent friend request.
      *
      * @param $user
      * @param SentFriend $sent
-     * @return mixed
+     * @return Response
      */
-    public function view($user, SentFriend $sent)
+    public function view($user, SentFriend $sent): Response
     {
         return ($this->messenger->providerHasFriends()
             && (string) $this->messenger->getProviderId() === (string) $sent->sender_id
@@ -55,12 +56,12 @@ class SentFriendPolicy
     }
 
     /**
-     * Determine whether the provider can create models.
+     * Determine whether the provider can add new friend request.
      *
      * @param $user
-     * @return mixed
+     * @return Response
      */
-    public function create($user)
+    public function create($user): Response
     {
         return $this->messenger->providerHasFriends()
             ? $this->allow()
@@ -68,13 +69,13 @@ class SentFriendPolicy
     }
 
     /**
-     * Determine whether the provider can delete the model.
+     * Determine whether the provider can cancel sent friend request.
      *
      * @param $user
      * @param SentFriend $sent
-     * @return mixed
+     * @return Response
      */
-    public function delete($user, SentFriend $sent)
+    public function delete($user, SentFriend $sent): Response
     {
         return ($this->messenger->providerHasFriends()
             && (string) $this->messenger->getProviderId() === (string) $sent->sender_id

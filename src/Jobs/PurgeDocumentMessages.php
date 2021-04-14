@@ -22,7 +22,7 @@ class PurgeDocumentMessages implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param $documents
+     * @param Collection $documents
      */
     public function __construct(Collection $documents)
     {
@@ -35,7 +35,7 @@ class PurgeDocumentMessages implements ShouldQueue
      * @param PurgeDocumentMessagesAction $purgeDocuments
      * @return void
      */
-    public function handle(PurgeDocumentMessagesAction $purgeDocuments)
+    public function handle(PurgeDocumentMessagesAction $purgeDocuments): void
     {
         $purgeDocuments->execute($this->documents);
     }

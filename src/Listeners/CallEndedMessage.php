@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Collection;
 use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
 use RTippin\Messenger\Events\CallEndedEvent;
 use RTippin\Messenger\Support\Definitions;
@@ -53,7 +54,7 @@ class CallEndedMessage implements ShouldQueue
         return [
             $event->call->thread,
             $event->call->owner,
-            collect(['call_id' => $event->call->id])->toJson(),
+            (new Collection(['call_id' => $event->call->id]))->toJson(),
             Definitions::Call[$event->call->type].'_CALL',
         ];
     }

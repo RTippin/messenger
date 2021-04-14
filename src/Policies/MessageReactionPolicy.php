@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Auth\Access\Response;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
@@ -28,13 +29,13 @@ class MessageReactionPolicy
     }
 
     /**
-     * Determine whether the provider can view reactions.
+     * Determine whether the provider can view message reactions.
      *
      * @param $user
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function viewAny($user, Thread $thread)
+    public function viewAny($user, Thread $thread): Response
     {
         return $thread->hasCurrentProvider()
             ? $this->allow()
@@ -42,14 +43,14 @@ class MessageReactionPolicy
     }
 
     /**
-     * Determine whether the provider can create a reaction.
+     * Determine whether the provider can create a message reaction.
      *
      * @param $user
      * @param Message $message
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function create($user, Thread $thread, Message $message)
+    public function create($user, Thread $thread, Message $message): Response
     {
         return $this->messenger->isMessageReactionsEnabled()
         && ! $message->isSystemMessage()
@@ -59,14 +60,14 @@ class MessageReactionPolicy
     }
 
     /**
-     * Determine whether the provider can delete the reaction.
+     * Determine whether the provider can delete the message reaction.
      *
      * @param $user
      * @param MessageReaction $reaction
      * @param Thread $thread
-     * @return mixed
+     * @return Response
      */
-    public function delete($user, MessageReaction $reaction, Thread $thread)
+    public function delete($user, MessageReaction $reaction, Thread $thread): Response
     {
         return ! $thread->isLocked()
         && (((string) $this->messenger->getProviderId() === (string) $reaction->owner_id

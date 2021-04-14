@@ -25,7 +25,7 @@ class EndCalls implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param $calls
+     * @param Collection $calls
      */
     public function __construct(Collection $calls)
     {
@@ -39,7 +39,7 @@ class EndCalls implements ShouldQueue
      * @return void
      * @throws Throwable|InvalidArgumentException
      */
-    public function handle(EndCall $endCall)
+    public function handle(EndCall $endCall): void
     {
         $this->calls->each(fn (Call $call) => $endCall->execute($call));
     }

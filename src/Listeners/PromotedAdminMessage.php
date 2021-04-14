@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Support\Collection;
 use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
 use RTippin\Messenger\Events\PromotedAdminEvent;
 use Throwable;
@@ -63,9 +64,9 @@ class PromotedAdminMessage implements ShouldQueue
      */
     private function messageBody(PromotedAdminEvent $event): string
     {
-        return collect([
+        return (new Collection([
             'owner_id' => $event->participant->owner_id,
             'owner_type' => $event->participant->owner_type,
-        ])->toJson();
+        ]))->toJson();
     }
 }

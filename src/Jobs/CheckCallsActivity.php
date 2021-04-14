@@ -24,7 +24,7 @@ class CheckCallsActivity implements ShouldQueue
     /**
      * Create a new job instance.
      *
-     * @param $calls
+     * @param Collection $calls
      */
     public function __construct(Collection $calls)
     {
@@ -38,7 +38,7 @@ class CheckCallsActivity implements ShouldQueue
      * @return void
      * @throws Throwable|InvalidArgumentException
      */
-    public function handle(CallActivityChecker $checker)
+    public function handle(CallActivityChecker $checker): void
     {
         $checker->execute($this->calls);
     }
