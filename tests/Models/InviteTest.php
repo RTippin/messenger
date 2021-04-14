@@ -81,7 +81,6 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function it_has_avatar_routes()
     {
-
         $inviteAvatar = [
             'sm' => '/messenger/join/TEST1234/avatar/sm/5.png',
             'md' => '/messenger/join/TEST1234/avatar/md/5.png',
