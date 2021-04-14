@@ -121,9 +121,9 @@ class RemoveFriend extends BaseMessengerAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new FriendRemovedEvent(
@@ -131,7 +131,5 @@ class RemoveFriend extends BaseMessengerAction
                 $this->inverseFriend->withoutRelations()
             ));
         }
-
-        return $this;
     }
 }

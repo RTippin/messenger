@@ -173,9 +173,9 @@ class StorePrivateThread extends NewThreadAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new NewThreadEvent(
@@ -183,13 +183,9 @@ class StorePrivateThread extends NewThreadAction
                 $this->getThread(true),
             ));
         }
-
-        return $this;
     }
 
     /**
-     * Execute params for self participant.
-     *
      * @mixin StoreParticipant
      * @return array
      */
@@ -202,8 +198,6 @@ class StorePrivateThread extends NewThreadAction
     }
 
     /**
-     * Execute params for recipient participant.
-     *
      * @mixin StoreParticipant
      * @return array
      */
@@ -217,8 +211,6 @@ class StorePrivateThread extends NewThreadAction
     }
 
     /**
-     * Execute params for store message.
-     *
      * @mixin NewMessageAction
      * @param array $inputs
      * @return array
@@ -305,13 +297,9 @@ class StorePrivateThread extends NewThreadAction
     {
         if (is_null($this->recipient)) {
             $this->locator->throwNotFoundError();
-        }
-
-        if (! is_null($this->existingThread)) {
+        } elseif (! is_null($this->existingThread)) {
             throw new NewThreadException("You already have an existing conversation with {$this->recipient->name()}.");
-        }
-
-        if (! $this->messenger->canMessageProviderFirst($this->recipient)) {
+        } elseif (! $this->messenger->canMessageProviderFirst($this->recipient)) {
             throw new NewThreadException("Not authorized to start conversations with {$this->recipient->name()}.");
         }
 

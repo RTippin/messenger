@@ -101,9 +101,9 @@ class RemoveEmbeds extends BaseMessengerAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new EmbedsRemovedEvent(
@@ -111,7 +111,5 @@ class RemoveEmbeds extends BaseMessengerAction
                 $this->getMessage(true)
             ));
         }
-
-        return $this;
     }
 }

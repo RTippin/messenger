@@ -146,11 +146,9 @@ class EditMessage extends BaseMessengerAction
     }
 
     /**
-     * Generate the message resource.
-     *
-     * @return $this
+     * @return void
      */
-    private function generateResource(): self
+    private function generateResource(): void
     {
         $this->setJsonResource(new MessageResource(
                 $this->getMessage(),
@@ -158,8 +156,6 @@ class EditMessage extends BaseMessengerAction
                 true
             )
         );
-
-        return $this;
     }
 
     /**
@@ -178,9 +174,9 @@ class EditMessage extends BaseMessengerAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new MessageEditedEvent(
@@ -188,7 +184,5 @@ class EditMessage extends BaseMessengerAction
                 $this->originalBody
             ));
         }
-
-        return $this;
     }
 }

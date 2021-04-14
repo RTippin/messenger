@@ -68,7 +68,7 @@ abstract class CallParticipantAction extends BaseMessengerAction
      */
     protected function setParticipantInCallCache(CallParticipant $participant): self
     {
-        $this->cacheDriver->put("call:{$this->getCall()->id}:{$participant->id}", true, 60);
+        $this->cacheDriver->put("call:{$this->getCall()->id}:$participant->id", true, 60);
 
         return $this;
     }
@@ -81,7 +81,7 @@ abstract class CallParticipantAction extends BaseMessengerAction
      */
     protected function removeParticipantInCallCache(CallParticipant $participant): self
     {
-        $this->cacheDriver->forget("call:{$this->getCall()->id}:{$participant->id}");
+        $this->cacheDriver->forget("call:{$this->getCall()->id}:$participant->id");
 
         return $this;
     }

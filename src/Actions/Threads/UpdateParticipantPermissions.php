@@ -71,16 +71,14 @@ class UpdateParticipantPermissions extends ThreadParticipantAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function generateResource(): self
+    private function generateResource(): void
     {
         $this->setJsonResource(new ParticipantResource(
             $this->getParticipant(),
             $this->getThread()
         ));
-
-        return $this;
     }
 
     /**
@@ -99,9 +97,9 @@ class UpdateParticipantPermissions extends ThreadParticipantAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ParticipantPermissionsEvent(
@@ -110,8 +108,6 @@ class UpdateParticipantPermissions extends ThreadParticipantAction
                 $this->getParticipant(true)
             ));
         }
-
-        return $this;
     }
 
     /**

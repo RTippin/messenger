@@ -102,8 +102,6 @@ class UpdateGroupSettings extends BaseMessengerAction
     }
 
     /**
-     * Generate the thread settings resource.
-     *
      * @return $this
      */
     private function generateResource(): self
@@ -142,9 +140,9 @@ class UpdateGroupSettings extends BaseMessengerAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ThreadSettingsEvent(
@@ -153,7 +151,5 @@ class UpdateGroupSettings extends BaseMessengerAction
                 $this->nameChanged
             ));
         }
-
-        return $this;
     }
 }

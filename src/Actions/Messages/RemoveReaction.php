@@ -105,8 +105,6 @@ class RemoveReaction extends BaseMessengerAction
     }
 
     /**
-     * Generate the reaction broadcast resource.
-     *
      * @return array
      */
     private function generateBroadcastResource(): array
@@ -141,9 +139,9 @@ class RemoveReaction extends BaseMessengerAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ReactionRemovedEvent(
@@ -151,8 +149,6 @@ class RemoveReaction extends BaseMessengerAction
                 $this->reaction->toArray()
             ));
         }
-
-        return $this;
     }
 
     /**

@@ -104,9 +104,9 @@ class ThreadApproval extends ThreadParticipantAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ThreadApprovalEvent(
@@ -115,8 +115,6 @@ class ThreadApproval extends ThreadParticipantAction
                 $this->approved
             ));
         }
-
-        return $this;
     }
 
     /**
@@ -139,13 +137,9 @@ class ThreadApproval extends ThreadParticipantAction
     {
         if ($this->getThread()->isGroup()) {
             throw new ThreadApprovalException('Group threads do not have approvals.');
-        }
-
-        if (! $this->getThread()->isPending()) {
+        } elseif (! $this->getThread()->isPending()) {
             throw new ThreadApprovalException('That conversation is not pending.');
-        }
-
-        if (! $this->getThread()->isAwaitingMyApproval()) {
+        } elseif (! $this->getThread()->isAwaitingMyApproval()) {
             throw new ThreadApprovalException;
         }
 

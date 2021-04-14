@@ -129,18 +129,14 @@ class StoreInvite extends InviteAction
     }
 
     /**
-     * Broadcast / fire events.
-     *
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new NewInviteEvent(
                 $this->getData(true)
             ));
         }
-
-        return $this;
     }
 }

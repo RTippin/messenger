@@ -109,16 +109,14 @@ class CancelFriendRequest extends BaseMessengerAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new FriendCancelledEvent(
                 $this->sentFriend->withoutRelations()
             ));
         }
-
-        return $this;
     }
 }

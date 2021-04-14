@@ -180,13 +180,13 @@ abstract class NewMessageAction extends BaseMessengerAction
      * @param string $body
      * @param string|null $temporaryId
      * @param array|null $extra
-     * @return $this
+     * @return void
      */
     private function storeMessage(MessengerProvider $owner,
                                   string $type,
                                   string $body,
                                   ?string $temporaryId,
-                                  ?array $extra): self
+                                  ?array $extra): void
     {
         $this->setMessage(
             $this->getThread()
@@ -206,7 +206,5 @@ abstract class NewMessageAction extends BaseMessengerAction
                 ])
                 ->setTemporaryId($temporaryId)
         );
-
-        return $this;
     }
 }

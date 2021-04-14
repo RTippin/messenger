@@ -69,9 +69,9 @@ class SendKnock extends BaseMessengerAction
         $this->setThread($parameters[0])
             ->checkCanKnockAtThread()
             ->generateResource()
+            ->storeCacheTimeout()
             ->fireBroadcast()
-            ->fireEvents()
-            ->storeCacheTimeout();
+            ->fireEvents();
 
         return $this;
     }
@@ -84,9 +84,7 @@ class SendKnock extends BaseMessengerAction
     {
         if (! $this->messenger->isKnockKnockEnabled()) {
             throw new FeatureDisabledException('Knocking is currently disabled.');
-        }
-
-        if ($this->messenger->getKnockTimeout() !== 0
+        } elseif ($this->messenger->getKnockTimeout() !== 0
             && ($this->getThread()->isGroup()
                 && $this->cacheDriver->has("knock.knock.{$this->getThread()->id}"))
             || ($this->getThread()->isPrivate()
@@ -98,8 +96,6 @@ class SendKnock extends BaseMessengerAction
     }
 
     /**
-     * Generate the knock resource.
-     *
      * @return $this
      */
     private function generateResource(): self
@@ -128,9 +124,9 @@ class SendKnock extends BaseMessengerAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new KnockEvent(
@@ -138,13 +134,9 @@ class SendKnock extends BaseMessengerAction
                 $this->getThread(true)
             ));
         }
-
-        return $this;
     }
 
     /**
-     * If the timeout for knocks is not 0, then put the lock in cache.
-     *
      * @return $this
      */
     private function storeCacheTimeout(): self

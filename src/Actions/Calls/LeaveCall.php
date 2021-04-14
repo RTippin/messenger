@@ -99,9 +99,9 @@ class LeaveCall extends CallParticipantAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new CallLeftEvent(
@@ -109,7 +109,5 @@ class LeaveCall extends CallParticipantAction
                 $this->getCallParticipant(true)
             ));
         }
-
-        return $this;
     }
 }

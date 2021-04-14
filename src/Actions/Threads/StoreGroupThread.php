@@ -124,8 +124,6 @@ class StoreGroupThread extends NewThreadAction
     }
 
     /**
-     * Execute params for created system message.
-     *
      * @mixin StoreSystemMessage
      * @param string $subject
      * @return array
@@ -141,8 +139,6 @@ class StoreGroupThread extends NewThreadAction
     }
 
     /**
-     * Execute params for admin participant.
-     *
      * @mixin StoreParticipant
      * @return array
      */
@@ -156,8 +152,6 @@ class StoreGroupThread extends NewThreadAction
     }
 
     /**
-     * Execute params for many participants.
-     *
      * @param array $providers
      * @mixin StoreManyParticipants
      * @return array
@@ -187,9 +181,9 @@ class StoreGroupThread extends NewThreadAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new NewThreadEvent(
@@ -197,7 +191,5 @@ class StoreGroupThread extends NewThreadAction
                 $this->getThread(true),
             ));
         }
-
-        return $this;
     }
 }

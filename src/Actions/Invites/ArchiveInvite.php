@@ -58,18 +58,14 @@ class ArchiveInvite extends InviteAction
     }
 
     /**
-     * Broadcast / fire events.
-     *
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new InviteArchivedEvent(
                 $this->getData(true)
             ));
         }
-
-        return $this;
     }
 }

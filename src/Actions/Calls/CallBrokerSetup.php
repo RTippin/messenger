@@ -26,7 +26,7 @@ class CallBrokerSetup extends BaseMessengerAction
     }
 
     /**
-     * Setup the call with the driver specified in our config.
+     * Setup the call with the video provider.
      *
      * @param mixed ...$parameters
      * @return $this
@@ -48,16 +48,14 @@ class CallBrokerSetup extends BaseMessengerAction
     }
 
     /**
-     * @return $this
+     * @return void
      * @throws CallBrokerException
      */
-    private function checkCallNeedsToBeSetup(): self
+    private function checkCallNeedsToBeSetup(): void
     {
         if ($this->getCall()->isSetup()) {
             $this->throwSetupFailed('Call does not need to be setup.');
         }
-
-        return $this;
     }
 
     /**

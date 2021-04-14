@@ -21,9 +21,7 @@ class StoreParticipant extends ThreadParticipantAction
     {
         $this->setThread($parameters[0]);
 
-        // Whether we store fresh or see if we need
-        // to restore existing participant
-
+        // Store fresh or see if we need to restore existing participant
         if ($parameters[3] ?? null === true) {
             $this->storeOrRestoreParticipant($parameters[1]);
         } else {

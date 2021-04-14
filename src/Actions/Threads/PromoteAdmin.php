@@ -96,9 +96,9 @@ class PromoteAdmin extends ThreadParticipantAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new PromotedAdminEvent(
@@ -107,8 +107,6 @@ class PromoteAdmin extends ThreadParticipantAction
                 $this->getParticipant(true)
             ));
         }
-
-        return $this;
     }
 
     /**

@@ -116,17 +116,11 @@ class StoreFriendRequest extends BaseMessengerAction
     {
         if (is_null($this->recipient)) {
             throw new ProviderNotFoundException;
-        }
-
-        if ($this->messenger->getProvider()->is($this->recipient)) {
+        } elseif ($this->messenger->getProvider()->is($this->recipient)) {
             throw new FriendException('Cannot friend yourself.');
-        }
-
-        if (! $this->messenger->canFriendProvider($this->recipient)) {
+        } elseif (! $this->messenger->canFriendProvider($this->recipient)) {
             throw new FriendException('Not authorized to add friend.');
-        }
-
-        if ($this->friends->friendStatus($this->recipient) !== 0) {
+        } elseif ($this->friends->friendStatus($this->recipient) !== 0) {
             throw new FriendException("You are already friends, or have a pending request with {$this->recipient->name()}.");
         }
 
@@ -192,16 +186,14 @@ class StoreFriendRequest extends BaseMessengerAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new FriendRequestEvent(
                 $this->getData(true)
             ));
         }
-
-        return $this;
     }
 }

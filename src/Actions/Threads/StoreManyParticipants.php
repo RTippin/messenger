@@ -103,18 +103,16 @@ class StoreManyParticipants extends ThreadParticipantAction
     /**
      * @param Collection $providers
      * @param bool $isNewGroup
-     * @return $this
+     * @return void
      * @throws Throwable
      */
-    private function handleTransactions(Collection $providers, bool $isNewGroup): self
+    private function handleTransactions(Collection $providers, bool $isNewGroup): void
     {
         if ($this->isChained()) {
             $this->executeTransactions($providers, $isNewGroup);
         } else {
             $this->database->transaction(fn () => $this->executeTransactions($providers, $isNewGroup));
         }
-
-        return $this;
     }
 
     /**
@@ -132,8 +130,7 @@ class StoreManyParticipants extends ThreadParticipantAction
             )
         );
 
-        //If we created any new participants, dispatch events / broadcast
-
+        // If we created any new participants, dispatch events / broadcast
         if ($this->getData()->count()) {
             if ($this->shouldExecuteChains()) {
                 $this->fireBroadcast()->fireEvents();
@@ -164,7 +161,7 @@ class StoreManyParticipants extends ThreadParticipantAction
                 : $this->rejectExistingParticipants($providers);
         }
 
-        return collect();
+        return new Collection();
     }
 
     /**
@@ -190,8 +187,7 @@ class StoreManyParticipants extends ThreadParticipantAction
      */
     private function getProvider(string $alias, string $id): ?MessengerProvider
     {
-        return $this->providersRepository
-            ->getProviderUsingAliasAndId($alias, $id);
+        return $this->providersRepository->getProviderUsingAliasAndId($alias, $id);
     }
 
     /**
@@ -242,9 +238,9 @@ class StoreManyParticipants extends ThreadParticipantAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ParticipantsAddedEvent(
@@ -253,7 +249,5 @@ class StoreManyParticipants extends ThreadParticipantAction
                 $this->getData()
             ));
         }
-
-        return $this;
     }
 }

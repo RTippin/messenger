@@ -92,9 +92,9 @@ class ArchiveMessage extends BaseMessengerAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    protected function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new MessageArchivedEvent(
@@ -102,8 +102,6 @@ class ArchiveMessage extends BaseMessengerAction
                 $this->getMessage(true)
             ));
         }
-
-        return $this;
     }
 
     /**

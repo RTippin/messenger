@@ -205,22 +205,18 @@ class UpdateGroupAvatar extends BaseMessengerAction
 
     /**
      * @param string $image
-     * @return $this
+     * @return void
      */
-    private function updateThread(string $image): self
+    private function updateThread(string $image): void
     {
         $this->getThread()->timestamps = false;
 
         $this->getThread()->update([
             'image' => $image,
         ]);
-
-        return $this;
     }
 
     /**
-     * Generate the thread settings resource.
-     *
      * @return $this
      */
     private function generateResource(): self
@@ -259,9 +255,9 @@ class UpdateGroupAvatar extends BaseMessengerAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ThreadAvatarEvent(
@@ -269,20 +265,16 @@ class UpdateGroupAvatar extends BaseMessengerAction
                 $this->getThread(true)
             ));
         }
-
-        return $this;
     }
 
     /**
-     * @return $this
+     * @return void
      * @throws FeatureDisabledException
      */
-    private function isThreadAvatarUploadEnabled(): self
+    private function isThreadAvatarUploadEnabled(): void
     {
         if (! $this->messenger->isThreadAvatarUploadEnabled()) {
             throw new FeatureDisabledException('Group avatar uploads are currently disabled.');
         }
-
-        return $this;
     }
 }

@@ -96,15 +96,11 @@ class JoinWithInvite extends InviteAction
 
     /**
      * @param Invite $invite
-     * @return $this
+     * @return void
      */
-    private function incrementInviteUses(Invite $invite): self
+    private function incrementInviteUses(Invite $invite): void
     {
-        $invite->update([
-            'uses' => $invite->uses + 1,
-        ]);
-
-        return $this;
+        $invite->increment('uses');
     }
 
     /**
@@ -124,12 +120,10 @@ class JoinWithInvite extends InviteAction
     }
 
     /**
-     * Broadcast / fire events.
-     *
      * @param Invite $invite
-     * @return $this
+     * @return void
      */
-    private function fireEvents(Invite $invite): self
+    private function fireEvents(Invite $invite): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new InviteUsedEvent(
@@ -138,7 +132,5 @@ class JoinWithInvite extends InviteAction
                 $invite->withoutRelations()
             ));
         }
-
-        return $this;
     }
 }

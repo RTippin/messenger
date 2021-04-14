@@ -92,9 +92,9 @@ class RemoveParticipant extends BaseMessengerAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new RemovedFromThreadEvent(
@@ -103,8 +103,6 @@ class RemoveParticipant extends BaseMessengerAction
                 $this->getParticipant(true)
             ));
         }
-
-        return $this;
     }
 
     /**

@@ -89,9 +89,9 @@ class ArchiveThread extends BaseMessengerAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ThreadArchivedEvent(
@@ -99,8 +99,6 @@ class ArchiveThread extends BaseMessengerAction
                 $this->getThread(true)
             ));
         }
-
-        return $this;
     }
 
     /**

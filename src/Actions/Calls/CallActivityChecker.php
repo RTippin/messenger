@@ -44,7 +44,7 @@ class CallActivityChecker extends BaseMessengerAction
     }
 
     /**
-     * Loop through the collection of active calls we got and
+     * Loop through the collection of active calls given and
      * end empty calls or remove participants who are not in
      * cache and have not officially left the call.
      *
@@ -105,7 +105,7 @@ class CallActivityChecker extends BaseMessengerAction
      */
     private function removeIfNotInCache(Call $call, CallParticipant $participant): void
     {
-        if (! $this->cacheDriver->has("call:{$call->id}:{$participant->id}")) {
+        if (! $this->cacheDriver->has("call:$call->id:$participant->id")) {
             $this->leaveCall->execute($call, $participant);
         }
     }

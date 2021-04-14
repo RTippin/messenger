@@ -96,15 +96,13 @@ class JoinCall extends CallParticipantAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function generateResource(): self
+    private function generateResource(): void
     {
         $this->setJsonResource(new CallParticipantResource(
             $this->getCallParticipant()
         ));
-
-        return $this;
     }
 
     /**
@@ -133,9 +131,9 @@ class JoinCall extends CallParticipantAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new CallJoinedEvent(
@@ -143,7 +141,5 @@ class JoinCall extends CallParticipantAction
                 $this->getCallParticipant(true)
             ));
         }
-
-        return $this;
     }
 }

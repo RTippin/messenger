@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Actions\Calls;
 use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
+use Illuminate\Support\Collection;
 use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
@@ -104,7 +105,7 @@ class StoreCall extends NewCallAction
 
         $this->getCall()->setRelation(
             'participants',
-            collect($participant->getCallParticipant())
+            new Collection($participant->getCallParticipant())
         );
     }
 }

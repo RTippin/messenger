@@ -36,6 +36,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static \Illuminate\Database\Query\Builder|\RTippin\Messenger\Models\Invite withoutTrashed()
  * @method static Builder|Message valid()
  * @method static Builder|Message invalid()
+ * @method increment($column, $amount = 1, array $extra = [])
  * @mixin Model|\Eloquent
  */
 class Invite extends Model
