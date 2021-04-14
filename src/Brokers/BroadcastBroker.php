@@ -118,9 +118,10 @@ class BroadcastBroker implements BroadcastDriver
 
         $this->recipients = $this->participantRepository
             ->getThreadBroadcastableParticipants($this->thread)
-            ->reject(fn (Participant $participant) => (string) $participant->owner_id === (string) $this->messenger->getProviderId()
-                    && $participant->owner_type === $this->messenger->getProviderClass()
-            );
+            ->reject(function (Participant $participant) {
+                return (string) $participant->owner_id === (string) $this->messenger->getProviderId()
+                    && $participant->owner_type === $this->messenger->getProviderClass();
+            });
 
         return $this;
     }
@@ -146,7 +147,7 @@ class BroadcastBroker implements BroadcastDriver
     {
         $this->presence(false);
 
-        $this->recipients = collect([$recipient]);
+        $this->recipients = new Collection([$recipient]);
 
         return $this;
     }
@@ -158,7 +159,7 @@ class BroadcastBroker implements BroadcastDriver
     {
         $this->presence(true);
 
-        $this->recipients = collect([$entity]);
+        $this->recipients = new Collection([$entity]);
 
         return $this;
     }
@@ -194,15 +195,11 @@ class BroadcastBroker implements BroadcastDriver
     {
         if (! is_null($this->recipients)
             && $this->recipients->count()
-            && $this->checkImplementsInterface(
-                $abstract, BroadcastEvent::class
-            )) {
+            && $this->checkImplementsInterface($abstract, BroadcastEvent::class)) {
             if ($this->usingPresence) {
-                $this->generatePresenceChannels()
-                    ->each(fn (Collection $channels) => $this->executeBroadcast($abstract, $channels));
+                $this->generatePresenceChannels()->each(fn (Collection $channels) => $this->executeBroadcast($abstract, $channels));
             } else {
-                $this->generatePrivateChannels()
-                    ->each(fn (Collection $channels) => $this->executeBroadcast($abstract, $channels));
+                $this->generatePrivateChannels()->each(fn (Collection $channels) => $this->executeBroadcast($abstract, $channels));
 
                 $this->executePushNotify($abstract);
             }
@@ -243,14 +240,12 @@ class BroadcastBroker implements BroadcastDriver
         if (in_array($abstract, $participants)
             && $this->messenger->isValidMessengerProvider($recipient->owner_type)) {
             /** @var Participant|CallParticipant $recipient */
-
-            return "private-messenger.{$this->messenger->findProviderAlias($recipient->owner_type)}.{$recipient->owner_id}";
+            return "private-messenger.{$this->messenger->findProviderAlias($recipient->owner_type)}.$recipient->owner_id";
         }
 
         if (! in_array($abstract, $participants)
             && $this->messenger->isValidMessengerProvider($recipient)) {
             /** @var MessengerProvider $recipient */
-
             return "private-messenger.{$this->messenger->findProviderAlias($recipient)}.{$recipient->getKey()}";
         }
 
@@ -280,14 +275,12 @@ class BroadcastBroker implements BroadcastDriver
 
         if ($abstract === Thread::class) {
             /** @var Thread $entity */
-
-            return "presence-messenger.thread.{$entity->id}";
+            return "presence-messenger.thread.$entity->id";
         }
 
         if ($abstract === Call::class) {
             /** @var Call $entity */
-
-            return "presence-messenger.call.{$entity->id}.thread.{$entity->thread_id}";
+            return "presence-messenger.call.$entity->id.thread.$entity->thread_id";
         }
 
         return null;

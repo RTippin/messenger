@@ -3,6 +3,7 @@
 namespace RTippin\Messenger;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use LogicException;
 use RTippin\Messenger\Brokers\FriendBroker;
@@ -21,6 +22,7 @@ use RTippin\Messenger\Commands\PurgeThreadsCommand;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\EmojiInterface;
 use RTippin\Messenger\Contracts\FriendDriver;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Http\Middleware\MessengerApi;
 use RTippin\Messenger\Services\EmojiService;
@@ -47,6 +49,12 @@ class MessengerServiceProvider extends ServiceProvider
         $this->registerRoutes();
         $this->registerChannels();
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'messenger');
+
+        Collection::macro('forProvider', function (MessengerProvider $provider, $morph = 'owner') {
+            /** @var Collection $this */
+            return $this->where("{$morph}_id", '=', $provider->getKey())
+                ->where("{$morph}_type", '=', get_class($provider));
+        });
 
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();

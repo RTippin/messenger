@@ -19,7 +19,7 @@ use RTippin\Messenger\Traits\Uuids;
  *
  * @property string $id
  * @property string $call_id
- * @property string $owner_id
+ * @property string|int $owner_id
  * @property string $owner_type
  * @property string|null $left_call
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -31,8 +31,8 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static \Illuminate\Database\Eloquent\Builder|CallParticipant whereKicked($value)
  * @method static Builder|CallParticipant inCall()
  * @method static Builder|CallParticipant hasProvider(string $relation, MessengerProvider $provider)
- * @method static Builder|CallParticipant forProvider(MessengerProvider $provider)
- * @method static Builder|CallParticipant notProvider(MessengerProvider $provider)
+ * @method static Builder|CallParticipant forProvider(MessengerProvider $provider, string $morph = 'owner')
+ * @method static Builder|CallParticipant notProvider(MessengerProvider $provider, string $morph = 'owner')
  */
 class CallParticipant extends Model
 {

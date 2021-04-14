@@ -48,8 +48,7 @@ class FriendBroker implements FriendDriver
      */
     public function getProviderFriendsBuilder(): Builder
     {
-        return Friend::where('owner_id', '=', $this->messenger->getProviderId())
-            ->where('owner_type', '=', $this->messenger->getProviderClass())
+        return Friend::forProvider($this->messenger->getProvider())
             ->whereIn('party_type', $this->messenger->getAllFriendableProviders());
     }
 
@@ -58,8 +57,7 @@ class FriendBroker implements FriendDriver
      */
     public function getProviderPendingFriendsBuilder(): Builder
     {
-        return PendingFriend::where('recipient_id', '=', $this->messenger->getProviderId())
-            ->where('recipient_type', '=', $this->messenger->getProviderClass())
+        return PendingFriend::forProvider($this->messenger->getProvider(), 'recipient')
             ->whereIn('sender_type', $this->messenger->getAllFriendableProviders());
     }
 
@@ -68,8 +66,7 @@ class FriendBroker implements FriendDriver
      */
     public function getProviderSentFriendsBuilder(): Builder
     {
-        return SentFriend::where('sender_id', '=', $this->messenger->getProviderId())
-            ->where('sender_type', '=', $this->messenger->getProviderClass())
+        return SentFriend::forProvider($this->messenger->getProvider(), 'sender')
             ->whereIn('recipient_type', $this->messenger->getAllFriendableProviders());
     }
 
@@ -129,10 +126,7 @@ class FriendBroker implements FriendDriver
     public function isFriend($provider = null): bool
     {
         return $this->messenger->isValidMessengerProvider($provider)
-            && $this->getProviderFriends()
-                ->where('party_id', $provider->getKey())
-                ->where('party_type', get_class($provider))
-                ->first();
+            && $this->getProviderFriends()->forProvider($provider, 'party')->first();
     }
 
     /**
@@ -141,10 +135,7 @@ class FriendBroker implements FriendDriver
     public function isSentFriendRequest($provider = null): bool
     {
         return $this->messenger->isValidMessengerProvider($provider)
-            && $this->getProviderSentFriends()
-            ->where('recipient_id', $provider->getKey())
-            ->where('recipient_type', get_class($provider))
-            ->first();
+            && $this->getProviderSentFriends()->forProvider($provider, 'recipient')->first();
     }
 
     /**
@@ -153,10 +144,7 @@ class FriendBroker implements FriendDriver
     public function isPendingFriendRequest($provider = null): bool
     {
         return $this->messenger->isValidMessengerProvider($provider)
-            && $this->getProviderPendingFriends()
-            ->where('sender_id', $provider->getKey())
-            ->where('sender_type', get_class($provider))
-            ->first();
+            && $this->getProviderPendingFriends()->forProvider($provider, 'sender')->first();
     }
 
     /**
@@ -221,10 +209,7 @@ class FriendBroker implements FriendDriver
      */
     private function getFriend($model): ?Friend
     {
-        return $this->getProviderFriends()
-            ->where('party_id', $model->id)
-            ->where('party_type', get_class($model))
-            ->first();
+        return $this->getProviderFriends()->forProvider($model, 'party')->first();
     }
 
     /**
@@ -233,10 +218,7 @@ class FriendBroker implements FriendDriver
      */
     private function getSentFriend($model): ?SentFriend
     {
-        return $this->getProviderSentFriends()
-            ->where('recipient_id', $model->id)
-            ->where('recipient_type', get_class($model))
-            ->first();
+        return $this->getProviderSentFriends()->forProvider($model, 'recipient')->first();
     }
 
     /**
@@ -245,10 +227,7 @@ class FriendBroker implements FriendDriver
      */
     private function getPendingFriend($model): ?PendingFriend
     {
-        return $this->getProviderPendingFriends()
-            ->where('sender_id', $model->id)
-            ->where('sender_type', get_class($model))
-            ->first();
+        return $this->getProviderPendingFriends()->forProvider($model, 'sender')->first();
     }
 
     /**

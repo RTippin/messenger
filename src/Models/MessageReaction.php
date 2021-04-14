@@ -26,8 +26,8 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read \RTippin\Messenger\Models\Message $message
  * @property-read Model|MessengerProvider $owner
  * @mixin Model|\Eloquent
- * @method static Builder|MessageReaction forProvider(MessengerProvider $provider)
- * @method static Builder|MessageReaction notProvider(MessengerProvider $provider)
+ * @method static Builder|MessageReaction forProvider(MessengerProvider $provider, string $morph = 'owner')
+ * @method static Builder|MessageReaction notProvider(MessengerProvider $provider, string $morph = 'owner')
  * @method static Builder|MessageReaction reaction(string $reaction)
  */
 class MessageReaction extends Model

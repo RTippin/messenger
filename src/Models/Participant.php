@@ -24,7 +24,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string $id
  * @property string $thread_id
  * @property string $owner_type
- * @property string $owner_id
+ * @property string|int $owner_id
  * @property bool $admin
  * @property bool $muted
  * @property bool $pending
@@ -44,8 +44,8 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static \Illuminate\Database\Query\Builder|Participant withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Participant withoutTrashed()
  * @mixin Model|\Eloquent
- * @method static Builder|Participant forProvider(MessengerProvider $provider)
- * @method static Builder|Participant notProvider(MessengerProvider $provider)
+ * @method static Builder|Participant forProvider(MessengerProvider $provider, string $morph = 'owner')
+ * @method static Builder|Participant notProvider(MessengerProvider $provider, string $morph = 'owner')
  * @method static Builder|Participant admins()
  * @method static Builder|Participant validProviders()
  * @method static Builder|Participant notMuted()

@@ -26,7 +26,7 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @property string $id
  * @property string $thread_id
  * @property string $owner_type
- * @property string $owner_id
+ * @property string|int $owner_id
  * @property int $type
  * @property string $body
  * @property string $reply_to_id
@@ -46,8 +46,8 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @method static \Illuminate\Database\Query\Builder|Message withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Message withoutTrashed()
  * @mixin Model|\Eloquent
- * @method static Builder|Message forProvider(MessengerProvider $provider)
- * @method static Builder|Message notProvider(MessengerProvider $provider)
+ * @method static Builder|Message forProvider(MessengerProvider $provider, string $morph = 'owner')
+ * @method static Builder|Message notProvider(MessengerProvider $provider, string $morph = 'owner')
  * @method static Builder|Message text()
  * @method static Builder|Message document()
  * @method static Builder|Message image()

@@ -15,7 +15,7 @@ use RTippin\Messenger\Traits\Uuids;
  *
  * @property string $id
  * @property string $owner_type
- * @property string $owner_id
+ * @property string|int $owner_id
  * @property bool $message_popups
  * @property bool $message_sound
  * @property bool $call_ringtone_sound

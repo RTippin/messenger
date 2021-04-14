@@ -22,7 +22,7 @@ use RTippin\Messenger\Traits\Uuids;
  *
  * @property string $id
  * @property string $thread_id
- * @property string $owner_id
+ * @property string|int $owner_id
  * @property string $owner_type
  * @property int $type
  * @property int $mode
@@ -40,8 +40,8 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static Builder|Call videoCall()
  * @method static Builder|Call active()
  * @method static Builder|Call hasProvider(string $relation, MessengerProvider $provider)
- * @method static Builder|Call forProvider(MessengerProvider $provider)
- * @method static Builder|Call notProvider(MessengerProvider $provider)
+ * @method static Builder|Call forProvider(MessengerProvider $provider, string $morph = 'owner')
+ * @method static Builder|Call notProvider(MessengerProvider $provider, string $morph = 'owner')
  * @property string|null $payload
  * @property int $setup_complete
  * @property int $teardown_complete
