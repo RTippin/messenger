@@ -63,10 +63,7 @@ class StoreCall extends NewCallAction
         $this->setThread($parameters[0])
             ->canInitiateCall()
             ->setCallLockout()
-            ->handleTransactions(
-                'VIDEO',
-                $parameters[1] ?? false
-            )
+            ->handleTransactions($parameters[1] ?? false)
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();
@@ -75,29 +72,27 @@ class StoreCall extends NewCallAction
     }
 
     /**
-     * @param string $type
      * @param bool $setupComplete
      * @return $this
      * @throws Throwable
      */
-    private function handleTransactions(string $type, bool $setupComplete): self
+    private function handleTransactions(bool $setupComplete): self
     {
         if ($this->isChained()) {
-            $this->executeTransactions($type, $setupComplete);
+            $this->executeTransactions($setupComplete);
         } else {
-            $this->database->transaction(fn () => $this->executeTransactions($type, $setupComplete), 3);
+            $this->database->transaction(fn () => $this->executeTransactions($setupComplete), 3);
         }
 
         return $this;
     }
 
     /**
-     * @param string $type
      * @param bool $setupComplete
      */
-    private function executeTransactions(string $type, bool $setupComplete): void
+    private function executeTransactions(bool $setupComplete): void
     {
-        $this->storeCall($type, $setupComplete);
+        $this->storeCall('VIDEO', $setupComplete);
 
         $participant = $this->chain(JoinCall::class)
             ->withoutDispatches()
