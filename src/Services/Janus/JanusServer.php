@@ -437,6 +437,7 @@ class JanusServer
 
         $client = $this->httpClient->withOptions([
             'verify' => $this->selfSigned,
+            'timeout' => 30,
         ]);
 
         $server = $admin ? $this->janusAdminServer : $this->janusServer;
