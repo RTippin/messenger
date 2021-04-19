@@ -195,7 +195,7 @@ class FriendBroker implements FriendDriver
 
         return $this->getProviderFriendsBuilder()
             ->get()
-            ->reject(function (Friend $friend) use ($participants){
+            ->reject(function (Friend $friend) use ($participants) {
                 return $participants->where('owner_id', '=', $friend->party_id)
                     ->where('owner_type', '=', $friend->party_type)
                     ->first();
