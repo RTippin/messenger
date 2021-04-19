@@ -29,7 +29,6 @@ class CallHeartbeat
             $thread,
         ]);
 
-        return $heartbeat->execute($call)
-            ->getMessageResponse();
+        return $heartbeat->execute($call)->getMessageResponse();
     }
 }

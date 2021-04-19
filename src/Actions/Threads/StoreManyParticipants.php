@@ -187,12 +187,12 @@ class StoreManyParticipants extends ThreadParticipantAction
     private function storeManyParticipants(Collection $providers, bool $isNewGroup): Collection
     {
         if ($isNewGroup) {
-            return $providers->transform(function(MessengerProvider $provider) {
+            return $providers->transform(function (MessengerProvider $provider) {
                 return $this->storeParticipant($provider, Definitions::DefaultParticipant)->getParticipant(true);
             });
         }
 
-        return $providers->transform(function(MessengerProvider $provider) {
+        return $providers->transform(function (MessengerProvider $provider) {
             return $this->storeOrRestoreParticipant($provider)->getParticipant(true);
         });
     }

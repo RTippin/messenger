@@ -64,10 +64,10 @@ trait ScopesProvider
      */
     private function concatBuilder(string $morph): Expression
     {
-        $query = "CONCAT({$morph}_type, {$morph}_id)";
-
         if (DB::getDriverName() === 'sqlite') {
             $query = "{$morph}_type || {$morph}_id";
+        } else {
+            $query = "CONCAT({$morph}_type, {$morph}_id)";
         }
 
         return new Expression($query);

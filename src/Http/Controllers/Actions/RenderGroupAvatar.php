@@ -32,10 +32,6 @@ class RenderGroupAvatar
     {
         $this->authorize('groupMethod', $thread);
 
-        return $service->renderGroupAvatar(
-            $thread,
-            $size,
-            $image
-        );
+        return $service->renderGroupAvatar($thread, $size, $image);
     }
 }

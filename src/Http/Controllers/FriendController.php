@@ -59,7 +59,6 @@ class FriendController
     {
         $this->authorize('delete', $friend);
 
-        return $removeFriend->execute($friend)
-            ->getJsonResource();
+        return $removeFriend->execute($friend)->getJsonResource();
     }
 }

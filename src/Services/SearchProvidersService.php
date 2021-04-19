@@ -201,7 +201,6 @@ class SearchProvidersService
         } else {
             $this->messengerQuery = MessengerModel::whereHasMorph('owner', $searchable,
                 function (Builder $query, $provider) {
-
                     /** @var Searchable $provider */
                     $provider::getProviderSearchableBuilder(
                         $query,

@@ -45,7 +45,6 @@ class KnockKnock
     {
         $this->authorize('sendKnock', $thread);
 
-        return $sendKnock->execute($thread)
-            ->getMessageResponse();
+        return $sendKnock->execute($thread)->getMessageResponse();
     }
 }

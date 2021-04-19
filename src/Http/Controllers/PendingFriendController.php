@@ -79,7 +79,6 @@ class PendingFriendController
     {
         $this->authorize('delete', $pending);
 
-        return $denyFriendRequest->execute($pending)
-            ->getJsonResource();
+        return $denyFriendRequest->execute($pending)->getJsonResource();
     }
 }

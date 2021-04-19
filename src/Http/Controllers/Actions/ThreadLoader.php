@@ -38,9 +38,7 @@ class ThreadLoader
             return $this->withRelations($thread, $relations);
         }
 
-        return new ThreadResource(
-            $thread->load(self::LOAD)
-        );
+        return new ThreadResource($thread->load(self::LOAD));
     }
 
     /**

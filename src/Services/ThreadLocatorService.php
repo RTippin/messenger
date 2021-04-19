@@ -124,11 +124,7 @@ class ThreadLocatorService
     private function locateRecipient(): self
     {
         /** @var MessengerProvider|null $recipient */
-        $recipient = $this->providersRepository
-            ->getProviderUsingAliasAndId(
-                $this->alias,
-                $this->id
-            );
+        $recipient = $this->providersRepository->getProviderUsingAliasAndId($this->alias, $this->id);
 
         if ($recipient
             && $recipient->isNot($this->messenger->getProvider())) {

@@ -21,17 +21,14 @@ class StatusHeartbeat
                              Messenger $messenger,
                              OnlineStatus $onlineStatus): ProviderStatusResource
     {
-        $onlineStatus->execute(
-            $request->input('away') ?? false
-        );
+        $onlineStatus->execute($request->input('away') ?? false);
 
         return new ProviderStatusResource(
-            $messenger->getProvider()
-                ->setHidden([
-                    'password',
-                    'deleted_at',
-                    'remember_token',
-                ])
+            $messenger->getProvider()->setHidden([
+                'password',
+                'deleted_at',
+                'remember_token',
+            ])
         );
     }
 }

@@ -37,10 +37,6 @@ class RenderMessageImage
             $thread,
         ]);
 
-        return $service->renderMessageImage(
-            $message,
-            $size,
-            $image
-        );
+        return $service->renderMessageImage($message, $size, $image);
     }
 }

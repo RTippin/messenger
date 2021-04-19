@@ -101,11 +101,7 @@ class InviteController
             throw new AuthorizationException('Not authorized to view invite avatar.');
         }
 
-        return $service->renderGroupAvatar(
-            $invite->thread,
-            $size,
-            $image
-        );
+        return $service->renderGroupAvatar($invite->thread, $size, $image);
     }
 
     /**
@@ -126,7 +122,6 @@ class InviteController
             $thread,
         ]);
 
-        return $archiveInvite->execute($invite)
-            ->getMessageResponse();
+        return $archiveInvite->execute($invite)->getMessageResponse();
     }
 }

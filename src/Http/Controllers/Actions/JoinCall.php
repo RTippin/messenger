@@ -31,7 +31,6 @@ class JoinCall
             $thread,
         ]);
 
-        return $joinCall->execute($call)
-            ->getJsonResource();
+        return $joinCall->execute($call)->getJsonResource();
     }
 }

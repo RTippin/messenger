@@ -91,15 +91,13 @@ class ThreadRepository
      */
     public function getProviderUnreadThreadsBuilder(): Builder
     {
-        return Thread::whereHas('participants',
-            function (Builder $query) {
-                $query->where('owner_id', '=', $this->messenger->getProviderId())
-                    ->where('owner_type', '=', $this->messenger->getProviderClass())
-                    ->where(function (Builder $query) {
-                        $query->whereNull('participants.last_read');
-                        $query->orWhere('threads.updated_at', '>', $query->raw('participants.last_read'));
-                    });
-            }
-        );
+        return Thread::whereHas('participants', function (Builder $query) {
+            return $query->where('owner_id', '=', $this->messenger->getProviderId())
+                ->where('owner_type', '=', $this->messenger->getProviderClass())
+                ->where(function (Builder $query) {
+                    return $query->whereNull('participants.last_read')
+                        ->orWhere('threads.updated_at', '>', $query->raw('participants.last_read'));
+                });
+        });
     }
 }

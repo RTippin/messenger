@@ -82,8 +82,7 @@ class CallController
             $thread,
         ]);
 
-        return $storeCall->execute($thread)
-            ->getJsonResource();
+        return $storeCall->execute($thread)->getJsonResource();
     }
 
     /**

@@ -31,7 +31,6 @@ class PromoteAdmin
             $thread,
         ]);
 
-        return $promoteAdmin->execute($thread, $participant)
-            ->getJsonResource();
+        return $promoteAdmin->execute($thread, $participant)->getJsonResource();
     }
 }

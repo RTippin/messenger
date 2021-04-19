@@ -33,7 +33,6 @@ class EndCall
             $thread,
         ]);
 
-        return $endCall->execute($call)
-            ->getMessageResponse();
+        return $endCall->execute($call)->getMessageResponse();
     }
 }

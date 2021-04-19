@@ -81,7 +81,6 @@ class ThreadController
     {
         $this->authorize('delete', $thread);
 
-        return $archiveThread->execute($thread)
-            ->getMessageResponse();
+        return $archiveThread->execute($thread)->getMessageResponse();
     }
 }

@@ -29,10 +29,10 @@ class ProvidersRepository
      */
     public function getProviderUsingAliasAndId(string $alias, string $id): ?MessengerProvider
     {
-        /** @var MessengerProvider $provider */
+        /** @var MessengerProvider|null $provider */
         $provider = $this->messenger->findAliasProvider($alias);
 
-        return $provider
+        return ! is_null($provider)
             ? $provider::find($id)
             : null;
     }

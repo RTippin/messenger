@@ -81,7 +81,6 @@ class SentFriendController
     {
         $this->authorize('delete', $sent);
 
-        return $cancelFriendRequest->execute($sent)
-            ->getJsonResource();
+        return $cancelFriendRequest->execute($sent)->getJsonResource();
     }
 }

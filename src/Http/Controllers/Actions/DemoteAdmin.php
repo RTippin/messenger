@@ -31,7 +31,6 @@ class DemoteAdmin
             $thread,
         ]);
 
-        return $demoteAdmin->execute($thread, $participant)
-            ->getJsonResource();
+        return $demoteAdmin->execute($thread, $participant)->getJsonResource();
     }
 }

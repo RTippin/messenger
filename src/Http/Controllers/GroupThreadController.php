@@ -147,8 +147,6 @@ class GroupThreadController
     {
         $this->authorize('leave', $thread);
 
-        return $leaveThread->execute(
-            $thread
-        )->getMessageResponse();
+        return $leaveThread->execute($thread)->getMessageResponse();
     }
 }

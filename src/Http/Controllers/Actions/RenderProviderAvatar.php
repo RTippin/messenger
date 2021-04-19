@@ -26,8 +26,6 @@ class RenderProviderAvatar
                            string $size,
                            string $image)
     {
-        return $service->renderProviderAvatar(
-            $alias, $id, $size, $image
-        );
+        return $service->renderProviderAvatar($alias, $id, $size, $image);
     }
 }
