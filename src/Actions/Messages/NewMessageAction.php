@@ -64,12 +64,12 @@ abstract class NewMessageAction extends BaseMessengerAction
      */
     protected function setReplyingToMessage(?string $replyToId = null): self
     {
-        if (! is_null($replyToId)
-            && ! is_null($message = $this->getThread()->messages()->with('owner')->find($replyToId))
-            && ! $message->isSystemMessage()) {
-            $this->replyingTo = $message;
-        } else {
-            $this->replyingTo = null;
+        if (! is_null($replyToId)) {
+            $this->replyingTo = $this->getThread()
+                ->messages()
+                ->nonSystem()
+                ->with('owner')
+                ->find($replyToId);
         }
 
         return $this;

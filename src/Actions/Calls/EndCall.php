@@ -118,19 +118,13 @@ class EndCall extends BaseMessengerAction
      */
     private function endCall(): void
     {
-        $this->setData(
-            $this->getCall()
-                ->update([
-                    'call_ended' => now(),
-                ])
-        );
+        $this->getCall()->update([
+            'call_ended' => now(),
+        ]);
 
-        $this->getCall()
-            ->participants()
-            ->inCall()
-            ->update([
-                'left_call' => now(),
-            ]);
+        $this->getCall()->participants()->inCall()->update([
+            'left_call' => now(),
+        ]);
     }
 
     /**

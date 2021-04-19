@@ -34,12 +34,12 @@ abstract class CallParticipantAction extends BaseMessengerAction
     {
         $this->setCallParticipant(
             $this->getCall()
-            ->participants()
-            ->create([
-                'owner_id' => $provider->getKey(),
-                'owner_type' => get_class($provider),
-            ])
-            ->setRelation('owner', $provider)
+                ->participants()
+                ->create([
+                    'owner_id' => $provider->getKey(),
+                    'owner_type' => get_class($provider),
+                ])
+                ->setRelation('owner', $provider)
         );
 
         return $this;
