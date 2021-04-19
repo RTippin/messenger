@@ -30,8 +30,7 @@ class UpdateMessengerSettings extends BaseMessengerAction
      */
     public function execute(...$parameters): self
     {
-        $this->messenger->getProviderMessenger()
-            ->update($parameters[0]);
+        $this->messenger->getProviderMessenger()->update($parameters[0]);
 
         $this->setOnlineCacheStatus($parameters[0]['online_status']);
 

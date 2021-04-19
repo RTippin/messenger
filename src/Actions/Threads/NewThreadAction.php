@@ -39,13 +39,7 @@ abstract class NewThreadAction extends BaseMessengerAction
      */
     protected function storeThread(array $attributes = []): self
     {
-        $thread = Thread::create(array_merge(
-            Definitions::DefaultThread,
-            $attributes
-        ));
-
-        $this->setThread($thread)
-            ->setData($thread);
+        $this->setThread(Thread::create(array_merge(Definitions::DefaultThread, $attributes)));
 
         return $this;
     }

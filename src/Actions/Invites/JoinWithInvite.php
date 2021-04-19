@@ -25,6 +25,11 @@ class JoinWithInvite extends InviteAction
     private DatabaseManager $database;
 
     /**
+     * @var Invite
+     */
+    private Invite $invite;
+
+    /**
      * JoinWithInvite constructor.
      *
      * @param Messenger $messenger
@@ -51,27 +56,25 @@ class JoinWithInvite extends InviteAction
     {
         $this->isInvitationsEnabled();
 
-        /** @var Invite $invite */
-        $invite = $parameters[0];
+        $this->invite = $parameters[0];
 
-        $this->setThread($invite->thread)
-            ->handleTransactions($invite)
-            ->fireEvents($invite);
+        $this->setThread($this->invite->thread)
+            ->handleTransactions()
+            ->fireEvents();
 
         return $this;
     }
 
     /**
-     * @param Invite $invite
      * @return $this
      * @throws Throwable
      */
-    private function handleTransactions(Invite $invite): self
+    private function handleTransactions(): self
     {
         if ($this->isChained()) {
-            $this->executeTransactions($invite);
+            $this->executeTransactions();
         } else {
-            $this->database->transaction(fn () => $this->executeTransactions($invite), 3);
+            $this->database->transaction(fn () => $this->executeTransactions(), 3);
         }
 
         return $this;
@@ -81,13 +84,13 @@ class JoinWithInvite extends InviteAction
      * Execute all actions that must occur for
      * a successful private thread creation.
      *
-     * @param Invite $invite
+     * @return  void
      */
-    private function executeTransactions(Invite $invite): void
+    private function executeTransactions(): void
     {
-        $this->incrementInviteUses($invite);
+        $this->incrementInviteUses();
 
-        $this->setData(
+        $this->setParticipant(
             $this->chain(StoreParticipant::class)
                 ->execute(...$this->addParticipant())
                 ->getParticipant()
@@ -95,12 +98,11 @@ class JoinWithInvite extends InviteAction
     }
 
     /**
-     * @param Invite $invite
      * @return void
      */
-    private function incrementInviteUses(Invite $invite): void
+    private function incrementInviteUses(): void
     {
-        $invite->increment('uses');
+        $this->invite->increment('uses');
     }
 
     /**
@@ -120,16 +122,15 @@ class JoinWithInvite extends InviteAction
     }
 
     /**
-     * @param Invite $invite
      * @return void
      */
-    private function fireEvents(Invite $invite): void
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new InviteUsedEvent(
                 $this->messenger->getProvider()->withoutRelations(),
                 $this->getThread(true),
-                $invite->withoutRelations()
+                $this->invite->withoutRelations()
             ));
         }
     }

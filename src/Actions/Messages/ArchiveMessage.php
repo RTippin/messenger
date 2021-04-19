@@ -17,12 +17,12 @@ class ArchiveMessage extends BaseMessengerAction
     /**
      * @var BroadcastDriver
      */
-    protected BroadcastDriver $broadcaster;
+    private BroadcastDriver $broadcaster;
 
     /**
      * @var Dispatcher
      */
-    protected Dispatcher $dispatcher;
+    private Dispatcher $dispatcher;
 
     /**
      * @var Messenger

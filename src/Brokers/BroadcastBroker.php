@@ -101,8 +101,7 @@ class BroadcastBroker implements BroadcastDriver
 
         $this->presence(false);
 
-        $this->recipients = $this->participantRepository
-            ->getThreadBroadcastableParticipants($this->thread);
+        $this->recipients = $this->participantRepository->getThreadBroadcastableParticipants($this->thread);
 
         return $this;
     }
@@ -116,12 +115,7 @@ class BroadcastBroker implements BroadcastDriver
 
         $this->presence(false);
 
-        $this->recipients = $this->participantRepository
-            ->getThreadBroadcastableParticipants($this->thread)
-            ->reject(function (Participant $participant) {
-                return (string) $participant->owner_id === (string) $this->messenger->getProviderId()
-                    && $participant->owner_type === $this->messenger->getProviderClass();
-            });
+        $this->recipients = $this->participantRepository->getThreadBroadcastableParticipants($this->thread, true);
 
         return $this;
     }
@@ -271,7 +265,7 @@ class BroadcastBroker implements BroadcastDriver
     {
         $abstract = is_object($entity)
             ? get_class($entity)
-            : '';
+            : null;
 
         if ($abstract === Thread::class) {
             /** @var Thread $entity */
@@ -308,7 +302,8 @@ class BroadcastBroker implements BroadcastDriver
                     ->setChannels($channels->values()->toArray())
             );
         } catch (BroadcastException | BindingResolutionException | Throwable $e) {
-            //continue on
+            // Should a broadcast fail, we do not want to
+            // halt further code execution. Continue on!
         }
     }
 

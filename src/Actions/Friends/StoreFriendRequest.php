@@ -51,6 +51,11 @@ class StoreFriendRequest extends BaseMessengerAction
     private FriendDriver $friends;
 
     /**
+     * @var SentFriend
+     */
+    private SentFriend $sentFriend;
+
+    /**
      * StoreFriendRequest constructor.
      *
      * @param Messenger $messenger
@@ -132,18 +137,16 @@ class StoreFriendRequest extends BaseMessengerAction
      */
     private function storeSentFriendRequest(): self
     {
-        $this->setData(
-            SentFriend::create([
-                'sender_id' => $this->messenger->getProviderId(),
-                'sender_type' => $this->messenger->getProviderClass(),
-                'recipient_id' => $this->recipient->getKey(),
-                'recipient_type' => get_class($this->recipient),
-            ])
-                ->setRelations([
-                    'recipient' => $this->recipient,
-                    'sender' => $this->messenger->getProvider(),
-                ])
-        );
+        $this->sentFriend = SentFriend::create([
+            'sender_id' => $this->messenger->getProviderId(),
+            'sender_type' => $this->messenger->getProviderClass(),
+            'recipient_id' => $this->recipient->getKey(),
+            'recipient_type' => get_class($this->recipient),
+        ])
+            ->setRelations([
+                'recipient' => $this->recipient,
+                'sender' => $this->messenger->getProvider(),
+            ]);
 
         return $this;
     }
@@ -154,7 +157,7 @@ class StoreFriendRequest extends BaseMessengerAction
     private function generateResource(): self
     {
         $this->setJsonResource(new SentFriendResource(
-            $this->getData()
+            $this->sentFriend
         ));
 
         return $this;
@@ -166,7 +169,7 @@ class StoreFriendRequest extends BaseMessengerAction
     private function generateBroadcastResource(): array
     {
         return (new FriendRequestBroadcastResource(
-            $this->getData()
+            $this->sentFriend
         ))->resolve();
     }
 
@@ -192,7 +195,7 @@ class StoreFriendRequest extends BaseMessengerAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new FriendRequestEvent(
-                $this->getData(true)
+                $this->sentFriend->withoutRelations()
             ));
         }
     }

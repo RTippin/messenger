@@ -162,8 +162,6 @@ abstract class NewCallAction extends BaseMessengerAction
                 ])
         );
 
-        $this->setData($this->getCall());
-
         return $this;
     }
 }

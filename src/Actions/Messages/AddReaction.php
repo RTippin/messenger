@@ -243,18 +243,16 @@ class AddReaction extends BaseMessengerAction
      */
     private function storeReaction(): void
     {
-        $this->reaction = $this->getMessage()
-            ->reactions()
-            ->create([
-                'owner_id' => $this->messenger->getProviderId(),
-                'owner_type' => $this->messenger->getProviderClass(),
-                'reaction' => $this->react,
-                'created_at' => now(),
-            ])
-            ->setRelations([
-                'owner' => $this->messenger->getProvider(),
-                'message' => $this->getMessage(),
-            ]);
+        $this->reaction = $this->getMessage()->reactions()->create([
+            'owner_id' => $this->messenger->getProviderId(),
+            'owner_type' => $this->messenger->getProviderClass(),
+            'reaction' => $this->react,
+            'created_at' => now(),
+        ])
+        ->setRelations([
+            'owner' => $this->messenger->getProvider(),
+            'message' => $this->getMessage(),
+        ]);
 
         if (! $this->getMessage()->reacted) {
             $this->getMessage()->update([

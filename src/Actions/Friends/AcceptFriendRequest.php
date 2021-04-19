@@ -40,6 +40,11 @@ class AcceptFriendRequest extends BaseMessengerAction
     /**
      * @var Friend
      */
+    private Friend $friend;
+
+    /**
+     * @var Friend
+     */
     private Friend $inverseFriend;
 
     /**
@@ -112,18 +117,16 @@ class AcceptFriendRequest extends BaseMessengerAction
      */
     private function storeMyFriend(): void
     {
-        $this->setData(
-            Friend::create([
-                'owner_id' => $this->pending->recipient_id,
-                'owner_type' => $this->pending->recipient_type,
-                'party_id' => $this->pending->sender_id,
-                'party_type' => $this->pending->sender_type,
-            ])
-                ->setRelations([
-                    'owner' => $this->pending->recipient,
-                    'party' => $this->pending->sender,
-                ])
-        );
+        $this->friend = Friend::create([
+            'owner_id' => $this->pending->recipient_id,
+            'owner_type' => $this->pending->recipient_type,
+            'party_id' => $this->pending->sender_id,
+            'party_type' => $this->pending->sender_type,
+        ])
+            ->setRelations([
+                'owner' => $this->pending->recipient,
+                'party' => $this->pending->sender,
+            ]);
     }
 
     /**
@@ -157,7 +160,7 @@ class AcceptFriendRequest extends BaseMessengerAction
     private function generateResource(): self
     {
         $this->setJsonResource(new FriendResource(
-            $this->getData()
+            $this->friend
         ));
 
         return $this;
@@ -195,7 +198,7 @@ class AcceptFriendRequest extends BaseMessengerAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new FriendApprovedEvent(
-                $this->getData(true),
+                $this->friend->withoutRelations(),
                 $this->inverseFriend->withoutRelations()
             ));
         }

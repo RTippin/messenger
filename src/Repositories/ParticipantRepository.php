@@ -29,15 +29,17 @@ class ParticipantRepository
      * Get all participants who pass our requirements for broadcasting.
      *
      * @param Thread $thread
+     * @param bool $withoutProvider
      * @return Collection
      * @noinspection SpellCheckingInspection
      */
-    public function getThreadBroadcastableParticipants(Thread $thread): Collection
+    public function getThreadBroadcastableParticipants(Thread $thread, bool $withoutProvider = false): Collection
     {
-        return $thread->participants()
-            ->validProviders()
-            ->notMuted()
-            ->get();
+        $builder = $thread->participants()->validProviders()->notMuted();
+
+        return $withoutProvider
+            ? $builder->notProvider($this->messenger->getProvider())->get()
+            : $builder->get();
     }
 
     /**

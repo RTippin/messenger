@@ -251,10 +251,7 @@ class StorePrivateThread extends NewThreadAction
      */
     private function locateRecipientAndThread(string $alias, string $id): self
     {
-        $this->locator
-            ->setAlias($alias)
-            ->setId($id)
-            ->locate();
+        $this->locator->setAlias($alias)->setId($id)->locate();
 
         $this->recipient = $this->locator->getRecipient();
 

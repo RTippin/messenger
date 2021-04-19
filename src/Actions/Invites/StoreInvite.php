@@ -10,6 +10,7 @@ use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Request\InviteRequest;
 use RTippin\Messenger\Http\Resources\InviteResource;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Models\Thread;
 
 class StoreInvite extends InviteAction
@@ -18,6 +19,11 @@ class StoreInvite extends InviteAction
      * @var Dispatcher
      */
     private Dispatcher $dispatcher;
+
+    /**
+     * @var Invite
+     */
+    private Invite $invite;
 
     /**
      * StoreInvite constructor.
@@ -60,22 +66,18 @@ class StoreInvite extends InviteAction
      */
     private function storeInvite(array $params): self
     {
-        $this->setData(
-            $this->getThread()
-                ->invites()
-                ->create([
-                    'owner_id' => $this->messenger->getProviderId(),
-                    'owner_type' => $this->messenger->getProviderClass(),
-                    'code' => $this->generateInviteCode(),
-                    'max_use' => $params['uses'],
-                    'uses' => 0,
-                    'expires_at' => $this->setExpiresAt($params['expires']),
-                ])
-                ->setRelations([
-                    'owner' => $this->messenger->getProvider(),
-                    'thread' => $this->getThread(),
-                ])
-        );
+        $this->invite = $this->getThread()->invites()->create([
+            'owner_id' => $this->messenger->getProviderId(),
+            'owner_type' => $this->messenger->getProviderClass(),
+            'code' => $this->generateInviteCode(),
+            'max_use' => $params['uses'],
+            'uses' => 0,
+            'expires_at' => $this->setExpiresAt($params['expires']),
+        ])
+        ->setRelations([
+            'owner' => $this->messenger->getProvider(),
+            'thread' => $this->getThread(),
+        ]);
 
         return $this;
     }
@@ -122,7 +124,7 @@ class StoreInvite extends InviteAction
     private function generateResource(): self
     {
         $this->setJsonResource(new InviteResource(
-            $this->getData()
+            $this->invite
         ));
 
         return $this;
@@ -135,7 +137,7 @@ class StoreInvite extends InviteAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new NewInviteEvent(
-                $this->getData(true)
+                $this->invite->withoutRelations()
             ));
         }
     }

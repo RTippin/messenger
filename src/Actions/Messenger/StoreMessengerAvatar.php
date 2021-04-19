@@ -34,8 +34,7 @@ class StoreMessengerAvatar extends MessengerAvatarAction
 
         $file = $this->upload($parameters[0]['image']);
 
-        $this->removeOldIfExist()
-            ->updateProviderAvatar($file);
+        $this->removeOldIfExist()->updateProviderAvatar($file);
 
         return $this;
     }

@@ -29,8 +29,7 @@ class DestroyMessengerAvatar extends MessengerAvatarAction
     {
         $this->isAvatarRemovalEnabled();
 
-        $this->removeOldIfExist()
-            ->updateProviderAvatar(null);
+        $this->removeOldIfExist()->updateProviderAvatar(null);
 
         return $this;
     }

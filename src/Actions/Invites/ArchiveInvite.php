@@ -17,6 +17,11 @@ class ArchiveInvite extends InviteAction
     private Dispatcher $dispatcher;
 
     /**
+     * @var Invite
+     */
+    private Invite $invite;
+
+    /**
      * ArchiveInvite constructor.
      *
      * @param Messenger $messenger
@@ -39,9 +44,9 @@ class ArchiveInvite extends InviteAction
     {
         $this->isInvitationsEnabled();
 
-        $this->setData($parameters[0])
-            ->archiveInvite()
-            ->fireEvents();
+        $this->invite = $parameters[0];
+
+        $this->archiveInvite()->fireEvents();
 
         return $this;
     }
@@ -52,7 +57,7 @@ class ArchiveInvite extends InviteAction
      */
     private function archiveInvite(): self
     {
-        $this->getData()->delete();
+        $this->invite->delete();
 
         return $this;
     }
@@ -64,7 +69,7 @@ class ArchiveInvite extends InviteAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new InviteArchivedEvent(
-                $this->getData(true)
+                $this->invite->withoutRelations()
             ));
         }
     }

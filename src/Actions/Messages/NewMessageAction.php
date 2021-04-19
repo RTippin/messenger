@@ -189,22 +189,20 @@ abstract class NewMessageAction extends BaseMessengerAction
                                   ?array $extra): void
     {
         $this->setMessage(
-            $this->getThread()
-                ->messages()
-                ->create([
-                    'type' => array_search($type, Definitions::Message),
-                    'owner_id' => $owner->getKey(),
-                    'owner_type' => get_class($owner),
-                    'body' => $body,
-                    'reply_to_id' => optional($this->replyingTo)->id,
-                    'extra' => $extra,
-                ])
-                ->setRelations([
-                    'owner' => $owner,
-                    'thread' => $this->getThread(),
-                    'replyTo' => $this->replyingTo,
-                ])
-                ->setTemporaryId($temporaryId)
+            $this->getThread()->messages()->create([
+                'type' => array_search($type, Definitions::Message),
+                'owner_id' => $owner->getKey(),
+                'owner_type' => get_class($owner),
+                'body' => $body,
+                'reply_to_id' => optional($this->replyingTo)->id,
+                'extra' => $extra,
+            ])
+            ->setRelations([
+                'owner' => $owner,
+                'thread' => $this->getThread(),
+                'replyTo' => $this->replyingTo,
+            ])
+            ->setTemporaryId($temporaryId)
         );
     }
 }

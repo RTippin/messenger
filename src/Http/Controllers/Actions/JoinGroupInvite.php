@@ -26,7 +26,6 @@ class JoinGroupInvite
     {
         $this->authorize('join', $invite);
 
-        return $joinWithInvite->execute($invite)
-            ->getData();
+        return $joinWithInvite->execute($invite)->getParticipant();
     }
 }
