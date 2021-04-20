@@ -9,10 +9,9 @@ class FeatureDisabledException extends AuthorizationException
     /**
      * FeatureDisabledException constructor.
      *
-     * @param  string  $message
-     * @return void
+     * @param string $message
      */
-    public function __construct($message = 'That feature is currently disabled.')
+    public function __construct(string $message = 'That feature is currently disabled.')
     {
         parent::__construct($message);
     }

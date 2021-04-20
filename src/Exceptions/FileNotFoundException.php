@@ -11,7 +11,7 @@ class FileNotFoundException extends NotFoundHttpException
      *
      * @param string|null $fileName
      */
-    public function __construct(string $fileName = null)
+    public function __construct(?string $fileName = null)
     {
         $name = $fileName ?? 'unknown file';
 

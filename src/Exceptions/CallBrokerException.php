@@ -11,7 +11,7 @@ class CallBrokerException extends Exception
      *
      * @param string $message
      */
-    public function __construct($message = 'Call broker failed.')
+    public function __construct(string $message = 'Call broker failed.')
     {
         parent::__construct($message);
     }

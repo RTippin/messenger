@@ -9,10 +9,9 @@ class ThreadApprovalException extends AuthorizationException
     /**
      * ThreadApprovalException constructor.
      *
-     * @param  string  $message
-     * @return void
+     * @param string $message
      */
-    public function __construct($message = 'Not authorized to approve that conversation.')
+    public function __construct(string $message = 'Not authorized to approve that conversation.')
     {
         parent::__construct($message);
     }

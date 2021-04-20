@@ -3,8 +3,9 @@
 namespace RTippin\Messenger\Services;
 
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Collection as DBCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Collection;
 use RTippin\Messenger\Contracts\Searchable;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Messenger as MessengerModel;
@@ -106,9 +107,9 @@ class SearchProvidersService
     /**
      * Execute query and return query collection results.
      *
-     * @return Collection|null
+     * @return DBCollection|null
      */
-    public function get(): ?Collection
+    public function get(): ?DBCollection
     {
         return is_null($this->messengerQuery)
             ? null
@@ -174,9 +175,7 @@ class SearchProvidersService
      */
     private function splitQuery(): self
     {
-        $this->searchQueryItems = collect(
-            preg_split('/[ \n,]+/', $this->searchQuery)
-        )
+        $this->searchQueryItems = (new Collection(preg_split('/[ \n,]+/', $this->searchQuery)))
             ->filter(fn ($value) => strlen($value) >= 2)
             ->uniqueStrict()
             ->take(4)

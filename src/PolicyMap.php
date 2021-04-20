@@ -36,7 +36,7 @@ trait PolicyMap
      *
      * @var array
      */
-    protected array $policies = [
+    private array $policies = [
         Call::class => CallPolicy::class,
         CallParticipant::class => CallParticipantPolicy::class,
         Thread::class => ThreadPolicy::class,
@@ -55,7 +55,7 @@ trait PolicyMap
      * @return void
      * @throws BindingResolutionException
      */
-    protected function registerPolicies(): void
+    private function registerPolicies(): void
     {
         $gate = $this->app->make(Gate::class);
 

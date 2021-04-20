@@ -9,10 +9,9 @@ class NewThreadException extends AuthorizationException
     /**
      * NewThreadException constructor.
      *
-     * @param  string  $message
-     * @return void
+     * @param string $message
      */
-    public function __construct($message = 'New thread failed.')
+    public function __construct(string $message = 'New thread failed.')
     {
         parent::__construct($message);
     }

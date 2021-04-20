@@ -9,10 +9,9 @@ class ReactionException extends AuthorizationException
     /**
      * KnockException constructor.
      *
-     * @param  string  $message
-     * @return void
+     * @param string $message
      */
-    public function __construct($message = 'Reaction was not authorized.')
+    public function __construct(string $message = 'Reaction was not authorized.')
     {
         parent::__construct($message);
     }

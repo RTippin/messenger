@@ -126,7 +126,7 @@ class ThreadLocatorService
         /** @var MessengerProvider|null $recipient */
         $recipient = $this->providersRepository->getProviderUsingAliasAndId($this->alias, $this->id);
 
-        if ($recipient
+        if (! is_null($recipient)
             && $recipient->isNot($this->messenger->getProvider())) {
             $this->recipient = $recipient;
         }

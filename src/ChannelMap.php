@@ -17,13 +17,13 @@ trait ChannelMap
 {
     /**
      * Register all broadcast channels used by messenger.
+     *
      * @throws BindingResolutionException
      */
-    protected function registerChannels()
+    private function registerChannels()
     {
         if ($this->app['config']->get('messenger.routing.channels.enabled')) {
-            $this->app->make(BroadcastManager::class)
-                ->routes($this->channelRouteConfiguration());
+            $this->app->make(BroadcastManager::class)->routes($this->channelRouteConfiguration());
 
             $broadcaster = $this->app->make(Broadcaster::class);
 
@@ -38,7 +38,7 @@ trait ChannelMap
      *
      * @return array
      */
-    protected function channelRouteConfiguration(): array
+    private function channelRouteConfiguration(): array
     {
         return [
             'domain' => $this->app['config']->get('messenger.routing.channels.domain'),

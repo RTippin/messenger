@@ -86,7 +86,9 @@ final class Messenger
      */
     public function findProviderAlias($provider = null): ?string
     {
-        return $this->providers->search(fn ($item) => $item['model'] === $this->getClassNameString($provider)) ?: null;
+        return $this->providers->search(function ($item) use ($provider) {
+            return $item['model'] === $this->getClassNameString($provider);
+        }) ?: null;
     }
 
     /**
@@ -110,7 +112,10 @@ final class Messenger
      */
     public function isProviderSearchable($provider = null): bool
     {
-        return (bool) $this->providers->search(fn ($item) => $item['model'] === $this->getClassNameString($provider) && $item['searchable'] === true);
+        return (bool) $this->providers->search(function ($item) use ($provider) {
+            return $item['model'] === $this->getClassNameString($provider)
+                && $item['searchable'] === true;
+        });
     }
 
     /**
@@ -122,7 +127,10 @@ final class Messenger
      */
     public function isProviderFriendable($provider = null): bool
     {
-        return (bool) $this->providers->search(fn ($item) => $item['model'] === $this->getClassNameString($provider) && $item['friendable'] === true);
+        return (bool) $this->providers->search(function ($item) use ($provider) {
+            return $item['model'] === $this->getClassNameString($provider)
+                && $item['friendable'] === true;
+        });
     }
 
     /**

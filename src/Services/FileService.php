@@ -202,7 +202,6 @@ class FileService
         ]);
     }
 
-
     /**
      * @param string $message
      * @throws FileServiceException

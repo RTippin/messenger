@@ -11,7 +11,7 @@ class ProviderNotFoundException extends NotFoundHttpException
      *
      * @param string $message
      */
-    public function __construct($message = 'We were unable to locate the recipient you requested.')
+    public function __construct(string $message = 'We were unable to locate the recipient you requested.')
     {
         parent::__construct($message);
     }

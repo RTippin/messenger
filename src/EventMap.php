@@ -44,7 +44,7 @@ trait EventMap
      *
      * @var array
      */
-    protected array $events = [
+    private array $events = [
         CallStartedEvent::class => [
             SetupCall::class,
         ],
@@ -94,7 +94,7 @@ trait EventMap
      * @return void
      * @throws BindingResolutionException
      */
-    protected function registerEvents()
+    private function registerEvents()
     {
         if ($this->app['config']->get('messenger.queued_event_listeners')) {
             $events = $this->app->make(Dispatcher::class);

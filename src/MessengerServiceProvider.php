@@ -66,7 +66,7 @@ class MessengerServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    protected function bootForConsole(): void
+    private function bootForConsole(): void
     {
         $this->commands([
             CallsActivityCheckCommand::class,
@@ -117,30 +117,17 @@ class MessengerServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/messenger.php', 'messenger');
 
-        $this->app->singleton(
-            Messenger::class,
-            Messenger::class
-        );
-        $this->app->alias(
-            Messenger::class,
-            'messenger'
-        );
-        $this->app->singleton(
-            FriendDriver::class,
-            FriendBroker::class
-        );
-        $this->app->singleton(
-            EmojiInterface::class,
-            EmojiService::class
-        );
-        $this->app->singleton(
-            BroadcastDriver::class,
-            $this->getBroadcastImplementation()
-        );
-        $this->app->singleton(
-            VideoDriver::class,
-            $this->getVideoImplementation()
-        );
+        $this->app->singleton(Messenger::class, Messenger::class);
+
+        $this->app->alias(Messenger::class, 'messenger');
+
+        $this->app->singleton(FriendDriver::class, FriendBroker::class);
+
+        $this->app->singleton(EmojiInterface::class, EmojiService::class);
+
+        $this->app->singleton(BroadcastDriver::class, $this->getBroadcastImplementation());
+
+        $this->app->singleton(VideoDriver::class, $this->getVideoImplementation());
     }
 
     /**
@@ -150,7 +137,7 @@ class MessengerServiceProvider extends ServiceProvider
      * @param $middleware
      * @return array
      */
-    protected function mergeApiMiddleware($middleware): array
+    private function mergeApiMiddleware($middleware): array
     {
         $merged = array_merge([MessengerApi::class], is_array($middleware) ? $middleware : [$middleware]);
 
