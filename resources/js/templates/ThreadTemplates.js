@@ -157,7 +157,7 @@ window.ThreadTemplates = (function () {
             let html = '';
             data.data.forEach(function (message) {
                 html += '<span class="badge badge-pill badge-light">'+moment(Messenger.format().makeUtcLocal(message.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'</span>';
-                html += templates.system_message(message)
+                html += templates.system_message(message, true)
             });
             if(!data.meta.final_page){
                 html += '<div id="log_paginate_btn" class="col-12 text-center mt-4"><hr>' +
@@ -286,7 +286,7 @@ window.ThreadTemplates = (function () {
                 templates.thread_body(data) +
                 '</div></div></div></a></li>'
         },
-        message_body : function(data, pending, reply){
+        message_body : function(data, pending, reply, nolink){
             if(pending === true){
                 switch(data.type){
                     case 1:
@@ -302,11 +302,11 @@ window.ThreadTemplates = (function () {
             if(reply === true){
                 switch(data.type){
                     case 1:
-                        return '<a target="_blank" href="'+data.image.lg+'"><i class="far fa-image"></i> Sent an image</a>';
+                        return nolink === true ? '<i class="far fa-image"></i> Sent an image' : '<a target="_blank" href="'+data.image.lg+'"><i class="far fa-image"></i> Sent an image</a>';
                     case 2:
-                        return '<a href="'+data.document+'" target="_blank"><i class="fas fa-file-download"></i> Sent a file</a>';
+                        return nolink === true ? '<i class="fas fa-file-download"></i> Sent a file' : '<a href="'+data.document+'" target="_blank"><i class="fas fa-file-download"></i> Sent a file</a>';
                     case 3:
-                        return '<a href="'+data.audio+'" target="_blank"><i class="fas fa-music"></i> Sent an audio file</a>';
+                        return nolink === true ? '<i class="fas fa-music"></i> Sent an audio file' :  '<a href="'+data.audio+'" target="_blank"><i class="fas fa-music"></i> Sent an audio file</a>';
                     default:
                         return methods.format_message_body(data.body, true);
                 }
@@ -534,7 +534,7 @@ window.ThreadTemplates = (function () {
                 ' id="end_history_marker" class="alert-dark shadow-sm rounded mb-4 mt-n3 w-100 text-center text-dark"> ' +
                 '<strong><i class="fas fa-comments"></i> Start of conversation</div>';
         },
-        system_message : function (data) {
+        system_message : function (data, modal) {
             let icon = 'fas fa-info-circle', extra = '';
             switch(data.type){
                 case 88:
@@ -571,7 +571,7 @@ window.ThreadTemplates = (function () {
                     icon = 'far fa-plus-square';
                 break;
             }
-            return '<div id="message_'+data.id+'" class="system-message alert-warning rounded py-1 w-100 text-center" ' +
+            return '<div id="'+(modal === true ? 'modal_' : '')+'message_'+data.id+'" class="system-message alert-warning rounded py-1 w-100 text-center" ' +
                     'title="'+Messenger.format().escapeHtml(data.owner.name)+' on '+moment(Messenger.format().makeUtcLocal(data.created_at)).format('ddd, MMM Do YYYY, h:mm:ssa')+'"><i class="'+icon+'"></i> ' +
                     '<strong>'+data.owner.name+'</strong> '+data.body+extra+'</div>';
         },
@@ -753,10 +753,15 @@ window.ThreadTemplates = (function () {
             Messenger.alert().showAvatar(ThreadManager.state().t_name, avatar);
         },
         thread_new_message_alert : function(){
-            return '<div class="text-center h6 font-weight-bold"><div class="py-2 alert alert-primary border-info shadow" role="alert">You have new messages <i class="fas fa-level-down-alt"></i></div></div>'
+            return '<div class="text-center h6 font-weight-bold"><div class="py-2 alert alert-warning border-info shadow" role="alert">You have new messages <i class="fas fa-level-down-alt"></i></div></div>'
         },
-        thread_replying_message_alert : function(name){
-            return '<div class="text-center h6 font-weight-bold"><div class="py-2 alert alert-dark border-secondary shadow" role="alert"><i class="fas fa-reply"></i> Replying to '+name+' <span class="float-right"><i class="fas fa-times-circle"></i></span></div></div>'
+        thread_replying_message_alert : function(message){
+            return '<div class="text-center h6 font-weight-bold">' +
+                '<div class="py-2 alert alert-primary border-secondary shadow" role="alert">' +
+                '<i class="fas fa-reply"></i> <img height="25" width="25" class="rounded-circle" src="'+message.owner.avatar.sm+'"> Replying to '+message.owner.name+' <span class="float-right"><i class="fas fa-times-circle"></i></span><hr class="my-2">' +
+                '<div class="col-12 replying-to-alert">'+templates.message_body(message, false, true, true)+'</div> ' +
+                '</div>' +
+                '</div>'
         },
         group_settings : function(settings){
             return '<form id="group_settings_form" action="javascript:ThreadManager.group().saveSettings()">\n' +

@@ -312,7 +312,7 @@ window.ThreadManager = (function () {
                     if(!opt.thread.lockout && opt.thread.messaging) opt.elements.message_text_input.prop('disabled', false);
                     opt.timers.remove_typing_interval = setInterval(methods.removeTypers, 1000);
                     opt.timers.bobble_refresh_interval = setInterval(function() {
-                        if(!opt.storage.active_profiles.length && !NotifyManager.sockets().forced_disconnect) LoadIn.bobbleHeads()
+                        if(!NotifyManager.sockets().forced_disconnect) LoadIn.bobbleHeads()
                     }, 180000);
                     opt.elements.msg_panel.click(mounted.msgPanelClick);
                     opt.elements.msg_panel.scroll(mounted.msgPanelScroll);
@@ -1295,6 +1295,7 @@ window.ThreadManager = (function () {
                 else opt.elements.the_thread.scrollTop(40);
             }
             methods.imageLoadListener(false);
+            methods.drawBobbleHeads();
             if(!messages.length || data.meta.final_page){
                 opt.thread.thread_history = false;
                 opt.thread.history_route = null;
@@ -1964,7 +1965,7 @@ window.ThreadManager = (function () {
             if (messageStorage.found && ! opt.storage.messages[i].system_message){
                 msg.find('.message-body').addClass('shadow-primary');
                 opt.elements.reply_message_alert.show();
-                opt.elements.reply_message_alert.html(ThreadTemplates.render().thread_replying_message_alert(opt.storage.messages[i].owner.name));
+                opt.elements.reply_message_alert.html(ThreadTemplates.render().thread_replying_message_alert(opt.storage.messages[i]));
                 opt.thread.replying = true;
                 opt.thread.reply_to_id = arg.id;
                 Messenger.format().focusEnd(focus_input);
