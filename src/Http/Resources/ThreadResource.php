@@ -35,6 +35,7 @@ class ThreadResource extends JsonResource
 
     /**
      * ThreadResource constructor.
+     *
      * @param Thread $thread
      * @param bool $addParticipants
      * @param bool $addMessages

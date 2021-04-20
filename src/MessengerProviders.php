@@ -329,7 +329,7 @@ trait MessengerProviders
     public function getSearchableForCurrentProvider(): array
     {
         return $this->providers->filter(function ($provider, $alias) {
-                return $provider['searchable'] === true && in_array($alias, $this->providerCanSearch);
+            return $provider['searchable'] === true && in_array($alias, $this->providerCanSearch);
         })
             ->map(fn ($provider) => $provider['model'])
             ->flatten()
@@ -346,7 +346,7 @@ trait MessengerProviders
     public function getFriendableForCurrentProvider(): array
     {
         return $this->providers->filter(function ($provider, $alias) {
-                return $provider['friendable'] === true && in_array($alias, $this->providerCanFriend);
+            return $provider['friendable'] === true && in_array($alias, $this->providerCanFriend);
         })
             ->map(fn ($provider) => $provider['model'])
             ->flatten()
