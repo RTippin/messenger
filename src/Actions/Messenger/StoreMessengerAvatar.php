@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Actions\Messenger;
 
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
-use RTippin\Messenger\Exceptions\UploadFailedException;
+use RTippin\Messenger\Exceptions\FileServiceException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Services\FileService;
 
@@ -24,9 +24,9 @@ class StoreMessengerAvatar extends MessengerAvatarAction
 
     /**
      * @param mixed ...$parameters
-     * @var UploadedFile[0]['image']
      * @return $this
-     * @throws FeatureDisabledException|UploadFailedException
+     * @throws FeatureDisabledException|FileServiceException
+     *@var UploadedFile[0]['image']
      */
     public function execute(...$parameters): self
     {
@@ -52,9 +52,9 @@ class StoreMessengerAvatar extends MessengerAvatarAction
     /**
      * @param UploadedFile $file
      * @return string
-     * @throws UploadFailedException
+     * @throws FileServiceException
      */
-    private function upload(UploadedFile $file): ?string
+    private function upload(UploadedFile $file): string
     {
         return $this->fileService
             ->setType('image')

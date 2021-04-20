@@ -7,7 +7,7 @@ use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
-use RTippin\Messenger\Exceptions\UploadFailedException;
+use RTippin\Messenger\Exceptions\FileServiceException;
 use RTippin\Messenger\Http\Request\ImageMessageRequest;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
@@ -56,10 +56,10 @@ class StoreImageMessage extends NewMessageAction
      * updated_at, mark read for participant, broadcast.
      *
      * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var ImageMessageRequest[1]
      * @return $this
-     * @throws Throwable|FeatureDisabledException|UploadFailedException
+     * @throws Throwable|FeatureDisabledException|FileServiceException
+     *@var Thread[0]
+     * @var ImageMessageRequest[1]
      */
     public function execute(...$parameters): self
     {
@@ -94,9 +94,9 @@ class StoreImageMessage extends NewMessageAction
     /**
      * @param UploadedFile $file
      * @return string
-     * @throws UploadFailedException
+     * @throws FileServiceException
      */
-    private function upload(UploadedFile $file): ?string
+    private function upload(UploadedFile $file): string
     {
         return $this->fileService
             ->setType('image')

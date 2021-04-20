@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Tests\Messenger;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Orchestra\Testbench\TestCase;
-use RTippin\Messenger\Exceptions\UploadFailedException;
+use RTippin\Messenger\Exceptions\FileServiceException;
 use RTippin\Messenger\Services\FileService;
 
 class FileServiceTest extends TestCase
@@ -18,12 +18,6 @@ class FileServiceTest extends TestCase
 
         $this->fileService = app(FileService::class);
         Storage::fake('messenger');
-    }
-
-    /** @test */
-    public function it_has_null_name()
-    {
-        $this->assertNull($this->fileService->getName());
     }
 
     /** @test */
@@ -84,13 +78,22 @@ class FileServiceTest extends TestCase
     }
 
     /** @test */
-    public function it_throws_exception_if_upload_failed()
+    public function it_throws_exception_if_upload_extension_not_found()
     {
-        $this->expectException(UploadFailedException::class);
-        $this->expectExceptionMessage('File failed to upload.');
+        $this->expectException(FileServiceException::class);
+        $this->expectExceptionMessage('File extension was not found.');
 
         $badFile = UploadedFile::fake()->create('undefined', 0, 'undefined');
 
         $this->fileService->setDisk('messenger')->upload($badFile);
+    }
+
+    /** @test */
+    public function it_throws_exception_if_name_null()
+    {
+        $this->expectException(FileServiceException::class);
+        $this->expectExceptionMessage('File name was not set.');
+
+        $this->fileService->getName();
     }
 }

@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Services;
 
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Http\UploadedFile;
-use RTippin\Messenger\Exceptions\UploadFailedException;
+use RTippin\Messenger\Exceptions\FileServiceException;
 
 class FileService
 {
@@ -90,7 +90,7 @@ class FileService
     /**
      * @param UploadedFile $file
      * @return $this
-     * @throws UploadFailedException
+     * @throws FileServiceException
      */
     public function upload(UploadedFile $file): self
     {
@@ -129,24 +129,29 @@ class FileService
     }
 
     /**
-     * @return string|null
+     * @return string
+     * @throws FileServiceException
      */
-    public function getName(): ?string
+    public function getName(): string
     {
+        if (is_null($this->name)) {
+            $this->throwFileServiceException('File name was not set.');
+        }
+
         return $this->name;
     }
 
     /**
      * @param UploadedFile $file
      * @return void
-     * @throws UploadFailedException
+     * @throws FileServiceException
      */
     private function fileUpload(UploadedFile $file): void
     {
         $this->name = $this->nameFile($file);
 
         if (! $this->storeFile($file)) {
-            $this->uploadFailed();
+            $this->throwFileServiceException('File failed to upload.');
         }
     }
 
@@ -159,7 +164,7 @@ class FileService
         $extension = $file->guessExtension();
 
         if (! $extension) {
-            $this->uploadFailed();
+            $this->throwFileServiceException('File extension was not found.');
         }
 
         if (! is_null($this->name)) {
@@ -183,10 +188,7 @@ class FileService
      */
     private function getOriginalName(UploadedFile $file): string
     {
-        return pathinfo(
-            $file->getClientOriginalName(),
-            PATHINFO_FILENAME
-        );
+        return pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
     }
 
     /**
@@ -200,13 +202,13 @@ class FileService
         ]);
     }
 
+
     /**
-     * Upload failed! :(.
-     *
-     * @throws UploadFailedException
+     * @param string $message
+     * @throws FileServiceException
      */
-    private function uploadFailed()
+    private function throwFileServiceException(string $message): void
     {
-        throw new UploadFailedException;
+        throw new FileServiceException($message);
     }
 }

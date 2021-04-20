@@ -6,7 +6,7 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Routing\Controller;
 use RTippin\Messenger\Actions\Messages\StoreImageMessage;
-use RTippin\Messenger\Exceptions\UploadFailedException;
+use RTippin\Messenger\Exceptions\FileServiceException;
 use RTippin\Messenger\Http\Collections\ImageMessageCollection;
 use RTippin\Messenger\Http\Request\ImageMessageRequest;
 use RTippin\Messenger\Http\Resources\MessageResource;
@@ -82,7 +82,7 @@ class ImageMessageController extends Controller
      * @param StoreImageMessage $storeImageMessage
      * @param Thread $thread
      * @return MessageResource
-     * @throws AuthorizationException|Throwable|UploadFailedException
+     * @throws AuthorizationException|Throwable|FileServiceException
      */
     public function store(ImageMessageRequest $request,
                           StoreImageMessage $storeImageMessage,
