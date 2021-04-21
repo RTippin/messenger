@@ -19,8 +19,6 @@ use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
- * App\Models\Messages\Participant.
- *
  * @property string $id
  * @property string $thread_id
  * @property string $owner_type
@@ -45,8 +43,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static \Illuminate\Database\Query\Builder|Participant withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Participant withoutTrashed()
  * @mixin Model|\Eloquent
- * @method static Builder|Participant forProvider(MessengerProvider $provider, string $morph = 'owner')
- * @method static Builder|Participant notProvider(MessengerProvider $provider, string $morph = 'owner')
  * @method static Builder|Participant admins()
  * @method static Builder|Participant validProviders()
  * @method static Builder|Participant notMuted()
@@ -135,8 +131,7 @@ class Participant extends Model
             'thread_id',
             'thread_id'
         )
-            ->where('owner_id', '=', $this->owner_id)
-            ->where('owner_type', '=', $this->owner_type)
+            ->forProviderWithModel($this)
             ->latest();
     }
 

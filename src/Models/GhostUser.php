@@ -6,7 +6,6 @@ use Illuminate\Database\Eloquent\Model as Eloquent;
 use RTippin\Messenger\Support\Helpers;
 
 /**
- * App\GhostUser.
  * @mixin \Eloquent
  */
 class GhostUser extends Eloquent

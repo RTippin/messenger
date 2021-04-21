@@ -111,10 +111,8 @@ class RemoveFriend extends BaseMessengerAction
      */
     private function getInverseFriend(): self
     {
-        $this->inverseFriend = Friend::where('owner_id', '=', $this->friend->party_id)
-            ->where('owner_type', '=', $this->friend->party_type)
-            ->where('party_id', '=', $this->friend->owner_id)
-            ->where('party_type', '=', $this->friend->owner_type)
+        $this->inverseFriend = Friend::forProviderWithModel($this->friend, 'party')
+            ->forProviderWithModel($this->friend, 'owner', 'party')
             ->first();
 
         return $this;

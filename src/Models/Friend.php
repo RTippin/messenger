@@ -14,8 +14,6 @@ use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
- * App\Models\Friend\Friend.
- *
  * @property string $id
  * @property string|int $owner_id
  * @property string $owner_type
@@ -26,9 +24,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @mixin Model|\Eloquent
  * @property-read MessengerProvider $owner
  * @property-read MessengerProvider $party
- * @method static Builder|Friend hasProvider(string $relation, MessengerProvider $provider)
- * @method static Builder|Friend forProvider(MessengerProvider $provider, string $morph = 'owner')
- * @method static Builder|Friend notProvider(MessengerProvider $provider, string $morph = 'owner')
  */
 class Friend extends Model
 {

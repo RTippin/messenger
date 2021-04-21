@@ -21,8 +21,6 @@ use RTippin\Messenger\Traits\Uuids;
 use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
 
 /**
- * App\Models\Messages\Message.
- *
  * @property string $id
  * @property string $thread_id
  * @property string $owner_type
@@ -46,8 +44,6 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @method static \Illuminate\Database\Query\Builder|Message withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Message withoutTrashed()
  * @mixin Model|\Eloquent
- * @method static Builder|Message forProvider(MessengerProvider $provider, string $morph = 'owner')
- * @method static Builder|Message notProvider(MessengerProvider $provider, string $morph = 'owner')
  * @method static Builder|Message text()
  * @method static Builder|Message document()
  * @method static Builder|Message image()

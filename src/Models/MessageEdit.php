@@ -10,8 +10,6 @@ use RTippin\Messenger\Database\Factories\MessageEditFactory;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
- * App\Models\Messages\MessageEdit.
- *
  * @property string $id
  * @property string $message_id
  * @property string $body

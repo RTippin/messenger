@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Models;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -14,8 +13,6 @@ use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
- * App\Models\Friend\PendingFriend.
- *
  * @property string $id
  * @property string|int $sender_id
  * @property string $sender_type
@@ -26,9 +23,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @mixin Model|\Eloquent
  * @property-read MessengerProvider $recipient
  * @property-read MessengerProvider $sender
- * @method static Builder|PendingFriend hasProvider(string $relation, MessengerProvider $provider)
- * @method static Builder|PendingFriend forProvider(MessengerProvider $provider, string $morph = 'owner')
- * @method static Builder|PendingFriend notProvider(MessengerProvider $provider, string $morph = 'owner')
  */
 class PendingFriend extends Model
 {

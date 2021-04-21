@@ -10,7 +10,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\ThreadFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Definitions;
@@ -20,8 +19,6 @@ use RTippin\Messenger\Traits\Uuids;
 use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
 
 /**
- * App\Models\Messages\Thread.
- *
  * @property string $id
  * @property int $type
  * @property string|null $subject
@@ -46,7 +43,6 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @property-read \RTippin\Messenger\Models\Message|null $recentMessage
  * @method static Builder|Thread group()
  * @method static Builder|Thread private()
- * @method static Builder|Thread hasProvider(string $relation, MessengerProvider $provider)
  * @method static \Illuminate\Database\Query\Builder|Thread onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|Thread withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Thread withoutTrashed()
@@ -314,8 +310,7 @@ class Thread extends Model
 
         if ($this->relationLoaded('participants')) {
             $this->currentParticipantCache = $this->participants
-                ->where('owner_id', Messenger::getProviderId())
-                ->where('owner_type', Messenger::getProviderClass())
+                ->forProvider(Messenger::getProvider())
                 ->first();
         } else {
             $this->currentParticipantCache = $this->participants()

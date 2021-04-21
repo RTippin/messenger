@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Repositories;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Participant;
@@ -35,11 +36,14 @@ class ParticipantRepository
      */
     public function getThreadBroadcastableParticipants(Thread $thread, bool $withoutProvider = false): Collection
     {
-        $builder = $thread->participants()->validProviders()->notMuted();
-
-        return $withoutProvider
-            ? $builder->notProvider($this->messenger->getProvider())->get()
-            : $builder->get();
+        return $thread->participants()
+            ->validProviders()
+            ->notMuted()
+            ->when($withoutProvider, function(Builder $query) {
+                /** @var Builder|Participant $query */
+                return $query->notProvider($this->messenger->getProvider());
+            })
+            ->get();
     }
 
     /**

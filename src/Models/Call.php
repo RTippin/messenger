@@ -18,8 +18,6 @@ use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
- * App\Models\Messages\Call.
- *
  * @property string $id
  * @property string $thread_id
  * @property string|int $owner_id
@@ -38,9 +36,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read Model|MessengerProvider $owner
  * @method static Builder|Call videoCall()
  * @method static Builder|Call active()
- * @method static Builder|Call hasProvider(string $relation, MessengerProvider $provider)
- * @method static Builder|Call forProvider(MessengerProvider $provider, string $morph = 'owner')
- * @method static Builder|Call notProvider(MessengerProvider $provider, string $morph = 'owner')
  * @property string|null $payload
  * @property bool $setup_complete
  * @property bool $teardown_complete
@@ -228,10 +223,7 @@ class Call extends Model
             return $this->currentParticipantCache;
         }
 
-        return $this->currentParticipantCache = $this->participants
-            ->where('owner_id', Messenger::getProviderId())
-            ->where('owner_type', '=', Messenger::getProviderClass())
-            ->first();
+        return $this->currentParticipantCache = $this->participants->forProvider(Messenger::getProvider())->first();
     }
 
     /**
@@ -262,9 +254,7 @@ class Call extends Model
      */
     public function hasJoinedCall(): bool
     {
-        return $this->currentCallParticipant()
-            ? true
-            : false;
+        return (bool) $this->currentCallParticipant();
     }
 
     /**

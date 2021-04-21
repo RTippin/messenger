@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Repositories;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Support\Helpers;
 
@@ -92,8 +93,8 @@ class ThreadRepository
     public function getProviderUnreadThreadsBuilder(): Builder
     {
         return Thread::whereHas('participants', function (Builder $query) {
-            return $query->where('owner_id', '=', $this->messenger->getProviderId())
-                ->where('owner_type', '=', $this->messenger->getProviderClass())
+            /** @var Builder|Participant $query */
+            return $query->forProvider($this->messenger->getProvider())
                 ->where(function (Builder $query) {
                     return $query->whereNull('participants.last_read')
                         ->orWhere('threads.updated_at', '>', $query->raw('participants.last_read'));

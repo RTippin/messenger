@@ -13,11 +13,10 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\InviteFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Helpers;
+use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
- * App\Models\Messages\Invite.
- *
  * @property string $id
  * @property string $thread_id
  * @property string $owner_type
@@ -44,6 +43,7 @@ class Invite extends Model
     use HasFactory;
     use Uuids;
     use SoftDeletes;
+    use ScopesProvider;
 
     /**
      * @var string
@@ -110,10 +110,13 @@ class Invite extends Model
      */
     public function scopeValid(Builder $query): Builder
     {
-        return $query->where(fn (Builder $q) => $q->where('max_use', '=', 0)
-            ->orWhere('thread_invites.uses', '<', $q->raw('thread_invites.max_use'))
-        )->where(fn (Builder $q) => $q->whereNull('expires_at')
-            ->orWhere('expires_at', '>', now()));
+        return $query->where(function (Builder $q) {
+            return $q->where('max_use', '=', 0)
+                ->orWhere('thread_invites.uses', '<', $q->raw('thread_invites.max_use'));
+        })
+            ->where(function (Builder $q) {
+                return $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
+            });
     }
 
     /**
@@ -125,9 +128,10 @@ class Invite extends Model
     public function scopeInvalid(Builder $query): Builder
     {
         return $query->where('expires_at', '<=', now())
-            ->orWhere(fn (Builder $q) => $q->where('max_use', '!=', 0)
-                ->where('thread_invites.uses', '>=', $q->raw('thread_invites.max_use'))
-            );
+            ->orWhere(function (Builder $q) {
+                return $q->where('max_use', '!=', 0)
+                    ->where('thread_invites.uses', '>=', $q->raw('thread_invites.max_use'));
+            });
     }
 
     /**

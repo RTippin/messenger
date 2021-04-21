@@ -8,11 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\MessengerFactory;
+use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
- * App\Models\Messages\Messenger.
- *
  * @property string $id
  * @property string $owner_type
  * @property string|int $owner_id
@@ -33,6 +32,7 @@ class Messenger extends Model
 {
     use HasFactory;
     use Uuids;
+    use ScopesProvider;
 
     /**
      * The database table used by the model.

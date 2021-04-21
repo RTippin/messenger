@@ -15,8 +15,6 @@ use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
- * App\Models\Messages\MessageReaction.
- *
  * @property string $id
  * @property string $owner_type
  * @property string|int $owner_id
@@ -26,8 +24,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read \RTippin\Messenger\Models\Message $message
  * @property-read Model|MessengerProvider $owner
  * @mixin Model|\Eloquent
- * @method static Builder|MessageReaction forProvider(MessengerProvider $provider, string $morph = 'owner')
- * @method static Builder|MessageReaction notProvider(MessengerProvider $provider, string $morph = 'owner')
  * @method static Builder|MessageReaction reaction(string $reaction)
  */
 class MessageReaction extends Model

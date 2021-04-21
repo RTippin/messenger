@@ -6,8 +6,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use RTippin\Messenger\Database\Factories\SentFriendFactory;
 
 /**
- * App\Models\Friend\SentFriend.
- *
  * Duplicate of PendingFriend. Used for ease of separation
  * between the type of "pending friend".
  */

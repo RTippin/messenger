@@ -15,8 +15,6 @@ use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
- * App\Models\Messages\CallParticipant.
- *
  * @property string $id
  * @property string $call_id
  * @property string|int $owner_id
@@ -30,9 +28,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @property bool $kicked
  * @method static \Illuminate\Database\Eloquent\Builder|CallParticipant whereKicked($value)
  * @method static Builder|CallParticipant inCall()
- * @method static Builder|CallParticipant hasProvider(string $relation, MessengerProvider $provider)
- * @method static Builder|CallParticipant forProvider(MessengerProvider $provider, string $morph = 'owner')
- * @method static Builder|CallParticipant notProvider(MessengerProvider $provider, string $morph = 'owner')
  */
 class CallParticipant extends Model
 {
