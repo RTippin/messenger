@@ -3,6 +3,8 @@
 namespace RTippin\Messenger\Tests\Fixtures;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Searchable;
@@ -13,6 +15,7 @@ class CompanyModelUuid extends User implements MessengerProvider, Searchable
 {
     use Messageable;
     use Uuids;
+    use HasFactory;
 
     protected $table = 'companies';
 
@@ -41,5 +44,10 @@ class CompanyModelUuid extends User implements MessengerProvider, Searchable
                 $query->orWhere('company_name', 'LIKE', "%{$item}%");
             }
         })->orWhere('company_email', '=', $search);
+    }
+
+    protected static function newFactory(): Factory
+    {
+        return CompanyModelUuidFactory::new();
     }
 }

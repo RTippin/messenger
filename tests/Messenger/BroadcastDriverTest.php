@@ -9,6 +9,7 @@ use RTippin\Messenger\Brokers\BroadcastBroker;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\PushNotificationEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
@@ -125,6 +126,32 @@ class BroadcastDriverTest extends FeatureTestCase
 
             return true;
         });
+    }
+
+    /** @test */
+    public function it_chunks_channels_at_100_sending_multiple_broadcast()
+    {
+        Event::fake([
+            FakeBroadcastEvent::class,
+        ]);
+        Participant::factory()
+            ->for($this->group)
+            ->owner($this->getModelUser()::factory()->create())
+            ->count(120)
+            ->create();
+        Participant::factory()
+            ->for($this->group)
+            ->owner($this->getModelCompany()::factory()->create())
+            ->count(120)
+            ->create();
+
+        app(BroadcastDriver::class)
+            ->toAllInThread($this->group)
+            ->with(self::WITH)
+            ->broadcast(FakeBroadcastEvent::class);
+
+        // Group has 243 total participants.
+        Event::assertDispatchedTimes(FakeBroadcastEvent::class, 3);
     }
 
     /** @test */

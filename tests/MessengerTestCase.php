@@ -70,7 +70,7 @@ class MessengerTestCase extends TestCase
     /**
      * @return MessengerProvider|UserModel|UserModelUuid|string
      */
-    protected function getModelUser()
+    protected function getModelUser(): string
     {
         return self::UseUUID ? UserModelUuid::class : UserModel::class;
     }
@@ -78,7 +78,7 @@ class MessengerTestCase extends TestCase
     /**
      * @return MessengerProvider|CompanyModel|CompanyModelUuid|string
      */
-    protected function getModelCompany()
+    protected function getModelCompany(): string
     {
         return self::UseUUID ? CompanyModelUuid::class : CompanyModel::class;
     }

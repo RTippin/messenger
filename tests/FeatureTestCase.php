@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Models\Messenger as MessengerModel;
 
 class FeatureTestCase extends MessengerTestCase
 {
@@ -63,27 +62,21 @@ class FeatureTestCase extends MessengerTestCase
 
     private function storeBaseUsers(): void
     {
-        $this->tippin = $this->getModelUser()::create([
+        $this->tippin = $this->getModelUser()::factory()->create([
             'name' => 'Richard Tippin',
             'email' => 'tippindev@gmail.com',
-            'password' => 'secret',
         ]);
-        $this->doe = $this->getModelUser()::create([
+        $this->doe = $this->getModelUser()::factory()->create([
             'name' => 'John Doe',
             'email' => 'doe@example.net',
-            'password' => 'secret',
         ]);
-        MessengerModel::factory()->owner($this->tippin)->create();
-        MessengerModel::factory()->owner($this->doe)->create();
     }
 
     private function storeBaseCompanies(): void
     {
-        $this->developers = $this->getModelCompany()::create([
+        $this->developers = $this->getModelCompany()::factory()->create([
             'company_name' => 'Developers',
             'company_email' => 'developers@example.net',
-            'password' => 'secret',
         ]);
-        MessengerModel::factory()->owner($this->developers)->create();
     }
 }
