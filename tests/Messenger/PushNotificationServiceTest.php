@@ -94,6 +94,29 @@ class PushNotificationServiceTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_fires_events_to_many_providers()
+    {
+        Event::fake([
+            PushNotificationEvent::class,
+        ]);
+        $this->getModelUser()::factory()->count(100)->create();
+        $this->getModelCompany()::factory()->count(100)->create();
+
+        app(PushNotificationService::class)->to(
+                $this->getModelUser()::get()
+                    ->push($this->getModelCompany()::get())
+                    ->values()
+                    ->flatten()
+            )
+            ->with(self::WITH)
+            ->notify(FakeNotifyEvent::class);
+
+        Event::assertDispatched(function (PushNotificationEvent $event) {
+            return $event->recipients->count() === 203;
+        });
+    }
+
+    /** @test */
     public function it_ignores_provider_with_devices_disabled()
     {
         Event::fake([
