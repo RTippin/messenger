@@ -81,7 +81,7 @@ class PurgeAudioCommandTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_finds_multiple_documents()
+    public function it_finds_multiple_audio_files()
     {
         Message::factory()
             ->for($this->group)
@@ -101,5 +101,24 @@ class PurgeAudioCommandTest extends FeatureTestCase
             ->assertExitCode(0);
 
         Bus::assertDispatched(PurgeAudioMessages::class);
+    }
+
+    /** @test */
+    public function it_dispatches_multiple_jobs_chunking_per_100()
+    {
+        Message::factory()
+            ->for($this->group)
+            ->owner($this->tippin)
+            ->audio()
+            ->count(200)
+            ->create([
+                'deleted_at' => now()->subYear(),
+            ]);
+
+        $this->artisan('messenger:purge:audio')
+            ->expectsOutput('200 audio messages archived 30 days or greater found. Purging dispatched!')
+            ->assertExitCode(0);
+
+        Bus::assertDispatchedTimes(PurgeAudioMessages::class, 2);
     }
 }

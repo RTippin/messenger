@@ -117,17 +117,35 @@ class MessengerServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/messenger.php', 'messenger');
 
-        $this->app->singleton(Messenger::class, Messenger::class);
+        $this->app->singleton(
+            Messenger::class,
+            Messenger::class
+        );
 
-        $this->app->alias(Messenger::class, 'messenger');
+        $this->app->alias(
+            Messenger::class,
+            'messenger'
+        );
 
-        $this->app->singleton(FriendDriver::class, FriendBroker::class);
+        $this->app->singleton(
+            FriendDriver::class,
+            FriendBroker::class
+        );
 
-        $this->app->singleton(EmojiInterface::class, EmojiService::class);
+        $this->app->singleton(
+            EmojiInterface::class,
+            EmojiService::class
+        );
 
-        $this->app->singleton(BroadcastDriver::class, $this->getBroadcastImplementation());
+        $this->app->singleton(
+            BroadcastDriver::class,
+            $this->getBroadcastImplementation()
+        );
 
-        $this->app->singleton(VideoDriver::class, $this->getVideoImplementation());
+        $this->app->singleton(
+            VideoDriver::class,
+            $this->getVideoImplementation()
+        );
     }
 
     /**

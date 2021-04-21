@@ -102,4 +102,23 @@ class PurgeImagesCommandTest extends FeatureTestCase
 
         Bus::assertDispatched(PurgeImageMessages::class);
     }
+
+    /** @test */
+    public function it_dispatches_multiple_jobs_chunking_per_100()
+    {
+        Message::factory()
+            ->for($this->group)
+            ->owner($this->tippin)
+            ->image()
+            ->count(200)
+            ->create([
+                'deleted_at' => now()->subYear(),
+            ]);
+
+        $this->artisan('messenger:purge:images')
+            ->expectsOutput('200 image messages archived 30 days or greater found. Purging dispatched!')
+            ->assertExitCode(0);
+
+        Bus::assertDispatchedTimes(PurgeImageMessages::class, 2);
+    }
 }

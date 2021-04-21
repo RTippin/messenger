@@ -69,4 +69,20 @@ class InviteFactory extends Factory
             ];
         });
     }
+
+    /**
+     * Set invite to all possible invalid states.
+     *
+     * @return Factory
+     */
+    public function invalid(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'max_use' => 5,
+                'uses' => 5,
+                'expires_at' => now()->subHour(),
+            ];
+        });
+    }
 }

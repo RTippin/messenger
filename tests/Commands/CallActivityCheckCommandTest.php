@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Commands;
 use Illuminate\Support\Facades\Bus;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\CheckCallsActivity;
+use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -83,16 +84,20 @@ class CallActivityCheckCommandTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_finds_multiple_calls()
+    public function it_dispatches_multiple_jobs_chunking_per_100()
     {
-        $this->createCall($this->group, $this->tippin);
-        $this->createCall($this->group, $this->tippin);
+        Call::factory()
+            ->for($this->group)
+            ->owner($this->tippin)
+            ->setup()
+            ->count(200)
+            ->create();
         $this->travel(2)->minutes();
 
         $this->artisan('messenger:calls:check-activity')
-            ->expectsOutput('2 active calls found. Call activity checks dispatched!')
+            ->expectsOutput('200 active calls found. Call activity checks dispatched!')
             ->assertExitCode(0);
 
-        Bus::assertDispatched(CheckCallsActivity::class);
+        Bus::assertDispatchedTimes(CheckCallsActivity::class, 2);
     }
 }

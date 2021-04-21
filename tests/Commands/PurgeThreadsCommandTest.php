@@ -87,4 +87,20 @@ class PurgeThreadsCommandTest extends FeatureTestCase
 
         Bus::assertDispatched(PurgeThreads::class);
     }
+
+    /** @test */
+    public function it_dispatches_multiple_jobs_chunking_per_100()
+    {
+        Thread::factory()
+            ->count(200)
+            ->create([
+                'deleted_at' => now()->subYear(),
+            ]);
+
+        $this->artisan('messenger:purge:threads')
+            ->expectsOutput('200 threads archived 30 days or greater found. Purging dispatched!')
+            ->assertExitCode(0);
+
+        Bus::assertDispatchedTimes(PurgeThreads::class, 2);
+    }
 }

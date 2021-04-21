@@ -102,4 +102,23 @@ class PurgeDocumentsCommandTest extends FeatureTestCase
 
         Bus::assertDispatched(PurgeDocumentMessages::class);
     }
+
+    /** @test */
+    public function it_dispatches_multiple_jobs_chunking_per_100()
+    {
+        Message::factory()
+            ->for($this->group)
+            ->owner($this->tippin)
+            ->document()
+            ->count(200)
+            ->create([
+                'deleted_at' => now()->subYear(),
+            ]);
+
+        $this->artisan('messenger:purge:documents')
+            ->expectsOutput('200 document messages archived 30 days or greater found. Purging dispatched!')
+            ->assertExitCode(0);
+
+        Bus::assertDispatchedTimes(PurgeDocumentMessages::class, 2);
+    }
 }

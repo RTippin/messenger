@@ -141,4 +141,21 @@ class InvitesCheckCommandTest extends FeatureTestCase
 
         Bus::assertDispatched(ArchiveInvalidInvites::class);
     }
+
+    /** @test */
+    public function it_dispatches_multiple_jobs_chunking_per_100()
+    {
+        Invite::factory()
+            ->for($this->group)
+            ->owner($this->tippin)
+            ->invalid()
+            ->count(200)
+            ->create();
+
+        $this->artisan('messenger:invites:check-valid')
+            ->expectsOutput('200 invalid invites found. Archive invites dispatched!')
+            ->assertExitCode(0);
+
+        Bus::assertDispatchedTimes(ArchiveInvalidInvites::class, 2);
+    }
 }

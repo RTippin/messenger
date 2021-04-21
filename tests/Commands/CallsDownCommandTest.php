@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\EndCalls;
+use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -101,17 +102,21 @@ class CallsDownCommandTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_finds_multiple_calls()
+    public function it_dispatches_multiple_jobs_chunking_per_100()
     {
-        $this->createCall($this->group, $this->tippin);
-        $this->createCall($this->group, $this->tippin);
+        Call::factory()
+            ->for($this->group)
+            ->owner($this->tippin)
+            ->setup()
+            ->count(200)
+            ->create();
 
         $this->artisan('messenger:calls:down')
-            ->expectsOutput('2 active calls found. End calls dispatched!')
+            ->expectsOutput('200 active calls found. End calls dispatched!')
             ->expectsOutput('Call system is now down for 30 minutes.')
             ->assertExitCode(0);
 
         $this->assertTrue(Cache::has('messenger:calls:down'));
-        Bus::assertDispatched(EndCalls::class);
+        Bus::assertDispatchedTimes(EndCalls::class, 2);
     }
 }
