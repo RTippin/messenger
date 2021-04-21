@@ -39,7 +39,7 @@ class ParticipantRepository
         return $thread->participants()
             ->validProviders()
             ->notMuted()
-            ->when($withoutProvider, function(Builder $query) {
+            ->when($withoutProvider, function (Builder $query) {
                 /** @var Builder|Participant $query */
                 return $query->notProvider($this->messenger->getProvider());
             })
