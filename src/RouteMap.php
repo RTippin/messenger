@@ -24,11 +24,24 @@ trait RouteMap
      *
      * @throws BindingResolutionException
      */
-    private function registerMiddleware(): void
+    private function registerRouterServices(): void
     {
-        $this->app->make(Kernel::class)->prependToMiddlewarePriority(MessengerApi::class);
-
+        $kernel = $this->app->make(Kernel::class);
         $router = $this->app->make(Router::class);
+
+        $this->registerMiddleware($kernel, $router);
+
+        $this->registerRoutes($router);
+
+        $this->configureRateLimiting();
+    }
+
+    /**
+     * Register our middleware.
+     */
+    private function registerMiddleware(Kernel $kernel, Router $router): void
+    {
+        $kernel->prependToMiddlewarePriority(MessengerApi::class);
 
         $router->aliasMiddleware('messenger.provider', SetMessengerProvider::class);
 
@@ -37,13 +50,9 @@ trait RouteMap
 
     /**
      * Register all routes used by messenger.
-     *
-     * @throws BindingResolutionException
      */
-    private function registerRoutes(): void
+    private function registerRoutes(Router $router): void
     {
-        $router = $this->app->make(Router::class);
-
         $router->group($this->apiRouteConfiguration(), function () {
             $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
         });
@@ -52,7 +61,7 @@ trait RouteMap
             $this->loadRoutesFrom(__DIR__.'/../routes/invite_api.php');
         });
 
-        if ($this->app['config']->get('messenger.routing.web.enabled')) {
+        if (config('messenger.routing.web.enabled')) {
             $router->group($this->webRouteConfiguration(), function () {
                 $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
             });
@@ -62,7 +71,7 @@ trait RouteMap
             });
         }
 
-        if ($this->app['config']->get('messenger.routing.provider_avatar.enabled')) {
+        if (config('messenger.routing.provider_avatar.enabled')) {
             $router->group($this->providerAvatarRouteConfiguration(), function () {
                 $this->loadRoutesFrom(__DIR__.'/../routes/avatar.php');
             });
@@ -112,11 +121,11 @@ trait RouteMap
     private function apiRouteConfiguration(bool $invite = false): array
     {
         return [
-            'domain' => $this->app['config']->get('messenger.routing.api.domain'),
-            'prefix' => trim($this->app['config']->get('messenger.routing.api.prefix'), '/'),
+            'domain' => config('messenger.routing.api.domain'),
+            'prefix' => trim(config('messenger.routing.api.prefix'), '/'),
             'middleware' => $invite
-                ? $this->mergeApiMiddleware($this->app['config']->get('messenger.routing.api.invite_api_middleware'))
-                : $this->mergeApiMiddleware($this->app['config']->get('messenger.routing.api.middleware')),
+                ? $this->mergeApiMiddleware(config('messenger.routing.api.invite_api_middleware'))
+                : $this->mergeApiMiddleware(config('messenger.routing.api.middleware')),
         ];
     }
 
@@ -129,11 +138,11 @@ trait RouteMap
     private function webRouteConfiguration(bool $invite = false): array
     {
         return [
-            'domain' => $this->app['config']->get('messenger.routing.web.domain'),
-            'prefix' => trim($this->app['config']->get('messenger.routing.web.prefix'), '/'),
+            'domain' => config('messenger.routing.web.domain'),
+            'prefix' => trim(config('messenger.routing.web.prefix'), '/'),
             'middleware' => $invite
-                ? $this->app['config']->get('messenger.routing.web.invite_web_middleware')
-                : $this->app['config']->get('messenger.routing.web.middleware'),
+                ? config('messenger.routing.web.invite_web_middleware')
+                : config('messenger.routing.web.middleware'),
         ];
     }
 
@@ -145,9 +154,9 @@ trait RouteMap
     private function providerAvatarRouteConfiguration(): array
     {
         return [
-            'domain' => $this->app['config']->get('messenger.routing.provider_avatar.domain'),
-            'prefix' => trim($this->app['config']->get('messenger.routing.provider_avatar.prefix'), '/'),
-            'middleware' => $this->app['config']->get('messenger.routing.provider_avatar.middleware'),
+            'domain' => config('messenger.routing.provider_avatar.domain'),
+            'prefix' => trim(config('messenger.routing.provider_avatar.prefix'), '/'),
+            'middleware' => config('messenger.routing.provider_avatar.middleware'),
         ];
     }
 }

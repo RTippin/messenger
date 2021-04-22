@@ -1,6 +1,11 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v0.27]
+
+#### Removed
+- StoreMessengerIp listener removed. Up to end user to attach listener to heartbeat event should they want to use the IP provided.
+
 ### [v0.26 (04-12-2021)]
 
 #### Added

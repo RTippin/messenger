@@ -42,11 +42,9 @@ class MessengerServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->registerMiddleware();
-        $this->configureRateLimiting();
+        $this->registerRouterServices();
         $this->registerPolicies();
-        $this->registerEvents();
-        $this->registerRoutes();
+        $this->registerListeners();
         $this->registerChannels();
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'messenger');
 
@@ -101,7 +99,7 @@ class MessengerServiceProvider extends ServiceProvider
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'messenger.migrations');
 
-        if ($this->app['config']->get('messenger.calling.driver') === 'janus') {
+        if (config('messenger.calling.driver') === 'janus') {
             $this->publishes([
                 __DIR__.'/../config/janus.php' => config_path('janus.php'),
             ], 'messenger.janus.config');
@@ -171,8 +169,8 @@ class MessengerServiceProvider extends ServiceProvider
      */
     private function getBroadcastImplementation(): string
     {
-        $broadcastDrivers = $this->app['config']->get('messenger.drivers.broadcasting');
-        $alias = $this->app['config']->get('messenger.broadcasting.driver') ?? 'null';
+        $broadcastDrivers = config('messenger.drivers.broadcasting');
+        $alias = config('messenger.broadcasting.driver') ?? 'null';
 
         if (! array_key_exists($alias, $broadcastDrivers)) {
             $this->throwDriverNotExist($alias);
@@ -189,8 +187,8 @@ class MessengerServiceProvider extends ServiceProvider
      */
     private function getVideoImplementation(): string
     {
-        $videoDrivers = $this->app['config']->get('messenger.drivers.calling');
-        $alias = $this->app['config']->get('messenger.calling.driver') ?? 'null';
+        $videoDrivers = config('messenger.drivers.calling');
+        $alias = config('messenger.calling.driver') ?? 'null';
 
         if (! array_key_exists($alias, $videoDrivers)) {
             $this->throwDriverNotExist($alias);

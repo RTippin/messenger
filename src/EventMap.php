@@ -13,7 +13,6 @@ use RTippin\Messenger\Events\InviteUsedEvent;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Events\PromotedAdminEvent;
 use RTippin\Messenger\Events\RemovedFromThreadEvent;
-use RTippin\Messenger\Events\StatusHeartbeatEvent;
 use RTippin\Messenger\Events\ThreadArchivedEvent;
 use RTippin\Messenger\Events\ThreadAvatarEvent;
 use RTippin\Messenger\Events\ThreadLeftEvent;
@@ -27,7 +26,6 @@ use RTippin\Messenger\Listeners\ParticipantsAddedMessage;
 use RTippin\Messenger\Listeners\PromotedAdminMessage;
 use RTippin\Messenger\Listeners\RemovedFromThreadMessage;
 use RTippin\Messenger\Listeners\SetupCall;
-use RTippin\Messenger\Listeners\StoreMessengerIp;
 use RTippin\Messenger\Listeners\TeardownCall;
 use RTippin\Messenger\Listeners\ThreadArchivedMessage;
 use RTippin\Messenger\Listeners\ThreadAvatarMessage;
@@ -70,9 +68,6 @@ trait EventMap
         RemovedFromThreadEvent::class => [
             RemovedFromThreadMessage::class,
         ],
-        StatusHeartbeatEvent::class => [
-            StoreMessengerIp::class,
-        ],
         ThreadLeftEvent::class => [
             ThreadLeftMessage::class,
             ArchiveEmptyThread::class,
@@ -94,9 +89,9 @@ trait EventMap
      * @return void
      * @throws BindingResolutionException
      */
-    private function registerEvents()
+    private function registerListeners()
     {
-        if ($this->app['config']->get('messenger.queued_event_listeners')) {
+        if (config('messenger.queued_event_listeners')) {
             $events = $this->app->make(Dispatcher::class);
 
             foreach ($this->events as $event => $listeners) {

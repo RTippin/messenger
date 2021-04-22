@@ -626,9 +626,6 @@ PromotedAdminEvent::class => [
 RemovedFromThreadEvent::class => [
     RemovedFromThreadMessage::class,
 ],
-StatusHeartbeatEvent::class => [
-    StoreMessengerIp::class,
-],
 ThreadLeftEvent::class => [
     ThreadLeftMessage::class,
     ArchiveEmptyThread::class,

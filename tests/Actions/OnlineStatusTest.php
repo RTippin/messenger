@@ -2,15 +2,12 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\Messenger\OnlineStatus;
 use RTippin\Messenger\Events\StatusHeartbeatEvent;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Listeners\StoreMessengerIp;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class OnlineStatusTest extends FeatureTestCase
@@ -112,18 +109,6 @@ class OnlineStatusTest extends FeatureTestCase
 
         Event::assertDispatched(function (StatusHeartbeatEvent $event) {
             return $event->away === false;
-        });
-    }
-
-    /** @test */
-    public function it_dispatches_listeners()
-    {
-        Bus::fake();
-
-        app(OnlineStatus::class)->execute(true);
-
-        Bus::assertDispatched(function (CallQueuedListener $job) {
-            return $job->class === StoreMessengerIp::class;
         });
     }
 }
