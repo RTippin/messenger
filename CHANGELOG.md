@@ -1,10 +1,14 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
-### [v0.27]
+### [v0.27 (04-21-2021)]
 
 #### Removed
 - StoreMessengerIp listener removed. Up to end user to attach listener to heartbeat event should they want to use the IP provided.
+
+#### Changed
+- `instance()` method on messenger singleton renamed to `getInstance()`
+- General major refactoring.
 
 ### [v0.26 (04-12-2021)]
 
