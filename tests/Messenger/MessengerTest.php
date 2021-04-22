@@ -31,7 +31,7 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function messenger_facade_same_instance_as_container()
     {
-        $this->assertSame($this->messenger, MessengerFacade::instance());
+        $this->assertSame($this->messenger, MessengerFacade::getInstance());
     }
 
     /** @test */

@@ -195,7 +195,7 @@ final class Messenger
     /**
      * Return the current instance of messenger.
      */
-    public function instance(): self
+    public function getInstance(): self
     {
         return $this;
     }

@@ -113,7 +113,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static reset()
  * @method static setMessengerProviders(array $providers = [])
  * @method static getMessengerProviders()
- * @method static instance()
+ * @method static getInstance()
  * @method static getApiRateLimit()
  * @method static setApiRateLimit(int $apiRateLimit)
  * @method static getSearchRateLimit()
