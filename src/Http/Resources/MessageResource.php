@@ -314,7 +314,7 @@ class MessageResource extends JsonResource
         $owner = null;
 
         if (Messenger::isValidMessengerProvider($data['owner_type'])) {
-            $owner = $data['owner_type']::find($data['owner_id']);
+            $owner = Messenger::findAliasProvider($data['owner_type'])::find($data['owner_id']);
         }
 
         return $owner ?: Messenger::getGhostProvider();

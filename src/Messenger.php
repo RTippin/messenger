@@ -101,9 +101,15 @@ final class Messenger
      */
     public function findAliasProvider(string $alias): ?string
     {
-        return $this->providers->has($alias)
-            ? $this->providers->get($alias)['model']
-            : null;
+        if ($this->providers->has($alias)) {
+            return $this->providers->get($alias)['model'];
+        }
+
+        if (! is_null($morphAlias = $this->findProviderAlias($alias))) {
+            return $this->providers->get($morphAlias)['model'];
+        }
+
+        return null;
     }
 
     /**

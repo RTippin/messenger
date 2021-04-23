@@ -85,6 +85,17 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
+    public function it_returns_valid_provider_class_using_morph_alias_if_morph_maps_set()
+    {
+        if (self::UseMorphMap) {
+            $this->assertSame($this->getModelUser(), $this->messenger->findAliasProvider('users'));
+            $this->assertSame($this->getModelCompany(), $this->messenger->findAliasProvider('companies'));
+        } else {
+            $this->assertTrue(true);
+        }
+    }
+
+    /** @test */
     public function it_allows_given_provider_objects_and_class_strings_to_be_searched()
     {
         $user = $this->getModelUser();
