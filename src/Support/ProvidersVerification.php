@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Support;
 
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use RTippin\Messenger\Contracts\MessengerProvider;
@@ -67,13 +68,30 @@ class ProvidersVerification
     {
         return $providers->map(fn ($provider) => [
             'model' => $provider['model'],
-            'morph_class' => (new $provider['model'])->getMorphClass(),
+            'morph_class' => $this->getModelMorphClass($provider['model']),
             'searchable' => $this->passesSearchable($provider),
             'friendable' => $this->passesFriendable($provider),
             'devices' => $this->passesHasDevices($provider),
             'default_avatar' => $provider['default_avatar'],
             'provider_interactions' => $provider['provider_interactions'],
         ]);
+    }
+
+    /**
+     * Get the class name for polymorphic relations.
+     *
+     * @param string $model
+     * @return string
+     */
+    private function getModelMorphClass(string $model): string
+    {
+        $morphMap = Relation::morphMap();
+
+        if (! empty($morphMap) && in_array($model, $morphMap)) {
+            return array_search($model, $morphMap, true);
+        }
+
+        return $model;
     }
 
     /**
