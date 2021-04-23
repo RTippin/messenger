@@ -51,7 +51,7 @@ class MessengerServiceProvider extends ServiceProvider
         Collection::macro('forProvider', function (MessengerProvider $provider, $morph = 'owner') {
             /** @var Collection $this */
             return $this->where("{$morph}_id", '=', $provider->getKey())
-                ->where("{$morph}_type", '=', get_class($provider));
+                ->where("{$morph}_type", '=', $provider->getMorphClass());
         });
 
         if ($this->app->runningInConsole()) {

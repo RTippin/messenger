@@ -45,7 +45,7 @@ class SentFriendsTest extends FeatureTestCase
             ->assertStatus(201)
             ->assertJson([
                 'sender_id' => $this->tippin->getKey(),
-                'sender_type' => get_class($this->tippin),
+                'sender_type' => $this->tippin->getMorphClass(),
             ]);
     }
 
@@ -66,7 +66,7 @@ class SentFriendsTest extends FeatureTestCase
             ->assertStatus(201)
             ->assertJson([
                 'sender_id' => $this->tippin->getKey(),
-                'sender_type' => get_class($this->tippin),
+                'sender_type' => $this->tippin->getMorphClass(),
             ]);
     }
 

@@ -45,7 +45,7 @@ trait ScopesProvider
         return $query->where(
             $this->concatBuilder($morph),
             $not ? '!=' : '=',
-            get_class($provider).$provider->getKey()
+            $provider->getMorphClass().$provider->getKey()
         );
     }
 

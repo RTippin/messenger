@@ -107,12 +107,12 @@ class StorePrivateThreadTest extends FeatureTestCase
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
+            'owner_type' => $this->tippin->getMorphClass(),
             'pending' => false,
         ]);
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
+            'owner_type' => $this->doe->getMorphClass(),
             'pending' => true,
         ]);
     }
@@ -131,12 +131,12 @@ class StorePrivateThreadTest extends FeatureTestCase
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
+            'owner_type' => $this->tippin->getMorphClass(),
             'pending' => false,
         ]);
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
+            'owner_type' => $this->doe->getMorphClass(),
             'pending' => false,
         ]);
     }

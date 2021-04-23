@@ -34,7 +34,7 @@ class ThreadApprovalTest extends FeatureTestCase
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
+            'owner_type' => $this->tippin->getMorphClass(),
             'pending' => false,
         ]);
     }

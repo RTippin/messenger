@@ -48,7 +48,7 @@ class JoinWithInviteTest extends FeatureTestCase
         $this->assertDatabaseHas('participants', [
             'thread_id' => $this->group->id,
             'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
+            'owner_type' => $this->doe->getMorphClass(),
             'admin' => false,
         ]);
     }

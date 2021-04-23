@@ -73,7 +73,7 @@ class RoutesDisabledTest extends FeatureTestCase
             'body' => 'test.png',
             'type' => 1,
             'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
+            'owner_type' => $this->tippin->getMorphClass(),
         ]);
 
         $this->assertNull($message->getImageViewRoute());
@@ -87,7 +87,7 @@ class RoutesDisabledTest extends FeatureTestCase
             'body' => 'test.pdf',
             'type' => 2,
             'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
+            'owner_type' => $this->tippin->getMorphClass(),
         ]);
 
         $this->assertNull($message->getDocumentDownloadRoute());

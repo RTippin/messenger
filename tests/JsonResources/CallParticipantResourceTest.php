@@ -33,7 +33,7 @@ class CallParticipantResourceTest extends FeatureTestCase
         $this->assertSame($this->callParticipant->id, $resource['id']);
         $this->assertSame($this->call->id, $resource['call_id']);
         $this->assertEquals($this->tippin->getKey(), $resource['owner_id']);
-        $this->assertSame(get_class($this->tippin), $resource['owner_type']);
+        $this->assertSame($this->tippin->getMorphClass(), $resource['owner_type']);
         $this->assertSame($this->callParticipant->created_at->toDayDateTimeString(), $resource['created_at']->toDayDateTimeString());
         $this->assertSame($this->callParticipant->updated_at->toDayDateTimeString(), $resource['updated_at']->toDayDateTimeString());
         $this->assertNull($resource['left_call']);

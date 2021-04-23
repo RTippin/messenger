@@ -99,9 +99,9 @@ class FriendsTest extends FeatureTestCase
             ->assertJson([
                 'id' => $this->friend->id,
                 'owner_id' => $this->tippin->getKey(),
-                'owner_type' => get_class($this->tippin),
+                'owner_type' => $this->tippin->getMorphClass(),
                 'party_id' => $this->doe->getKey(),
-                'party_type' => get_class($this->doe),
+                'party_type' => $this->doe->getMorphClass(),
                 'party' => [
                     'provider_id' => $this->doe->getKey(),
                     'provider_alias' => 'user',
@@ -122,9 +122,9 @@ class FriendsTest extends FeatureTestCase
             ->assertJson([
                 'id' => $this->friendCompany->id,
                 'owner_id' => $this->tippin->getKey(),
-                'owner_type' => get_class($this->tippin),
+                'owner_type' => $this->tippin->getMorphClass(),
                 'party_id' => $this->developers->getKey(),
-                'party_type' => get_class($this->developers),
+                'party_type' => $this->developers->getMorphClass(),
                 'party' => [
                     'provider_id' => $this->developers->getKey(),
                     'provider_alias' => 'company',

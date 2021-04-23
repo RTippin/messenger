@@ -30,7 +30,7 @@ class UpdateMessengerSettingsTest extends FeatureTestCase
 
         $this->assertDatabaseHas('messengers', [
             'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
+            'owner_type' => $this->tippin->getMorphClass(),
             'message_popups' => false,
             'message_sound' => false,
             'call_ringtone_sound' => false,

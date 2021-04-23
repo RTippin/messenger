@@ -36,7 +36,7 @@ class JoinCallTest extends FeatureTestCase
         $this->assertDatabaseHas('call_participants', [
             'call_id' => $this->call->id,
             'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
+            'owner_type' => $this->doe->getMorphClass(),
             'left_call' => null,
         ]);
     }
@@ -48,10 +48,7 @@ class JoinCallTest extends FeatureTestCase
 
         app(JoinCall::class)->withoutDispatches()->execute($this->call);
 
-        $participant = $this->call->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
-            ->first();
+        $participant = $this->call->participants()->forProvider($this->doe)->first();
 
         $this->assertTrue(Cache::has("call:{$this->call->id}:{$participant->id}"));
     }
@@ -102,10 +99,7 @@ class JoinCallTest extends FeatureTestCase
 
         app(JoinCall::class)->execute($this->call);
 
-        $participant = $this->call->participants()
-            ->where('owner_id', '=', $this->doe->getKey())
-            ->where('owner_type', '=', get_class($this->doe))
-            ->first();
+        $participant = $this->call->participants()->forProvider($this->doe)->first();
 
         Event::assertDispatched(function (CallJoinedBroadcast $event) {
             $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());

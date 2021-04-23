@@ -28,7 +28,7 @@ class StoreParticipantTest extends FeatureTestCase
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
+            'owner_type' => $this->doe->getMorphClass(),
             'thread_id' => $this->group->id,
             'admin' => false,
             'pending' => false,
@@ -46,7 +46,7 @@ class StoreParticipantTest extends FeatureTestCase
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
+            'owner_type' => $this->doe->getMorphClass(),
             'thread_id' => $this->group->id,
             'admin' => true,
             'pending' => false,
@@ -66,7 +66,7 @@ class StoreParticipantTest extends FeatureTestCase
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
+            'owner_type' => $this->doe->getMorphClass(),
             'thread_id' => $this->group->id,
             'admin' => false,
             'pending' => true,

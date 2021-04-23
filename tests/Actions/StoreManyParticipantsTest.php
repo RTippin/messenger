@@ -145,12 +145,12 @@ class StoreManyParticipantsTest extends FeatureTestCase
         $this->assertDatabaseCount('participants', 3);
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
+            'owner_type' => $this->doe->getMorphClass(),
             'admin' => false,
         ]);
         $this->assertDatabaseHas('participants', [
             'owner_id' => $developers->getKey(),
-            'owner_type' => get_class($developers),
+            'owner_type' => $developers->getMorphClass(),
             'admin' => false,
         ]);
     }

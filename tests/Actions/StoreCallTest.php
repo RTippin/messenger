@@ -40,12 +40,12 @@ class StoreCallTest extends FeatureTestCase
         $this->assertDatabaseHas('calls', [
             'thread_id' => $this->private->id,
             'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
+            'owner_type' => $this->tippin->getMorphClass(),
             'setup_complete' => false,
         ]);
         $this->assertDatabaseHas('call_participants', [
             'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
+            'owner_type' => $this->tippin->getMorphClass(),
             'left_call' => null,
         ]);
     }
@@ -61,7 +61,7 @@ class StoreCallTest extends FeatureTestCase
         $this->assertDatabaseHas('calls', [
             'thread_id' => $this->private->id,
             'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
+            'owner_type' => $this->tippin->getMorphClass(),
             'setup_complete' => true,
         ]);
     }

@@ -27,9 +27,9 @@ class StoreFriendRequestTest extends FeatureTestCase
 
         $this->assertDatabaseHas('pending_friends', [
             'sender_id' => $this->tippin->getKey(),
-            'sender_type' => get_class($this->tippin),
+            'sender_type' => $this->tippin->getMorphClass(),
             'recipient_id' => $this->doe->getKey(),
-            'recipient_type' => get_class($this->doe),
+            'recipient_type' => $this->doe->getMorphClass(),
         ]);
     }
 

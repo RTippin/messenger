@@ -124,7 +124,7 @@ class MessageTest extends FeatureTestCase
             'body' => 'First Reply Message',
             'type' => 0,
             'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
+            'owner_type' => $this->tippin->getMorphClass(),
             'reply_to_id' => $this->message->id,
         ]);
 

@@ -33,7 +33,7 @@ class StoreGroupThreadTest extends FeatureTestCase
         ]);
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
+            'owner_type' => $this->tippin->getMorphClass(),
             'admin' => true,
         ]);
     }
@@ -48,7 +48,7 @@ class StoreGroupThreadTest extends FeatureTestCase
         $this->assertDatabaseCount('messages', 1);
         $this->assertDatabaseHas('messages', [
             'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
+            'owner_type' => $this->tippin->getMorphClass(),
             'type' => 93,
             'body' => 'created Test Group',
         ]);

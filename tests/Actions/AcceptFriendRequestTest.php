@@ -27,15 +27,15 @@ class AcceptFriendRequestTest extends FeatureTestCase
 
         $this->assertDatabaseHas('friends', [
             'owner_id' => $this->tippin->getKey(),
-            'owner_type' => get_class($this->tippin),
+            'owner_type' => $this->tippin->getMorphClass(),
             'party_id' => $this->doe->getKey(),
-            'party_type' => get_class($this->doe),
+            'party_type' => $this->doe->getMorphClass(),
         ]);
         $this->assertDatabaseHas('friends', [
             'owner_id' => $this->doe->getKey(),
-            'owner_type' => get_class($this->doe),
+            'owner_type' => $this->doe->getMorphClass(),
             'party_id' => $this->tippin->getKey(),
-            'party_type' => get_class($this->tippin),
+            'party_type' => $this->tippin->getMorphClass(),
         ]);
     }
 

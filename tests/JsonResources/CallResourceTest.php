@@ -38,7 +38,7 @@ class CallResourceTest extends FeatureTestCase
         $this->assertSame($this->call->created_at->toDayDateTimeString(), $resource['created_at']->toDayDateTimeString());
         $this->assertSame($this->call->updated_at->toDayDateTimeString(), $resource['updated_at']->toDayDateTimeString());
         $this->assertEquals($this->tippin->getKey(), $resource['owner_id']);
-        $this->assertSame(get_class($this->tippin), $resource['owner_type']);
+        $this->assertSame($this->tippin->getMorphClass(), $resource['owner_type']);
         $this->assertIsArray($resource['owner']);
         $this->assertIsArray($resource['meta']);
         $this->assertSame($this->group->id, $resource['meta']['thread_id']);

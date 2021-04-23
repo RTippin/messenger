@@ -170,7 +170,7 @@ class PushNotificationService
             && $this->messenger->isValidMessengerProvider($recipient)) {
             /** @var MessengerProvider $recipient */
             return [
-                'owner_type' => get_class($recipient),
+                'owner_type' => $recipient->getMorphClass(),
                 'owner_id' => $recipient->getKey(),
             ];
         }

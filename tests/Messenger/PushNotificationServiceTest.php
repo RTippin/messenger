@@ -75,11 +75,11 @@ class PushNotificationServiceTest extends FeatureTestCase
         Event::assertDispatched(function (PushNotificationEvent $event) {
             $recipients = $event->recipients->toArray();
             $tippin = [
-                'owner_type' => get_class($this->tippin),
+                'owner_type' => $this->tippin->getMorphClass(),
                 'owner_id' => $this->tippin->getKey(),
             ];
             $developers = [
-                'owner_type' => get_class($this->developers),
+                'owner_type' => $this->developers->getMorphClass(),
                 'owner_id' => $this->developers->getKey(),
             ];
 
@@ -138,7 +138,7 @@ class PushNotificationServiceTest extends FeatureTestCase
         Event::assertDispatched(function (PushNotificationEvent $event) {
             $recipients = $event->recipients->toArray();
             $developers = [
-                'owner_type' => get_class($this->developers),
+                'owner_type' => $this->developers->getMorphClass(),
                 'owner_id' => $this->developers->getKey(),
             ];
 
