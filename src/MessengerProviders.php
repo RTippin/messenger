@@ -31,11 +31,6 @@ trait MessengerProviders
     private ?MessengerModel $providerMessengerModel = null;
 
     /**
-     * @var null|string
-     */
-    private ?string $providerMorphClass = null;
-
-    /**
      * @var bool
      */
     private bool $providerHasFriends = false;
@@ -95,7 +90,6 @@ trait MessengerProviders
         $this->alias = $this->findProviderAlias($provider);
         $interactions = $this->providers->get($this->alias)['provider_interactions'];
         $this->provider = $provider;
-        $this->providerMorphClass = $this->provider->getMorphClass();
         $this->providerHasFriends = $this->isProviderFriendable($provider);
         $this->providerHasDevices = $this->providers->get($this->alias)['devices'];
         $this->providerCanMessageFirst = $interactions['can_message'];
@@ -149,7 +143,6 @@ trait MessengerProviders
     {
         $this->alias = null;
         $this->provider = null;
-        $this->providerMorphClass = null;
         $this->providerHasFriends = false;
         $this->providerHasDevices = false;
         $this->providerCanMessageFirst = [];
@@ -212,7 +205,7 @@ trait MessengerProviders
     {
         $alias = $this->findProviderAlias($provider);
 
-        return $alias && in_array($alias, $this->providerCanMessageFirst);
+        return ! is_null($alias) && in_array($alias, $this->providerCanMessageFirst);
     }
 
     /**
@@ -304,7 +297,7 @@ trait MessengerProviders
         return $this->providers->filter(function ($provider, $alias) {
             return $provider['searchable'] === true && in_array($alias, $this->providerCanSearch);
         })
-            ->map(fn ($provider) => $provider['model'])
+            ->map(fn ($provider) => $provider['morph_class'])
             ->flatten()
             ->toArray();
     }
@@ -321,7 +314,7 @@ trait MessengerProviders
         return $this->providers->filter(function ($provider, $alias) {
             return $provider['friendable'] === true && in_array($alias, $this->providerCanFriend);
         })
-            ->map(fn ($provider) => $provider['model'])
+            ->map(fn ($provider) => $provider['morph_class'])
             ->flatten()
             ->toArray();
     }

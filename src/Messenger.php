@@ -5,6 +5,7 @@ namespace RTippin\Messenger;
 use Illuminate\Contracts\Cache\Repository as CacheRepository;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Filesystem\Filesystem;
 use RTippin\Messenger\Support\ProvidersVerification;
 
@@ -87,7 +88,8 @@ final class Messenger
     public function findProviderAlias($provider = null): ?string
     {
         return $this->providers->search(function ($item) use ($provider) {
-            return $item['model'] === $this->getClassNameString($provider);
+            return $item['morph_class'] === $this->getClassNameString($provider)
+                || $item['model'] === $this->getClassNameString($provider);
         }) ?: null;
     }
 
@@ -113,7 +115,8 @@ final class Messenger
     public function isProviderSearchable($provider = null): bool
     {
         return (bool) $this->providers->search(function ($item) use ($provider) {
-            return $item['model'] === $this->getClassNameString($provider)
+            return ($item['morph_class'] === $this->getClassNameString($provider)
+                    || $item['model'] === $this->getClassNameString($provider))
                 && $item['searchable'] === true;
         });
     }
@@ -128,7 +131,8 @@ final class Messenger
     public function isProviderFriendable($provider = null): bool
     {
         return (bool) $this->providers->search(function ($item) use ($provider) {
-            return $item['model'] === $this->getClassNameString($provider)
+            return ($item['morph_class'] === $this->getClassNameString($provider)
+                    || $item['model'] === $this->getClassNameString($provider))
                 && $item['friendable'] === true;
         });
     }
@@ -151,7 +155,7 @@ final class Messenger
     {
         return $this->providers
             ->filter(fn ($provider) => $provider['searchable'] === true)
-            ->map(fn ($provider) => $provider['model'])
+            ->map(fn ($provider) => $provider['morph_class'])
             ->flatten()
             ->toArray();
     }
@@ -164,7 +168,7 @@ final class Messenger
     {
         return $this->providers
             ->filter(fn ($provider) => $provider['friendable'] === true)
-            ->map(fn ($provider) => $provider['model'])
+            ->map(fn ($provider) => $provider['morph_class'])
             ->flatten()
             ->toArray();
     }
@@ -175,7 +179,7 @@ final class Messenger
     public function getAllMessengerProviders(): array
     {
         return $this->providers
-            ->map(fn ($provider) => $provider['model'])
+            ->map(fn ($provider) => $provider['morph_class'])
             ->flatten()
             ->toArray();
     }
@@ -187,7 +191,7 @@ final class Messenger
     {
         return $this->providers
             ->filter(fn ($provider) => $provider['devices'] === true)
-            ->map(fn ($provider) => $provider['model'])
+            ->map(fn ($provider) => $provider['morph_class'])
             ->flatten()
             ->toArray();
     }
@@ -226,12 +230,13 @@ final class Messenger
 
     /**
      * @param $provider
-     * @return string|null
+     * @return Model|string|null
      */
     private function getClassNameString($provider = null): ?string
     {
         return is_object($provider)
-            ? get_class($provider)
+        && $provider instanceof Model
+            ? $provider->getMorphClass()
             : $provider;
     }
 }

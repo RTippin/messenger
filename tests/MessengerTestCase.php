@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests;
 
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Orchestra\Testbench\TestCase;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\MessengerServiceProvider;
@@ -20,6 +21,12 @@ class MessengerTestCase extends TestCase
      */
     const UseUUID = false;
 
+    /**
+     * Set TRUE to run all feature test with
+     * relation morph map set for providers.
+     */
+    const UseMorphMap = false;
+
     protected function getPackageProviders($app): array
     {
         return [
@@ -35,6 +42,13 @@ class MessengerTestCase extends TestCase
         $config->set('messenger.calling.enabled', true);
         $config->set('messenger.providers', $this->getBaseProvidersConfig());
         $config->set('messenger.site_name', 'Messenger-Testbench');
+
+        if (self::UseMorphMap) {
+            Relation::morphMap([
+                'users' => $this->getModelUser(),
+                'companies' => $this->getModelCompany(),
+            ]);
+        }
     }
 
     protected function getBaseProvidersConfig(): array

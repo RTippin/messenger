@@ -157,9 +157,11 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_returns_all_provider_classes()
     {
+        $user = $this->getModelUser();
+        $company = $this->getModelCompany();
         $expected = [
-            $this->getModelUser(),
-            $this->getModelCompany(),
+            (new $user)->getMorphClass(),
+            (new $company)->getMorphClass(),
         ];
 
         $this->assertSame($expected, $this->messenger->getAllMessengerProviders());
@@ -168,9 +170,11 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_returns_provider_classes_that_can_be_searched()
     {
+        $user = $this->getModelUser();
+        $company = $this->getModelCompany();
         $expected = [
-            $this->getModelUser(),
-            $this->getModelCompany(),
+            (new $user)->getMorphClass(),
+            (new $company)->getMorphClass(),
         ];
 
         $this->assertSame($expected, $this->messenger->getAllSearchableProviders());
@@ -179,9 +183,11 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_returns_provider_classes_that_can_be_friended()
     {
+        $user = $this->getModelUser();
+        $company = $this->getModelCompany();
         $expected = [
-            $this->getModelUser(),
-            $this->getModelCompany(),
+            (new $user)->getMorphClass(),
+            (new $company)->getMorphClass(),
         ];
 
         $this->assertSame($expected, $this->messenger->getAllFriendableProviders());
@@ -190,9 +196,11 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_returns_provider_classes_that_have_devices()
     {
+        $user = $this->getModelUser();
+        $company = $this->getModelCompany();
         $expected = [
-            $this->getModelUser(),
-            $this->getModelCompany(),
+            (new $user)->getMorphClass(),
+            (new $company)->getMorphClass(),
         ];
 
         $this->assertSame($expected, $this->messenger->getAllProvidersWithDevices());
@@ -268,9 +276,11 @@ class MessengerTest extends MessengerTestCase
             'password' => 'secret',
         ]);
         $this->messenger->setProvider($provider);
+        $user = $this->getModelUser();
+        $company = $this->getModelCompany();
         $expected = [
-            $this->getModelUser(),
-            $this->getModelCompany(),
+            (new $user)->getMorphClass(),
+            (new $company)->getMorphClass(),
         ];
 
         $this->assertSame($provider, $this->messenger->getProvider());
