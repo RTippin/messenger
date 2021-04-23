@@ -67,8 +67,8 @@ class StoreInvite extends InviteAction
     private function storeInvite(array $params): self
     {
         $this->invite = $this->getThread()->invites()->create([
-            'owner_id' => $this->messenger->getProviderId(),
-            'owner_type' => $this->messenger->getProviderClass(),
+            'owner_id' => $this->messenger->getProvider()->getKey(),
+            'owner_type' => $this->messenger->getProvider()->getMorphClass(),
             'code' => $this->generateInviteCode(),
             'max_use' => $params['uses'],
             'uses' => 0,

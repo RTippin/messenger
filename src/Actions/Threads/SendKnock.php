@@ -88,7 +88,7 @@ class SendKnock extends BaseMessengerAction
             && ($this->getThread()->isGroup()
                 && $this->cacheDriver->has("knock.knock.{$this->getThread()->id}"))
             || ($this->getThread()->isPrivate()
-                && $this->cacheDriver->has("knock.knock.{$this->getThread()->id}.{$this->messenger->getProviderId()}"))) {
+                && $this->cacheDriver->has("knock.knock.{$this->getThread()->id}.{$this->messenger->getProvider()->getKey()}"))) {
             throw new KnockException("You may only knock at {$this->getThread()->name()} once every {$this->messenger->getKnockTimeout()} minutes.");
         }
 
@@ -159,6 +159,6 @@ class SendKnock extends BaseMessengerAction
     {
         return $this->getThread()->isGroup()
             ? "knock.knock.{$this->getThread()->id}"
-            : "knock.knock.{$this->getThread()->id}.{$this->messenger->getProviderId()}";
+            : "knock.knock.{$this->getThread()->id}.{$this->messenger->getProvider()->getKey()}";
     }
 }

@@ -138,10 +138,10 @@ class StoreFriendRequest extends BaseMessengerAction
     private function storeSentFriendRequest(): self
     {
         $this->sentFriend = SentFriend::create([
-            'sender_id' => $this->messenger->getProviderId(),
-            'sender_type' => $this->messenger->getProviderClass(),
+            'sender_id' => $this->messenger->getProvider()->getKey(),
+            'sender_type' => $this->messenger->getProvider()->getMorphClass(),
             'recipient_id' => $this->recipient->getKey(),
-            'recipient_type' => get_class($this->recipient),
+            'recipient_type' => $this->recipient->getMorphClass(),
         ])
             ->setRelations([
                 'recipient' => $this->recipient,

@@ -23,7 +23,7 @@ abstract class ThreadParticipantAction extends BaseMessengerAction
                 ->participants()
                 ->create(array_merge($attributes, [
                     'owner_id' => $provider->getKey(),
-                    'owner_type' => get_class($provider),
+                    'owner_type' => $provider->getMorphClass(),
                 ]))
                 ->setRelation('owner', $provider)
         );
@@ -45,7 +45,7 @@ abstract class ThreadParticipantAction extends BaseMessengerAction
             ->withTrashed()
             ->firstOrCreate([
                 'owner_id' => $provider->getKey(),
-                'owner_type' => get_class($provider),
+                'owner_type' => $provider->getMorphClass(),
             ])
             ->setRelation('owner', $provider);
 

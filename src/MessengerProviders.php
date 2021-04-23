@@ -31,14 +31,9 @@ trait MessengerProviders
     private ?MessengerModel $providerMessengerModel = null;
 
     /**
-     * @var null|string|int
-     */
-    private $id = null;
-
-    /**
      * @var null|string
      */
-    private ?string $providerClass = null;
+    private ?string $providerMorphClass = null;
 
     /**
      * @var bool
@@ -100,13 +95,12 @@ trait MessengerProviders
         $this->alias = $this->findProviderAlias($provider);
         $interactions = $this->providers->get($this->alias)['provider_interactions'];
         $this->provider = $provider;
-        $this->providerClass = get_class($provider);
+        $this->providerMorphClass = $this->provider->getMorphClass();
         $this->providerHasFriends = $this->isProviderFriendable($provider);
         $this->providerHasDevices = $this->providers->get($this->alias)['devices'];
         $this->providerCanMessageFirst = $interactions['can_message'];
         $this->providerCanFriend = $interactions['can_friend'];
         $this->providerCanSearch = $interactions['can_search'];
-        $this->id = $provider->getKey();
         $this->providerIsSet = true;
 
         $this->app->instance(MessengerProvider::class, $provider);
@@ -128,8 +122,8 @@ trait MessengerProviders
                 || $this->getProvider()->is($provider))) {
             if (is_null($this->providerMessengerModel)) {
                 $this->providerMessengerModel = MessengerModel::firstOrCreate([
-                    'owner_id' => $this->getProviderId(),
-                    'owner_type' => $this->getProviderClass(),
+                    'owner_id' => $this->getProvider()->getKey(),
+                    'owner_type' => $this->getProvider()->getMorphClass(),
                 ]);
             }
 
@@ -138,7 +132,7 @@ trait MessengerProviders
             && $this->isValidMessengerProvider($provider)) {
             return MessengerModel::firstOrCreate([
                 'owner_id' => $provider->getKey(),
-                'owner_type' => get_class($provider),
+                'owner_type' => $provider->getMorphClass(),
             ]);
         }
 
@@ -155,13 +149,12 @@ trait MessengerProviders
     {
         $this->alias = null;
         $this->provider = null;
-        $this->providerClass = null;
+        $this->providerMorphClass = null;
         $this->providerHasFriends = false;
         $this->providerHasDevices = false;
         $this->providerCanMessageFirst = [];
         $this->providerCanFriend = [];
         $this->providerCanSearch = [];
-        $this->id = null;
         $this->providerIsSet = false;
 
         $this->app->forgetInstance(MessengerProvider::class);
@@ -187,26 +180,6 @@ trait MessengerProviders
     public function getProviderAlias(): ?string
     {
         return $this->alias;
-    }
-
-    /**
-     * Get the current primary key of the set Messenger Provider.
-     *
-     * @return int|string|null
-     */
-    public function getProviderId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Get the current base class of set Messenger Provider.
-     *
-     * @return string|null
-     */
-    public function getProviderClass(): ?string
-    {
-        return $this->providerClass;
     }
 
     /**

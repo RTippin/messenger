@@ -70,8 +70,8 @@ class MessageReactionPolicy
     public function delete($user, MessageReaction $reaction, Thread $thread): Response
     {
         return ! $thread->isLocked()
-        && (((string) $this->messenger->getProviderId() === (string) $reaction->owner_id
-                && $this->messenger->getProviderClass() === $reaction->owner_type)
+        && (((string) $this->messenger->getProvider()->getKey() === (string) $reaction->owner_id
+                && $this->messenger->getProvider()->getMorphClass() === $reaction->owner_type)
             || $thread->isAdmin())
             ? $this->allow()
             : $this->deny('Not authorized to remove reaction.');

@@ -275,8 +275,8 @@ class MessengerTest extends MessengerTestCase
 
         $this->assertSame($provider, $this->messenger->getProvider());
         $this->assertSame('user', $this->messenger->getProviderAlias());
-        $this->assertSame(1, $this->messenger->getProviderId());
-        $this->assertSame($this->getModelUser(), $this->messenger->getProviderClass());
+        $this->assertSame(1, $this->messenger->getProvider()->getKey());
+        $this->assertSame($this->getModelUser(), get_class($this->messenger->getProvider()));
         $this->assertTrue(app()->bound(MessengerProvider::class));
         $this->assertSame($provider, app(MessengerProvider::class));
         $this->assertTrue($this->messenger->providerHasFriends());
@@ -305,8 +305,6 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->unsetProvider();
 
         $this->assertNull($this->messenger->getProviderAlias());
-        $this->assertNull($this->messenger->getProviderId());
-        $this->assertNull($this->messenger->getProviderClass());
         $this->assertFalse(app()->bound(MessengerProvider::class));
         $this->assertFalse($this->messenger->providerHasFriends());
         $this->assertFalse($this->messenger->providerHasDevices());

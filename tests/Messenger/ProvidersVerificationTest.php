@@ -65,6 +65,7 @@ class ProvidersVerificationTest extends MessengerTestCase
         $expected = [
             'user' => [
                 'model' => UserModel::class,
+                'morph_class' => (new UserModel)->getMorphClass(),
                 'searchable' => true,
                 'friendable' => true,
                 'devices' => true,
@@ -88,6 +89,7 @@ class ProvidersVerificationTest extends MessengerTestCase
         $expected = [
             'company' => [
                 'model' => CompanyModel::class,
+                'morph_class' => (new CompanyModel)->getMorphClass(),
                 'searchable' => true,
                 'friendable' => true,
                 'devices' => true,
@@ -113,6 +115,7 @@ class ProvidersVerificationTest extends MessengerTestCase
         $expected = [
             'user' => [
                 'model' => UserModel::class,
+                'morph_class' => (new UserModel)->getMorphClass(),
                 'searchable' => true,
                 'friendable' => true,
                 'devices' => true,
@@ -125,6 +128,7 @@ class ProvidersVerificationTest extends MessengerTestCase
             ],
             'company' => [
                 'model' => CompanyModel::class,
+                'morph_class' => (new CompanyModel)->getMorphClass(),
                 'searchable' => true,
                 'friendable' => true,
                 'devices' => true,

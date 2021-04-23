@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use RTippin\Messenger\Contracts\MessengerProvider;
 
 /**
  * @method static setProvider($provider = null)
@@ -85,10 +86,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static getProviderOnlineStatus($provider = null)
  * @method static getProviderMessenger($provider = null)
  * @method static unsetProvider()
- * @method static getProvider()
+ * @method static MessengerProvider getProvider()
  * @method static getProviderAlias()
- * @method static getProviderId()
- * @method static getProviderClass()
  * @method static providerHasFriends()
  * @method static providerHasDevices()
  * @method static canMessageProviderFirst($provider = null)

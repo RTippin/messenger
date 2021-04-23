@@ -194,7 +194,7 @@ abstract class NewMessageAction extends BaseMessengerAction
             $this->getThread()->messages()->create([
                 'type' => array_search($type, Definitions::Message),
                 'owner_id' => $owner->getKey(),
-                'owner_type' => get_class($owner),
+                'owner_type' => $owner->getMorphClass(),
                 'body' => $body,
                 'reply_to_id' => optional($this->replyingTo)->id,
                 'extra' => $extra,

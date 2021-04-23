@@ -37,7 +37,7 @@ abstract class CallParticipantAction extends BaseMessengerAction
                 ->participants()
                 ->create([
                     'owner_id' => $provider->getKey(),
-                    'owner_type' => get_class($provider),
+                    'owner_type' => $provider->getMorphClass(),
                 ])
                 ->setRelation('owner', $provider)
         );

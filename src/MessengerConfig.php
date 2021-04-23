@@ -315,7 +315,6 @@ trait MessengerConfig
         'id',
         'alias',
         'ghost',
-        'providerClass',
         'providerMessengerModel',
         'providerHasFriends',
         'ghostParticipant',

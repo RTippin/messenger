@@ -237,8 +237,8 @@ class Call extends Model
             return false;
         }
 
-        if ((string) Messenger::getProviderId() === (string) $this->owner_id
-            && Messenger::getProviderClass() === $this->owner_type) {
+        if ((string) Messenger::getProvider()->getKey() === (string) $this->owner_id
+            && Messenger::getProvider()->getMorphClass() === $this->owner_type) {
             return true;
         }
 

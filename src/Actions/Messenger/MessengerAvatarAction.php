@@ -50,7 +50,7 @@ abstract class MessengerAvatarAction extends BaseMessengerAction
      */
     protected function getDirectory(): string
     {
-        return "{$this->messenger->getAvatarStorage('directory')}/{$this->messenger->getProviderAlias()}/{$this->messenger->getProviderId()}";
+        return "{$this->messenger->getAvatarStorage('directory')}/{$this->messenger->getProviderAlias()}/{$this->messenger->getProvider()->getKey()}";
     }
 
     /**

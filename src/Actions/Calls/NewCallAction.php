@@ -151,8 +151,8 @@ abstract class NewCallAction extends BaseMessengerAction
                 ->calls()
                 ->create([
                     'type' => array_search($type, Definitions::Call),
-                    'owner_id' => $this->messenger->getProviderId(),
-                    'owner_type' => $this->messenger->getProviderClass(),
+                    'owner_id' => $this->messenger->getProvider()->getKey(),
+                    'owner_type' => $this->messenger->getProvider()->getMorphClass(),
                     'setup_complete' => $isSetupComplete,
                     'teardown_complete' => false,
                 ])

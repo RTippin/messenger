@@ -1,6 +1,17 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v0.28 (04-22-2021)]
+
+#### Added
+- Support for morph maps on polymorphic relations for providers.
+
+#### Changed
+- All instances of `get_class()` replaced with `$model->getMorphClass()`.
+
+#### Removed
+- `getProviderId()` and `getProviderClass()` methods removed from Messenger.
+
 ### [v0.27 (04-21-2021)]
 
 #### Removed

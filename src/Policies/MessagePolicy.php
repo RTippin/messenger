@@ -142,8 +142,8 @@ class MessagePolicy
         return ! $thread->isLocked()
         && $message->isText()
         && $this->messenger->isMessageEditsEnabled()
-        && (string) $this->messenger->getProviderId() === (string) $message->owner_id
-        && $this->messenger->getProviderClass() === $message->owner_type
+        && (string) $this->messenger->getProvider()->getKey() === (string) $message->owner_id
+        && $this->messenger->getProvider()->getMorphClass() === $message->owner_type
             ? $this->allow()
             : $this->deny('Not authorized to update message.');
     }
@@ -160,8 +160,8 @@ class MessagePolicy
     {
         return ! $thread->isLocked()
         && $message->showEmbeds()
-        && (((string) $this->messenger->getProviderId() === (string) $message->owner_id
-                && $this->messenger->getProviderClass() === $message->owner_type)
+        && (((string) $this->messenger->getProvider()->getKey() === (string) $message->owner_id
+                && $this->messenger->getProvider()->getMorphClass() === $message->owner_type)
             || $thread->isAdmin())
             ? $this->allow()
             : $this->deny('Not authorized to remove embeds from message.');
@@ -179,8 +179,8 @@ class MessagePolicy
     {
         return ! $thread->isLocked()
         && ! $message->isSystemMessage()
-        && (((string) $this->messenger->getProviderId() === (string) $message->owner_id
-                && $this->messenger->getProviderClass() === $message->owner_type)
+        && (((string) $this->messenger->getProvider()->getKey() === (string) $message->owner_id
+                && $this->messenger->getProvider()->getMorphClass() === $message->owner_type)
             || $thread->isAdmin())
             ? $this->allow()
             : $this->deny('Not authorized to remove message.');

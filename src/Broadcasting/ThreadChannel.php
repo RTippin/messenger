@@ -31,7 +31,7 @@ class ThreadChannel
      * Authenticate the user's access to the channel.
      *
      * @param $user
-     * @param $thread
+     * @param Thread $thread
      * @return ProviderResource
      * @throws AuthorizationException
      */

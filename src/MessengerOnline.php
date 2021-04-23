@@ -27,7 +27,7 @@ trait MessengerOnline
                     $this->setProviderToAway();
                 } else {
                     $this->cacheDriver->put(
-                        "{$this->getProviderAlias()}:online:{$this->getProviderId()}",
+                        "{$this->getProviderAlias()}:online:{$this->getProvider()->getKey()}",
                         'online',
                         now()->addMinutes($this->getOnlineCacheLifetime())
                     );
@@ -60,7 +60,7 @@ trait MessengerOnline
     {
         if ($this->isOnlineStatusEnabled()) {
             if (! $provider && $this->isProviderSet()) {
-                $this->cacheDriver->forget("{$this->getProviderAlias()}:online:{$this->getProviderId()}");
+                $this->cacheDriver->forget("{$this->getProviderAlias()}:online:{$this->getProvider()->getKey()}");
             } elseif ($provider && $this->isValidMessengerProvider($provider)) {
                 $this->cacheDriver->forget("{$this->findProviderAlias($provider)}:online:{$provider->getKey()}");
             }
@@ -82,7 +82,7 @@ trait MessengerOnline
                 && $this->isProviderSet()
                 && $this->getOnlineStatusSetting($this->getProvider()) !== 0) {
                 $this->cacheDriver->put(
-                    "{$this->getProviderAlias()}:online:{$this->getProviderId()}",
+                    "{$this->getProviderAlias()}:online:{$this->getProvider()->getKey()}",
                     'away',
                     now()->addMinutes($this->getOnlineCacheLifetime())
                 );
@@ -111,7 +111,7 @@ trait MessengerOnline
         if ($this->isOnlineStatusEnabled()) {
             try {
                 if (! $provider && $this->isProviderSet()) {
-                    return $this->cacheDriver->get("{$this->getProviderAlias()}:online:{$this->getProviderId()}") === 'online';
+                    return $this->cacheDriver->get("{$this->getProviderAlias()}:online:{$this->getProvider()->getKey()}") === 'online';
                 }
 
                 return $this->isValidMessengerProvider($provider)
@@ -135,7 +135,7 @@ trait MessengerOnline
         if ($this->isOnlineStatusEnabled()) {
             try {
                 if (! $provider && $this->isProviderSet()) {
-                    return $this->cacheDriver->get("{$this->getProviderAlias()}:online:{$this->getProviderId()}") === 'away';
+                    return $this->cacheDriver->get("{$this->getProviderAlias()}:online:{$this->getProvider()->getKey()}") === 'away';
                 }
 
                 return $this->isValidMessengerProvider($provider)
@@ -161,7 +161,7 @@ trait MessengerOnline
             try {
                 if (! $provider
                     && $this->isProviderSet()
-                    && $self_cache = $this->cacheDriver->get("{$this->getProviderAlias()}:online:{$this->getProviderId()}")) {
+                    && $self_cache = $this->cacheDriver->get("{$this->getProviderAlias()}:online:{$this->getProvider()->getKey()}")) {
                     return $self_cache === 'online' ? 1 : 2;
                 }
                 if ($provider && $this->isValidMessengerProvider($provider)

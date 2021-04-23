@@ -47,8 +47,8 @@ class FriendPolicy
     public function view($user, Friend $friend): Response
     {
         return ($this->messenger->providerHasFriends()
-            && (string) $this->messenger->getProviderId() === (string) $friend->owner_id
-            && $this->messenger->getProviderClass() === $friend->owner_type)
+            && (string) $this->messenger->getProvider()->getKey() === (string) $friend->owner_id
+            && $this->messenger->getProvider()->getMorphClass() === $friend->owner_type)
             ? $this->allow()
             : $this->deny('Not authorized to view friend');
     }
@@ -63,8 +63,8 @@ class FriendPolicy
     public function delete($user, Friend $friend): Response
     {
         return ($this->messenger->providerHasFriends()
-            && (string) $this->messenger->getProviderId() === (string) $friend->owner_id
-            && $this->messenger->getProviderClass() === $friend->owner_type)
+            && (string) $this->messenger->getProvider()->getKey() === (string) $friend->owner_id
+            && $this->messenger->getProvider()->getMorphClass() === $friend->owner_type)
             ? $this->allow()
             : $this->deny('Not authorized to remove friend');
     }

@@ -67,6 +67,7 @@ class ProvidersVerification
     {
         return $providers->map(fn ($provider) => [
             'model' => $provider['model'],
+            'morph_class' => (new $provider['model'])->getMorphClass(),
             'searchable' => $this->passesSearchable($provider),
             'friendable' => $this->passesFriendable($provider),
             'devices' => $this->passesHasDevices($provider),

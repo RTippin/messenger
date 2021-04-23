@@ -20,9 +20,9 @@
         provider : {
             model : '{{messenger()->getProviderAlias()}}',
             @if(config('messenger.provider_uuids'))
-                id : '{{messenger()->getProviderId()}}',
+                id : '{{messenger()->getProvider()->getKey()}}',
             @else
-                id : {{messenger()->getProviderId()}},
+                id : {{messenger()->getProvider()->getKey()}},
             @endif
             name : '{{ messenger()->getProvider()->name()}}',
             slug : '{{ messenger()->getProvider()->getAvatarRoute('sm')}}',
