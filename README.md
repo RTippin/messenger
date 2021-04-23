@@ -22,7 +22,8 @@
 - laravel broadcast driver configured.
 
 ### Features
-- Realtime messaging between multiple models.
+- Realtime messaging between multiple models, such as a User, Admin, and Teacher model.
+- Support for morph maps on your provider models. See: [Morph Maps][link-morph-maps]
 - Private and group threads.
 - Permissions per participant within a group thread.
 - Send image, document or audio messages.
@@ -674,7 +675,7 @@ ThreadSettingsEvent::class => [
 ```
 
 - Our default broadcast driver, [BroadcastBroker][link-broadcast-broker], is responsible for extracting private/presence channel names and dispatching the broadcast event that any action in our system calls for.
-  - If push notifications are enabled, this broker will also forward its data to our [PushNotificationFormatter][link-push-notify]. The formatter will then fire a [PushNotificationEvent][link-push-event] that you can attach a listener to handle your own FCM / other service.
+  - If push notifications are enabled, this broker will also forward its data to our [PushNotificationService][link-push-notify]. The service will then fire a [PushNotificationEvent][link-push-event] that you can attach a listener to handle your own FCM / other service.
 - Video calling is disabled by default. Our current supported 3rd party video provider is an open source media server, [Janus Media Server][link-janus-server]. We only utilize their [VideoRoom Plugin][link-janus-video], using create and destroy rooms.
   - More video drivers will be included in the future, such as one for Twillio.
 - All drivers can be extended or swapped with your own custom implementations. Create your own class, extend our proper contract, and add your custom driver into the appropriate drivers array in the config.
@@ -849,6 +850,8 @@ Echo.join('messenger.thread.1234-5678')
 - [Messages][link-messages]
 - [Document Messages][link-documents]
 - [Image Messages][link-images]
+- [Audio Messages][link-audio]
+- [Message Reactions][link-reactions]
 - [Messenger][link-messenger]
 - [Friends][link-friends]
 - [Calls][link-calls]
@@ -890,6 +893,8 @@ If you discover any security related issues, please email author email instead o
 [link-documents]: docs/Documents.md
 [link-friends]: docs/Friends.md
 [link-images]: docs/Images.md
+[link-audio]: docs/Audio.md
+[link-reactions]: docs/MessageReactions.md
 [link-messages]: docs/Messages.md
 [link-messenger]: docs/Messenger.md
 [link-participants]: docs/Participants.md
@@ -908,3 +913,4 @@ If you discover any security related issues, please email author email instead o
 [link-push-notify]: src/Services/PushNotificationService.php
 [link-push-event]: https://github.com/RTippin/messenger/blob/master/src/Events/PushNotificationEvent.php
 [link-messenger-faker]: https://github.com/RTippin/messenger-faker
+[link-morph-maps]: https://laravel.com/docs/8.x/eloquent-relationships#custom-polymorphic-types
