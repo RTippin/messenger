@@ -176,8 +176,7 @@ class UpdateGroupAvatar extends BaseMessengerAction
             ->setType('image')
             ->setDisk($this->getThread()->getStorageDisk())
             ->setDirectory($this->getDirectory())
-            ->upload($image)
-            ->getName();
+            ->upload($image);
     }
 
     /**

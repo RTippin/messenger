@@ -102,8 +102,7 @@ class StoreAudioMessage extends NewMessageAction
             ->setType('audio')
             ->setDisk($this->getThread()->getStorageDisk())
             ->setDirectory($this->getDirectory())
-            ->upload($audio)
-            ->getName();
+            ->upload($audio);
     }
 
     /**

@@ -60,7 +60,6 @@ class StoreMessengerAvatar extends MessengerAvatarAction
             ->setType('image')
             ->setDisk($this->messenger->getAvatarStorage('disk'))
             ->setDirectory($this->getDirectory())
-            ->upload($file)
-            ->getName();
+            ->upload($file);
     }
 }

@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Services;
 
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 use RTippin\Messenger\Exceptions\FileServiceException;
 
 class FileService
@@ -89,14 +90,24 @@ class FileService
 
     /**
      * @param UploadedFile $file
-     * @return $this
+     * @return string
      * @throws FileServiceException
      */
-    public function upload(UploadedFile $file): self
+    public function upload(UploadedFile $file): string
     {
-        $this->fileUpload($file);
+        $name = $this->nameFile($file);
 
-        return $this;
+        if (is_null($name)) {
+            $this->throwFileServiceException('File name was not set.');
+        }
+
+        if (! $this->storeFile($file, $name)) {
+            $this->throwFileServiceException('File failed to upload.');
+        }
+
+        $this->reset();
+
+        return $name;
     }
 
     /**
@@ -106,9 +117,13 @@ class FileService
     public function destroy(string $file): bool
     {
         if ($this->filesystemManager->disk($this->disk)->exists($file)) {
-            return $this->filesystemManager
+            $destroy = $this->filesystemManager
                 ->disk($this->disk)
                 ->delete($file);
+
+            $this->reset();
+
+            return $destroy;
         }
 
         return false;
@@ -120,39 +135,16 @@ class FileService
     public function destroyDirectory(): bool
     {
         if ($this->filesystemManager->disk($this->disk)->exists($this->directory)) {
-            return $this->filesystemManager
+            $destroy = $this->filesystemManager
                 ->disk($this->disk)
                 ->deleteDirectory($this->directory);
+
+            $this->reset();
+
+            return $destroy;
         }
 
         return false;
-    }
-
-    /**
-     * @return string
-     * @throws FileServiceException
-     */
-    public function getName(): string
-    {
-        if (is_null($this->name)) {
-            $this->throwFileServiceException('File name was not set.');
-        }
-
-        return $this->name;
-    }
-
-    /**
-     * @param UploadedFile $file
-     * @return void
-     * @throws FileServiceException
-     */
-    private function fileUpload(UploadedFile $file): void
-    {
-        $this->name = $this->nameFile($file);
-
-        if (! $this->storeFile($file)) {
-            $this->throwFileServiceException('File failed to upload.');
-        }
     }
 
     /**
@@ -168,18 +160,17 @@ class FileService
         }
 
         if (! is_null($this->name)) {
-            return "{$this->getName()}.$extension";
+            return "$this->name.$extension";
         }
 
         switch ($this->type) {
             case 'image':
-                return uniqid('img_', true).".$extension";
+                return 'img_'.Str::uuid()->toString().".$extension";
             case 'document':
             case 'audio':
                 return $this->getOriginalName($file).'_'.now()->timestamp.".$extension";
+            default: return $this->getOriginalName($file).$extension;
         }
-
-        return $this->getOriginalName($file).$extension;
     }
 
     /**
@@ -193,11 +184,12 @@ class FileService
 
     /**
      * @param UploadedFile $file
+     * @param string $name
      * @return bool
      */
-    private function storeFile(UploadedFile $file): bool
+    private function storeFile(UploadedFile $file, string $name): bool
     {
-        return $file->storeAs($this->directory, $this->name, [
+        return $file->storeAs($this->directory, $name, [
             'disk' => $this->disk,
         ]);
     }
@@ -209,5 +201,16 @@ class FileService
     private function throwFileServiceException(string $message): void
     {
         throw new FileServiceException($message);
+    }
+
+    /**
+     * After an upload, reset the properties that were set.
+     */
+    private function reset(): void
+    {
+        $this->type = null;
+        $this->disk = null;
+        $this->directory = null;
+        $this->name = null;
     }
 }

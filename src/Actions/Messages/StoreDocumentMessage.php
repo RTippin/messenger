@@ -102,8 +102,7 @@ class StoreDocumentMessage extends NewMessageAction
             ->setType('document')
             ->setDisk($this->getThread()->getStorageDisk())
             ->setDirectory($this->getDirectory())
-            ->upload($file)
-            ->getName();
+            ->upload($file);
     }
 
     /**

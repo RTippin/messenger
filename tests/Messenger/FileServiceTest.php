@@ -27,8 +27,7 @@ class FileServiceTest extends TestCase
 
         $name = $this->fileService->setDisk('messenger')
             ->setType('image')
-            ->upload($image)
-            ->getName();
+            ->upload($image);
 
         $this->assertStringContainsString('img_', $name);
         Storage::disk('messenger')->assertExists($name);
@@ -41,8 +40,7 @@ class FileServiceTest extends TestCase
 
         $name = $this->fileService->setDisk('messenger')
             ->setType('document')
-            ->upload($document)
-            ->getName();
+            ->upload($document);
 
         $this->assertNotSame('test_123_rev_2.pdf', $name);
         $this->assertStringContainsString('test_123_rev_2', $name);
@@ -57,8 +55,7 @@ class FileServiceTest extends TestCase
         $name = $this->fileService->setDisk('messenger')
             ->setType('image')
             ->setDirectory('test/1234')
-            ->upload($image)
-            ->getName();
+            ->upload($image);
 
         Storage::disk('messenger')->assertExists('test/1234/'.$name);
     }
@@ -70,8 +67,7 @@ class FileServiceTest extends TestCase
 
         $name = $this->fileService->setDisk('messenger')
             ->setName('test_renamed')
-            ->upload($document)
-            ->getName();
+            ->upload($document);
 
         $this->assertSame('test_renamed.pdf', $name);
         Storage::disk('messenger')->assertExists($name);
@@ -89,11 +85,34 @@ class FileServiceTest extends TestCase
     }
 
     /** @test */
-    public function it_throws_exception_if_name_null()
+    public function it_removes_file_from_storage()
     {
-        $this->expectException(FileServiceException::class);
-        $this->expectExceptionMessage('File name was not set.');
+        UploadedFile::fake()->image('picture.jpg')
+            ->storeAs('images', 'picture.jpg', [
+                'disk' => 'messenger',
+            ]);
 
-        $this->fileService->getName();
+        $this->fileService->setDisk('messenger')->destroy('images/picture.jpg');
+
+        Storage::disk('messenger')->assertMissing('images/picture.jpg');
+    }
+
+    /** @test */
+    public function it_removes_directory_from_storage()
+    {
+        UploadedFile::fake()->image('picture.jpg')
+            ->storeAs('images', 'picture.jpg', [
+                'disk' => 'messenger',
+            ]);
+        UploadedFile::fake()->image('picture2.jpg')
+            ->storeAs('images', 'picture2.jpg', [
+                'disk' => 'messenger',
+            ]);
+
+        $this->fileService->setDisk('messenger')->setDirectory('images')->destroyDirectory();
+
+        Storage::disk('messenger')->assertMissing('images/picture.jpg');
+        Storage::disk('messenger')->assertMissing('images/picture2.jpg');
+        Storage::disk('messenger')->assertMissing('images');
     }
 }
