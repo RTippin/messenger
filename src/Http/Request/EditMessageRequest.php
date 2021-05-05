@@ -2,9 +2,7 @@
 
 namespace RTippin\Messenger\Http\Request;
 
-use Illuminate\Foundation\Http\FormRequest;
-
-class EditMessageRequest extends FormRequest
+class EditMessageRequest extends BaseMessageRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -13,8 +11,8 @@ class EditMessageRequest extends FormRequest
      */
     public function rules(): array
     {
-        return [
-            'message' => ['required', 'string'],
-        ];
+        return $this->generateRules([
+            'message',
+        ]);
     }
 }

@@ -2,11 +2,10 @@
 
 namespace RTippin\Messenger\Http\Request;
 
-use Illuminate\Foundation\Http\FormRequest;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Rules\IntegerOrString;
 
-class PrivateThreadRequest extends FormRequest
+class PrivateThreadRequest extends BaseMessageRequest
 {
     /**
      * Get the validation rules that apply to the request.

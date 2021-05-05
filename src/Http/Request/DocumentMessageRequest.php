@@ -2,10 +2,7 @@
 
 namespace RTippin\Messenger\Http\Request;
 
-use Illuminate\Foundation\Http\FormRequest;
-use RTippin\Messenger\Facades\Messenger;
-
-class DocumentMessageRequest extends FormRequest
+class DocumentMessageRequest extends BaseMessageRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,14 +11,11 @@ class DocumentMessageRequest extends FormRequest
      */
     public function rules(): array
     {
-        $limit = Messenger::getMessageDocumentSizeLimit();
-        $mimes = Messenger::getMessageDocumentMimeTypes();
-
-        return [
-            'document' => ['required', "max:$limit", 'file', "mimes:$mimes"],
-            'temporary_id' => ['required', 'string'],
-            'reply_to_id' => ['nullable', 'string'],
-            'extra' => ['nullable', 'array'],
-        ];
+        return $this->generateRules([
+            'document',
+            'temporary_id',
+            'reply_to_id',
+            'extra',
+        ]);
     }
 }

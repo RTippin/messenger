@@ -134,41 +134,6 @@ class PrivateMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function user_can_send_message_with_extra()
-    {
-        $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
-        $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $this->private->id,
-        ]), [
-            'message' => 'Hello!',
-            'temporary_id' => '123-456-789',
-            'extra' => ['test' => true],
-        ])
-            ->assertSuccessful()
-            ->assertJson([
-                'thread_id' => $this->private->id,
-                'temporary_id' => '123-456-789',
-                'type' => 0,
-                'type_verbose' => 'MESSAGE',
-                'body' => 'Hello!',
-                'extra' => [
-                    'test' => true,
-                ],
-                'owner' => [
-                    'provider_id' => $this->tippin->getKey(),
-                    'provider_alias' => 'user',
-                    'name' => 'Richard Tippin',
-                ],
-            ]);
-    }
-
-    /** @test */
     public function recipient_can_send_message()
     {
         $this->actingAs($this->doe);
@@ -290,11 +255,11 @@ class PrivateMessageTest extends FeatureTestCase
 
     /**
      * @test
-     * @dataProvider messageValidation
+     * @dataProvider messageFailsValidation
      * @param $messageValue
      * @param $tempIdValue
      */
-    public function send_message_validates_request($messageValue, $tempIdValue)
+    public function send_message_fails_validations($messageValue, $tempIdValue)
     {
         $this->actingAs($this->tippin);
 
@@ -313,10 +278,10 @@ class PrivateMessageTest extends FeatureTestCase
 
     /**
      * @test
-     * @dataProvider messageExtraValidation
+     * @dataProvider messageExtraFailsValidation
      * @param $extraValue
      */
-    public function send_message_validates_extra($extraValue)
+    public function send_message_extra_fails_validation($extraValue)
     {
         $this->actingAs($this->tippin);
 
@@ -333,7 +298,30 @@ class PrivateMessageTest extends FeatureTestCase
             ]);
     }
 
-    public function messageValidation(): array
+    /**
+     * @test
+     * @dataProvider messageExtraPassesValidation
+     * @param $extraValue
+     * @param $extraOutput
+     */
+    public function send_message_extra_passes_validation($extraValue, $extraOutput)
+    {
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.messages.store', [
+            'thread' => $this->private->id,
+        ]), [
+            'message' => 'Hello!',
+            'temporary_id' => '123-456-789',
+            'extra' => $extraValue,
+        ])
+            ->assertSuccessful()
+            ->assertJson([
+                'extra' => $extraOutput,
+            ]);
+    }
+
+    public function messageFailsValidation(): array
     {
         return [
             'Fields cannot be empty' => ['', ''],
@@ -344,12 +332,23 @@ class PrivateMessageTest extends FeatureTestCase
         ];
     }
 
-    public function messageExtraValidation(): array
+    public function messageExtraFailsValidation(): array
     {
         return [
             'Cannot be string' => ['yes'],
             'Cannot be boolean' => [true],
             'Cannot be integer' => [5],
+        ];
+    }
+
+    public function messageExtraPassesValidation(): array
+    {
+        return [
+            'Can be array' => [['testing' => true], ['testing' => true]],
+            'Can be multidimensional array' => [['testing' => true, 'more' => ['test' => true]], ['testing' => true, 'more' => ['test' => true]]],
+            'Can be JSON string' => ['{"testing":true}', ['testing' => true]],
+            'Can be JSON string array' => ['[{"testing":true,"more":[0,1,2]}]', [['testing' => true, 'more' => [0,1,2]]]],
+            'Can be null' => [null, null],
         ];
     }
 }

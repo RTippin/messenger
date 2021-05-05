@@ -2,10 +2,7 @@
 
 namespace RTippin\Messenger\Http\Request;
 
-use Illuminate\Foundation\Http\FormRequest;
-use RTippin\Messenger\Facades\Messenger;
-
-class AudioMessageRequest extends FormRequest
+class AudioMessageRequest extends BaseMessageRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,14 +11,11 @@ class AudioMessageRequest extends FormRequest
      */
     public function rules(): array
     {
-        $limit = Messenger::getMessageAudioSizeLimit();
-        $mimes = Messenger::getMessageAudioMimeTypes();
-
-        return [
-            'audio' => ['required', "max:$limit", 'file', "mimes:$mimes"],
-            'temporary_id' => ['required', 'string'],
-            'reply_to_id' => ['nullable', 'string'],
-            'extra' => ['nullable', 'array'],
-        ];
+        return $this->generateRules([
+            'audio',
+            'temporary_id',
+            'reply_to_id',
+            'extra',
+        ]);
     }
 }

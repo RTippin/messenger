@@ -2,10 +2,7 @@
 
 namespace RTippin\Messenger\Http\Request;
 
-use Illuminate\Foundation\Http\FormRequest;
-use RTippin\Messenger\Facades\Messenger;
-
-class ImageMessageRequest extends FormRequest
+class ImageMessageRequest extends BaseMessageRequest
 {
     /**
      * Get the validation rules that apply to the request.
@@ -14,14 +11,11 @@ class ImageMessageRequest extends FormRequest
      */
     public function rules(): array
     {
-        $limit = Messenger::getMessageImageSizeLimit();
-        $mimes = Messenger::getMessageImageMimeTypes();
-
-        return [
-            'image' => ['required', "max:$limit", 'file', "mimes:$mimes"],
-            'temporary_id' => ['required', 'string'],
-            'reply_to_id' => ['nullable', 'string'],
-            'extra' => ['nullable', 'array'],
-        ];
+        return $this->generateRules([
+            'image',
+            'temporary_id',
+            'reply_to_id',
+            'extra',
+        ]);
     }
 }
