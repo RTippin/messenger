@@ -347,7 +347,7 @@ class PrivateMessageTest extends FeatureTestCase
             'Can be array' => [['testing' => true], ['testing' => true]],
             'Can be multidimensional array' => [['testing' => true, 'more' => ['test' => true]], ['testing' => true, 'more' => ['test' => true]]],
             'Can be JSON string' => ['{"testing":true}', ['testing' => true]],
-            'Can be JSON string array' => ['[{"testing":true,"more":[0,1,2]}]', [['testing' => true, 'more' => [0,1,2]]]],
+            'Can be JSON string array' => ['[{"testing":true,"more":[0,1,2]}]', [['testing' => true, 'more' => [0, 1, 2]]]],
             'Can be null' => [null, null],
         ];
     }
