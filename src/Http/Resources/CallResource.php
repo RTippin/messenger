@@ -34,7 +34,7 @@ class CallResource extends JsonResource
      */
     public function __construct(Call $call,
                                 Thread $thread,
-                                $addParticipants = false)
+                                bool $addParticipants = false)
     {
         parent::__construct($call);
 
