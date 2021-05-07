@@ -166,7 +166,7 @@ class Invite extends Model
      * @param bool $api
      * @return string|null
      */
-    public function getInvitationAvatarRoute(string $size = 'sm', $api = false): ?string
+    public function getInvitationAvatarRoute(string $size = 'sm', bool $api = false): ?string
     {
         return Helpers::Route(($api ? 'api.' : '').'messenger.invites.avatar.render',
             [
@@ -181,7 +181,7 @@ class Invite extends Model
      * @param bool $api
      * @return array
      */
-    public function inviteAvatar($api = false): array
+    public function inviteAvatar(bool $api = false): array
     {
         return [
             'sm' => $this->getInvitationAvatarRoute('sm', $api),

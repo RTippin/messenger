@@ -19,7 +19,7 @@ class InviteResource extends JsonResource
      * @param Invite $invite
      * @param bool $joining
      */
-    public function __construct(Invite $invite, $joining = false)
+    public function __construct(Invite $invite, bool $joining = false)
     {
         parent::__construct($invite);
 
@@ -39,7 +39,7 @@ class InviteResource extends JsonResource
 
         return [
             'owner' => $this->when(! $this->joining,
-                fn () => new ProviderResource($invite->owner)
+                fn () => (new ProviderResource($invite->owner))->resolve()
             ),
             'options' => $this->when($this->joining,
                 fn () => $this->joinOptions($invite)
