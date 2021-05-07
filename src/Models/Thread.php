@@ -364,7 +364,7 @@ class Thread extends Model
      * @param bool $api
      * @return string|null
      */
-    public function getThreadAvatarRoute(string $size = 'sm', $api = false): ?string
+    public function getThreadAvatarRoute(string $size = 'sm', bool $api = false): ?string
     {
         return Helpers::Route(($api ? 'api.' : '').'messenger.threads.avatar.render',
             [
@@ -379,7 +379,7 @@ class Thread extends Model
      * @param bool $api
      * @return array
      */
-    public function threadAvatar($api = false): array
+    public function threadAvatar(bool $api = false): array
     {
         if ($this->isPrivate()) {
             return [

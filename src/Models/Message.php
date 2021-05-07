@@ -280,7 +280,7 @@ class Message extends Model
      * @param bool $api
      * @return string|null
      */
-    public function getImageViewRoute(string $size = 'sm', $api = false): ?string
+    public function getImageViewRoute(string $size = 'sm', bool $api = false): ?string
     {
         if (! $this->isImage()) {
             return null;
@@ -300,7 +300,7 @@ class Message extends Model
      * @param bool $api
      * @return string|null
      */
-    public function getDocumentDownloadRoute($api = false): ?string
+    public function getDocumentDownloadRoute(bool $api = false): ?string
     {
         if (! $this->isDocument()) {
             return null;
@@ -319,7 +319,7 @@ class Message extends Model
      * @param bool $api
      * @return string|null
      */
-    public function getAudioDownloadRoute($api = false): ?string
+    public function getAudioDownloadRoute(bool $api = false): ?string
     {
         if (! $this->isAudio()) {
             return null;
@@ -435,7 +435,7 @@ class Message extends Model
      * @param string|null $id
      * @return Message
      */
-    public function setTemporaryId($id = null): self
+    public function setTemporaryId(?string $id = null): self
     {
         $this->temporaryId = (is_null($id) || empty($id))
             ? null

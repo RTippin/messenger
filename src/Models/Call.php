@@ -195,7 +195,7 @@ class Call extends Model
      * @param Thread|null $thread
      * @return bool
      */
-    public function isGroupCall(Thread $thread = null): bool
+    public function isGroupCall(?Thread $thread = null): bool
     {
         return $thread
             ? $thread->isGroup()
@@ -206,7 +206,7 @@ class Call extends Model
      * @param Thread|null $thread
      * @return string|null
      */
-    public function name(Thread $thread = null): ?string
+    public function name(?Thread $thread = null): ?string
     {
         return $thread
             ? $thread->name()
@@ -230,7 +230,7 @@ class Call extends Model
      * @param Thread|null $thread
      * @return bool
      */
-    public function isCallAdmin(Thread $thread = null): bool
+    public function isCallAdmin(?Thread $thread = null): bool
     {
         if ($this->hasEnded()
             || ! $this->currentCallParticipant()) {
