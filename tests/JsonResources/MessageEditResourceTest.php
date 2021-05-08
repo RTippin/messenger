@@ -4,7 +4,9 @@ namespace RTippin\Messenger\Tests\JsonResources;
 
 use Illuminate\Support\Carbon;
 use RTippin\Messenger\Http\Resources\MessageEditResource;
+use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageEdit;
+use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class MessageEditResourceTest extends FeatureTestCase
@@ -14,16 +16,13 @@ class MessageEditResourceTest extends FeatureTestCase
     {
         $created = now()->subMinutes(5)->format('Y-m-d H:i:s.u');
         Carbon::setTestNow($created);
-        $message = $this->createMessage($this->createGroupThread($this->tippin), $this->tippin);
-        $edit = MessageEdit::create([
-            'message_id' => $message->id,
-            'body' => 'Edit',
-            'edited_at' => $created,
-        ]);
+        $group = Thread::factory()->group()->create();
+        $message = Message::factory()->for($group)->owner($this->tippin)->create();
+        $edit = MessageEdit::factory()->for($message)->create();
 
         $resource = (new MessageEditResource($edit))->resolve();
 
-        $this->assertSame('Edit', $resource['body']);
+        $this->assertSame($edit->body, $resource['body']);
         $this->assertSame($created, $resource['edited_at']->format('Y-m-d H:i:s.u'));
         $this->assertCount(2, $resource);
     }
