@@ -3,6 +3,21 @@
 
 ---
 
+### [v0.30 (05-11-2021)]
+
+#### Added
+- MessageTransformer support class to generate and transform message body.
+
+#### Changed
+- Bugfix in JS where failed message image loaded improper not found image.
+- Yarn upgrade. Assets recompiled.
+
+#### Removed
+- Message transformer methods from MessageResource class.
+- `.svg` as a valid default image mime allowed for upload.
+
+---
+
 ### [v0.29 (05-02-2021)]
 
 #### Changed
@@ -10,7 +25,6 @@
 
 #### Removed
 - `getName()` method removed from FileService. `upload()` method returns final file name now.
-- `.svg` as a valid default image mime allowed for upload.
 
 ---
 
