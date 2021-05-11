@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Listeners;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
 use RTippin\Messenger\Events\ThreadAvatarEvent;
-use RTippin\Messenger\Services\SystemMessageService;
+use RTippin\Messenger\Support\MessageTransformer;
 use Throwable;
 
 class ThreadAvatarMessage implements ShouldQueue
@@ -18,11 +18,6 @@ class ThreadAvatarMessage implements ShouldQueue
     public string $queue = 'messenger';
 
     /**
-     * @var SystemMessageService
-     */
-    private SystemMessageService $service;
-
-    /**
      * @var StoreSystemMessage
      */
     private StoreSystemMessage $storeSystemMessage;
@@ -30,13 +25,11 @@ class ThreadAvatarMessage implements ShouldQueue
     /**
      * Create the event listener.
      *
-     * @param SystemMessageService $service
      * @param StoreSystemMessage $storeSystemMessage
      */
-    public function __construct(SystemMessageService $service, StoreSystemMessage $storeSystemMessage)
+    public function __construct(StoreSystemMessage $storeSystemMessage)
     {
         $this->storeSystemMessage = $storeSystemMessage;
-        $this->service = $service;
     }
 
     /**
@@ -57,8 +50,6 @@ class ThreadAvatarMessage implements ShouldQueue
      */
     private function systemMessage(ThreadAvatarEvent $event): array
     {
-        return $this->service
-            ->setStoreData($event->thread, $event->provider)
-            ->makeGroupAvatarChanged();
+        return MessageTransformer::makeGroupAvatarChanged($event->thread, $event->provider);
     }
 }
