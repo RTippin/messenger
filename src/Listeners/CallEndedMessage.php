@@ -3,10 +3,9 @@
 namespace RTippin\Messenger\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Collection;
 use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
 use RTippin\Messenger\Events\CallEndedEvent;
-use RTippin\Messenger\Support\Definitions;
+use RTippin\Messenger\Services\SystemMessageService;
 use Throwable;
 
 class CallEndedMessage implements ShouldQueue
@@ -19,6 +18,11 @@ class CallEndedMessage implements ShouldQueue
     public string $queue = 'messenger';
 
     /**
+     * @var SystemMessageService
+     */
+    private SystemMessageService $service;
+
+    /**
      * @var StoreSystemMessage
      */
     private StoreSystemMessage $storeSystemMessage;
@@ -26,11 +30,13 @@ class CallEndedMessage implements ShouldQueue
     /**
      * Create the event listener.
      *
+     * @param SystemMessageService $service
      * @param StoreSystemMessage $storeSystemMessage
      */
-    public function __construct(StoreSystemMessage $storeSystemMessage)
+    public function __construct(SystemMessageService $service, StoreSystemMessage $storeSystemMessage)
     {
         $this->storeSystemMessage = $storeSystemMessage;
+        $this->service = $service;
     }
 
     /**
@@ -51,11 +57,8 @@ class CallEndedMessage implements ShouldQueue
      */
     private function systemMessage(CallEndedEvent $event): array
     {
-        return [
-            $event->call->thread,
-            $event->call->owner,
-            (new Collection(['call_id' => $event->call->id]))->toJson(),
-            Definitions::Call[$event->call->type].'_CALL',
-        ];
+        return $this->service
+            ->setStoreData($event->call->thread, $event->call->owner)
+            ->makeVideoCall($event->call);
     }
 }
