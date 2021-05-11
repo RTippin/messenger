@@ -3,9 +3,9 @@
 namespace RTippin\Messenger\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Collection;
 use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
 use RTippin\Messenger\Events\PromotedAdminEvent;
+use RTippin\Messenger\Services\SystemMessageService;
 use Throwable;
 
 class PromotedAdminMessage implements ShouldQueue
@@ -18,6 +18,11 @@ class PromotedAdminMessage implements ShouldQueue
     public string $queue = 'messenger';
 
     /**
+     * @var SystemMessageService
+     */
+    private SystemMessageService $service;
+
+    /**
      * @var StoreSystemMessage
      */
     private StoreSystemMessage $storeSystemMessage;
@@ -25,11 +30,13 @@ class PromotedAdminMessage implements ShouldQueue
     /**
      * Create the event listener.
      *
+     * @param SystemMessageService $service
      * @param StoreSystemMessage $storeSystemMessage
      */
-    public function __construct(StoreSystemMessage $storeSystemMessage)
+    public function __construct(SystemMessageService $service, StoreSystemMessage $storeSystemMessage)
     {
         $this->storeSystemMessage = $storeSystemMessage;
+        $this->service = $service;
     }
 
     /**
@@ -50,23 +57,8 @@ class PromotedAdminMessage implements ShouldQueue
      */
     private function systemMessage(PromotedAdminEvent $event): array
     {
-        return [
-            $event->thread,
-            $event->provider,
-            $this->messageBody($event),
-            'PROMOTED_ADMIN',
-        ];
-    }
-
-    /**
-     * @param PromotedAdminEvent $event
-     * @return string
-     */
-    private function messageBody(PromotedAdminEvent $event): string
-    {
-        return (new Collection([
-            'owner_id' => $event->participant->owner_id,
-            'owner_type' => $event->participant->owner_type,
-        ]))->toJson();
+        return $this->service
+            ->setStoreData($event->thread, $event->provider)
+            ->makeParticipantPromoted($event->participant);
     }
 }

@@ -10,6 +10,7 @@ use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Http\Request\GroupThreadRequest;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Services\SystemMessageService;
 use RTippin\Messenger\Support\Definitions;
 use Throwable;
 
@@ -30,6 +31,12 @@ class StoreGroupThread extends NewThreadAction
      */
     private DatabaseManager $database;
 
+
+    /**
+     * @var SystemMessageService
+     */
+    private SystemMessageService $systemMessage;
+
     /**
      * StoreGroupThread constructor.
      *
@@ -37,17 +44,20 @@ class StoreGroupThread extends NewThreadAction
      * @param BroadcastDriver $broadcaster
      * @param DatabaseManager $database
      * @param Dispatcher $dispatcher
+     * @param SystemMessageService $systemMessage
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
                                 DatabaseManager $database,
-                                Dispatcher $dispatcher)
+                                Dispatcher $dispatcher,
+                                SystemMessageService $systemMessage)
     {
         parent::__construct($messenger);
 
         $this->dispatcher = $dispatcher;
         $this->broadcaster = $broadcaster;
         $this->database = $database;
+        $this->systemMessage = $systemMessage;
     }
 
     /**
@@ -130,12 +140,9 @@ class StoreGroupThread extends NewThreadAction
      */
     private function createdSystemMessage(string $subject): array
     {
-        return [
-            $this->getThread(),
-            $this->messenger->getProvider(),
-            'created '.$subject,
-            'GROUP_CREATED',
-        ];
+        return $this->systemMessage
+            ->setStoreData($this->getThread(), $this->messenger->getProvider())
+            ->makeGroupCreated($subject);
     }
 
     /**

@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Listeners;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
 use RTippin\Messenger\Events\ThreadSettingsEvent;
+use RTippin\Messenger\Services\SystemMessageService;
 use Throwable;
 
 class ThreadNameMessage implements ShouldQueue
@@ -17,6 +18,11 @@ class ThreadNameMessage implements ShouldQueue
     public string $queue = 'messenger';
 
     /**
+     * @var SystemMessageService
+     */
+    private SystemMessageService $service;
+
+    /**
      * @var StoreSystemMessage
      */
     private StoreSystemMessage $storeSystemMessage;
@@ -24,11 +30,13 @@ class ThreadNameMessage implements ShouldQueue
     /**
      * Create the event listener.
      *
+     * @param SystemMessageService $service
      * @param StoreSystemMessage $storeSystemMessage
      */
-    public function __construct(StoreSystemMessage $storeSystemMessage)
+    public function __construct(SystemMessageService $service, StoreSystemMessage $storeSystemMessage)
     {
         $this->storeSystemMessage = $storeSystemMessage;
+        $this->service = $service;
     }
 
     /**
@@ -49,12 +57,9 @@ class ThreadNameMessage implements ShouldQueue
      */
     private function systemMessage(ThreadSettingsEvent $event): array
     {
-        return [
-            $event->thread,
-            $event->provider,
-            "renamed the group to {$event->thread->subject}",
-            'GROUP_RENAMED',
-        ];
+        return $this->service
+            ->setStoreData($event->thread, $event->provider)
+            ->makeGroupRenamed($event->thread->subject);
     }
 
     /**

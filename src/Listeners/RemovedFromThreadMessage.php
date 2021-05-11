@@ -3,9 +3,9 @@
 namespace RTippin\Messenger\Listeners;
 
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Support\Collection;
 use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
 use RTippin\Messenger\Events\RemovedFromThreadEvent;
+use RTippin\Messenger\Services\SystemMessageService;
 use Throwable;
 
 class RemovedFromThreadMessage implements ShouldQueue
@@ -18,6 +18,11 @@ class RemovedFromThreadMessage implements ShouldQueue
     public string $queue = 'messenger';
 
     /**
+     * @var SystemMessageService
+     */
+    private SystemMessageService $service;
+
+    /**
      * @var StoreSystemMessage
      */
     private StoreSystemMessage $storeSystemMessage;
@@ -25,11 +30,13 @@ class RemovedFromThreadMessage implements ShouldQueue
     /**
      * Create the event listener.
      *
+     * @param SystemMessageService $service
      * @param StoreSystemMessage $storeSystemMessage
      */
-    public function __construct(StoreSystemMessage $storeSystemMessage)
+    public function __construct(SystemMessageService $service, StoreSystemMessage $storeSystemMessage)
     {
         $this->storeSystemMessage = $storeSystemMessage;
+        $this->service = $service;
     }
 
     /**
@@ -50,23 +57,8 @@ class RemovedFromThreadMessage implements ShouldQueue
      */
     private function systemMessage(RemovedFromThreadEvent $event): array
     {
-        return [
-            $event->thread,
-            $event->provider,
-            $this->messageBody($event),
-            'PARTICIPANT_REMOVED',
-        ];
-    }
-
-    /**
-     * @param RemovedFromThreadEvent $event
-     * @return string
-     */
-    private function messageBody(RemovedFromThreadEvent $event): string
-    {
-        return (new Collection([
-            'owner_id' => $event->participant->owner_id,
-            'owner_type' => $event->participant->owner_type,
-        ]))->toJson();
+        return $this->service
+            ->setStoreData($event->thread, $event->provider)
+            ->makeRemovedFromGroup($event->participant);
     }
 }

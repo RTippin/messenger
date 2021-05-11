@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Listeners;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
+use RTippin\Messenger\Services\SystemMessageService;
 use Throwable;
 
 class ParticipantsAddedMessage implements ShouldQueue
@@ -17,6 +18,11 @@ class ParticipantsAddedMessage implements ShouldQueue
     public string $queue = 'messenger';
 
     /**
+     * @var SystemMessageService
+     */
+    private SystemMessageService $service;
+
+    /**
      * @var StoreSystemMessage
      */
     private StoreSystemMessage $storeSystemMessage;
@@ -24,11 +30,13 @@ class ParticipantsAddedMessage implements ShouldQueue
     /**
      * Create the event listener.
      *
+     * @param SystemMessageService $service
      * @param StoreSystemMessage $storeSystemMessage
      */
-    public function __construct(StoreSystemMessage $storeSystemMessage)
+    public function __construct(SystemMessageService $service, StoreSystemMessage $storeSystemMessage)
     {
         $this->storeSystemMessage = $storeSystemMessage;
+        $this->service = $service;
     }
 
     /**
@@ -49,25 +57,8 @@ class ParticipantsAddedMessage implements ShouldQueue
      */
     private function systemMessage(ParticipantsAddedEvent $event): array
     {
-        return [
-            $event->thread,
-            $event->provider,
-            $this->messageBody($event),
-            'PARTICIPANTS_ADDED',
-        ];
-    }
-
-    /**
-     * @param ParticipantsAddedEvent $event
-     * @return string
-     */
-    private function messageBody(ParticipantsAddedEvent $event): string
-    {
-        return $event->participants->map(
-            fn ($item) => [
-                'owner_id' => $item['owner_id'],
-                'owner_type' => $item['owner_type'],
-            ])
-            ->toJson();
+        return $this->service
+            ->setStoreData($event->thread, $event->provider)
+            ->makeParticipantsAdded($event->participants);
     }
 }

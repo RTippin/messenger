@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Listeners;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
 use RTippin\Messenger\Events\ThreadArchivedEvent;
+use RTippin\Messenger\Services\SystemMessageService;
 use Throwable;
 
 class ThreadArchivedMessage implements ShouldQueue
@@ -17,6 +18,11 @@ class ThreadArchivedMessage implements ShouldQueue
     public string $queue = 'messenger';
 
     /**
+     * @var SystemMessageService
+     */
+    private SystemMessageService $service;
+
+    /**
      * @var StoreSystemMessage
      */
     private StoreSystemMessage $storeSystemMessage;
@@ -24,11 +30,13 @@ class ThreadArchivedMessage implements ShouldQueue
     /**
      * Create the event listener.
      *
+     * @param SystemMessageService $service
      * @param StoreSystemMessage $storeSystemMessage
      */
-    public function __construct(StoreSystemMessage $storeSystemMessage)
+    public function __construct(SystemMessageService $service, StoreSystemMessage $storeSystemMessage)
     {
         $this->storeSystemMessage = $storeSystemMessage;
+        $this->service = $service;
     }
 
     /**
@@ -51,22 +59,8 @@ class ThreadArchivedMessage implements ShouldQueue
      */
     private function systemMessage(ThreadArchivedEvent $event): array
     {
-        return [
-            $event->thread,
-            $event->provider,
-            $this->messageBody($event),
-            'THREAD_ARCHIVED',
-        ];
-    }
-
-    /**
-     * @param ThreadArchivedEvent $event
-     * @return string
-     */
-    private function messageBody(ThreadArchivedEvent $event): string
-    {
-        return $event->thread->isGroup()
-            ? 'archived the group'
-            : 'archived the conversation';
+        return $this->service
+            ->setStoreData($event->thread, $event->provider)
+            ->makeThreadArchived();
     }
 }
