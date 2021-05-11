@@ -10,8 +10,8 @@ use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Http\Request\GroupThreadRequest;
 use RTippin\Messenger\Messenger;
-use RTippin\Messenger\Support\MessageTransformer;
 use RTippin\Messenger\Support\Definitions;
+use RTippin\Messenger\Support\MessageTransformer;
 use Throwable;
 
 class StoreGroupThread extends NewThreadAction
