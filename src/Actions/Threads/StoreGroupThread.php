@@ -31,7 +31,6 @@ class StoreGroupThread extends NewThreadAction
      */
     private DatabaseManager $database;
 
-
     /**
      * @var SystemMessageService
      */

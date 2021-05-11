@@ -27,7 +27,6 @@ class ThreadAvatarMessage implements ShouldQueue
      */
     private StoreSystemMessage $storeSystemMessage;
 
-
     /**
      * Create the event listener.
      *
