@@ -495,9 +495,9 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame(5120, $this->messenger->getThreadAvatarSizeLimit());
         $this->assertFalse($this->messenger->isCallingTemporarilyDisabled());
         $this->assertSame('csv,doc,docx,json,pdf,ppt,pptx,rar,rtf,txt,xls,xlsx,xml,zip,7z', $this->messenger->getMessageDocumentMimeTypes());
-        $this->assertSame('jpg,jpeg,png,bmp,gif,svg,webp', $this->messenger->getMessageImageMimeTypes());
-        $this->assertSame('jpg,jpeg,png,bmp,gif,svg,webp', $this->messenger->getProviderAvatarMimeTypes());
-        $this->assertSame('jpg,jpeg,png,bmp,gif,svg,webp', $this->messenger->getThreadAvatarMimeTypes());
+        $this->assertSame('jpg,jpeg,png,bmp,gif,webp', $this->messenger->getMessageImageMimeTypes());
+        $this->assertSame('jpg,jpeg,png,bmp,gif,webp', $this->messenger->getProviderAvatarMimeTypes());
+        $this->assertSame('jpg,jpeg,png,bmp,gif,webp', $this->messenger->getThreadAvatarMimeTypes());
         $this->assertSame('aac,mp3,oga,wav,weba,webm', $this->messenger->getMessageAudioMimeTypes());
     }
 

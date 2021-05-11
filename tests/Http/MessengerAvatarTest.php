@@ -134,6 +134,7 @@ class MessengerAvatarTest extends FeatureTestCase
             'Avatar must be 5120 kb or less' => [UploadedFile::fake()->create('image.jpg', 5121, 'image/jpeg')],
             'Avatar cannot be a pdf' => [UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')],
             'Avatar cannot be text file' => [UploadedFile::fake()->create('test.txt', 500, 'text/plain')],
+            'Avatar cannot be svg' => [UploadedFile::fake()->create('image.svg', 500, 'image/svg+xml')],
         ];
     }
 
@@ -144,7 +145,6 @@ class MessengerAvatarTest extends FeatureTestCase
             'Avatar can be png' => [UploadedFile::fake()->create('image.png', 500, 'image/png')],
             'Avatar can be bmp' => [UploadedFile::fake()->create('image.bmp', 500, 'image/bmp')],
             'Avatar can be gif' => [UploadedFile::fake()->create('image.gif', 500, 'image/gif')],
-            'Avatar can be svg' => [UploadedFile::fake()->create('image.svg', 500, 'image/svg+xml')],
             'Avatar can be webp' => [UploadedFile::fake()->create('image.svg', 500, 'image/webp')],
             'Avatar can be 5120 kb max limit' => [UploadedFile::fake()->create('image.jpg', 5120, 'image/jpeg')],
         ];

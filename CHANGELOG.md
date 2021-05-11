@@ -10,6 +10,7 @@
 
 #### Removed
 - `getName()` method removed from FileService. `upload()` method returns final file name now.
+- `.svg` as a valid default image mime allowed for upload.
 
 ---
 
