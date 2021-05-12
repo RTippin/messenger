@@ -9,6 +9,8 @@ use RTippin\Messenger\Brokers\BroadcastBroker;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\PushNotificationEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Call;
+use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -16,17 +18,9 @@ use RTippin\Messenger\Tests\Fixtures\OtherModel;
 
 class BroadcastDriverTest extends FeatureTestCase
 {
-    private Thread $group;
     const WITH = [
         'data' => 1234,
     ];
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin, $this->doe, $this->developers);
-    }
 
     /** @test */
     public function it_uses_default_broadcast_broker()
@@ -109,12 +103,13 @@ class BroadcastDriverTest extends FeatureTestCase
     /** @test */
     public function it_broadcast_to_all_in_thread()
     {
+        $group = $this->createGroupThread($this->tippin, $this->doe, $this->developers);
         Event::fake([
             FakeBroadcastEvent::class,
         ]);
 
         app(BroadcastDriver::class)
-            ->toAllInThread($this->group)
+            ->toAllInThread($group)
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
 
@@ -131,39 +126,46 @@ class BroadcastDriverTest extends FeatureTestCase
     /** @test */
     public function it_chunks_channels_at_100_sending_multiple_broadcast()
     {
+        $group = Thread::factory()->group()->create();
         Event::fake([
             FakeBroadcastEvent::class,
         ]);
         Participant::factory()
-            ->for($this->group)
-            ->owner($this->getModelUser()::factory()->create())
-            ->count(120)
+            ->for($group)
+            ->owner($this->tippin)
+            ->admin()
             ->create();
         Participant::factory()
-            ->for($this->group)
+            ->for($group)
+            ->owner($this->getModelUser()::factory()->create())
+            ->count(200)
+            ->create();
+        Participant::factory()
+            ->for($group)
             ->owner($this->getModelCompany()::factory()->create())
-            ->count(120)
+            ->count(100)
             ->create();
 
         app(BroadcastDriver::class)
-            ->toAllInThread($this->group)
+            ->toAllInThread($group)
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
 
-        // Group has 243 total participants.
-        Event::assertDispatchedTimes(FakeBroadcastEvent::class, 3);
+        // Group has 301 total participants. 100 per === 4 total chunks.
+        Event::assertDispatchedTimes(FakeBroadcastEvent::class, 4);
     }
 
     /** @test */
     public function it_broadcast_to_others_in_thread()
     {
+        $group = $this->createGroupThread($this->tippin, $this->doe, $this->developers);
         Messenger::setProvider($this->tippin);
         Event::fake([
             FakeBroadcastEvent::class,
         ]);
 
         app(BroadcastDriver::class)
-            ->toOthersInThread($this->group)
+            ->toOthersInThread($group)
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
 
@@ -222,12 +224,17 @@ class BroadcastDriverTest extends FeatureTestCase
     /** @test */
     public function it_broadcast_to_thread_participant()
     {
+        $participant = Participant::factory()
+            ->for(Thread::factory()->create())
+            ->owner($this->tippin)
+            ->admin()
+            ->create();
         Event::fake([
             FakeBroadcastEvent::class,
         ]);
 
         app(BroadcastDriver::class)
-            ->to($this->group->participants()->admins()->first())
+            ->to($participant)
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
 
@@ -243,12 +250,18 @@ class BroadcastDriverTest extends FeatureTestCase
     /** @test */
     public function it_broadcast_to_call_participant()
     {
+        $participant = CallParticipant::factory()->for(
+            Call::factory()->for(
+                Thread::factory()->create()
+            )->owner($this->tippin)->create()
+        )->owner($this->tippin)->create();
+
         Event::fake([
             FakeBroadcastEvent::class,
         ]);
 
         app(BroadcastDriver::class)
-            ->to($this->createCall($this->group, $this->tippin)->participants()->first())
+            ->to($participant)
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
 
@@ -289,17 +302,18 @@ class BroadcastDriverTest extends FeatureTestCase
     /** @test */
     public function it_broadcast_to_thread_presence()
     {
+        $thread = Thread::factory()->create();
         Event::fake([
             FakeBroadcastEvent::class,
         ]);
 
         app(BroadcastDriver::class)
-            ->toPresence($this->group)
+            ->toPresence($thread)
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
 
-        Event::assertDispatched(function (FakeBroadcastEvent $event) {
-            $this->assertContains('presence-messenger.thread.'.$this->group->id, $event->broadcastOn());
+        Event::assertDispatched(function (FakeBroadcastEvent $event) use ($thread) {
+            $this->assertContains('presence-messenger.thread.'.$thread->id, $event->broadcastOn());
             $this->assertCount(1, $event->broadcastOn());
             $this->assertSame(1234, $event->broadcastWith()['data']);
 
@@ -310,18 +324,19 @@ class BroadcastDriverTest extends FeatureTestCase
     /** @test */
     public function it_broadcast_to_call_presence()
     {
+        $thread = Thread::factory()->create();
+        $call = Call::factory()->for($thread)->owner($this->tippin)->create();
         Event::fake([
             FakeBroadcastEvent::class,
         ]);
-        $call = $this->createCall($this->group, $this->tippin);
 
         app(BroadcastDriver::class)
             ->toPresence($call)
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
 
-        Event::assertDispatched(function (FakeBroadcastEvent $event) use ($call) {
-            $this->assertContains("presence-messenger.call.{$call->id}.thread.{$this->group->id}", $event->broadcastOn());
+        Event::assertDispatched(function (FakeBroadcastEvent $event) use ($call, $thread) {
+            $this->assertContains("presence-messenger.call.{$call->id}.thread.{$thread->id}", $event->broadcastOn());
             $this->assertCount(1, $event->broadcastOn());
             $this->assertSame(1234, $event->broadcastWith()['data']);
 
@@ -332,22 +347,23 @@ class BroadcastDriverTest extends FeatureTestCase
     /** @test */
     public function it_broadcast_to_many_presence()
     {
+        $thread = Thread::factory()->create();
+        $call = Call::factory()->for($thread)->owner($this->tippin)->create();
         Event::fake([
             FakeBroadcastEvent::class,
         ]);
-        $call = $this->createCall($this->group, $this->tippin);
 
         app(BroadcastDriver::class)
             ->toManyPresence(collect([
                 $call,
-                $this->group,
+                $thread,
             ]))
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
 
-        Event::assertDispatched(function (FakeBroadcastEvent $event) use ($call) {
-            $this->assertContains("presence-messenger.call.{$call->id}.thread.{$this->group->id}", $event->broadcastOn());
-            $this->assertContains('presence-messenger.thread.'.$this->group->id, $event->broadcastOn());
+        Event::assertDispatched(function (FakeBroadcastEvent $event) use ($call, $thread) {
+            $this->assertContains("presence-messenger.call.{$call->id}.thread.{$thread->id}", $event->broadcastOn());
+            $this->assertContains('presence-messenger.thread.'.$thread->id, $event->broadcastOn());
             $this->assertCount(2, $event->broadcastOn());
             $this->assertSame(1234, $event->broadcastWith()['data']);
 
