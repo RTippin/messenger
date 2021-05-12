@@ -60,7 +60,7 @@
     </li>
     <li class="nav-item dropdown">
         <a id="user_nav_dp" href="#" class="dropdown-toggle nav-link pb-lg-0" data-toggle="dropdown" role="button" aria-expanded="false">
-            <img class="rounded align-top my-n2 my-global-avatar" id="navProf_pic" height="38" width="38" src="{{messenger()->getProvider()->getAvatarRoute()}}">
+            <img class="rounded align-top my-n2 my-global-avatar" id="navProf_pic" height="38" width="38" src="{{messenger()->getProvider()->getProviderAvatarRoute()}}">
             <i class="h5 fas fa-caret-down"></i>
         </a>
         <div class="dropdown-menu dropdown-menu-right" aria-labelledby="user_nav_dp">

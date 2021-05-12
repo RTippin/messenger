@@ -24,9 +24,9 @@
             @else
                 id : {{messenger()->getProvider()->getKey()}},
             @endif
-            name : '{{ messenger()->getProvider()->name()}}',
-            slug : '{{ messenger()->getProvider()->getAvatarRoute('sm')}}',
-            avatar_md : '{{ messenger()->getProvider()->getAvatarRoute('md')}}',
+            name : '{{ messenger()->getProvider()->getProviderName()}}',
+            slug : '{{ messenger()->getProvider()->getProviderAvatarRoute('sm')}}',
+            avatar_md : '{{ messenger()->getProvider()->getProviderAvatarRoute('md')}}',
         },
         common : {
             app_name : '{{messenger()->getSiteName()}}',

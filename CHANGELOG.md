@@ -3,6 +3,20 @@
 
 ---
 
+### [v0.31 (05-XX-2021)]
+
+#### Changed
+- Renamed ALL methods on the MessengerProvider contract and matching trait to avoid future conflicts with other laravel packages / implementations.
+    - `name()` to `getProviderName()`
+    - `getAvatarColumn()` to `getProviderAvatarColumn()`
+    - `getLastActiveColumn()` to `getProviderLastActiveColumn()`
+    - `getAvatarRoute()` to `getProviderAvatarRoute()`
+    - `getRoute()` to `getProviderProfileRoute()`
+    - `onlineStatus()` to `getProviderOnlineStatus()`
+    - `onlineStatusVerbose()` to `getProviderOnlineStatusVerbose()`
+
+---
+
 ### [v0.30 (05-11-2021)]
 
 #### Added

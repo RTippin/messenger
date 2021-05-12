@@ -78,7 +78,7 @@ class OnlineStatus extends BaseMessengerAction
         if ($this->messenger->isOnlineStatusEnabled()
             && $this->messenger->getProviderMessenger()->online_status !== 0) {
             $this->messenger->getProvider()->forceFill([
-                $this->messenger->getProvider()->getLastActiveColumn() => now(),
+                $this->messenger->getProvider()->getProviderLastActiveColumn() => now(),
             ])->save();
         }
 

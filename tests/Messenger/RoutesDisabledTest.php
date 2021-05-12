@@ -47,8 +47,8 @@ class RoutesDisabledTest extends FeatureTestCase
     /** @test */
     public function provider_avatar_routes_null()
     {
-        $this->assertNull($this->tippin->getAvatarRoute());
-        $this->assertNull($this->tippin->getAvatarRoute('sm', true));
+        $this->assertNull($this->tippin->getProviderAvatarRoute());
+        $this->assertNull($this->tippin->getProviderAvatarRoute('sm', true));
     }
 
     /** @test */

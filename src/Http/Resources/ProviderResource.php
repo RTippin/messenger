@@ -65,8 +65,8 @@ class ProviderResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'name' => $this->provider->name(),
-            'route' => $this->provider->getRoute(),
+            'name' => $this->provider->getProviderName(),
+            'route' => $this->provider->getProviderProfileRoute(),
             'provider_id' => $this->provider->getKey(),
             'provider_alias' => Messenger::findProviderAlias($this->provider) ?: 'ghost',
             'base' => $this->when($this->addBaseModel,
@@ -86,14 +86,14 @@ class ProviderResource extends JsonResource
     {
         return [
             'api_avatar' => [
-                'sm' => $this->provider->getAvatarRoute('sm', true),
-                'md' => $this->provider->getAvatarRoute('md', true),
-                'lg' => $this->provider->getAvatarRoute('lg', true),
+                'sm' => $this->provider->getProviderAvatarRoute('sm', true),
+                'md' => $this->provider->getProviderAvatarRoute('md', true),
+                'lg' => $this->provider->getProviderAvatarRoute('lg', true),
             ],
             'avatar' => [
-                'sm' => $this->provider->getAvatarRoute('sm'),
-                'md' => $this->provider->getAvatarRoute('md'),
-                'lg' => $this->provider->getAvatarRoute('lg'),
+                'sm' => $this->provider->getProviderAvatarRoute('sm'),
+                'md' => $this->provider->getProviderAvatarRoute('md'),
+                'lg' => $this->provider->getProviderAvatarRoute('lg'),
             ],
         ];
     }
@@ -114,8 +114,8 @@ class ProviderResource extends JsonResource
             'can_friend' => $this->canFriend($isFriendable),
             'searchable' => $isSearchable,
             'can_search' => $this->canSearch($isSearchable),
-            'online_status' => $this->provider->onlineStatus(),
-            'online_status_verbose' => Definitions::OnlineStatus[$this->provider->onlineStatus()],
+            'online_status' => $this->provider->getProviderOnlineStatus(),
+            'online_status_verbose' => Definitions::OnlineStatus[$this->provider->getProviderOnlineStatus()],
             'friend_status' => $friendStatus,
             'friend_status_verbose' => Definitions::FriendStatus[$friendStatus],
             'last_active' => $this->getLastActive($friendStatus),
@@ -189,7 +189,7 @@ class ProviderResource extends JsonResource
     {
         if (Messenger::isOnlineStatusEnabled()) {
             return $friendStatus === 1
-                ? $this->provider->{$this->provider->getLastActiveColumn()}
+                ? $this->provider->{$this->provider->getProviderLastActiveColumn()}
                 : null;
         }
 

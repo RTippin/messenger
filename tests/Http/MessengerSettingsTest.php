@@ -52,7 +52,7 @@ class MessengerSettingsTest extends FeatureTestCase
                 'online_status' => 2,
             ]);
 
-        $this->assertSame(2, $this->tippin->onlineStatus());
+        $this->assertSame(2, $this->tippin->getProviderOnlineStatus());
     }
 
     /** @test */
@@ -78,7 +78,7 @@ class MessengerSettingsTest extends FeatureTestCase
                 'online_status' => 1,
             ]);
 
-        $this->assertSame(1, $this->tippin->onlineStatus());
+        $this->assertSame(1, $this->tippin->getProviderOnlineStatus());
     }
 
     /** @test */
@@ -104,7 +104,7 @@ class MessengerSettingsTest extends FeatureTestCase
                 'online_status' => 0,
             ]);
 
-        $this->assertSame(0, $this->tippin->onlineStatus());
+        $this->assertSame(0, $this->tippin->getProviderOnlineStatus());
     }
 
     /**

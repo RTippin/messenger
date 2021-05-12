@@ -169,7 +169,7 @@ class User extends Authenticatable implements MessengerProvider
 ***Example:***
 
 ```php
-public function name(): string
+public function getProviderName(): string
 {
     return strip_tags(ucwords($this->first." ".$this->last));
 }
@@ -185,7 +185,7 @@ public function name(): string
 ***Example:***
 
 ```php
-public function getAvatarColumn(): string
+public function getProviderAvatarColumn(): string
 {
     return 'avatar';
 }
@@ -201,7 +201,7 @@ public function getAvatarColumn(): string
 ***Example:***
 
 ```php
-    public function getLastActiveColumn(): string
+    public function getProviderLastActiveColumn(): string
     {
         return 'last_active';
     }

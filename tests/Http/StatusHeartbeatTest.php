@@ -30,7 +30,7 @@ class StatusHeartbeatTest extends FeatureTestCase
         ])
             ->assertSuccessful();
 
-        $this->assertSame(1, $this->tippin->onlineStatus());
+        $this->assertSame(1, $this->tippin->getProviderOnlineStatus());
     }
 
     /** @test */
@@ -47,7 +47,7 @@ class StatusHeartbeatTest extends FeatureTestCase
         ])
             ->assertSuccessful();
 
-        $this->assertSame(2, $this->tippin->onlineStatus());
+        $this->assertSame(2, $this->tippin->getProviderOnlineStatus());
     }
 
     /**

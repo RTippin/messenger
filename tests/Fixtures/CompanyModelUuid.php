@@ -25,12 +25,12 @@ class CompanyModelUuid extends User implements MessengerProvider, Searchable
 
     public $keyType = 'string';
 
-    public function name(): string
+    public function getProviderName(): string
     {
         return strip_tags(ucwords($this->company_name));
     }
 
-    public function getAvatarColumn(): string
+    public function getProviderAvatarColumn(): string
     {
         return 'avatar';
     }

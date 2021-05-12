@@ -36,7 +36,7 @@ trait Messageable
      *
      * @return string|null
      */
-    public function getRoute(): ?string
+    public function getProviderProfileRoute(): ?string
     {
         return null;
     }
@@ -47,7 +47,7 @@ trait Messageable
      *
      * @return string
      */
-    public function name(): string
+    public function getProviderName(): string
     {
         return strip_tags(ucwords($this->name));
     }
@@ -57,7 +57,7 @@ trait Messageable
      *
      * @return string
      */
-    public function getAvatarColumn(): string
+    public function getProviderAvatarColumn(): string
     {
         return 'picture';
     }
@@ -69,7 +69,7 @@ trait Messageable
      *
      * @return string
      */
-    public function getLastActiveColumn(): string
+    public function getProviderLastActiveColumn(): string
     {
         return 'updated_at';
     }
@@ -82,14 +82,14 @@ trait Messageable
      * @param bool $api
      * @return string|null
      */
-    public function getAvatarRoute(string $size = 'sm', $api = false): ?string
+    public function getProviderAvatarRoute(string $size = 'sm', bool $api = false): ?string
     {
         return Helpers::Route(($api ? 'api.' : '').'avatar.render',
             [
                 'alias' => Messenger::findProviderAlias($this),
                 'id' => $this->getKey(),
                 'size' => $size,
-                'image' => $this->{$this->getAvatarColumn()} ?: 'default.png',
+                'image' => $this->{$this->getProviderAvatarColumn()} ?: 'default.png',
             ]
         );
     }
@@ -100,7 +100,7 @@ trait Messageable
      *
      * @return int
      */
-    public function onlineStatus(): int
+    public function getProviderOnlineStatus(): int
     {
         if (! is_null($this->isOnlineCache)) {
             return $this->isOnlineCache;
@@ -116,8 +116,8 @@ trait Messageable
      *
      * @return string
      */
-    public function onlineStatusVerbose(): string
+    public function getProviderOnlineStatusVerbose(): string
     {
-        return Str::lower(Definitions::OnlineStatus[$this->onlineStatus()]);
+        return Str::lower(Definitions::OnlineStatus[$this->getProviderOnlineStatus()]);
     }
 }

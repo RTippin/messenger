@@ -224,9 +224,9 @@ class MessageTransformer
                 $remaining = $call->participants_count - 4;
                 foreach ($participants as $participant) {
                     if ($participants->last()->id === $participant->id) {
-                        $names .= " {$participant->owner->name()} and $remaining others";
+                        $names .= " {$participant->owner->getProviderName()} and $remaining others";
                     } else {
-                        $names .= " {$participant->owner->name()},";
+                        $names .= " {$participant->owner->getProviderName()},";
                     }
                 }
             } else {
@@ -234,11 +234,11 @@ class MessageTransformer
                     if ($participants->count() === 1
                         || ($participants->count() === 2
                             && $participants->first()->id === $participant->id)) {
-                        $names .= "{$participant->owner->name()}";
+                        $names .= "{$participant->owner->getProviderName()}";
                     } elseif ($participants->last()->id === $participant->id) {
-                        $names .= " and {$participant->owner->name()}";
+                        $names .= " and {$participant->owner->getProviderName()}";
                     } else {
-                        $names .= " {$participant->owner->name()},";
+                        $names .= " {$participant->owner->getProviderName()},";
                     }
                 }
             }
@@ -256,7 +256,7 @@ class MessageTransformer
      */
     private static function transformAdminAdded(Message $message, array $bodyJson): string
     {
-        return 'promoted '.self::locateContentOwner($message, $bodyJson)->name();
+        return 'promoted '.self::locateContentOwner($message, $bodyJson)->getProviderName();
     }
 
     /**
@@ -266,7 +266,7 @@ class MessageTransformer
      */
     private static function transformAdminRemoved(Message $message, array $bodyJson): string
     {
-        return 'demoted '.self::locateContentOwner($message, $bodyJson)->name();
+        return 'demoted '.self::locateContentOwner($message, $bodyJson)->getProviderName();
     }
 
     /**
@@ -276,7 +276,7 @@ class MessageTransformer
      */
     private static function transformParticipantRemoved(Message $message, array $bodyJson): string
     {
-        return 'removed '.self::locateContentOwner($message, $bodyJson)->name();
+        return 'removed '.self::locateContentOwner($message, $bodyJson)->getProviderName();
     }
 
     /**
@@ -291,17 +291,17 @@ class MessageTransformer
         if (count($bodyJson) > 3) {
             $remaining = count($bodyJson) - 3;
             foreach (array_slice($bodyJson, 0, 3) as $owner) {
-                $names .= self::locateContentOwner($message, $owner)->name().', ';
+                $names .= self::locateContentOwner($message, $owner)->getProviderName().', ';
             }
             $names .= "and $remaining others";
         } else {
             foreach ($bodyJson as $key => $owner) {
                 if (count($bodyJson) === 1) {
-                    $names .= self::locateContentOwner($message, $owner)->name();
+                    $names .= self::locateContentOwner($message, $owner)->getProviderName();
                 } elseif ($key === array_key_last($bodyJson)) {
-                    $names .= 'and '.self::locateContentOwner($message, $owner)->name();
+                    $names .= 'and '.self::locateContentOwner($message, $owner)->getProviderName();
                 } else {
-                    $names .= self::locateContentOwner($message, $owner)->name().', ';
+                    $names .= self::locateContentOwner($message, $owner)->getProviderName().', ';
                 }
             }
         }

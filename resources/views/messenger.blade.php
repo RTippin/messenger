@@ -1,5 +1,5 @@
 @extends('messenger::app')
-@section('title'){{messenger()->getProvider()->name()}} - {{messenger()->getSiteName()}} @endsection
+@section('title'){{messenger()->getProvider()->getProviderName()}} - {{messenger()->getSiteName()}} @endsection
 @section('content')
 <div class="container-fluid mt-n3">
     <div id="messenger_container" class="row inbox main-inbox d-flex">
@@ -7,7 +7,7 @@
             <div class="card bg-transparent h-100">
                 <div class="card-header bg-light px-1 d-flex justify-content-between">
                     <div id="my_avatar_status">
-                        <img data-toggle="tooltip" data-placement="right" title="You are {{messenger()->getProvider()->onlineStatusVerbose()}}" class="my-global-avatar ml-1 rounded-circle medium-image avatar-is-{{messenger()->getProvider()->onlineStatusVerbose()}}" src="{{messenger()->getProvider()->getAvatarRoute()}}" />
+                        <img data-toggle="tooltip" data-placement="right" title="You are {{messenger()->getProvider()->getProviderOnlineStatusVerbose()}}" class="my-global-avatar ml-1 rounded-circle medium-image avatar-is-{{messenger()->getProvider()->getProviderOnlineStatusVerbose()}}" src="{{messenger()->getProvider()->getProviderAvatarRoute()}}" />
                     </div>
                     <span class="d-none d-md-inline h4 font-weight-bold">Messenger</span>
                     <div class="dropdown">

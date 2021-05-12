@@ -17,14 +17,14 @@ interface MessengerProvider
      *
      * @return string
      */
-    public function name();
+    public function getProviderName(): string;
 
     /**
      * The column name your providers avatar is stored in the database as.
      *
      * @return string
      */
-    public function getAvatarColumn();
+    public function getProviderAvatarColumn(): string;
 
     /**
      * The column name your provider has in the database that we will use to
@@ -33,7 +33,7 @@ interface MessengerProvider
      *
      * @return string
      */
-    public function getLastActiveColumn(): string;
+    public function getProviderLastActiveColumn(): string;
 
     /**
      * Get the route of the avatar for your provider. We will call this
@@ -43,7 +43,7 @@ interface MessengerProvider
      * @param bool $api
      * @return string|null
      */
-    public function getAvatarRoute(string $size = 'sm', $api = false);
+    public function getProviderAvatarRoute(string $size = 'sm', bool $api = false): ?string;
 
     /**
      * If your provider has a route/slug for a profile page,
@@ -51,7 +51,7 @@ interface MessengerProvider
      *
      * @return string|null
      */
-    public function getRoute();
+    public function getProviderProfileRoute(): ?string;
 
     /**
      * Returns online status of your provider.
@@ -59,12 +59,12 @@ interface MessengerProvider
      *
      * @return int
      */
-    public function onlineStatus();
+    public function getProviderOnlineStatus(): int;
 
     /**
      * Verbose meaning of the online status number.
      *
      * @return string
      */
-    public function onlineStatusVerbose();
+    public function getProviderOnlineStatusVerbose(): string;
 }

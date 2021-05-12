@@ -36,10 +36,10 @@ abstract class MessengerAvatarAction extends BaseMessengerAction
      */
     protected function removeOldIfExist(): self
     {
-        if (! is_null($this->messenger->getProvider()->{$this->messenger->getProvider()->getAvatarColumn()})) {
+        if (! is_null($this->messenger->getProvider()->{$this->messenger->getProvider()->getProviderAvatarColumn()})) {
             $this->fileService
                 ->setDisk($this->messenger->getAvatarStorage('disk'))
-                ->destroy("{$this->getDirectory()}/{$this->messenger->getProvider()->{$this->messenger->getProvider()->getAvatarColumn()}}");
+                ->destroy("{$this->getDirectory()}/{$this->messenger->getProvider()->{$this->messenger->getProvider()->getProviderAvatarColumn()}}");
         }
 
         return $this;
@@ -59,7 +59,7 @@ abstract class MessengerAvatarAction extends BaseMessengerAction
     protected function updateProviderAvatar(?string $file): void
     {
         $this->messenger->getProvider()->forceFill([
-            $this->messenger->getProvider()->getAvatarColumn() => $file,
+            $this->messenger->getProvider()->getProviderAvatarColumn() => $file,
         ])->save();
     }
 }

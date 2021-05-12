@@ -341,7 +341,7 @@ class Thread extends Model
         $name = 'Conversation';
 
         if ($this->isPrivate()) {
-            $name = $this->recipient()->owner->name();
+            $name = $this->recipient()->owner->getProviderName();
         } elseif ($this->isGroup()) {
             $name = $this->subject;
         }
@@ -383,9 +383,9 @@ class Thread extends Model
     {
         if ($this->isPrivate()) {
             return [
-                'sm' => $this->recipient()->owner->getAvatarRoute('sm', $api),
-                'md' => $this->recipient()->owner->getAvatarRoute('md', $api),
-                'lg' => $this->recipient()->owner->getAvatarRoute('lg', $api),
+                'sm' => $this->recipient()->owner->getProviderAvatarRoute('sm', $api),
+                'md' => $this->recipient()->owner->getProviderAvatarRoute('md', $api),
+                'lg' => $this->recipient()->owner->getProviderAvatarRoute('lg', $api),
             ];
         }
 
