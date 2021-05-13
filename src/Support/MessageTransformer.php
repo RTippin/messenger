@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Support;
 
 use Exception;
 use Illuminate\Support\Collection;
+use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Call;
@@ -70,8 +71,8 @@ class MessageTransformer
      * @return array
      */
     public static function makeVideoCall(Thread $thread,
-                                  MessengerProvider $provider,
-                                  Call $call): array
+                                         MessengerProvider $provider,
+                                         Call $call): array
     {
         $body = (new Collection(['call_id' => $call->id]))->toJson();
 
@@ -201,6 +202,33 @@ class MessageTransformer
 
     /**
      * @param Message $message
+     * @param array $data
+     * @return GhostUser|MessengerProvider
+     */
+    public static function locateContentOwner(Message $message, array $data)
+    {
+        /** @var Participant $participant */
+        $participant = $message->thread->participants
+            ->where('owner_id', '=', $data['owner_id'])
+            ->where('owner_type', '=', $data['owner_type'])
+            ->first();
+
+        if ($participant && Messenger::isValidMessengerProvider($participant->owner)) {
+            return $participant->owner;
+        }
+
+        /** @var MessengerProvider|null $owner */
+        $owner = null;
+
+        if (Messenger::isValidMessengerProvider($data['owner_type'])) {
+            $owner = Messenger::findAliasProvider($data['owner_type'])::find($data['owner_id']);
+        }
+
+        return $owner ?: Messenger::getGhostProvider();
+    }
+
+    /**
+     * @param Message $message
      * @param array $bodyJson
      * @return string
      */
@@ -310,33 +338,6 @@ class MessageTransformer
     }
 
     /**
-     * @param Message $message
-     * @param array $data
-     * @return GhostUser|MessengerProvider
-     */
-    private static function locateContentOwner(Message $message, array $data)
-    {
-        /** @var Participant $participant */
-        $participant = $message->thread->participants
-            ->where('owner_id', '=', $data['owner_id'])
-            ->where('owner_type', '=', $data['owner_type'])
-            ->first();
-
-        if ($participant && Messenger::isValidMessengerProvider($participant->owner)) {
-            return $participant->owner;
-        }
-
-        /** @var MessengerProvider|null $owner */
-        $owner = null;
-
-        if (Messenger::isValidMessengerProvider($data['owner_type'])) {
-            $owner = Messenger::findAliasProvider($data['owner_type'])::find($data['owner_id']);
-        }
-
-        return $owner ?: Messenger::getGhostProvider();
-    }
-
-    /**
      * @param string $body
      * @return string
      */
@@ -372,17 +373,13 @@ class MessageTransformer
      * @param string $body
      * @param string $type
      * @return array
+     * @see StoreSystemMessage
      */
     private static function generateStoreResponse(Thread $thread,
                                                   MessengerProvider $provider,
                                                   string $body,
                                                   string $type): array
     {
-        return [
-            $thread,
-            $provider,
-            $body,
-            $type,
-        ];
+        return [$thread, $provider, $body, $type];
     }
 }
