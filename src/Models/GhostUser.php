@@ -50,7 +50,6 @@ class GhostUser extends Eloquent
         return 'updated_at';
     }
 
-
     /**
      * @return string
      */
@@ -59,8 +58,7 @@ class GhostUser extends Eloquent
         return 'updated_at';
     }
 
-
-    /**     *
+    /**
      * @return string|null
      */
     public function getProviderProfileRoute(): ?string
