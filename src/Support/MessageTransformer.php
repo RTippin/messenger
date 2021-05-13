@@ -29,23 +29,18 @@ class MessageTransformer
             $bodyJson = self::decodeBodyJson($message->body);
 
             switch ($message->type) {
-                case 90:
-                    return self::transformVideoCall($message, $bodyJson);
+                case 90: return self::transformVideoCall($message, $bodyJson);
                 case 88: // participant joined with invite link
                 case 91: // group avatar updated
-                case 92: // group archived
+                case 92: // thread archived
                 case 93: // created group
                 case 94: // renamed group
                 case 97: // participant left group
                     return self::sanitizedBody($message->body);
-                case 95:
-                    return self::transformAdminRemoved($message, $bodyJson);
-                case 96:
-                    return self::transformAdminAdded($message, $bodyJson);
-                case 98:
-                    return self::transformParticipantRemoved($message, $bodyJson);
-                case 99:
-                    return self::transformParticipantsAdded($message, $bodyJson);
+                case 95: return self::transformAdminRemoved($message, $bodyJson);
+                case 96: return self::transformAdminAdded($message, $bodyJson);
+                case 98: return self::transformParticipantRemoved($message, $bodyJson);
+                case 99: return self::transformParticipantsAdded($message, $bodyJson);
             }
         } catch (Exception $e) {
             report($e);
@@ -262,7 +257,7 @@ class MessageTransformer
                     if ($participants->count() === 1
                         || ($participants->count() === 2
                             && $participants->first()->id === $participant->id)) {
-                        $names .= "{$participant->owner->getProviderName()}";
+                        $names .= " {$participant->owner->getProviderName()}";
                     } elseif ($participants->last()->id === $participant->id) {
                         $names .= " and {$participant->owner->getProviderName()}";
                     } else {
@@ -271,7 +266,7 @@ class MessageTransformer
                 }
             }
 
-            return "was in a video call with $names";
+            return 'was in a video call with '.trim($names);
         }
 
         return 'was in a video call';
@@ -314,27 +309,31 @@ class MessageTransformer
      */
     private static function transformParticipantsAdded(Message $message, array $bodyJson): string
     {
-        $names = 'added ';
+        $names = '';
 
         if (count($bodyJson) > 3) {
             $remaining = count($bodyJson) - 3;
-            foreach (array_slice($bodyJson, 0, 3) as $owner) {
-                $names .= self::locateContentOwner($message, $owner)->getProviderName().', ';
+            $sliced = array_slice($bodyJson, 0, 3);
+            foreach ($sliced as $key => $owner) {
+                if ($key === array_key_last($sliced)) {
+                    $names .= ' '.self::locateContentOwner($message, $owner)->getProviderName()." and $remaining others";
+                } else {
+                    $names .= ' '.self::locateContentOwner($message, $owner)->getProviderName().',';
+                }
             }
-            $names .= "and $remaining others";
         } else {
             foreach ($bodyJson as $key => $owner) {
-                if (count($bodyJson) === 1) {
-                    $names .= self::locateContentOwner($message, $owner)->getProviderName();
+                if (count($bodyJson) === 1 || (count($bodyJson) === 2 && $key === array_key_first($bodyJson))) {
+                    $names .= ' '.self::locateContentOwner($message, $owner)->getProviderName();
                 } elseif ($key === array_key_last($bodyJson)) {
-                    $names .= 'and '.self::locateContentOwner($message, $owner)->getProviderName();
+                    $names .= ' and '.self::locateContentOwner($message, $owner)->getProviderName();
                 } else {
-                    $names .= self::locateContentOwner($message, $owner)->getProviderName().', ';
+                    $names .= ' '.self::locateContentOwner($message, $owner)->getProviderName().',';
                 }
             }
         }
 
-        return $names;
+        return 'added '.trim($names);
     }
 
     /**
