@@ -37,9 +37,35 @@ class GhostUser extends Eloquent
     /**
      * @return string
      */
-    public function getLastActiveColumn(): string
+    public function getProviderName(): string
+    {
+        return 'Ghost Profile';
+    }
+
+    /**
+     * @return string
+     */
+    public function getProviderAvatarColumn(): string
     {
         return 'updated_at';
+    }
+
+
+    /**
+     * @return string
+     */
+    public function getProviderLastActiveColumn(): string
+    {
+        return 'updated_at';
+    }
+
+
+    /**     *
+     * @return string|null
+     */
+    public function getProviderProfileRoute(): ?string
+    {
+        return null;
     }
 
     /**
@@ -47,7 +73,7 @@ class GhostUser extends Eloquent
      * @param bool $api
      * @return string|null
      */
-    public function getAvatarRoute(string $size = 'sm', $api = false): ?string
+    public function getProviderAvatarRoute(string $size = 'sm', bool $api = false): ?string
     {
         return Helpers::Route(($api ? 'api.' : '').'avatar.render',
             [
@@ -62,7 +88,7 @@ class GhostUser extends Eloquent
     /**
      * @return int
      */
-    public function onlineStatus(): int
+    public function getProviderOnlineStatus(): int
     {
         return 0;
     }
@@ -70,25 +96,8 @@ class GhostUser extends Eloquent
     /**
      * @return string
      */
-    public function onlineStatusVerbose(): string
+    public function getProviderOnlineStatusVerbose(): string
     {
         return 'offline';
-    }
-
-    /**
-     * @param bool $full
-     * @return string|null
-     */
-    public function getRoute($full = false): ?string
-    {
-        return null;
-    }
-
-    /**
-     * @return string
-     */
-    public function name(): string
-    {
-        return 'Ghost Profile';
     }
 }
