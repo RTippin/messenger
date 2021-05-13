@@ -38,13 +38,13 @@ class ProviderResource extends JsonResource
      *
      * @param mixed $provider
      * @param bool $addOptions
-     * @param null $forceFriendStatus
+     * @param int|null $forceFriendStatus
      * @param bool $addBaseModel
      */
     public function __construct($provider,
-                                $addOptions = false,
-                                $forceFriendStatus = null,
-                                $addBaseModel = true)
+                                bool $addOptions = false,
+                                ?int $forceFriendStatus = null,
+                                bool $addBaseModel = true)
     {
         parent::__construct($provider);
 

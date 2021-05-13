@@ -26,8 +26,7 @@ class KnockBroadcastResource extends JsonResource
      * @param MessengerProvider $provider
      * @param Thread $thread
      */
-    public function __construct(MessengerProvider $provider,
-                                Thread $thread)
+    public function __construct(MessengerProvider $provider, Thread $thread)
     {
         parent::__construct($provider);
 

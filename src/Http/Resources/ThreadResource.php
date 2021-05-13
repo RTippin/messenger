@@ -42,9 +42,9 @@ class ThreadResource extends JsonResource
      * @param bool $addCalls
      */
     public function __construct(Thread $thread,
-                                $addParticipants = false,
-                                $addMessages = false,
-                                $addCalls = false)
+                                bool $addParticipants = false,
+                                bool $addMessages = false,
+                                bool $addCalls = false)
     {
         parent::__construct($thread);
 

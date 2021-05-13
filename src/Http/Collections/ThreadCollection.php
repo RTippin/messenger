@@ -15,11 +15,11 @@ class ThreadCollection extends MessengerCollection
      *
      * @param $resource
      * @param bool $paginate
-     * @param null $pageId
+     * @param string|null $pageId
      */
     public function __construct($resource,
-                                $paginate = false,
-                                $pageId = null)
+                                bool $paginate = false,
+                                ?string $pageId = null)
     {
         parent::__construct($resource);
 

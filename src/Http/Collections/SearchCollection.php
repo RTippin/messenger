@@ -31,13 +31,13 @@ class SearchCollection extends MessengerCollection
      *
      * @param $resource
      * @param null $searchQuery
-     * @param null $searchQueryItems
+     * @param array|null $searchQueryItems
      * @param bool $addOptions
      */
     public function __construct($resource,
                                 $searchQuery = null,
-                                $searchQueryItems = null,
-                                $addOptions = false)
+                                ?array $searchQueryItems = null,
+                                bool $addOptions = false)
     {
         parent::__construct($resource);
 

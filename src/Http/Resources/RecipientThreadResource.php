@@ -25,7 +25,7 @@ class RecipientThreadResource extends JsonResource
      * @param MessengerProvider $provider
      * @param Thread|null $thread
      */
-    public function __construct(MessengerProvider $provider, Thread $thread = null)
+    public function __construct(MessengerProvider $provider, ?Thread $thread = null)
     {
         parent::__Construct($provider);
 
