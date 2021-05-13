@@ -3,9 +3,10 @@
 
 ---
 
-### [v0.31 (05-XX-2021)]
+### [v0.31 (05-13-2021)]
 
 #### Changed
+- Fine tuned MessageTransformer. Bug fixes on some sentences.
 - Renamed ALL methods on the MessengerProvider contract and matching trait to avoid future conflicts with other laravel packages / implementations.
     - `name()` to `getProviderName()`
     - `getAvatarColumn()` to `getProviderAvatarColumn()`
