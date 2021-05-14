@@ -10,6 +10,7 @@ use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewMessageEvent;
+use RTippin\Messenger\Http\Request\BaseMessageRequest;
 use RTippin\Messenger\Http\Resources\MessageResource;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Support\Definitions;
@@ -33,34 +34,34 @@ abstract class NewMessageAction extends BaseMessengerAction
     protected DatabaseManager $database;
 
     /**
-     * @var string
+     * @var int
      */
-    protected string $messageType;
+    private int $messageType;
 
     /**
      * @var string
      */
-    protected string $messageBody;
+    private string $messageBody;
 
     /**
      * @var string|null
      */
-    protected ?string $messageTemporaryId = null;
+    private ?string $messageTemporaryId = null;
 
     /**
      * @var array|null
      */
-    protected ?array $messageExtraData = null;
+    private ?array $messageExtraData = null;
 
     /**
      * @var Message|null
      */
-    protected ?Message $replyingTo = null;
+    private ?Message $replyingTo = null;
 
     /**
      * @var MessengerProvider
      */
-    protected MessengerProvider $messageOwner;
+    private MessengerProvider $messageOwner;
 
     /**
      * NewMessageAction constructor.
@@ -101,42 +102,17 @@ abstract class NewMessageAction extends BaseMessengerAction
     }
 
     /**
-     * @param string|null $temporaryId
+     * @param array $parameters
      * @return $this
+     * @see BaseMessageRequest
      */
-    protected function setMessageTemporaryId(?string $temporaryId = null): self
+    protected function setMessageOptionalParameters(array $parameters): self
     {
-        $this->messageTemporaryId = ! is_null($temporaryId) ? $temporaryId : null;
+        $this->setMessageTemporaryId($parameters['temporary_id'] ?? null);
 
-        return $this;
-    }
+        $this->setReplyingToMessage($parameters['reply_to_id'] ?? null);
 
-    /**
-     * @param array|null $extra
-     * @return $this
-     */
-    protected function setMessageExtraData(?array $extra = null): self
-    {
-        $this->messageExtraData = ! is_null($extra) ? $extra : null;
-
-        return $this;
-    }
-
-    /**
-     * @param string|null $replyToId
-     * @return $this
-     */
-    protected function setReplyingToMessage(?string $replyToId = null): self
-    {
-        if (! is_null($replyToId)) {
-            $this->replyingTo = $this->getThread()
-                ->messages()
-                ->nonSystem()
-                ->with('owner')
-                ->find($replyToId);
-        } else {
-            $this->replyingTo = null;
-        }
+        $this->setMessageExtraData($parameters['extra'] ?? null);
 
         return $this;
     }
@@ -211,6 +187,38 @@ abstract class NewMessageAction extends BaseMessengerAction
         }
 
         return $this;
+    }
+
+    /**
+     * @param string|null $temporaryId
+     */
+    private function setMessageTemporaryId(?string $temporaryId = null): void
+    {
+        $this->messageTemporaryId = ! is_null($temporaryId) ? $temporaryId : null;
+    }
+
+    /**
+     * @param array|null $extra
+     */
+    private function setMessageExtraData(?array $extra = null): void
+    {
+        $this->messageExtraData = ! is_null($extra) ? $extra : null;
+    }
+
+    /**
+     * @param string|null $replyToId
+     */
+    private function setReplyingToMessage(?string $replyToId = null): void
+    {
+        if (! is_null($replyToId)) {
+            $this->replyingTo = $this->getThread()
+                ->messages()
+                ->nonSystem()
+                ->with('owner')
+                ->find($replyToId);
+        } else {
+            $this->replyingTo = null;
+        }
     }
 
     /**
