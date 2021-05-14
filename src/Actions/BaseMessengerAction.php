@@ -186,7 +186,7 @@ abstract class BaseMessengerAction implements Action
     /**
      * @inheritDoc
      */
-    public function getData($withoutRelations = false)
+    public function getData(bool $withoutRelations = false)
     {
         if ($withoutRelations
             && ! is_null($this->data)) {
@@ -209,7 +209,7 @@ abstract class BaseMessengerAction implements Action
     /**
      * @inheritDoc
      */
-    public function getThread($withoutRelations = false): ?Thread
+    public function getThread(bool $withoutRelations = false): ?Thread
     {
         if ($withoutRelations
             && ! is_null($this->thread)) {
@@ -222,7 +222,7 @@ abstract class BaseMessengerAction implements Action
     /**
      * @inheritDoc
      */
-    public function setThread(Thread $thread = null): self
+    public function setThread(?Thread $thread = null): self
     {
         if (! is_null($thread)) {
             $this->thread = $thread;
@@ -234,7 +234,7 @@ abstract class BaseMessengerAction implements Action
     /**
      * @inheritDoc
      */
-    public function getParticipant($withoutRelations = false): ?Participant
+    public function getParticipant(bool $withoutRelations = false): ?Participant
     {
         if ($withoutRelations
             && ! is_null($this->participant)) {
@@ -247,7 +247,7 @@ abstract class BaseMessengerAction implements Action
     /**
      * @inheritDoc
      */
-    public function setParticipant(Participant $participant = null): self
+    public function setParticipant(?Participant $participant = null): self
     {
         if (! is_null($participant)) {
             $this->participant = $participant;
@@ -259,7 +259,7 @@ abstract class BaseMessengerAction implements Action
     /**
      * @inheritDoc
      */
-    public function getCallParticipant($withoutRelations = false): ?CallParticipant
+    public function getCallParticipant(bool $withoutRelations = false): ?CallParticipant
     {
         if ($withoutRelations
             && ! is_null($this->callParticipant)) {
@@ -272,7 +272,7 @@ abstract class BaseMessengerAction implements Action
     /**
      * @inheritDoc
      */
-    public function setCallParticipant(CallParticipant $participant = null): self
+    public function setCallParticipant(?CallParticipant $participant = null): self
     {
         if (! is_null($participant)) {
             $this->callParticipant = $participant;
@@ -284,7 +284,7 @@ abstract class BaseMessengerAction implements Action
     /**
      * @inheritDoc
      */
-    public function getMessage($withoutRelations = false): ?Message
+    public function getMessage(bool $withoutRelations = false): ?Message
     {
         if ($withoutRelations
             && ! is_null($this->message)) {
@@ -297,7 +297,7 @@ abstract class BaseMessengerAction implements Action
     /**
      * @inheritDoc
      */
-    public function setMessage(Message $message = null): self
+    public function setMessage(?Message $message = null): self
     {
         if (! is_null($message)) {
             $this->message = $message;
@@ -309,7 +309,7 @@ abstract class BaseMessengerAction implements Action
     /**
      * @inheritDoc
      */
-    public function getCall($withoutRelations = false): ?Call
+    public function getCall(bool $withoutRelations = false): ?Call
     {
         if ($withoutRelations
             && ! is_null($this->call)) {
@@ -322,7 +322,7 @@ abstract class BaseMessengerAction implements Action
     /**
      * @inheritDoc
      */
-    public function setCall(Call $call = null): self
+    public function setCall(?Call $call = null): self
     {
         if (! is_null($call)) {
             $this->call = $call;

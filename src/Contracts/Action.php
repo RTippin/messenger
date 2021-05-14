@@ -90,7 +90,7 @@ interface Action
      * @param bool $withoutRelations
      * @return Model|mixed
      */
-    public function getData($withoutRelations = false);
+    public function getData(bool $withoutRelations = false);
 
     /**
      * @param $data
@@ -104,13 +104,13 @@ interface Action
      * @param bool $withoutRelations
      * @return Thread|null
      */
-    public function getThread($withoutRelations = false): ?Thread;
+    public function getThread(bool $withoutRelations = false): ?Thread;
 
     /**
      * @param ?Thread $thread
      * @return $this
      */
-    public function setThread(Thread $thread = null);
+    public function setThread(?Thread $thread = null);
 
     /**
      * Get the participant model the action may be holding.
@@ -118,13 +118,13 @@ interface Action
      * @param false $withoutRelations
      * @return Participant|null
      */
-    public function getParticipant($withoutRelations = false): ?Participant;
+    public function getParticipant(bool $withoutRelations = false): ?Participant;
 
     /**
      * @param Participant|null $participant
      * @return $this
      */
-    public function setParticipant(Participant $participant = null): self;
+    public function setParticipant(?Participant $participant = null): self;
 
     /**
      * Get the call participant model the action may be holding.
@@ -132,13 +132,13 @@ interface Action
      * @param false $withoutRelations
      * @return CallParticipant|null
      */
-    public function getCallParticipant($withoutRelations = false): ?CallParticipant;
+    public function getCallParticipant(bool $withoutRelations = false): ?CallParticipant;
 
     /**
      * @param CallParticipant|null $participant
      * @return $this
      */
-    public function setCallParticipant(CallParticipant $participant = null): self;
+    public function setCallParticipant(?CallParticipant $participant = null): self;
 
     /**
      * Get the message model the action may be holding.
@@ -146,13 +146,13 @@ interface Action
      * @param false $withoutRelations
      * @return Message|null
      */
-    public function getMessage($withoutRelations = false): ?Message;
+    public function getMessage(bool $withoutRelations = false): ?Message;
 
     /**
      * @param Message|null $message
      * @return $this
      */
-    public function setMessage(Message $message = null): self;
+    public function setMessage(?Message $message = null): self;
 
     /**
      * Get the call model the action may be holding.
@@ -160,13 +160,13 @@ interface Action
      * @param bool $withoutRelations
      * @return Call|null
      */
-    public function getCall($withoutRelations = false): ?Call;
+    public function getCall(bool $withoutRelations = false): ?Call;
 
     /**
      * @param ?Call $call
      * @return $this
      */
-    public function setCall(Call $call = null);
+    public function setCall(?Call $call = null);
 
     /**
      * Disable any event dispatches that the action may hold.
