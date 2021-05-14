@@ -61,14 +61,13 @@ class StoreMessage extends NewMessageAction
     public function execute(...$parameters): self
     {
         $this->setThread($parameters[0])
+            ->setMessageType('MESSAGE')
+            ->setMessageBody($this->emoji->toShort($parameters[1]['message']))
+            ->setMessageTemporaryId($parameters[1]['temporary_id'] ?? null)
             ->setReplyingToMessage($parameters[1]['reply_to_id'] ?? null)
-            ->handleTransactions(
-                $this->messenger->getProvider(),
-                'MESSAGE',
-                $this->emoji->toShort($parameters[1]['message']),
-                $parameters[1]['temporary_id'] ?? null,
-                $parameters[1]['extra'] ?? null
-            )
+            ->setMessageExtraData($parameters[1]['extra'] ?? null)
+            ->setMessageOwner($this->messenger->getProvider())
+            ->handleTransactions()
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();

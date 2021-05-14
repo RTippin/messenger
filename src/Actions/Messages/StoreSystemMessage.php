@@ -24,11 +24,10 @@ class StoreSystemMessage extends NewMessageAction
         $this->systemMessage = true;
 
         $this->setThread($parameters[0])
-            ->handleTransactions(
-                $parameters[1],
-                $parameters[3],
-                $parameters[2]
-            )
+            ->setMessageType($parameters[3])
+            ->setMessageBody($parameters[2])
+            ->setMessageOwner($parameters[1])
+            ->handleTransactions()
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();

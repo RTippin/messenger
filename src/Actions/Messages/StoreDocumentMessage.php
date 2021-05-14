@@ -66,14 +66,13 @@ class StoreDocumentMessage extends NewMessageAction
         $this->isDocumentUploadEnabled();
 
         $this->setThread($parameters[0])
+            ->setMessageType('DOCUMENT_MESSAGE')
+            ->setMessageBody($this->upload($parameters[1]['document']))
+            ->setMessageTemporaryId($parameters[1]['temporary_id'] ?? null)
             ->setReplyingToMessage($parameters[1]['reply_to_id'] ?? null)
-            ->handleTransactions(
-                $this->messenger->getProvider(),
-                'DOCUMENT_MESSAGE',
-                $this->upload($parameters[1]['document']),
-                $parameters[1]['temporary_id'] ?? null,
-                $parameters[1]['extra'] ?? null
-            )
+            ->setMessageExtraData($parameters[1]['extra'] ?? null)
+            ->setMessageOwner($this->messenger->getProvider())
+            ->handleTransactions()
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();

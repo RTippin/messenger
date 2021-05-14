@@ -58,7 +58,7 @@ class StoreImageMessage extends NewMessageAction
      * @param mixed ...$parameters
      * @return $this
      * @throws Throwable|FeatureDisabledException|FileServiceException
-     *@var Thread[0]
+     * @var Thread[0]
      * @var ImageMessageRequest[1]
      */
     public function execute(...$parameters): self
@@ -66,14 +66,13 @@ class StoreImageMessage extends NewMessageAction
         $this->isImageUploadEnabled();
 
         $this->setThread($parameters[0])
+            ->setMessageType('IMAGE_MESSAGE')
+            ->setMessageBody($this->upload($parameters[1]['image']))
+            ->setMessageTemporaryId($parameters[1]['temporary_id'] ?? null)
             ->setReplyingToMessage($parameters[1]['reply_to_id'] ?? null)
-            ->handleTransactions(
-                $this->messenger->getProvider(),
-                'IMAGE_MESSAGE',
-                $this->upload($parameters[1]['image']),
-                $parameters[1]['temporary_id'] ?? null,
-                $parameters[1]['extra'] ?? null
-            )
+            ->setMessageExtraData($parameters[1]['extra'] ?? null)
+            ->setMessageOwner($this->messenger->getProvider())
+            ->handleTransactions()
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();

@@ -33,9 +33,34 @@ abstract class NewMessageAction extends BaseMessengerAction
     protected DatabaseManager $database;
 
     /**
+     * @var string
+     */
+    protected string $messageType;
+
+    /**
+     * @var string
+     */
+    protected string $messageBody;
+
+    /**
+     * @var string|null
+     */
+    protected ?string $messageTemporaryId = null;
+
+    /**
+     * @var array|null
+     */
+    protected ?array $messageExtraData = null;
+
+    /**
      * @var Message|null
      */
     protected ?Message $replyingTo = null;
+
+    /**
+     * @var MessengerProvider
+     */
+    protected MessengerProvider $messageOwner;
 
     /**
      * @var bool
@@ -59,6 +84,50 @@ abstract class NewMessageAction extends BaseMessengerAction
     }
 
     /**
+     * @param string $type
+     * @return $this
+     */
+    protected function setMessageType(string $type): self
+    {
+        $this->messageType = $type;
+
+        return $this;
+    }
+
+    /**
+     * @param string $body
+     * @return $this
+     */
+    protected function setMessageBody(string $body): self
+    {
+        $this->messageBody = $body;
+
+        return $this;
+    }
+
+    /**
+     * @param string|null $temporaryId
+     * @return $this
+     */
+    protected function setMessageTemporaryId(?string $temporaryId = null): self
+    {
+        $this->messageTemporaryId = ! is_null($temporaryId) ? $temporaryId : null;
+
+        return $this;
+    }
+
+    /**
+     * @param array|null $extra
+     * @return $this
+     */
+    protected function setMessageExtraData(?array $extra = null): self
+    {
+        $this->messageExtraData = ! is_null($extra) ? $extra : null;
+
+        return $this;
+    }
+
+    /**
      * @param string|null $replyToId
      * @return $this
      */
@@ -79,23 +148,25 @@ abstract class NewMessageAction extends BaseMessengerAction
 
     /**
      * @param MessengerProvider $owner
-     * @param string $type
-     * @param string $body
-     * @param string|null $temporaryId
-     * @param array|null $extra
+     * @return $this
+     */
+    protected function setMessageOwner(MessengerProvider $owner): self
+    {
+        $this->messageOwner = $owner;
+
+        return $this;
+    }
+
+    /**
      * @return $this
      * @throws Throwable
      */
-    protected function handleTransactions(MessengerProvider $owner,
-                                          string $type,
-                                          string $body,
-                                          ?string $temporaryId = null,
-                                          ?array $extra = null): self
+    protected function handleTransactions(): self
     {
         if ($this->isChained()) {
-            $this->executeTransactions($owner, $type, $body, $temporaryId, $extra);
+            $this->executeTransactions();
         } else {
-            $this->database->transaction(fn () => $this->executeTransactions($owner, $type, $body, $temporaryId, $extra), 5);
+            $this->database->transaction(fn () => $this->executeTransactions(), 5);
         }
 
         return $this;
@@ -148,19 +219,11 @@ abstract class NewMessageAction extends BaseMessengerAction
     }
 
     /**
-     * @param MessengerProvider $owner
-     * @param string $type
-     * @param string $body
-     * @param string|null $temporaryId
-     * @param array|null $extra
+     * Store message. If not chained, touch thread and mark sender as read.
      */
-    private function executeTransactions(MessengerProvider $owner,
-                                         string $type,
-                                         string $body,
-                                         ?string $temporaryId,
-                                         ?array $extra): void
+    private function executeTransactions(): void
     {
-        $this->storeMessage($owner, $type, $body, $temporaryId, $extra);
+        $this->storeMessage();
 
         if ($this->shouldExecuteChains()) {
             $this->getThread()->touch();
@@ -177,34 +240,25 @@ abstract class NewMessageAction extends BaseMessengerAction
      * Store message, attach owner relation from
      * provider in memory, add temp ID.
      *
-     * @param MessengerProvider $owner
-     * @param string $type
-     * @param string $body
-     * @param string|null $temporaryId
-     * @param array|null $extra
      * @return void
      */
-    private function storeMessage(MessengerProvider $owner,
-                                  string $type,
-                                  string $body,
-                                  ?string $temporaryId,
-                                  ?array $extra): void
+    private function storeMessage(): void
     {
         $this->setMessage(
             $this->getThread()->messages()->create([
-                'type' => array_search($type, Definitions::Message),
-                'owner_id' => $owner->getKey(),
-                'owner_type' => $owner->getMorphClass(),
-                'body' => $body,
+                'type' => array_search($this->messageType, Definitions::Message),
+                'owner_id' => $this->messageOwner->getKey(),
+                'owner_type' => $this->messageOwner->getMorphClass(),
+                'body' => $this->messageBody,
                 'reply_to_id' => optional($this->replyingTo)->id,
-                'extra' => $extra,
+                'extra' => $this->messageExtraData,
             ])
             ->setRelations([
-                'owner' => $owner,
+                'owner' => $this->messageOwner,
                 'thread' => $this->getThread(),
                 'replyTo' => $this->replyingTo,
             ])
-            ->setTemporaryId($temporaryId)
+            ->setTemporaryId($this->messageTemporaryId)
         );
     }
 }
