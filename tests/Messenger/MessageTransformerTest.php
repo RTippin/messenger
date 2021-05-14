@@ -401,7 +401,7 @@ class MessageTransformerTest extends FeatureTestCase
                 'body' => MessageTransformer::makeVideoCall($thread, $this->tippin, $call)[2],
             ]);
 
-        $this->assertSame('was in a video call with John Doe, Developers, Jane Smith and 1 others', MessageTransformer::transform($message));
+        $this->assertSame('was in a video call with John Doe, Developers, Jane Smith, and 1 others', MessageTransformer::transform($message));
     }
 
     /** @test */
@@ -426,7 +426,7 @@ class MessageTransformerTest extends FeatureTestCase
                 'body' => MessageTransformer::makeVideoCall($thread, $this->tippin, $call)[2],
             ]);
 
-        $this->assertSame('was in a video call with John Doe, Developers, Jane Smith and 3 others', MessageTransformer::transform($message));
+        $this->assertSame('was in a video call with John Doe, Developers, Jane Smith, and 3 others', MessageTransformer::transform($message));
     }
 
     /** @test */
@@ -637,7 +637,7 @@ class MessageTransformerTest extends FeatureTestCase
                 'body' => MessageTransformer::makeParticipantsAdded($thread, $this->tippin, $participants)[2],
             ]);
 
-        $this->assertSame('added John Doe, Developers, Jane Smith and 1 others', MessageTransformer::transform($message));
+        $this->assertSame('added John Doe, Developers, Jane Smith, and 1 others', MessageTransformer::transform($message));
     }
 
     /** @test */
@@ -659,6 +659,6 @@ class MessageTransformerTest extends FeatureTestCase
                 'body' => MessageTransformer::makeParticipantsAdded($thread, $this->tippin, $participants)[2],
             ]);
 
-        $this->assertSame('added John Doe, Developers, Jane Smith and 3 others', MessageTransformer::transform($message));
+        $this->assertSame('added John Doe, Developers, Jane Smith, and 3 others', MessageTransformer::transform($message));
     }
 }

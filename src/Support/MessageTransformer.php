@@ -247,7 +247,7 @@ class MessageTransformer
                 $remaining = $call->participants_count - 4;
                 foreach ($participants as $participant) {
                     if ($participants->last()->id === $participant->id) {
-                        $names .= " {$participant->owner->getProviderName()} and $remaining others";
+                        $names .= " {$participant->owner->getProviderName()}, and $remaining others";
                     } else {
                         $names .= " {$participant->owner->getProviderName()},";
                     }
@@ -316,7 +316,7 @@ class MessageTransformer
             $sliced = array_slice($bodyJson, 0, 3);
             foreach ($sliced as $key => $owner) {
                 if ($key === array_key_last($sliced)) {
-                    $names .= ' '.self::locateContentOwner($message, $owner)->getProviderName()." and $remaining others";
+                    $names .= ' '.self::locateContentOwner($message, $owner)->getProviderName().", and $remaining others";
                 } else {
                     $names .= ' '.self::locateContentOwner($message, $owner)->getProviderName().',';
                 }
