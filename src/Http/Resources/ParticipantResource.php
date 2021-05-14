@@ -44,6 +44,7 @@ class ParticipantResource extends JsonResource
     {
         return [
             'id' => $this->participant->id,
+            'thread_id' => $this->participant->thread_id,
             'admin' => $this->participant->admin,
             'pending' => $this->participant->pending,
             'send_knocks' => $this->participant->send_knocks,
