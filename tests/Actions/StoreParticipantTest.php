@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use RTippin\Messenger\Actions\Threads\StoreParticipant;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -70,6 +71,43 @@ class StoreParticipantTest extends FeatureTestCase
             'thread_id' => $this->group->id,
             'admin' => false,
             'pending' => true,
+        ]);
+    }
+
+    /** @test */
+    public function it_stores_participant_if_check_restore_false()
+    {
+        app(StoreParticipant::class)->execute(
+            $this->group,
+            $this->doe,
+            [],
+            false
+        );
+
+        $this->assertDatabaseHas('participants', [
+            'owner_id' => $this->doe->getKey(),
+            'owner_type' => $this->doe->getMorphClass(),
+            'thread_id' => $this->group->id,
+            'admin' => false,
+            'pending' => false,
+        ]);
+    }
+
+    /** @test */
+    public function it_restores_participant_if_check_restore_true()
+    {
+        $participant = Participant::factory()->for($this->group)->owner($this->doe)->create(['deleted_at' => now()]);
+
+        app(StoreParticipant::class)->execute(
+            $this->group,
+            $this->doe,
+            [],
+            true
+        );
+
+        $this->assertDatabaseHas('participants', [
+            'id' => $participant->id,
+            'deleted_at' => null,
         ]);
     }
 }

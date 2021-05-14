@@ -8,7 +8,7 @@ use RTippin\Messenger\Models\Thread;
 class StoreParticipant extends ThreadParticipantAction
 {
     /**
-     * Store a single, fresh participant for the provided thread.
+     * Store a single, fresh or restored participant for the provided thread.
      *
      * @param mixed ...$parameters
      * @var Thread[0]
@@ -22,7 +22,7 @@ class StoreParticipant extends ThreadParticipantAction
         $this->setThread($parameters[0]);
 
         // Store fresh or see if we need to restore existing participant
-        if ($parameters[3] ?? null === true) {
+        if ($parameters[3] ?? false) {
             $this->storeOrRestoreParticipant($parameters[1]);
         } else {
             $this->storeParticipant(
