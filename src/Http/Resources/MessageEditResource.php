@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use RTippin\Messenger\Models\MessageEdit;
+use RTippin\Messenger\Support\MessageTransformer;
 
 class MessageEditResource extends JsonResource
 {
@@ -36,16 +37,8 @@ class MessageEditResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'body' => $this->sanitizedBody(),
+            'body' => MessageTransformer::sanitizedBody($this->message->body),
             'edited_at' => $this->message->edited_at,
         ];
-    }
-
-    /**
-     * @return string
-     */
-    public function sanitizedBody(): string
-    {
-        return htmlspecialchars($this->message->body);
     }
 }

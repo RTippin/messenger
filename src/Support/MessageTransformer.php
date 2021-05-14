@@ -50,6 +50,24 @@ class MessageTransformer
     }
 
     /**
+     * @param string $body
+     * @return string
+     */
+    public static function sanitizedBody(string $body): string
+    {
+        return htmlspecialchars($body);
+    }
+
+    /**
+     * @param string $body
+     * @return array|null
+     */
+    public static function decodeBodyJson(string $body): ?array
+    {
+        return json_decode($body, true);
+    }
+
+    /**
      * @param Thread $thread
      * @param MessengerProvider $provider
      * @return array
@@ -334,24 +352,6 @@ class MessageTransformer
         }
 
         return 'added '.trim($names);
-    }
-
-    /**
-     * @param string $body
-     * @return string
-     */
-    private static function sanitizedBody(string $body): string
-    {
-        return htmlspecialchars($body);
-    }
-
-    /**
-     * @param string $body
-     * @return array|null
-     */
-    private static function decodeBodyJson(string $body): ?array
-    {
-        return json_decode($body, true);
     }
 
     /**

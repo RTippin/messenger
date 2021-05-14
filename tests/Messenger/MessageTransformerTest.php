@@ -112,7 +112,7 @@ class MessageTransformerTest extends FeatureTestCase
         $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
 
         $make = MessageTransformer::makeParticipantDemoted($thread, $this->tippin, $participant);
-        $json = json_decode($make[2], true);
+        $json = MessageTransformer::decodeBodyJson($make[2]);
 
         $this->assertSame($thread, $make[0]);
         $this->assertSame($this->tippin, $make[1]);
@@ -130,7 +130,7 @@ class MessageTransformerTest extends FeatureTestCase
         $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
 
         $make = MessageTransformer::makeParticipantPromoted($thread, $this->tippin, $participant);
-        $json = json_decode($make[2], true);
+        $json = MessageTransformer::decodeBodyJson($make[2]);
 
         $this->assertSame($thread, $make[0]);
         $this->assertSame($this->tippin, $make[1]);
@@ -161,7 +161,7 @@ class MessageTransformerTest extends FeatureTestCase
         $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
 
         $make = MessageTransformer::makeRemovedFromGroup($thread, $this->tippin, $participant);
-        $json = json_decode($make[2], true);
+        $json = MessageTransformer::decodeBodyJson($make[2]);
 
         $this->assertSame($thread, $make[0]);
         $this->assertSame($this->tippin, $make[1]);
@@ -180,7 +180,7 @@ class MessageTransformerTest extends FeatureTestCase
         $participant2 = Participant::factory()->for($thread)->owner($this->developers)->create();
 
         $make = MessageTransformer::makeParticipantsAdded($thread, $this->tippin, collect([$participant1, $participant2]));
-        $json = json_decode($make[2], true);
+        $json = MessageTransformer::decodeBodyJson($make[2]);
 
         $this->assertSame($thread, $make[0]);
         $this->assertSame($this->tippin, $make[1]);
