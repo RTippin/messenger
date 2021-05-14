@@ -21,8 +21,6 @@ class StoreSystemMessage extends NewMessageAction
      */
     public function execute(...$parameters): self
     {
-        $this->systemMessage = true;
-
         $this->setThread($parameters[0])
             ->setMessageType($parameters[3])
             ->setMessageBody($parameters[2])

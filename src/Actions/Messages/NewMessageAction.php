@@ -63,11 +63,6 @@ abstract class NewMessageAction extends BaseMessengerAction
     protected MessengerProvider $messageOwner;
 
     /**
-     * @var bool
-     */
-    protected bool $systemMessage = false;
-
-    /**
      * NewMessageAction constructor.
      *
      * @param BroadcastDriver $broadcaster
@@ -89,7 +84,7 @@ abstract class NewMessageAction extends BaseMessengerAction
      */
     protected function setMessageType(string $type): self
     {
-        $this->messageType = $type;
+        $this->messageType = array_search($type, Definitions::Message);
 
         return $this;
     }
@@ -228,7 +223,7 @@ abstract class NewMessageAction extends BaseMessengerAction
         if ($this->shouldExecuteChains()) {
             $this->getThread()->touch();
 
-            if (! $this->systemMessage) {
+            if (in_array($this->messageType, Message::NonSystemTypes)) {
                 $this->chain(MarkParticipantRead::class)
                     ->withoutDispatches()
                     ->execute($this->getThread()->currentParticipant());
@@ -246,7 +241,7 @@ abstract class NewMessageAction extends BaseMessengerAction
     {
         $this->setMessage(
             $this->getThread()->messages()->create([
-                'type' => array_search($this->messageType, Definitions::Message),
+                'type' => $this->messageType,
                 'owner_id' => $this->messageOwner->getKey(),
                 'owner_type' => $this->messageOwner->getMorphClass(),
                 'body' => $this->messageBody,

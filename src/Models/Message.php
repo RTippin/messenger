@@ -86,7 +86,7 @@ class Message extends Model
     /**
      * @var null|string
      */
-    public $temporaryId = null;
+    public ?string $temporaryId = null;
 
     /**
      * @var string
