@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Actions;
 use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Mockery;
 use RTippin\Messenger\Actions\Messenger\StoreMessengerAvatar;

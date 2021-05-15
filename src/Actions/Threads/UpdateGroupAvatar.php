@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Actions\Threads;
 
+use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Actions\BaseMessengerAction;
@@ -17,6 +18,7 @@ use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\FileService;
 use RTippin\Messenger\Support\Definitions;
+use Throwable;
 
 class UpdateGroupAvatar extends BaseMessengerAction
 {
@@ -56,11 +58,6 @@ class UpdateGroupAvatar extends BaseMessengerAction
     private string $theDefaultImage;
 
     /**
-     * @var bool
-     */
-    private bool $avatarChanged = false;
-
-    /**
      * UpdateGroupAvatar constructor.
      *
      * @param Messenger $messenger
@@ -85,21 +82,23 @@ class UpdateGroupAvatar extends BaseMessengerAction
      *
      * @param mixed ...$parameters
      * @return $this
-     * @throws FeatureDisabledException|FileServiceException
-     *@var Thread[0]
+     * @throws FeatureDisabledException|FileServiceException|Exception
+     * @var Thread[0]
      * @var GroupAvatarRequest[1]
      */
     public function execute(...$parameters): self
     {
         $this->setThread($parameters[0])
             ->setOriginalAvatar()
-            ->determineAction($parameters[1])
-            ->determineIfAvatarChanged()
-            ->handleAction($parameters[1])
-            ->removeOldAvatar()
-            ->generateResource()
-            ->fireBroadcast()
-            ->fireEvents();
+            ->determineIfDefault($parameters[1]);
+
+        if ($this->avatarChanged()) {
+            $this->handleUpdatingAvatar($parameters[1]);
+
+            $this->fireBroadcast()->fireEvents();
+        }
+
+        $this->generateResource();
 
         return $this;
     }
@@ -116,51 +115,56 @@ class UpdateGroupAvatar extends BaseMessengerAction
 
     /**
      * @param array $params
-     * @return $this
      */
-    private function determineAction(array $params): self
+    private function determineIfDefault(array $params): void
     {
-        $this->usingDefault = array_key_exists('default', $params);
-
-        if ($this->usingDefault) {
+        if (array_key_exists('default', $params)) {
+            $this->usingDefault = true;
             $this->theDefaultImage = $params['default'];
         }
-
-        return $this;
     }
 
     /**
-     * @return $this
+     * @return bool
      */
-    private function determineIfAvatarChanged(): self
+    private function avatarChanged(): bool
     {
-        if (! $this->usingDefault
-            || ($this->usingDefault
-                && $this->getThread()->image !== $this->theDefaultImage)) {
-            $this->avatarChanged = true;
-        }
-
-        return $this;
+        return ! $this->usingDefault || $this->getThread()->image !== $this->theDefaultImage;
     }
 
     /**
      * @param array $params
-     * @return $this
-     * @throws FeatureDisabledException|FileServiceException
+     * @throws FeatureDisabledException|Exception
      */
-    private function handleAction(array $params): self
+    private function handleUpdatingAvatar(array $params): void
     {
-        if ($this->avatarChanged) {
-            if ($this->usingDefault) {
-                $this->updateThread($this->theDefaultImage);
-            } else {
-                $this->updateThread($this->uploadAvatar($params['image']));
-            }
+        if (! $this->usingDefault) {
+            $this->attemptTransactionOrRollbackFile($this->uploadAvatar($params['image']))->removeOldAvatar();
         } else {
-            $this->withoutDispatches();
+            $this->updateThread($this->theDefaultImage)->removeOldAvatar();
         }
+    }
 
-        return $this;
+    /**
+     * The avatar has been uploaded at this point, so if our
+     * database actions fail, we want to remove the avatar
+     * from storage and rethrow the exception.
+     *
+     * @param string $fileName
+     * @return $this
+     * @throws Exception
+     */
+    private function attemptTransactionOrRollbackFile(string $fileName): self
+    {
+        try {
+            return $this->updateThread($fileName);
+        } catch (Throwable $e) {
+            $this->fileService
+                ->setDisk($this->getThread()->getStorageDisk())
+                ->destroy("{$this->getThread()->getAvatarDirectory()}/$fileName");
+
+            throw new Exception($e->getMessage(), $e->getCode(), $e);
+        }
     }
 
     /**
@@ -175,56 +179,45 @@ class UpdateGroupAvatar extends BaseMessengerAction
         return $this->fileService
             ->setType('image')
             ->setDisk($this->getThread()->getStorageDisk())
-            ->setDirectory($this->getDirectory())
+            ->setDirectory($this->getThread()->getAvatarDirectory())
             ->upload($image);
     }
 
     /**
-     * @return string
+     * Remove the old avatar, if any.
      */
-    private function getDirectory(): string
+    private function removeOldAvatar(): void
     {
-        return "{$this->getThread()->getStorageDirectory()}/avatar";
-    }
-
-    /**
-     * @return $this
-     */
-    private function removeOldAvatar(): self
-    {
-        if ($this->avatarChanged
-            && ! in_array($this->originalAvatar, Definitions::DefaultGroupAvatars)) {
+        if (! in_array($this->originalAvatar, Definitions::DefaultGroupAvatars)) {
             $this->fileService
                 ->setDisk($this->getThread()->getStorageDisk())
-                ->destroy("{$this->getDirectory()}/{$this->originalAvatar}");
+                ->destroy("{$this->getThread()->getAvatarDirectory()}/$this->originalAvatar");
         }
-
-        return $this;
     }
 
     /**
      * @param string $image
-     * @return void
+     * @return $this
      */
-    private function updateThread(string $image): void
+    private function updateThread(string $image): self
     {
         $this->getThread()->timestamps = false;
 
         $this->getThread()->update([
             'image' => $image,
         ]);
+
+        return $this;
     }
 
     /**
-     * @return $this
+     * Make the settings json resource
      */
-    private function generateResource(): self
+    private function generateResource(): void
     {
         $this->setJsonResource(new ThreadSettingsResource(
             $this->getThread()
         ));
-
-        return $this;
     }
 
     /**

@@ -26,8 +26,7 @@ class ThreadAvatarEvent
      * @param MessengerProvider $provider
      * @param Thread $thread
      */
-    public function __construct(MessengerProvider $provider,
-                                Thread $thread)
+    public function __construct(MessengerProvider $provider, Thread $thread)
     {
         $this->provider = $provider;
         $this->thread = $thread;

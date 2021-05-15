@@ -49,13 +49,13 @@ class PurgeThreadsTest extends FeatureTestCase
     {
         UploadedFile::fake()
             ->image('avatar.jpg')
-            ->storeAs($this->private->getStorageDirectory().'/avatar', 'avatar.jpg', [
+            ->storeAs($this->private->getAvatarDirectory(), 'avatar.jpg', [
                 'disk' => $this->disk,
             ]);
 
         UploadedFile::fake()
             ->image('avatar.jpg')
-            ->storeAs($this->group->getStorageDirectory().'/avatar', 'avatar.jpg', [
+            ->storeAs($this->group->getAvatarDirectory(), 'avatar.jpg', [
                 'disk' => $this->group->getStorageDisk(),
             ]);
 

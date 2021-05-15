@@ -32,7 +32,7 @@ class UpdateGroupAvatarTest extends FeatureTestCase
         $this->group->update([
             'image' => 'avatar.jpg',
         ]);
-        UploadedFile::fake()->image('avatar.jpg')->storeAs($this->group->getStorageDirectory().'/avatar', 'avatar.jpg', [
+        UploadedFile::fake()->image('avatar.jpg')->storeAs($this->group->getAvatarDirectory(), 'avatar.jpg', [
             'disk' => $this->disk,
         ]);
     }
@@ -83,7 +83,7 @@ class UpdateGroupAvatarTest extends FeatureTestCase
             'type' => 2,
             'image' => '3.png',
         ]);
-        Storage::disk($this->disk)->assertMissing($this->group->getStorageDirectory().'/avatar/avatar.jpg');
+        Storage::disk($this->disk)->assertMissing($this->group->getAvatarDirectory().'/avatar.jpg');
     }
 
     /** @test */
@@ -96,7 +96,7 @@ class UpdateGroupAvatarTest extends FeatureTestCase
             ]
         );
 
-        Storage::disk($this->disk)->assertMissing($this->group->getStorageDirectory().'/avatar/avatar.jpg');
+        Storage::disk($this->disk)->assertMissing($this->group->getAvatarDirectory().'/avatar.jpg');
         Storage::disk($this->disk)->assertExists($this->group->getAvatarPath());
     }
 
