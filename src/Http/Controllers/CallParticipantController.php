@@ -25,8 +25,7 @@ class CallParticipantController
      * @return CallParticipantCollection
      * @throws AuthorizationException
      */
-    public function index(Thread $thread,
-                          Call $call): CallParticipantCollection
+    public function index(Thread $thread, Call $call): CallParticipantCollection
     {
         $this->authorize('viewAny', [
             CallParticipant::class,

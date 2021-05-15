@@ -26,8 +26,7 @@ class CallController
      * @return CallCollection
      * @throws AuthorizationException
      */
-    public function index(CallRepository $repository,
-                          Thread $thread): CallCollection
+    public function index(CallRepository $repository, Thread $thread): CallCollection
     {
         $this->authorize('viewAny', [
             Call::class,
@@ -50,8 +49,8 @@ class CallController
      * @throws AuthorizationException
      */
     public function paginate(CallRepository $repository,
-                                        Thread $thread,
-                                        Call $call): CallCollection
+                             Thread $thread,
+                             Call $call): CallCollection
     {
         $this->authorize('viewAny', [
             Call::class,
@@ -74,8 +73,7 @@ class CallController
      * @return CallResource
      * @throws AuthorizationException|Throwable|InvalidArgumentException|NewCallException
      */
-    public function store(StoreCall $storeCall,
-                          Thread $thread): CallResource
+    public function store(StoreCall $storeCall, Thread $thread): CallResource
     {
         $this->authorize('create', [
             Call::class,

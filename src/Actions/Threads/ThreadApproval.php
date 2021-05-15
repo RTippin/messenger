@@ -137,9 +137,13 @@ class ThreadApproval extends ThreadParticipantAction
     {
         if ($this->getThread()->isGroup()) {
             throw new ThreadApprovalException('Group threads do not have approvals.');
-        } elseif (! $this->getThread()->isPending()) {
+        }
+
+        if (! $this->getThread()->isPending()) {
             throw new ThreadApprovalException('That conversation is not pending.');
-        } elseif (! $this->getThread()->isAwaitingMyApproval()) {
+        }
+
+        if (! $this->getThread()->isAwaitingMyApproval()) {
             throw new ThreadApprovalException;
         }
 

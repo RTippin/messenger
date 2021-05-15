@@ -30,7 +30,7 @@ class ThreadLoader
      * @return ThreadResource
      * @throws AuthorizationException
      */
-    public function __invoke(Thread $thread, $relations = null): ThreadResource
+    public function __invoke(Thread $thread, ?String $relations = null): ThreadResource
     {
         $this->authorize('view', $thread);
 
@@ -43,10 +43,10 @@ class ThreadLoader
 
     /**
      * @param Thread $thread
-     * @param null $relations
+     * @param null|string $relations
      * @return ThreadResource
      */
-    private function withRelations(Thread $thread, $relations = null): ThreadResource
+    private function withRelations(Thread $thread, ?string $relations): ThreadResource
     {
         $options = array_filter(
             explode('|', $relations)

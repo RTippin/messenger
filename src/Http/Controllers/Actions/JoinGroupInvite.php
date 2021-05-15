@@ -21,8 +21,7 @@ class JoinGroupInvite
      * @return Participant
      * @throws AuthorizationException|Exception|Throwable|FeatureDisabledException
      */
-    public function __invoke(JoinWithInvite $joinWithInvite,
-                             Invite $invite): Participant
+    public function __invoke(JoinWithInvite $joinWithInvite, Invite $invite): Participant
     {
         $this->authorize('join', $invite);
 

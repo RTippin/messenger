@@ -183,13 +183,13 @@ class ImageRenderService
      * @param string|null $alias
      * @return BinaryFileResponse
      */
-    private function renderDefaultImage($alias = null): BinaryFileResponse
+    private function renderDefaultImage(?string $alias = null): BinaryFileResponse
     {
-        $default = $alias
+        $default = ! is_null($alias)
             ? $this->messenger->getProviderDefaultAvatarPath($alias)
             : null;
 
-        if ($default && file_exists($default)) {
+        if (! is_null($default) && file_exists($default)) {
             return $this->responseFactory->file($default);
         }
 

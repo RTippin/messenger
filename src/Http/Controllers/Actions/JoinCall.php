@@ -23,8 +23,8 @@ class JoinCall
      * @throws AuthorizationException
      */
     public function __invoke(JoinCallAction $joinCall,
-                          Thread $thread,
-                          Call $call): CallParticipantResource
+                             Thread $thread,
+                             Call $call): CallParticipantResource
     {
         $this->authorize('join', [
             $call,

@@ -93,9 +93,9 @@ class InviteController
      * @throws FileNotFoundException
      */
     public function renderAvatar(ImageRenderService $service,
-                             Invite $invite,
-                             string $size,
-                             string $image)
+                                 Invite $invite,
+                                 string $size,
+                                 string $image)
     {
         if (! $invite->isValid()) {
             throw new AuthorizationException('Not authorized to view invite avatar.');

@@ -21,8 +21,7 @@ class Search extends Controller
      * @param string|null $query
      * @return SearchCollection
      */
-    public function __invoke(SearchProvidersService $search,
-                             string $query = null): SearchCollection
+    public function __invoke(SearchProvidersService $search, ?string $query = null): SearchCollection
     {
         return new SearchCollection(
             $search->search($query)->paginate(),

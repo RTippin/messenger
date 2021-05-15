@@ -35,8 +35,7 @@ class ImageMessageController extends Controller
      * @return ImageMessageCollection
      * @throws AuthorizationException
      */
-    public function index(ImageMessageRepository $repository,
-                          Thread $thread): ImageMessageCollection
+    public function index(ImageMessageRepository $repository, Thread $thread): ImageMessageCollection
     {
         $this->authorize('viewAny', [
             Message::class,
@@ -59,8 +58,8 @@ class ImageMessageController extends Controller
      * @throws AuthorizationException
      */
     public function paginate(ImageMessageRepository $repository,
-                                 Thread $thread,
-                                 Message $image): ImageMessageCollection
+                             Thread $thread,
+                             Message $image): ImageMessageCollection
     {
         $this->authorize('viewAny', [
             Message::class,

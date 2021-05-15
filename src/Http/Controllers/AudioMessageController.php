@@ -35,8 +35,7 @@ class AudioMessageController extends Controller
      * @return AudioMessageCollection
      * @throws AuthorizationException
      */
-    public function index(AudioMessageRepository $repository,
-                          Thread $thread): AudioMessageCollection
+    public function index(AudioMessageRepository $repository, Thread $thread): AudioMessageCollection
     {
         $this->authorize('viewAny', [
             Message::class,
@@ -59,8 +58,8 @@ class AudioMessageController extends Controller
      * @throws AuthorizationException
      */
     public function paginate(AudioMessageRepository $repository,
-                                 Thread $thread,
-                                 Message $audio): AudioMessageCollection
+                             Thread $thread,
+                             Message $audio): AudioMessageCollection
     {
         $this->authorize('viewAny', [
             Message::class,

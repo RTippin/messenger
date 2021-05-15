@@ -137,11 +137,17 @@ class AddReaction extends BaseMessengerAction
     {
         if (! $this->messenger->isMessageReactionsEnabled()) {
             throw new FeatureDisabledException('Message reactions are currently disabled.');
-        } elseif (is_null($this->react)) {
+        }
+
+        if (is_null($this->react)) {
             throw new ReactionException('No valid reactions found.');
-        } elseif ($this->hasExistingReaction()) {
+        }
+
+        if ($this->hasExistingReaction()) {
             throw new ReactionException('You have already used that reaction.');
-        } elseif (! $this->canAddNewReaction()) {
+        }
+
+        if (! $this->canAddNewReaction()) {
             throw new ReactionException('We appreciate the enthusiasm, but there are already too many reactions on this message.');
         }
 

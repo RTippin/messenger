@@ -21,8 +21,7 @@ class SystemMessageController
      * @return SystemMessageCollection
      * @throws AuthorizationException
      */
-    public function index(SystemMessageRepository $repository,
-                          Thread $thread): SystemMessageCollection
+    public function index(SystemMessageRepository $repository, Thread $thread): SystemMessageCollection
     {
         $this->authorize('viewAny', [
             Message::class,
@@ -45,8 +44,8 @@ class SystemMessageController
      * @throws AuthorizationException
      */
     public function paginate(SystemMessageRepository $repository,
-                                   Thread $thread,
-                                   Message $log): SystemMessageCollection
+                             Thread $thread,
+                             Message $log): SystemMessageCollection
     {
         $this->authorize('viewAny', [
             Message::class,

@@ -59,11 +59,11 @@ class MarkParticipantRead extends BaseMessengerAction
      * @param Thread|null $thread
      * @return bool
      */
-    private function shouldUpdateTimestamp(Thread $thread = null): bool
+    private function shouldUpdateTimestamp(?Thread $thread = null): bool
     {
         return ! is_null($this->getParticipant())
             && ! $this->getParticipant()->pending
-            && (! $thread
+            && (is_null($thread)
                 || is_null($this->getParticipant()->last_read)
                 || Helpers::PrecisionTime($thread->updated_at) > Helpers::PrecisionTime($this->getParticipant()->last_read));
     }

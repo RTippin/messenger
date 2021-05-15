@@ -31,8 +31,7 @@ class DownloadMessageFile
      * @param Messenger $messenger
      * @param FilesystemManager $filesystemManager
      */
-    public function __construct(Messenger $messenger,
-                                FilesystemManager $filesystemManager)
+    public function __construct(Messenger $messenger, FilesystemManager $filesystemManager)
     {
         $this->messenger = $messenger;
         $this->filesystemManager = $filesystemManager;

@@ -30,19 +30,19 @@ interface FriendDriver
      * @param bool $withRelations
      * @return Friend|Collection
      */
-    public function getProviderFriends($withRelations = false);
+    public function getProviderFriends(bool $withRelations = false);
 
     /**
      * @param bool $withRelations
      * @return PendingFriend|Collection
      */
-    public function getProviderPendingFriends($withRelations = false);
+    public function getProviderPendingFriends(bool $withRelations = false);
 
     /**
      * @param bool $withRelations
      * @return SentFriend|Collection
      */
-    public function getProviderSentFriends($withRelations = false);
+    public function getProviderSentFriends(bool $withRelations = false);
 
     /**
      * @param null|mixed|MessengerProvider $provider

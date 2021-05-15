@@ -33,8 +33,7 @@ class ArchiveEmptyThread implements ShouldQueue
      * @param Messenger $messenger
      * @param ArchiveThread $archiveThread
      */
-    public function __construct(Messenger $messenger,
-                                ArchiveThread $archiveThread)
+    public function __construct(Messenger $messenger, ArchiveThread $archiveThread)
     {
         $this->archiveThread = $archiveThread;
         $this->messenger = $messenger;

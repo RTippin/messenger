@@ -73,7 +73,7 @@ class FriendBroker implements FriendDriver
     /**
      * @inheritDoc
      */
-    public function getProviderFriends($withRelations = false)
+    public function getProviderFriends(bool $withRelations = false)
     {
         if (! $this->messenger->providerHasFriends()) {
             return $this->sendEmptyCollection();
@@ -89,7 +89,7 @@ class FriendBroker implements FriendDriver
     /**
      * @inheritDoc
      */
-    public function getProviderPendingFriends($withRelations = false)
+    public function getProviderPendingFriends(bool $withRelations = false)
     {
         if (! $this->messenger->providerHasFriends()) {
             return $this->sendEmptyCollection();
@@ -106,7 +106,7 @@ class FriendBroker implements FriendDriver
     /**
      * @inheritDoc
      */
-    public function getProviderSentFriends($withRelations = false)
+    public function getProviderSentFriends(bool $withRelations = false)
     {
         if (! $this->messenger->providerHasFriends()) {
             return $this->sendEmptyCollection();

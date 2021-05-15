@@ -57,8 +57,7 @@ class PendingFriendController
      * @return FriendResource
      * @throws Throwable|AuthorizationException
      */
-    public function update(AcceptFriendRequest $acceptFriendRequest,
-                           PendingFriend $pending): FriendResource
+    public function update(AcceptFriendRequest $acceptFriendRequest, PendingFriend $pending): FriendResource
     {
         $this->authorize('update', $pending);
 
@@ -74,8 +73,7 @@ class PendingFriendController
      * @return ProviderResource
      * @throws Exception|AuthorizationException
      */
-    public function destroy(DenyFriendRequest $denyFriendRequest,
-                            PendingFriend $pending): ProviderResource
+    public function destroy(DenyFriendRequest $denyFriendRequest, PendingFriend $pending): ProviderResource
     {
         $this->authorize('delete', $pending);
 

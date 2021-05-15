@@ -94,8 +94,7 @@ class SearchProvidersService
      */
     public function paginate()
     {
-        if (! $this->passesQueryLength()
-            || is_null($this->messengerQuery)) {
+        if (! $this->passesQueryLength() || is_null($this->messengerQuery)) {
             return $this->sendEmptyPaginator();
         }
 
@@ -139,8 +138,7 @@ class SearchProvidersService
      */
     private function passesQueryLength(): bool
     {
-        return ! is_null($this->searchQuery)
-            && strlen($this->searchQuery) >= 2;
+        return ! is_null($this->searchQuery) && strlen($this->searchQuery) >= 2;
     }
 
     /**
@@ -194,8 +192,7 @@ class SearchProvidersService
     {
         $searchable = $this->getAllowedSearchable();
 
-        if (is_null($searchable)
-            || ! count($searchable)) {
+        if (is_null($searchable) || ! count($searchable)) {
             $this->messengerQuery = null;
         } else {
             $this->messengerQuery = MessengerModel::whereHasMorph('owner', $searchable,

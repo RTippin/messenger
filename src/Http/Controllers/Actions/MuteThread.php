@@ -20,8 +20,7 @@ class MuteThread
      * @return JsonResponse
      * @throws AuthorizationException
      */
-    public function __invoke(MuteThreadAction $muteThread,
-                             Thread $thread): JsonResponse
+    public function __invoke(MuteThreadAction $muteThread, Thread $thread): JsonResponse
     {
         $this->authorize('mutes', $thread);
 

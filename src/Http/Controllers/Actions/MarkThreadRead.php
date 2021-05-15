@@ -20,8 +20,7 @@ class MarkThreadRead
      * @return JsonResponse
      * @throws AuthorizationException
      */
-    public function __invoke(MarkParticipantRead $markParticipantRead,
-                             Thread $thread): JsonResponse
+    public function __invoke(MarkParticipantRead $markParticipantRead, Thread $thread): JsonResponse
     {
         $this->authorize('view', $thread);
 

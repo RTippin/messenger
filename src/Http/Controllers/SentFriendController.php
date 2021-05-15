@@ -44,8 +44,7 @@ class SentFriendController
      * @return SentFriendResource
      * @throws AuthorizationException|NotFoundHttpException|FriendException
      */
-    public function store(FriendRequest $request,
-                          StoreFriendRequest $storeFriendRequest): SentFriendResource
+    public function store(FriendRequest $request, StoreFriendRequest $storeFriendRequest): SentFriendResource
     {
         $this->authorize('create', SentFriend::class);
 
@@ -76,8 +75,7 @@ class SentFriendController
      * @return ProviderResource
      * @throws Exception|AuthorizationException
      */
-    public function destroy(CancelFriendRequest $cancelFriendRequest,
-                            SentFriend $sent): ProviderResource
+    public function destroy(CancelFriendRequest $cancelFriendRequest, SentFriend $sent): ProviderResource
     {
         $this->authorize('delete', $sent);
 

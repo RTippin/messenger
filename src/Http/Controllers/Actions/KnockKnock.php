@@ -40,8 +40,7 @@ class KnockKnock
      * @return JsonResponse
      * @throws AuthorizationException|FeatureDisabledException|KnockException|InvalidArgumentException
      */
-    public function __invoke(SendKnock $sendKnock,
-                             Thread $thread): JsonResponse
+    public function __invoke(SendKnock $sendKnock, Thread $thread): JsonResponse
     {
         $this->authorize('sendKnock', $thread);
 

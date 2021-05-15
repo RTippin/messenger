@@ -54,8 +54,7 @@ class FriendController
      * @return ProviderResource
      * @throws Throwable|AuthorizationException
      */
-    public function destroy(RemoveFriend $removeFriend,
-                            Friend $friend): ProviderResource
+    public function destroy(RemoveFriend $removeFriend, Friend $friend): ProviderResource
     {
         $this->authorize('delete', $friend);
 

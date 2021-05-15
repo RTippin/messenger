@@ -211,7 +211,7 @@ class UpdateGroupAvatar extends BaseMessengerAction
     }
 
     /**
-     * Make the settings json resource
+     * Make the settings json resource.
      */
     private function generateResource(): void
     {

@@ -294,9 +294,13 @@ class StorePrivateThread extends NewThreadAction
     {
         if (is_null($this->recipient)) {
             $this->locator->throwNotFoundError();
-        } elseif (! is_null($this->existingThread)) {
+        }
+
+        if (! is_null($this->existingThread)) {
             throw new NewThreadException("You already have an existing conversation with {$this->recipient->getProviderName()}.");
-        } elseif (! $this->messenger->canMessageProviderFirst($this->recipient)) {
+        }
+
+        if (! $this->messenger->canMessageProviderFirst($this->recipient)) {
             throw new NewThreadException("Not authorized to start conversations with {$this->recipient->getProviderName()}.");
         }
 

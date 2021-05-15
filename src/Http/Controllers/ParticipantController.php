@@ -31,8 +31,7 @@ class ParticipantController
      * @return ParticipantCollection
      * @throws AuthorizationException
      */
-    public function index(ParticipantRepository $repository,
-                          Thread $thread): ParticipantCollection
+    public function index(ParticipantRepository $repository, Thread $thread): ParticipantCollection
     {
         $this->authorize('viewAny', [
             Participant::class,
@@ -55,8 +54,8 @@ class ParticipantController
      * @throws AuthorizationException
      */
     public function paginate(ParticipantRepository $repository,
-                                        Thread $thread,
-                                        Participant $participant): ParticipantCollection
+                             Thread $thread,
+                             Participant $participant): ParticipantCollection
     {
         $this->authorize('viewAny', [
             Participant::class,

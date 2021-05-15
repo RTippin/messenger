@@ -120,9 +120,13 @@ abstract class NewCallAction extends BaseMessengerAction
         if (! $this->messenger->isCallingEnabled()
             || $this->messenger->isCallingTemporarilyDisabled()) {
             throw new FeatureDisabledException('Calling is currently disabled.');
-        } elseif ($this->getThread()->hasActiveCall()) {
+        }
+
+        if ($this->getThread()->hasActiveCall()) {
             throw new NewCallException("{$this->getThread()->name()} already has an active call.");
-        } elseif ($this->cacheDriver->get("call:{$this->getThread()->id}:starting")) {
+        }
+
+        if ($this->cacheDriver->get("call:{$this->getThread()->id}:starting")) {
             throw new NewCallException("{$this->getThread()->name()} has a call awaiting creation.");
         }
 

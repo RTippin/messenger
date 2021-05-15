@@ -48,8 +48,7 @@ class GroupThreadController
      * @return GroupThreadCollection
      * @throws AuthorizationException
      */
-    public function paginate(GroupThreadRepository $repository,
-                             Thread $group): GroupThreadCollection
+    public function paginate(GroupThreadRepository $repository, Thread $group): GroupThreadCollection
     {
         $this->authorize('groupMethod', $group);
 
@@ -84,8 +83,8 @@ class GroupThreadController
      * @throws AuthorizationException
      */
     public function updateSettings(ThreadSettingsRequest $request,
-                           UpdateGroupSettings $updateGroupSettings,
-                           Thread $thread): ThreadSettingsResource
+                                   UpdateGroupSettings $updateGroupSettings,
+                                   Thread $thread): ThreadSettingsResource
     {
         $this->authorize('settings', $thread);
 
@@ -124,8 +123,7 @@ class GroupThreadController
      * @return ThreadResource
      * @throws Throwable
      */
-    public function store(GroupThreadRequest $request,
-                          StoreGroupThread $storeGroupThread): ThreadResource
+    public function store(GroupThreadRequest $request, StoreGroupThread $storeGroupThread): ThreadResource
     {
         $this->authorize('create', Thread::class);
 
@@ -142,8 +140,7 @@ class GroupThreadController
      * @return JsonResponse
      * @throws AuthorizationException|Exception
      */
-    public function leave(LeaveThread $leaveThread,
-                          Thread $thread): JsonResponse
+    public function leave(LeaveThread $leaveThread, Thread $thread): JsonResponse
     {
         $this->authorize('leave', $thread);
 

@@ -84,7 +84,9 @@ class SendKnock extends BaseMessengerAction
     {
         if (! $this->messenger->isKnockKnockEnabled()) {
             throw new FeatureDisabledException('Knocking is currently disabled.');
-        } elseif ($this->messenger->getKnockTimeout() !== 0
+        }
+
+        if ($this->messenger->getKnockTimeout() !== 0
             && ($this->getThread()->isGroup()
                 && $this->cacheDriver->has("knock.knock.{$this->getThread()->id}"))
             || ($this->getThread()->isPrivate()

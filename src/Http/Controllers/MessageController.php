@@ -41,8 +41,7 @@ class MessageController extends Controller
      * @return MessageCollection
      * @throws AuthorizationException
      */
-    public function index(MessageRepository $repository,
-                          Thread $thread): MessageCollection
+    public function index(MessageRepository $repository, Thread $thread): MessageCollection
     {
         $this->authorize('viewAny', [
             Message::class,
@@ -65,8 +64,8 @@ class MessageController extends Controller
      * @throws AuthorizationException
      */
     public function paginate(MessageRepository $repository,
-                            Thread $thread,
-                            Message $message): MessageCollection
+                             Thread $thread,
+                             Message $message): MessageCollection
     {
         $this->authorize('viewAny', [
             Message::class,
@@ -113,8 +112,7 @@ class MessageController extends Controller
      * @return MessageResource
      * @throws AuthorizationException
      */
-    public function show(Thread $thread,
-                         Message $message): MessageResource
+    public function show(Thread $thread, Message $message): MessageResource
     {
         $this->authorize('view', [
             Message::class,
@@ -132,8 +130,7 @@ class MessageController extends Controller
      * @return MessageEditCollection
      * @throws AuthorizationException
      */
-    public function showEdits(Thread $thread,
-                         Message $message): MessageEditCollection
+    public function showEdits(Thread $thread, Message $message): MessageEditCollection
     {
         $this->authorize('viewEdits', [
             $message,
