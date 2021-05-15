@@ -25,13 +25,13 @@ class PurgeAudioMessagesTest extends FeatureTestCase
         $this->audio1 = Message::factory()->for($group)->owner($this->tippin)->audio()->create(['body' => 'test.mp3']);
         UploadedFile::fake()
             ->create('test.mp3', 500, 'audio/mpeg')
-            ->storeAs($group->getStorageDirectory().'/audio', 'test.mp3', [
+            ->storeAs($group->getAudioDirectory(), 'test.mp3', [
                 'disk' => $this->disk,
             ]);
         $this->audio2 = Message::factory()->for($group)->owner($this->tippin)->audio()->create(['body' => 'foo.mp3']);
         UploadedFile::fake()
             ->create('foo.mp3', 500, 'audio/mpeg')
-            ->storeAs($group->getStorageDirectory().'/audio', 'foo.mp3', [
+            ->storeAs($group->getAudioDirectory(), 'foo.mp3', [
                 'disk' => $this->disk,
             ]);
     }

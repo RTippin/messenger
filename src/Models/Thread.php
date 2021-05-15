@@ -235,6 +235,30 @@ class Thread extends Model
     /**
      * @return string
      */
+    public function getImagesDirectory(): string
+    {
+        return "{$this->getStorageDirectory()}/images";
+    }
+
+    /**
+     * @return string
+     */
+    public function getDocumentsDirectory(): string
+    {
+        return "{$this->getStorageDirectory()}/documents";
+    }
+
+    /**
+     * @return string
+     */
+    public function getAudioDirectory(): string
+    {
+        return "{$this->getStorageDirectory()}/audio";
+    }
+
+    /**
+     * @return string
+     */
     public function getAvatarPath(): string
     {
         return "{$this->getStorageDirectory()}/avatar/$this->image";

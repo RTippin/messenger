@@ -122,6 +122,9 @@ class ThreadTest extends FeatureTestCase
         $this->assertSame('messenger', $this->group->getStorageDisk());
         $this->assertSame("threads/{$this->group->id}", $this->group->getStorageDirectory());
         $this->assertSame("threads/{$this->group->id}/avatar/test.png", $this->group->getAvatarPath());
+        $this->assertSame("threads/{$this->group->id}/images", $this->group->getImagesDirectory());
+        $this->assertSame("threads/{$this->group->id}/documents", $this->group->getDocumentsDirectory());
+        $this->assertSame("threads/{$this->group->id}/audio", $this->group->getAudioDirectory());
     }
 
     /** @test */

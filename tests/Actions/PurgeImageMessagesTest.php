@@ -24,12 +24,12 @@ class PurgeImageMessagesTest extends FeatureTestCase
         Storage::fake($this->disk);
         $this->image1 = Message::factory()->for($group)->owner($this->tippin)->image()->create();
         UploadedFile::fake()->image('picture.jpg')
-            ->storeAs($group->getStorageDirectory().'/images', 'picture.jpg', [
+            ->storeAs($group->getImagesDirectory(), 'picture.jpg', [
                 'disk' => $this->disk,
             ]);
         $this->image2 = Message::factory()->for($group)->owner($this->tippin)->image()->create(['body' => 'foo.jpg']);
         UploadedFile::fake()->image('foo.jpg')
-            ->storeAs($group->getStorageDirectory().'/images', 'foo.jpg', [
+            ->storeAs($group->getImagesDirectory(), 'foo.jpg', [
                 'disk' => $this->disk,
             ]);
     }

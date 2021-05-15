@@ -25,13 +25,13 @@ class PurgeDocumentMessagesTest extends FeatureTestCase
         $this->document1 = Message::factory()->for($group)->owner($this->tippin)->document()->create(['body' => 'test.pdf']);
         UploadedFile::fake()
             ->create('test.pdf', 500, 'application/pdf')
-            ->storeAs($group->getStorageDirectory().'/documents', 'test.pdf', [
+            ->storeAs($group->getDocumentsDirectory(), 'test.pdf', [
                 'disk' => $this->disk,
             ]);
         $this->document2 = Message::factory()->for($group)->owner($this->tippin)->document()->create(['body' => 'foo.pdf']);
         UploadedFile::fake()
             ->create('foo.pdf', 500, 'application/pdf')
-            ->storeAs($group->getStorageDirectory().'/documents', 'foo.pdf', [
+            ->storeAs($group->getDocumentsDirectory(), 'foo.pdf', [
                 'disk' => $this->disk,
             ]);
     }

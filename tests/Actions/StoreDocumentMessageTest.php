@@ -2,10 +2,13 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use Mockery;
 use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
 use RTippin\Messenger\Events\NewMessageEvent;
@@ -13,6 +16,7 @@ use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Services\FileService;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreDocumentMessageTest extends FeatureTestCase
@@ -37,6 +41,28 @@ class StoreDocumentMessageTest extends FeatureTestCase
 
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Document messages are currently disabled.');
+
+        app(StoreDocumentMessage::class)->withoutDispatches()->execute(
+            $this->private,
+            [
+                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+            ]
+        );
+    }
+
+    /** @test */
+    public function it_throws_exception_if_transaction_fails_and_removes_uploaded_document()
+    {
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('DB Error');
+        DB::shouldReceive('transaction')->andThrow(new Exception('DB Error'));
+        $this->mock(FileService::class)->shouldReceive([
+            'setType' => Mockery::self(),
+            'setDisk' => Mockery::self(),
+            'setDirectory' => Mockery::self(),
+            'upload' => 'test.pdf',
+            'destroy' => true,
+        ]);
 
         app(StoreDocumentMessage::class)->withoutDispatches()->execute(
             $this->private,

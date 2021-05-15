@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Actions\Messages;
 
+use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\UploadedFile;
@@ -58,20 +59,25 @@ class StoreDocumentMessage extends NewMessageAction
      * @param mixed ...$parameters
      * @return $this
      * @throws Throwable|FeatureDisabledException|FileServiceException
-     *@var Thread[0]
+     * @var Thread[0]
      * @var DocumentMessageRequest[1]
      */
     public function execute(...$parameters): self
     {
-        $this->isDocumentUploadEnabled();
+        $this->checkDocumentUploadIsEnabled();
 
-        $this->setThread($parameters[0])
-            ->setMessageType('DOCUMENT_MESSAGE')
-            ->setMessageBody($this->upload($parameters[1]['document']))
+        $this->setThread($parameters[0]);
+
+        $document = $this->upload($parameters[1]['document']);
+
+        $this->setMessageType('DOCUMENT_MESSAGE')
+            ->setMessageBody($document)
             ->setMessageOptionalParameters($parameters[1])
-            ->setMessageOwner($this->messenger->getProvider())
-            ->handleTransactions()
-            ->generateResource()
+            ->setMessageOwner($this->messenger->getProvider());
+
+        $this->attemptTransactionOrRollbackFile($document);
+
+        $this->generateResource()
             ->fireBroadcast()
             ->fireEvents();
 
@@ -79,9 +85,30 @@ class StoreDocumentMessage extends NewMessageAction
     }
 
     /**
+     * The document file has been uploaded at this point, so if
+     * our database actions fail, we want to remove the file
+     * from storage and rethrow the exception.
+     *
+     * @param string $fileName
+     * @throws Exception
+     */
+    private function attemptTransactionOrRollbackFile(string $fileName): void
+    {
+        try {
+            $this->handleTransactions();
+        } catch (Throwable $e) {
+            $this->fileService
+                ->setDisk($this->getThread()->getStorageDisk())
+                ->destroy("{$this->getThread()->getDocumentsDirectory()}/$fileName");
+
+            throw new Exception($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    /**
      * @throws FeatureDisabledException
      */
-    private function isDocumentUploadEnabled(): void
+    private function checkDocumentUploadIsEnabled(): void
     {
         if (! $this->messenger->isMessageDocumentUploadEnabled()) {
             throw new FeatureDisabledException('Document messages are currently disabled.');
@@ -98,15 +125,7 @@ class StoreDocumentMessage extends NewMessageAction
         return $this->fileService
             ->setType('document')
             ->setDisk($this->getThread()->getStorageDisk())
-            ->setDirectory($this->getDirectory())
+            ->setDirectory($this->getThread()->getDocumentsDirectory())
             ->upload($file);
-    }
-
-    /**
-     * @return string
-     */
-    private function getDirectory(): string
-    {
-        return "{$this->getThread()->getStorageDirectory()}/documents";
     }
 }

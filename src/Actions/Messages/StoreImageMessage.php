@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Actions\Messages;
 
+use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\UploadedFile;
@@ -63,15 +64,20 @@ class StoreImageMessage extends NewMessageAction
      */
     public function execute(...$parameters): self
     {
-        $this->isImageUploadEnabled();
+        $this->checkImageUploadIsEnabled();
 
-        $this->setThread($parameters[0])
-            ->setMessageType('IMAGE_MESSAGE')
-            ->setMessageBody($this->upload($parameters[1]['image']))
+        $this->setThread($parameters[0]);
+
+        $image = $this->upload($parameters[1]['image']);
+
+        $this->setMessageType('IMAGE_MESSAGE')
+            ->setMessageBody($image)
             ->setMessageOptionalParameters($parameters[1])
-            ->setMessageOwner($this->messenger->getProvider())
-            ->handleTransactions()
-            ->generateResource()
+            ->setMessageOwner($this->messenger->getProvider());
+
+        $this->attemptTransactionOrRollbackFile($image);
+
+        $this->generateResource()
             ->fireBroadcast()
             ->fireEvents();
 
@@ -79,9 +85,30 @@ class StoreImageMessage extends NewMessageAction
     }
 
     /**
+     * The image file has been uploaded at this point, so if
+     * our database actions fail, we want to remove the file
+     * from storage and rethrow the exception.
+     *
+     * @param string $fileName
+     * @throws Exception
+     */
+    private function attemptTransactionOrRollbackFile(string $fileName): void
+    {
+        try {
+            $this->handleTransactions();
+        } catch (Throwable $e) {
+            $this->fileService
+                ->setDisk($this->getThread()->getStorageDisk())
+                ->destroy("{$this->getThread()->getImagesDirectory()}/$fileName");
+
+            throw new Exception($e->getMessage(), $e->getCode(), $e);
+        }
+    }
+
+    /**
      * @throws FeatureDisabledException
      */
-    private function isImageUploadEnabled(): void
+    private function checkImageUploadIsEnabled(): void
     {
         if (! $this->messenger->isMessageImageUploadEnabled()) {
             throw new FeatureDisabledException('Image messages are currently disabled.');
@@ -98,15 +125,7 @@ class StoreImageMessage extends NewMessageAction
         return $this->fileService
             ->setType('image')
             ->setDisk($this->getThread()->getStorageDisk())
-            ->setDirectory($this->getDirectory())
+            ->setDirectory($this->getThread()->getImagesDirectory())
             ->upload($file);
-    }
-
-    /**
-     * @return string
-     */
-    private function getDirectory(): string
-    {
-        return "{$this->getThread()->getStorageDirectory()}/images";
     }
 }
