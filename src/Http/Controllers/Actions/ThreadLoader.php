@@ -30,7 +30,7 @@ class ThreadLoader
      * @return ThreadResource
      * @throws AuthorizationException
      */
-    public function __invoke(Thread $thread, ?String $relations = null): ThreadResource
+    public function __invoke(Thread $thread, ?string $relations = null): ThreadResource
     {
         $this->authorize('view', $thread);
 
