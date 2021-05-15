@@ -24,8 +24,7 @@ abstract class MessengerAvatarAction extends BaseMessengerAction
      * @param Messenger $messenger
      * @param FileService $fileService
      */
-    public function __construct(Messenger $messenger,
-                                FileService $fileService)
+    public function __construct(Messenger $messenger, FileService $fileService)
     {
         $this->fileService = $fileService;
         $this->messenger = $messenger;

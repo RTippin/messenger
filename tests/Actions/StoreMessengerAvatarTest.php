@@ -2,12 +2,16 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Mockery;
 use RTippin\Messenger\Actions\Messenger\StoreMessengerAvatar;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Services\FileService;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreMessengerAvatarTest extends FeatureTestCase
@@ -32,6 +36,27 @@ class StoreMessengerAvatarTest extends FeatureTestCase
 
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Avatar upload is currently disabled.');
+
+        app(StoreMessengerAvatar::class)->execute([
+            'image' => UploadedFile::fake()->image('avatar.jpg'),
+        ]);
+    }
+
+    /** @test */
+    public function it_throws_exception_if_transaction_fails_and_removes_uploaded_avatar()
+    {
+        $this->tippin->update(['picture' => 'avatar.jpg']);
+
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('Storage Error');
+        $fileService = $this->mock(FileService::class);
+        $fileService->shouldReceive([
+            'setType' => Mockery::self(),
+            'setDisk' => Mockery::self(),
+            'setDirectory' => Mockery::self(),
+            'upload' => 'avatar.jpg',
+        ]);
+        $fileService->shouldReceive('destroy')->andThrow(new Exception('Storage Error'));
 
         app(StoreMessengerAvatar::class)->execute([
             'image' => UploadedFile::fake()->image('avatar.jpg'),

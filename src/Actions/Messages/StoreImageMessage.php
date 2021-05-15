@@ -64,7 +64,7 @@ class StoreImageMessage extends NewMessageAction
      */
     public function execute(...$parameters): self
     {
-        $this->checkImageUploadIsEnabled();
+        $this->isImageUploadEnabled();
 
         $this->setThread($parameters[0]);
 
@@ -108,7 +108,7 @@ class StoreImageMessage extends NewMessageAction
     /**
      * @throws FeatureDisabledException
      */
-    private function checkImageUploadIsEnabled(): void
+    private function isImageUploadEnabled(): void
     {
         if (! $this->messenger->isMessageImageUploadEnabled()) {
             throw new FeatureDisabledException('Image messages are currently disabled.');

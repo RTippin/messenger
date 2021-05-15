@@ -2,11 +2,13 @@
 
 namespace RTippin\Messenger\Actions\Messenger;
 
+use Exception;
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\FileServiceException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Services\FileService;
+use Throwable;
 
 class StoreMessengerAvatar extends MessengerAvatarAction
 {
@@ -16,8 +18,7 @@ class StoreMessengerAvatar extends MessengerAvatarAction
      * @param Messenger $messenger
      * @param FileService $fileService
      */
-    public function __construct(Messenger $messenger,
-                                FileService $fileService)
+    public function __construct(Messenger $messenger, FileService $fileService)
     {
         parent::__construct($messenger, $fileService);
     }
@@ -25,18 +26,37 @@ class StoreMessengerAvatar extends MessengerAvatarAction
     /**
      * @param mixed ...$parameters
      * @return $this
-     * @throws FeatureDisabledException|FileServiceException
-     *@var UploadedFile[0]['image']
+     * @throws FeatureDisabledException|FileServiceException|Exception
+     * @var UploadedFile[0]['image']
      */
     public function execute(...$parameters): self
     {
         $this->isAvatarUploadEnabled();
 
-        $file = $this->upload($parameters[0]['image']);
-
-        $this->removeOldIfExist()->updateProviderAvatar($file);
+        $this->attemptTransactionOrRollbackFile($this->upload($parameters[0]['image']));
 
         return $this;
+    }
+
+    /**
+     * The avatar has been uploaded at this point, so if our
+     * database actions fail, we want to remove the avatar
+     * from storage and rethrow the exception.
+     *
+     * @param string $fileName
+     * @throws Exception
+     */
+    private function attemptTransactionOrRollbackFile(string $fileName): void
+    {
+        try {
+            $this->removeOldIfExist()->updateProviderAvatar($fileName);
+        } catch (Throwable $e) {
+            $this->fileService
+                ->setDisk($this->messenger->getAvatarStorage('disk'))
+                ->destroy("{$this->getDirectory()}/$fileName");
+
+            throw new Exception($e->getMessage(), $e->getCode(), $e);
+        }
     }
 
     /**

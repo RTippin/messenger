@@ -14,8 +14,7 @@ class DestroyMessengerAvatar extends MessengerAvatarAction
      * @param Messenger $messenger
      * @param FileService $fileService
      */
-    public function __construct(Messenger $messenger,
-                                FileService $fileService)
+    public function __construct(Messenger $messenger, FileService $fileService)
     {
         parent::__construct($messenger, $fileService);
     }

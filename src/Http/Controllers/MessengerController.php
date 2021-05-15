@@ -2,10 +2,12 @@
 
 namespace RTippin\Messenger\Http\Controllers;
 
+use Exception;
 use RTippin\Messenger\Actions\Messenger\DestroyMessengerAvatar;
 use RTippin\Messenger\Actions\Messenger\StoreMessengerAvatar;
 use RTippin\Messenger\Actions\Messenger\UpdateMessengerSettings;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
+use RTippin\Messenger\Exceptions\FileServiceException;
 use RTippin\Messenger\Http\Collections\ActiveCallCollection;
 use RTippin\Messenger\Http\Request\MessengerAvatarRequest;
 use RTippin\Messenger\Http\Request\MessengerSettingsRequest;
@@ -90,7 +92,7 @@ class MessengerController
      * @param MessengerAvatarRequest $request
      * @param StoreMessengerAvatar $storeMessengerAvatar
      * @return MessengerResource
-     * @throws FeatureDisabledException
+     * @throws FeatureDisabledException|FileServiceException|Exception
      */
     public function updateAvatar(MessengerAvatarRequest $request,
                                  StoreMessengerAvatar $storeMessengerAvatar): MessengerResource

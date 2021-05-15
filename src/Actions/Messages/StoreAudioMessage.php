@@ -64,7 +64,7 @@ class StoreAudioMessage extends NewMessageAction
      */
     public function execute(...$parameters): self
     {
-        $this->checkAudioUploadIsEnabled();
+        $this->isAudioUploadEnabled();
 
         $this->setThread($parameters[0]);
 
@@ -108,7 +108,7 @@ class StoreAudioMessage extends NewMessageAction
     /**
      * @throws FeatureDisabledException
      */
-    private function checkAudioUploadIsEnabled(): void
+    private function isAudioUploadEnabled(): void
     {
         if (! $this->messenger->isMessageAudioUploadEnabled()) {
             throw new FeatureDisabledException('Audio messages are currently disabled.');
