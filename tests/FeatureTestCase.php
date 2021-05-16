@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Cache;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Contracts\MessengerProvider;
 
 class FeatureTestCase extends MessengerTestCase
@@ -41,6 +42,8 @@ class FeatureTestCase extends MessengerTestCase
     protected function tearDown(): void
     {
         Cache::flush();
+
+        BaseMessengerAction::enableEvents();
 
         parent::tearDown();
     }

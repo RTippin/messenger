@@ -17,6 +17,11 @@ use RTippin\Messenger\Traits\ChecksReflection;
 
 abstract class BaseMessengerAction implements Action
 {
+    /**
+     * @var bool
+     */
+    private static bool $allEventsSilenced = false;
+
     use ChecksReflection;
 
     /**
@@ -87,6 +92,22 @@ abstract class BaseMessengerAction implements Action
     /**
      * @inheritDoc
      */
+    public static function disableEvents(): void
+    {
+        static::$allEventsSilenced = true;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function enableEvents(): void
+    {
+        static::$allEventsSilenced = false;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function isChained(): bool
     {
         return $this->isChained;
@@ -105,7 +126,7 @@ abstract class BaseMessengerAction implements Action
      */
     public function shouldFireEvents(): bool
     {
-        return $this->shouldFireEvents;
+        return ! static::$allEventsSilenced && $this->shouldFireEvents;
     }
 
     /**
@@ -113,7 +134,7 @@ abstract class BaseMessengerAction implements Action
      */
     public function shouldFireBroadcast(): bool
     {
-        return $this->shouldFireBroadcast;
+        return ! static::$allEventsSilenced && $this->shouldFireBroadcast;
     }
 
     /**

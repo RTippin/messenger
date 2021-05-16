@@ -23,6 +23,18 @@ interface Action
     public function execute(...$parameters);
 
     /**
+     * Disables all events and broadcast globally
+     * for any actions during the request cycle.
+     */
+    public static function disableEvents(): void;
+
+    /**
+     * Enables default events and broadcast globally
+     * for any actions during the request cycle.
+     */
+    public static function enableEvents(): void;
+
+    /**
      * Is the current action part of a chain?
      */
     public function isChained(): bool;
