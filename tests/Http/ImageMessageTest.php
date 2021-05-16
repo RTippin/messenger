@@ -3,67 +3,40 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
-use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
-use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class ImageMessageTest extends FeatureTestCase
+class ImageMessageTest extends HttpTestCase
 {
-    private Thread $private;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-        Storage::fake(Messenger::getThreadStorage('disk'));
-    }
-
     /** @test */
     public function user_can_send_image_message()
     {
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.images.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'image' => UploadedFile::fake()->image('picture.jpg'),
             'temporary_id' => '123-456-789',
         ])
             ->assertSuccessful()
             ->assertJson([
-                'thread_id' => $this->private->id,
+                'thread_id' => $thread->id,
                 'temporary_id' => '123-456-789',
                 'type' => 1,
                 'type_verbose' => 'IMAGE_MESSAGE',
-                'owner' => [
-                    'provider_id' => $this->tippin->getKey(),
-                    'provider_alias' => 'user',
-                    'name' => 'Richard Tippin',
-                ],
             ]);
     }
 
     /** @test */
     public function user_can_send_image_message_with_extra()
     {
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.images.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'image' => UploadedFile::fake()->image('picture.jpg'),
             'temporary_id' => '123-456-789',
@@ -71,17 +44,9 @@ class ImageMessageTest extends FeatureTestCase
         ])
             ->assertSuccessful()
             ->assertJson([
-                'thread_id' => $this->private->id,
-                'temporary_id' => '123-456-789',
-                'type' => 1,
-                'type_verbose' => 'IMAGE_MESSAGE',
+                'thread_id' => $thread->id,
                 'extra' => [
                     'test' => true,
-                ],
-                'owner' => [
-                    'provider_id' => $this->tippin->getKey(),
-                    'provider_alias' => 'user',
-                    'name' => 'Richard Tippin',
                 ],
             ]);
     }
@@ -90,15 +55,11 @@ class ImageMessageTest extends FeatureTestCase
     public function image_message_mime_types_can_be_overwritten()
     {
         Messenger::setMessageImageMimeTypes('cr2');
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.images.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'image' => UploadedFile::fake()->create('avatar.cr2', 500, 'image/x-canon-cr2'),
             'temporary_id' => '123-456-789',
@@ -110,15 +71,11 @@ class ImageMessageTest extends FeatureTestCase
     public function image_message_size_limit_can_be_overwritten()
     {
         Messenger::setMessageImageSizeLimit(20480);
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.images.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'image' => UploadedFile::fake()->create('avatar.jpg', 18000, 'image/jpeg'),
             'temporary_id' => '123-456-789',
@@ -130,10 +87,11 @@ class ImageMessageTest extends FeatureTestCase
     public function user_forbidden_to_send_image_message_when_disabled_from_config()
     {
         Messenger::setMessageImageUpload(false);
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.images.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'image' => UploadedFile::fake()->image('picture.jpg'),
             'temporary_id' => '123-456-789',
@@ -148,10 +106,11 @@ class ImageMessageTest extends FeatureTestCase
      */
     public function send_image_message_upload_passes_validation($imageValue)
     {
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.images.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'image' => $imageValue,
             'temporary_id' => '123-456-789',
@@ -166,10 +125,11 @@ class ImageMessageTest extends FeatureTestCase
      */
     public function send_image_message_upload_fails_validation($imageValue)
     {
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.images.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'image' => $imageValue,
             'temporary_id' => '123-456-789',

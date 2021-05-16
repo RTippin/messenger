@@ -2,52 +2,100 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
-use RTippin\Messenger\Events\NewThreadEvent;
-use RTippin\Messenger\Events\ParticipantsAddedEvent;
-use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class GroupThreadsTest extends FeatureTestCase
+class GroupThreadsTest extends HttpTestCase
 {
-    /** @test */
-    public function guest_is_unauthorized()
-    {
-        $this->getJson(route('api.messenger.groups.index'))
-            ->assertUnauthorized();
-    }
-
     /** @test */
     public function user_has_one_group()
     {
-        $group = $this->createGroupThread($this->tippin);
-
+        $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.groups.index'))
             ->assertSuccessful()
-            ->assertJsonCount(1, 'data')
+            ->assertJsonCount(1, 'data');
+    }
+
+    /** @test */
+    public function store_group_without_extra_participants()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.groups.store'), [
+            'subject' => 'Test Group',
+        ])
+            ->assertSuccessful()
             ->assertJson([
-                'data' => [
-                    [
-                        'id' => $group->id,
-                        'type' => 2,
-                        'type_verbose' => 'GROUP',
-                        'group' => true,
-                        'name' => 'First Test Group',
-                        'options' => [
-                            'admin' => true,
-                        ],
-                    ],
-                ],
-                'meta' => [
-                    'final_page' => true,
-                    'index' => true,
-                    'per_page' => Messenger::getThreadsIndexCount(),
-                    'results' => 1,
-                    'total' => 1,
-                ],
+                'type' => 2,
+                'type_verbose' => 'GROUP',
+                'group' => true,
+                'name' => 'Test Group',
             ]);
+    }
+
+    /** @test */
+    public function store_group_with_extra_participants_will_ignore_participant_if_not_friend()
+    {
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.groups.store'), [
+            'subject' => 'Test Group',
+            'providers' => [
+                [
+                    'id' => $this->doe->getKey(),
+                    'alias' => 'user',
+                ],
+            ],
+        ])
+            ->assertSuccessful();
+
+        $this->assertDatabaseCount('participants', 1);
+    }
+
+    /** @test */
+    public function store_group_with_one_added_participant()
+    {
+        $this->createFriends($this->tippin, $this->doe);
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.groups.store'), [
+            'subject' => 'Test Group Participants',
+            'providers' => [
+                [
+                    'id' => $this->doe->getKey(),
+                    'alias' => 'user',
+                ],
+            ],
+        ])
+            ->assertSuccessful();
+
+        $this->assertDatabaseCount('participants', 2);
+    }
+
+    /** @test */
+    public function store_group_with_multiple_providers()
+    {
+        $this->createFriends($this->tippin, $this->doe);
+        $this->createFriends($this->tippin, $this->developers);
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.groups.store'), [
+            'subject' => 'Test Many Participants',
+            'providers' => [
+                [
+                    'id' => $this->doe->getKey(),
+                    'alias' => 'user',
+                ],
+                [
+                    'id' => $this->developers->getKey(),
+                    'alias' => 'company',
+                ],
+            ],
+        ])
+            ->assertSuccessful();
+
+        $this->assertDatabaseCount('participants', 3);
     }
 
     /**
@@ -83,156 +131,6 @@ class GroupThreadsTest extends FeatureTestCase
             ->assertStatus(422)
             ->assertJsonMissingValidationErrors('subject')
             ->assertJsonValidationErrors($errors);
-    }
-
-    /** @test */
-    public function store_group_without_extra_participants()
-    {
-        $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            NewThreadEvent::class,
-        ]);
-        $this->doesntExpectEvents([
-            NewThreadBroadcast::class,
-        ]);
-
-        $this->postJson(route('api.messenger.groups.store'), [
-            'subject' => 'Test Group',
-        ])
-            ->assertSuccessful()
-            ->assertJson([
-                'type' => 2,
-                'type_verbose' => 'GROUP',
-                'group' => true,
-                'name' => 'Test Group',
-                'options' => [
-                    'admin' => true,
-                    'invitations' => true,
-                    'add_participants' => true,
-                ],
-                'resources' => [
-                    'latest_message' => [
-                        'type' => 93,
-                        'type_verbose' => 'GROUP_CREATED',
-                        'body' => 'created Test Group',
-                    ],
-                ],
-            ]);
-    }
-
-    /** @test */
-    public function store_group_with_extra_participants_will_ignore_participant_if_not_friend()
-    {
-        $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            NewThreadEvent::class,
-        ]);
-        $this->doesntExpectEvents([
-            NewThreadBroadcast::class,
-            ParticipantsAddedEvent::class,
-        ]);
-
-        $this->postJson(route('api.messenger.groups.store'), [
-            'subject' => 'Test Group',
-            'providers' => [
-                [
-                    'id' => $this->doe->getKey(),
-                    'alias' => 'user',
-                ],
-            ],
-        ])
-            ->assertSuccessful()
-            ->assertJson([
-                'type' => 2,
-                'type_verbose' => 'GROUP',
-                'group' => true,
-                'name' => 'Test Group',
-                'options' => [
-                    'admin' => true,
-                    'invitations' => true,
-                    'add_participants' => true,
-                ],
-                'resources' => [
-                    'latest_message' => [
-                        'type' => 93,
-                        'type_verbose' => 'GROUP_CREATED',
-                        'body' => 'created Test Group',
-                    ],
-                ],
-            ]);
-    }
-
-    /** @test */
-    public function store_group_with_one_added_participant_that_is_friend()
-    {
-        $this->createFriends($this->tippin, $this->doe);
-        $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            NewThreadEvent::class,
-            NewThreadBroadcast::class,
-            ParticipantsAddedEvent::class,
-        ]);
-
-        $this->postJson(route('api.messenger.groups.store'), [
-            'subject' => 'Test Group Participants',
-            'providers' => [
-                [
-                    'id' => $this->doe->getKey(),
-                    'alias' => 'user',
-                ],
-            ],
-        ])
-            ->assertSuccessful()
-            ->assertJson([
-                'type' => 2,
-                'type_verbose' => 'GROUP',
-                'group' => true,
-                'name' => 'Test Group Participants',
-                'options' => [
-                    'admin' => true,
-                    'invitations' => true,
-                    'add_participants' => true,
-                ],
-                'resources' => [
-                    'latest_message' => [
-                        'type' => 93,
-                        'type_verbose' => 'GROUP_CREATED',
-                        'body' => 'created Test Group Participants',
-                    ],
-                ],
-            ]);
-    }
-
-    /** @test */
-    public function store_group_with_multiple_providers_added_as_participants_that_are_friends()
-    {
-        $this->createFriends($this->tippin, $this->doe);
-        $this->createFriends($this->tippin, $this->developers);
-        $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            NewThreadEvent::class,
-            NewThreadBroadcast::class,
-            ParticipantsAddedEvent::class,
-        ]);
-
-        $this->postJson(route('api.messenger.groups.store'), [
-            'subject' => 'Test Many Participants',
-            'providers' => [
-                [
-                    'id' => $this->doe->getKey(),
-                    'alias' => 'user',
-                ],
-                [
-                    'id' => $this->developers->getKey(),
-                    'alias' => 'company',
-                ],
-            ],
-        ])
-            ->assertSuccessful();
     }
 
     public function subjectValidation(): array
