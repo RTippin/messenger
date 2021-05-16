@@ -20,12 +20,12 @@ class ArchiveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_can_check_archive_group_thread()
     {
-        $group = Thread::factory()->group()->create(['subject' => 'Some Group']);
-        Participant::factory()->for($group)->owner($this->tippin)->admin()->create();
+        $thread = Thread::factory()->group()->create(['subject' => 'Some Group']);
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.archive.check', [
-            'thread' => $group->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful()
             ->assertJson([
@@ -40,12 +40,12 @@ class ArchiveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function non_admin_forbidden_to_check_archive_group_thread()
     {
-        $group = Thread::factory()->group()->create();
-        Participant::factory()->for($group)->owner($this->doe)->create();
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.archive.check', [
-            'thread' => $group->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
@@ -53,13 +53,13 @@ class ArchiveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_forbidden_to_check_archive_group_thread_with_active_call()
     {
-        $group = Thread::factory()->group()->create();
-        Participant::factory()->for($group)->owner($this->tippin)->admin()->create();
-        Call::factory()->for($group)->owner($this->tippin)->setup()->create();
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.archive.check', [
-            'thread' => $group->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
@@ -67,12 +67,12 @@ class ArchiveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_can_archive_group_thread()
     {
-        $group = Thread::factory()->group()->create();
-        Participant::factory()->for($group)->owner($this->tippin)->admin()->create();
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.destroy', [
-            'thread' => $group->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful();
     }
@@ -80,12 +80,12 @@ class ArchiveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function non_admin_forbidden_to_archive_group_thread()
     {
-        $group = Thread::factory()->group()->create();
-        Participant::factory()->for($group)->owner($this->doe)->create();
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->doe);
 
         $this->deleteJson(route('api.messenger.threads.destroy', [
-            'thread' => $group->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
@@ -93,11 +93,11 @@ class ArchiveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function non_participant_forbidden_to_archive_group_thread()
     {
-        $group = Thread::factory()->group()->create();
+        $thread = Thread::factory()->group()->create();
         $this->actingAs($this->doe);
 
         $this->deleteJson(route('api.messenger.threads.destroy', [
-            'thread' => $group->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
@@ -105,13 +105,13 @@ class ArchiveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_forbidden_to_archive_group_thread_with_active_call()
     {
-        $group = Thread::factory()->group()->create();
-        Participant::factory()->for($group)->owner($this->tippin)->admin()->create();
-        Call::factory()->for($group)->owner($this->tippin)->setup()->create();
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
         $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.destroy', [
-            'thread' => $group->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }

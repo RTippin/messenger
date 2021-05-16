@@ -2,20 +2,21 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Broadcasting\ThreadArchivedBroadcast;
-use RTippin\Messenger\Events\ThreadArchivedEvent;
+use RTippin\Messenger\Actions\BaseMessengerAction;
+use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class ArchivePrivateThreadTest extends FeatureTestCase
 {
-    private Thread $private;
+    private Thread $thread;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
+        BaseMessengerAction::disableEvents();
+        $this->thread = $this->createPrivateThread($this->tippin, $this->doe);
     }
 
     /** @test */
@@ -24,7 +25,7 @@ class ArchivePrivateThreadTest extends FeatureTestCase
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.archive.check', [
-            'thread' => $this->private->id,
+            'thread' => $this->thread->id,
         ]))
             ->assertSuccessful()
             ->assertJson([
@@ -39,11 +40,11 @@ class ArchivePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function user_forbidden_to_check_archive_private_thread_with_active_call()
     {
-        $this->createCall($this->private, $this->tippin);
+        Call::factory()->for($this->thread)->owner($this->tippin)->setup()->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.archive.check', [
-            'thread' => $this->private->id,
+            'thread' => $this->thread->id,
         ]))
             ->assertForbidden();
     }
@@ -53,13 +54,8 @@ class ArchivePrivateThreadTest extends FeatureTestCase
     {
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            ThreadArchivedBroadcast::class,
-            ThreadArchivedEvent::class,
-        ]);
-
         $this->deleteJson(route('api.messenger.threads.destroy', [
-            'thread' => $this->private->id,
+            'thread' => $this->thread->id,
         ]))
             ->assertSuccessful();
     }
@@ -69,13 +65,8 @@ class ArchivePrivateThreadTest extends FeatureTestCase
     {
         $this->actingAs($this->doe);
 
-        $this->expectsEvents([
-            ThreadArchivedBroadcast::class,
-            ThreadArchivedEvent::class,
-        ]);
-
         $this->deleteJson(route('api.messenger.threads.destroy', [
-            'thread' => $this->private->id,
+            'thread' => $this->thread->id,
         ]))
             ->assertSuccessful();
     }
@@ -86,7 +77,7 @@ class ArchivePrivateThreadTest extends FeatureTestCase
         $this->actingAs($this->createJaneSmith());
 
         $this->deleteJson(route('api.messenger.threads.destroy', [
-            'thread' => $this->private->id,
+            'thread' => $this->thread->id,
         ]))
             ->assertForbidden();
     }
@@ -94,11 +85,11 @@ class ArchivePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function user_forbidden_to_archive_private_thread_with_active_call()
     {
-        $this->createCall($this->private, $this->tippin);
+        Call::factory()->for($this->thread)->owner($this->tippin)->setup()->create();
         $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.destroy', [
-            'thread' => $this->private->id,
+            'thread' => $this->thread->id,
         ]))
             ->assertForbidden();
     }

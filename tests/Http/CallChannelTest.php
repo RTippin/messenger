@@ -3,22 +3,12 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Models\Call;
+use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class CallChannelTest extends FeatureTestCase
 {
-    private Thread $private;
-    private Call $call;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-        $this->call = $this->createCall($this->private, $this->tippin);
-    }
-
     protected function getEnvironmentSetUp($app): void
     {
         parent::getEnvironmentSetUp($app);
@@ -31,8 +21,11 @@ class CallChannelTest extends FeatureTestCase
     /** @test */
     public function guest_is_unauthorized()
     {
+        $thread = Thread::factory()->create();
+        $call = Call::factory()->for($thread)->owner($this->tippin)->create();
+
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-messenger.call.{$this->call->id}.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.call.$call->id.thread.$thread->id",
         ])
             ->assertUnauthorized();
     }
@@ -40,10 +33,11 @@ class CallChannelTest extends FeatureTestCase
     /** @test */
     public function missing_thread_forbidden()
     {
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-messenger.call.{$this->call->id}.thread.404",
+            'channel_name' => "presence-messenger.call.$call->id.thread.404",
         ])
             ->assertForbidden();
     }
@@ -51,32 +45,37 @@ class CallChannelTest extends FeatureTestCase
     /** @test */
     public function missing_call_forbidden()
     {
+        $thread = Thread::factory()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-messenger.call.404.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.call.404.thread.$thread->id",
         ])
             ->assertForbidden();
     }
 
     /** @test */
-    public function non_participant_forbidden()
+    public function non_thread_participant_forbidden()
     {
-        $this->actingAs($this->companyDevelopers());
-
-        $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-messenger.call.{$this->call->id}.thread.{$this->private->id}",
-        ])
-            ->assertForbidden();
-    }
-
-    /** @test */
-    public function non_joined_participant_forbidden()
-    {
+        $thread = Thread::factory()->create();
+        $call = Call::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-messenger.call.{$this->call->id}.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.call.$call->id.thread.$thread->id",
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function non_joined_call_participant_forbidden()
+    {
+        $thread = $this->createGroupThread($this->doe);
+        $call = Call::factory()->for($thread)->owner($this->doe)->create();
+        $this->actingAs($this->doe);
+
+        $this->postJson('/api/broadcasting/auth', [
+            'channel_name' => "presence-messenger.call.$call->id.thread.$thread->id",
         ])
             ->assertForbidden();
     }
@@ -84,15 +83,13 @@ class CallChannelTest extends FeatureTestCase
     /** @test */
     public function kicked_participant_forbidden()
     {
-        $this->call->participants()
-            ->first()
-            ->update([
-                'kicked' => true,
-            ]);
-        $this->actingAs($this->tippin);
+        $thread = $this->createGroupThread($this->doe);
+        $call = Call::factory()->for($thread)->owner($this->doe)->create();
+        CallParticipant::factory()->for($call)->owner($this->doe)->kicked()->create();
+        $this->actingAs($this->doe);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-messenger.call.{$this->call->id}.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.call.$call->id.thread.$thread->id",
         ])
             ->assertForbidden();
     }
@@ -100,13 +97,13 @@ class CallChannelTest extends FeatureTestCase
     /** @test */
     public function inactive_call_forbidden()
     {
-        $this->call->update([
-            'call_ended' => now(),
-        ]);
+        $thread = $this->createGroupThread($this->tippin);
+        $call = Call::factory()->for($thread)->owner($this->tippin)->ended()->create();
+        CallParticipant::factory()->for($call)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-messenger.call.{$this->call->id}.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.call.$call->id.thread.$thread->id",
         ])
             ->assertForbidden();
     }
@@ -114,10 +111,12 @@ class CallChannelTest extends FeatureTestCase
     /** @test */
     public function call_participant_is_authorized()
     {
+        $thread = $this->createGroupThread($this->tippin);
+        $call = $this->createCall($thread, $this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-messenger.call.{$this->call->id}.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.call.$call->id.thread.$thread->id",
         ])
             ->assertSuccessful()
             ->assertJson([

@@ -4,43 +4,40 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class AudioMessageTest extends FeatureTestCase
 {
-    private Thread $private;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
+        BaseMessengerAction::disableEvents();
         Storage::fake(Messenger::getThreadStorage('disk'));
     }
 
     /** @test */
     public function user_can_send_audio_message()
     {
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.audio.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
             'temporary_id' => '123-456-789',
         ])
             ->assertSuccessful()
             ->assertJson([
-                'thread_id' => $this->private->id,
+                'thread_id' => $thread->id,
                 'temporary_id' => '123-456-789',
                 'type' => 3,
                 'type_verbose' => 'AUDIO_MESSAGE',
@@ -55,15 +52,12 @@ class AudioMessageTest extends FeatureTestCase
     /** @test */
     public function user_can_send_audio_message_with_extra()
     {
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.audio.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
             'temporary_id' => '123-456-789',
@@ -71,7 +65,7 @@ class AudioMessageTest extends FeatureTestCase
         ])
             ->assertSuccessful()
             ->assertJson([
-                'thread_id' => $this->private->id,
+                'thread_id' => $thread->id,
                 'temporary_id' => '123-456-789',
                 'type' => 3,
                 'type_verbose' => 'AUDIO_MESSAGE',
@@ -90,15 +84,12 @@ class AudioMessageTest extends FeatureTestCase
     public function audio_message_mime_types_can_be_overwritten()
     {
         Messenger::setMessageAudioMimeTypes('3gpp');
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.audio.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'audio' => UploadedFile::fake()->create('test.3gp', 500, 'audio/3gpp'),
             'temporary_id' => '123-456-789',
@@ -110,15 +101,12 @@ class AudioMessageTest extends FeatureTestCase
     public function audio_message_size_limit_can_be_overwritten()
     {
         Messenger::setMessageAudioSizeLimit(20480);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.audio.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'audio' => UploadedFile::fake()->create('test.mp3', 18000, 'audio/mpeg'),
             'temporary_id' => '123-456-789',
@@ -130,10 +118,12 @@ class AudioMessageTest extends FeatureTestCase
     public function user_forbidden_to_send_audio_message_when_disabled_from_config()
     {
         Messenger::setMessageAudioUpload(false);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.audio.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
             'temporary_id' => '123-456-789',
@@ -148,10 +138,12 @@ class AudioMessageTest extends FeatureTestCase
      */
     public function send_audio_message_passes_audio_validation($audioValue)
     {
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.audio.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'audio' => $audioValue,
             'temporary_id' => '123-456-789',
@@ -166,10 +158,12 @@ class AudioMessageTest extends FeatureTestCase
      */
     public function send_audio_message_fails_audio_validation($audioValue)
     {
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.audio.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'audio' => $audioValue,
             'temporary_id' => '123-456-789',
