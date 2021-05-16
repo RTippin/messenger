@@ -18,12 +18,12 @@ class CreateThreadsTable extends Migration
             $table->integer('type')->default(1);
             $table->string('subject')->nullable();
             $table->string('image')->nullable();
-            $table->boolean('add_participants')->default(0);
-            $table->boolean('invitations')->default(0);
-            $table->boolean('calling')->default(1);
-            $table->boolean('messaging')->default(1);
-            $table->boolean('knocks')->default(1);
-            $table->boolean('lockout')->default(0);
+            $table->boolean('add_participants')->default(false);
+            $table->boolean('invitations')->default(false);
+            $table->boolean('calling')->default(true);
+            $table->boolean('messaging')->default(true);
+            $table->boolean('knocks')->default(true);
+            $table->boolean('lockout')->default(false);
             $table->timestamps(6);
             $table->softDeletes();
         });

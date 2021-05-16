@@ -19,8 +19,8 @@ class CreateCallsTable extends Migration
             $table->uuid('thread_id');
             Helpers::SchemaMorphType('owner', $table);
             $table->integer('type')->default(1);
-            $table->boolean('setup_complete')->default(0);
-            $table->boolean('teardown_complete')->default(0);
+            $table->boolean('setup_complete')->default(false);
+            $table->boolean('teardown_complete')->default(false);
             $table->string('room_id')->nullable();
             $table->string('room_pin')->nullable();
             $table->string('room_secret')->nullable();

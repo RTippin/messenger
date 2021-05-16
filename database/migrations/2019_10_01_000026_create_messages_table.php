@@ -21,9 +21,9 @@ class CreateMessagesTable extends Migration
             $table->integer('type')->index();
             $table->text('body');
             $table->uuid('reply_to_id')->nullable()->index();
-            $table->boolean('edited')->default(0);
-            $table->boolean('reacted')->default(0);
-            $table->boolean('embeds')->default(1);
+            $table->boolean('edited')->default(false);
+            $table->boolean('reacted')->default(false);
+            $table->boolean('embeds')->default(true);
             $table->text('extra')->nullable()->default(null);
             $table->timestamps(6);
             $table->softDeletes();

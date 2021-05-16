@@ -18,7 +18,7 @@ class CreateCallParticipantsTable extends Migration
             $table->uuid('id')->primary();
             $table->uuid('call_id');
             Helpers::SchemaMorphType('owner', $table);
-            $table->boolean('kicked')->default(0);
+            $table->boolean('kicked')->default(false);
             $table->timestamp('left_call')->nullable();
             $table->timestamps();
             $table->foreign('call_id')
