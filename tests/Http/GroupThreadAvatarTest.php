@@ -73,8 +73,7 @@ class GroupThreadAvatarTest extends HttpTestCase
     /** @test */
     public function update_group_avatar_with_upload()
     {
-        $thread = Thread::factory()->group()->create();
-        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
@@ -89,8 +88,7 @@ class GroupThreadAvatarTest extends HttpTestCase
     public function group_avatar_mime_types_can_be_overwritten()
     {
         Messenger::setThreadAvatarMimeTypes('cr2');
-        $thread = Thread::factory()->group()->create();
-        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
@@ -105,8 +103,7 @@ class GroupThreadAvatarTest extends HttpTestCase
     public function group_avatar_size_limit_can_be_overwritten()
     {
         Messenger::setThreadAvatarSizeLimit(20480);
-        $thread = Thread::factory()->group()->create();
-        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
@@ -124,8 +121,7 @@ class GroupThreadAvatarTest extends HttpTestCase
      */
     public function update_group_avatar_default_passes_validation($defaultValue)
     {
-        $thread = Thread::factory()->group()->create();
-        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
@@ -143,8 +139,7 @@ class GroupThreadAvatarTest extends HttpTestCase
      */
     public function update_group_avatar_default_fails_validation($defaultValue)
     {
-        $thread = Thread::factory()->group()->create();
-        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
@@ -163,8 +158,7 @@ class GroupThreadAvatarTest extends HttpTestCase
      */
     public function group_avatar_upload_passes_validations($avatarValue)
     {
-        $thread = Thread::factory()->group()->create();
-        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
@@ -182,8 +176,7 @@ class GroupThreadAvatarTest extends HttpTestCase
      */
     public function group_avatar_upload_fails_validations($avatarValue)
     {
-        $thread = Thread::factory()->group()->create();
-        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
