@@ -2,34 +2,20 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
-use RTippin\Messenger\Events\ThreadLeftEvent;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class LeaveGroupThreadTest extends FeatureTestCase
+class LeaveGroupThreadTest extends HttpTestCase
 {
-    private Thread $group;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-    }
-
     /** @test */
     public function non_admin_can_leave()
     {
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
         $this->actingAs($this->doe);
 
-        $this->expectsEvents([
-            ThreadLeftBroadcast::class,
-            ThreadLeftEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.leave', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful();
     }
@@ -37,18 +23,12 @@ class LeaveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function non_admin_can_leave_when_thread_locked()
     {
-        $this->group->update([
-            'lockout' => true,
-        ]);
+        $thread = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->doe);
 
-        $this->expectsEvents([
-            ThreadLeftBroadcast::class,
-            ThreadLeftEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.leave', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful();
     }
@@ -56,18 +36,13 @@ class LeaveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_can_leave_if_only_admin_but_thread_locked()
     {
-        $this->group->update([
-            'lockout' => true,
-        ]);
+        $thread = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            ThreadLeftBroadcast::class,
-            ThreadLeftEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.leave', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful();
     }
@@ -75,12 +50,11 @@ class LeaveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_cannot_leave_if_only_admin_and_not_only_participant()
     {
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
-        $this->assertSame(2, $this->group->participants()->count());
-
         $this->postJson(route('api.messenger.threads.leave', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
@@ -88,19 +62,11 @@ class LeaveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_can_leave_when_only_participant()
     {
-        $this->group->participants()
-            ->forProvider($this->doe)
-            ->first()
-            ->forceDelete();
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            ThreadLeftBroadcast::class,
-            ThreadLeftEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.leave', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful();
     }
@@ -108,21 +74,12 @@ class LeaveGroupThreadTest extends FeatureTestCase
     /** @test */
     public function admin_can_leave_when_other_admins_exist()
     {
-        $this->group->participants()
-            ->forProvider($this->doe)
-            ->first()
-            ->update([
-                'admin' => true,
-            ]);
+        $thread = $this->createGroupThread($this->tippin);
+        Participant::factory()->for($thread)->owner($this->doe)->admin()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            ThreadLeftBroadcast::class,
-            ThreadLeftEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.leave', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful();
     }

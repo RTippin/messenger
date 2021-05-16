@@ -3,35 +3,21 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Support\Facades\Cache;
-use RTippin\Messenger\Broadcasting\KnockBroadcast;
-use RTippin\Messenger\Events\KnockEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class KnockGroupThreadTest extends FeatureTestCase
+class KnockGroupThreadTest extends HttpTestCase
 {
-    private Thread $group;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-    }
-
     /** @test */
     public function admin_can_knock_at_thread()
     {
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            KnockBroadcast::class,
-            KnockEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.knock', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful();
     }
@@ -39,73 +25,64 @@ class KnockGroupThreadTest extends FeatureTestCase
     /** @test */
     public function non_admin_with_permission_can_knock_at_thread()
     {
-        $this->group->participants()
-            ->forProvider($this->doe)
-            ->first()
-            ->update([
-                'send_knocks' => true,
-            ]);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create(['send_knocks' => true]);
         $this->actingAs($this->doe);
 
-        $this->expectsEvents([
-            KnockBroadcast::class,
-            KnockEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.knock', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful();
     }
 
     /** @test */
-    public function admin_forbidden_to_knock_at_thread_when_timeout_exist()
+    public function forbidden_to_knock_at_thread_when_timeout_exist()
     {
-        Cache::put('knock.knock.'.$this->group->id, true);
+        $thread = $this->createGroupThread($this->tippin);
+        Cache::put('knock.knock.'.$thread->id, true);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
 
     /** @test */
-    public function admin_forbidden_to_knock_at_thread_when_disabled_from_settings()
+    public function forbidden_to_knock_at_thread_when_disabled_from_settings()
     {
-        $this->group->update([
-            'knocks' => false,
-        ]);
+        $thread = Thread::factory()->group()->create(['knocks' => false]);
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
 
     /** @test */
-    public function admin_forbidden_to_knock_at_thread_when_thread_locked()
+    public function forbidden_to_knock_at_thread_when_thread_locked()
     {
-        $this->group->update([
-            'lockout' => true,
-        ]);
+        $thread = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
 
     /** @test */
-    public function admin_forbidden_to_knock_at_thread_when_disabled_from_config()
+    public function forbidden_to_knock_at_thread_when_disabled_from_config()
     {
         Messenger::setKnockKnock(false);
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
@@ -113,10 +90,12 @@ class KnockGroupThreadTest extends FeatureTestCase
     /** @test */
     public function non_admin_without_permission_forbidden_to_knock_at_thread()
     {
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.knock', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
@@ -124,10 +103,11 @@ class KnockGroupThreadTest extends FeatureTestCase
     /** @test */
     public function non_participant_forbidden_to_knock_at_thread()
     {
-        $this->actingAs($this->createJaneSmith());
+        $thread = Thread::factory()->group()->create();
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }

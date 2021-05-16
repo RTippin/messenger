@@ -2,32 +2,20 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Broadcasting\CallLeftBroadcast;
-use RTippin\Messenger\Events\CallLeftEvent;
 use RTippin\Messenger\Models\Call;
-use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Models\CallParticipant;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class LeaveCallTest extends FeatureTestCase
+class LeaveCallTest extends HttpTestCase
 {
-    private Thread $group;
-    private Call $call;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->call = $this->createCall($this->group, $this->tippin);
-    }
-
     /** @test */
     public function leaving_missing_call_not_found()
     {
-        $this->actingAs($this->doe);
+        $thread = $this->createGroupThread($this->tippin);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.leave', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
             'call' => '123-456-789',
         ]))
             ->assertNotFound();
@@ -36,11 +24,28 @@ class LeaveCallTest extends FeatureTestCase
     /** @test */
     public function non_call_participant_forbidden_to_leave_call()
     {
-        $this->actingAs($this->doe);
+        $thread = $this->createGroupThread($this->tippin);
+        $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.leave', [
-            'thread' => $this->group->id,
-            'call' => $this->call->id,
+            'thread' => $thread->id,
+            'call' => $call->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function left_call_participant_forbidden_to_leave_call()
+    {
+        $thread = $this->createGroupThread($this->tippin);
+        $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        CallParticipant::factory()->for($call)->owner($this->tippin)->left()->create();
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.calls.leave', [
+            'thread' => $thread->id,
+            'call' => $call->id,
         ]))
             ->assertForbidden();
     }
@@ -48,14 +53,14 @@ class LeaveCallTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_leave_inactive_call()
     {
-        $this->call->update([
-            'call_ended' => now(),
-        ]);
+        $thread = $this->createGroupThread($this->tippin);
+        $call = Call::factory()->for($thread)->owner($this->tippin)->ended()->create();
+        CallParticipant::factory()->for($call)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.leave', [
-            'thread' => $this->group->id,
-            'call' => $this->call->id,
+            'thread' => $thread->id,
+            'call' => $call->id,
         ]))
             ->assertForbidden();
     }
@@ -63,16 +68,13 @@ class LeaveCallTest extends FeatureTestCase
     /** @test */
     public function call_participant_can_leave_call()
     {
+        $thread = $this->createGroupThread($this->tippin);
+        $call = $this->createCall($thread, $this->tippin);
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            CallLeftBroadcast::class,
-            CallLeftEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.calls.leave', [
-            'thread' => $this->group->id,
-            'call' => $this->call->id,
+            'thread' => $thread->id,
+            'call' => $call->id,
         ]))
             ->assertSuccessful();
     }

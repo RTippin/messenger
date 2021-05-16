@@ -2,30 +2,13 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Events\InviteUsedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class JoinWithInviteTest extends FeatureTestCase
+class JoinWithInviteTest extends HttpTestCase
 {
-    private Thread $group;
-    private Invite $invite;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->invite = Invite::factory()
-            ->for($this->group)
-            ->owner($this->tippin)
-            ->expires(now()->addHour())
-            ->testing()
-            ->create(['max_use' => 1]);
-    }
-
     /** @test */
     public function missing_invite_is_not_found()
     {
@@ -38,22 +21,17 @@ class JoinWithInviteTest extends FeatureTestCase
     /** @test */
     public function invalid_invite_yet_to_be_deleted_shows_invalid()
     {
-        $this->invite->update([
-            'uses' => 1,
-        ]);
+        $thread = Thread::factory()->group()->create();
+        $invite = Invite::factory()->for($thread)->owner($this->tippin)->invalid()->testing()->create();
 
         $this->getJson(route('api.messenger.invites.join', [
             'invite' => 'TEST1234',
         ]))
             ->assertSuccessful()
             ->assertJson([
-                'id' => $this->invite->id,
-                'code' => 'TEST1234',
-                'thread_id' => $this->group->id,
+                'id' => $invite->id,
+                'thread_id' => $thread->id,
                 'options' => [
-                    'messenger_auth' => false,
-                    'in_thread' => false,
-                    'thread_name' => null,
                     'is_valid' => false,
                 ],
             ]);
@@ -62,6 +40,8 @@ class JoinWithInviteTest extends FeatureTestCase
     /** @test */
     public function invite_shows_invalid_when_not_deleted_and_past_expires()
     {
+        $thread = Thread::factory()->group()->create();
+        $invite = Invite::factory()->for($thread)->owner($this->tippin)->expires(now()->addHour())->testing()->create();
         $this->travel(2)->hours();
 
         $this->getJson(route('api.messenger.invites.join', [
@@ -69,13 +49,9 @@ class JoinWithInviteTest extends FeatureTestCase
         ]))
             ->assertSuccessful()
             ->assertJson([
-                'id' => $this->invite->id,
-                'code' => 'TEST1234',
-                'thread_id' => $this->group->id,
+                'id' => $invite->id,
+                'thread_id' => $thread->id,
                 'options' => [
-                    'messenger_auth' => false,
-                    'in_thread' => false,
-                    'thread_name' => null,
                     'is_valid' => false,
                 ],
             ]);
@@ -84,18 +60,20 @@ class JoinWithInviteTest extends FeatureTestCase
     /** @test */
     public function guest_can_view_valid_invite()
     {
+        $thread = Thread::factory()->group()->create(['subject' => 'Group']);
+        $invite = Invite::factory()->for($thread)->owner($this->tippin)->testing()->create();
+
         $this->getJson(route('api.messenger.invites.join', [
             'invite' => 'TEST1234',
         ]))
             ->assertSuccessful()
             ->assertJson([
-                'id' => $this->invite->id,
-                'code' => 'TEST1234',
-                'thread_id' => $this->group->id,
+                'id' => $invite->id,
+                'thread_id' => $thread->id,
                 'options' => [
                     'messenger_auth' => false,
                     'in_thread' => false,
-                    'thread_name' => 'First Test Group',
+                    'thread_name' => 'Group',
                     'is_valid' => true,
                 ],
             ]);
@@ -104,20 +82,21 @@ class JoinWithInviteTest extends FeatureTestCase
     /** @test */
     public function non_participant_can_view_valid_invite()
     {
-        $this->actingAs($this->companyDevelopers());
+        $thread = Thread::factory()->group()->create(['subject' => 'Group']);
+        $invite = Invite::factory()->for($thread)->owner($this->tippin)->testing()->create();
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.invites.join', [
             'invite' => 'TEST1234',
         ]))
             ->assertSuccessful()
             ->assertJson([
-                'id' => $this->invite->id,
-                'code' => 'TEST1234',
-                'thread_id' => $this->group->id,
+                'id' => $invite->id,
+                'thread_id' => $thread->id,
                 'options' => [
                     'messenger_auth' => true,
                     'in_thread' => false,
-                    'thread_name' => 'First Test Group',
+                    'thread_name' => 'Group',
                     'is_valid' => true,
                 ],
             ]);
@@ -126,16 +105,17 @@ class JoinWithInviteTest extends FeatureTestCase
     /** @test */
     public function existing_participant_viewing_invite_shows_in_thread()
     {
-        $this->actingAs($this->doe);
+        $thread = $this->createGroupThread($this->tippin);
+        $invite = Invite::factory()->for($thread)->owner($this->tippin)->testing()->create();
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.invites.join', [
             'invite' => 'TEST1234',
         ]))
             ->assertSuccessful()
             ->assertJson([
-                'id' => $this->invite->id,
-                'code' => 'TEST1234',
-                'thread_id' => $this->group->id,
+                'id' => $invite->id,
+                'thread_id' => $thread->id,
                 'options' => [
                     'messenger_auth' => true,
                     'in_thread' => true,
@@ -148,28 +128,25 @@ class JoinWithInviteTest extends FeatureTestCase
     /** @test */
     public function non_participant_can_join_group_with_valid_invite()
     {
-        $this->actingAs($this->createJaneSmith());
-
-        $this->expectsEvents([
-            InviteUsedEvent::class,
-        ]);
+        $thread = Thread::factory()->group()->create(['subject' => 'Group']);
+        Invite::factory()->for($thread)->owner($this->tippin)->testing()->create();
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.invites.join', [
             'invite' => 'TEST1234',
         ]))
             ->assertSuccessful()
             ->assertJson([
-                'thread_id' => $this->group->id,
+                'thread_id' => $thread->id,
             ]);
     }
 
     /** @test */
     public function forbidden_to_join_group_with_valid_invite_when_disabled_from_group_settings()
     {
-        $this->group->update([
-            'invitations' => false,
-        ]);
-        $this->actingAs($this->companyDevelopers());
+        $thread = Thread::factory()->group()->create(['invitations' => false]);
+        Invite::factory()->for($thread)->owner($this->tippin)->testing()->create();
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.invites.join', [
             'invite' => 'TEST1234',
@@ -181,7 +158,9 @@ class JoinWithInviteTest extends FeatureTestCase
     public function forbidden_to_join_group_with_valid_invite_when_disabled_from_config()
     {
         Messenger::setThreadInvites(false);
-        $this->actingAs($this->companyDevelopers());
+        $thread = Thread::factory()->group()->create();
+        Invite::factory()->for($thread)->owner($this->tippin)->testing()->create();
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.invites.join', [
             'invite' => 'TEST1234',
@@ -192,7 +171,9 @@ class JoinWithInviteTest extends FeatureTestCase
     /** @test */
     public function existing_participant_forbidden_to_join_group_with_valid_invite()
     {
-        $this->actingAs($this->doe);
+        $thread = $this->createGroupThread($this->tippin);
+        Invite::factory()->for($thread)->owner($this->tippin)->testing()->create();
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.invites.join', [
             'invite' => 'TEST1234',
@@ -203,8 +184,10 @@ class JoinWithInviteTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_join_group_with_expired_but_not_deleted_invite()
     {
+        $thread = Thread::factory()->group()->create();
+        Invite::factory()->for($thread)->owner($this->tippin)->expires(now()->addHour())->testing()->create();
         $this->travel(2)->hours();
-        $this->actingAs($this->companyDevelopers());
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.invites.join', [
             'invite' => 'TEST1234',

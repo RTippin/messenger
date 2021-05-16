@@ -2,30 +2,20 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Broadcasting\ParticipantReadBroadcast;
-use RTippin\Messenger\Events\ParticipantsReadEvent;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class MarkThreadReadTest extends FeatureTestCase
+class MarkThreadReadTest extends HttpTestCase
 {
-    private Thread $private;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-        $this->createMessage($this->private, $this->tippin);
-    }
-
     /** @test */
     public function mark_read_cannot_be_a_post()
     {
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.mark.read', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]))
             ->assertStatus(405);
     }
@@ -33,10 +23,11 @@ class MarkThreadReadTest extends FeatureTestCase
     /** @test */
     public function non_participant_forbidden_to_mark_read()
     {
-        $this->actingAs($this->companyDevelopers());
+        $thread = $this->createGroupThread($this->tippin);
+        $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.mark.read', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
@@ -44,83 +35,57 @@ class MarkThreadReadTest extends FeatureTestCase
     /** @test */
     public function unread_participant_can_mark_read()
     {
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            ParticipantReadBroadcast::class,
-            ParticipantsReadEvent::class,
-        ]);
-
         $this->getJson(route('api.messenger.threads.mark.read', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful();
     }
 
     /** @test */
-    public function read_participant_can_mark_read_and_nothing_changes()
+    public function read_participant_can_mark_read()
     {
-        $this->private->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'last_read' => now(),
-            ]);
-        $this->travel(5)->minutes();
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create(['last_read' => now()]);
         $this->actingAs($this->tippin);
 
-        $this->doesntExpectEvents([
-            ParticipantReadBroadcast::class,
-            ParticipantsReadEvent::class,
-        ]);
-
         $this->getJson(route('api.messenger.threads.mark.read', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful();
     }
 
     /** @test */
-    public function pending_thread_awaiting_participant_approval_will_change_nothing()
+    public function thread_pending_participant_approval_will_change_nothing()
     {
-        $this->private->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'pending' => true,
-            ]);
-        $this->actingAs($this->tippin);
-
-        $this->doesntExpectEvents([
-            ParticipantReadBroadcast::class,
-            ParticipantsReadEvent::class,
-        ]);
+        $thread = Thread::factory()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
+        $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.mark.read', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful();
+
+        $this->assertNull($participant->fresh()->last_read);
     }
 
     /** @test */
-    public function pending_thread_awaiting_other_participant_approval_can_mark_read()
+    public function thread_awaiting_participant_approval_can_mark_read()
     {
-        $this->private->participants()
-            ->forProvider($this->doe)
-            ->first()
-            ->update([
-                'pending' => true,
-            ]);
+        $thread = Thread::factory()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            ParticipantReadBroadcast::class,
-            ParticipantsReadEvent::class,
-        ]);
-
         $this->getJson(route('api.messenger.threads.mark.read', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful();
+
+        $this->assertNotNull($participant->fresh()->last_read);
     }
 }

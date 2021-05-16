@@ -2,37 +2,24 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Broadcasting\KickedFromCallBroadcast;
-use RTippin\Messenger\Events\KickedFromCallEvent;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
-use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class KickCallParticipantTest extends FeatureTestCase
+class KickCallParticipantTest extends HttpTestCase
 {
-    private Thread $group;
-    private Call $call;
-    private CallParticipant $participant;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->call = $this->createCall($this->group, $this->tippin);
-        $this->participant = CallParticipant::factory()->for($this->call)->owner($this->doe)->create();
-    }
-
     /** @test */
     public function kick_participant_must_be_an_update()
     {
+        $thread = $this->createGroupThread($this->tippin);
+        $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        $participant = CallParticipant::factory()->for($call)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.participants.update', [
-            'thread' => $this->group->id,
-            'call' => $this->call->id,
-            'participant' => $this->participant->id,
+            'thread' => $thread->id,
+            'call' => $call->id,
+            'participant' => $participant->id,
         ]), [
             'kicked' => true,
         ])
@@ -42,11 +29,13 @@ class KickCallParticipantTest extends FeatureTestCase
     /** @test */
     public function kick_participant_on_missing_participant_not_found()
     {
+        $thread = $this->createGroupThread($this->tippin);
+        $call = $this->createCall($thread, $this->tippin);
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.calls.participants.update', [
-            'thread' => $this->group->id,
-            'call' => $this->call->id,
+            'thread' => $thread->id,
+            'call' => $call->id,
             'participant' => '123-456-789',
         ]), [
             'kicked' => true,
@@ -57,18 +46,15 @@ class KickCallParticipantTest extends FeatureTestCase
     /** @test */
     public function non_call_participant_forbidden_to_kick_call_participant()
     {
-        $this->call->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'left_call' => now(),
-            ]);
-        $this->actingAs($this->tippin);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        $participant = CallParticipant::factory()->for($call)->owner($this->tippin)->create();
+        $this->actingAs($this->doe);
 
         $this->putJson(route('api.messenger.threads.calls.participants.update', [
-            'thread' => $this->group->id,
-            'call' => $this->call->id,
-            'participant' => $this->participant->id,
+            'thread' => $thread->id,
+            'call' => $call->id,
+            'participant' => $participant->id,
         ]), [
             'kicked' => true,
         ])
@@ -78,12 +64,15 @@ class KickCallParticipantTest extends FeatureTestCase
     /** @test */
     public function non_call_admin_participant_forbidden_to_kick_call_participant()
     {
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $call = $this->createCall($thread, $this->tippin);
+        $participant = CallParticipant::factory()->for($call)->owner($this->doe)->create();
         $this->actingAs($this->doe);
 
         $this->putJson(route('api.messenger.threads.calls.participants.update', [
-            'thread' => $this->group->id,
-            'call' => $this->call->id,
-            'participant' => $this->participant->id,
+            'thread' => $thread->id,
+            'call' => $call->id,
+            'participant' => $participant->id,
         ]), [
             'kicked' => true,
         ])
@@ -93,15 +82,13 @@ class KickCallParticipantTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_kick_call_participant_in_private_thread()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
-        $call = $this->createCall($private, $this->tippin, $this->doe);
-        $participant = $call->participants()
-            ->forProvider($this->doe)
-            ->first();
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $call = $this->createCall($thread, $this->tippin);
+        $participant = CallParticipant::factory()->for($call)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.calls.participants.update', [
-            'thread' => $private->id,
+            'thread' => $thread->id,
             'call' => $call->id,
             'participant' => $participant->id,
         ]), [
@@ -113,17 +100,15 @@ class KickCallParticipantTest extends FeatureTestCase
     /** @test */
     public function admin_can_kick_call_participant()
     {
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $call = $this->createCall($thread, $this->tippin);
+        $participant = CallParticipant::factory()->for($call)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            KickedFromCallBroadcast::class,
-            KickedFromCallEvent::class,
-        ]);
-
         $this->putJson(route('api.messenger.threads.calls.participants.update', [
-            'thread' => $this->group->id,
-            'call' => $this->call->id,
-            'participant' => $this->participant->id,
+            'thread' => $thread->id,
+            'call' => $call->id,
+            'participant' => $participant->id,
         ]), [
             'kicked' => true,
         ])
@@ -133,19 +118,13 @@ class KickCallParticipantTest extends FeatureTestCase
     /** @test */
     public function call_creator_can_kick_call_participant()
     {
-        $call = $this->createCall($this->group, $this->doe, $this->tippin);
-        $participant = $call->participants()
-            ->forProvider($this->tippin)
-            ->first();
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $call = $this->createCall($thread, $this->doe);
+        $participant = CallParticipant::factory()->for($call)->owner($this->tippin)->create();
         $this->actingAs($this->doe);
 
-        $this->expectsEvents([
-            KickedFromCallBroadcast::class,
-            KickedFromCallEvent::class,
-        ]);
-
         $this->putJson(route('api.messenger.threads.calls.participants.update', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
             'call' => $call->id,
             'participant' => $participant->id,
         ]), [
@@ -157,21 +136,15 @@ class KickCallParticipantTest extends FeatureTestCase
     /** @test */
     public function admin_can_un_kick_call_participant()
     {
-        $this->participant->update([
-            'kicked' => true,
-            'left_call' => now(),
-        ]);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $call = $this->createCall($thread, $this->tippin);
+        $participant = CallParticipant::factory()->for($call)->owner($this->doe)->kicked()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            KickedFromCallBroadcast::class,
-            KickedFromCallEvent::class,
-        ]);
-
         $this->putJson(route('api.messenger.threads.calls.participants.update', [
-            'thread' => $this->group->id,
-            'call' => $this->call->id,
-            'participant' => $this->participant->id,
+            'thread' => $thread->id,
+            'call' => $call->id,
+            'participant' => $participant->id,
         ]), [
             'kicked' => false,
         ])

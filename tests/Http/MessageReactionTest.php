@@ -3,36 +3,24 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Database\Eloquent\Factories\Sequence;
-use RTippin\Messenger\Broadcasting\ReactionAddedBroadcast;
-use RTippin\Messenger\Broadcasting\ReactionRemovedBroadcast;
-use RTippin\Messenger\Events\ReactionAddedEvent;
-use RTippin\Messenger\Events\ReactionRemovedEvent;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class MessageReactionTest extends FeatureTestCase
+class MessageReactionTest extends HttpTestCase
 {
-    private Thread $private;
-    private Message $message;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-        $this->message = $this->createMessage($this->private, $this->tippin);
-    }
-
     /** @test */
     public function non_participant_is_forbidden_to_react()
     {
-        $this->actingAs($this->createJaneSmith());
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()->for($thread)->owner($this->doe)->create();
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.reactions.store', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]), [
             'reaction' => ':joy:',
         ])
@@ -42,47 +30,60 @@ class MessageReactionTest extends FeatureTestCase
     /** @test */
     public function non_participant_is_forbidden_to_view_reacts()
     {
-        $this->actingAs($this->createJaneSmith());
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()->for($thread)->owner($this->doe)->create();
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.reactions.index', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]))
             ->assertForbidden();
     }
 
     /** @test */
-    public function user_can_react_to_message()
+    public function user_can_react_to_other_message()
     {
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            ReactionAddedBroadcast::class,
-            ReactionAddedEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.messages.reactions.store', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]), [
             'reaction' => ':joy:',
         ])
             ->assertSuccessful()
             ->assertJson([
-                'message_id' => $this->message->id,
+                'message_id' => $message->id,
                 'reaction' => ':joy:',
-                'owner' => [
-                    'name' => 'Richard Tippin',
-                    'provider_id' => $this->tippin->getKey(),
-                ],
             ]);
+    }
+
+    /** @test */
+    public function user_can_react_to_own_message()
+    {
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.messages.reactions.store', [
+            'thread' => $thread->id,
+            'message' => $message->id,
+        ]), [
+            'reaction' => ':joy:',
+        ])
+            ->assertSuccessful();
     }
 
     /** @test */
     public function participant_can_view_reacts()
     {
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         MessageReaction::factory()
-            ->for($this->message)
+            ->for($message)
             ->owner($this->tippin)
             ->state(new Sequence(
                 ['reaction' => ':one:'],
@@ -94,7 +95,7 @@ class MessageReactionTest extends FeatureTestCase
             ->count(5)
             ->create();
         MessageReaction::factory()
-            ->for($this->message)
+            ->for($message)
             ->owner($this->doe)
             ->state(new Sequence(
                 ['reaction' => ':one:'],
@@ -106,12 +107,11 @@ class MessageReactionTest extends FeatureTestCase
             ))
             ->count(6)
             ->create();
-
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.reactions.index', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]))
             ->assertSuccessful()
             ->assertJsonCount(6, 'data')
@@ -136,20 +136,14 @@ class MessageReactionTest extends FeatureTestCase
     /** @test */
     public function user_can_remove_own_reaction()
     {
-        $reaction = MessageReaction::factory()
-            ->for($this->message)
-            ->owner($this->tippin)
-            ->create();
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        $reaction = MessageReaction::factory()->for($message)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            ReactionRemovedBroadcast::class,
-            ReactionRemovedEvent::class,
-        ]);
-
         $this->deleteJson(route('api.messenger.threads.messages.reactions.destroy', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
             'reaction' => $reaction->id,
         ]))
             ->assertSuccessful();
@@ -158,38 +152,30 @@ class MessageReactionTest extends FeatureTestCase
     /** @test */
     public function user_forbidden_to_remove_unowned_reaction()
     {
-        $reaction = MessageReaction::factory()
-            ->for($this->message)
-            ->owner($this->doe)
-            ->create();
-        $this->actingAs($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
+        $message = Message::factory()->for($thread)->owner($this->doe)->create();
+        $reaction = MessageReaction::factory()->for($message)->owner($this->tippin)->create();
+        $this->actingAs($this->doe);
 
         $this->deleteJson(route('api.messenger.threads.messages.reactions.destroy', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
             'reaction' => $reaction->id,
         ]))
             ->assertForbidden();
     }
 
     /** @test */
-    public function user_can_remove_unowned_reaction_when_group_admin()
+    public function admin_can_remove_unowned_reaction()
     {
-        $group = $this->createGroupThread($this->tippin, $this->doe);
-        $message = $this->createMessage($group, $this->tippin);
-        $reaction = MessageReaction::factory()
-            ->for($message)
-            ->owner($this->doe)
-            ->create();
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $message = Message::factory()->for($thread)->owner($this->doe)->create();
+        $reaction = MessageReaction::factory()->for($message)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            ReactionRemovedBroadcast::class,
-            ReactionRemovedEvent::class,
-        ]);
-
         $this->deleteJson(route('api.messenger.threads.messages.reactions.destroy', [
-            'thread' => $group->id,
+            'thread' => $thread->id,
             'message' => $message->id,
             'reaction' => $reaction->id,
         ]))
@@ -203,11 +189,13 @@ class MessageReactionTest extends FeatureTestCase
      */
     public function it_passes_validating_has_valid_emoji($string)
     {
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.reactions.store', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]), [
             'reaction' => $string,
         ])
@@ -221,11 +209,13 @@ class MessageReactionTest extends FeatureTestCase
      */
     public function it_fails_validating_has_valid_emoji($string)
     {
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.reactions.store', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]), [
             'reaction' => $string,
         ])
