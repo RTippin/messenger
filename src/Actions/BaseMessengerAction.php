@@ -17,12 +17,12 @@ use RTippin\Messenger\Traits\ChecksReflection;
 
 abstract class BaseMessengerAction implements Action
 {
+    use ChecksReflection;
+
     /**
      * @var bool
      */
     private static bool $allEventsSilenced = false;
-
-    use ChecksReflection;
 
     /**
      * @var null|string|Model|mixed|Collection
