@@ -4,66 +4,53 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
-use RTippin\Messenger\Events\NewMessageEvent;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class DocumentMessageTest extends FeatureTestCase
 {
-    private Thread $private;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
+        BaseMessengerAction::disableEvents();
         Storage::fake(Messenger::getThreadStorage('disk'));
     }
 
     /** @test */
     public function user_can_send_document_message()
     {
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.documents.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
             'temporary_id' => '123-456-789',
         ])
             ->assertSuccessful()
             ->assertJson([
-                'thread_id' => $this->private->id,
+                'thread_id' => $thread->id,
                 'temporary_id' => '123-456-789',
                 'type' => 2,
                 'type_verbose' => 'DOCUMENT_MESSAGE',
-                'owner' => [
-                    'provider_id' => $this->tippin->getKey(),
-                    'provider_alias' => 'user',
-                    'name' => 'Richard Tippin',
-                ],
             ]);
     }
 
     /** @test */
     public function user_can_send_document_message_with_extra()
     {
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.documents.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
             'temporary_id' => '123-456-789',
@@ -71,17 +58,9 @@ class DocumentMessageTest extends FeatureTestCase
         ])
             ->assertSuccessful()
             ->assertJson([
-                'thread_id' => $this->private->id,
-                'temporary_id' => '123-456-789',
-                'type' => 2,
-                'type_verbose' => 'DOCUMENT_MESSAGE',
+                'thread_id' => $thread->id,
                 'extra' => [
                     'test' => true,
-                ],
-                'owner' => [
-                    'provider_id' => $this->tippin->getKey(),
-                    'provider_alias' => 'user',
-                    'name' => 'Richard Tippin',
                 ],
             ]);
     }
@@ -90,15 +69,12 @@ class DocumentMessageTest extends FeatureTestCase
     public function document_message_mime_types_can_be_overwritten()
     {
         Messenger::setMessageDocumentMimeTypes('mp3');
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.documents.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'document' => UploadedFile::fake()->create('song.mp3', 500, 'audio/mpeg'),
             'temporary_id' => '123-456-789',
@@ -110,15 +86,12 @@ class DocumentMessageTest extends FeatureTestCase
     public function document_message_size_limit_can_be_overwritten()
     {
         Messenger::setMessageDocumentSizeLimit(20480);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.documents.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'document' => UploadedFile::fake()->create('test.pdf', 18000, 'application/pdf'),
             'temporary_id' => '123-456-789',
@@ -130,10 +103,12 @@ class DocumentMessageTest extends FeatureTestCase
     public function user_forbidden_to_send_document_message_when_disabled_from_config()
     {
         Messenger::setMessageDocumentUpload(false);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.documents.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
             'temporary_id' => '123-456-789',
@@ -148,10 +123,12 @@ class DocumentMessageTest extends FeatureTestCase
      */
     public function send_document_message_passes_document_validation($documentValue)
     {
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.documents.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'document' => $documentValue,
             'temporary_id' => '123-456-789',
@@ -166,10 +143,12 @@ class DocumentMessageTest extends FeatureTestCase
      */
     public function send_document_message_fails_document_validation($documentValue)
     {
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.documents.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'document' => $documentValue,
             'temporary_id' => '123-456-789',

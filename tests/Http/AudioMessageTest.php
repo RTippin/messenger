@@ -41,11 +41,6 @@ class AudioMessageTest extends FeatureTestCase
                 'temporary_id' => '123-456-789',
                 'type' => 3,
                 'type_verbose' => 'AUDIO_MESSAGE',
-                'owner' => [
-                    'provider_id' => $this->tippin->getKey(),
-                    'provider_alias' => 'user',
-                    'name' => 'Richard Tippin',
-                ],
             ]);
     }
 
@@ -66,16 +61,8 @@ class AudioMessageTest extends FeatureTestCase
             ->assertSuccessful()
             ->assertJson([
                 'thread_id' => $thread->id,
-                'temporary_id' => '123-456-789',
-                'type' => 3,
-                'type_verbose' => 'AUDIO_MESSAGE',
                 'extra' => [
                     'test' => true,
-                ],
-                'owner' => [
-                    'provider_id' => $this->tippin->getKey(),
-                    'provider_alias' => 'user',
-                    'name' => 'Richard Tippin',
                 ],
             ]);
     }

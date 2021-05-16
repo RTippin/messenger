@@ -2,8 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Broadcasting\CallEndedBroadcast;
-use RTippin\Messenger\Events\CallEndedEvent;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
@@ -11,25 +10,23 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class EndCallTest extends FeatureTestCase
 {
-    private Thread $group;
-    private Call $call;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->call = $this->createCall($this->group, $this->tippin);
+        BaseMessengerAction::disableEvents();
     }
 
     /** @test */
     public function end_call_must_be_a_post()
     {
+        $thread = Thread::factory()->create();
+        $call = Call::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.calls.end', [
-            'thread' => $this->group->id,
-            'call' => $this->call->id,
+            'thread' => $thread->id,
+            'call' => $call->id,
         ]))
             ->assertStatus(405);
     }
@@ -37,10 +34,11 @@ class EndCallTest extends FeatureTestCase
     /** @test */
     public function end_call_on_missing_call_not_found()
     {
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.end', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
             'call' => '123-456-789',
         ]))
             ->assertNotFound();
@@ -49,11 +47,13 @@ class EndCallTest extends FeatureTestCase
     /** @test */
     public function non_call_participant_forbidden_to_end_call()
     {
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $call = $this->createCall($thread, $this->tippin);
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.calls.end', [
-            'thread' => $this->group->id,
-            'call' => $this->call->id,
+            'thread' => $thread->id,
+            'call' => $call->id,
         ]))
             ->assertForbidden();
     }
@@ -61,16 +61,14 @@ class EndCallTest extends FeatureTestCase
     /** @test */
     public function inactive_participant_forbidden_to_end_call()
     {
-        $this->call->participants()
-            ->first()
-            ->update([
-                'left_call' => now(),
-            ]);
+        $thread = $this->createGroupThread($this->tippin);
+        $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        CallParticipant::factory()->for($call)->owner($this->tippin)->left()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.end', [
-            'thread' => $this->group->id,
-            'call' => $this->call->id,
+            'thread' => $thread->id,
+            'call' => $call->id,
         ]))
             ->assertForbidden();
     }
@@ -78,16 +76,14 @@ class EndCallTest extends FeatureTestCase
     /** @test */
     public function kicked_participant_forbidden_to_end_call()
     {
-        $this->call->participants()
-            ->first()
-            ->update([
-                'kicked' => true,
-            ]);
+        $thread = $this->createGroupThread($this->tippin);
+        $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        CallParticipant::factory()->for($call)->owner($this->tippin)->kicked()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.end', [
-            'thread' => $this->group->id,
-            'call' => $this->call->id,
+            'thread' => $thread->id,
+            'call' => $call->id,
         ]))
             ->assertForbidden();
     }
@@ -95,12 +91,14 @@ class EndCallTest extends FeatureTestCase
     /** @test */
     public function non_call_admin_participant_forbidden_to_end_call()
     {
-        CallParticipant::factory()->for($this->call)->owner($this->doe)->create();
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        CallParticipant::factory()->for($call)->owner($this->doe)->create();
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.calls.end', [
-            'thread' => $this->group->id,
-            'call' => $this->call->id,
+            'thread' => $thread->id,
+            'call' => $call->id,
         ]))
             ->assertForbidden();
     }
@@ -108,16 +106,13 @@ class EndCallTest extends FeatureTestCase
     /** @test */
     public function admin_can_end_call()
     {
+        $thread = $this->createGroupThread($this->tippin);
+        $call = $this->createCall($thread, $this->tippin);
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            CallEndedBroadcast::class,
-            CallEndedEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.calls.end', [
-            'thread' => $this->group->id,
-            'call' => $this->call->id,
+            'thread' => $thread->id,
+            'call' => $call->id,
         ]))
             ->assertSuccessful();
     }
@@ -125,16 +120,26 @@ class EndCallTest extends FeatureTestCase
     /** @test */
     public function call_creator_can_end_call()
     {
-        $call = $this->createCall($this->group, $this->doe);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $call = $this->createCall($thread, $this->doe);
         $this->actingAs($this->doe);
 
-        $this->expectsEvents([
-            CallEndedBroadcast::class,
-            CallEndedEvent::class,
-        ]);
+        $this->postJson(route('api.messenger.threads.calls.end', [
+            'thread' => $thread->id,
+            'call' => $call->id,
+        ]))
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function recipient_can_end_call_in_private_thread()
+    {
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $call = $this->createCall($thread, $this->tippin, $this->doe);
+        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.calls.end', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
             'call' => $call->id,
         ]))
             ->assertSuccessful();

@@ -2,51 +2,23 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Contracts\FriendDriver;
-use RTippin\Messenger\Events\FriendRemovedEvent;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class FriendsTest extends FeatureTestCase
 {
-    private Friend $friend;
-    private Friend $inverseFriend;
-    private Friend $friendCompany;
-    private Friend $inverseFriendCompany;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $friends = $this->createFriends($this->tippin, $this->doe);
-        $this->friend = $friends[0];
-        $this->inverseFriend = $friends[1];
-        $friendsCompany = $this->createFriends($this->tippin, $this->developers);
-        $this->friendCompany = $friendsCompany[0];
-        $this->inverseFriendCompany = $friendsCompany[1];
+        BaseMessengerAction::disableEvents();
     }
 
     /** @test */
-    public function guest_is_unauthorized()
+    public function user_has_no_friends()
     {
-        $this->getJson(route('api.messenger.friends.index'))
-            ->assertUnauthorized();
-    }
-
-    /** @test */
-    public function new_user_has_no_friends()
-    {
-        $this->actingAs($this->createJaneSmith());
-
-        $this->getJson(route('api.messenger.friends.index'))
-            ->assertStatus(200)
-            ->assertJsonCount(0);
-    }
-
-    /** @test */
-    public function new_company_has_no_friends()
-    {
-        $this->actingAs($this->createSomeCompany());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.friends.index'))
             ->assertStatus(200)
@@ -56,90 +28,41 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function user_can_remove_friend()
     {
+        $friend = Friend::factory()->providers($this->tippin, $this->doe)->create();
+        Friend::factory()->providers($this->doe, $this->tippin)->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            FriendRemovedEvent::class,
-        ]);
-
         $this->deleteJson(route('api.messenger.friends.destroy', [
-            'friend' => $this->friend->id,
+            'friend' => $friend->id,
         ]))
             ->assertSuccessful();
-
-        $this->assertSame(0, resolve(FriendDriver::class)->friendStatus($this->doe));
-    }
-
-    /** @test */
-    public function user_can_remove_company_friend()
-    {
-        $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            FriendRemovedEvent::class,
-        ]);
-
-        $this->deleteJson(route('api.messenger.friends.destroy', [
-            'friend' => $this->friendCompany->id,
-        ]))
-            ->assertSuccessful();
-
-        $this->assertSame(0, resolve(FriendDriver::class)->friendStatus($this->developers));
     }
 
     /** @test */
     public function user_can_view_friend()
     {
+        $friend = Friend::factory()->providers($this->tippin, $this->doe)->create();
+        Friend::factory()->providers($this->doe, $this->tippin)->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.friends.show', [
-            'friend' => $this->friend->id,
+            'friend' => $friend->id,
         ]))
             ->assertSuccessful()
             ->assertJson([
-                'id' => $this->friend->id,
-                'owner_id' => $this->tippin->getKey(),
-                'owner_type' => $this->tippin->getMorphClass(),
-                'party_id' => $this->doe->getKey(),
-                'party_type' => $this->doe->getMorphClass(),
-                'party' => [
-                    'provider_id' => $this->doe->getKey(),
-                    'provider_alias' => 'user',
-                    'name' => 'John Doe',
-                ],
-            ]);
-    }
-
-    /** @test */
-    public function user_can_view_company_friend()
-    {
-        $this->actingAs($this->tippin);
-
-        $this->getJson(route('api.messenger.friends.show', [
-            'friend' => $this->friendCompany->id,
-        ]))
-            ->assertSuccessful()
-            ->assertJson([
-                'id' => $this->friendCompany->id,
-                'owner_id' => $this->tippin->getKey(),
-                'owner_type' => $this->tippin->getMorphClass(),
-                'party_id' => $this->developers->getKey(),
-                'party_type' => $this->developers->getMorphClass(),
-                'party' => [
-                    'provider_id' => $this->developers->getKey(),
-                    'provider_alias' => 'company',
-                    'name' => 'Developers',
-                ],
+                'id' => $friend->id,
             ]);
     }
 
     /** @test */
     public function user_cannot_remove_inverse_friend()
     {
+        Friend::factory()->providers($this->tippin, $this->doe)->create();
+        $inverse = Friend::factory()->providers($this->doe, $this->tippin)->create();
         $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.friends.destroy', [
-            'friend' => $this->inverseFriend->id,
+            'friend' => $inverse->id,
         ]))
             ->assertForbidden();
     }
@@ -147,32 +70,12 @@ class FriendsTest extends FeatureTestCase
     /** @test */
     public function user_cannot_view_inverse_friend()
     {
+        Friend::factory()->providers($this->tippin, $this->doe)->create();
+        $inverse = Friend::factory()->providers($this->doe, $this->tippin)->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.friends.show', [
-            'friend' => $this->inverseFriend->id,
-        ]))
-            ->assertForbidden();
-    }
-
-    /** @test */
-    public function user_cannot_remove_inverse_company_friend()
-    {
-        $this->actingAs($this->tippin);
-
-        $this->deleteJson(route('api.messenger.friends.destroy', [
-            'friend' => $this->inverseFriendCompany->id,
-        ]))
-            ->assertForbidden();
-    }
-
-    /** @test */
-    public function user_cannot_view_inverse_company_friend()
-    {
-        $this->actingAs($this->tippin);
-
-        $this->getJson(route('api.messenger.friends.show', [
-            'friend' => $this->inverseFriendCompany->id,
+            'friend' => $inverse->id,
         ]))
             ->assertForbidden();
     }

@@ -108,9 +108,6 @@ class AddParticipantsTest extends FeatureTestCase
             ->assertJsonCount(1)
             ->assertJson([
                 [
-                    'party' => [
-                        'name' => 'John Doe',
-                    ],
                     'party_id' => $this->doe->getKey(),
                 ],
             ]);

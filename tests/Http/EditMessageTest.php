@@ -2,45 +2,33 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Broadcasting\MessageEditedBroadcast;
-use RTippin\Messenger\Events\MessageEditedEvent;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageEdit;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class EditMessageTest extends FeatureTestCase
 {
-    private Thread $private;
-    private Message $message;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-        $this->message = $this->createMessage($this->private, $this->tippin);
-    }
-
-    /** @test */
-    public function guest_is_unauthorized()
-    {
-        $this->getJson(route('api.messenger.threads.messages.history', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
-        ]))
-            ->assertUnauthorized();
+        BaseMessengerAction::disableEvents();
     }
 
     /** @test */
     public function non_participant_is_forbidden()
     {
-        $this->actingAs($this->companyDevelopers());
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.messages.history', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]))
             ->assertForbidden();
     }
@@ -48,11 +36,13 @@ class EditMessageTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_view_message_edits_if_message_has_none()
     {
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.messages.history', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]))
             ->assertForbidden();
     }
@@ -61,55 +51,29 @@ class EditMessageTest extends FeatureTestCase
     public function forbidden_to_view_message_edits_when_disabled_in_config()
     {
         Messenger::setMessageEditsView(false);
-        $this->travel(10)->minutes();
-        MessageEdit::factory()->for($this->message)->create();
-        $this->message->touch();
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->edited()->create();
+        MessageEdit::factory()->for($message)->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.history', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]))
             ->assertForbidden();
     }
 
     /** @test */
-    public function recipient_can_view_message_edits()
+    public function user_can_view_message_edits()
     {
-        $this->travel(10)->minutes();
-        MessageEdit::factory()->for($this->message)->create(['body' => 'First Edit']);
-        $this->message->update([
-            'edited' => true,
-        ]);
-        $this->actingAs($this->doe);
-
-        $this->getJson(route('api.messenger.threads.messages.history', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
-        ]))
-            ->assertSuccessful()
-            ->assertJsonCount(1)
-            ->assertJson([
-                [
-                    'body' => 'First Edit',
-                ],
-            ]);
-    }
-
-    /** @test */
-    public function can_view_multiple_message_edits()
-    {
-        $this->travel(10)->minutes();
-        MessageEdit::factory()->for($this->message)->count(2)->create();
-
-        $this->message->update([
-            'edited' => true,
-        ]);
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->edited()->create();
+        MessageEdit::factory()->for($message)->count(2)->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.history', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]))
             ->assertSuccessful()
             ->assertJsonCount(2);
@@ -118,23 +82,19 @@ class EditMessageTest extends FeatureTestCase
     /** @test */
     public function owner_can_edit_message()
     {
-        $this->travel(5)->minutes();
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->edited()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            MessageEditedBroadcast::class,
-            MessageEditedEvent::class,
-        ]);
-
         $this->putJson(route('api.messenger.threads.messages.update', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]), [
             'message' => 'Edited Message',
         ])
             ->assertSuccessful()
             ->assertJson([
-                'id' => $this->message->id,
+                'id' => $message->id,
                 'body' => 'Edited Message',
                 'edited' => true,
             ]);
@@ -143,11 +103,13 @@ class EditMessageTest extends FeatureTestCase
     /** @test */
     public function non_owner_forbidden_to_update_message()
     {
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);
 
         $this->putJson(route('api.messenger.threads.messages.update', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]), [
             'message' => 'Edited Message',
         ])
@@ -158,11 +120,13 @@ class EditMessageTest extends FeatureTestCase
     public function forbidden_to_update_message_when_disabled_in_config()
     {
         Messenger::setMessageEdits(false);
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.messages.update', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]), [
             'message' => 'Edited Message',
         ])
@@ -172,14 +136,13 @@ class EditMessageTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_update_image_message()
     {
-        $this->message->update([
-            'type' => 1,
-        ]);
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->image()->create();
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.messages.update', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]), [
             'message' => 'Edited Message',
         ])
@@ -189,14 +152,13 @@ class EditMessageTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_update_document_message()
     {
-        $this->message->update([
-            'type' => 2,
-        ]);
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->document()->create();
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.messages.update', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]), [
             'message' => 'Edited Message',
         ])
@@ -206,14 +168,13 @@ class EditMessageTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_update_system_message()
     {
-        $this->message->update([
-            'type' => 99,
-        ]);
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create(['type' => 99]);
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.messages.update', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]), [
             'message' => 'Edited Message',
         ])
@@ -223,14 +184,14 @@ class EditMessageTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_update_message_when_thread_locked()
     {
-        $this->private->update([
-            'lockout' => true,
-        ]);
+        $thread = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.messages.update', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]), [
             'message' => 'Edited Message',
         ])

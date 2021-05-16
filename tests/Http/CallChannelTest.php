@@ -21,11 +21,8 @@ class CallChannelTest extends FeatureTestCase
     /** @test */
     public function guest_is_unauthorized()
     {
-        $thread = Thread::factory()->create();
-        $call = Call::factory()->for($thread)->owner($this->tippin)->create();
-
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-messenger.call.$call->id.thread.$thread->id",
+            'channel_name' => "presence-messenger.call.1234.thread.5678",
         ])
             ->assertUnauthorized();
     }
