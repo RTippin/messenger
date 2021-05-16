@@ -6,9 +6,9 @@ use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\HttpTestCase;
+use RTippin\Messenger\Tests\FeatureTestCase;
 
-class KnockPrivateThreadTest extends HttpTestCase
+class KnockPrivateThreadTest extends FeatureTestCase
 {
     /** @test */
     public function user_can_knock_at_thread()

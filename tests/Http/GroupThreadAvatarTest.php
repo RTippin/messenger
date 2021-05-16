@@ -6,9 +6,9 @@ use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\HttpTestCase;
+use RTippin\Messenger\Tests\FeatureTestCase;
 
-class GroupThreadAvatarTest extends HttpTestCase
+class GroupThreadAvatarTest extends FeatureTestCase
 {
     /** @test */
     public function non_admin_forbidden_to_update_group_avatar()

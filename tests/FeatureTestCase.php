@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests;
 
 use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\BaseMessengerAction;
@@ -37,7 +38,9 @@ class FeatureTestCase extends MessengerTestCase
         ])->run();
         $this->storeBaseUsers();
         $this->storeBaseCompanies();
+        BaseMessengerAction::disableEvents();
         Storage::fake(Messenger::getThreadStorage('disk'));
+        $this->withoutMiddleware(ThrottleRequests::class);
     }
 
     protected function tearDown(): void

@@ -4,9 +4,9 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Tests\HttpTestCase;
+use RTippin\Messenger\Tests\FeatureTestCase;
 
-class MessengerAvatarTest extends HttpTestCase
+class MessengerAvatarTest extends FeatureTestCase
 {
     /** @test */
     public function user_forbidden_to_upload_avatar_when_disabled()

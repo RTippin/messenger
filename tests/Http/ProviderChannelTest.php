@@ -2,10 +2,10 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
-use RTippin\Messenger\Tests\HttpTestCase;
 
-class ProviderChannelTest extends HttpTestCase
+class ProviderChannelTest extends FeatureTestCase
 {
     protected function getEnvironmentSetUp($app): void
     {

@@ -4,9 +4,9 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\HttpTestCase;
+use RTippin\Messenger\Tests\FeatureTestCase;
 
-class PromoteDemoteParticipantTest extends HttpTestCase
+class PromoteDemoteParticipantTest extends FeatureTestCase
 {
     /** @test */
     public function forbidden_to_promote_admin_role_in_private_thread()

@@ -4,9 +4,9 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
-use RTippin\Messenger\Tests\HttpTestCase;
+use RTippin\Messenger\Tests\FeatureTestCase;
 
-class KickCallParticipantTest extends HttpTestCase
+class KickCallParticipantTest extends FeatureTestCase
 {
     /** @test */
     public function kick_participant_must_be_an_update()

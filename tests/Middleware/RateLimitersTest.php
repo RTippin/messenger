@@ -5,9 +5,9 @@ namespace RTippin\Messenger\Tests\Middleware;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Tests\HttpTestCase;
+use RTippin\Messenger\Tests\FeatureTestCase;
 
-class RateLimitersTest extends HttpTestCase
+class RateLimitersTest extends FeatureTestCase
 {
     protected function setUp(): void
     {

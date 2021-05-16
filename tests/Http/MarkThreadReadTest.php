@@ -4,9 +4,9 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\HttpTestCase;
+use RTippin\Messenger\Tests\FeatureTestCase;
 
-class MarkThreadReadTest extends HttpTestCase
+class MarkThreadReadTest extends FeatureTestCase
 {
     /** @test */
     public function mark_read_cannot_be_a_post()

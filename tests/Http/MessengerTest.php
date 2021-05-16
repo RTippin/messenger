@@ -4,10 +4,10 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Call;
+use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
-use RTippin\Messenger\Tests\HttpTestCase;
 
-class MessengerTest extends HttpTestCase
+class MessengerTest extends FeatureTestCase
 {
     /** @test */
     public function guest_is_unauthorized()

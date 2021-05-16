@@ -4,9 +4,9 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\HttpTestCase;
+use RTippin\Messenger\Tests\FeatureTestCase;
 
-class PrivateThreadApprovalTest extends HttpTestCase
+class PrivateThreadApprovalTest extends FeatureTestCase
 {
     /** @test */
     public function recipient_can_approve_pending_thread()

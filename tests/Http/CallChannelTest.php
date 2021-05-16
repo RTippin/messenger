@@ -5,9 +5,9 @@ namespace RTippin\Messenger\Tests\Http;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\HttpTestCase;
+use RTippin\Messenger\Tests\FeatureTestCase;
 
-class CallChannelTest extends HttpTestCase
+class CallChannelTest extends FeatureTestCase
 {
     protected function getEnvironmentSetUp($app): void
     {

@@ -6,9 +6,9 @@ use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\HttpTestCase;
+use RTippin\Messenger\Tests\FeatureTestCase;
 
-class InvitesTest extends HttpTestCase
+class InvitesTest extends FeatureTestCase
 {
     /** @test */
     public function forbidden_to_view_invites_on_private_thread()

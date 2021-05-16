@@ -4,9 +4,9 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Tests\HttpTestCase;
+use RTippin\Messenger\Tests\FeatureTestCase;
 
-class ImageMessageTest extends HttpTestCase
+class ImageMessageTest extends FeatureTestCase
 {
     /** @test */
     public function user_can_send_image_message()

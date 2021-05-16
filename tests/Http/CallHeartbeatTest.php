@@ -4,9 +4,9 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
-use RTippin\Messenger\Tests\HttpTestCase;
+use RTippin\Messenger\Tests\FeatureTestCase;
 
-class CallHeartbeatTest extends HttpTestCase
+class CallHeartbeatTest extends FeatureTestCase
 {
     /** @test */
     public function heartbeat_cannot_be_a_post()

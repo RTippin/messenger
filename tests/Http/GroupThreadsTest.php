@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Tests\HttpTestCase;
+use RTippin\Messenger\Tests\FeatureTestCase;
 
-class GroupThreadsTest extends HttpTestCase
+class GroupThreadsTest extends FeatureTestCase
 {
     /** @test */
     public function user_has_one_group()

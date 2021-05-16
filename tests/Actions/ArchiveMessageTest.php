@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Messages\ArchiveMessage;
 use RTippin\Messenger\Broadcasting\MessageArchivedBroadcast;
 use RTippin\Messenger\Events\MessageArchivedEvent;
@@ -13,53 +14,42 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class ArchiveMessageTest extends FeatureTestCase
 {
-    private Thread $private;
-    private Message $message;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-        $this->message = $this->createMessage($this->private, $this->tippin);
-        Messenger::setProvider($this->tippin);
-    }
-
     /** @test */
     public function it_soft_deletes_message()
     {
-        app(ArchiveMessage::class)->withoutDispatches()->execute(
-            $this->private,
-            $this->message
-        );
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+
+        app(ArchiveMessage::class)->execute($thread, $message);
 
         $this->assertSoftDeleted('messages', [
-            'id' => $this->message->id,
+            'id' => $message->id,
         ]);
     }
 
     /** @test */
     public function it_fires_events()
     {
+        Messenger::setProvider($this->tippin);
+        BaseMessengerAction::enableEvents();
         Event::fake([
             MessageArchivedBroadcast::class,
             MessageArchivedEvent::class,
         ]);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
 
-        app(ArchiveMessage::class)->execute(
-            $this->private,
-            $this->message
-        );
+        app(ArchiveMessage::class)->execute($thread, $message);
 
-        Event::assertDispatched(function (MessageArchivedBroadcast $event) {
+        Event::assertDispatched(function (MessageArchivedBroadcast $event) use ($message) {
             $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
-            $this->assertSame($this->message->id, $event->broadcastWith()['message_id']);
+            $this->assertSame($message->id, $event->broadcastWith()['message_id']);
 
             return true;
         });
-        Event::assertDispatched(function (MessageArchivedEvent $event) {
-            return $this->message->id === $event->message->id;
+        Event::assertDispatched(function (MessageArchivedEvent $event) use ($message) {
+            return $message->id === $event->message->id;
         });
     }
 }

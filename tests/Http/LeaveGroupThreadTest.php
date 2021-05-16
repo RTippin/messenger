@@ -4,9 +4,9 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\HttpTestCase;
+use RTippin\Messenger\Tests\FeatureTestCase;
 
-class LeaveGroupThreadTest extends HttpTestCase
+class LeaveGroupThreadTest extends FeatureTestCase
 {
     /** @test */
     public function non_admin_can_leave()

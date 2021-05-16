@@ -5,9 +5,9 @@ namespace RTippin\Messenger\Tests\Http;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\HttpTestCase;
+use RTippin\Messenger\Tests\FeatureTestCase;
 
-class EndCallTest extends HttpTestCase
+class EndCallTest extends FeatureTestCase
 {
     /** @test */
     public function end_call_must_be_a_post()

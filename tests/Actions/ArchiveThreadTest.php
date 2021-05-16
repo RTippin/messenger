@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\ArchiveThread;
 use RTippin\Messenger\Broadcasting\ThreadArchivedBroadcast;
 use RTippin\Messenger\Events\ThreadArchivedEvent;
@@ -15,46 +16,40 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class ArchiveThreadTest extends FeatureTestCase
 {
-    private Thread $private;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-        Messenger::setProvider($this->tippin);
-    }
-
     /** @test */
     public function it_soft_deletes_thread()
     {
-        app(ArchiveThread::class)->withoutDispatches()->execute($this->private);
+        $thread = Thread::factory()->create();
+
+        app(ArchiveThread::class)->execute($thread);
 
         $this->assertSoftDeleted('threads', [
-            'id' => $this->private->id,
+            'id' => $thread->id,
         ]);
     }
 
     /** @test */
     public function it_fires_events()
     {
+        Messenger::setProvider($this->tippin);
+        BaseMessengerAction::enableEvents();
         Event::fake([
             ThreadArchivedBroadcast::class,
             ThreadArchivedEvent::class,
         ]);
+        $thread = $this->createGroupThread($this->tippin);
 
-        app(ArchiveThread::class)->execute($this->private);
+        app(ArchiveThread::class)->execute($thread);
 
-        Event::assertDispatched(function (ThreadArchivedBroadcast $event) {
+        Event::assertDispatched(function (ThreadArchivedBroadcast $event) use ($thread) {
             $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
-            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
-            $this->assertSame($this->private->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame($thread->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
-        Event::assertDispatched(function (ThreadArchivedEvent $event) {
+        Event::assertDispatched(function (ThreadArchivedEvent $event) use ($thread) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
-            $this->assertSame($this->private->id, $event->thread->id);
+            $this->assertSame($thread->id, $event->thread->id);
 
             return true;
         });
@@ -63,9 +58,12 @@ class ArchiveThreadTest extends FeatureTestCase
     /** @test */
     public function it_dispatched_listeners()
     {
+        Messenger::setProvider($this->tippin);
+        BaseMessengerAction::enableEvents();
         Bus::fake();
+        $thread = $this->createGroupThread($this->tippin);
 
-        app(ArchiveThread::class)->withoutBroadcast()->execute($this->private);
+        app(ArchiveThread::class)->withoutBroadcast()->execute($thread);
 
         Bus::assertDispatched(function (CallQueuedListener $job) {
             return $job->class === ThreadArchivedMessage::class;

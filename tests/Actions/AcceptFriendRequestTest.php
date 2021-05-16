@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Friends\AcceptFriendRequest;
 use RTippin\Messenger\Broadcasting\FriendApprovedBroadcast;
 use RTippin\Messenger\Events\FriendApprovedEvent;
@@ -11,19 +12,12 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class AcceptFriendRequestTest extends FeatureTestCase
 {
-    private PendingFriend $pendingFriend;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->pendingFriend = PendingFriend::factory()->providers($this->doe, $this->tippin)->create();
-    }
-
     /** @test */
     public function it_stores_friends()
     {
-        app(AcceptFriendRequest::class)->withoutDispatches()->execute($this->pendingFriend);
+        $pending = PendingFriend::factory()->providers($this->doe, $this->tippin)->create();
+
+        app(AcceptFriendRequest::class)->execute($pending);
 
         $this->assertDatabaseHas('friends', [
             'owner_id' => $this->tippin->getKey(),
@@ -42,22 +36,26 @@ class AcceptFriendRequestTest extends FeatureTestCase
     /** @test */
     public function it_removes_pending_friend()
     {
-        app(AcceptFriendRequest::class)->withoutDispatches()->execute($this->pendingFriend);
+        $pending = PendingFriend::factory()->providers($this->doe, $this->tippin)->create();
+
+        app(AcceptFriendRequest::class)->execute($pending);
 
         $this->assertDatabaseMissing('pending_friends', [
-            'id' => $this->pendingFriend->id,
+            'id' => $pending->id,
         ]);
     }
 
     /** @test */
     public function it_fires_events()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             FriendApprovedBroadcast::class,
             FriendApprovedEvent::class,
         ]);
+        $pending = PendingFriend::factory()->providers($this->doe, $this->tippin)->create();
 
-        app(AcceptFriendRequest::class)->execute($this->pendingFriend);
+        app(AcceptFriendRequest::class)->execute($pending);
 
         Event::assertDispatched(function (FriendApprovedBroadcast $event) {
             $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());

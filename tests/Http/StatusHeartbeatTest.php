@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Tests\HttpTestCase;
+use RTippin\Messenger\Tests\FeatureTestCase;
 
-class StatusHeartbeatTest extends HttpTestCase
+class StatusHeartbeatTest extends FeatureTestCase
 {
     /** @test */
     public function messenger_heartbeat_must_be_a_post()

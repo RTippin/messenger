@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Tests\HttpTestCase;
+use RTippin\Messenger\Tests\FeatureTestCase;
 
-class SearchTest extends HttpTestCase
+class SearchTest extends FeatureTestCase
 {
     /** @test */
     public function empty_search_returns_no_results()
