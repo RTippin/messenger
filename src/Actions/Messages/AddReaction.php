@@ -221,15 +221,33 @@ class AddReaction extends BaseMessengerAction
                 ->with($this->getJsonResource()->resolve())
                 ->broadcast(ReactionAddedBroadcast::class);
 
-            if ($this->messenger->getProvider()->isNot($this->getMessage()->owner)) {
-                $this->broadcaster
-                    ->to($this->getMessage()->owner)
-                    ->with($this->generateBroadcastResource())
-                    ->broadcast(ReactionAddedBroadcast::class);
-            }
+            $this->checkBroadcastToMessageOwner();
         }
 
         return $this;
+    }
+
+    /**
+     * Only broadcast to message owner if the current provider is not
+     * the message owner and the owner is still in the thread.
+     *
+     * @return void
+     */
+    private function checkBroadcastToMessageOwner(): void
+    {
+        if ((string) $this->messenger->getProvider()->getKey() === $this->getMessage()->owner_id
+            && $this->messenger->getProvider()->getMorphClass() === $this->getMessage()->owner_type) {
+            // We are the owner, break;
+            return;
+        }
+
+        // Only broadcast if participant still in thread.
+        if ($this->getThread()->participants()->forProviderWithModel($this->getMessage())->exists()) {
+            $this->broadcaster
+                ->to($this->getMessage()->owner)
+                ->with($this->generateBroadcastResource())
+                ->broadcast(ReactionAddedBroadcast::class);
+        }
     }
 
     /**

@@ -38,4 +38,19 @@ class MessageReactionFactory extends Factory
     {
         return $this->for($owner, 'owner');
     }
+
+    /**
+     * Set the message reaction.
+     *
+     * @param string $reaction
+     * @return Factory
+     */
+    public function reaction(string $reaction): Factory
+    {
+        return $this->state(function (array $attributes) use ($reaction) {
+            return [
+                'reaction' => $reaction,
+            ];
+        });
+    }
 }
