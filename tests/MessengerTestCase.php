@@ -19,13 +19,13 @@ class MessengerTestCase extends TestCase
      * Set TRUE to run all feature test with
      * provider models/tables using UUIDS.
      */
-    const UseUUID = true;
+    const UseUUID = false;
 
     /**
      * Set TRUE to run all feature test with
      * relation morph map set for providers.
      */
-    const UseMorphMap = true;
+    const UseMorphMap = false;
 
     protected function getPackageProviders($app): array
     {

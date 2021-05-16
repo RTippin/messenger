@@ -235,7 +235,7 @@ class AddReaction extends BaseMessengerAction
      */
     private function checkBroadcastToMessageOwner(): void
     {
-        if ((string) $this->messenger->getProvider()->getKey() === $this->getMessage()->owner_id
+        if ((string) $this->messenger->getProvider()->getKey() === (string) $this->getMessage()->owner_id
             && $this->messenger->getProvider()->getMorphClass() === $this->getMessage()->owner_type) {
             // We are the owner, break;
             return;
