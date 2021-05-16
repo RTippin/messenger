@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class FindRecipientThreadTest extends FeatureTestCase
+class FindRecipientThreadTest extends HttpTestCase
 {
     /** @test */
     public function private_thread_locator_returns_user_with_existing_thread_id()

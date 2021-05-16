@@ -2,21 +2,13 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class EndCallTest extends FeatureTestCase
+class EndCallTest extends HttpTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        BaseMessengerAction::disableEvents();
-    }
-
     /** @test */
     public function end_call_must_be_a_post()
     {

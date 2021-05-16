@@ -5,9 +5,9 @@ namespace RTippin\Messenger\Tests\Http;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class CallChannelTest extends FeatureTestCase
+class CallChannelTest extends HttpTestCase
 {
     protected function getEnvironmentSetUp($app): void
     {
@@ -22,7 +22,7 @@ class CallChannelTest extends FeatureTestCase
     public function guest_is_unauthorized()
     {
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-messenger.call.1234.thread.5678",
+            'channel_name' => 'presence-messenger.call.1234.thread.5678',
         ])
             ->assertUnauthorized();
     }

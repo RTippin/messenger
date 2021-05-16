@@ -2,12 +2,11 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class ArchivePrivateThreadTest extends FeatureTestCase
+class ArchivePrivateThreadTest extends HttpTestCase
 {
     private Thread $thread;
 
@@ -15,7 +14,6 @@ class ArchivePrivateThreadTest extends FeatureTestCase
     {
         parent::setUp();
 
-        BaseMessengerAction::disableEvents();
         $this->thread = $this->createPrivateThread($this->tippin, $this->doe);
     }
 

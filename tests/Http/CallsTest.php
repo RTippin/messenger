@@ -5,9 +5,9 @@ namespace RTippin\Messenger\Tests\Http;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class CallsTest extends FeatureTestCase
+class CallsTest extends HttpTestCase
 {
     /** @test */
     public function non_participant_forbidden_to_view_calls()

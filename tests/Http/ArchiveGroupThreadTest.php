@@ -2,21 +2,13 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class ArchiveGroupThreadTest extends FeatureTestCase
+class ArchiveGroupThreadTest extends HttpTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        BaseMessengerAction::disableEvents();
-    }
-
     /** @test */
     public function admin_can_check_archive_group_thread()
     {

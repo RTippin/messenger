@@ -2,34 +2,21 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Broadcasting\MessageArchivedBroadcast;
-use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
-use RTippin\Messenger\Events\MessageArchivedEvent;
-use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class GroupMessageTest extends FeatureTestCase
+class GroupMessageTest extends HttpTestCase
 {
-    private Thread $group;
-    private Message $message;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->message = $this->createMessage($this->group, $this->tippin);
-    }
-
     /** @test */
     public function non_participant_is_forbidden()
     {
-        $this->actingAs($this->createJaneSmith());
+        $thread = Thread::factory()->create();
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.index', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
@@ -37,10 +24,12 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function participant_can_view_messages_index()
     {
-        $this->actingAs($this->doe);
+        $thread = $this->createGroupThread($this->tippin);
+        Message::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.index', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful()
             ->assertJsonCount(1, 'data');
@@ -49,62 +38,50 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function participant_can_view_message()
     {
-        $this->actingAs($this->doe);
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.show', [
-            'thread' => $this->group->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]))
             ->assertSuccessful()
             ->assertJson([
-                'id' => $this->message->id,
-                'body' => 'First Test Message',
+                'id' => $message->id,
             ]);
     }
 
     /** @test */
     public function admin_can_send_message()
     {
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',
         ])
             ->assertSuccessful()
             ->assertJson([
-                'thread_id' => $this->group->id,
+                'thread_id' => $thread->id,
                 'temporary_id' => '123-456-789',
                 'type' => 0,
                 'type_verbose' => 'MESSAGE',
                 'body' => 'Hello!',
-                'owner' => [
-                    'provider_id' => $this->tippin->getKey(),
-                    'provider_alias' => 'user',
-                    'name' => 'Richard Tippin',
-                ],
             ]);
     }
 
     /** @test */
     public function participant_can_send_message()
     {
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
         $this->actingAs($this->doe);
 
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',
@@ -115,13 +92,12 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_send_message_when_thread_locked()
     {
-        $this->group->update([
-            'lockout' => true,
-        ]);
+        $thread = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',
@@ -132,10 +108,11 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function non_participant_forbidden_to_send_message()
     {
-        $this->actingAs($this->createJaneSmith());
+        $thread = Thread::factory()->group()->create();
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',
@@ -146,16 +123,12 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function participant_forbidden_to_send_message_without_proper_permission()
     {
-        $this->group->participants()
-            ->forProvider($this->doe)
-            ->first()
-            ->update([
-                'send_messages' => false,
-            ]);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create(['send_messages' => false]);
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',
@@ -166,14 +139,13 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_archive_message_when_thread_locked()
     {
-        $this->group->update([
-            'lockout' => true,
-        ]);
-        $message = $this->createMessage($this->group, $this->tippin);
+        $thread = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.messages.destroy', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
             'message' => $message->id,
         ]))
             ->assertForbidden();
@@ -182,34 +154,40 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function participant_can_archive_own_message()
     {
-        $message = $this->createMessage($this->group, $this->doe);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $message = Message::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->doe);
 
-        $this->expectsEvents([
-            MessageArchivedBroadcast::class,
-            MessageArchivedEvent::class,
-        ]);
-
         $this->deleteJson(route('api.messenger.threads.messages.destroy', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
             'message' => $message->id,
         ]))
             ->assertSuccessful();
     }
 
     /** @test */
-    public function admin_can_archive_another_participants_message()
+    public function participant_forbidden_to_archive_non_owned_message()
     {
-        $message = $this->createMessage($this->group, $this->doe);
-        $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            MessageArchivedBroadcast::class,
-            MessageArchivedEvent::class,
-        ]);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->doe);
 
         $this->deleteJson(route('api.messenger.threads.messages.destroy', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function admin_can_archive_another_participants_message()
+    {
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $message = Message::factory()->for($thread)->owner($this->doe)->create();
+        $this->actingAs($this->tippin);
+
+        $this->deleteJson(route('api.messenger.threads.messages.destroy', [
+            'thread' => $thread->id,
             'message' => $message->id,
         ]))
             ->assertSuccessful();
@@ -218,13 +196,12 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function admin_forbidden_to_send_message_when_disabled_in_group_settings()
     {
-        $this->group->update([
-            'messaging' => false,
-        ]);
+        $thread = Thread::factory()->group()->create(['messaging' => false]);
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',
@@ -235,13 +212,12 @@ class GroupMessageTest extends FeatureTestCase
     /** @test */
     public function participant_forbidden_to_send_message_when_disabled_in_group_settings()
     {
-        $this->group->update([
-            'messaging' => false,
-        ]);
+        $thread = Thread::factory()->group()->create(['messaging' => false]);
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',

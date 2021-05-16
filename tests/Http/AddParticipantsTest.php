@@ -2,20 +2,12 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class AddParticipantsTest extends FeatureTestCase
+class AddParticipantsTest extends HttpTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        BaseMessengerAction::disableEvents();
-    }
-
     /** @test */
     public function forbidden_to_view_add_participants_on_private_thread()
     {
