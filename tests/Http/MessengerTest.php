@@ -3,10 +3,11 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class MessengerTest extends FeatureTestCase
+class MessengerTest extends HttpTestCase
 {
     /** @test */
     public function guest_is_unauthorized()
@@ -58,9 +59,9 @@ class MessengerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function new_user_has_no_unread_threads()
+    public function user_has_no_unread_threads()
     {
-        $this->actingAs($this->createJaneSmith());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.unread.threads.count'))
             ->assertSuccessful()
@@ -70,23 +71,22 @@ class MessengerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function user_has_unread_threads_count()
+    public function user_has_unread_thread()
     {
         $this->createGroupThread($this->tippin);
-        $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.unread.threads.count'))
             ->assertSuccessful()
             ->assertJson([
-                'unread_threads_count' => 2,
+                'unread_threads_count' => 1,
             ]);
     }
 
     /** @test */
-    public function new_user_has_no_active_calls()
+    public function user_has_no_active_calls()
     {
-        $this->actingAs($this->createJaneSmith());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.active.calls'))
             ->assertSuccessful()
@@ -94,20 +94,14 @@ class MessengerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function user_has_one_active_call()
+    public function user_has_active_call()
     {
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
-        $call = $this->createCall($thread, $this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
+        Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.active.calls'))
             ->assertSuccessful()
-            ->assertJsonCount(1)
-            ->assertJson([
-                [
-                    'id' => $call->id,
-                    'thread_id' => $thread->id,
-                ],
-            ]);
+            ->assertJsonCount(1);
     }
 }

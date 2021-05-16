@@ -2,26 +2,15 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Broadcasting\FriendCancelledBroadcast;
-use RTippin\Messenger\Broadcasting\FriendRequestBroadcast;
-use RTippin\Messenger\Events\FriendCancelledEvent;
-use RTippin\Messenger\Events\FriendRequestEvent;
 use RTippin\Messenger\Models\SentFriend;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class SentFriendsTest extends FeatureTestCase
+class SentFriendsTest extends HttpTestCase
 {
     /** @test */
-    public function guest_is_unauthorized()
+    public function user_has_no_sent_friends()
     {
-        $this->getJson(route('api.messenger.friends.sent.index'))
-            ->assertUnauthorized();
-    }
-
-    /** @test */
-    public function new_user_has_no_sent_friends()
-    {
-        $this->actingAs($this->createJaneSmith());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.friends.sent.index'))
             ->assertStatus(200)
@@ -32,11 +21,6 @@ class SentFriendsTest extends FeatureTestCase
     public function user_can_friend_another_user()
     {
         $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            FriendRequestBroadcast::class,
-            FriendRequestEvent::class,
-        ]);
 
         $this->postJson(route('api.messenger.friends.sent.store'), [
             'recipient_id' => $this->doe->getKey(),
@@ -53,11 +37,6 @@ class SentFriendsTest extends FeatureTestCase
     public function user_can_friend_another_company()
     {
         $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            FriendRequestBroadcast::class,
-            FriendRequestEvent::class,
-        ]);
 
         $this->postJson(route('api.messenger.friends.sent.store'), [
             'recipient_id' => $this->developers->getKey(),
@@ -88,11 +67,6 @@ class SentFriendsTest extends FeatureTestCase
     {
         $sent = SentFriend::factory()->providers($this->tippin, $this->doe)->create();
         $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            FriendCancelledBroadcast::class,
-            FriendCancelledEvent::class,
-        ]);
 
         $this->deleteJson(route('api.messenger.friends.sent.destroy', [
             'sent' => $sent->id,

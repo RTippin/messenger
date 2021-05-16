@@ -61,4 +61,18 @@ class ParticipantFactory extends Factory
             ];
         });
     }
+
+    /**
+     * Indicate participant is muted.
+     *
+     * @return Factory
+     */
+    public function muted(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'muted' => true,
+            ];
+        });
+    }
 }

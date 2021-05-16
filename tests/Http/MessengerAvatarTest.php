@@ -3,22 +3,11 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class MessengerAvatarTest extends FeatureTestCase
+class MessengerAvatarTest extends HttpTestCase
 {
-    private string $disk;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->disk = Messenger::getAvatarStorage('disk');
-        Storage::fake($this->disk);
-    }
-
     /** @test */
     public function user_forbidden_to_upload_avatar_when_disabled()
     {
@@ -74,7 +63,7 @@ class MessengerAvatarTest extends FeatureTestCase
         ]);
         $directory = Messenger::getAvatarStorage('directory').'/user/'.$this->tippin->getKey();
         UploadedFile::fake()->image('avatar.jpg')->storeAs($directory, 'avatar.jpg', [
-            'disk' => $this->disk,
+            'disk' => Messenger::getAvatarStorage('disk'),
         ]);
         $this->actingAs($this->tippin);
 

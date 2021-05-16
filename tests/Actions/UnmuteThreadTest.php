@@ -12,29 +12,17 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class UnmuteThreadTest extends FeatureTestCase
 {
-    private Thread $group;
-    private Participant $participant;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin);
-        $this->participant = $this->group->participants()->first();
-        Messenger::setProvider($this->tippin);
-    }
-
     /** @test */
     public function it_updates_participant()
     {
-        $this->participant->update([
-            'muted' => true,
-        ]);
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->muted()->create();
+        Messenger::setProvider($this->tippin);
 
-        app(UnmuteThread::class)->withoutDispatches()->execute($this->group);
+        app(UnmuteThread::class)->withoutDispatches()->execute($thread);
 
         $this->assertDatabaseHas('participants', [
-            'id' => $this->participant->id,
+            'id' => $participant->id,
             'muted' => false,
         ]);
     }
@@ -42,17 +30,32 @@ class UnmuteThreadTest extends FeatureTestCase
     /** @test */
     public function it_fires_events()
     {
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->muted()->create();
+        Messenger::setProvider($this->tippin);
         Event::fake([
             ParticipantUnMutedEvent::class,
         ]);
-        $this->participant->update([
-            'muted' => true,
+
+        app(UnmuteThread::class)->execute($thread);
+
+        Event::assertDispatched(function (ParticipantUnMutedEvent $event) use ($participant) {
+            return $participant->id === $event->participant->id;
+        });
+    }
+
+    /** @test */
+    public function it_doesnt_fire_events_if_already_un_muted()
+    {
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Messenger::setProvider($this->tippin);
+        Event::fake([
+            ParticipantUnMutedEvent::class,
         ]);
 
-        app(UnmuteThread::class)->execute($this->group);
+        app(UnmuteThread::class)->execute($thread);
 
-        Event::assertDispatched(function (ParticipantUnMutedEvent $event) {
-            return $this->participant->id === $event->participant->id;
-        });
+        Event::assertNotDispatched(ParticipantUnMutedEvent::class);
     }
 }

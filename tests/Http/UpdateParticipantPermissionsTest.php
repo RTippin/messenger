@@ -2,38 +2,22 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Broadcasting\ParticipantPermissionsBroadcast;
-use RTippin\Messenger\Events\ParticipantPermissionsEvent;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class UpdateParticipantPermissionsTest extends FeatureTestCase
+class UpdateParticipantPermissionsTest extends HttpTestCase
 {
-    private Thread $group;
-    private Participant $participant;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->participant = $this->group->participants()->forProvider($this->doe)->first();
-    }
-
     /** @test */
     public function user_forbidden_to_update_private_participant_permissions()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
-        $participant = $private->participants()
-            ->forProvider($this->doe)
-            ->first();
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.participants.update', [
-            'thread' => $private->id,
+            'thread' => $thread->id,
             'participant' => $participant->id,
         ]), [
             'send_messages' => false,
@@ -46,18 +30,15 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function update_group_participant_permissions_without_changes_fires_no_events()
+    public function update_permissions_without_changes_successful()
     {
+        $thread = $this->createGroupThread($this->tippin);
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
 
-        $this->doesntExpectEvents([
-            ParticipantPermissionsBroadcast::class,
-            ParticipantPermissionsEvent::class,
-        ]);
-
         $this->putJson(route('api.messenger.threads.participants.update', [
-            'thread' => $this->group->id,
-            'participant' => $this->participant->id,
+            'thread' => $thread->id,
+            'participant' => $participant->id,
         ]), [
             'send_messages' => true,
             'add_participants' => false,
@@ -69,18 +50,15 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function admin_can_update_group_participant_permissions()
+    public function admin_can_update_permissions()
     {
+        $thread = $this->createGroupThread($this->tippin);
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            ParticipantPermissionsBroadcast::class,
-            ParticipantPermissionsEvent::class,
-        ]);
-
         $this->putJson(route('api.messenger.threads.participants.update', [
-            'thread' => $this->group->id,
-            'participant' => $this->participant->id,
+            'thread' => $thread->id,
+            'participant' => $participant->id,
         ]), [
             'send_messages' => false,
             'add_participants' => true,
@@ -90,7 +68,7 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
         ])
             ->assertSuccessful()
             ->assertJson([
-                'id' => $this->participant->id,
+                'id' => $participant->id,
                 'send_messages' => false,
                 'add_participants' => true,
                 'manage_invites' => true,
@@ -105,14 +83,14 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
     /** @test */
     public function admin_forbidden_to_update_group_participant_permissions_when_thread_locked()
     {
-        $this->group->update([
-            'lockout' => true,
-        ]);
+        $thread = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.participants.update', [
-            'thread' => $this->group->id,
-            'participant' => $this->participant->id,
+            'thread' => $thread->id,
+            'participant' => $participant->id,
         ]), [
             'send_messages' => false,
             'add_participants' => true,
@@ -130,11 +108,13 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
      */
     public function update_group_participant_checks_boolean_values($permissionValue)
     {
+        $thread = $this->createGroupThread($this->tippin);
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.participants.update', [
-            'thread' => $this->group->id,
-            'participant' => $this->participant->id,
+            'thread' => $thread->id,
+            'participant' => $participant->id,
         ]), [
             'send_messages' => $permissionValue,
             'add_participants' => $permissionValue,

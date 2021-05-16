@@ -2,10 +2,9 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Events\StatusHeartbeatEvent;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class StatusHeartbeatTest extends FeatureTestCase
+class StatusHeartbeatTest extends HttpTestCase
 {
     /** @test */
     public function messenger_heartbeat_must_be_a_post()
@@ -21,16 +20,10 @@ class StatusHeartbeatTest extends FeatureTestCase
     {
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            StatusHeartbeatEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.heartbeat'), [
             'away' => false,
         ])
             ->assertSuccessful();
-
-        $this->assertSame(1, $this->tippin->getProviderOnlineStatus());
     }
 
     /** @test */
@@ -38,16 +31,10 @@ class StatusHeartbeatTest extends FeatureTestCase
     {
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            StatusHeartbeatEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.heartbeat'), [
             'away' => true,
         ])
             ->assertSuccessful();
-
-        $this->assertSame(2, $this->tippin->getProviderOnlineStatus());
     }
 
     /**

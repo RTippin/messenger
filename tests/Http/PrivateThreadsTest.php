@@ -3,37 +3,14 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
-use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
-use RTippin\Messenger\Events\NewThreadEvent;
-use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class PrivateThreadsTest extends FeatureTestCase
+class PrivateThreadsTest extends HttpTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        Storage::fake(Messenger::getThreadStorage('disk'));
-    }
-
     /** @test */
-    public function guest_is_unauthorized()
-    {
-        $this->getJson(route('api.messenger.privates.index'))
-            ->assertUnauthorized();
-    }
-
-    /** @test */
-    public function creating_new_private_thread_with_non_friend_is_pending()
+    public function creating_private_thread_with_non_friend_is_pending()
     {
         $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            NewThreadBroadcast::class,
-            NewThreadEvent::class,
-        ]);
 
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
@@ -51,64 +28,23 @@ class PrivateThreadsTest extends FeatureTestCase
                 'options' => [
                     'awaiting_my_approval' => false,
                 ],
-                'resources' => [
-                    'latest_message' => [
-                        'body' => 'Hello World!',
-                    ],
-                ],
             ]);
     }
 
     /** @test */
-    public function creating_new_private_thread_with_friend_is_not_pending()
+    public function creating_private_thread_with_friend_is_not_pending()
     {
         $this->createFriends($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            NewThreadBroadcast::class,
-            NewThreadEvent::class,
-        ]);
 
         $this->postJson(route('api.messenger.privates.store'), [
             'message' => 'Hello World!',
             'recipient_alias' => 'user',
             'recipient_id' => $this->doe->getKey(),
         ])
-            ->assertSuccessful();
-    }
-
-    /** @test */
-    public function creating_new_private_thread_with_non_friend_company()
-    {
-        $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            NewThreadBroadcast::class,
-            NewThreadEvent::class,
-        ]);
-
-        $this->postJson(route('api.messenger.privates.store'), [
-            'message' => 'Hello World!',
-            'recipient_alias' => 'company',
-            'recipient_id' => $this->developers->getKey(),
-        ])
             ->assertSuccessful()
             ->assertJson([
-                'type' => 1,
-                'type_verbose' => 'PRIVATE',
-                'pending' => true,
-                'group' => false,
-                'unread' => true,
-                'name' => 'Developers',
-                'options' => [
-                    'awaiting_my_approval' => false,
-                ],
-                'resources' => [
-                    'latest_message' => [
-                        'body' => 'Hello World!',
-                    ],
-                ],
+                'pending' => false,
             ]);
     }
 
@@ -116,11 +52,6 @@ class PrivateThreadsTest extends FeatureTestCase
     public function creating_new_private_thread_with_image()
     {
         $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            NewThreadBroadcast::class,
-            NewThreadEvent::class,
-        ]);
 
         $this->postJson(route('api.messenger.privates.store'), [
             'image' => UploadedFile::fake()->image('picture.jpg'),
@@ -135,11 +66,6 @@ class PrivateThreadsTest extends FeatureTestCase
     {
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            NewThreadBroadcast::class,
-            NewThreadEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.privates.store'), [
             'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
             'recipient_alias' => 'user',
@@ -152,11 +78,6 @@ class PrivateThreadsTest extends FeatureTestCase
     public function creating_new_private_thread_with_audio()
     {
         $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            NewThreadBroadcast::class,
-            NewThreadEvent::class,
-        ]);
 
         $this->postJson(route('api.messenger.privates.store'), [
             'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),

@@ -2,20 +2,10 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class SearchTest extends FeatureTestCase
+class SearchTest extends HttpTestCase
 {
-    /** @test */
-    public function guest_is_unauthorized()
-    {
-        $this->getJson(route('api.messenger.search', [
-            'query' => 'john',
-        ]))
-            ->assertUnauthorized();
-    }
-
     /** @test */
     public function empty_search_returns_no_results()
     {
@@ -27,7 +17,6 @@ class SearchTest extends FeatureTestCase
                 'meta' => [
                     'total' => 0,
                     'search_items' => [],
-                    'per_page' => Messenger::getSearchPageCount(),
                     'search' => '',
                 ],
             ]);
@@ -55,7 +44,6 @@ class SearchTest extends FeatureTestCase
                     'search_items' => [
                         'tippin',
                     ],
-                    'per_page' => Messenger::getSearchPageCount(),
                     'search' => 'tippin',
                 ],
             ]);
@@ -83,7 +71,6 @@ class SearchTest extends FeatureTestCase
                     'search_items' => [
                         'developers',
                     ],
-                    'per_page' => Messenger::getSearchPageCount(),
                     'search' => 'developers',
                 ],
             ]);
@@ -105,7 +92,6 @@ class SearchTest extends FeatureTestCase
                     'search_items' => [
                         'jane',
                     ],
-                    'per_page' => Messenger::getSearchPageCount(),
                     'search' => 'jane',
                 ],
             ]);
@@ -139,7 +125,6 @@ class SearchTest extends FeatureTestCase
                         'tippin',
                         'john',
                     ],
-                    'per_page' => Messenger::getSearchPageCount(),
                     'search' => 'tippin john',
                 ],
             ]);
@@ -173,7 +158,6 @@ class SearchTest extends FeatureTestCase
                         'tippin',
                         'developers',
                     ],
-                    'per_page' => Messenger::getSearchPageCount(),
                     'search' => 'tippin developers',
                 ],
             ]);
@@ -194,7 +178,6 @@ class SearchTest extends FeatureTestCase
                     'search_items' => [
                         'tippin',
                     ],
-                    'per_page' => Messenger::getSearchPageCount(),
                     'search' => 'tippin',
                 ],
             ]);
@@ -222,7 +205,6 @@ class SearchTest extends FeatureTestCase
                     'search_items' => [
                         'tippindev@gmail.com',
                     ],
-                    'per_page' => Messenger::getSearchPageCount(),
                     'search' => 'tippindev@gmail.com',
                 ],
             ]);
@@ -250,7 +232,6 @@ class SearchTest extends FeatureTestCase
                     'search_items' => [
                         'developers@example.net',
                     ],
-                    'per_page' => Messenger::getSearchPageCount(),
                     'search' => 'developers@example.net',
                 ],
             ]);
@@ -271,7 +252,6 @@ class SearchTest extends FeatureTestCase
                     'search_items' => [
                         'richard.tippin',
                     ],
-                    'per_page' => Messenger::getSearchPageCount(),
                     'search' => 'richard.tippin',
                 ],
             ]);

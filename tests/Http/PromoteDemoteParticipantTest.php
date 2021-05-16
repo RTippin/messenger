@@ -2,36 +2,22 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Broadcasting\DemotedAdminBroadcast;
-use RTippin\Messenger\Broadcasting\PromotedAdminBroadcast;
-use RTippin\Messenger\Events\DemotedAdminEvent;
-use RTippin\Messenger\Events\PromotedAdminEvent;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class PromoteDemoteParticipantTest extends FeatureTestCase
+class PromoteDemoteParticipantTest extends HttpTestCase
 {
-    private Thread $private;
-    private Thread $group;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-    }
-
     /** @test */
-    public function user_forbidden_to_promote_admin_role_in_private_thread()
+    public function forbidden_to_promote_admin_role_in_private_thread()
     {
-        $participant = $this->private->participants()
-            ->forProvider($this->doe)
-            ->first();
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.participants.promote', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
             'participant' => $participant->id,
         ]))
             ->assertForbidden();
@@ -40,13 +26,13 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
     /** @test */
     public function user_forbidden_to_demote_admin_role_in_private_thread()
     {
-        $participant = $this->private->participants()
-            ->forProvider($this->doe)
-            ->first();
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.participants.demote', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
             'participant' => $participant->id,
         ]))
             ->assertForbidden();
@@ -55,13 +41,13 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
     /** @test */
     public function non_admin_forbidden_to_demote_admin()
     {
-        $participant = $this->group->participants()
-            ->forProvider($this->tippin)
-            ->first();
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.participants.demote', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
             'participant' => $participant->id,
         ]))
             ->assertForbidden();
@@ -70,13 +56,13 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
     /** @test */
     public function non_admin_forbidden_to_promote_admin()
     {
-        $participant = $this->group->participants()
-            ->forProvider($this->tippin)
-            ->first();
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.participants.promote', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
             'participant' => $participant->id,
         ]))
             ->assertForbidden();
@@ -85,13 +71,12 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
     /** @test */
     public function admin_forbidden_to_promote_existing_admin()
     {
-        $participant = $this->group->participants()
-            ->forProvider($this->tippin)
-            ->first();
+        $thread = $this->createGroupThread($this->tippin);
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.participants.promote', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
             'participant' => $participant->id,
         ]))
             ->assertForbidden();
@@ -100,13 +85,12 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
     /** @test */
     public function admin_forbidden_to_demote_non_admin()
     {
-        $participant = $this->group->participants()
-            ->forProvider($this->doe)
-            ->first();
+        $thread = $this->createGroupThread($this->tippin);
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.participants.demote', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
             'participant' => $participant->id,
         ]))
             ->assertForbidden();
@@ -115,18 +99,12 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
     /** @test */
     public function admin_can_promote_participant_to_admin()
     {
-        $participant = $this->group->participants()
-            ->forProvider($this->doe)
-            ->first();
+        $thread = $this->createGroupThread($this->tippin);
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            PromotedAdminBroadcast::class,
-            PromotedAdminEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.participants.promote', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
             'participant' => $participant->id,
         ]))
             ->assertSuccessful()
@@ -137,18 +115,15 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function admin_forbidden_to_promote_participant_to_admin_when_thread_locked()
+    public function admin_forbidden_to_promote_participant_when_thread_locked()
     {
-        $this->group->update([
-            'lockout' => true,
-        ]);
-        $participant = $this->group->participants()
-            ->forProvider($this->doe)
-            ->first();
+        $thread = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.participants.promote', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
             'participant' => $participant->id,
         ]))
             ->assertForbidden();
@@ -157,21 +132,12 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
     /** @test */
     public function admin_can_demote_admin()
     {
-        $participant = $this->group->participants()
-            ->forProvider($this->doe)
-            ->first();
-        $participant->update([
-            'admin' => true,
-        ]);
+        $thread = $this->createGroupThread($this->tippin);
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->admin()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            DemotedAdminBroadcast::class,
-            DemotedAdminEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.participants.demote', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
             'participant' => $participant->id,
         ]))
             ->assertSuccessful()
@@ -184,19 +150,13 @@ class PromoteDemoteParticipantTest extends FeatureTestCase
     /** @test */
     public function admin_forbidden_to_demote_admin_when_thread_locked()
     {
-        $this->group->update([
-            'lockout' => true,
-        ]);
-        $participant = $this->group->participants()
-            ->forProvider($this->doe)
-            ->first();
-        $participant->update([
-            'admin' => true,
-        ]);
+        $thread = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.participants.demote', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
             'participant' => $participant->id,
         ]))
             ->assertForbidden();

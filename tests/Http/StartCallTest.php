@@ -3,45 +3,22 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Support\Facades\Cache;
-use RTippin\Messenger\Broadcasting\CallJoinedBroadcast;
-use RTippin\Messenger\Broadcasting\CallStartedBroadcast;
-use RTippin\Messenger\Events\CallJoinedEvent;
-use RTippin\Messenger\Events\CallStartedEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Call;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class StartCallTest extends FeatureTestCase
+class StartCallTest extends HttpTestCase
 {
-    private Thread $private;
-    private Thread $group;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-    }
-
     /** @test */
-    public function non_participant_forbidden_to_start_call_in_private()
+    public function non_participant_forbidden_to_start_call()
     {
-        $this->actingAs($this->companyDevelopers());
+        $thread = Thread::factory()->group()->create();
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
-            'thread' => $this->private->id,
-        ]))
-            ->assertForbidden();
-    }
-
-    /** @test */
-    public function non_participant_forbidden_to_start_call_in_group()
-    {
-        $this->actingAs($this->createSomeCompany());
-
-        $this->postJson(route('api.messenger.threads.calls.store', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
@@ -49,27 +26,40 @@ class StartCallTest extends FeatureTestCase
     /** @test */
     public function participant_without_permission_forbidden_to_start_call()
     {
-        $this->actingAs($this->doe);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
 
     /** @test */
-    public function forbidden_to_start_call_on_pending_private()
+    public function forbidden_to_start_call_on_private_awaiting_recipient_approval()
     {
-        $this->private->participants()
-            ->forProvider($this->doe)
-            ->first()
-            ->update([
-                'pending' => true,
-            ]);
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function forbidden_to_start_call_on_private_awaiting_our_approval()
+    {
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
+        $this->actingAs($this->doe);
+
+        $this->postJson(route('api.messenger.threads.calls.store', [
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
@@ -77,11 +67,12 @@ class StartCallTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_start_call_when_active_call_exist()
     {
-        $this->createCall($this->private, $this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
+        Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
@@ -89,11 +80,12 @@ class StartCallTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_start_call_when_creating_call_timeout_exist()
     {
-        Cache::put("call:{$this->private->id}:starting", true);
+        $thread = $this->createGroupThread($this->tippin);
+        Cache::put("call:$thread->id:starting", true);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
@@ -101,13 +93,12 @@ class StartCallTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_start_call_when_disabled_from_group_settings()
     {
-        $this->group->update([
-            'calling' => false,
-        ]);
+        $thread = Thread::factory()->group()->create(['calling' => false]);
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
@@ -116,10 +107,11 @@ class StartCallTest extends FeatureTestCase
     public function forbidden_to_start_call_when_disabled_from_config()
     {
         Messenger::setCalling(false);
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
@@ -128,10 +120,11 @@ class StartCallTest extends FeatureTestCase
     public function forbidden_to_start_call_when_temporarily_disabled()
     {
         Messenger::disableCallsTemporarily(1);
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
@@ -139,45 +132,23 @@ class StartCallTest extends FeatureTestCase
     /** @test */
     public function user_can_start_call_in_private()
     {
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            CallStartedBroadcast::class,
-            CallStartedEvent::class,
-        ]);
-        $this->doesntExpectEvents([
-            CallJoinedBroadcast::class,
-            CallJoinedEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.calls.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]))
-            ->assertSuccessful()
-            ->assertJson([
-                'thread_id' => $this->private->id,
-                'options' => [
-                    'setup_complete' => false,
-                ],
-            ]);
+            ->assertSuccessful();
     }
 
     /** @test */
     public function admin_can_start_call_in_group()
     {
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            CallStartedBroadcast::class,
-            CallStartedEvent::class,
-        ]);
-        $this->doesntExpectEvents([
-            CallJoinedBroadcast::class,
-            CallJoinedEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.calls.store', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful();
     }
@@ -185,25 +156,12 @@ class StartCallTest extends FeatureTestCase
     /** @test */
     public function participant_with_permission_can_start_call_in_group()
     {
-        $this->group->participants()
-            ->forProvider($this->doe)
-            ->first()
-            ->update([
-                'start_calls' => true,
-            ]);
-        $this->actingAs($this->doe);
-
-        $this->expectsEvents([
-            CallStartedBroadcast::class,
-            CallStartedEvent::class,
-        ]);
-        $this->doesntExpectEvents([
-            CallJoinedBroadcast::class,
-            CallJoinedEvent::class,
-        ]);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create(['start_calls' => true]);
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful();
     }

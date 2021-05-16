@@ -2,22 +2,12 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class ThreadChannelTest extends FeatureTestCase
+class ThreadChannelTest extends HttpTestCase
 {
-    private Thread $private;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->tippin = $this->userTippin();
-        $this->doe = $this->userDoe();
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-    }
-
     protected function getEnvironmentSetUp($app): void
     {
         parent::getEnvironmentSetUp($app);
@@ -30,8 +20,10 @@ class ThreadChannelTest extends FeatureTestCase
     /** @test */
     public function guest_is_unauthorized()
     {
+        $thread = Thread::factory()->group()->create();
+
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-messenger.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.thread.$thread->id",
         ])
             ->assertUnauthorized();
     }
@@ -50,38 +42,51 @@ class ThreadChannelTest extends FeatureTestCase
     /** @test */
     public function non_participant_forbidden()
     {
-        $this->actingAs($this->companyDevelopers());
+        $thread = Thread::factory()->group()->create();
+        $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-messenger.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.thread.$thread->id",
         ])
             ->assertForbidden();
     }
 
     /** @test */
-    public function pending_participant_forbidden()
+    public function recipient_awaiting_approval_forbidden()
     {
-        $this->private->participants()
-            ->forProvider($this->doe)
-            ->first()
-            ->update([
-                'pending' => true,
-            ]);
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
         $this->actingAs($this->doe);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-messenger.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.thread.$thread->id",
         ])
             ->assertForbidden();
+    }
+
+    /** @test */
+    public function participant_awaiting_recipient_approval_authorized()
+    {
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
+        $this->actingAs($this->tippin);
+
+        $this->postJson('/api/broadcasting/auth', [
+            'channel_name' => "presence-messenger.thread.$thread->id",
+        ])
+            ->assertSuccessful();
     }
 
     /** @test */
     public function participant_is_authorized()
     {
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-messenger.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.thread.$thread->id",
         ])
             ->assertSuccessful()
             ->assertJson([
@@ -97,11 +102,12 @@ class ThreadChannelTest extends FeatureTestCase
     /** @test */
     public function participant_is_forbidden_when_thread_locked()
     {
-        $this->doe->delete();
+        $thread = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson('/api/broadcasting/auth', [
-            'channel_name' => "presence-messenger.thread.{$this->private->id}",
+            'channel_name' => "presence-messenger.thread.$thread->id",
         ])
             ->assertForbidden();
     }

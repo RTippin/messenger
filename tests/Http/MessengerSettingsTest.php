@@ -2,35 +2,24 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class MessengerSettingsTest extends FeatureTestCase
+class MessengerSettingsTest extends HttpTestCase
 {
     /** @test */
-    public function messenger_created_when_called_from_user_without_messenger()
+    public function user_can_view_messenger_settings()
     {
-        $jane = $this->createJaneSmith();
-
-        $this->assertDatabaseMissing('messengers', [
-            'owner_id' => $jane->getKey(),
-        ]);
-
-        $this->actingAs($jane);
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.settings'))
             ->assertSuccessful()
             ->assertJson([
-                'owner_id' => $jane->getKey(),
-                'dark_mode' => true,
+                'owner_id' => $this->tippin->getKey(),
             ]);
-
-        $this->assertDatabaseHas('messengers', [
-            'owner_id' => $jane->getKey(),
-        ]);
     }
 
     /** @test */
-    public function updating_messenger_settings_and_set_status_to_away()
+    public function user_can_update_messenger_settings()
     {
         $this->actingAs($this->tippin);
 
@@ -51,60 +40,6 @@ class MessengerSettingsTest extends FeatureTestCase
                 'dark_mode' => false,
                 'online_status' => 2,
             ]);
-
-        $this->assertSame(2, $this->tippin->getProviderOnlineStatus());
-    }
-
-    /** @test */
-    public function updating_messenger_settings_and_set_status_to_online()
-    {
-        $this->actingAs($this->tippin);
-
-        $this->putJson(route('api.messenger.settings'), [
-            'message_popups' => true,
-            'message_sound' => true,
-            'call_ringtone_sound' => true,
-            'notify_sound' => true,
-            'dark_mode' => true,
-            'online_status' => 1,
-        ])
-            ->assertSuccessful()
-            ->assertJson([
-                'message_popups' => true,
-                'message_sound' => true,
-                'call_ringtone_sound' => true,
-                'notify_sound' => true,
-                'dark_mode' => true,
-                'online_status' => 1,
-            ]);
-
-        $this->assertSame(1, $this->tippin->getProviderOnlineStatus());
-    }
-
-    /** @test */
-    public function updating_messenger_settings_and_set_status_to_offline()
-    {
-        $this->actingAs($this->tippin);
-
-        $this->putJson(route('api.messenger.settings'), [
-            'message_popups' => true,
-            'message_sound' => true,
-            'call_ringtone_sound' => true,
-            'notify_sound' => true,
-            'dark_mode' => true,
-            'online_status' => 0,
-        ])
-            ->assertSuccessful()
-            ->assertJson([
-                'message_popups' => true,
-                'message_sound' => true,
-                'call_ringtone_sound' => true,
-                'notify_sound' => true,
-                'dark_mode' => true,
-                'online_status' => 0,
-            ]);
-
-        $this->assertSame(0, $this->tippin->getProviderOnlineStatus());
     }
 
     /**

@@ -4,11 +4,10 @@ namespace RTippin\Messenger\Tests\Middleware;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Middleware\ThrottleRequests;
-use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class RateLimitersTest extends FeatureTestCase
+class RateLimitersTest extends HttpTestCase
 {
     protected function setUp(): void
     {
@@ -54,11 +53,11 @@ class RateLimitersTest extends FeatureTestCase
     /** @test */
     public function store_message_api_limits_request_60_per_minute()
     {
-        $group = $this->createGroupThread($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $response = $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $group->id,
+            'thread' => $thread->id,
         ]), [
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',
@@ -71,12 +70,11 @@ class RateLimitersTest extends FeatureTestCase
     /** @test */
     public function store_image_message_api_limits_request_15_per_minute()
     {
-        Storage::fake(Messenger::getThreadStorage('disk'));
-        $group = $this->createGroupThread($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $response = $this->postJson(route('api.messenger.threads.images.store', [
-            'thread' => $group->id,
+            'thread' => $thread->id,
         ]), [
             'image' => UploadedFile::fake()->image('picture.jpg'),
             'temporary_id' => '123-456-789',
@@ -89,12 +87,11 @@ class RateLimitersTest extends FeatureTestCase
     /** @test */
     public function store_document_message_api_limits_request_15_per_minute()
     {
-        Storage::fake(Messenger::getThreadStorage('disk'));
-        $group = $this->createGroupThread($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $response = $this->postJson(route('api.messenger.threads.documents.store', [
-            'thread' => $group->id,
+            'thread' => $thread->id,
         ]), [
             'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
             'temporary_id' => '123-456-789',

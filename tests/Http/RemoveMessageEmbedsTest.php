@@ -2,72 +2,53 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Broadcasting\EmbedsRemovedBroadcast;
-use RTippin\Messenger\Events\EmbedsRemovedEvent;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class RemoveMessageEmbedsTest extends FeatureTestCase
+class RemoveMessageEmbedsTest extends HttpTestCase
 {
-    private Thread $private;
-    private Message $message;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-        $this->message = $this->createMessage($this->private, $this->tippin);
-    }
-
-    /** @test */
-    public function guest_is_unauthorized()
-    {
-        $this->deleteJson(route('api.messenger.threads.messages.embeds.destroy', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
-        ]))
-            ->assertUnauthorized();
-    }
-
     /** @test */
     public function non_participant_is_forbidden()
     {
-        $this->actingAs($this->companyDevelopers());
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()->for($thread)->owner($this->doe)->create();
+        $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.messages.embeds.destroy', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]))
             ->assertForbidden();
     }
 
     /** @test */
-    public function sender_can_remove_message_embeds()
+    public function message_owner_can_remove_embeds()
     {
-        $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            EmbedsRemovedBroadcast::class,
-            EmbedsRemovedEvent::class,
-        ]);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
+        $message = Message::factory()->for($thread)->owner($this->doe)->create();
+        $this->actingAs($this->doe);
 
         $this->deleteJson(route('api.messenger.threads.messages.embeds.destroy', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]))
             ->assertSuccessful();
     }
 
     /** @test */
-    public function recipient_forbidden_to_remove_message_embeds()
+    public function non_owner_forbidden_to_remove_embeds()
     {
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);
 
         $this->deleteJson(route('api.messenger.threads.messages.embeds.destroy', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]))
             ->assertForbidden();
     }
@@ -75,30 +56,27 @@ class RemoveMessageEmbedsTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_remove_message_embeds_when_thread_locked()
     {
-        $this->doe->delete();
-        $this->actingAs($this->tippin);
+        $thread = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
+        $message = Message::factory()->for($thread)->owner($this->doe)->create();
+        $this->actingAs($this->doe);
 
         $this->deleteJson(route('api.messenger.threads.messages.embeds.destroy', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]))
             ->assertForbidden();
     }
 
     /** @test */
-    public function group_admin_can_remove_embeds_from_non_owned_message()
+    public function admin_can_remove_embeds_from_non_owned_message()
     {
-        $group = $this->createGroupThread($this->tippin, $this->doe);
-        $message = $this->createMessage($group, $this->doe);
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            EmbedsRemovedBroadcast::class,
-            EmbedsRemovedEvent::class,
-        ]);
-
         $this->deleteJson(route('api.messenger.threads.messages.embeds.destroy', [
-            'thread' => $group->id,
+            'thread' => $thread->id,
             'message' => $message->id,
         ]))
             ->assertSuccessful();

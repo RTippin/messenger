@@ -2,54 +2,34 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Broadcasting\MessageArchivedBroadcast;
-use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
-use RTippin\Messenger\Events\MessageArchivedEvent;
-use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class PrivateMessageTest extends FeatureTestCase
+class PrivateMessageTest extends HttpTestCase
 {
-    private Thread $private;
-    private Message $message;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-        $this->message = $this->createMessage($this->private, $this->tippin);
-    }
-
-    /** @test */
-    public function guest_is_unauthorized()
-    {
-        $this->getJson(route('api.messenger.threads.messages.index', [
-            'thread' => $this->private->id,
-        ]))
-            ->assertUnauthorized();
-    }
-
     /** @test */
     public function non_participant_is_forbidden()
     {
-        $this->actingAs($this->companyDevelopers());
+        $thread = Thread::factory()->create();
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.index', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
 
     /** @test */
-    public function recipient_can_view_messages_index()
+    public function user_can_view_messages()
     {
-        $this->actingAs($this->doe);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        Message::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.index', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful()
             ->assertJsonCount(1, 'data');
@@ -58,43 +38,30 @@ class PrivateMessageTest extends FeatureTestCase
     /** @test */
     public function user_can_view_message()
     {
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.show', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]))
             ->assertSuccessful()
             ->assertJson([
-                'id' => $this->message->id,
-                'body' => 'First Test Message',
-            ]);
-    }
-
-    /** @test */
-    public function recipient_can_view_message()
-    {
-        $this->actingAs($this->doe);
-
-        $this->getJson(route('api.messenger.threads.messages.show', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
-        ]))
-            ->assertSuccessful()
-            ->assertJson([
-                'id' => $this->message->id,
-                'body' => 'First Test Message',
+                'id' => $message->id,
             ]);
     }
 
     /** @test */
     public function user_forbidden_to_send_message_when_thread_locked()
     {
-        $this->doe->delete();
+        $thread = Thread::factory()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',
@@ -105,71 +72,35 @@ class PrivateMessageTest extends FeatureTestCase
     /** @test */
     public function user_can_send_message()
     {
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',
         ])
             ->assertSuccessful()
             ->assertJson([
-                'thread_id' => $this->private->id,
+                'thread_id' => $thread->id,
                 'temporary_id' => '123-456-789',
                 'type' => 0,
                 'type_verbose' => 'MESSAGE',
                 'body' => 'Hello!',
-                'owner' => [
-                    'provider_id' => $this->tippin->getKey(),
-                    'provider_alias' => 'user',
-                    'name' => 'Richard Tippin',
-                ],
             ]);
     }
 
     /** @test */
-    public function recipient_can_send_message()
+    public function user_can_send_message_when_thread_awaiting_recipient_approval()
     {
-        $this->actingAs($this->doe);
-
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
-        $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $this->private->id,
-        ]), [
-            'message' => 'Hello!',
-            'temporary_id' => '123-456-789',
-        ])
-            ->assertSuccessful();
-    }
-
-    /** @test */
-    public function sender_can_send_message_when_thread_awaiting_recipient_approval()
-    {
-        $this->private->participants()
-            ->forProvider($this->doe)
-            ->first()
-            ->update([
-                'pending' => true,
-            ]);
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            NewMessageBroadcast::class,
-            NewMessageEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',
@@ -180,10 +111,11 @@ class PrivateMessageTest extends FeatureTestCase
     /** @test */
     public function non_participant_forbidden_to_send_message()
     {
-        $this->actingAs($this->developers);
+        $thread = Thread::factory()->create();
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',
@@ -192,18 +124,15 @@ class PrivateMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function recipient_forbidden_to_send_message_when_thread_awaiting_approval_on_them()
+    public function recipient_forbidden_to_send_message_when_thread_awaiting_approval()
     {
-        $this->private->participants()
-            ->forProvider($this->doe)
-            ->first()
-            ->update([
-                'pending' => true,
-            ]);
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',
@@ -212,30 +141,29 @@ class PrivateMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function sender_can_archive_message()
+    public function message_owner_can_archive_message()
     {
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            MessageArchivedBroadcast::class,
-            MessageArchivedEvent::class,
-        ]);
-
         $this->deleteJson(route('api.messenger.threads.messages.destroy', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]))
             ->assertSuccessful();
     }
 
     /** @test */
-    public function recipient_forbidden_to_archive_message()
+    public function non_owner_forbidden_to_archive_message()
     {
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);
 
         $this->deleteJson(route('api.messenger.threads.messages.destroy', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]))
             ->assertForbidden();
     }
@@ -243,12 +171,15 @@ class PrivateMessageTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_archive_message_when_thread_locked()
     {
-        $this->doe->delete();
+        $thread = Thread::factory()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.messages.destroy', [
-            'thread' => $this->private->id,
-            'message' => $this->message->id,
+            'thread' => $thread->id,
+            'message' => $message->id,
         ]))
             ->assertForbidden();
     }
@@ -261,10 +192,11 @@ class PrivateMessageTest extends FeatureTestCase
      */
     public function send_message_fails_validations($messageValue, $tempIdValue)
     {
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'message' => $messageValue,
             'temporary_id' => $tempIdValue,
@@ -283,10 +215,11 @@ class PrivateMessageTest extends FeatureTestCase
      */
     public function send_message_extra_fails_validation($extraValue)
     {
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'message' => 'test',
             'temporary_id' => '1234',
@@ -306,10 +239,11 @@ class PrivateMessageTest extends FeatureTestCase
      */
     public function send_message_extra_passes_validation($extraValue, $extraOutput)
     {
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',

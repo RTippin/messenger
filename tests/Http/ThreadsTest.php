@@ -2,56 +2,16 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class ThreadsTest extends FeatureTestCase
+class ThreadsTest extends HttpTestCase
 {
-    private Thread $private;
-    private Thread $group;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin, $this->doe, $this->developers);
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-    }
-
     /** @test */
-    public function guest_is_unauthorized()
+    public function user_has_no_threads()
     {
-        $this->getJson(route('api.messenger.threads.index'))
-            ->assertUnauthorized();
-    }
-
-    /** @test */
-    public function new_user_has_no_threads()
-    {
-        $this->actingAs($this->createJaneSmith());
-
-        $this->getJson(route('api.messenger.threads.index'))
-            ->assertStatus(200)
-            ->assertJsonCount(0, 'data')
-            ->assertJson([
-                'meta' => [
-                    'final_page' => true,
-                    'index' => true,
-                    'next_page_id' => null,
-                    'next_page_route' => null,
-                    'page_id' => null,
-                    'per_page' => Messenger::getThreadsIndexCount(),
-                    'results' => 0,
-                    'total' => 0,
-                ],
-            ]);
-    }
-
-    /** @test */
-    public function new_company_has_no_threads()
-    {
-        $this->actingAs($this->createSomeCompany());
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.index'))
             ->assertStatus(200)
@@ -61,33 +21,13 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function user_belongs_to_two_threads()
     {
+        $this->createPrivateThread($this->tippin, $this->doe);
+        $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.index'))
             ->assertStatus(200)
-            ->assertJsonCount(2, 'data')
-            ->assertJson([
-                'data' => [
-                    [
-                        'type_verbose' => 'PRIVATE',
-                        'name' => 'John Doe',
-                    ],
-                    [
-                        'type_verbose' => 'GROUP',
-                        'name' => 'First Test Group',
-                    ],
-                ],
-            ]);
-    }
-
-    /** @test */
-    public function company_belongs_to_one_thread()
-    {
-        $this->actingAs($this->developers);
-
-        $this->getJson(route('api.messenger.threads.index'))
-            ->assertStatus(200)
-            ->assertJsonCount(1, 'data');
+            ->assertJsonCount(2, 'data');
     }
 
     /** @test */
@@ -104,11 +44,11 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function user_forbidden_to_view_thread_they_do_not_belong_to()
     {
-        $group = $this->createGroupThread($this->doe);
+        $thread = Thread::factory()->group()->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.show', [
-            'thread' => $group->id,
+            'thread' => $thread->id,
         ]))
             ->assertForbidden();
     }
@@ -116,24 +56,18 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function user_can_view_individual_private_thread()
     {
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.show', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful()
             ->assertJson([
-                'id' => $this->private->id,
+                'id' => $thread->id,
                 'type' => 1,
                 'type_verbose' => 'PRIVATE',
                 'group' => false,
-                'unread' => true,
-                'name' => 'John Doe',
-                'options' => [
-                    'add_participants' => false,
-                    'admin' => false,
-                    'invitations' => false,
-                ],
                 'resources' => [
                     'recipient' => [
                         'provider_id' => $this->doe->getKey(),
@@ -146,35 +80,29 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function user_can_view_individual_group_thread()
     {
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.show', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful()
             ->assertJson([
-                'id' => $this->group->id,
+                'id' => $thread->id,
                 'type' => 2,
                 'type_verbose' => 'GROUP',
                 'group' => true,
-                'unread' => true,
-                'name' => 'First Test Group',
-                'options' => [
-                    'add_participants' => true,
-                    'admin' => true,
-                    'invitations' => true,
-                ],
             ]);
     }
 
     /** @test */
     public function unread_thread_is_unread()
     {
-        $this->createMessage($this->private, $this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.is.unread', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful()
             ->assertJson([
@@ -185,17 +113,12 @@ class ThreadsTest extends FeatureTestCase
     /** @test */
     public function read_thread_is_not_unread()
     {
-        $this->createMessage($this->private, $this->tippin);
-        $this->private->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'last_read' => now()->addMinute(),
-            ]);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create(['last_read' => now()->addMinute()]);
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.is.unread', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]))
             ->assertSuccessful()
             ->assertJson([

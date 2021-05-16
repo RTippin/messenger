@@ -2,34 +2,22 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Broadcasting\ThreadApprovalBroadcast;
-use RTippin\Messenger\Events\ThreadApprovalEvent;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class PrivateThreadApprovalTest extends FeatureTestCase
+class PrivateThreadApprovalTest extends HttpTestCase
 {
-    private Thread $private;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe, true);
-    }
-
     /** @test */
     public function recipient_can_approve_pending_thread()
     {
-        $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            ThreadApprovalBroadcast::class,
-            ThreadApprovalEvent::class,
-        ]);
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
+        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.approval', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'approve' => true,
         ])
@@ -39,15 +27,13 @@ class PrivateThreadApprovalTest extends FeatureTestCase
     /** @test */
     public function recipient_can_deny_pending_thread()
     {
-        $this->actingAs($this->tippin);
-
-        $this->expectsEvents([
-            ThreadApprovalBroadcast::class,
-            ThreadApprovalEvent::class,
-        ]);
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
+        $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.approval', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'approve' => false,
         ])
@@ -57,10 +43,13 @@ class PrivateThreadApprovalTest extends FeatureTestCase
     /** @test */
     public function sender_cannot_deny_pending_thread()
     {
-        $this->actingAs($this->doe);
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.approval', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'approve' => false,
         ])
@@ -70,10 +59,13 @@ class PrivateThreadApprovalTest extends FeatureTestCase
     /** @test */
     public function sender_cannot_approve_pending_thread()
     {
-        $this->actingAs($this->doe);
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.approval', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'approve' => true,
         ])
@@ -83,12 +75,11 @@ class PrivateThreadApprovalTest extends FeatureTestCase
     /** @test */
     public function user_cannot_approve_non_pending_thread()
     {
-        $this->makeNonPending();
-
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.approval', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'approve' => true,
         ])
@@ -98,11 +89,11 @@ class PrivateThreadApprovalTest extends FeatureTestCase
     /** @test */
     public function user_cannot_deny_non_pending_thread()
     {
-        $this->makeNonPending();
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.approval', [
-            'thread' => $this->private->id,
+            'thread' => $thread->id,
         ]), [
             'approve' => false,
         ])
@@ -112,11 +103,11 @@ class PrivateThreadApprovalTest extends FeatureTestCase
     /** @test */
     public function user_cannot_approve_group_thread()
     {
-        $group = $this->createGroupThread($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.approval', [
-            'thread' => $group->id,
+            'thread' => $thread->id,
         ]), [
             'approve' => true,
         ])
@@ -126,24 +117,14 @@ class PrivateThreadApprovalTest extends FeatureTestCase
     /** @test */
     public function user_cannot_deny_group_thread()
     {
-        $group = $this->createGroupThread($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.approval', [
-            'thread' => $group->id,
+            'thread' => $thread->id,
         ]), [
             'approve' => false,
         ])
             ->assertForbidden();
-    }
-
-    private function makeNonPending(): void
-    {
-        $this->private->participants()
-            ->where('pending', '=', true)
-            ->first()
-            ->update([
-                'pending' => false,
-            ]);
     }
 }
