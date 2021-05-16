@@ -3,31 +3,22 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\Storage;
-use RTippin\Messenger\Broadcasting\ThreadAvatarBroadcast;
-use RTippin\Messenger\Events\ThreadAvatarEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class GroupThreadAvatarTest extends FeatureTestCase
+class GroupThreadAvatarTest extends HttpTestCase
 {
-    private Thread $group;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-    }
-
     /** @test */
     public function non_admin_forbidden_to_update_group_avatar()
     {
-        $this->actingAs($this->doe);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'default' => '1.png',
         ])
@@ -37,13 +28,12 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function admin_forbidden_to_update_group_avatar_when_thread_locked()
     {
-        $this->group->update([
-            'lockout' => true,
-        ]);
-        $this->actingAs($this->doe);
+        $thread = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'default' => '1.png',
         ])
@@ -51,17 +41,14 @@ class GroupThreadAvatarTest extends FeatureTestCase
     }
 
     /** @test */
-    public function update_group_avatar_without_changes_expects_no_events()
+    public function update_group_avatar_without_changes_successful()
     {
+        $thread = Thread::factory()->group()->create(['image' => '5.png']);
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
-        $this->doesntExpectEvents([
-            ThreadAvatarBroadcast::class,
-            ThreadAvatarEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.avatar.update', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'default' => '5.png',
         ])
@@ -71,39 +58,27 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function update_group_avatar_with_new_default()
     {
+        $thread = Thread::factory()->group()->create(['image' => '5.png']);
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            ThreadAvatarBroadcast::class,
-            ThreadAvatarEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.avatar.update', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'default' => '1.png',
         ])
             ->assertSuccessful();
-
-        $this->assertDatabaseHas('threads', [
-            'id' => $this->group->id,
-            'image' => '1.png',
-        ]);
     }
 
     /** @test */
-    public function group_avatar_upload_stores_photo()
+    public function update_group_avatar_with_upload()
     {
-        Storage::fake(Messenger::getThreadStorage('disk'));
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            ThreadAvatarBroadcast::class,
-            ThreadAvatarEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.avatar.update', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'image' => UploadedFile::fake()->image('avatar.jpg'),
         ])
@@ -113,17 +88,13 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function group_avatar_mime_types_can_be_overwritten()
     {
-        Storage::fake(Messenger::getThreadStorage('disk'));
         Messenger::setThreadAvatarMimeTypes('cr2');
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            ThreadAvatarBroadcast::class,
-            ThreadAvatarEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.avatar.update', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'image' => UploadedFile::fake()->create('avatar.cr2', 500, 'image/x-canon-cr2'),
         ])
@@ -133,17 +104,13 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function group_avatar_size_limit_can_be_overwritten()
     {
-        Storage::fake(Messenger::getThreadStorage('disk'));
         Messenger::setThreadAvatarSizeLimit(20480);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
-        $this->expectsEvents([
-            ThreadAvatarBroadcast::class,
-            ThreadAvatarEvent::class,
-        ]);
-
         $this->postJson(route('api.messenger.threads.avatar.update', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'image' => UploadedFile::fake()->create('avatar.jpg', 18000, 'image/jpeg'),
         ])
@@ -157,10 +124,12 @@ class GroupThreadAvatarTest extends FeatureTestCase
      */
     public function update_group_avatar_default_passes_validation($defaultValue)
     {
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'default' => $defaultValue,
         ])
@@ -174,10 +143,12 @@ class GroupThreadAvatarTest extends FeatureTestCase
      */
     public function update_group_avatar_default_fails_validation($defaultValue)
     {
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'default' => $defaultValue,
         ])
@@ -192,11 +163,12 @@ class GroupThreadAvatarTest extends FeatureTestCase
      */
     public function group_avatar_upload_passes_validations($avatarValue)
     {
-        Storage::fake(Messenger::getThreadStorage('disk'));
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'image' => $avatarValue,
         ])
@@ -210,10 +182,12 @@ class GroupThreadAvatarTest extends FeatureTestCase
      */
     public function group_avatar_upload_fails_validations($avatarValue)
     {
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.avatar.update', [
-            'thread' => $this->group->id,
+            'thread' => $thread->id,
         ]), [
             'image' => $avatarValue,
         ])

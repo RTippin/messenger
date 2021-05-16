@@ -130,6 +130,28 @@ class UpdateGroupAvatarTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_doesnt_fires_events_if_nothing_changed()
+    {
+        $this->group->update([
+            'image' => '1.png',
+        ]);
+        Event::fake([
+            ThreadAvatarBroadcast::class,
+            ThreadAvatarEvent::class,
+        ]);
+
+        app(UpdateGroupAvatar::class)->execute(
+            $this->group,
+            [
+                'default' => '1.png',
+            ]
+        );
+
+        Event::assertNotDispatched(ThreadAvatarBroadcast::class);
+        Event::assertNotDispatched(ThreadAvatarEvent::class);
+    }
+
+    /** @test */
     public function it_dispatches_listeners()
     {
         Bus::fake();
