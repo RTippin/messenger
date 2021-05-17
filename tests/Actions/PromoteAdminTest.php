@@ -29,7 +29,7 @@ class PromoteAdminTest extends FeatureTestCase
     {
         $thread = Thread::factory()->group()->create();
         $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
-        
+
         app(PromoteAdmin::class)->execute($thread, $participant);
 
         $this->assertDatabaseHas('participants', [

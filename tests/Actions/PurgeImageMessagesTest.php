@@ -43,7 +43,7 @@ class PurgeImageMessagesTest extends FeatureTestCase
             ->storeAs($thread->getImagesDirectory(), 'foo.jpg', [
                 'disk' => Messenger::getThreadStorage('disk'),
             ]);
-        
+
         app(PurgeImageMessages::class)->execute(Message::image()->get());
 
         Storage::disk(Messenger::getThreadStorage('disk'))->assertMissing($image1->getImagePath());
