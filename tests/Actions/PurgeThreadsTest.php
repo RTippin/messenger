@@ -11,57 +11,35 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PurgeThreadsTest extends FeatureTestCase
 {
-    private Thread $private;
-    private Thread $group;
-    private string $disk;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-        $this->group = $this->createGroupThread($this->tippin);
-        $this->disk = Messenger::getThreadStorage('disk');
-        Storage::fake($this->disk);
-    }
-
     /** @test */
     public function it_removes_threads_and_participants()
     {
+        $this->createPrivateThread($this->tippin, $this->doe);
+        $this->createGroupThread($this->tippin);
+
         app(PurgeThreads::class)->execute(Thread::all());
 
-        $this->assertDatabaseMissing('participants', [
-            'thread_id' => $this->private->id,
-        ]);
-        $this->assertDatabaseMissing('participants', [
-            'thread_id' => $this->group->id,
-        ]);
-        $this->assertDatabaseMissing('threads', [
-            'id' => $this->private->id,
-        ]);
-        $this->assertDatabaseMissing('threads', [
-            'id' => $this->group->id,
-        ]);
+        $this->assertDatabaseCount('participants', 0);
+        $this->assertDatabaseCount('threads', 0);
     }
 
     /** @test */
     public function it_removes_files_and_directories_from_disk()
     {
+        $thread = Thread::factory()->create();
         UploadedFile::fake()
             ->image('avatar.jpg')
-            ->storeAs($this->private->getAvatarDirectory(), 'avatar.jpg', [
-                'disk' => $this->disk,
+            ->storeAs($thread->getAvatarDirectory(), 'avatar.jpg', [
+                'disk' => Messenger::getThreadStorage('disk'),
             ]);
-
         UploadedFile::fake()
             ->image('avatar.jpg')
-            ->storeAs($this->group->getAvatarDirectory(), 'avatar.jpg', [
-                'disk' => $this->group->getStorageDisk(),
+            ->storeAs($thread->getAvatarDirectory(), 'avatar.jpg', [
+                'disk' => Messenger::getThreadStorage('disk'),
             ]);
 
         app(PurgeThreads::class)->execute(Thread::all());
 
-        Storage::disk($this->disk)->assertMissing($this->private->getStorageDirectory());
-        Storage::disk($this->disk)->assertMissing($this->group->getStorageDirectory());
+        Storage::disk(Messenger::getThreadStorage('disk'))->assertMissing($thread->getStorageDirectory());
     }
 }

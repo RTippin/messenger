@@ -7,54 +7,48 @@ use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Messages\PurgeAudioMessages;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PurgeAudioMessagesTest extends FeatureTestCase
 {
-    private Message $audio1;
-    private Message $audio2;
-    private string $disk;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $group = $this->createGroupThread($this->tippin);
-        $this->disk = Messenger::getThreadStorage('disk');
-        Storage::fake($this->disk);
-        $this->audio1 = Message::factory()->for($group)->owner($this->tippin)->audio()->create(['body' => 'test.mp3']);
-        UploadedFile::fake()
-            ->create('test.mp3', 500, 'audio/mpeg')
-            ->storeAs($group->getAudioDirectory(), 'test.mp3', [
-                'disk' => $this->disk,
-            ]);
-        $this->audio2 = Message::factory()->for($group)->owner($this->tippin)->audio()->create(['body' => 'foo.mp3']);
-        UploadedFile::fake()
-            ->create('foo.mp3', 500, 'audio/mpeg')
-            ->storeAs($group->getAudioDirectory(), 'foo.mp3', [
-                'disk' => $this->disk,
-            ]);
-    }
-
     /** @test */
     public function it_removes_messages()
     {
+        $thread = Thread::factory()->create();
+        $audio1 = Message::factory()->for($thread)->owner($this->tippin)->audio()->create();
+        $audio2 = Message::factory()->for($thread)->owner($this->tippin)->audio()->create();
+
         app(PurgeAudioMessages::class)->execute(Message::audio()->get());
 
         $this->assertDatabaseMissing('messages', [
-            'id' => $this->audio1->id,
+            'id' => $audio1->id,
         ]);
         $this->assertDatabaseMissing('messages', [
-            'id' => $this->audio2->id,
+            'id' => $audio2->id,
         ]);
     }
 
     /** @test */
     public function it_removes_audio_from_disk()
     {
+        $thread = Thread::factory()->create();
+        $audio1 = Message::factory()->for($thread)->owner($this->tippin)->audio()->create(['body' => 'test.mp3']);
+        $audio2 = Message::factory()->for($thread)->owner($this->tippin)->audio()->create(['body' => 'foo.mp3']);
+        UploadedFile::fake()
+            ->create('test.mp3', 500, 'audio/mpeg')
+            ->storeAs($thread->getAudioDirectory(), 'test.mp3', [
+                'disk' => Messenger::getThreadStorage('disk'),
+            ]);
+        UploadedFile::fake()
+            ->create('foo.mp3', 500, 'audio/mpeg')
+            ->storeAs($thread->getAudioDirectory(), 'foo.mp3', [
+                'disk' => Messenger::getThreadStorage('disk'),
+            ]);
+
         app(PurgeAudioMessages::class)->execute(Message::audio()->get());
 
-        Storage::disk($this->disk)->assertMissing($this->audio1->getAudioPath());
-        Storage::disk($this->disk)->assertMissing($this->audio2->getAudioPath());
+        Storage::disk(Messenger::getThreadStorage('disk'))->assertMissing($audio1->getAudioPath());
+        Storage::disk(Messenger::getThreadStorage('disk'))->assertMissing($audio2->getAudioPath());
     }
 }

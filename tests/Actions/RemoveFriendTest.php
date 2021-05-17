@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Friends\RemoveFriend;
 use RTippin\Messenger\Events\FriendRemovedEvent;
 use RTippin\Messenger\Models\Friend;
@@ -10,56 +11,53 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class RemoveFriendTest extends FeatureTestCase
 {
-    private Friend $friend;
-    private Friend $inverseFriend;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $friends = $this->createFriends($this->tippin, $this->doe);
-        $this->friend = $friends[0];
-        $this->inverseFriend = $friends[1];
-    }
-
     /** @test */
     public function it_removes_inverse_friend()
     {
-        app(RemoveFriend::class)->withoutDispatches()->execute($this->friend);
+        $friend = Friend::factory()->providers($this->tippin, $this->doe)->create();
+        $inverse = Friend::factory()->providers($this->doe, $this->tippin)->create();
+
+        app(RemoveFriend::class)->withoutDispatches()->execute($inverse);
 
         $this->assertDatabaseMissing('friends', [
-            'id' => $this->friend->id,
+            'id' => $friend->id,
         ]);
         $this->assertDatabaseMissing('friends', [
-            'id' => $this->inverseFriend->id,
+            'id' => $inverse->id,
         ]);
     }
 
     /** @test */
     public function it_removes_friend()
     {
-        app(RemoveFriend::class)->withoutDispatches()->execute($this->inverseFriend);
+        $friend = Friend::factory()->providers($this->tippin, $this->doe)->create();
+        $inverse = Friend::factory()->providers($this->doe, $this->tippin)->create();
+
+        app(RemoveFriend::class)->withoutDispatches()->execute($friend);
 
         $this->assertDatabaseMissing('friends', [
-            'id' => $this->friend->id,
+            'id' => $friend->id,
         ]);
         $this->assertDatabaseMissing('friends', [
-            'id' => $this->inverseFriend->id,
+            'id' => $inverse->id,
         ]);
     }
 
     /** @test */
     public function it_fires_events()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             FriendRemovedEvent::class,
         ]);
+        $friend = Friend::factory()->providers($this->tippin, $this->doe)->create();
+        $inverse = Friend::factory()->providers($this->doe, $this->tippin)->create();
 
-        app(RemoveFriend::class)->execute($this->friend);
+        app(RemoveFriend::class)->execute($friend);
 
-        Event::assertDispatched(function (FriendRemovedEvent $event) {
-            $this->assertSame($this->inverseFriend->id, $event->inverseFriend->id);
-            $this->assertSame($this->friend->id, $event->friend->id);
+        Event::assertDispatched(function (FriendRemovedEvent $event) use ($friend, $inverse) {
+            $this->assertSame($inverse->id, $event->inverseFriend->id);
+            $this->assertSame($friend->id, $event->friend->id);
 
             return true;
         });

@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Messages\RemoveEmbeds;
 use RTippin\Messenger\Broadcasting\EmbedsRemovedBroadcast;
 use RTippin\Messenger\Events\EmbedsRemovedEvent;
@@ -13,28 +14,23 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class RemoveEmbedsTest extends FeatureTestCase
 {
-    private Thread $group;
-    private Message $message;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread($this->tippin);
-        $this->message = $this->createMessage($this->group, $this->tippin);
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
     public function it_sets_message_embeds_to_false()
     {
-        app(RemoveEmbeds::class)->withoutDispatches()->execute(
-            $this->group,
-            $this->message
-        );
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+
+        app(RemoveEmbeds::class)->execute($thread, $message);
 
         $this->assertDatabaseHas('messages', [
-            'id' => $this->message->id,
+            'id' => $message->id,
             'embeds' => false,
         ]);
     }
@@ -42,24 +38,24 @@ class RemoveEmbedsTest extends FeatureTestCase
     /** @test */
     public function it_fires_events()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             EmbedsRemovedBroadcast::class,
             EmbedsRemovedEvent::class,
         ]);
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
 
-        app(RemoveEmbeds::class)->execute(
-            $this->group,
-            $this->message
-        );
+        app(RemoveEmbeds::class)->execute($thread, $message);
 
-        Event::assertDispatched(function (EmbedsRemovedBroadcast $event) {
-            $this->assertSame($this->message->id, $event->broadcastWith()['message_id']);
-            $this->assertContains('presence-messenger.thread.'.$this->group->id, $event->broadcastOn());
+        Event::assertDispatched(function (EmbedsRemovedBroadcast $event) use ($thread, $message) {
+            $this->assertSame($message->id, $event->broadcastWith()['message_id']);
+            $this->assertContains('presence-messenger.thread.'.$thread->id, $event->broadcastOn());
 
             return true;
         });
-        Event::assertDispatched(function (EmbedsRemovedEvent $event) {
-            return $this->message->id === $event->message->id;
+        Event::assertDispatched(function (EmbedsRemovedEvent $event) use ($message) {
+            return $message->id === $event->message->id;
         });
     }
 }

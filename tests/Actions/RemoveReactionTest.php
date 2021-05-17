@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Messages\RemoveReaction;
 use RTippin\Messenger\Broadcasting\ReactionRemovedBroadcast;
 use RTippin\Messenger\Events\ReactionRemovedEvent;
@@ -14,39 +15,28 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class RemoveReactionTest extends FeatureTestCase
 {
-    private Thread $group;
-    private Message $message;
-    private MessageReaction $reaction;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->message = Message::factory()->for($this->group)->owner($this->tippin)->reacted()->create();
-        $this->reaction = MessageReaction::factory()->for($this->message)->owner($this->tippin)->create(['reaction' => ':joy:']);
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
     public function it_removes_reaction()
     {
-        $reaction = MessageReaction::factory()
-            ->for($this->message)
-            ->owner($this->tippin)
-            ->create(['reaction' => ':poop:']);
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->reacted()->create();
+        MessageReaction::factory()->for($message)->owner($this->tippin)->create();
+        $reaction = MessageReaction::factory()->for($message)->owner($this->tippin)->create();
 
-        app(RemoveReaction::class)->withoutDispatches()->execute(
-            $this->group,
-            $this->message,
-            $reaction
-        );
+        app(RemoveReaction::class)->execute($thread, $message, $reaction);
 
         $this->assertDatabaseMissing('message_reactions', [
             'id' => $reaction->id,
         ]);
         $this->assertDatabaseHas('messages', [
-            'id' => $this->message->id,
+            'id' => $message->id,
             'reacted' => true,
         ]);
     }
@@ -54,17 +44,17 @@ class RemoveReactionTest extends FeatureTestCase
     /** @test */
     public function it_removes_reaction_and_marks_message_not_reacted_when_last_one()
     {
-        app(RemoveReaction::class)->withoutDispatches()->execute(
-            $this->group,
-            $this->message,
-            $this->reaction
-        );
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->reacted()->create();
+        $reaction = MessageReaction::factory()->for($message)->owner($this->tippin)->create();
+
+        app(RemoveReaction::class)->execute($thread, $message, $reaction);
 
         $this->assertDatabaseMissing('message_reactions', [
-            'id' => $this->reaction->id,
+            'id' => $reaction->id,
         ]);
         $this->assertDatabaseHas('messages', [
-            'id' => $this->message->id,
+            'id' => $message->id,
             'reacted' => false,
         ]);
     }
@@ -72,48 +62,64 @@ class RemoveReactionTest extends FeatureTestCase
     /** @test */
     public function it_fires_events()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             ReactionRemovedBroadcast::class,
             ReactionRemovedEvent::class,
         ]);
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->reacted()->create();
+        $reaction = MessageReaction::factory()->for($message)->owner($this->tippin)->reaction(':joy:')->create();
 
-        app(RemoveReaction::class)->execute(
-            $this->group,
-            $this->message,
-            $this->reaction
-        );
+        app(RemoveReaction::class)->execute($thread, $message, $reaction);
 
-        Event::assertDispatched(function (ReactionRemovedBroadcast $event) {
-            $this->assertContains('presence-messenger.thread.'.$this->group->id, $event->broadcastOn());
-            $this->assertSame($this->reaction->id, $event->broadcastWith()['id']);
+        Event::assertDispatched(function (ReactionRemovedBroadcast $event) use ($thread, $reaction) {
+            $this->assertContains('presence-messenger.thread.'.$thread->id, $event->broadcastOn());
+            $this->assertSame($reaction->id, $event->broadcastWith()['id']);
             $this->assertSame(':joy:', $event->broadcastWith()['reaction']);
 
             return true;
         });
         Event::assertDispatchedTimes(ReactionRemovedBroadcast::class, 1);
-        Event::assertDispatched(function (ReactionRemovedEvent $event) {
-            return $this->reaction->id === $event->reaction['id'];
+        Event::assertDispatched(function (ReactionRemovedEvent $event) use ($reaction) {
+            return $reaction->id === $event->reaction['id'];
         });
     }
 
     /** @test */
     public function it_fires_multiple_events_if_not_message_owner()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             ReactionRemovedBroadcast::class,
             ReactionRemovedEvent::class,
         ]);
-        Messenger::setProvider($this->doe);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $message = Message::factory()->for($thread)->owner($this->doe)->reacted()->create();
+        $reaction = MessageReaction::factory()->for($message)->owner($this->tippin)->create();
 
-        app(RemoveReaction::class)->execute(
-            $this->group,
-            $this->message,
-            $this->reaction
-        );
+        app(RemoveReaction::class)->execute($thread, $message, $reaction);
 
         Event::assertDispatchedTimes(ReactionRemovedBroadcast::class, 2);
-        Event::assertDispatched(function (ReactionRemovedEvent $event) {
-            return $this->reaction->id === $event->reaction['id'];
+        Event::assertDispatched(function (ReactionRemovedEvent $event) use ($reaction) {
+            return $reaction->id === $event->reaction['id'];
         });
+    }
+
+    /** @test */
+    public function it_doesnt_fire_multiple_events_if_message_owner_not_in_thread()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            ReactionRemovedBroadcast::class,
+            ReactionRemovedEvent::class,
+        ]);
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->doe)->reacted()->create();
+        $reaction = MessageReaction::factory()->for($message)->owner($this->tippin)->create();
+
+        app(RemoveReaction::class)->execute($thread, $message, $reaction);
+
+        Event::assertDispatchedTimes(ReactionRemovedBroadcast::class, 1);
     }
 }

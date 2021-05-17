@@ -7,52 +7,46 @@ use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Messages\PurgeImageMessages;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PurgeImageMessagesTest extends FeatureTestCase
 {
-    private Message $image1;
-    private Message $image2;
-    private string $disk;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $group = $this->createGroupThread($this->tippin);
-        $this->disk = Messenger::getThreadStorage('disk');
-        Storage::fake($this->disk);
-        $this->image1 = Message::factory()->for($group)->owner($this->tippin)->image()->create();
-        UploadedFile::fake()->image('picture.jpg')
-            ->storeAs($group->getImagesDirectory(), 'picture.jpg', [
-                'disk' => $this->disk,
-            ]);
-        $this->image2 = Message::factory()->for($group)->owner($this->tippin)->image()->create(['body' => 'foo.jpg']);
-        UploadedFile::fake()->image('foo.jpg')
-            ->storeAs($group->getImagesDirectory(), 'foo.jpg', [
-                'disk' => $this->disk,
-            ]);
-    }
-
     /** @test */
     public function it_removes_messages()
     {
+        $thread = Thread::factory()->create();
+        $image1 = Message::factory()->for($thread)->owner($this->tippin)->image()->create();
+        $image2 = Message::factory()->for($thread)->owner($this->tippin)->image()->create();
+
         app(PurgeImageMessages::class)->execute(Message::image()->get());
 
         $this->assertDatabaseMissing('messages', [
-            'id' => $this->image1->id,
+            'id' => $image1->id,
         ]);
         $this->assertDatabaseMissing('messages', [
-            'id' => $this->image2->id,
+            'id' => $image2->id,
         ]);
     }
 
     /** @test */
     public function it_removes_images_from_disk()
     {
+        $thread = Thread::factory()->create();
+        $image1 = Message::factory()->for($thread)->owner($this->tippin)->image()->create();
+        $image2 = Message::factory()->for($thread)->owner($this->tippin)->image()->create(['body' => 'foo.jpg']);
+        UploadedFile::fake()->image('picture.jpg')
+            ->storeAs($thread->getImagesDirectory(), 'picture.jpg', [
+                'disk' => Messenger::getThreadStorage('disk'),
+            ]); 
+        UploadedFile::fake()->image('foo.jpg')
+            ->storeAs($thread->getImagesDirectory(), 'foo.jpg', [
+                'disk' => Messenger::getThreadStorage('disk'),
+            ]);
+        
         app(PurgeImageMessages::class)->execute(Message::image()->get());
 
-        Storage::disk($this->disk)->assertMissing($this->image1->getImagePath());
-        Storage::disk($this->disk)->assertMissing($this->image2->getImagePath());
+        Storage::disk(Messenger::getThreadStorage('disk'))->assertMissing($image1->getImagePath());
+        Storage::disk(Messenger::getThreadStorage('disk'))->assertMissing($image2->getImagePath());
     }
 }

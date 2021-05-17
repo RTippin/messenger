@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\RemoveParticipant;
 use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
 use RTippin\Messenger\Events\RemovedFromThreadEvent;
@@ -16,54 +17,49 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class RemoveParticipantTest extends FeatureTestCase
 {
-    private Thread $group;
-    private Participant $participant;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->participant = $this->group->participants()->forProvider($this->doe)->first();
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
     public function it_soft_deletes_participant()
     {
-        app(RemoveParticipant::class)->withoutDispatches()->execute(
-            $this->group,
-            $this->participant
-        );
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
+
+        app(RemoveParticipant::class)->execute($thread, $participant);
 
         $this->assertSoftDeleted('participants', [
-            'id' => $this->participant->id,
+            'id' => $participant->id,
         ]);
     }
 
     /** @test */
     public function it_fires_events()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             ThreadLeftBroadcast::class,
             RemovedFromThreadEvent::class,
         ]);
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
 
-        app(RemoveParticipant::class)->execute(
-            $this->group,
-            $this->participant
-        );
+        app(RemoveParticipant::class)->execute($thread, $participant);
 
-        Event::assertDispatched(function (ThreadLeftBroadcast $event) {
+        Event::assertDispatched(function (ThreadLeftBroadcast $event) use ($thread) {
             $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
-            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame($thread->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
-        Event::assertDispatched(function (RemovedFromThreadEvent $event) {
+        Event::assertDispatched(function (RemovedFromThreadEvent $event) use ($thread, $participant) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
-            $this->assertSame($this->group->id, $event->thread->id);
-            $this->assertSame($this->participant->id, $event->participant->id);
+            $this->assertSame($thread->id, $event->thread->id);
+            $this->assertSame($participant->id, $event->participant->id);
 
             return true;
         });
@@ -72,12 +68,12 @@ class RemoveParticipantTest extends FeatureTestCase
     /** @test */
     public function it_dispatches_listeners()
     {
+        BaseMessengerAction::enableEvents();
         Bus::fake();
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
 
-        app(RemoveParticipant::class)->withoutBroadcast()->execute(
-            $this->group,
-            $this->participant
-        );
+        app(RemoveParticipant::class)->execute($thread, $participant);
 
         Bus::assertDispatched(function (CallQueuedListener $job) {
             return $job->class === RemovedFromThreadMessage::class;

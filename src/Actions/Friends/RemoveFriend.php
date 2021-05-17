@@ -39,8 +39,7 @@ class RemoveFriend extends BaseMessengerAction
      * @param DatabaseManager $database
      * @param Dispatcher $dispatcher
      */
-    public function __construct(DatabaseManager $database,
-                                Dispatcher $dispatcher)
+    public function __construct(DatabaseManager $database, Dispatcher $dispatcher)
     {
         $this->database = $database;
         $this->dispatcher = $dispatcher;

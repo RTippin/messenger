@@ -7,54 +7,48 @@ use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Messages\PurgeDocumentMessages;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PurgeDocumentMessagesTest extends FeatureTestCase
 {
-    private Message $document1;
-    private Message $document2;
-    private string $disk;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $group = $this->createGroupThread($this->tippin);
-        $this->disk = Messenger::getThreadStorage('disk');
-        Storage::fake($this->disk);
-        $this->document1 = Message::factory()->for($group)->owner($this->tippin)->document()->create(['body' => 'test.pdf']);
-        UploadedFile::fake()
-            ->create('test.pdf', 500, 'application/pdf')
-            ->storeAs($group->getDocumentsDirectory(), 'test.pdf', [
-                'disk' => $this->disk,
-            ]);
-        $this->document2 = Message::factory()->for($group)->owner($this->tippin)->document()->create(['body' => 'foo.pdf']);
-        UploadedFile::fake()
-            ->create('foo.pdf', 500, 'application/pdf')
-            ->storeAs($group->getDocumentsDirectory(), 'foo.pdf', [
-                'disk' => $this->disk,
-            ]);
-    }
-
     /** @test */
     public function it_removes_messages()
     {
+        $thread = Thread::factory()->create();
+        $document1 = Message::factory()->for($thread)->owner($this->tippin)->document()->create();
+        $document2 = Message::factory()->for($thread)->owner($this->tippin)->document()->create();
+        
         app(PurgeDocumentMessages::class)->execute(Message::document()->get());
-
+        
         $this->assertDatabaseMissing('messages', [
-            'id' => $this->document1->id,
+            'id' => $document1->id,
         ]);
         $this->assertDatabaseMissing('messages', [
-            'id' => $this->document2->id,
+            'id' => $document2->id,
         ]);
     }
 
     /** @test */
     public function it_removes_documents_from_disk()
     {
+        $thread = Thread::factory()->create();
+        $document1 = Message::factory()->for($thread)->owner($this->tippin)->document()->create(['body' => 'test.pdf']);
+        $document2 = Message::factory()->for($thread)->owner($this->tippin)->document()->create(['body' => 'foo.pdf']);
+        UploadedFile::fake()
+            ->create('test.pdf', 500, 'application/pdf')
+            ->storeAs($thread->getDocumentsDirectory(), 'test.pdf', [
+                'disk' => Messenger::getThreadStorage('disk'),
+            ]);
+        UploadedFile::fake()
+            ->create('foo.pdf', 500, 'application/pdf')
+            ->storeAs($thread->getDocumentsDirectory(), 'foo.pdf', [
+                'disk' => Messenger::getThreadStorage('disk'),
+            ]);
+
         app(PurgeDocumentMessages::class)->execute(Message::document()->get());
 
-        Storage::disk($this->disk)->assertMissing($this->document1->getDocumentPath());
-        Storage::disk($this->disk)->assertMissing($this->document2->getDocumentPath());
+        Storage::disk(Messenger::getThreadStorage('disk'))->assertMissing($document1->getDocumentPath());
+        Storage::disk(Messenger::getThreadStorage('disk'))->assertMissing($document2->getDocumentPath());
     }
 }
