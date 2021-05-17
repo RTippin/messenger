@@ -30,7 +30,7 @@ class LeaveThreadTest extends FeatureTestCase
     {
         $thread = Thread::factory()->group()->create();
         $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
-        
+
         app(LeaveThread::class)->execute($thread);
 
         $this->assertSoftDeleted('participants', [

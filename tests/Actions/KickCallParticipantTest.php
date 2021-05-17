@@ -19,7 +19,7 @@ class KickCallParticipantTest extends FeatureTestCase
     protected function setUp(): void
     {
         parent::setUp();
-        
+
         Messenger::setProvider($this->tippin);
     }
 
