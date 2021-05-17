@@ -11,22 +11,13 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class DestroyMessengerAvatarTest extends FeatureTestCase
 {
-    private string $directory;
-    private string $disk;
-
     protected function setUp(): void
     {
         parent::setUp();
 
+        Messenger::setProvider($this->tippin);
         $this->tippin->update([
             'picture' => 'avatar.jpg',
-        ]);
-        $this->directory = Messenger::getAvatarStorage('directory').'/user/'.$this->tippin->getKey();
-        $this->disk = Messenger::getAvatarStorage('disk');
-        Messenger::setProvider($this->tippin);
-        Storage::fake($this->disk);
-        UploadedFile::fake()->image('avatar.jpg')->storeAs($this->directory, 'avatar.jpg', [
-            'disk' => $this->disk,
         ]);
     }
 
@@ -55,8 +46,14 @@ class DestroyMessengerAvatarTest extends FeatureTestCase
     /** @test */
     public function it_removes_image_from_disk()
     {
+        $directory = Messenger::getAvatarStorage('directory').'/user/'.$this->tippin->getKey();
+
+        UploadedFile::fake()->image('avatar.jpg')->storeAs($directory, 'avatar.jpg', [
+            'disk' => Messenger::getAvatarStorage('disk'),
+        ]);
+
         app(DestroyMessengerAvatar::class)->execute();
 
-        Storage::disk($this->disk)->assertMissing($this->directory.'/avatar.jpg');
+        Storage::disk(Messenger::getAvatarStorage('disk'))->assertMissing($directory.'/avatar.jpg');
     }
 }

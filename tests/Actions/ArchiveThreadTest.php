@@ -16,6 +16,13 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class ArchiveThreadTest extends FeatureTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Messenger::setProvider($this->tippin);
+    }
+
     /** @test */
     public function it_soft_deletes_thread()
     {
@@ -31,7 +38,6 @@ class ArchiveThreadTest extends FeatureTestCase
     /** @test */
     public function it_fires_events()
     {
-        Messenger::setProvider($this->tippin);
         BaseMessengerAction::enableEvents();
         Event::fake([
             ThreadArchivedBroadcast::class,
@@ -58,7 +64,6 @@ class ArchiveThreadTest extends FeatureTestCase
     /** @test */
     public function it_dispatched_listeners()
     {
-        Messenger::setProvider($this->tippin);
         BaseMessengerAction::enableEvents();
         Bus::fake();
         $thread = $this->createGroupThread($this->tippin);

@@ -14,6 +14,13 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class ArchiveMessageTest extends FeatureTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Messenger::setProvider($this->tippin);
+    }
+
     /** @test */
     public function it_soft_deletes_message()
     {
@@ -30,7 +37,6 @@ class ArchiveMessageTest extends FeatureTestCase
     /** @test */
     public function it_fires_events()
     {
-        Messenger::setProvider($this->tippin);
         BaseMessengerAction::enableEvents();
         Event::fake([
             MessageArchivedBroadcast::class,

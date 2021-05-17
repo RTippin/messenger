@@ -17,6 +17,13 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class AddReactionTest extends FeatureTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Messenger::setProvider($this->tippin);
+    }
+
     /** @test */
     public function it_throws_exception_if_disabled()
     {
@@ -45,7 +52,6 @@ class AddReactionTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_reaction_already_exist()
     {
-        Messenger::setProvider($this->tippin);
         $thread = $this->createGroupThread($this->tippin);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         MessageReaction::factory()->for($message)->owner($this->tippin)->reaction(':joy:')->create();
@@ -59,7 +65,6 @@ class AddReactionTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_reaction_exceeds_max_unique()
     {
-        Messenger::setProvider($this->tippin);
         $thread = $this->createGroupThread($this->tippin);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         MessageReaction::factory()
@@ -89,7 +94,6 @@ class AddReactionTest extends FeatureTestCase
     /** @test */
     public function it_stores_reaction_and_marks_message_reacted()
     {
-        Messenger::setProvider($this->tippin);
         $thread = $this->createGroupThread($this->tippin);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
 
@@ -108,7 +112,6 @@ class AddReactionTest extends FeatureTestCase
     /** @test */
     public function it_fires_events()
     {
-        Messenger::setProvider($this->tippin);
         BaseMessengerAction::enableEvents();
         Event::fake([
             ReactionAddedBroadcast::class,
@@ -135,7 +138,6 @@ class AddReactionTest extends FeatureTestCase
     /** @test */
     public function it_fires_multiple_events_if_not_message_owner()
     {
-        Messenger::setProvider($this->tippin);
         BaseMessengerAction::enableEvents();
         Event::fake([
             ReactionAddedBroadcast::class,
@@ -155,7 +157,6 @@ class AddReactionTest extends FeatureTestCase
     /** @test */
     public function it_doesnt_fire_multiple_events_if_message_owner_not_in_thread()
     {
-        Messenger::setProvider($this->tippin);
         BaseMessengerAction::enableEvents();
         Event::fake([
             ReactionAddedBroadcast::class,

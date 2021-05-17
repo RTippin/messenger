@@ -11,20 +11,12 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class CallBrokerSetupTest extends FeatureTestCase
 {
-    private Thread $group;
-    private Call $call;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin);
-        $this->call = Call::factory()->for($this->group)->owner($this->tippin)->create();
-    }
-
     /** @test */
     public function it_updates_call_with_room_data()
     {
+        $thread = Thread::factory()->create();
+        $call = Call::factory()->for($thread)->owner($this->tippin)->create();
+
         $this->mock(VideoDriver::class)->shouldReceive([
             'create' => true,
             'getRoomId' => '123456',
@@ -33,13 +25,10 @@ class CallBrokerSetupTest extends FeatureTestCase
             'getExtraPayload' => 'TEST-EXTRA-PAYLOAD',
         ]);
 
-        app(CallBrokerSetup::class)->execute(
-            $this->group,
-            $this->call
-        );
+        app(CallBrokerSetup::class)->execute($thread, $call);
 
         $this->assertDatabaseHas('calls', [
-            'id' => $this->call->id,
+            'id' => $call->id,
             'setup_complete' => true,
             'teardown_complete' => false,
             'room_id' => '123456',
@@ -52,6 +41,9 @@ class CallBrokerSetupTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_setup_failed()
     {
+        $thread = Thread::factory()->create();
+        $call = Call::factory()->for($thread)->owner($this->tippin)->create();
+
         $this->mock(VideoDriver::class)->shouldReceive([
             'create' => false,
         ]);
@@ -59,25 +51,18 @@ class CallBrokerSetupTest extends FeatureTestCase
         $this->expectException(CallBrokerException::class);
         $this->expectExceptionMessage('Setup with video provider failed.');
 
-        app(CallBrokerSetup::class)->execute(
-            $this->group,
-            $this->call
-        );
+        app(CallBrokerSetup::class)->execute($thread, $call);
     }
 
     /** @test */
     public function it_throws_exception_if_call_already_setup()
     {
-        $this->call->update([
-            'setup_complete' => true,
-        ]);
+        $thread = Thread::factory()->create();
+        $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
 
         $this->expectException(CallBrokerException::class);
         $this->expectExceptionMessage('Call does not need to be setup.');
 
-        app(CallBrokerSetup::class)->execute(
-            $this->group,
-            $this->call
-        );
+        app(CallBrokerSetup::class)->execute($thread, $call);
     }
 }

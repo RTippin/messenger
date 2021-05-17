@@ -4,24 +4,33 @@ namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Calls\IgnoreCall;
 use RTippin\Messenger\Broadcasting\CallEndedBroadcast;
 use RTippin\Messenger\Broadcasting\CallIgnoredBroadcast;
 use RTippin\Messenger\Events\CallEndedEvent;
 use RTippin\Messenger\Events\CallIgnoredEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Call;
+use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class IgnoreCallTest extends FeatureTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Messenger::setProvider($this->tippin);
+    }
+
     /** @test */
     public function it_keeps_call_active_if_ignoring_group_call()
     {
-        $group = $this->createGroupThread($this->tippin, $this->doe);
-        $call = $this->createCall($group, $this->tippin);
-        Messenger::setProvider($this->doe);
+        $thread = Thread::factory()->group()->create();
+        $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
 
-        app(IgnoreCall::class)->withoutDispatches()->execute($group, $call);
+        app(IgnoreCall::class)->execute($thread, $call);
 
         $this->assertDatabaseHas('calls', [
             'id' => $call->id,
@@ -34,13 +43,11 @@ class IgnoreCallTest extends FeatureTestCase
     /** @test */
     public function it_ends_call_if_ignoring_private_call()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
-        $call = $this->createCall($private, $this->tippin);
-        $ended = now();
-        Carbon::setTestNow($ended);
-        Messenger::setProvider($this->doe);
+        $thread = Thread::factory()->create();
+        $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        Carbon::setTestNow($ended = now());
 
-        app(IgnoreCall::class)->withoutDispatches()->execute($private, $call);
+        app(IgnoreCall::class)->execute($thread, $call);
 
         $this->assertDatabaseHas('calls', [
             'id' => $call->id,
@@ -51,22 +58,22 @@ class IgnoreCallTest extends FeatureTestCase
     /** @test */
     public function it_fires_events_if_ignoring_group_call()
     {
-        $group = $this->createGroupThread($this->tippin, $this->doe);
-        $call = $this->createCall($group, $this->tippin);
-        Messenger::setProvider($this->doe);
+        BaseMessengerAction::enableEvents();
         Event::fake([
             CallIgnoredBroadcast::class,
             CallIgnoredEvent::class,
             CallEndedBroadcast::class,
             CallEndedEvent::class,
         ]);
+        $thread = Thread::factory()->group()->create();
+        $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
 
-        app(IgnoreCall::class)->execute($group, $call);
+        app(IgnoreCall::class)->execute($thread, $call);
 
-        Event::assertDispatched(function (CallIgnoredBroadcast $event) use ($group, $call) {
-            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
+        Event::assertDispatched(function (CallIgnoredBroadcast $event) use ($thread, $call) {
+            $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
             $this->assertSame($call->id, $event->broadcastWith()['id']);
-            $this->assertSame($group->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame($thread->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
@@ -80,22 +87,22 @@ class IgnoreCallTest extends FeatureTestCase
     /** @test */
     public function it_fires_events_if_ignoring_private_call()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
-        $call = $this->createCall($private, $this->tippin);
-        Messenger::setProvider($this->doe);
+        BaseMessengerAction::enableEvents();
         Event::fake([
             CallIgnoredBroadcast::class,
             CallIgnoredEvent::class,
             CallEndedBroadcast::class,
             CallEndedEvent::class,
         ]);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
 
-        app(IgnoreCall::class)->execute($private, $call);
+        app(IgnoreCall::class)->execute($thread, $call);
 
-        Event::assertDispatched(function (CallIgnoredBroadcast $event) use ($private, $call) {
-            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
+        Event::assertDispatched(function (CallIgnoredBroadcast $event) use ($thread, $call) {
+            $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
             $this->assertSame($call->id, $event->broadcastWith()['id']);
-            $this->assertSame($private->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame($thread->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });

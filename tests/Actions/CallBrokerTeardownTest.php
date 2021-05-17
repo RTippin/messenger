@@ -6,31 +6,24 @@ use RTippin\Messenger\Actions\Calls\CallBrokerTeardown;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Exceptions\CallBrokerException;
 use RTippin\Messenger\Models\Call;
+use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class CallBrokerTeardownTest extends FeatureTestCase
 {
-    private Call $call;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $group = $this->createGroupThread($this->tippin);
-        $this->call = Call::factory()->for($group)->owner($this->tippin)->create();
-    }
-
     /** @test */
     public function it_updates_call_after_teardown()
     {
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
+
         $this->mock(VideoDriver::class)
             ->shouldReceive('destroy')
             ->andReturn(true);
 
-        app(CallBrokerTeardown::class)->execute($this->call);
+        app(CallBrokerTeardown::class)->execute($call);
 
         $this->assertDatabaseHas('calls', [
-            'id' => $this->call->id,
+            'id' => $call->id,
             'teardown_complete' => true,
         ]);
     }
@@ -38,6 +31,8 @@ class CallBrokerTeardownTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_destroy_failed()
     {
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
+
         $this->mock(VideoDriver::class)
             ->shouldReceive('destroy')
             ->andReturn(false);
@@ -45,6 +40,6 @@ class CallBrokerTeardownTest extends FeatureTestCase
         $this->expectException(CallBrokerException::class);
         $this->expectExceptionMessage('Teardown video provider failed.');
 
-        app(CallBrokerTeardown::class)->execute($this->call);
+        app(CallBrokerTeardown::class)->execute($call);
     }
 }
