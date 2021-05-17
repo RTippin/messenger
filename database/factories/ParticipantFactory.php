@@ -75,4 +75,18 @@ class ParticipantFactory extends Factory
             ];
         });
     }
+
+    /**
+     * Indicate participant is read.
+     *
+     * @return Factory
+     */
+    public function read(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'last_read' => now(),
+            ];
+        });
+    }
 }

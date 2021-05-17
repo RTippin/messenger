@@ -7,6 +7,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Calls\LeaveCall;
 use RTippin\Messenger\Broadcasting\CallLeftBroadcast;
 use RTippin\Messenger\Events\CallLeftEvent;
@@ -18,32 +19,17 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class LeaveCallTest extends FeatureTestCase
 {
-    private Thread $group;
-    private Call $call;
-    private CallParticipant $participant;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin);
-        $this->call = $this->createCall($this->group, $this->tippin);
-        $this->participant = $this->call->participants()->first();
-    }
-
     /** @test */
     public function it_updates_participant()
     {
-        $left = now()->addMinutes(5);
-        Carbon::setTestNow($left);
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
+        $participant = CallParticipant::factory()->for($call)->owner($this->tippin)->create();
+        Carbon::setTestNow($left = now()->addMinutes(5));
 
-        app(LeaveCall::class)->withoutDispatches()->execute(
-            $this->call,
-            $this->participant
-        );
+        app(LeaveCall::class)->execute($call, $participant);
 
         $this->assertDatabaseHas('call_participants', [
-            'id' => $this->participant->id,
+            'id' => $participant->id,
             'left_call' => $left,
         ]);
     }
@@ -51,50 +37,50 @@ class LeaveCallTest extends FeatureTestCase
     /** @test */
     public function it_removes_participant_key_from_cache()
     {
-        Cache::put("call:{$this->call->id}:{$this->participant->id}", true);
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
+        $participant = CallParticipant::factory()->for($call)->owner($this->tippin)->create();
+        Cache::put("call:$call->id:$participant->id", true);
 
-        app(LeaveCall::class)->withoutDispatches()->execute(
-            $this->call,
-            $this->participant
-        );
+        app(LeaveCall::class)->execute($call, $participant);
 
-        $this->assertFalse(Cache::has("call:{$this->call->id}:{$this->participant->id}"));
+        $this->assertFalse(Cache::has("call:$call->id:$participant->id"));
     }
 
     /** @test */
     public function it_fires_events()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             CallLeftBroadcast::class,
             CallLeftEvent::class,
         ]);
+        $thread = Thread::factory()->create();
+        $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        $participant = CallParticipant::factory()->for($call)->owner($this->tippin)->create();
 
-        app(LeaveCall::class)->execute(
-            $this->call,
-            $this->participant
-        );
+        app(LeaveCall::class)->execute($call, $participant);
 
-        Event::assertDispatched(function (CallLeftBroadcast $event) {
+        Event::assertDispatched(function (CallLeftBroadcast $event) use ($thread, $call) {
             $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
-            $this->assertSame($this->call->id, $event->broadcastWith()['id']);
-            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame($call->id, $event->broadcastWith()['id']);
+            $this->assertSame($thread->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
-        Event::assertDispatched(function (CallLeftEvent $event) {
-            return $this->participant->id === $event->participant->id;
+        Event::assertDispatched(function (CallLeftEvent $event) use ($participant) {
+            return $participant->id === $event->participant->id;
         });
     }
 
     /** @test */
     public function it_dispatches_listeners()
     {
+        BaseMessengerAction::enableEvents();
         Bus::fake();
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
+        $participant = CallParticipant::factory()->for($call)->owner($this->tippin)->create();
 
-        app(LeaveCall::class)->withoutBroadcast()->execute(
-            $this->call,
-            $this->participant
-        );
+        app(LeaveCall::class)->execute($call, $participant);
 
         Bus::assertDispatched(function (CallQueuedListener $job) {
             return $job->class === EndCallIfEmpty::class;

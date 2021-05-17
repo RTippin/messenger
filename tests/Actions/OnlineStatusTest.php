@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Messenger\OnlineStatus;
 use RTippin\Messenger\Events\StatusHeartbeatEvent;
 use RTippin\Messenger\Facades\Messenger;
@@ -22,7 +23,7 @@ class OnlineStatusTest extends FeatureTestCase
     /** @test */
     public function it_stores_away_cache_key()
     {
-        app(OnlineStatus::class)->withoutDispatches()->execute(true);
+        app(OnlineStatus::class)->execute(true);
 
         $this->assertTrue(Cache::has("user:online:{$this->tippin->getKey()}"));
         $this->assertSame('away', Cache::get("user:online:{$this->tippin->getKey()}"));
@@ -31,7 +32,7 @@ class OnlineStatusTest extends FeatureTestCase
     /** @test */
     public function it_stores_online_cache_key()
     {
-        app(OnlineStatus::class)->withoutDispatches()->execute(false);
+        app(OnlineStatus::class)->execute(false);
 
         $this->assertTrue(Cache::has("user:online:{$this->tippin->getKey()}"));
         $this->assertSame('online', Cache::get("user:online:{$this->tippin->getKey()}"));
@@ -42,7 +43,7 @@ class OnlineStatusTest extends FeatureTestCase
     {
         Messenger::setOnlineStatus(false);
 
-        app(OnlineStatus::class)->withoutDispatches()->execute(false);
+        app(OnlineStatus::class)->execute(false);
 
         $this->assertFalse(Cache::has("user:online:{$this->tippin->getKey()}"));
     }
@@ -50,8 +51,7 @@ class OnlineStatusTest extends FeatureTestCase
     /** @test */
     public function it_doesnt_touch_provider_if_provider_set_to_offline()
     {
-        $before = now()->subMinutes(5);
-        Carbon::setTestNow($before);
+        Carbon::setTestNow($before = now()->subMinutes(5));
         $this->tippin->update([
             'updated_at' => $before,
         ]);
@@ -59,7 +59,7 @@ class OnlineStatusTest extends FeatureTestCase
             'online_status' => 0,
         ]);
 
-        app(OnlineStatus::class)->withoutDispatches()->execute(false);
+        app(OnlineStatus::class)->execute(false);
 
         $this->assertDatabaseHas('users', [
             'id' => $this->tippin->getKey(),
@@ -75,7 +75,7 @@ class OnlineStatusTest extends FeatureTestCase
             'updated_at' => $before,
         ]);
 
-        app(OnlineStatus::class)->withoutDispatches()->execute(true);
+        app(OnlineStatus::class)->execute(true);
 
         $this->assertNotSame($before->toDayDateTimeString(), $this->tippin->updated_at->toDayDateTimeString());
     }
@@ -83,6 +83,7 @@ class OnlineStatusTest extends FeatureTestCase
     /** @test */
     public function it_fires_away_events()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             StatusHeartbeatEvent::class,
         ]);
@@ -101,6 +102,7 @@ class OnlineStatusTest extends FeatureTestCase
     /** @test */
     public function it_fires_online_events()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             StatusHeartbeatEvent::class,
         ]);

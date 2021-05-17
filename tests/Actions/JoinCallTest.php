@@ -4,39 +4,37 @@ namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Calls\JoinCall;
 use RTippin\Messenger\Broadcasting\CallJoinedBroadcast;
 use RTippin\Messenger\Events\CallJoinedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Call;
+use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class JoinCallTest extends FeatureTestCase
 {
-    private Thread $group;
-    private Call $call;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->call = $this->createCall($this->group, $this->tippin);
+        Messenger::setProvider($this->tippin);
     }
 
     /** @test */
     public function it_stores_call_participant()
     {
-        Messenger::setProvider($this->doe);
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
 
-        app(JoinCall::class)->withoutDispatches()->execute($this->call);
+        app(JoinCall::class)->execute($call);
 
-        $this->assertDatabaseCount('call_participants', 2);
+        $this->assertDatabaseCount('call_participants', 1);
         $this->assertDatabaseHas('call_participants', [
-            'call_id' => $this->call->id,
-            'owner_id' => $this->doe->getKey(),
-            'owner_type' => $this->doe->getMorphClass(),
+            'call_id' => $call->id,
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => $this->tippin->getMorphClass(),
             'left_call' => null,
         ]);
     }
@@ -44,44 +42,41 @@ class JoinCallTest extends FeatureTestCase
     /** @test */
     public function it_stores_call_participant_cache_key()
     {
-        Messenger::setProvider($this->doe);
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
 
-        app(JoinCall::class)->withoutDispatches()->execute($this->call);
+        app(JoinCall::class)->execute($call);
 
-        $participant = $this->call->participants()->forProvider($this->doe)->first();
+        $participant = CallParticipant::first();
 
-        $this->assertTrue(Cache::has("call:{$this->call->id}:{$participant->id}"));
+        $this->assertTrue(Cache::has("call:$call->id:$participant->id"));
     }
 
     /** @test */
     public function it_fires_no_events_or_stores_cache_key_if_already_joined()
     {
-        Messenger::setProvider($this->tippin);
+        BaseMessengerAction::enableEvents();
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
+        $participant = CallParticipant::factory()->for($call)->owner($this->tippin)->create();
 
         $this->doesntExpectEvents([
             CallJoinedBroadcast::class,
             CallJoinedEvent::class,
         ]);
 
-        $participant = $this->call->participants()->first();
+        app(JoinCall::class)->execute($call);
 
-        app(JoinCall::class)->execute($this->call);
-
-        $this->assertFalse(Cache::has("call:{$this->call->id}:{$participant->id}"));
+        $this->assertFalse(Cache::has("call:$call->id:$participant->id"));
     }
 
     /** @test */
     public function it_updates_participant_and_cache_if_rejoining()
     {
-        $participant = $this->call->participants()->first();
-        $participant->update([
-            'left_call' => now(),
-        ]);
-        Messenger::setProvider($this->tippin);
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
+        $participant = CallParticipant::factory()->for($call)->owner($this->tippin)->left()->create();
 
-        app(JoinCall::class)->withoutDispatches()->execute($this->call);
+        app(JoinCall::class)->execute($call);
 
-        $this->assertTrue(Cache::has("call:{$this->call->id}:{$participant->id}"));
+        $this->assertTrue(Cache::has("call:$call->id:$participant->id"));
         $this->assertDatabaseHas('call_participants', [
             'id' => $participant->id,
             'left_call' => null,
@@ -91,20 +86,22 @@ class JoinCallTest extends FeatureTestCase
     /** @test */
     public function it_fires_events()
     {
-        Messenger::setProvider($this->doe);
+        BaseMessengerAction::enableEvents();
         Event::fake([
             CallJoinedBroadcast::class,
             CallJoinedEvent::class,
         ]);
+        $thread = Thread::factory()->create();
+        $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
 
-        app(JoinCall::class)->execute($this->call);
+        app(JoinCall::class)->execute($call);
 
-        $participant = $this->call->participants()->forProvider($this->doe)->first();
+        $participant = CallParticipant::first();
 
-        Event::assertDispatched(function (CallJoinedBroadcast $event) {
-            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
-            $this->assertSame($this->call->id, $event->broadcastWith()['id']);
-            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
+        Event::assertDispatched(function (CallJoinedBroadcast $event) use ($thread, $call) {
+            $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertSame($call->id, $event->broadcastWith()['id']);
+            $this->assertSame($thread->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });

@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\MarkParticipantRead;
 use RTippin\Messenger\Broadcasting\ParticipantReadBroadcast;
 use RTippin\Messenger\Events\ParticipantsReadEvent;
@@ -13,30 +14,18 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class MarkParticipantReadTest extends FeatureTestCase
 {
-    private Thread $private;
-    private Participant $participant;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->private = $this->createPrivateThread($this->tippin, $this->userDoe());
-        $this->participant = $this->private->participants()->forProvider($this->tippin)->first();
-    }
-
     /** @test */
     public function it_updates_participant()
     {
+        $thread = Thread::factory()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
         $read = now()->addMinutes(5)->format('Y-m-d H:i:s.u');
         Carbon::setTestNow($read);
 
-        app(MarkParticipantRead::class)->withoutDispatches()->execute(
-            $this->participant,
-            $this->private
-        );
+        app(MarkParticipantRead::class)->execute($participant, $thread);
 
         $this->assertDatabaseHas('participants', [
-            'id' => $this->participant->id,
+            'id' => $participant->id,
             'last_read' => $read,
         ]);
     }
@@ -44,60 +33,52 @@ class MarkParticipantReadTest extends FeatureTestCase
     /** @test */
     public function it_fires_events()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             ParticipantReadBroadcast::class,
             ParticipantsReadEvent::class,
         ]);
+        $thread = Thread::factory()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
 
-        app(MarkParticipantRead::class)->execute(
-            $this->participant,
-            $this->private
-        );
+        app(MarkParticipantRead::class)->execute($participant, $thread);
 
-        Event::assertDispatched(function (ParticipantReadBroadcast $event) {
+        Event::assertDispatched(function (ParticipantReadBroadcast $event) use ($thread) {
             $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
-            $this->assertSame($this->private->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame($thread->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
-        Event::assertDispatched(function (ParticipantsReadEvent $event) {
-            return $this->participant->id === $event->participant->id;
+        Event::assertDispatched(function (ParticipantsReadEvent $event) use ($participant) {
+            return $participant->id === $event->participant->id;
         });
     }
 
     /** @test */
     public function it_fires_no_events_if_participant_already_up_to_date()
     {
+        BaseMessengerAction::enableEvents();
+        $thread = Thread::factory()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->read()->create();
+
         $this->doesntExpectEvents([
             ParticipantReadBroadcast::class,
             ParticipantsReadEvent::class,
         ]);
 
-        $this->participant->update([
-            'last_read' => now(),
-        ]);
-        $this->travel(5)->minutes();
-
-        app(MarkParticipantRead::class)->execute(
-            $this->participant,
-            $this->private
-        );
+        app(MarkParticipantRead::class)->execute($participant, $thread);
     }
 
     /** @test */
     public function it_does_not_update_a_pending_participant()
     {
-        $this->participant->update([
-            'pending' => true,
-        ]);
+        $thread = Thread::factory()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->pending()->create();
 
-        app(MarkParticipantRead::class)->execute(
-            $this->participant,
-            $this->private
-        );
+        app(MarkParticipantRead::class)->execute($participant, $thread);
 
         $this->assertDatabaseHas('participants', [
-            'id' => $this->participant->id,
+            'id' => $participant->id,
             'last_read' => null,
         ]);
     }
@@ -105,13 +86,14 @@ class MarkParticipantReadTest extends FeatureTestCase
     /** @test */
     public function it_updates_participant_if_no_thread_supplied()
     {
+        $participant = Participant::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
         $read = now()->addMinutes(5)->format('Y-m-d H:i:s.u');
         Carbon::setTestNow($read);
 
-        app(MarkParticipantRead::class)->withoutDispatches()->execute($this->participant);
+        app(MarkParticipantRead::class)->execute($participant);
 
         $this->assertDatabaseHas('participants', [
-            'id' => $this->participant->id,
+            'id' => $participant->id,
             'last_read' => $read,
         ]);
     }

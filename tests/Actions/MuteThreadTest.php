@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\MuteThread;
 use RTippin\Messenger\Events\ParticipantMutedEvent;
 use RTippin\Messenger\Facades\Messenger;
@@ -12,14 +13,20 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class MuteThreadTest extends FeatureTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Messenger::setProvider($this->tippin);
+    }
+
     /** @test */
     public function it_updates_participant()
     {
         $thread = Thread::factory()->group()->create();
         $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
-        Messenger::setProvider($this->tippin);
 
-        app(MuteThread::class)->withoutDispatches()->execute($thread);
+        app(MuteThread::class)->execute($thread);
 
         $this->assertDatabaseHas('participants', [
             'id' => $participant->id,
@@ -30,12 +37,12 @@ class MuteThreadTest extends FeatureTestCase
     /** @test */
     public function it_fires_events()
     {
-        $thread = Thread::factory()->group()->create();
-        $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
-        Messenger::setProvider($this->tippin);
+        BaseMessengerAction::enableEvents();
         Event::fake([
             ParticipantMutedEvent::class,
         ]);
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
 
         app(MuteThread::class)->execute($thread);
 
@@ -47,15 +54,12 @@ class MuteThreadTest extends FeatureTestCase
     /** @test */
     public function it_doesnt_fire_events_if_already_muted()
     {
+        BaseMessengerAction::enableEvents();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->muted()->create();
-        Messenger::setProvider($this->tippin);
-        Event::fake([
-            ParticipantMutedEvent::class,
-        ]);
+
+        $this->doesntExpectEvents(ParticipantMutedEvent::class);
 
         app(MuteThread::class)->execute($thread);
-
-        Event::assertNotDispatched(ParticipantMutedEvent::class);
     }
 }

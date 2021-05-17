@@ -114,7 +114,7 @@ class ThreadsTest extends FeatureTestCase
     public function read_thread_is_not_unread()
     {
         $thread = Thread::factory()->group()->create();
-        Participant::factory()->for($thread)->owner($this->tippin)->create(['last_read' => now()->addMinute()]);
+        Participant::factory()->for($thread)->owner($this->tippin)->read()->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.is.unread', [

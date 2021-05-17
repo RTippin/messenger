@@ -48,7 +48,7 @@ class MarkThreadReadTest extends FeatureTestCase
     public function read_participant_can_mark_read()
     {
         $thread = Thread::factory()->group()->create();
-        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create(['last_read' => now()]);
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->read()->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.mark.read', [

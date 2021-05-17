@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\LeaveThread;
 use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
 use RTippin\Messenger\Events\ThreadLeftEvent;
@@ -17,48 +18,49 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class LeaveThreadTest extends FeatureTestCase
 {
-    private Thread $group;
-    private Participant $participant;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread($this->tippin);
-        $this->participant = $this->group->participants()->first();
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
     public function it_soft_deletes_participant()
     {
-        app(LeaveThread::class)->withoutDispatches()->execute($this->group);
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
+        
+        app(LeaveThread::class)->execute($thread);
 
         $this->assertSoftDeleted('participants', [
-            'id' => $this->participant->id,
+            'id' => $participant->id,
         ]);
     }
 
     /** @test */
     public function it_fires_events()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             ThreadLeftBroadcast::class,
             ThreadLeftEvent::class,
         ]);
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
 
-        app(LeaveThread::class)->execute($this->group);
+        app(LeaveThread::class)->execute($thread);
 
-        Event::assertDispatched(function (ThreadLeftBroadcast $event) {
+        Event::assertDispatched(function (ThreadLeftBroadcast $event) use ($thread) {
             $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
-            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame($thread->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
-        Event::assertDispatched(function (ThreadLeftEvent $event) {
+        Event::assertDispatched(function (ThreadLeftEvent $event) use ($thread, $participant) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
-            $this->assertSame($this->group->id, $event->thread->id);
-            $this->assertEquals($this->participant->id, $event->participant->id);
+            $this->assertSame($thread->id, $event->thread->id);
+            $this->assertEquals($participant->id, $event->participant->id);
 
             return true;
         });
@@ -67,9 +69,11 @@ class LeaveThreadTest extends FeatureTestCase
     /** @test */
     public function it_dispatches_listeners()
     {
+        BaseMessengerAction::enableEvents();
         Bus::fake();
+        $thread = $this->createGroupThread($this->tippin);
 
-        app(LeaveThread::class)->withoutBroadcast()->execute($this->group);
+        app(LeaveThread::class)->withoutBroadcast()->execute($thread);
 
         Bus::assertDispatched(function (CallQueuedListener $job) {
             return $job->class === ArchiveEmptyThread::class;
