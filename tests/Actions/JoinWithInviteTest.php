@@ -56,13 +56,13 @@ class JoinWithInviteTest extends FeatureTestCase
     /** @test */
     public function it_increments_invite_uses()
     {
-        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->doe)->create(['uses' => 2]);
-        
+        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->doe)->create(['uses' => 3]);
+
         app(JoinWithInvite::class)->execute($invite);
 
         $this->assertDatabaseHas('thread_invites', [
             'id' => $invite->id,
-            'uses' => 3,
+            'uses' => 4,
         ]);
     }
 
