@@ -18,9 +18,9 @@ class PurgeDocumentMessagesTest extends FeatureTestCase
         $thread = Thread::factory()->create();
         $document1 = Message::factory()->for($thread)->owner($this->tippin)->document()->create();
         $document2 = Message::factory()->for($thread)->owner($this->tippin)->document()->create();
-        
+
         app(PurgeDocumentMessages::class)->execute(Message::document()->get());
-        
+
         $this->assertDatabaseMissing('messages', [
             'id' => $document1->id,
         ]);

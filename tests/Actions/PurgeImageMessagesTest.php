@@ -38,7 +38,7 @@ class PurgeImageMessagesTest extends FeatureTestCase
         UploadedFile::fake()->image('picture.jpg')
             ->storeAs($thread->getImagesDirectory(), 'picture.jpg', [
                 'disk' => Messenger::getThreadStorage('disk'),
-            ]); 
+            ]);
         UploadedFile::fake()->image('foo.jpg')
             ->storeAs($thread->getImagesDirectory(), 'foo.jpg', [
                 'disk' => Messenger::getThreadStorage('disk'),
