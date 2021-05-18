@@ -11,76 +11,72 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class InviteTest extends FeatureTestCase
 {
-    private Thread $group;
-    private Invite $invite;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin);
-        $this->invite = Invite::factory()
-            ->for($this->group)
-            ->owner($this->tippin)
-            ->expires(now()->addMinutes(5))
-            ->testing()
-            ->create([
-                'max_use' => 10,
-                'uses' => 1,
-            ]);
-    }
-
     /** @test */
     public function it_exists()
     {
+        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+
         $this->assertDatabaseCount('thread_invites', 1);
         $this->assertDatabaseHas('thread_invites', [
-            'id' => $this->invite->id,
+            'id' => $invite->id,
         ]);
-        $this->assertInstanceOf(Invite::class, $this->invite);
+        $this->assertInstanceOf(Invite::class, $invite);
     }
 
     /** @test */
     public function it_cast_attributes()
     {
-        $this->invite->delete();
+        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create([
+            'deleted_at' => now(),
+            'expires_at' => now(),
+            'max_use' => 10,
+            'uses' => 1,
+        ]);
 
-        $this->assertInstanceOf(Carbon::class, $this->invite->created_at);
-        $this->assertInstanceOf(Carbon::class, $this->invite->updated_at);
-        $this->assertInstanceOf(Carbon::class, $this->invite->expires_at);
-        $this->assertInstanceOf(Carbon::class, $this->invite->deleted_at);
-        $this->assertSame(10, $this->invite->max_use);
-        $this->assertSame(1, $this->invite->uses);
+        $this->assertInstanceOf(Carbon::class, $invite->created_at);
+        $this->assertInstanceOf(Carbon::class, $invite->updated_at);
+        $this->assertInstanceOf(Carbon::class, $invite->expires_at);
+        $this->assertInstanceOf(Carbon::class, $invite->deleted_at);
+        $this->assertSame(10, $invite->max_use);
+        $this->assertSame(1, $invite->uses);
     }
 
     /** @test */
     public function it_has_relations()
     {
-        $this->assertSame($this->tippin->getKey(), $this->invite->owner->getKey());
-        $this->assertSame($this->group->id, $this->invite->thread->id);
-        $this->assertInstanceOf(Thread::class, $this->invite->thread);
-        $this->assertInstanceOf(MessengerProvider::class, $this->invite->owner);
+        $thread = Thread::factory()->group()->create();
+        $invite = Invite::factory()->for($thread)->owner($this->tippin)->create();
+        $this->assertSame($this->tippin->getKey(), $invite->owner->getKey());
+        $this->assertSame($thread->id, $invite->thread->id);
+        $this->assertInstanceOf(Thread::class, $invite->thread);
+        $this->assertInstanceOf(MessengerProvider::class, $invite->owner);
     }
 
     /** @test */
     public function owner_returns_ghost_if_not_found()
     {
-        $this->invite->update([
+        $invite = Invite::factory()->for(Thread::factory()->group()->create())->create([
             'owner_id' => 404,
+            'owner_type' => $this->tippin->getMorphClass(),
         ]);
 
-        $this->assertInstanceOf(GhostUser::class, $this->invite->owner);
+        $this->assertInstanceOf(GhostUser::class, $invite->owner);
     }
 
     /** @test */
     public function it_has_route()
     {
-        $this->assertStringContainsString('/messenger/join/TEST1234', $this->invite->getInvitationRoute());
+        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->testing()->create();
+
+        $this->assertStringContainsString('/messenger/join/TEST1234', $invite->getInvitationRoute());
     }
 
     /** @test */
     public function it_has_avatar_routes()
     {
+        $invite = Invite::factory()->for(
+            Thread::factory()->group()->create(['image' => '5.png'])
+        )->owner($this->tippin)->testing()->create();
         $inviteAvatar = [
             'sm' => '/messenger/join/TEST1234/avatar/sm/5.png',
             'md' => '/messenger/join/TEST1234/avatar/md/5.png',
@@ -92,26 +88,28 @@ class InviteTest extends FeatureTestCase
             'lg' => '/api/messenger/join/TEST1234/avatar/lg/5.png',
         ];
 
-        $this->assertSame($inviteAvatar, $this->invite->inviteAvatar());
-        $this->assertSame($inviteAvatarApi, $this->invite->inviteAvatar(true));
+        $this->assertSame($inviteAvatar, $invite->inviteAvatar());
+        $this->assertSame($inviteAvatarApi, $invite->inviteAvatar(true));
     }
 
     /** @test */
     public function it_is_valid()
     {
-        $this->assertTrue($this->invite->isValid());
+        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+
+        $this->assertTrue($invite->isValid());
         $this->assertSame(1, Invite::valid()->count());
     }
 
     /** @test */
     public function it_is_valid_if_uses_unlimited()
     {
-        $this->invite->update([
+        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create([
             'uses' => 10000,
             'max_use' => 0,
         ]);
 
-        $this->assertTrue($this->invite->isValid());
+        $this->assertTrue($invite->isValid());
         $this->assertSame(1, Invite::valid()->count());
         $this->assertSame(0, Invite::invalid()->count());
     }
@@ -119,12 +117,10 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function it_is_valid_if_never_expired()
     {
-        $this->invite->update([
-            'expires_at' => null,
-        ]);
+        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
         $this->travel(5)->years();
 
-        $this->assertTrue($this->invite->isValid());
+        $this->assertTrue($invite->isValid());
         $this->assertSame(1, Invite::valid()->count());
         $this->assertSame(0, Invite::invalid()->count());
     }
@@ -132,9 +128,12 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function it_is_invalid_if_past_expiration()
     {
+        $invite = Invite::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->expires(now()->addMinutes(10))->create();
         $this->travel(1)->hours();
 
-        $this->assertFalse($this->invite->isValid());
+        $this->assertFalse($invite->isValid());
         $this->assertSame(0, Invite::valid()->count());
         $this->assertSame(1, Invite::invalid()->count());
     }
@@ -142,39 +141,42 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function it_is_invalid_if_thread_removed()
     {
-        $this->group->delete();
+        $invite = Invite::factory()->for(
+            Thread::factory()->group()->create(['deleted_at' => now()])
+        )->owner($this->tippin)->create();
 
-        $this->assertFalse($this->invite->isValid());
+        $this->assertFalse($invite->isValid());
     }
 
     /** @test */
     public function it_is_invalid_if_thread_invitations_disabled()
     {
-        $this->group->update([
-            'invitations' => false,
-        ]);
+        $invite = Invite::factory()->for(
+            Thread::factory()->group()->create(['invitations' => false])
+        )->owner($this->tippin)->create();
 
-        $this->assertFalse($this->invite->isValid());
+        $this->assertFalse($invite->isValid());
     }
 
     /** @test */
     public function it_is_invalid_if_thread_locked()
     {
-        $this->group->update([
-            'lockout' => true,
-        ]);
+        $invite = Invite::factory()->for(
+            Thread::factory()->group()->locked()->create()
+        )->owner($this->tippin)->create();
 
-        $this->assertFalse($this->invite->isValid());
+        $this->assertFalse($invite->isValid());
     }
 
     /** @test */
     public function it_is_invalid_if_uses_equal_max_use()
     {
-        $this->invite->update([
+        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create([
             'uses' => 10,
+            'max_use' => 10,
         ]);
 
-        $this->assertFalse($this->invite->isValid());
+        $this->assertFalse($invite->isValid());
         $this->assertSame(0, Invite::valid()->count());
         $this->assertSame(1, Invite::invalid()->count());
     }
@@ -182,11 +184,12 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function it_is_invalid_if_uses_greater_than_max_use()
     {
-        $this->invite->update([
+        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create([
             'uses' => 15,
+            'max_use' => 10,
         ]);
 
-        $this->assertFalse($this->invite->isValid());
+        $this->assertFalse($invite->isValid());
         $this->assertSame(0, Invite::valid()->count());
         $this->assertSame(1, Invite::invalid()->count());
     }

@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Messenger;
 
 use RTippin\Messenger\Exceptions\ProviderNotFoundException;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\ThreadLocatorService;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
