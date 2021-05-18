@@ -12,13 +12,10 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class CallsDownCommandTest extends FeatureTestCase
 {
-    private Thread $group;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread($this->tippin);
         Bus::fake();
     }
 
@@ -63,7 +60,8 @@ class CallsDownCommandTest extends FeatureTestCase
     /** @test */
     public function it_dispatches_job_and_sets_cache_lockout()
     {
-        $this->createCall($this->group, $this->tippin);
+
+        Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
 
         $this->artisan('messenger:calls:down')
             ->expectsOutput('1 active calls found. End calls dispatched!')
@@ -76,7 +74,7 @@ class CallsDownCommandTest extends FeatureTestCase
     /** @test */
     public function it_dispatches_job_now()
     {
-        $this->createCall($this->group, $this->tippin);
+        Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
 
         $this->artisan('messenger:calls:down', [
             '--now' => true,
@@ -104,12 +102,8 @@ class CallsDownCommandTest extends FeatureTestCase
     /** @test */
     public function it_dispatches_multiple_jobs_chunking_per_100()
     {
-        Call::factory()
-            ->for($this->group)
-            ->owner($this->tippin)
-            ->setup()
-            ->count(200)
-            ->create();
+        $thread = Thread::factory()->create();
+        Call::factory()->for($thread)->owner($this->tippin)->setup()->count(200)->create();
 
         $this->artisan('messenger:calls:down')
             ->expectsOutput('200 active calls found. End calls dispatched!')

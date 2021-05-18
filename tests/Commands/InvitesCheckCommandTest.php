@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Commands;
 
-use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Bus;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\ArchiveInvalidInvites;
@@ -12,20 +11,17 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class InvitesCheckCommandTest extends FeatureTestCase
 {
-    private Thread $group;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread($this->tippin);
         Bus::fake();
     }
 
     /** @test */
     public function it_does_nothing_if_no_invalid_invites_found()
     {
-        Invite::factory()->for($this->group)->owner($this->tippin)->create();
+        Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
 
         $this->artisan('messenger:invites:check-valid')
             ->expectsOutput('No invalid invites found.')
@@ -38,7 +34,7 @@ class InvitesCheckCommandTest extends FeatureTestCase
     public function it_does_nothing_if_invite_not_expired()
     {
         Invite::factory()
-            ->for($this->group)
+            ->for(Thread::factory()->group()->create())
             ->owner($this->tippin)
             ->expires(now()->addMinutes(10))
             ->create();
@@ -66,9 +62,9 @@ class InvitesCheckCommandTest extends FeatureTestCase
     public function it_runs_job_now()
     {
         Invite::factory()
-            ->for($this->group)
+            ->for(Thread::factory()->group()->create())
             ->owner($this->tippin)
-            ->expires(now())
+            ->invalid()
             ->create();
 
         $this->artisan('messenger:invites:check-valid', [
@@ -84,7 +80,7 @@ class InvitesCheckCommandTest extends FeatureTestCase
     public function it_dispatches_job_if_invite_has_max_use()
     {
         Invite::factory()
-            ->for($this->group)
+            ->for(Thread::factory()->group()->create())
             ->owner($this->tippin)
             ->create([
                 'max_use' => 1,
@@ -102,7 +98,7 @@ class InvitesCheckCommandTest extends FeatureTestCase
     public function it_dispatches_job_if_invite_has_expired()
     {
         Invite::factory()
-            ->for($this->group)
+            ->for(Thread::factory()->group()->create())
             ->owner($this->tippin)
             ->expires(now()->addMinutes(5))
             ->create();
@@ -119,17 +115,9 @@ class InvitesCheckCommandTest extends FeatureTestCase
     public function it_finds_multiple_invalid_invites()
     {
         Invite::factory()
-            ->for($this->group)
+            ->for(Thread::factory()->group()->create())
             ->owner($this->tippin)
-            ->state(new Sequence(
-                [
-                    'max_use' => 1,
-                    'uses' => 1,
-                ],
-                [
-                    'expires_at' => now()->addMinutes(5),
-                ],
-            ))
+            ->invalid()
             ->count(2)
             ->create();
 
@@ -145,8 +133,9 @@ class InvitesCheckCommandTest extends FeatureTestCase
     /** @test */
     public function it_dispatches_multiple_jobs_chunking_per_100()
     {
+        $thread = Thread::factory()->group()->create();
         Invite::factory()
-            ->for($this->group)
+            ->for($thread)
             ->owner($this->tippin)
             ->invalid()
             ->count(200)

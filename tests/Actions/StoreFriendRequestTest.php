@@ -22,7 +22,7 @@ class StoreFriendRequestTest extends FeatureTestCase
 
         Messenger::setProvider($this->tippin);
     }
-    
+
     /** @test */
     public function it_stores_sent_friend()
     {

@@ -4,8 +4,6 @@ namespace RTippin\Messenger\Tests\Commands;
 
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Storage;
-use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\PurgeThreads;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -16,7 +14,6 @@ class PurgeThreadsCommandTest extends FeatureTestCase
     {
         parent::setUp();
 
-        Storage::fake(Messenger::getThreadStorage('disk'));
         Bus::fake();
     }
 

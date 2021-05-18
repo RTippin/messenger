@@ -9,16 +9,6 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PurgeMessagesCommandTest extends FeatureTestCase
 {
-    private Thread $group;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->tippin = $this->userTippin();
-        $this->group = $this->createGroupThread($this->tippin);
-    }
-
     /** @test */
     public function it_doesnt_find_messages()
     {
@@ -41,7 +31,7 @@ class PurgeMessagesCommandTest extends FeatureTestCase
     public function it_removes_message()
     {
         $message = Message::factory()
-            ->for($this->group)
+            ->for(Thread::factory()->create())
             ->owner($this->tippin)
             ->create(['deleted_at' => now()->subMonths(2)]);
 
@@ -58,7 +48,7 @@ class PurgeMessagesCommandTest extends FeatureTestCase
     public function it_removes_multiple_messages()
     {
         Message::factory()
-            ->for($this->group)
+            ->for(Thread::factory()->create())
             ->owner($this->tippin)
             ->state(new Sequence(
                 ['deleted_at' => now()->subDays(8)],

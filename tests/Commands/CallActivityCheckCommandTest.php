@@ -11,13 +11,10 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class CallActivityCheckCommandTest extends FeatureTestCase
 {
-    private Thread $group;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread($this->tippin);
         Bus::fake();
     }
 
@@ -46,7 +43,7 @@ class CallActivityCheckCommandTest extends FeatureTestCase
     /** @test */
     public function it_ignores_calls_created_within_the_last_minute()
     {
-        $this->createCall($this->group, $this->tippin);
+        Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
 
         $this->artisan('messenger:calls:check-activity')
             ->expectsOutput('No matching active calls found.')
@@ -58,7 +55,7 @@ class CallActivityCheckCommandTest extends FeatureTestCase
     /** @test */
     public function it_dispatches_job()
     {
-        $this->createCall($this->group, $this->tippin);
+        Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
         $this->travel(2)->minutes();
 
         $this->artisan('messenger:calls:check-activity')
@@ -71,7 +68,7 @@ class CallActivityCheckCommandTest extends FeatureTestCase
     /** @test */
     public function it_runs_job_now()
     {
-        $this->createCall($this->group, $this->tippin);
+        Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
         $this->travel(2)->minutes();
 
         $this->artisan('messenger:calls:check-activity', [
@@ -86,12 +83,8 @@ class CallActivityCheckCommandTest extends FeatureTestCase
     /** @test */
     public function it_dispatches_multiple_jobs_chunking_per_100()
     {
-        Call::factory()
-            ->for($this->group)
-            ->owner($this->tippin)
-            ->setup()
-            ->count(200)
-            ->create();
+        $thread = Thread::factory()->create();
+        Call::factory()->for($thread)->owner($this->tippin)->setup()->count(200)->create();
         $this->travel(2)->minutes();
 
         $this->artisan('messenger:calls:check-activity')

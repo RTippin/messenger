@@ -17,7 +17,7 @@ class StoreSystemMessageTest extends FeatureTestCase
     public function it_stores_message()
     {
         $thread = Thread::factory()->group()->create();
-        
+
         app(StoreSystemMessage::class)->execute($thread, $this->tippin, 'system', 'GROUP_CREATED');
 
         $this->assertDatabaseHas('messages', [

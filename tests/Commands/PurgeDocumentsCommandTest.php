@@ -4,8 +4,6 @@ namespace RTippin\Messenger\Tests\Commands;
 
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Storage;
-use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\PurgeDocumentMessages;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
@@ -13,14 +11,10 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PurgeDocumentsCommandTest extends FeatureTestCase
 {
-    private Thread $group;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread($this->tippin);
-        Storage::fake(Messenger::getThreadStorage('disk'));
         Bus::fake();
     }
 
@@ -50,7 +44,7 @@ class PurgeDocumentsCommandTest extends FeatureTestCase
     public function it_dispatches_job()
     {
         Message::factory()
-            ->for($this->group)
+            ->for(Thread::factory()->create())
             ->owner($this->tippin)
             ->document()
             ->create(['deleted_at' => now()->subMonths(2)]);
@@ -66,7 +60,7 @@ class PurgeDocumentsCommandTest extends FeatureTestCase
     public function it_runs_job_now()
     {
         Message::factory()
-            ->for($this->group)
+            ->for(Thread::factory()->create())
             ->owner($this->tippin)
             ->document()
             ->create(['deleted_at' => now()->subMonths(2)]);
@@ -84,7 +78,7 @@ class PurgeDocumentsCommandTest extends FeatureTestCase
     public function it_finds_multiple_documents()
     {
         Message::factory()
-            ->for($this->group)
+            ->for(Thread::factory()->create())
             ->owner($this->tippin)
             ->document()
             ->state(new Sequence(
@@ -106,8 +100,9 @@ class PurgeDocumentsCommandTest extends FeatureTestCase
     /** @test */
     public function it_dispatches_multiple_jobs_chunking_per_100()
     {
+        $thread = Thread::factory()->create();
         Message::factory()
-            ->for($this->group)
+            ->for($thread)
             ->owner($this->tippin)
             ->document()
             ->count(200)

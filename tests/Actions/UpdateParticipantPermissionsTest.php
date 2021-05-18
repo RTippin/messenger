@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\UpdateParticipantPermissions;
 use RTippin\Messenger\Broadcasting\ParticipantPermissionsBroadcast;
 use RTippin\Messenger\Events\ParticipantPermissionsEvent;
@@ -13,35 +14,29 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class UpdateParticipantPermissionsTest extends FeatureTestCase
 {
-    private Thread $group;
-    private Participant $participant;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->participant = $this->group->participants()->forProvider($this->doe)->first();
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
     public function it_updates_participant()
     {
-        app(UpdateParticipantPermissions::class)->withoutDispatches()->execute(
-            $this->group,
-            $this->participant,
-            [
-                'send_messages' => false,
-                'add_participants' => true,
-                'manage_invites' => true,
-                'start_calls' => true,
-                'send_knocks' => true,
-            ]
-        );
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
+
+        app(UpdateParticipantPermissions::class)->execute($thread, $participant, [
+            'send_messages' => false,
+            'add_participants' => true,
+            'manage_invites' => true,
+            'start_calls' => true,
+            'send_knocks' => true,
+        ]);
 
         $this->assertDatabaseHas('participants', [
-            'id' => $this->participant->id,
+            'id' => $participant->id,
             'send_messages' => false,
             'add_participants' => true,
             'manage_invites' => true,
@@ -53,33 +48,32 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
     /** @test */
     public function it_fires_events_when_participant_updated()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             ParticipantPermissionsBroadcast::class,
             ParticipantPermissionsEvent::class,
         ]);
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
 
-        app(UpdateParticipantPermissions::class)->execute(
-            $this->group,
-            $this->participant,
-            [
-                'send_messages' => false,
-                'add_participants' => true,
-                'manage_invites' => true,
-                'start_calls' => true,
-                'send_knocks' => true,
-            ]
-        );
+        app(UpdateParticipantPermissions::class)->execute($thread, $participant, [
+            'send_messages' => false,
+            'add_participants' => true,
+            'manage_invites' => true,
+            'start_calls' => true,
+            'send_knocks' => true,
+        ]);
 
-        Event::assertDispatched(function (ParticipantPermissionsBroadcast $event) {
+        Event::assertDispatched(function (ParticipantPermissionsBroadcast $event) use ($thread) {
             $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
-            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame($thread->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
-        Event::assertDispatched(function (ParticipantPermissionsEvent $event) {
+        Event::assertDispatched(function (ParticipantPermissionsEvent $event) use ($thread, $participant) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
-            $this->assertSame($this->group->id, $event->thread->id);
-            $this->assertSame($this->participant->id, $event->participant->id);
+            $this->assertSame($thread->id, $event->thread->id);
+            $this->assertSame($participant->id, $event->participant->id);
 
             return true;
         });
@@ -88,21 +82,21 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
     /** @test */
     public function it_doesnt_fire_events_if_participant_not_changed()
     {
+        BaseMessengerAction::enableEvents();
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
+
         $this->doesntExpectEvents([
             ParticipantPermissionsBroadcast::class,
             ParticipantPermissionsEvent::class,
         ]);
 
-        app(UpdateParticipantPermissions::class)->execute(
-            $this->group,
-            $this->participant,
-            [
-                'send_messages' => true,
-                'add_participants' => false,
-                'manage_invites' => false,
-                'start_calls' => false,
-                'send_knocks' => false,
-            ]
-        );
+        app(UpdateParticipantPermissions::class)->execute($thread, $participant, [
+            'send_messages' => true,
+            'add_participants' => false,
+            'manage_invites' => false,
+            'start_calls' => false,
+            'send_knocks' => false,
+        ]);
     }
 }

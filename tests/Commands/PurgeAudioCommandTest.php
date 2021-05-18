@@ -4,8 +4,6 @@ namespace RTippin\Messenger\Tests\Commands;
 
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Bus;
-use Illuminate\Support\Facades\Storage;
-use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\PurgeAudioMessages;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
@@ -13,14 +11,10 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PurgeAudioCommandTest extends FeatureTestCase
 {
-    private Thread $group;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread($this->tippin);
-        Storage::fake(Messenger::getThreadStorage('disk'));
         Bus::fake();
     }
 
@@ -50,7 +44,7 @@ class PurgeAudioCommandTest extends FeatureTestCase
     public function it_dispatches_job()
     {
         Message::factory()
-            ->for($this->group)
+            ->for(Thread::factory()->create())
             ->owner($this->tippin)
             ->audio()
             ->create(['deleted_at' => now()->subMonths(2)]);
@@ -66,7 +60,7 @@ class PurgeAudioCommandTest extends FeatureTestCase
     public function it_runs_job_now()
     {
         Message::factory()
-            ->for($this->group)
+            ->for(Thread::factory()->create())
             ->owner($this->tippin)
             ->audio()
             ->create(['deleted_at' => now()->subMonths(2)]);
@@ -84,7 +78,7 @@ class PurgeAudioCommandTest extends FeatureTestCase
     public function it_finds_multiple_audio_files()
     {
         Message::factory()
-            ->for($this->group)
+            ->for(Thread::factory()->create())
             ->owner($this->tippin)
             ->audio()
             ->state(new Sequence(
@@ -106,8 +100,9 @@ class PurgeAudioCommandTest extends FeatureTestCase
     /** @test */
     public function it_dispatches_multiple_jobs_chunking_per_100()
     {
+        $thread = Thread::factory()->create();
         Message::factory()
-            ->for($this->group)
+            ->for($thread)
             ->owner($this->tippin)
             ->audio()
             ->count(200)
