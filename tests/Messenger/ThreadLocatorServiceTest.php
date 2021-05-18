@@ -11,13 +11,11 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 class ThreadLocatorServiceTest extends FeatureTestCase
 {
     private ThreadLocatorService $locator;
-    private Thread $private;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
         $this->locator = app(ThreadLocatorService::class);
         Messenger::setProvider($this->tippin);
     }
@@ -25,10 +23,12 @@ class ThreadLocatorServiceTest extends FeatureTestCase
     /** @test */
     public function it_returns_user_with_existing_thread_id()
     {
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+
         $results = $this->locator->setAlias('user')->setId($this->doe->getKey())->locate();
 
         $this->assertSame($this->doe->getKey(), $results->getRecipient()->getKey());
-        $this->assertSame($this->private->id, $results->getThread()->id);
+        $this->assertSame($thread->id, $results->getThread()->id);
     }
 
     /** @test */

@@ -17,8 +17,7 @@ class MessageEditResourceTest extends FeatureTestCase
     {
         $created = now()->subMinutes(5)->format('Y-m-d H:i:s.u');
         Carbon::setTestNow($created);
-        $group = Thread::factory()->group()->create();
-        $message = Message::factory()->for($group)->owner($this->tippin)->create();
+        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
         $edit = MessageEdit::factory()->for($message)->create();
 
         $resource = (new MessageEditResource($edit))->resolve();

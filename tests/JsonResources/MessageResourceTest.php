@@ -13,8 +13,7 @@ class MessageResourceTest extends FeatureTestCase
     /** @test */
     public function it_transforms_base_text_message()
     {
-        $created = now()->format('Y-m-d H:i:s.u');
-        Carbon::setTestNow($created);
+        Carbon::setTestNow($created = now()->format('Y-m-d H:i:s.u'));
         $private = Thread::factory()->create();
         $message = Message::factory()->for($private)->owner($this->tippin)->create(['body' => 'Test']);
 

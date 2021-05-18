@@ -60,7 +60,6 @@ class CallsDownCommandTest extends FeatureTestCase
     /** @test */
     public function it_dispatches_job_and_sets_cache_lockout()
     {
-
         Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
 
         $this->artisan('messenger:calls:down')

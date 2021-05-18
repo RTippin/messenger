@@ -9,31 +9,22 @@ use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\GhostUser;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class CallTest extends FeatureTestCase
 {
-    private Thread $group;
-    private Call $call;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-        $this->call = $this->createCall($this->group, $this->tippin, $this->doe);
-    }
-
     /** @test */
     public function it_exists()
     {
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
+
         $this->assertDatabaseCount('calls', 1);
         $this->assertDatabaseHas('calls', [
-            'id' => $this->call->id,
+            'id' => $call->id,
         ]);
-        $this->assertInstanceOf(Call::class, $this->call);
+        $this->assertInstanceOf(Call::class, $call);
         $this->assertSame(1, Call::videoCall()->count());
         $this->assertSame(1, Call::active()->count());
     }
@@ -41,148 +32,156 @@ class CallTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        $this->call->update([
-            'call_ended' => now(),
-        ]);
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->ended()->create();
 
-        $this->assertInstanceOf(Carbon::class, $this->call->created_at);
-        $this->assertInstanceOf(Carbon::class, $this->call->updated_at);
-        $this->assertInstanceOf(Carbon::class, $this->call->call_ended);
-        $this->assertSame(1, $this->call->type);
-        $this->assertSame(true, $this->call->setup_complete);
-        $this->assertSame(false, $this->call->teardown_complete);
-        $this->assertSame(123456789, $this->call->room_id);
-        $this->assertSame('PIN', $this->call->room_pin);
-        $this->assertSame('SECRET', $this->call->room_secret);
-        $this->assertSame('PAYLOAD', $this->call->payload);
+        $this->assertInstanceOf(Carbon::class, $call->created_at);
+        $this->assertInstanceOf(Carbon::class, $call->updated_at);
+        $this->assertInstanceOf(Carbon::class, $call->call_ended);
+        $this->assertSame(1, $call->type);
+        $this->assertSame(true, $call->setup_complete);
+        $this->assertSame(true, $call->teardown_complete);
+        $this->assertSame(123456789, $call->room_id);
+        $this->assertSame('PIN', $call->room_pin);
+        $this->assertSame('SECRET', $call->room_secret);
+        $this->assertSame('PAYLOAD', $call->payload);
     }
 
     /** @test */
     public function it_has_relations()
     {
-        $this->assertSame($this->group->id, $this->call->thread->id);
-        $this->assertSame($this->tippin->getKey(), $this->call->owner->getKey());
-        $this->assertCount(2, $this->call->participants);
-        $this->assertInstanceOf(Thread::class, $this->call->thread);
-        $this->assertInstanceOf(MessengerProvider::class, $this->call->owner);
-        $this->assertInstanceOf(Collection::class, $this->call->participants);
+        $thread = Thread::factory()->create();
+        $call = Call::factory()->for($thread)->owner($this->tippin)->create();
+        CallParticipant::factory()->for($call)->owner($this->tippin)->create();
+        CallParticipant::factory()->for($call)->owner($this->doe)->create();
+
+        $this->assertSame($thread->id, $call->thread->id);
+        $this->assertSame($this->tippin->getKey(), $call->owner->getKey());
+        $this->assertCount(2, $call->participants);
+        $this->assertInstanceOf(Thread::class, $call->thread);
+        $this->assertInstanceOf(MessengerProvider::class, $call->owner);
+        $this->assertInstanceOf(Collection::class, $call->participants);
     }
 
     /** @test */
     public function owner_returns_ghost_if_not_found()
     {
-        $this->call->update([
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create([
             'owner_id' => 404,
+            'owner_type' => $this->tippin->getMorphClass(),
         ]);
 
-        $this->assertInstanceOf(GhostUser::class, $this->call->owner);
+        $this->assertInstanceOf(GhostUser::class, $call->owner);
     }
 
     /** @test */
     public function call_type_verbose()
     {
-        $this->assertSame('VIDEO', $this->call->getTypeVerbose());
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+
+        $this->assertSame('VIDEO', $call->getTypeVerbose());
     }
 
     /** @test */
     public function active_boolean()
     {
-        $this->assertTrue($this->call->isActive());
+        $thread = Thread::factory()->create();
+        $call1 = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        $call2 = Call::factory()->for($thread)->owner($this->tippin)->ended()->create();
 
-        $this->call->update([
-            'call_ended' => now(),
-        ]);
-
-        $this->assertFalse($this->call->isActive());
+        $this->assertTrue($call1->isActive());
+        $this->assertFalse($call2->isActive());
     }
 
     /** @test */
     public function is_setup_boolean()
     {
-        $this->assertTrue($this->call->isSetup());
+        $thread = Thread::factory()->create();
+        $call1 = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        $call2 = Call::factory()->for($thread)->owner($this->tippin)->create();
 
-        $this->call->update([
-            'setup_complete' => false,
-        ]);
-
-        $this->assertFalse($this->call->isSetup());
+        $this->assertTrue($call1->isSetup());
+        $this->assertFalse($call2->isSetup());
     }
 
     /** @test */
     public function is_torn_down_boolean()
     {
-        $this->assertFalse($this->call->isTornDown());
+        $thread = Thread::factory()->create();
+        $call1 = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        $call2 = Call::factory()->for($thread)->owner($this->tippin)->ended()->create();
 
-        $this->call->update([
-            'teardown_complete' => true,
-        ]);
-
-        $this->assertTrue($this->call->isTornDown());
+        $this->assertFalse($call1->isTornDown());
+        $this->assertTrue($call2->isTornDown());
     }
 
     /** @test */
     public function has_ended_boolean()
     {
-        $this->assertFalse($this->call->hasEnded());
+        $thread = Thread::factory()->create();
+        $call1 = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        $call2 = Call::factory()->for($thread)->owner($this->tippin)->ended()->create();
 
-        $this->call->update([
-            'call_ended' => now(),
-        ]);
-
-        $this->assertTrue($this->call->hasEnded());
-        $this->assertSame(0, Call::active()->count());
+        $this->assertFalse($call1->hasEnded());
+        $this->assertTrue($call2->hasEnded());
+        $this->assertSame(1, Call::active()->count());
     }
 
     /** @test */
     public function is_video_call_boolean()
     {
-        $this->assertTrue($this->call->isVideoCall());
+        $thread = Thread::factory()->create();
+        $call1 = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        $call2 = Call::factory()->for($thread)->owner($this->tippin)->create(['type' => 2]);
 
-        $this->call->update([
-            'type' => 2,
-        ]);
-
-        $this->assertFalse($this->call->isVideoCall());
+        $this->assertTrue($call1->isVideoCall());
+        $this->assertFalse($call2->isVideoCall());
     }
 
     /** @test */
-    public function is_group_call_boolean()
+    public function group_call_boolean()
     {
-        $this->assertTrue($this->call->isGroupCall());
-        $this->assertTrue($this->call->isGroupCall($this->group));
-    }
+        $thread1 = Thread::factory()->group()->create();
+        $thread2 = Thread::factory()->create();
+        $call1 = Call::factory()->for($thread1)->owner($this->tippin)->create();
+        $call2 = Call::factory()->for($thread2)->owner($this->tippin)->create();
 
-    /** @test */
-    public function is_not_group_call_boolean()
-    {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
-
-        $call = $this->createCall($private, $this->tippin);
-
-        $this->assertFalse($call->isGroupCall());
-        $this->assertFalse($call->isGroupCall($private));
+        $this->assertTrue($call1->isGroupCall());
+        $this->assertTrue($call1->isGroupCall($thread1));
+        $this->assertFalse($call2->isGroupCall());
+        $this->assertFalse($call2->isGroupCall($thread2));
     }
 
     /** @test */
     public function it_has_thread_name()
     {
-        $this->assertSame('First Test Group', $this->call->name());
-        $this->assertSame('First Test Group', $this->call->name($this->group));
+        Messenger::setProvider($this->tippin);
+        $thread1 = $this->createPrivateThread($this->tippin, $this->doe);
+        $thread2 = Thread::factory()->group()->create(['subject' => 'Test']);
+        $call1 = Call::factory()->for($thread1)->owner($this->tippin)->create();
+        $call2 = Call::factory()->for($thread2)->owner($this->tippin)->create();
+
+        $this->assertSame('John Doe', $call1->name());
+        $this->assertSame('John Doe', $call1->name($thread1));
+        $this->assertSame('Test', $call2->name());
+        $this->assertSame('Test', $call2->name($thread2));
     }
 
     /** @test */
     public function it_doesnt_have_current_participant_if_provider_not_set()
     {
-        $this->assertNull($this->call->currentCallParticipant());
+        $call = $this->createCall(Thread::factory()->create(), $this->tippin);
+
+        $this->assertNull($call->currentCallParticipant());
     }
 
     /** @test */
     public function it_has_current_participant()
     {
         Messenger::setProvider($this->tippin);
-        $participant = $this->call->currentCallParticipant();
+        $call = $this->createCall(Thread::factory()->create(), $this->tippin);
+        $participant = $call->currentCallParticipant();
 
-        $this->assertSame($participant, $this->call->currentCallParticipant());
+        $this->assertSame($participant, $call->currentCallParticipant());
         $this->assertInstanceOf(CallParticipant::class, $participant);
         $this->assertEquals($this->tippin->getKey(), $participant->owner_id);
     }
@@ -191,116 +190,106 @@ class CallTest extends FeatureTestCase
     public function it_has_no_admin_when_ended()
     {
         Messenger::setProvider($this->tippin);
-        $this->call->update([
-            'call_ended' => now(),
-        ]);
+        $thread = $this->createGroupThread($this->tippin);
+        $call = Call::factory()->for($thread)->owner($this->tippin)->ended()->create();
+        CallParticipant::factory()->for($call)->owner($this->tippin)->left()->create();
 
-        $this->assertFalse($this->call->isCallAdmin());
-        $this->assertFalse($this->call->isCallAdmin($this->group));
+        $this->assertFalse($call->isCallAdmin());
+        $this->assertFalse($call->isCallAdmin($thread));
     }
 
     /** @test */
     public function is_admin_if_call_creator()
     {
         Messenger::setProvider($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
+        $call = $this->createCall($thread, $this->tippin);
 
-        $this->assertTrue($this->call->isCallAdmin());
-        $this->assertTrue($this->call->isCallAdmin($this->group));
+        $this->assertTrue($call->isCallAdmin());
+        $this->assertTrue($call->isCallAdmin($thread));
     }
 
     /** @test */
-    public function admin_false_if__not_creator_or_group_thread_admin()
+    public function admin_false_if_not_creator_or_group_thread_admin()
     {
         Messenger::setProvider($this->doe);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $call = $this->createCall($thread, $this->tippin, $this->doe);
 
-        $this->assertFalse($this->call->isCallAdmin());
-        $this->assertFalse($this->call->isCallAdmin($this->group));
+        $this->assertFalse($call->isCallAdmin());
+        $this->assertFalse($call->isCallAdmin($thread));
     }
 
     /** @test */
     public function is_admin_if_group_admin()
     {
-        $this->group->participants()
-            ->forProvider($this->doe)
-            ->first()
-            ->update(Definitions::DefaultAdminParticipant);
         Messenger::setProvider($this->doe);
+        $thread = $this->createGroupThread($this->tippin);
+        Participant::factory()->for($thread)->owner($this->doe)->admin()->create();
+        $call = $this->createCall($thread, $this->tippin, $this->doe);
 
-        $this->assertTrue($this->call->isCallAdmin());
-        $this->assertTrue($this->call->isCallAdmin($this->group));
+        $this->assertTrue($call->isCallAdmin());
+        $this->assertTrue($call->isCallAdmin($thread));
     }
 
     /** @test */
     public function has_joined_false_if_not_joined()
     {
-        Messenger::setProvider($this->companyDevelopers());
+        Messenger::setProvider($this->doe);
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
 
-        $this->assertFalse($this->call->hasJoinedCall());
+        $this->assertFalse($call->hasJoinedCall());
     }
 
     /** @test */
     public function has_joined_true_if_joined()
     {
-        Messenger::setProvider($this->doe);
+        Messenger::setProvider($this->tippin);
+        $call = $this->createCall(Thread::factory()->create(), $this->tippin);
 
-        $this->assertTrue($this->call->hasJoinedCall());
+        $this->assertTrue($call->hasJoinedCall());
     }
 
     /** @test */
-    public function call_participant_was_not_kicked()
+    public function call_participant_kicked_boolean()
     {
-        Messenger::setProvider($this->doe);
+        Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->create();
+        $call1 = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        CallParticipant::factory()->for($call1)->owner($this->tippin)->create();
+        $call2 = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        CallParticipant::factory()->for($call2)->owner($this->tippin)->kicked()->create();
 
-        $this->assertFalse($this->call->wasKicked());
-    }
-
-    /** @test */
-    public function call_participant_was_kicked()
-    {
-        $this->call->participants()
-            ->forProvider($this->doe)
-            ->first()
-            ->update([
-                'kicked' => true,
-            ]);
-        Messenger::setProvider($this->doe);
-
-        $this->assertTrue($this->call->wasKicked());
+        $this->assertFalse($call1->wasKicked());
+        $this->assertTrue($call2->wasKicked());
     }
 
     /** @test */
     public function not_in_call_when_call_ended()
     {
         Messenger::setProvider($this->tippin);
-        $this->call->update([
-            'call_ended' => now(),
-        ]);
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->ended()->create();
+        CallParticipant::factory()->for($call)->owner($this->tippin)->create();
 
-        $this->assertFalse($this->call->isInCall());
+        $this->assertFalse($call->isInCall());
     }
 
     /** @test */
-    public function participant_is_in_call()
+    public function participant_in_call_boolean()
     {
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->create();
+        $call1 = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        CallParticipant::factory()->for($call1)->owner($this->tippin)->create();
+        $call2 = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        $call3 = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
+        CallParticipant::factory()->for($call3)->owner($this->tippin)->left()->create();
 
-        $this->assertTrue($this->call->isInCall());
-        $this->assertFalse($this->call->hasLeftCall());
-    }
-
-    /** @test */
-    public function participant_is_not_in_call()
-    {
-        $this->call->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'left_call' => now(),
-            ]);
-
-        Messenger::setProvider($this->tippin);
-
-        $this->assertFalse($this->call->isInCall());
-        $this->assertTrue($this->call->hasLeftCall());
+        $this->assertTrue($call1->isInCall());
+        $this->assertFalse($call1->hasLeftCall());
+        $this->assertFalse($call2->isInCall());
+        $this->assertFalse($call2->hasLeftCall());
+        $this->assertFalse($call3->isInCall());
+        $this->assertTrue($call3->hasLeftCall());
     }
 }

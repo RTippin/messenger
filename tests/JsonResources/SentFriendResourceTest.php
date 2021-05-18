@@ -12,8 +12,8 @@ class SentFriendResourceTest extends FeatureTestCase
     /** @test */
     public function it_transforms_sent_friend()
     {
-        $sender = SentFriend::factory()->providers($this->tippin, $this->doe)->create();
         Messenger::setProvider($this->tippin);
+        $sender = SentFriend::factory()->providers($this->tippin, $this->doe)->create();
 
         $resource = (new SentFriendResource($sender))->resolve();
         $sender = $sender->toArray();

@@ -10,27 +10,18 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class MessageReactionResourceTest extends FeatureTestCase
 {
-    private Message $message;
-    private MessageReaction $reaction;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $group = Thread::factory()->group()->create();
-        $this->message = Message::factory()->for($group)->owner($this->tippin)->create();
-        $this->reaction = MessageReaction::factory()->for($this->message)->owner($this->tippin)->create();
-    }
-
     /** @test */
     public function it_transforms_reaction()
     {
-        $resource = (new MessageReactionResource($this->reaction))->resolve();
+        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $reaction = MessageReaction::factory()->for($message)->owner($this->tippin)->create();
 
-        $this->assertSame($this->reaction->id, $resource['id']);
-        $this->assertSame($this->reaction->reaction, $resource['reaction']);
-        $this->assertSame($this->message->id, $resource['message_id']);
-        $this->assertSame($this->reaction->created_at->format('Y-m-d H:i:s.u'), $resource['created_at']->format('Y-m-d H:i:s.u'));
+        $resource = (new MessageReactionResource($reaction))->resolve();
+
+        $this->assertSame($reaction->id, $resource['id']);
+        $this->assertSame($reaction->reaction, $resource['reaction']);
+        $this->assertSame($message->id, $resource['message_id']);
+        $this->assertSame($reaction->created_at->format('Y-m-d H:i:s.u'), $resource['created_at']->format('Y-m-d H:i:s.u'));
         $this->assertEquals($this->tippin->getKey(), $resource['owner_id']);
         $this->assertSame($this->tippin->getMorphClass(), $resource['owner_type']);
         $this->assertIsArray($resource['owner']);
@@ -40,7 +31,10 @@ class MessageReactionResourceTest extends FeatureTestCase
     /** @test */
     public function it_transforms_reaction_and_adds_message()
     {
-        $resource = (new MessageReactionResource($this->reaction, $this->message))->resolve();
+        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $reaction = MessageReaction::factory()->for($message)->owner($this->tippin)->create();
+
+        $resource = (new MessageReactionResource($reaction, $message))->resolve();
 
         $this->assertIsArray($resource['message']);
     }

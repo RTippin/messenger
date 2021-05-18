@@ -10,50 +10,49 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class FriendTest extends FeatureTestCase
 {
-    private Friend $friend;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->friend = Friend::factory()->providers($this->tippin, $this->doe)->create();
-    }
-
     /** @test */
     public function it_exists()
     {
+        $friend = Friend::factory()->providers($this->tippin, $this->doe)->create();
+
         $this->assertDatabaseCount('friends', 1);
         $this->assertDatabaseHas('friends', [
-            'id' => $this->friend->id,
+            'id' => $friend->id,
         ]);
-        $this->assertInstanceOf(Friend::class, $this->friend);
+        $this->assertInstanceOf(Friend::class, $friend);
     }
 
     /** @test */
     public function it_cast_attributes()
     {
-        $this->assertInstanceOf(Carbon::class, $this->friend->created_at);
-        $this->assertInstanceOf(Carbon::class, $this->friend->updated_at);
+        $friend = Friend::factory()->providers($this->tippin, $this->doe)->create();
+
+        $this->assertInstanceOf(Carbon::class, $friend->created_at);
+        $this->assertInstanceOf(Carbon::class, $friend->updated_at);
     }
 
     /** @test */
     public function it_has_relations()
     {
-        $this->assertSame($this->tippin->getKey(), $this->friend->owner->getKey());
-        $this->assertSame($this->doe->getKey(), $this->friend->party->getKey());
-        $this->assertInstanceOf(MessengerProvider::class, $this->friend->owner);
-        $this->assertInstanceOf(MessengerProvider::class, $this->friend->party);
+        $friend = Friend::factory()->providers($this->tippin, $this->doe)->create();
+
+        $this->assertSame($this->tippin->getKey(), $friend->owner->getKey());
+        $this->assertSame($this->doe->getKey(), $friend->party->getKey());
+        $this->assertInstanceOf(MessengerProvider::class, $friend->owner);
+        $this->assertInstanceOf(MessengerProvider::class, $friend->party);
     }
 
     /** @test */
     public function relations_return_ghost_if_not_found()
     {
-        $this->friend->update([
+        $friend = Friend::factory()->create([
             'owner_id' => 404,
+            'owner_type' => $this->tippin->getMorphClass(),
             'party_id' => 404,
+            'party_type' => $this->doe->getMorphClass(),
         ]);
 
-        $this->assertInstanceOf(GhostUser::class, $this->friend->owner);
-        $this->assertInstanceOf(GhostUser::class, $this->friend->party);
+        $this->assertInstanceOf(GhostUser::class, $friend->owner);
+        $this->assertInstanceOf(GhostUser::class, $friend->party);
     }
 }

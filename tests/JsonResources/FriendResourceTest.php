@@ -12,9 +12,9 @@ class FriendResourceTest extends FeatureTestCase
     /** @test */
     public function it_transforms_friend()
     {
+        Messenger::setProvider($this->tippin);
         $owner = Friend::factory()->providers($this->tippin, $this->doe)->create();
         Friend::factory()->providers($this->doe, $this->tippin)->create();
-        Messenger::setProvider($this->tippin);
 
         $resource = (new FriendResource($owner))->resolve();
         $owner = $owner->toArray();

@@ -12,8 +12,8 @@ class PendingFriendResourceTest extends FeatureTestCase
     /** @test */
     public function it_transforms_pending_friend()
     {
-        $recipient = PendingFriend::factory()->providers($this->doe, $this->tippin)->create();
         Messenger::setProvider($this->tippin);
+        $recipient = PendingFriend::factory()->providers($this->doe, $this->tippin)->create();
 
         $resource = (new PendingFriendResource($recipient))->resolve();
         $recipient = $recipient->toArray();
