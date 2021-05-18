@@ -10,27 +10,17 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreParticipantTest extends FeatureTestCase
 {
-    private Thread $group;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin);
-    }
-
     /** @test */
     public function it_stores_participant_without_supplied_attributes()
     {
-        app(StoreParticipant::class)->execute(
-            $this->group,
-            $this->doe
-        );
+        $thread = Thread::factory()->group()->create();
+
+        app(StoreParticipant::class)->execute($thread, $this->doe);
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->doe->getKey(),
             'owner_type' => $this->doe->getMorphClass(),
-            'thread_id' => $this->group->id,
+            'thread_id' => $thread->id,
             'admin' => false,
             'pending' => false,
         ]);
@@ -39,16 +29,14 @@ class StoreParticipantTest extends FeatureTestCase
     /** @test */
     public function it_stores_participant_with_admin_attributes()
     {
-        app(StoreParticipant::class)->execute(
-            $this->group,
-            $this->doe,
-            Definitions::DefaultAdminParticipant
-        );
+        $thread = Thread::factory()->group()->create();
+
+        app(StoreParticipant::class)->execute($thread, $this->doe, Definitions::DefaultAdminParticipant);
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->doe->getKey(),
             'owner_type' => $this->doe->getMorphClass(),
-            'thread_id' => $this->group->id,
+            'thread_id' => $thread->id,
             'admin' => true,
             'pending' => false,
         ]);
@@ -57,18 +45,14 @@ class StoreParticipantTest extends FeatureTestCase
     /** @test */
     public function it_stores_participant_with_custom_attributes()
     {
-        app(StoreParticipant::class)->execute(
-            $this->group,
-            $this->doe,
-            [
-                'pending' => true,
-            ]
-        );
+        $thread = Thread::factory()->group()->create();
+
+        app(StoreParticipant::class)->execute($thread, $this->doe, ['pending' => true]);
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->doe->getKey(),
             'owner_type' => $this->doe->getMorphClass(),
-            'thread_id' => $this->group->id,
+            'thread_id' => $thread->id,
             'admin' => false,
             'pending' => true,
         ]);
@@ -77,17 +61,14 @@ class StoreParticipantTest extends FeatureTestCase
     /** @test */
     public function it_stores_participant_if_check_restore_false()
     {
-        app(StoreParticipant::class)->execute(
-            $this->group,
-            $this->doe,
-            [],
-            false
-        );
+        $thread = Thread::factory()->group()->create();
+
+        app(StoreParticipant::class)->execute($thread, $this->doe, [], false);
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->doe->getKey(),
             'owner_type' => $this->doe->getMorphClass(),
-            'thread_id' => $this->group->id,
+            'thread_id' => $thread->id,
             'admin' => false,
             'pending' => false,
         ]);
@@ -96,14 +77,10 @@ class StoreParticipantTest extends FeatureTestCase
     /** @test */
     public function it_restores_participant_if_check_restore_true()
     {
-        $participant = Participant::factory()->for($this->group)->owner($this->doe)->create(['deleted_at' => now()]);
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create(['deleted_at' => now()]);
 
-        app(StoreParticipant::class)->execute(
-            $this->group,
-            $this->doe,
-            [],
-            true
-        );
+        app(StoreParticipant::class)->execute($thread, $this->doe, [], true);
 
         $this->assertDatabaseHas('participants', [
             'id' => $participant->id,

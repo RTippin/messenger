@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\StoreManyParticipants;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
@@ -16,28 +17,24 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreManyParticipantsTest extends FeatureTestCase
 {
-    private Thread $group;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread($this->tippin);
         Messenger::setProvider($this->tippin);
     }
 
     /** @test */
     public function it_ignores_non_friend()
     {
-        app(StoreManyParticipants::class)->withoutDispatches()->execute(
-            $this->group,
+        $thread = $this->createGroupThread($this->tippin);
+
+        app(StoreManyParticipants::class)->execute($thread, [
             [
-                [
-                    'id' => $this->doe->getKey(),
-                    'alias' => 'user',
-                ],
+                'id' => $this->doe->getKey(),
+                'alias' => 'user',
             ],
-        );
+        ]);
 
         $this->assertDatabaseCount('participants', 1);
     }
@@ -45,15 +42,14 @@ class StoreManyParticipantsTest extends FeatureTestCase
     /** @test */
     public function it_ignores_not_found_provider()
     {
-        app(StoreManyParticipants::class)->withoutDispatches()->execute(
-            $this->group,
+        $thread = $this->createGroupThread($this->tippin);
+
+        app(StoreManyParticipants::class)->execute($thread, [
             [
-                [
-                    'id' => 404,
-                    'alias' => 'user',
-                ],
+                'id' => 404,
+                'alias' => 'user',
             ],
-        );
+        ]);
 
         $this->assertDatabaseCount('participants', 1);
     }
@@ -61,15 +57,15 @@ class StoreManyParticipantsTest extends FeatureTestCase
     /** @test */
     public function it_fires_no_events_if_no_valid_providers()
     {
+        BaseMessengerAction::enableEvents();
+        $thread = $this->createGroupThread($this->tippin);
+
         $this->doesntExpectEvents([
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
 
-        app(StoreManyParticipants::class)->execute(
-            $this->group,
-            [],
-        );
+        app(StoreManyParticipants::class)->execute($thread, []);
 
         $this->assertDatabaseCount('participants', 1);
     }
@@ -77,23 +73,17 @@ class StoreManyParticipantsTest extends FeatureTestCase
     /** @test */
     public function it_ignores_existing_participant()
     {
-        Participant::factory()->for($this->group)->owner($this->doe)->create();
+        BaseMessengerAction::enableEvents();
+        $thread = $this->createGroupThread($this->tippin);
+        Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->createFriends($this->tippin, $this->doe);
 
-        $this->doesntExpectEvents([
-            NewThreadBroadcast::class,
-            ParticipantsAddedEvent::class,
-        ]);
-
-        app(StoreManyParticipants::class)->execute(
-            $this->group,
+        app(StoreManyParticipants::class)->execute($thread, [
             [
-                [
-                    'id' => $this->doe->getKey(),
-                    'alias' => 'user',
-                ],
+                'id' => $this->doe->getKey(),
+                'alias' => 'user',
             ],
-        );
+        ]);
 
         $this->assertDatabaseCount('participants', 2);
     }
@@ -101,18 +91,16 @@ class StoreManyParticipantsTest extends FeatureTestCase
     /** @test */
     public function it_restores_participant_if_previously_soft_deleted()
     {
-        $participant = Participant::factory()->for($this->group)->owner($this->doe)->create(['deleted_at' => now()]);
+        $thread = $this->createGroupThread($this->tippin);
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create(['deleted_at' => now()]);
         $this->createFriends($this->tippin, $this->doe);
 
-        app(StoreManyParticipants::class)->withoutDispatches()->execute(
-            $this->group,
+        app(StoreManyParticipants::class)->execute($thread, [
             [
-                [
-                    'id' => $this->doe->getKey(),
-                    'alias' => 'user',
-                ],
+                'id' => $this->doe->getKey(),
+                'alias' => 'user',
             ],
-        );
+        ]);
 
         $this->assertDatabaseCount('participants', 2);
         $this->assertDatabaseHas('participants', [
@@ -124,23 +112,20 @@ class StoreManyParticipantsTest extends FeatureTestCase
     /** @test */
     public function it_stores_participants()
     {
-        $developers = $this->companyDevelopers();
+        $thread = $this->createGroupThread($this->tippin);
         $this->createFriends($this->tippin, $this->doe);
-        $this->createFriends($this->tippin, $developers);
+        $this->createFriends($this->tippin, $this->developers);
 
-        app(StoreManyParticipants::class)->withoutDispatches()->execute(
-            $this->group,
+        app(StoreManyParticipants::class)->execute($thread, [
             [
-                [
-                    'id' => $this->doe->getKey(),
-                    'alias' => 'user',
-                ],
-                [
-                    'id' => $developers->getKey(),
-                    'alias' => 'company',
-                ],
+                'id' => $this->doe->getKey(),
+                'alias' => 'user',
             ],
-        );
+            [
+                'id' => $this->developers->getKey(),
+                'alias' => 'company',
+            ],
+        ]);
 
         $this->assertDatabaseCount('participants', 3);
         $this->assertDatabaseHas('participants', [
@@ -149,8 +134,8 @@ class StoreManyParticipantsTest extends FeatureTestCase
             'admin' => false,
         ]);
         $this->assertDatabaseHas('participants', [
-            'owner_id' => $developers->getKey(),
-            'owner_type' => $developers->getMorphClass(),
+            'owner_id' => $this->developers->getKey(),
+            'owner_type' => $this->developers->getMorphClass(),
             'admin' => false,
         ]);
     }
@@ -158,37 +143,36 @@ class StoreManyParticipantsTest extends FeatureTestCase
     /** @test */
     public function it_fires_events()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
+        $thread = $this->createGroupThread($this->tippin);
         $this->createFriends($this->tippin, $this->doe);
         $this->createFriends($this->tippin, $this->developers);
 
-        app(StoreManyParticipants::class)->execute(
-            $this->group,
+        app(StoreManyParticipants::class)->execute($thread, [
             [
-                [
-                    'id' => $this->doe->getKey(),
-                    'alias' => 'user',
-                ],
-                [
-                    'id' => $this->developers->getKey(),
-                    'alias' => 'company',
-                ],
+                'id' => $this->doe->getKey(),
+                'alias' => 'user',
             ],
-        );
+            [
+                'id' => $this->developers->getKey(),
+                'alias' => 'company',
+            ],
+        ]);
 
-        Event::assertDispatched(function (NewThreadBroadcast $event) {
+        Event::assertDispatched(function (NewThreadBroadcast $event) use ($thread) {
             $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertContains('private-messenger.company.'.$this->developers->getKey(), $event->broadcastOn());
-            $this->assertContains('First Test Group', $event->broadcastWith()['thread']);
+            $this->assertSame($thread->id, $event->broadcastWith()['thread']['id']);
 
             return true;
         });
-        Event::assertDispatched(function (ParticipantsAddedEvent $event) {
+        Event::assertDispatched(function (ParticipantsAddedEvent $event) use ($thread) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
-            $this->assertSame('First Test Group', $event->thread->subject);
+            $this->assertSame($thread->id, $event->thread->id);
             $this->assertCount(2, $event->participants);
 
             return true;
@@ -198,18 +182,16 @@ class StoreManyParticipantsTest extends FeatureTestCase
     /** @test */
     public function it_dispatches_listeners()
     {
+        BaseMessengerAction::enableEvents();
         Bus::fake();
         $this->createFriends($this->tippin, $this->doe);
 
-        app(StoreManyParticipants::class)->withoutBroadcast()->execute(
-            $this->group,
+        app(StoreManyParticipants::class)->execute(Thread::factory()->group()->create(), [
             [
-                [
-                    'id' => $this->doe->getKey(),
-                    'alias' => 'user',
-                ],
+                'id' => $this->doe->getKey(),
+                'alias' => 'user',
             ],
-        );
+        ]);
 
         Bus::assertDispatched(function (CallQueuedListener $job) {
             return $job->class === ParticipantsAddedMessage::class;

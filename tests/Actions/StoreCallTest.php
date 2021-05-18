@@ -53,7 +53,7 @@ class StoreCallTest extends FeatureTestCase
     public function it_stores_call_setup_true()
     {
         $thread = Thread::factory()->create();
-        
+
         app(StoreCall::class)->execute($thread, true);
 
         $this->assertDatabaseHas('calls', [

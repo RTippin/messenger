@@ -9,29 +9,25 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Mockery;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\FileService;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreDocumentMessageTest extends FeatureTestCase
 {
-    private Thread $private;
-    private string $disk;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
-        $this->disk = Messenger::getThreadStorage('disk');
         Messenger::setProvider($this->tippin);
-        Storage::fake($this->disk);
     }
 
     /** @test */
@@ -42,19 +38,14 @@ class StoreDocumentMessageTest extends FeatureTestCase
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Document messages are currently disabled.');
 
-        app(StoreDocumentMessage::class)->withoutDispatches()->execute(
-            $this->private,
-            [
-                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
-            ]
-        );
+        app(StoreDocumentMessage::class)->execute(Thread::factory()->create(), [
+            'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+        ]);
     }
 
     /** @test */
     public function it_throws_exception_if_transaction_fails_and_removes_uploaded_document()
     {
-        $this->expectException(Exception::class);
-        $this->expectExceptionMessage('DB Error');
         DB::shouldReceive('transaction')->andThrow(new Exception('DB Error'));
         $this->mock(FileService::class)->shouldReceive([
             'setType' => Mockery::self(),
@@ -64,26 +55,27 @@ class StoreDocumentMessageTest extends FeatureTestCase
             'destroy' => true,
         ]);
 
-        app(StoreDocumentMessage::class)->withoutDispatches()->execute(
-            $this->private,
-            [
-                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
-            ]
-        );
+        $this->expectException(Exception::class);
+        $this->expectExceptionMessage('DB Error');
+
+        app(StoreDocumentMessage::class)->execute(Thread::factory()->create(), [
+            'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+        ]);
     }
 
     /** @test */
-    public function it_stores_message()
+    public function it_stores_document_message()
     {
-        app(StoreDocumentMessage::class)->withoutDispatches()->execute(
-            $this->private,
-            [
-                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
-            ]
-        );
+        $thread = Thread::factory()->create();
+
+        app(StoreDocumentMessage::class)->execute($thread, [
+            'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+        ]);
 
         $this->assertDatabaseHas('messages', [
-            'thread_id' => $this->private->id,
+            'thread_id' => $thread->id,
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => $this->tippin->getMorphClass(),
             'type' => 2,
         ]);
     }
@@ -91,26 +83,20 @@ class StoreDocumentMessageTest extends FeatureTestCase
     /** @test */
     public function it_stores_document_file()
     {
-        app(StoreDocumentMessage::class)->withoutDispatches()->execute(
-            $this->private,
-            [
-                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
-            ]
-        );
+        app(StoreDocumentMessage::class)->execute(Thread::factory()->create(), [
+            'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+        ]);
 
-        Storage::disk($this->disk)->assertExists(Message::document()->first()->getDocumentPath());
+        Storage::disk('messenger')->assertExists(Message::document()->first()->getDocumentPath());
     }
 
     /** @test */
     public function it_sets_temporary_id_on_message()
     {
-        $action = app(StoreDocumentMessage::class)->withoutDispatches()->execute(
-            $this->private,
-            [
-                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
-                'temporary_id' => '123-456-789',
-            ]
-        );
+        $action = app(StoreDocumentMessage::class)->execute(Thread::factory()->create(), [
+            'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+            'temporary_id' => '123-456-789',
+        ]);
 
         $this->assertSame('123-456-789', $action->getMessage()->temporaryId());
     }
@@ -118,17 +104,15 @@ class StoreDocumentMessageTest extends FeatureTestCase
     /** @test */
     public function it_can_add_extra_data_on_message()
     {
-        app(StoreDocumentMessage::class)->withoutDispatches()->execute(
-            $this->private,
-            [
-                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
-                'temporary_id' => '123-456-789',
-                'extra' => ['test' => true],
-            ]
-        );
+        $thread = Thread::factory()->create();
+
+        app(StoreDocumentMessage::class)->execute($thread, [
+            'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+            'extra' => ['test' => true],
+        ]);
 
         $this->assertDatabaseHas('messages', [
-            'thread_id' => $this->private->id,
+            'thread_id' => $thread->id,
             'type' => 2,
             'extra' => '{"test":true}',
         ]);
@@ -137,19 +121,16 @@ class StoreDocumentMessageTest extends FeatureTestCase
     /** @test */
     public function it_can_reply_to_existing_message()
     {
-        $message = $this->createMessage($this->private, $this->tippin);
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
 
-        app(StoreDocumentMessage::class)->withoutDispatches()->execute(
-            $this->private,
-            [
-                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
-                'temporary_id' => '123-456-789',
-                'reply_to_id' => $message->id,
-            ]
-        );
+        app(StoreDocumentMessage::class)->execute($thread, [
+            'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+            'reply_to_id' => $message->id,
+        ]);
 
         $this->assertDatabaseHas('messages', [
-            'thread_id' => $this->private->id,
+            'thread_id' => $thread->id,
             'type' => 2,
             'reply_to_id' => $message->id,
         ]);
@@ -158,20 +139,17 @@ class StoreDocumentMessageTest extends FeatureTestCase
     /** @test */
     public function it_updates_thread_and_participant()
     {
+        $thread = Thread::factory()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
         $updated = now()->addMinutes(5)->format('Y-m-d H:i:s.u');
         Carbon::setTestNow($updated);
 
-        app(StoreDocumentMessage::class)->withoutDispatches()->execute(
-            $this->private,
-            [
-                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
-            ]
-        );
-
-        $participant = $this->private->participants()->forProvider($this->tippin)->first();
+        app(StoreDocumentMessage::class)->execute($thread, [
+            'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+        ]);
 
         $this->assertDatabaseHas('threads', [
-            'id' => $this->private->id,
+            'id' => $thread->id,
             'updated_at' => $updated,
         ]);
         $this->assertDatabaseHas('participants', [
@@ -183,29 +161,26 @@ class StoreDocumentMessageTest extends FeatureTestCase
     /** @test */
     public function it_fires_events()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
-        app(StoreDocumentMessage::class)->execute(
-            $this->private,
-            [
-                'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
-                'temporary_id' => '123-456-789',
-            ]
-        );
+        app(StoreDocumentMessage::class)->execute($thread, [
+            'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+        ]);
 
-        Event::assertDispatched(function (NewMessageBroadcast $event) {
+        Event::assertDispatched(function (NewMessageBroadcast $event) use ($thread) {
             $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
-            $this->assertSame($this->private->id, $event->broadcastWith()['thread_id']);
-            $this->assertSame('123-456-789', $event->broadcastWith()['temporary_id']);
+            $this->assertSame($thread->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
-        Event::assertDispatched(function (NewMessageEvent $event) {
-            return $this->private->id === $event->message->thread_id;
+        Event::assertDispatched(function (NewMessageEvent $event) use ($thread) {
+            return $thread->id === $event->message->thread_id;
         });
     }
 }

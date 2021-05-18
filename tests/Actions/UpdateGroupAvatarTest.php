@@ -7,6 +7,7 @@ use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\UpdateGroupAvatar;
 use RTippin\Messenger\Broadcasting\ThreadAvatarBroadcast;
 use RTippin\Messenger\Events\ThreadAvatarEvent;
@@ -18,23 +19,11 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class UpdateGroupAvatarTest extends FeatureTestCase
 {
-    private Thread $group;
-    private string $disk;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->group = $this->createGroupThread($this->tippin);
         Messenger::setProvider($this->tippin);
-        $this->disk = Messenger::getThreadStorage('disk');
-        Storage::fake($this->disk);
-        $this->group->update([
-            'image' => 'avatar.jpg',
-        ]);
-        UploadedFile::fake()->image('avatar.jpg')->storeAs($this->group->getAvatarDirectory(), 'avatar.jpg', [
-            'disk' => $this->disk,
-        ]);
     }
 
     /** @test */
@@ -45,25 +34,22 @@ class UpdateGroupAvatarTest extends FeatureTestCase
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Group avatar uploads are currently disabled.');
 
-        app(UpdateGroupAvatar::class)->withoutDispatches()->execute(
-            $this->group,
-            [
-                'image' => UploadedFile::fake()->image('picture.jpg'),
-            ]
-        );
+        app(UpdateGroupAvatar::class)->execute(Thread::factory()->group()->create(), [
+            'image' => UploadedFile::fake()->image('picture.jpg'),
+        ]);
     }
 
     /** @test */
     public function it_updates_default_thread_avatar()
     {
-        app(UpdateGroupAvatar::class)->withoutDispatches()->execute(
-            $this->group,
-            [
-                'default' => '1.png',
-            ]
-        );
+        $thread = Thread::factory()->group()->create(['image' => '5.png']);
+
+        app(UpdateGroupAvatar::class)->execute($thread, [
+            'default' => '1.png',
+        ]);
 
         $this->assertDatabaseHas('threads', [
+            'id' => $thread->id,
             'type' => 2,
             'image' => '1.png',
         ]);
@@ -72,58 +58,61 @@ class UpdateGroupAvatarTest extends FeatureTestCase
     /** @test */
     public function it_updates_default_and_removes_existing_avatar_from_disk()
     {
-        app(UpdateGroupAvatar::class)->withoutDispatches()->execute(
-            $this->group,
-            [
-                'default' => '3.png',
-            ]
-        );
+        $thread = Thread::factory()->group()->create(['image' => 'avatar.jpg']);
+        UploadedFile::fake()->image('avatar.jpg')->storeAs($thread->getAvatarDirectory(), 'avatar.jpg', [
+            'disk' => 'messenger',
+        ]);
+
+        app(UpdateGroupAvatar::class)->execute($thread, [
+            'default' => '3.png',
+        ]);
 
         $this->assertDatabaseHas('threads', [
+            'id' => $thread->id,
             'type' => 2,
             'image' => '3.png',
         ]);
-        Storage::disk($this->disk)->assertMissing($this->group->getAvatarDirectory().'/avatar.jpg');
+        Storage::disk('messenger')->assertMissing($thread->getAvatarDirectory().'/avatar.jpg');
     }
 
     /** @test */
     public function it_stores_avatar_and_removes_previous_from_disk()
     {
-        app(UpdateGroupAvatar::class)->withoutDispatches()->execute(
-            $this->group,
-            [
-                'image' => UploadedFile::fake()->image('picture.jpg'),
-            ]
-        );
+        $thread = Thread::factory()->group()->create(['image' => 'avatar.jpg']);
+        UploadedFile::fake()->image('avatar.jpg')->storeAs($thread->getAvatarDirectory(), 'avatar.jpg', [
+            'disk' => 'messenger',
+        ]);
 
-        Storage::disk($this->disk)->assertMissing($this->group->getAvatarDirectory().'/avatar.jpg');
-        Storage::disk($this->disk)->assertExists($this->group->getAvatarPath());
+        app(UpdateGroupAvatar::class)->execute($thread, [
+            'image' => UploadedFile::fake()->image('picture.jpg'),
+        ]);
+
+        Storage::disk('messenger')->assertMissing($thread->getAvatarDirectory().'/avatar.jpg');
+        Storage::disk('messenger')->assertExists($thread->getAvatarPath());
     }
 
     /** @test */
     public function it_fires_events()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             ThreadAvatarBroadcast::class,
             ThreadAvatarEvent::class,
         ]);
+        $thread = Thread::factory()->group()->create(['image' => '5.png']);
 
-        app(UpdateGroupAvatar::class)->execute(
-            $this->group,
-            [
-                'default' => '1.png',
-            ]
-        );
+        app(UpdateGroupAvatar::class)->execute($thread, [
+            'default' => '1.png',
+        ]);
 
-        Event::assertDispatched(function (ThreadAvatarBroadcast $event) {
-            $this->assertContains('First Test Group', $event->broadcastWith());
-            $this->assertContains('presence-messenger.thread.'.$this->group->id, $event->broadcastOn());
+        Event::assertDispatched(function (ThreadAvatarBroadcast $event) use ($thread) {
+            $this->assertContains('presence-messenger.thread.'.$thread->id, $event->broadcastOn());
 
             return true;
         });
-        Event::assertDispatched(function (ThreadAvatarEvent $event) {
+        Event::assertDispatched(function (ThreadAvatarEvent $event) use ($thread) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
-            $this->assertSame($this->group->id, $event->thread->id);
+            $this->assertSame($thread->id, $event->thread->id);
 
             return true;
         });
@@ -132,36 +121,29 @@ class UpdateGroupAvatarTest extends FeatureTestCase
     /** @test */
     public function it_doesnt_fires_events_if_nothing_changed()
     {
-        $this->group->update([
-            'image' => '1.png',
-        ]);
-        Event::fake([
+        BaseMessengerAction::enableEvents();
+        $thread = Thread::factory()->group()->create(['image' => '1.png']);
+
+        $this->doesntExpectEvents([
             ThreadAvatarBroadcast::class,
             ThreadAvatarEvent::class,
         ]);
 
-        app(UpdateGroupAvatar::class)->execute(
-            $this->group,
-            [
-                'default' => '1.png',
-            ]
-        );
-
-        Event::assertNotDispatched(ThreadAvatarBroadcast::class);
-        Event::assertNotDispatched(ThreadAvatarEvent::class);
+        app(UpdateGroupAvatar::class)->execute($thread, [
+            'default' => '1.png',
+        ]);
     }
 
     /** @test */
     public function it_dispatches_listeners()
     {
+        BaseMessengerAction::enableEvents();
         Bus::fake();
+        $thread = Thread::factory()->group()->create(['image' => '5.png']);
 
-        app(UpdateGroupAvatar::class)->withoutBroadcast()->execute(
-            $this->group,
-            [
-                'default' => '1.png',
-            ]
-        );
+        app(UpdateGroupAvatar::class)->withoutBroadcast()->execute($thread, [
+            'default' => '1.png',
+        ]);
 
         Bus::assertDispatched(function (CallQueuedListener $job) {
             return $job->class === ThreadAvatarMessage::class;

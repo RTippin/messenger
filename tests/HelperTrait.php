@@ -72,15 +72,13 @@ trait HelperTrait
         ];
     }
 
-    protected function createPrivateThread($one, $two, bool $pending = false): Thread
+    protected function createPrivateThread($one, $two): Thread
     {
         $private = Thread::factory()->create();
         Participant::factory()
             ->for($private)
             ->owner($one)
-            ->create([
-                'pending' => $pending,
-            ]);
+            ->create();
         Participant::factory()
             ->for($private)
             ->owner($two)

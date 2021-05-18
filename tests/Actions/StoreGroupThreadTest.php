@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\StoreGroupThread;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
 use RTippin\Messenger\Events\NewThreadEvent;
@@ -22,7 +23,7 @@ class StoreGroupThreadTest extends FeatureTestCase
     /** @test */
     public function it_stores_thread_and_participant()
     {
-        app(StoreGroupThread::class)->withoutDispatches()->execute([
+        app(StoreGroupThread::class)->execute([
             'subject' => 'Test Group',
         ]);
 
@@ -41,7 +42,7 @@ class StoreGroupThreadTest extends FeatureTestCase
     /** @test */
     public function it_stores_system_message()
     {
-        app(StoreGroupThread::class)->withoutDispatches()->execute([
+        app(StoreGroupThread::class)->execute([
             'subject' => 'Test Group',
         ]);
 
@@ -59,7 +60,7 @@ class StoreGroupThreadTest extends FeatureTestCase
     {
         $this->createFriends($this->tippin, $this->doe);
 
-        app(StoreGroupThread::class)->withoutDispatches()->execute([
+        app(StoreGroupThread::class)->execute([
             'subject' => 'Test Group',
             'providers' => [
                 [
@@ -79,7 +80,7 @@ class StoreGroupThreadTest extends FeatureTestCase
     /** @test */
     public function it_ignores_participant_if_not_friend()
     {
-        app(StoreGroupThread::class)->withoutDispatches()->execute([
+        app(StoreGroupThread::class)->execute([
             'subject' => 'Test Group',
             'providers' => [
                 [
@@ -96,6 +97,8 @@ class StoreGroupThreadTest extends FeatureTestCase
     /** @test */
     public function it_fires_events_without_extra_participants()
     {
+        BaseMessengerAction::enableEvents();
+
         $this->expectsEvents([
             NewThreadEvent::class,
         ]);
@@ -111,6 +114,7 @@ class StoreGroupThreadTest extends FeatureTestCase
     /** @test */
     public function it_fires_events_with_extra_participants()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             NewThreadEvent::class,
             NewThreadBroadcast::class,

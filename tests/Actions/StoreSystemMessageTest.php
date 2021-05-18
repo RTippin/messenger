@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
 use RTippin\Messenger\Events\NewMessageEvent;
@@ -12,27 +13,15 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreSystemMessageTest extends FeatureTestCase
 {
-    private Thread $group;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-    }
-
     /** @test */
     public function it_stores_message()
     {
-        app(StoreSystemMessage::class)->withoutDispatches()->execute(
-            $this->group,
-            $this->tippin,
-            'system',
-            'GROUP_CREATED'
-        );
+        $thread = Thread::factory()->group()->create();
+        
+        app(StoreSystemMessage::class)->execute($thread, $this->tippin, 'system', 'GROUP_CREATED');
 
         $this->assertDatabaseHas('messages', [
-            'thread_id' => $this->group->id,
+            'thread_id' => $thread->id,
             'type' => 93,
             'body' => 'system',
         ]);
@@ -41,18 +30,14 @@ class StoreSystemMessageTest extends FeatureTestCase
     /** @test */
     public function it_updates_thread_timestamp()
     {
+        $thread = Thread::factory()->group()->create();
         $updated = now()->addMinutes(5)->format('Y-m-d H:i:s.u');
         Carbon::setTestNow($updated);
 
-        app(StoreSystemMessage::class)->withoutDispatches()->execute(
-            $this->group,
-            $this->tippin,
-            'system',
-            'GROUP_CREATED'
-        );
+        app(StoreSystemMessage::class)->execute($thread, $this->tippin, 'system', 'GROUP_CREATED');
 
         $this->assertDatabaseHas('threads', [
-            'id' => $this->group->id,
+            'id' => $thread->id,
             'updated_at' => $updated,
         ]);
     }
@@ -60,27 +45,24 @@ class StoreSystemMessageTest extends FeatureTestCase
     /** @test */
     public function it_fires_events()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
-        app(StoreSystemMessage::class)->execute(
-            $this->group,
-            $this->tippin,
-            'system',
-            'GROUP_CREATED'
-        );
+        app(StoreSystemMessage::class)->execute($thread, $this->tippin, 'system', 'GROUP_CREATED');
 
-        Event::assertDispatched(function (NewMessageBroadcast $event) {
+        Event::assertDispatched(function (NewMessageBroadcast $event) use ($thread) {
             $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
-            $this->assertSame($this->group->id, $event->broadcastWith()['thread_id']);
+            $this->assertSame($thread->id, $event->broadcastWith()['thread_id']);
 
             return true;
         });
-        Event::assertDispatched(function (NewMessageEvent $event) {
-            return $this->group->id === $event->message->thread_id;
+        Event::assertDispatched(function (NewMessageEvent $event) use ($thread) {
+            return $thread->id === $event->message->thread_id;
         });
     }
 
@@ -92,15 +74,12 @@ class StoreSystemMessageTest extends FeatureTestCase
      */
     public function it_stores_message_type_using_description($messageString, $messageInt)
     {
-        app(StoreSystemMessage::class)->withoutDispatches()->execute(
-            $this->group,
-            $this->tippin,
-            'system',
-            $messageString
-        );
+        $thread = Thread::factory()->group()->create();
+
+        app(StoreSystemMessage::class)->execute($thread, $this->tippin, 'system', $messageString);
 
         $this->assertDatabaseHas('messages', [
-            'thread_id' => $this->group->id,
+            'thread_id' => $thread->id,
             'type' => $messageInt,
         ]);
     }

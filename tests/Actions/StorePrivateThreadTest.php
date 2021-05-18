@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\StorePrivateThread;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
@@ -22,18 +23,16 @@ class StorePrivateThreadTest extends FeatureTestCase
     {
         parent::setUp();
 
-        Storage::fake(Messenger::getThreadStorage('disk'));
+        Messenger::setProvider($this->tippin);
     }
 
     /** @test */
     public function it_throws_exception_if_provider_not_found()
     {
-        Messenger::setProvider($this->tippin);
-
         $this->expectException(ProviderNotFoundException::class);
         $this->expectExceptionMessage('We were unable to locate the recipient you requested.');
 
-        app(StorePrivateThread::class)->withoutDispatches()->execute([
+        app(StorePrivateThread::class)->execute([
             'message' => 'Hello World!',
             'recipient_alias' => 'user',
             'recipient_id' => 404,
@@ -43,13 +42,12 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_one_exist_between_providers()
     {
-        Messenger::setProvider($this->tippin);
         $this->createPrivateThread($this->tippin, $this->doe);
 
         $this->expectException(NewThreadException::class);
         $this->expectExceptionMessage('You already have an existing conversation with John Doe.');
 
-        app(StorePrivateThread::class)->withoutDispatches()->execute([
+        app(StorePrivateThread::class)->execute([
             'message' => 'Hello World!',
             'recipient_alias' => 'user',
             'recipient_id' => $this->doe->getKey(),
@@ -67,7 +65,7 @@ class StorePrivateThreadTest extends FeatureTestCase
         $this->expectException(NewThreadException::class);
         $this->expectExceptionMessage('Not authorized to start conversations with Developers.');
 
-        app(StorePrivateThread::class)->withoutDispatches()->execute([
+        app(StorePrivateThread::class)->execute([
             'message' => 'Hello World!',
             'recipient_alias' => 'company',
             'recipient_id' => $this->companyDevelopers()->getKey(),
@@ -77,9 +75,7 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function it_stores_thread_with_participants_and_message()
     {
-        Messenger::setProvider($this->tippin);
-
-        app(StorePrivateThread::class)->withoutDispatches()->execute([
+        app(StorePrivateThread::class)->execute([
             'message' => 'Hello World!',
             'recipient_alias' => 'user',
             'recipient_id' => $this->doe->getKey(),
@@ -97,9 +93,7 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function it_marks_recipient_pending_if_not_friends()
     {
-        Messenger::setProvider($this->tippin);
-
-        app(StorePrivateThread::class)->withoutDispatches()->execute([
+        app(StorePrivateThread::class)->execute([
             'message' => 'Hello World!',
             'recipient_alias' => 'user',
             'recipient_id' => $this->doe->getKey(),
@@ -120,10 +114,9 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function it_is_not_pending_if_providers_are_friends()
     {
-        Messenger::setProvider($this->tippin);
         $this->createFriends($this->tippin, $this->doe);
 
-        app(StorePrivateThread::class)->withoutDispatches()->execute([
+        app(StorePrivateThread::class)->execute([
             'message' => 'Hello World!',
             'recipient_alias' => 'user',
             'recipient_id' => $this->doe->getKey(),
@@ -144,7 +137,7 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function it_fires_pending_events()
     {
-        Messenger::setProvider($this->tippin);
+        BaseMessengerAction::enableEvents();
         Event::fake([
             NewThreadBroadcast::class,
             NewThreadEvent::class,
@@ -173,7 +166,7 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function it_fires_not_pending_events()
     {
-        Messenger::setProvider($this->tippin);
+        BaseMessengerAction::enableEvents();
         Event::fake([
             NewThreadBroadcast::class,
             NewThreadEvent::class,
@@ -195,7 +188,7 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function it_doesnt_fire_message_events()
     {
-        Messenger::setProvider($this->tippin);
+        BaseMessengerAction::enableEvents();
 
         $this->doesntExpectEvents([
             NewMessageBroadcast::class,
@@ -212,9 +205,7 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function it_stores_image_message()
     {
-        Messenger::setProvider($this->tippin);
-
-        app(StorePrivateThread::class)->withoutDispatches()->execute([
+        app(StorePrivateThread::class)->execute([
             'image' => UploadedFile::fake()->image('picture.jpg'),
             'recipient_alias' => 'user',
             'recipient_id' => $this->doe->getKey(),
@@ -223,15 +214,13 @@ class StorePrivateThreadTest extends FeatureTestCase
         $this->assertDatabaseHas('messages', [
             'type' => 1,
         ]);
-        Storage::disk(Messenger::getThreadStorage('disk'))->assertExists(Message::image()->first()->getImagePath());
+        Storage::disk('messenger')->assertExists(Message::image()->first()->getImagePath());
     }
 
     /** @test */
     public function it_stores_document_message()
     {
-        Messenger::setProvider($this->tippin);
-
-        app(StorePrivateThread::class)->withoutDispatches()->execute([
+        app(StorePrivateThread::class)->execute([
             'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
             'recipient_alias' => 'user',
             'recipient_id' => $this->doe->getKey(),
@@ -240,15 +229,13 @@ class StorePrivateThreadTest extends FeatureTestCase
         $this->assertDatabaseHas('messages', [
             'type' => 2,
         ]);
-        Storage::disk(Messenger::getThreadStorage('disk'))->assertExists(Message::document()->first()->getDocumentPath());
+        Storage::disk('messenger')->assertExists(Message::document()->first()->getDocumentPath());
     }
 
     /** @test */
     public function it_stores_audio_message()
     {
-        Messenger::setProvider($this->tippin);
-
-        app(StorePrivateThread::class)->withoutDispatches()->execute([
+        app(StorePrivateThread::class)->execute([
             'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
             'recipient_alias' => 'user',
             'recipient_id' => $this->doe->getKey(),
@@ -257,15 +244,13 @@ class StorePrivateThreadTest extends FeatureTestCase
         $this->assertDatabaseHas('messages', [
             'type' => 3,
         ]);
-        Storage::disk(Messenger::getThreadStorage('disk'))->assertExists(Message::audio()->first()->getAudioPath());
+        Storage::disk('messenger')->assertExists(Message::audio()->first()->getAudioPath());
     }
 
     /** @test */
     public function it_can_add_extra_data_on_message()
     {
-        Messenger::setProvider($this->tippin);
-
-        app(StorePrivateThread::class)->withoutDispatches()->execute([
+        app(StorePrivateThread::class)->execute([
             'message' => 'Extra',
             'recipient_alias' => 'user',
             'recipient_id' => $this->doe->getKey(),

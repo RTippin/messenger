@@ -34,12 +34,11 @@ class StoreAudioMessageTest extends FeatureTestCase
     public function it_throws_exception_if_disabled()
     {
         Messenger::setMessageAudioUpload(false);
-        $thread = Thread::factory()->create();
 
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Audio messages are currently disabled.');
 
-        app(StoreAudioMessage::class)->execute($thread, [
+        app(StoreAudioMessage::class)->execute(Thread::factory()->create(), [
             'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
         ]);
     }
@@ -47,7 +46,6 @@ class StoreAudioMessageTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_transaction_fails_and_removes_uploaded_audio()
     {
-        $thread = Thread::factory()->create();
         DB::shouldReceive('transaction')->andThrow(new Exception('DB Error'));
         $this->mock(FileService::class)->shouldReceive([
             'setType' => Mockery::self(),
@@ -60,7 +58,7 @@ class StoreAudioMessageTest extends FeatureTestCase
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('DB Error');
 
-        app(StoreAudioMessage::class)->execute($thread, [
+        app(StoreAudioMessage::class)->execute(Thread::factory()->create(), [
             'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
         ]);
     }
@@ -76,6 +74,8 @@ class StoreAudioMessageTest extends FeatureTestCase
 
         $this->assertDatabaseHas('messages', [
             'thread_id' => $thread->id,
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => $this->tippin->getMorphClass(),
             'type' => 3,
         ]);
     }
@@ -83,9 +83,7 @@ class StoreAudioMessageTest extends FeatureTestCase
     /** @test */
     public function it_stores_audio_file()
     {
-        $thread = Thread::factory()->create();
-
-        app(StoreAudioMessage::class)->execute($thread, [
+        app(StoreAudioMessage::class)->execute(Thread::factory()->create(), [
             'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
         ]);
 
@@ -95,9 +93,7 @@ class StoreAudioMessageTest extends FeatureTestCase
     /** @test */
     public function it_sets_temporary_id_on_message()
     {
-        $thread = Thread::factory()->create();
-
-        $action = app(StoreAudioMessage::class)->execute($thread, [
+        $action = app(StoreAudioMessage::class)->execute(Thread::factory()->create(), [
             'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
             'temporary_id' => '123-456-789',
         ]);

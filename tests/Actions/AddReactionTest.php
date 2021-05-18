@@ -102,6 +102,8 @@ class AddReactionTest extends FeatureTestCase
         $this->assertDatabaseHas('message_reactions', [
             'message_id' => $message->id,
             'reaction' => ':joy:',
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => $this->tippin->getMorphClass(),
         ]);
         $this->assertDatabaseHas('messages', [
             'id' => $message->id,
