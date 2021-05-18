@@ -49,11 +49,11 @@ class DestroyMessengerAvatarTest extends FeatureTestCase
         $directory = Messenger::getAvatarStorage('directory').'/user/'.$this->tippin->getKey();
 
         UploadedFile::fake()->image('avatar.jpg')->storeAs($directory, 'avatar.jpg', [
-            'disk' => Messenger::getAvatarStorage('disk'),
+            'disk' => 'public',
         ]);
 
         app(DestroyMessengerAvatar::class)->execute();
 
-        Storage::disk(Messenger::getAvatarStorage('disk'))->assertMissing($directory.'/avatar.jpg');
+        Storage::disk('public')->assertMissing($directory.'/avatar.jpg');
     }
 }

@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Facades\Messenger;
 
 class FeatureTestCase extends MessengerTestCase
 {
@@ -39,7 +38,8 @@ class FeatureTestCase extends MessengerTestCase
         $this->storeBaseUsers();
         $this->storeBaseCompanies();
         BaseMessengerAction::disableEvents();
-        Storage::fake(Messenger::getThreadStorage('disk'));
+        Storage::fake('public');
+        Storage::fake('messenger');
         $this->withoutMiddleware(ThrottleRequests::class);
     }
 

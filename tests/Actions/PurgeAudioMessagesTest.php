@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Messages\PurgeAudioMessages;
-use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -38,17 +37,17 @@ class PurgeAudioMessagesTest extends FeatureTestCase
         UploadedFile::fake()
             ->create('test.mp3', 500, 'audio/mpeg')
             ->storeAs($thread->getAudioDirectory(), 'test.mp3', [
-                'disk' => Messenger::getThreadStorage('disk'),
+                'disk' => 'messenger',
             ]);
         UploadedFile::fake()
             ->create('foo.mp3', 500, 'audio/mpeg')
             ->storeAs($thread->getAudioDirectory(), 'foo.mp3', [
-                'disk' => Messenger::getThreadStorage('disk'),
+                'disk' => 'messenger',
             ]);
 
         app(PurgeAudioMessages::class)->execute(Message::audio()->get());
 
-        Storage::disk(Messenger::getThreadStorage('disk'))->assertMissing($audio1->getAudioPath());
-        Storage::disk(Messenger::getThreadStorage('disk'))->assertMissing($audio2->getAudioPath());
+        Storage::disk('messenger')->assertMissing($audio1->getAudioPath());
+        Storage::disk('messenger')->assertMissing($audio2->getAudioPath());
     }
 }

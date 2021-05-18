@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\SendKnock;
 use RTippin\Messenger\Broadcasting\KnockBroadcast;
 use RTippin\Messenger\Events\KnockEvent;
@@ -15,13 +16,10 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class SendKnockTest extends FeatureTestCase
 {
-    private Thread $private;
-
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->private = $this->createPrivateThread($this->tippin, $this->doe);
         Messenger::setProvider($this->tippin);
     }
 
@@ -33,80 +31,97 @@ class SendKnockTest extends FeatureTestCase
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Knocking is currently disabled.');
 
-        app(SendKnock::class)->withoutDispatches()->execute($this->private);
+        app(SendKnock::class)->execute(Thread::factory()->create());
     }
 
     /** @test */
     public function it_throws_exception_if_private_lockout_key_exist()
     {
-        Cache::put("knock.knock.{$this->private->id}.{$this->tippin->getKey()}", true);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        Cache::put("knock.knock.$thread->id.{$this->tippin->getKey()}", true);
 
         $this->expectException(KnockException::class);
         $this->expectExceptionMessage('You may only knock at John Doe once every 5 minutes.');
 
-        app(SendKnock::class)->withoutDispatches()->execute($this->private);
+        app(SendKnock::class)->execute($thread);
     }
 
     /** @test */
     public function it_throws_exception_if_group_lockout_key_exist()
     {
-        $group = $this->createGroupThread($this->tippin);
-        Cache::put("knock.knock.{$group->id}", true);
+        $thread = Thread::factory()->group()->create(['subject' => 'Test']);
+        Cache::put("knock.knock.$thread->id", true);
 
         $this->expectException(KnockException::class);
-        $this->expectExceptionMessage('You may only knock at First Test Group once every 5 minutes.');
+        $this->expectExceptionMessage('You may only knock at Test once every 5 minutes.');
 
-        app(SendKnock::class)->withoutDispatches()->execute($group);
+        app(SendKnock::class)->execute($thread);
     }
 
     /** @test */
     public function it_stores_private_cache_key()
     {
-        app(SendKnock::class)->withoutDispatches()->execute($this->private);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
-        $this->assertTrue(Cache::has('knock.knock.'.$this->private->id.'.'.$this->tippin->getKey()));
+        app(SendKnock::class)->execute($thread);
+
+        $this->assertTrue(Cache::has("knock.knock.$thread->id.{$this->tippin->getKey()}"));
     }
 
     /** @test */
     public function it_stores_group_cache_key()
     {
-        $group = $this->createGroupThread($this->tippin);
+        $thread = Thread::factory()->group()->create();
 
-        app(SendKnock::class)->withoutDispatches()->execute($group);
+        app(SendKnock::class)->execute($thread);
 
-        $this->assertTrue(Cache::has('knock.knock.'.$group->id));
+        $this->assertTrue(Cache::has("knock.knock.$thread->id"));
     }
 
     /** @test */
-    public function it_doesnt_stores_cache_key_if_timeout_zero()
+    public function it_doesnt_stores_private_cache_key_if_timeout_zero()
     {
         Messenger::setKnockTimeout(0);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
-        app(SendKnock::class)->withoutDispatches()->execute($this->private);
+        app(SendKnock::class)->execute($thread);
 
-        $this->assertFalse(Cache::has('knock.knock.'.$this->private->id.'.'.$this->tippin->getKey()));
+        $this->assertFalse(Cache::has("knock.knock.$thread->id.{$this->tippin->getKey()}"));
+    }
+
+    /** @test */
+    public function it_doesnt_stores_group_cache_key_if_timeout_zero()
+    {
+        Messenger::setKnockTimeout(0);
+        $thread = Thread::factory()->group()->create();
+
+        app(SendKnock::class)->execute($thread);
+
+        $this->assertFalse(Cache::has("knock.knock.$thread->id"));
     }
 
     /** @test */
     public function it_fires_events()
     {
+        BaseMessengerAction::enableEvents();
         Event::fake([
             KnockBroadcast::class,
             KnockEvent::class,
         ]);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
-        app(SendKnock::class)->execute($this->private);
+        app(SendKnock::class)->execute($thread);
 
-        Event::assertDispatched(function (KnockBroadcast $event) {
+        Event::assertDispatched(function (KnockBroadcast $event) use ($thread) {
             $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertNotContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
-            $this->assertSame($this->private->id, $event->broadcastWith()['thread']['id']);
+            $this->assertSame($thread->id, $event->broadcastWith()['thread']['id']);
 
             return true;
         });
-        Event::assertDispatched(function (KnockEvent $event) {
+        Event::assertDispatched(function (KnockEvent $event) use ($thread) {
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
-            $this->assertSame($this->private->id, $event->thread->id);
+            $this->assertSame($thread->id, $event->thread->id);
 
             return true;
         });

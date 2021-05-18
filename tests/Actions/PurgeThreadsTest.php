@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Threads\PurgeThreads;
-use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -30,16 +29,16 @@ class PurgeThreadsTest extends FeatureTestCase
         UploadedFile::fake()
             ->image('avatar.jpg')
             ->storeAs($thread->getAvatarDirectory(), 'avatar.jpg', [
-                'disk' => Messenger::getThreadStorage('disk'),
+                'disk' => 'messenger',
             ]);
         UploadedFile::fake()
             ->image('avatar.jpg')
             ->storeAs($thread->getAvatarDirectory(), 'avatar.jpg', [
-                'disk' => Messenger::getThreadStorage('disk'),
+                'disk' => 'messenger',
             ]);
 
         app(PurgeThreads::class)->execute(Thread::all());
 
-        Storage::disk(Messenger::getThreadStorage('disk'))->assertMissing($thread->getStorageDirectory());
+        Storage::disk('messenger')->assertMissing($thread->getStorageDirectory());
     }
 }

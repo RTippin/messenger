@@ -87,14 +87,32 @@ class SendKnock extends BaseMessengerAction
         }
 
         if ($this->messenger->getKnockTimeout() !== 0
-            && ($this->getThread()->isGroup()
-                && $this->cacheDriver->has("knock.knock.{$this->getThread()->id}"))
-            || ($this->getThread()->isPrivate()
-                && $this->cacheDriver->has("knock.knock.{$this->getThread()->id}.{$this->messenger->getProvider()->getKey()}"))) {
+            && ($this->hasGroupThreadLockout()
+                || $this->hasPrivateThreadLockout())) {
             throw new KnockException("You may only knock at {$this->getThread()->name()} once every {$this->messenger->getKnockTimeout()} minutes.");
         }
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    private function hasPrivateThreadLockout(): bool
+    {
+        return $this->getThread()->isPrivate()
+            && $this->cacheDriver->has("knock.knock.{$this->getThread()->id}.{$this->messenger->getProvider()->getKey()}");
+    }
+
+    /**
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    private function hasGroupThreadLockout(): bool
+    {
+        return $this->getThread()->isGroup()
+            && $this->cacheDriver->has("knock.knock.{$this->getThread()->id}");
     }
 
     /**

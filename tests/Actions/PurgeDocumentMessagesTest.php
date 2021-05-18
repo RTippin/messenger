@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Actions;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\Messages\PurgeDocumentMessages;
-use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -38,17 +37,17 @@ class PurgeDocumentMessagesTest extends FeatureTestCase
         UploadedFile::fake()
             ->create('test.pdf', 500, 'application/pdf')
             ->storeAs($thread->getDocumentsDirectory(), 'test.pdf', [
-                'disk' => Messenger::getThreadStorage('disk'),
+                'disk' => 'messenger',
             ]);
         UploadedFile::fake()
             ->create('foo.pdf', 500, 'application/pdf')
             ->storeAs($thread->getDocumentsDirectory(), 'foo.pdf', [
-                'disk' => Messenger::getThreadStorage('disk'),
+                'disk' => 'messenger',
             ]);
 
         app(PurgeDocumentMessages::class)->execute(Message::document()->get());
 
-        Storage::disk(Messenger::getThreadStorage('disk'))->assertMissing($document1->getDocumentPath());
-        Storage::disk(Messenger::getThreadStorage('disk'))->assertMissing($document2->getDocumentPath());
+        Storage::disk('messenger')->assertMissing($document1->getDocumentPath());
+        Storage::disk('messenger')->assertMissing($document2->getDocumentPath());
     }
 }
