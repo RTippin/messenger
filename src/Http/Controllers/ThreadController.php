@@ -64,7 +64,7 @@ class ThreadController
 
         return new ThreadResource($thread->load([
             'participants.owner',
-            'recentMessage.owner',
+            'latestMessage.owner',
             'activeCall.participants.owner',
         ]));
     }

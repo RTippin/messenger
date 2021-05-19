@@ -115,9 +115,9 @@ class ThreadResource extends JsonResource
      */
     private function addRecentMessage(): ?array
     {
-        if (! is_null($this->thread->recentMessage)) {
+        if (! is_null($this->thread->latestMessage)) {
             return (new MessageResource(
-                $this->thread->recentMessage,
+                $this->thread->latestMessage,
                 $this->thread
             ))->resolve();
         }

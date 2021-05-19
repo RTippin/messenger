@@ -16,7 +16,6 @@ use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
-use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
 
 /**
  * @property string $id
@@ -40,7 +39,7 @@ use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
  * @property-read int|null $messages_count
  * @property-read Collection|\RTippin\Messenger\Models\Participant[] $participants
  * @property-read int|null $participants_count
- * @property-read \RTippin\Messenger\Models\Message|null $recentMessage
+ * @property-read \RTippin\Messenger\Models\Message|null $latestMessage
  * @method static Builder|Thread group()
  * @method static Builder|Thread private()
  * @method static \Illuminate\Database\Query\Builder|Thread onlyTrashed()
@@ -54,7 +53,6 @@ class Thread extends Model
     use HasFactory;
     use SoftDeletes;
     use Uuids;
-    use HasEagerLimit;
     use ScopesProvider;
 
     /**
@@ -170,7 +168,7 @@ class Thread extends Model
     /**
      * @return HasOne|Call
      */
-    public function activeCall()
+    public function activeCall(): HasOne
     {
         return $this->hasOne(
             Call::class,
@@ -178,20 +176,19 @@ class Thread extends Model
             'id'
         )
             ->whereNull('call_ended')
-            ->latest();
+            ->latestOfMany();
     }
 
     /**
      * @return HasOne
      */
-    public function recentMessage(): HasOne
+    public function latestMessage(): HasOne
     {
         return $this->hasOne(
             Message::class,
             'thread_id',
-            'id')
-            ->latest()
-            ->limit(1);
+            'id'
+        )->latestOfMany();
     }
 
     /**

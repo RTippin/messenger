@@ -34,7 +34,7 @@ class GroupThreadRepository
             ->latest('updated_at')
             ->with([
                 'participants.owner',
-                'recentMessage.owner',
+                'latestMessage.owner',
                 'activeCall.participants.owner',
             ])
             ->limit($this->messenger->getThreadsIndexCount())
@@ -52,7 +52,7 @@ class GroupThreadRepository
             ->latest('updated_at')
             ->with([
                 'participants.owner',
-                'recentMessage.owner',
+                'latestMessage.owner',
                 'activeCall.participants.owner',
             ])
             ->where('threads.updated_at', '<=', Helpers::PrecisionTime($thread->updated_at))

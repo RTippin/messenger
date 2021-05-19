@@ -3,6 +3,20 @@
 
 ---
 
+### [v0.32 (05-18-2021)]
+
+#### Added
+- Using new `latestOfMany` eloquent call to gather the latest message for each thread in eager loads.
+
+#### Changed
+- composer.json now locked to laravel ^8.42
+- Rename relation on thread `recentMessage` to `latestMessage`
+
+#### Removed
+- staudenmeir/eloquent-eager-limit dependency.
+
+---
+
 ### [v0.31 (05-13-2021)]
 
 #### Changed

@@ -88,15 +88,15 @@ class ThreadTest extends FeatureTestCase
         $this->travel(5)->minutes();
         $latest = $this->createMessage($this->group, $this->tippin);
 
-        $this->assertInstanceOf(Message::class, $this->group->recentMessage);
-        $this->assertSame($this->group->id, $this->group->recentMessage->thread_id);
-        $this->assertSame($latest->id, $this->group->recentMessage->id);
+        $this->assertInstanceOf(Message::class, $this->group->latestMessage);
+        $this->assertSame($this->group->id, $this->group->latestMessage->thread_id);
+        $this->assertSame($latest->id, $this->group->latestMessage->id);
     }
 
     /** @test */
     public function it_doesnt_have_have_latest_message()
     {
-        $this->assertNull($this->group->recentMessage);
+        $this->assertNull($this->group->latestMessage);
     }
 
     /** @test */

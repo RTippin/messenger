@@ -17,8 +17,8 @@
 ---
 
 ### Prerequisites
-- PHP >= 7.4
-- Laravel >= 8.x
+- PHP >= 7.4||8.0
+- Laravel >= 8.42
 - laravel broadcast driver configured.
 
 ### Features

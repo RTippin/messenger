@@ -18,7 +18,6 @@ use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
-use Staudenmeir\EloquentEagerLimit\HasEagerLimit;
 
 /**
  * @property string $id
@@ -55,7 +54,6 @@ class Message extends Model
 {
     use HasFactory;
     use SoftDeletes;
-    use HasEagerLimit;
     use Uuids;
     use ScopesProvider;
 
