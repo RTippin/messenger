@@ -82,7 +82,7 @@ class CallsDownCommandTest extends FeatureTestCase
             ->expectsOutput('Call system is now down for 30 minutes.')
             ->assertExitCode(0);
 
-        Bus::assertDispatched(EndCalls::class);
+        Bus::assertDispatchedSync(EndCalls::class);
     }
 
     /** @test */

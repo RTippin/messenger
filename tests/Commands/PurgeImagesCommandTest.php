@@ -71,7 +71,7 @@ class PurgeImagesCommandTest extends FeatureTestCase
             ->expectsOutput('1 image messages archived 30 days or greater found. Purging completed!')
             ->assertExitCode(0);
 
-        Bus::assertDispatched(PurgeImageMessages::class);
+        Bus::assertDispatchedSync(PurgeImageMessages::class);
     }
 
     /** @test */

@@ -71,7 +71,7 @@ class PurgeDocumentsCommandTest extends FeatureTestCase
             ->expectsOutput('1 document messages archived 30 days or greater found. Purging completed!')
             ->assertExitCode(0);
 
-        Bus::assertDispatched(PurgeDocumentMessages::class);
+        Bus::assertDispatchedSync(PurgeDocumentMessages::class);
     }
 
     /** @test */

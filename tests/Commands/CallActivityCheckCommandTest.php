@@ -77,7 +77,7 @@ class CallActivityCheckCommandTest extends FeatureTestCase
             ->expectsOutput('1 active calls found. Call activity checks completed!')
             ->assertExitCode(0);
 
-        Bus::assertDispatched(CheckCallsActivity::class);
+        Bus::assertDispatchedSync(CheckCallsActivity::class);
     }
 
     /** @test */

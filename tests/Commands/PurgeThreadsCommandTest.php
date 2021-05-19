@@ -62,7 +62,7 @@ class PurgeThreadsCommandTest extends FeatureTestCase
             ->expectsOutput('1 threads archived 30 days or greater found. Purging completed!')
             ->assertExitCode(0);
 
-        Bus::assertDispatched(PurgeThreads::class);
+        Bus::assertDispatchedSync(PurgeThreads::class);
     }
 
     /** @test */

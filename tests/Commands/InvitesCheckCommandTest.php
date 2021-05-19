@@ -73,7 +73,7 @@ class InvitesCheckCommandTest extends FeatureTestCase
             ->expectsOutput('1 invalid invites found. Archive invites completed!')
             ->assertExitCode(0);
 
-        Bus::assertDispatched(ArchiveInvalidInvites::class);
+        Bus::assertDispatchedSync(ArchiveInvalidInvites::class);
     }
 
     /** @test */

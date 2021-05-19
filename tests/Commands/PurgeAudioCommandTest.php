@@ -71,7 +71,7 @@ class PurgeAudioCommandTest extends FeatureTestCase
             ->expectsOutput('1 audio messages archived 30 days or greater found. Purging completed!')
             ->assertExitCode(0);
 
-        Bus::assertDispatched(PurgeAudioMessages::class);
+        Bus::assertDispatchedSync(PurgeAudioMessages::class);
     }
 
     /** @test */
