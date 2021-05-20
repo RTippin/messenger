@@ -1,4 +1,4 @@
-# Laravel 8 Messenger
+# Laravel Messenger
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
@@ -12,7 +12,7 @@
 ---
 
 ### Notice - Alpha Release
-- Until the official v1 release, many breaking changes may be made to this package. I will document the changes in the changelog as best as I can.
+- Until the official v1 release, many breaking changes may be made to this package. I will document most changes in the [CHANGELOG](CHANGELOG.md).
 
 ---
 
@@ -81,7 +81,8 @@ $ composer require rtippin/messenger
 ```
 
 ### Publish Assets
-- To publish views / config / js assets is one easy command, use:
+- If you enable our built in web routes and wish to use the included frontend scaffolding, you may publish our assets.
+  - This publishes our views / config / js assets in one easy command:
 ```bash
 $ php artisan messenger:publish
 ```
@@ -883,8 +884,8 @@ If you discover any security related issues, please email author email instead o
 [link-styleci]: https://styleci.io/repos/309521487
 [link-author]: https://github.com/rtippin
 [link-config]: config/messenger.php
-[link-config-drivers]: https://github.com/RTippin/messenger/blob/master/config/messenger.php#L233
-[link-config-calling]: https://github.com/RTippin/messenger/blob/master/config/messenger.php#L248
+[link-config-drivers]: https://github.com/RTippin/messenger/blob/master/config/messenger.php#L232
+[link-config-calling]: https://github.com/RTippin/messenger/blob/master/config/messenger.php#L247
 [link-messageable]: src/Traits/Messageable.php
 [link-searchable]: src/Contracts/Searchable.php
 [link-search]: src/Traits/Search.php
