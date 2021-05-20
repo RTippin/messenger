@@ -41,7 +41,7 @@ class MessageEditTest extends FeatureTestCase
     /** @test */
     public function it_has_relation()
     {
-        $message =  Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
         $edit = MessageEdit::factory()->for($message)->create();
 
         $this->assertSame($message->id, $edit->message->id);

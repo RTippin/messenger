@@ -15,161 +15,169 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class ThreadTest extends FeatureTestCase
 {
-    private Thread $group;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin, $this->doe);
-    }
-
     /** @test */
     public function it_exists()
     {
-        $this->assertDatabaseCount('threads', 1);
+        $private = Thread::factory()->create();
+        $group = Thread::factory()->group()->create();
+
+        $this->assertDatabaseCount('threads', 2);
         $this->assertDatabaseHas('threads', [
-            'id' => $this->group->id,
+            'id' => $private->id,
         ]);
-        $this->assertInstanceOf(Thread::class, $this->group);
-        $this->assertSame(0, Thread::private()->count());
+        $this->assertDatabaseHas('threads', [
+            'id' => $group->id,
+        ]);
+        $this->assertInstanceOf(Thread::class, $private);
+        $this->assertSame(1, Thread::private()->count());
         $this->assertSame(1, Thread::group()->count());
     }
 
     /** @test */
     public function it_cast_attributes()
     {
-        $this->group->update([
-            'deleted_at' => now(),
-        ]);
+        $thread = Thread::factory()->group()->trashed()->create(['subject' => 'Test']);
 
-        $this->assertInstanceOf(Carbon::class, $this->group->created_at);
-        $this->assertInstanceOf(Carbon::class, $this->group->updated_at);
-        $this->assertInstanceOf(Carbon::class, $this->group->deleted_at);
-        $this->assertTrue($this->group->add_participants);
-        $this->assertTrue($this->group->invitations);
-        $this->assertTrue($this->group->calling);
-        $this->assertTrue($this->group->messaging);
-        $this->assertTrue($this->group->knocks);
-        $this->assertSame(2, $this->group->type);
-        $this->assertSame('First Test Group', $this->group->subject);
+        $this->assertInstanceOf(Carbon::class, $thread->created_at);
+        $this->assertInstanceOf(Carbon::class, $thread->updated_at);
+        $this->assertInstanceOf(Carbon::class, $thread->deleted_at);
+        $this->assertTrue($thread->add_participants);
+        $this->assertTrue($thread->invitations);
+        $this->assertTrue($thread->calling);
+        $this->assertTrue($thread->messaging);
+        $this->assertTrue($thread->knocks);
+        $this->assertSame(2, $thread->type);
+        $this->assertSame('Test', $thread->subject);
     }
 
     /** @test */
     public function it_has_relations()
     {
-        $this->assertInstanceOf(Collection::class, $this->group->participants);
-        $this->assertInstanceOf(Collection::class, $this->group->messages);
-        $this->assertInstanceOf(Collection::class, $this->group->calls);
-        $this->assertInstanceOf(Collection::class, $this->group->invites);
+        $thread = Thread::factory()->group()->create();
+
+        $this->assertInstanceOf(Collection::class, $thread->participants);
+        $this->assertInstanceOf(Collection::class, $thread->messages);
+        $this->assertInstanceOf(Collection::class, $thread->calls);
+        $this->assertInstanceOf(Collection::class, $thread->invites);
     }
 
     /** @test */
     public function it_has_active_call()
     {
-        $this->createCall($this->group, $this->tippin);
+        $thread = Thread::factory()->create();
+        Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
 
-        $this->assertInstanceOf(Call::class, $this->group->activeCall);
-        $this->assertSame($this->group->id, $this->group->activeCall->thread_id);
-        $this->assertTrue($this->group->hasActiveCall());
+        $this->assertInstanceOf(Call::class, $thread->activeCall);
+        $this->assertSame($thread->id, $thread->activeCall->thread_id);
+        $this->assertTrue($thread->hasActiveCall());
     }
 
     /** @test */
     public function it_doesnt_have_active_call()
     {
-        $this->assertNull($this->group->activeCall);
-        $this->assertFalse($this->group->hasActiveCall());
+        $thread = Thread::factory()->create();
+
+        $this->assertNull($thread->activeCall);
+        $this->assertFalse($thread->hasActiveCall());
     }
 
     /** @test */
     public function it_has_latest_message()
     {
-        $this->createMessage($this->group, $this->tippin);
+        $thread = Thread::factory()->create();
+        Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->travel(5)->minutes();
-        $latest = $this->createMessage($this->group, $this->tippin);
+        $latest = Message::factory()->for($thread)->owner($this->tippin)->create();
 
-        $this->assertInstanceOf(Message::class, $this->group->latestMessage);
-        $this->assertSame($this->group->id, $this->group->latestMessage->thread_id);
-        $this->assertSame($latest->id, $this->group->latestMessage->id);
+        $this->assertInstanceOf(Message::class, $thread->latestMessage);
+        $this->assertSame($thread->id, $thread->latestMessage->thread_id);
+        $this->assertSame($latest->id, $thread->latestMessage->id);
     }
 
     /** @test */
     public function it_doesnt_have_have_latest_message()
     {
-        $this->assertNull($this->group->latestMessage);
+        $thread = Thread::factory()->create();
+
+        $this->assertNull($thread->latestMessage);
     }
 
     /** @test */
     public function it_has_types()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
+        $private = Thread::factory()->create();
+        $group = Thread::factory()->group()->create();
 
         $this->assertTrue($private->isPrivate());
         $this->assertFalse($private->isGroup());
-        $this->assertTrue($this->group->isGroup());
-        $this->assertFalse($this->group->isPrivate());
+        $this->assertTrue($group->isGroup());
+        $this->assertFalse($group->isPrivate());
         $this->assertSame('PRIVATE', $private->getTypeVerbose());
-        $this->assertSame('GROUP', $this->group->getTypeVerbose());
+        $this->assertSame('GROUP', $group->getTypeVerbose());
     }
 
     /** @test */
     public function it_has_storage()
     {
-        $this->group->update([
-            'image' => 'test.png',
-        ]);
+        $thread = Thread::factory()->group()->create(['image' => 'test.png']);
 
-        $this->assertSame('messenger', $this->group->getStorageDisk());
-        $this->assertSame("threads/{$this->group->id}", $this->group->getStorageDirectory());
-        $this->assertSame("threads/{$this->group->id}/avatar/test.png", $this->group->getAvatarPath());
-        $this->assertSame("threads/{$this->group->id}/images", $this->group->getImagesDirectory());
-        $this->assertSame("threads/{$this->group->id}/documents", $this->group->getDocumentsDirectory());
-        $this->assertSame("threads/{$this->group->id}/audio", $this->group->getAudioDirectory());
-        $this->assertSame("threads/{$this->group->id}/avatar", $this->group->getAvatarDirectory());
+        $this->assertSame('messenger', $thread->getStorageDisk());
+        $this->assertSame("threads/$thread->id", $thread->getStorageDirectory());
+        $this->assertSame("threads/$thread->id/avatar/test.png", $thread->getAvatarPath());
+        $this->assertSame("threads/$thread->id/images", $thread->getImagesDirectory());
+        $this->assertSame("threads/$thread->id/documents", $thread->getDocumentsDirectory());
+        $this->assertSame("threads/$thread->id/audio", $thread->getAudioDirectory());
+        $this->assertSame("threads/$thread->id/avatar", $thread->getAvatarDirectory());
     }
 
     /** @test */
     public function it_doesnt_have_current_participant_if_provider_not_set()
     {
-        $this->assertNull($this->group->currentParticipant());
-        $this->assertFalse($this->group->hasCurrentProvider());
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $this->assertNull($thread->currentParticipant());
+        $this->assertFalse($thread->hasCurrentProvider());
     }
 
     /** @test */
     public function it_doesnt_have_current_participant_when_not_in_thread()
     {
-        Messenger::setProvider($this->companyDevelopers());
+        Messenger::setProvider($this->developers);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
-        $this->assertNull($this->group->currentParticipant());
-        $this->assertFalse($this->group->hasCurrentProvider());
+        $this->assertNull($thread->currentParticipant());
+        $this->assertFalse($thread->hasCurrentProvider());
     }
 
     /** @test */
     public function it_has_current_participant()
     {
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
 
-        $this->assertInstanceOf(Participant::class, $this->group->currentParticipant());
-        $this->assertTrue($this->group->hasCurrentProvider());
-        $this->assertEquals($this->tippin->getKey(), $this->group->currentParticipant()->owner_id);
+        $this->assertInstanceOf(Participant::class, $thread->currentParticipant());
+        $this->assertTrue($thread->hasCurrentProvider());
+        $this->assertSame($participant->id, $thread->currentParticipant()->id);
     }
 
     /** @test */
     public function recipient_returns_ghost_participant_if_group_thread()
     {
         Messenger::setProvider($this->tippin);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
 
-        $this->assertInstanceOf(Participant::class, $this->group->recipient());
-        $this->assertInstanceOf(GhostUser::class, $this->group->recipient()->owner);
-        $this->assertSame($this->group->id, $this->group->recipient()->thread_id);
-        $this->assertNull($this->group->recipient()->owner_id);
+        $this->assertInstanceOf(Participant::class, $thread->recipient());
+        $this->assertInstanceOf(GhostUser::class, $thread->recipient()->owner);
+        $this->assertSame($thread->id, $thread->recipient()->thread_id);
+        $this->assertNull($thread->recipient()->owner_id);
     }
 
     /** @test */
-    public function recipient_returns_ghost_participant_if_not_in_thread()
+    public function recipient_returns_ghost_participant_if_not_in_private_thread()
     {
         $private = $this->createPrivateThread($this->tippin, $this->doe);
-        Messenger::setProvider($this->companyDevelopers());
+        Messenger::setProvider($this->developers);
 
         $this->assertInstanceOf(Participant::class, $private->recipient());
         $this->assertInstanceOf(GhostUser::class, $private->recipient()->owner);
@@ -180,21 +188,23 @@ class ThreadTest extends FeatureTestCase
     /** @test */
     public function recipient_returns_other_participant_in_private_thread()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
         Messenger::setProvider($this->tippin);
+        $private = Thread::factory()->create();
+        Participant::factory()->for($private)->owner($this->tippin)->create();
+        $recipient = Participant::factory()->for($private)->owner($this->doe)->create();
 
         $this->assertInstanceOf(Participant::class, $private->recipient());
         $this->assertInstanceOf(MessengerProvider::class, $private->recipient()->owner);
         $this->assertSame($private->id, $private->recipient()->thread_id);
-        $this->assertEquals($this->doe->getKey(), $private->recipient()->owner_id);
+        $this->assertSame($recipient->id, $private->recipient()->id);
     }
 
     /** @test */
     public function recipient_returns_ghost_participant_if_invalid_recipient()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->companyDevelopers());
         Messenger::setMessengerProviders(['user' => $this->getBaseProvidersConfig()['user']]);
         Messenger::setProvider($this->tippin);
+        $private = $this->createPrivateThread($this->tippin, $this->developers);
 
         $this->assertInstanceOf(Participant::class, $private->recipient());
         $this->assertInstanceOf(GhostUser::class, $private->recipient()->owner);
@@ -205,30 +215,29 @@ class ThreadTest extends FeatureTestCase
     /** @test */
     public function it_has_name_depending_on_type()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
         Messenger::setProvider($this->tippin);
+        $group = Thread::factory()->group()->create(['subject' => 'Test']);
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
 
-        $this->assertSame('First Test Group', $this->group->name());
+        $this->assertSame('Test', $group->name());
         $this->assertSame('John Doe', $private->name());
     }
 
     /** @test */
     public function it_has_avatar_depending_on_type()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
-        $this->group->update([
-            'image' => 'test.png',
-        ]);
         Messenger::setProvider($this->tippin);
+        $group = Thread::factory()->group()->create(['image' => 'test.png']);
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
         $groupAvatar = [
-            'sm' => "/messenger/threads/{$this->group->id}/avatar/sm/test.png",
-            'md' => "/messenger/threads/{$this->group->id}/avatar/md/test.png",
-            'lg' => "/messenger/threads/{$this->group->id}/avatar/lg/test.png",
+            'sm' => "/messenger/threads/$group->id/avatar/sm/test.png",
+            'md' => "/messenger/threads/$group->id/avatar/md/test.png",
+            'lg' => "/messenger/threads/$group->id/avatar/lg/test.png",
         ];
         $groupAvatarApi = [
-            'sm' => "/api/messenger/threads/{$this->group->id}/avatar/sm/test.png",
-            'md' => "/api/messenger/threads/{$this->group->id}/avatar/md/test.png",
-            'lg' => "/api/messenger/threads/{$this->group->id}/avatar/lg/test.png",
+            'sm' => "/api/messenger/threads/$group->id/avatar/sm/test.png",
+            'md' => "/api/messenger/threads/$group->id/avatar/md/test.png",
+            'lg' => "/api/messenger/threads/$group->id/avatar/lg/test.png",
         ];
         $privateAvatar = [
             'sm' => "/images/user/{$this->doe->getKey()}/sm/default.png",
@@ -241,8 +250,8 @@ class ThreadTest extends FeatureTestCase
             'lg' => "/api/messenger/images/user/{$this->doe->getKey()}/lg/default.png",
         ];
 
-        $this->assertSame($groupAvatar, $this->group->threadAvatar());
-        $this->assertSame($groupAvatarApi, $this->group->threadAvatar(true));
+        $this->assertSame($groupAvatar, $group->threadAvatar());
+        $this->assertSame($groupAvatarApi, $group->threadAvatar(true));
         $this->assertSame($privateAvatar, $private->threadAvatar());
         $this->assertSame($privateAvatarApi, $private->threadAvatar(true));
     }
@@ -251,16 +260,18 @@ class ThreadTest extends FeatureTestCase
     public function is_admin()
     {
         Messenger::setProvider($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->assertTrue($this->group->isAdmin());
+        $this->assertTrue($thread->isAdmin());
     }
 
     /** @test */
     public function is_not_admin()
     {
         Messenger::setProvider($this->doe);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
 
-        $this->assertFalse($this->group->isAdmin());
+        $this->assertFalse($thread->isAdmin());
     }
 
     /** @test */
@@ -275,45 +286,46 @@ class ThreadTest extends FeatureTestCase
     /** @test */
     public function not_locked()
     {
+        $group = $this->createGroupThread($this->tippin);
         $private = $this->createPrivateThread($this->tippin, $this->doe);
         Messenger::setProvider($this->tippin);
 
         $this->assertFalse($private->isLocked());
-        $this->assertFalse($this->group->isLocked());
+        $this->assertFalse($group->isLocked());
     }
 
     /** @test */
     public function is_locked_if_not_participant()
     {
+        $group = $this->createGroupThread($this->tippin);
         $private = $this->createPrivateThread($this->tippin, $this->doe);
-        Messenger::setProvider($this->companyDevelopers());
+        Messenger::setProvider($this->developers);
 
         $this->assertTrue($private->isLocked());
-        $this->assertTrue($this->group->isLocked());
+        $this->assertTrue($group->isLocked());
     }
 
     /** @test */
     public function is_locked_when_set_in_thread_settings()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
-        $this->group->update([
-            'lockout' => true,
-        ]);
-        $private->update([
-            'lockout' => true,
-        ]);
+        $group = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($group)->owner($this->tippin)->admin()->create();
+        $private = Thread::factory()->locked()->create();
+        Participant::factory()->for($private)->owner($this->tippin)->create();
+        Participant::factory()->for($private)->owner($this->doe)->create();
         Messenger::setProvider($this->tippin);
 
         $this->assertTrue($private->isLocked());
-        $this->assertTrue($this->group->isLocked());
+        $this->assertTrue($group->isLocked());
     }
 
     /** @test */
     public function private_locked_if_recipient_not_found()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
-        $this->doe->delete();
         Messenger::setProvider($this->tippin);
+        $private = Thread::factory()->create();
+        Participant::factory()->for($private)->owner($this->tippin)->create();
+        Participant::factory()->for($private)->owner($this->doe)->trashed()->create();
 
         $this->assertTrue($private->isLocked());
     }
@@ -321,217 +333,192 @@ class ThreadTest extends FeatureTestCase
     /** @test */
     public function is_not_muted()
     {
+        $thread = $this->createGroupThread($this->tippin);
         Messenger::setProvider($this->tippin);
 
-        $this->assertFalse($this->group->isMuted());
+        $this->assertFalse($thread->isMuted());
     }
 
     /** @test */
     public function is_muted()
     {
-        $this->group->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'muted' => true,
-            ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->muted()->create();
 
-        $this->assertTrue($this->group->isMuted());
+        $this->assertTrue($thread->isMuted());
     }
 
     /** @test */
     public function group_is_not_pending()
     {
-        $this->group->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'pending' => true,
-            ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->pending()->create();
 
-        $this->assertFalse($this->group->isPending());
+        $this->assertFalse($thread->isPending());
     }
 
     /** @test */
     public function private_is_pending_and_awaiting_approval_if_provider_pending()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
-        $private->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'pending' => true,
-            ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->pending()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
 
-        $this->assertTrue($private->isPending());
-        $this->assertTrue($private->isAwaitingMyApproval());
+        $this->assertTrue($thread->isPending());
+        $this->assertTrue($thread->isAwaitingMyApproval());
     }
 
     /** @test */
     public function private_is_pending_for_other_participant_not_awaiting_their_approval()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
-        $private->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'pending' => true,
-            ]);
-        Messenger::setProvider($this->doe);
+        Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
 
-        $this->assertTrue($private->isPending());
-        $this->assertFalse($private->isAwaitingMyApproval());
+        $this->assertTrue($thread->isPending());
+        $this->assertFalse($thread->isAwaitingMyApproval());
     }
 
     /** @test */
     public function can_message()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
-        Messenger::setProvider($this->doe);
+        Messenger::setProvider($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->assertTrue($private->canMessage());
-        $this->assertTrue($this->group->canMessage());
+        $this->assertTrue($thread->canMessage());
+        $this->assertTrue($thread->canMessage());
     }
 
     /** @test */
     public function cannot_message_if_thread_locked()
     {
-        $this->group->update([
-            'lockout' => true,
-        ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
 
-        $this->assertFalse($this->group->canMessage());
+        $this->assertFalse($thread->canMessage());
     }
 
     /** @test */
     public function cannot_message_if_disabled_in_thread_settings()
     {
-        $this->group->update([
-            'messaging' => false,
-        ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create(['messaging' =>  false]);
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
 
-        $this->assertFalse($this->group->canMessage());
+        $this->assertFalse($thread->canMessage());
     }
 
     /** @test */
     public function cannot_message_if_awaiting_approval()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
-        $private->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'pending' => true,
-            ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->pending()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
 
-        $this->assertFalse($private->canMessage());
+        $this->assertFalse($thread->canMessage());
+    }
+
+    /** @test */
+    public function can_message_if_awaiting_other_participant_approval()
+    {
+        Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
+
+        $this->assertTrue($thread->canMessage());
     }
 
     /** @test */
     public function can_message_if_disabled_on_participant_but_is_admin()
     {
-        $this->group->participants()
-            ->admins()
-            ->first()
-            ->update([
-                'send_messages' => false,
-            ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create(['send_messages' => false]);
 
-        $this->assertTrue($this->group->canMessage());
+        $this->assertTrue($thread->canMessage());
     }
 
     /** @test */
     public function cannot_message_if_participant_disabled_and_not_admin()
     {
-        $this->group->participants()
-            ->forProvider($this->doe)
-            ->first()
-            ->update([
-                'send_messages' => false,
-            ]);
-        Messenger::setProvider($this->doe);
+        Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create(['send_messages' => false]);
 
-        $this->assertFalse($this->group->canMessage());
+        $this->assertFalse($thread->canMessage());
     }
 
     /** @test */
     public function can_add_participants()
     {
         Messenger::setProvider($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->assertTrue($this->group->canAddParticipants());
+        $this->assertTrue($thread->canAddParticipants());
     }
 
     /** @test */
     public function cannot_add_participants_if_thread_locked()
     {
-        $this->group->update([
-            'lockout' => true,
-        ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
 
-        $this->assertFalse($this->group->canAddParticipants());
+        $this->assertFalse($thread->canAddParticipants());
     }
 
     /** @test */
     public function cannot_add_participants_if_disabled_on_thread_settings()
     {
-        $this->group->update([
-            'add_participants' => false,
-        ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create(['add_participants' => false]);
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
 
-        $this->assertFalse($this->group->canAddParticipants());
+        $this->assertFalse($thread->canAddParticipants());
     }
 
     /** @test */
     public function can_add_participants_if_participant_disabled_but_is_admin()
     {
-        $this->group->participants()
-            ->admins()
-            ->first()
-            ->update([
-                'add_participants' => false,
-            ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create(['add_participants' => false]);
 
-        $this->assertTrue($this->group->canAddParticipants());
+        $this->assertTrue($thread->canAddParticipants());
     }
 
     /** @test */
     public function non_admin_without_permission_cannot_add_participants()
     {
-        Messenger::setProvider($this->doe);
+        Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
 
-        $this->assertFalse($this->group->canAddParticipants());
+        $this->assertFalse($thread->canAddParticipants());
     }
 
     /** @test */
     public function non_admin_with_permission_can_add_participants()
     {
-        $this->group->participants()
-            ->forProvider($this->doe)
-            ->first()
-            ->update([
-                'add_participants' => true,
-            ]);
-        Messenger::setProvider($this->doe);
+        Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create(['add_participants' => true]);
 
-        $this->assertTrue($this->group->canAddParticipants());
+        $this->assertTrue($thread->canAddParticipants());
     }
 
     /** @test */
     public function cannot_add_participants_to_private_thread()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
         Messenger::setProvider($this->tippin);
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
 
         $this->assertFalse($private->canAddParticipants());
     }
@@ -539,8 +526,8 @@ class ThreadTest extends FeatureTestCase
     /** @test */
     public function cannot_invite_participants_to_private_thread()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
         Messenger::setProvider($this->tippin);
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
 
         $this->assertFalse($private->canInviteParticipants());
     }
@@ -549,66 +536,59 @@ class ThreadTest extends FeatureTestCase
     public function admin_can_invite_participants()
     {
         Messenger::setProvider($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->assertTrue($this->group->canInviteParticipants());
+        $this->assertTrue($thread->canInviteParticipants());
     }
 
     /** @test */
     public function non_admin_without_permission_cannot_invite_participants()
     {
-        Messenger::setProvider($this->doe);
+        Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
 
-        $this->assertFalse($this->group->canInviteParticipants());
+        $this->assertFalse($thread->canInviteParticipants());
     }
 
     /** @test */
     public function non_admin_with_permission_can_invite_participants()
     {
-        $this->group->participants()
-            ->forProvider($this->doe)
-            ->first()
-            ->update([
-                'manage_invites' => true,
-            ]);
-        Messenger::setProvider($this->doe);
+        Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create(['manage_invites' => true]);
 
-        $this->assertTrue($this->group->canInviteParticipants());
+        $this->assertTrue($thread->canInviteParticipants());
     }
 
     /** @test */
     public function can_invite_participants_if_participant_disabled_but_is_admin()
     {
-        $this->group->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'manage_invites' => false,
-            ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create(['manage_invites' => false]);
 
-        $this->assertTrue($this->group->canInviteParticipants());
+        $this->assertTrue($thread->canInviteParticipants());
     }
 
     /** @test */
     public function cannot_invite_participants_if_disabled_in_thread_settings()
     {
-        $this->group->update([
-            'invitations' => false,
-        ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create(['invitations' => false]);
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
 
-        $this->assertFalse($this->group->canInviteParticipants());
+        $this->assertFalse($thread->canInviteParticipants());
     }
 
     /** @test */
     public function cannot_invite_participants_if_thread_locked()
     {
-        $this->group->update([
-            'lockout' => true,
-        ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
 
-        $this->assertFalse($this->group->canInviteParticipants());
+        $this->assertFalse($thread->canInviteParticipants());
     }
 
     /** @test */
@@ -616,132 +596,125 @@ class ThreadTest extends FeatureTestCase
     {
         Messenger::setThreadInvites(false);
         Messenger::setProvider($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->assertFalse($this->group->canInviteParticipants());
+        $this->assertFalse($thread->canInviteParticipants());
     }
 
     /** @test */
     public function can_join_with_invite()
     {
-        Messenger::setProvider($this->companyDevelopers());
+        Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
 
-        $this->assertTrue($this->group->canJoinWithInvite());
+        $this->assertTrue($thread->canJoinWithInvite());
     }
 
     /** @test */
     public function cannot_join_with_invite_if_no_provider_set()
     {
-        $this->assertFalse($this->group->canJoinWithInvite());
+        $thread = Thread::factory()->group()->create();
+
+        $this->assertFalse($thread->canJoinWithInvite());
     }
 
     /** @test */
     public function cannot_join_with_invite_if_disabled_in_config()
     {
         Messenger::setThreadInvites(false);
-        Messenger::setProvider($this->companyDevelopers());
+        Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
 
-        $this->assertFalse($this->group->canJoinWithInvite());
+        $this->assertFalse($thread->canJoinWithInvite());
     }
 
     /** @test */
     public function cannot_join_with_invite_if_already_in_thread()
     {
         Messenger::setProvider($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->assertFalse($this->group->canJoinWithInvite());
+        $this->assertFalse($thread->canJoinWithInvite());
     }
 
     /** @test */
     public function cannot_join_with_invite_if_thread_locked()
     {
-        $this->group->update([
-            'lockout' => true,
-        ]);
-        Messenger::setProvider($this->companyDevelopers());
+        Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->locked()->create();
 
-        $this->assertFalse($this->group->canJoinWithInvite());
+        $this->assertFalse($thread->canJoinWithInvite());
     }
 
     /** @test */
     public function cannot_join_with_invite_if_disabled_in_thread_settings()
     {
-        $this->group->update([
-            'invitations' => false,
-        ]);
-        Messenger::setProvider($this->companyDevelopers());
+        Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create(['invitations' => false]);
 
-        $this->assertFalse($this->group->canJoinWithInvite());
+        $this->assertFalse($thread->canJoinWithInvite());
     }
 
     /** @test */
     public function cannot_join_with_invite_if_in_private_thread()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
-        Messenger::setProvider($this->companyDevelopers());
+        Messenger::setProvider($this->developers);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
-        $this->assertFalse($private->canJoinWithInvite());
+        $this->assertFalse($thread->canJoinWithInvite());
     }
 
     /** @test */
     public function can_start_call()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
         Messenger::setProvider($this->tippin);
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
+        $group = $this->createGroupThread($this->tippin);
 
         $this->assertTrue($private->canCall());
-        $this->assertTrue($this->group->canCall());
+        $this->assertTrue($group->canCall());
     }
 
     /** @test */
     public function can_start_call_if_participant_disabled_but_is_admin()
     {
-        $this->group->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'start_calls' => false,
-            ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create(['start_calls' => false]);
 
-        $this->assertTrue($this->group->canCall());
+        $this->assertTrue($thread->canCall());
     }
 
     /** @test */
     public function can_start_call_if_participant_disabled_but_is_private_thread()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
-        $private->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'start_calls' => false,
-            ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create(['start_calls' => false]);
+        Participant::factory()->for($thread)->owner($this->doe)->create();
 
-        $this->assertTrue($private->canCall());
+        $this->assertTrue($thread->canCall());
     }
 
     /** @test */
     public function cannot_start_call_if_private_thread_is_pending()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
-        $private->participants()
-            ->forProvider($this->doe)
-            ->first()
-            ->update([
-                'pending' => true,
-            ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
 
-        $this->assertFalse($private->canCall());
+        $this->assertFalse($thread->canCall());
     }
 
     /** @test */
     public function non_admin_without_permissions_cannot_start_call()
     {
-        Messenger::setProvider($this->doe);
+        Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
 
-        $this->assertFalse($this->group->canCall());
+        $this->assertFalse($thread->canCall());
     }
 
     /** @test */
@@ -749,8 +722,9 @@ class ThreadTest extends FeatureTestCase
     {
         Messenger::setCalling(false);
         Messenger::setProvider($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->assertFalse($this->group->canCall());
+        $this->assertFalse($thread->canCall());
     }
 
     /** @test */
@@ -758,92 +732,82 @@ class ThreadTest extends FeatureTestCase
     {
         Messenger::disableCallsTemporarily(1);
         Messenger::setProvider($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->assertFalse($this->group->canCall());
+        $this->assertFalse($thread->canCall());
     }
 
     /** @test */
     public function cannot_start_call_if_thread_locked()
     {
-        $this->group->update([
-            'lockout' => true,
-        ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
 
-        $this->assertFalse($this->group->canCall());
+        $this->assertFalse($thread->canCall());
     }
 
     /** @test */
     public function cannot_start_call_if_disabled_in_thread_settings()
     {
-        $this->group->update([
-            'calling' => false,
-        ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create(['calling' => false]);
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
 
-        $this->assertFalse($this->group->canCall());
+        $this->assertFalse($thread->canCall());
     }
 
     /** @test */
     public function can_knock()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
         Messenger::setProvider($this->tippin);
+        $private = $this->createPrivateThread($this->tippin, $this->doe);
+        $group = $this->createGroupThread($this->tippin);
 
         $this->assertTrue($private->canKnock());
-        $this->assertTrue($this->group->canKnock());
+        $this->assertTrue($group->canKnock());
     }
 
     /** @test */
     public function can_knock_if_participant_disabled_but_is_admin()
     {
-        $this->group->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'send_knocks' => false,
-            ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create(['send_knocks' => false]);
 
-        $this->assertTrue($this->group->canKnock());
+        $this->assertTrue($thread->canKnock());
     }
 
     /** @test */
     public function can_knock_if_participant_disabled_but_is_private_thread()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
-        $private->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'send_knocks' => false,
-            ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create(['send_knocks' => false]);
+        Participant::factory()->for($thread)->owner($this->doe)->create();
 
-        $this->assertTrue($private->canKnock());
+        $this->assertTrue($thread->canKnock());
     }
 
     /** @test */
     public function cannot_knock_if_private_thread_is_pending()
     {
-        $private = $this->createPrivateThread($this->tippin, $this->doe);
-        $private->participants()
-            ->forProvider($this->doe)
-            ->first()
-            ->update([
-                'pending' => true,
-            ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
 
-        $this->assertFalse($private->canKnock());
+        $this->assertFalse($thread->canKnock());
     }
 
     /** @test */
     public function non_admin_without_permissions_cannot_knock()
     {
-        Messenger::setProvider($this->doe);
+        Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
 
-        $this->assertFalse($this->group->canKnock());
+        $this->assertFalse($thread->canKnock());
     }
 
     /** @test */
@@ -851,138 +815,120 @@ class ThreadTest extends FeatureTestCase
     {
         Messenger::setKnockKnock(false);
         Messenger::setProvider($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->assertFalse($this->group->canKnock());
+        $this->assertFalse($thread->canKnock());
     }
 
     /** @test */
     public function cannot_knock_if_thread_locked()
     {
-        $this->group->update([
-            'lockout' => true,
-        ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->locked()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
 
-        $this->assertFalse($this->group->canKnock());
+        $this->assertFalse($thread->canKnock());
     }
 
     /** @test */
     public function cannot_knock_if_disabled_in_thread_settings()
     {
-        $this->group->update([
-            'knocks' => false,
-        ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create(['knocks' => false]);
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
 
-        $this->assertFalse($this->group->canKnock());
+        $this->assertFalse($thread->canKnock());
     }
 
     /** @test */
     public function is_unread_if_last_read_null()
     {
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
 
-        $this->assertTrue($this->group->isUnread());
+        $this->assertTrue($thread->isUnread());
     }
 
     /** @test */
     public function is_unread_if_last_read_less_than_thread_last_updated()
     {
-        $this->group->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'last_read' => now(),
-            ]);
-        $this->group->update([
-            'updated_at' => now()->addHour(),
-        ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create(['updated_at' => now()->addHour()]);
+        Participant::factory()->for($thread)->owner($this->tippin)->read()->create();
 
-        $this->assertTrue($this->group->isUnread());
+        $this->assertTrue($thread->isUnread());
     }
 
     /** @test */
     public function not_unread_if_last_read_greater_than_thread_last_updated()
     {
-        $this->group->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'last_read' => now()->addHour(),
-            ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create(['updated_at' => now()->subHour()]);
+        Participant::factory()->for($thread)->owner($this->tippin)->read()->create();
 
-        $this->assertFalse($this->group->isUnread());
+        $this->assertFalse($thread->isUnread());
     }
 
     /** @test */
     public function not_unread_if_provider_not_set()
     {
-        $this->assertFalse($this->group->isUnread());
+        $thread = Thread::factory()->group()->create();
+
+        $this->assertFalse($thread->isUnread());
     }
 
     /** @test */
     public function not_unread_if_participant_not_in_thread()
     {
-        Messenger::setProvider($this->companyDevelopers());
+        Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
 
-        $this->assertFalse($this->group->isUnread());
+        $this->assertFalse($thread->isUnread());
     }
 
     /** @test */
     public function unread_count_matches_message_count_if_last_read_null()
     {
-        $this->createMessage($this->group, $this->tippin);
-        $this->createMessage($this->group, $this->tippin);
-        $this->createMessage($this->group, $this->tippin);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Message::factory()->for($thread)->owner($this->doe)->count(3)->create();
 
-        $this->assertSame(3, $this->group->unreadCount());
+        $this->assertSame(3, $thread->unreadCount());
     }
 
     /** @test */
     public function unread_count_matches_message_count_created_after_last_read()
     {
-        $this->createMessage($this->group, $this->tippin);
-        $this->createMessage($this->group, $this->tippin);
-        $this->travel(1)->minutes();
-        $this->group->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'last_read' => now(),
-            ]);
-        $this->travel(1)->minutes();
-        $this->createMessage($this->group, $this->tippin);
-        $this->group->update([
-            'updated_at' => now(),
-        ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Message::factory()->for($thread)->owner($this->doe)->count(3)->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->read()->create();
+        $this->travel(1)->minutes();
+        Message::factory()->for($thread)->owner($this->doe)->count(2)->create();
+        $thread->touch();
 
-        $this->assertSame(1, $this->group->unreadCount());
+        $this->assertSame(2, $thread->unreadCount());
     }
 
     /** @test */
     public function unread_count_zero_if_no_messages()
     {
         Messenger::setProvider($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->assertSame(0, $this->group->unreadCount());
+        $this->assertSame(0, $thread->unreadCount());
     }
 
     /** @test */
     public function unread_count_zero_if_thread_read()
     {
-        $this->createMessage($this->group, $this->tippin);
-        $this->group->participants()
-            ->forProvider($this->tippin)
-            ->first()
-            ->update([
-                'last_read' => now()->addHour(),
-            ]);
         Messenger::setProvider($this->tippin);
+        $thread = Thread::factory()->group()->create();
+        Message::factory()->for($thread)->owner($this->doe)->count(3)->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->read()->create();
 
-        $this->assertSame(0, $this->group->unreadCount());
+        $this->assertSame(0, $thread->unreadCount());
     }
 }
