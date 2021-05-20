@@ -29,8 +29,7 @@ class MarkParticipantRead extends BaseMessengerAction
      * @param BroadcastDriver $broadcaster
      * @param Dispatcher $dispatcher
      */
-    public function __construct(BroadcastDriver $broadcaster,
-                                Dispatcher $dispatcher)
+    public function __construct(BroadcastDriver $broadcaster, Dispatcher $dispatcher)
     {
         $this->broadcaster = $broadcaster;
         $this->dispatcher = $dispatcher;

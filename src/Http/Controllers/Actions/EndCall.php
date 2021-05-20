@@ -25,8 +25,8 @@ class EndCall
      * @throws AuthorizationException|Throwable|InvalidArgumentException
      */
     public function __invoke(EndCallAction $endCall,
-                          Thread $thread,
-                          Call $call): JsonResponse
+                             Thread $thread,
+                             Call $call): JsonResponse
     {
         $this->authorize('end', [
             $call,

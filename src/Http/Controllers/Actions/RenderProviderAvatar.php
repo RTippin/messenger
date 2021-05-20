@@ -21,10 +21,10 @@ class RenderProviderAvatar
      * @throws FileNotFoundException
      */
     public function __invoke(ImageRenderService $service,
-                           string $alias,
-                           string $id,
-                           string $size,
-                           string $image)
+                             string $alias,
+                             string $id,
+                             string $size,
+                             string $image)
     {
         return $service->renderProviderAvatar($alias, $id, $size, $image);
     }

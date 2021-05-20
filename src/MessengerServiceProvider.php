@@ -46,13 +46,16 @@ class MessengerServiceProvider extends ServiceProvider
         $this->registerPolicies();
         $this->registerListeners();
         $this->registerChannels();
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'messenger');
 
-        Collection::macro('forProvider', function (MessengerProvider $provider, $morph = 'owner') {
+        Collection::macro('forProvider', function (MessengerProvider $provider, string $morph = 'owner') {
             /** @var Collection $this */
             return $this->where("{$morph}_id", '=', $provider->getKey())
                 ->where("{$morph}_type", '=', $provider->getMorphClass());
         });
+
+        if (config('messenger.routing.web.enabled')) {
+            $this->loadViewsFrom(__DIR__.'/../resources/views', 'messenger');
+        }
 
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
@@ -88,16 +91,19 @@ class MessengerServiceProvider extends ServiceProvider
         ], 'messenger.config');
 
         $this->publishes([
-            __DIR__.'/../resources/views' => base_path('resources/views/vendor/messenger'),
-        ], 'messenger.views');
-
-        $this->publishes([
-            __DIR__.'/../public' => public_path('vendor/messenger'),
-        ], 'messenger.assets');
-
-        $this->publishes([
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'messenger.migrations');
+
+        // Only load our views and assets if web routes are enabled.
+        if (config('messenger.routing.web.enabled')) {
+            $this->publishes([
+                __DIR__.'/../resources/views' => base_path('resources/views/vendor/messenger'),
+            ], 'messenger.views');
+
+            $this->publishes([
+                __DIR__.'/../public' => public_path('vendor/messenger'),
+            ], 'messenger.assets');
+        }
 
         if (config('messenger.calling.driver') === 'janus') {
             $this->publishes([
@@ -107,7 +113,7 @@ class MessengerServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register any package services.
+     * Register Messenger's services.
      *
      * @return void
      */
@@ -115,35 +121,17 @@ class MessengerServiceProvider extends ServiceProvider
     {
         $this->mergeConfigFrom(__DIR__.'/../config/messenger.php', 'messenger');
 
-        $this->app->singleton(
-            Messenger::class,
-            Messenger::class
-        );
+        $this->app->singleton(Messenger::class, Messenger::class);
 
-        $this->app->alias(
-            Messenger::class,
-            'messenger'
-        );
+        $this->app->alias(Messenger::class, 'messenger');
 
-        $this->app->singleton(
-            FriendDriver::class,
-            FriendBroker::class
-        );
+        $this->app->singleton(FriendDriver::class, FriendBroker::class);
 
-        $this->app->singleton(
-            EmojiInterface::class,
-            EmojiService::class
-        );
+        $this->app->singleton(EmojiInterface::class, EmojiService::class);
 
-        $this->app->singleton(
-            BroadcastDriver::class,
-            $this->getBroadcastImplementation()
-        );
+        $this->app->bind(BroadcastDriver::class, $this->getBroadcastImplementation());
 
-        $this->app->singleton(
-            VideoDriver::class,
-            $this->getVideoImplementation()
-        );
+        $this->app->bind(VideoDriver::class, $this->getVideoImplementation());
     }
 
     /**

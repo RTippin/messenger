@@ -27,10 +27,10 @@ class RenderMessageImage
      * @throws AuthorizationException|FileNotFoundException
      */
     public function __invoke(ImageRenderService $service,
-                           Thread $thread,
-                           Message $message,
-                           string $size,
-                           string $image)
+                             Thread $thread,
+                             Message $message,
+                             string $size,
+                             string $image)
     {
         $this->authorize('view', [
             Message::class,

@@ -31,8 +31,7 @@ class StoreInvite extends InviteAction
      * @param Messenger $messenger
      * @param Dispatcher $dispatcher
      */
-    public function __construct(Messenger $messenger,
-                                Dispatcher $dispatcher)
+    public function __construct(Messenger $messenger, Dispatcher $dispatcher)
     {
         parent::__construct($messenger);
 

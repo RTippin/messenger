@@ -71,15 +71,12 @@ class MessengerController
      * Update the providers messenger settings.
      *
      * @param MessengerSettingsRequest $request
-     * @param UpdateMessengerSettings $updateMessengerSettings
+     * @param UpdateMessengerSettings $settings
      * @return MessengerResource
      */
-    public function updateSettings(MessengerSettingsRequest $request,
-                                   UpdateMessengerSettings $updateMessengerSettings): MessengerResource
+    public function updateSettings(MessengerSettingsRequest $request, UpdateMessengerSettings $settings): MessengerResource
     {
-        $updateMessengerSettings->execute(
-            $request->validated()
-        );
+        $settings->execute($request->validated());
 
         return new MessengerResource(
             $this->messenger->getProviderMessenger()
@@ -90,14 +87,13 @@ class MessengerController
      * Update the providers avatar.
      *
      * @param MessengerAvatarRequest $request
-     * @param StoreMessengerAvatar $storeMessengerAvatar
+     * @param StoreMessengerAvatar $storeAvatar
      * @return MessengerResource
      * @throws FeatureDisabledException|FileServiceException|Exception
      */
-    public function updateAvatar(MessengerAvatarRequest $request,
-                                 StoreMessengerAvatar $storeMessengerAvatar): MessengerResource
+    public function updateAvatar(MessengerAvatarRequest $request, StoreMessengerAvatar $storeAvatar): MessengerResource
     {
-        $storeMessengerAvatar->execute($request->validated());
+        $storeAvatar->execute($request->validated());
 
         return new MessengerResource(
             $this->messenger->getProviderMessenger()
