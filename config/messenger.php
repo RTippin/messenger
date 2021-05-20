@@ -122,6 +122,7 @@ return [
     | **Avatar - {disk}/{directory}/{threadID}/avatar
     | **Images - {disk}/{directory}/{threadID}/images
     | **Documents - {disk}/{directory}/{threadID}/documents
+    | **Audio - {disk}/{directory}/{threadID}/audio
     |
     */
     'storage' => [
@@ -140,15 +141,13 @@ return [
     | Messenger routing config
     |--------------------------------------------------------------------------
     |
-    | You may choose to load our built in routes, or disable to setup your own.
-    | The built in routing has all policy mappings and controllers already
-    | setup. Our built in middleware 'messenger.provider' simply takes the
-    | authenticated user via the request and sets them as the current
-    | messenger provider. You are free to use your own custom middleware
-    | to set your provider, and add any other middleware you may want,
-    | such as 'auth:api' etc. We also include an extension of laravels
-    | 'auth' middleware that lets it be optional for routes we want
-    | both guest and auth to see, 'auth.optional|auth.optional:api'
+    | Our API is the core of this package, and are the only routes that cannot
+    | be disabled. The api routes also bootstrap all of our policies and
+    | controllers for you. Our built in middleware 'messenger.provider'
+    | simply takes the authenticated user via the request and sets them
+    | as the current messenger provider. You are free to use your own
+    | custom middleware to set your provider, as well as  any other
+    | middleware you may want, such as 'auth:api' etc.
     |
     | All API routes return json, and are best used stateless through
     | auth:api such as passport or sanctum.
@@ -351,7 +350,8 @@ return [
     | Knock knock!! 👊
     |--------------------------------------------------------------------------
     |
-    | Enable or disable knocks, and set the timeout limit (in minutes)
+    | Enable or disable knocks, and set the timeout limit (in minutes).
+    | Set to 0 for no timeout.
     |
     */
     'knocks' => [
