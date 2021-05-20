@@ -36,6 +36,9 @@
       "system_message": false,
       "body": "img_5fcf0ea71dcb17.99881745.jpg",
       "edited": false,
+      "embeds": false,
+      "extra": null,
+      "reacted": false,
       "created_at": "2020-12-08T05:27:03.000000Z",
       "updated_at": "2020-12-08T05:27:03.000000Z",
       "meta": {
@@ -74,8 +77,8 @@
 {
   "image" : "(binary)",
   "temporary_id" : "33234580-3918-11eb-985e-e58d0602db52",
-  "reply_to_id" : "nullable|string" //message ID you are replying to
-  "extra" : "nullable|array" //extra data you can store on the message to be returned as json with message
+  "reply_to_id" : "nullable|string",
+  "extra" : "nullable|array|json"
 }
 ```
 #### Response:
@@ -113,6 +116,9 @@
   "system_message": false,
   "body": "img_5fcf12573c2f76.23243115.jpg",
   "edited": false,
+  "embeds": false,
+  "extra": null,
+  "reacted": false,
   "created_at": "2020-12-08T05:42:47.000000Z",
   "updated_at": "2020-12-08T05:42:47.000000Z",
   "meta": {

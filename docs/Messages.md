@@ -36,6 +36,9 @@
             "system_message": false,
             "body": "img_5fcf0ea71dcb17.99881745.jpg",
             "edited": false,
+            "embeds": true,
+            "extra": null,
+            "reacted": false,
             "created_at": "2020-12-08T05:27:03.000000Z",
             "updated_at": "2020-12-08T05:27:03.000000Z",
             "meta": {
@@ -87,6 +90,9 @@
             "system_message": false,
             "body": "Hello!",
             "edited": false,
+            "embeds": true,
+            "extra": null,
+            "reacted": false,
             "created_at": "2020-12-08T04:09:01.000000Z",
             "updated_at": "2020-12-08T04:09:01.000000Z",
             "meta": {
@@ -145,6 +151,9 @@
   "system_message": false,
   "body": "Hello!",
   "edited": false,
+  "embeds": true,
+  "extra": null,
+  "reacted": false,
   "created_at": "2020-12-08T04:09:01.000000Z",
   "updated_at": "2020-12-08T04:09:01.000000Z",
   "meta": {
@@ -155,7 +164,7 @@
 }
 ```
 ---
-### GET `/api/messenger/threads/{thread}/messages/{message}/edits` | *api.messenger.threads.messages.history*
+### GET `/api/messenger/threads/{thread}/messages/{message}/history` | *api.messenger.threads.messages.history*
 #### Response:
 ```json
 [
@@ -176,8 +185,8 @@
 {
   "message" : "Testing :100:",
   "temporary_id" : "34e70b00-3917-11eb-985e-e58d0602db52",
-  "reply_to_id" : "nullable|string" //message ID you are replying to
-  "extra" : "nullable|array" //extra data you can store on the message to be returned as json with message
+  "reply_to_id" : "nullable|string",
+  "extra" : "nullable|array|json"
 }
 ```
 #### Response:
@@ -215,6 +224,9 @@
   "system_message": false,
   "body": "Testing :100:",
   "edited": false,
+  "embeds": true,
+  "extra": null,
+  "reacted": false,
   "created_at": "2020-12-08T05:35:40.000000Z",
   "updated_at": "2020-12-08T05:35:40.000000Z",
   "meta": {
@@ -268,6 +280,9 @@
   "system_message": false,
   "body": "Edited Message",
   "edited": true,
+  "embeds": true,
+  "extra": null,
+  "reacted": false,
   "created_at": "2020-12-08T05:35:40.000000Z",
   "updated_at": "2020-12-08T05:35:40.000000Z",
   "meta": {

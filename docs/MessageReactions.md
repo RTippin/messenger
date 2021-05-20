@@ -118,7 +118,7 @@
 #### Payload:
 ```json
 {
-  "reaction" : ":poop:",
+  "reaction" : "💩"
 }
 ```
 #### Response:

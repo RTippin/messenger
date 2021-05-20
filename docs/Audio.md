@@ -36,6 +36,9 @@
       "system_message": false,
       "body": "test_1607405513.mp3",
       "edited": false,
+      "embeds": false,
+      "extra": null,
+      "reacted": false,
       "created_at": "2020-12-08T05:31:53.000000Z",
       "updated_at": "2020-12-08T05:31:53.000000Z",
       "meta": {
@@ -66,8 +69,8 @@
 {
   "audio" : "(binary)",
   "temporary_id" : "adb9c9b0-3916-11eb-985e-e58d0602db52",
-  "reply_to_id" : "nullable|string" //message ID you are replying to
-  "extra" : "nullable|array" //extra data you can store on the message to be returned as json with message
+  "reply_to_id" : "nullable|string",
+  "extra" : "nullable|array|json"
 }
 ```
 #### Response:
@@ -105,6 +108,9 @@
   "system_message": false,
   "body": "test_1607405513.mp3",
   "edited": false,
+  "embeds": false,
+  "extra": null,
+  "reacted": false,
   "created_at": "2020-12-08T05:31:53.000000Z",
   "updated_at": "2020-12-08T05:31:53.000000Z",
   "meta": {

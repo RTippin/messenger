@@ -48,7 +48,7 @@
   "message": "Hello!",
   "recipient_id": "922f8476-c5f4-4024-8ba2-1a0d1cd22d71",
   "recipient_alias": "user",
-  "extra" : "nullable|array" //extra data you can store on the message to be returned as json with message
+  "extra" : "nullable|array|json"
 }
 ```
 ```json
@@ -56,7 +56,7 @@
   "image": "(binary)",
   "recipient_id": "922f8476-c5f4-4024-8ba2-1a0d1cd22d71",
   "recipient_alias": "user",
-  "extra" : "nullable|array" //extra data you can store on the message to be returned as json with message
+  "extra" : "nullable|array|json"
 }
 ```
 ```json
@@ -64,7 +64,7 @@
   "document": "(binary)",
   "recipient_id": "922f8476-c5f4-4024-8ba2-1a0d1cd22d71",
   "recipient_alias": "user",
-  "extra" : "nullable|array" //extra data you can store on the message to be returned as json with message
+  "extra" : "nullable|array|json"
 }
 ```
 ```json
@@ -72,7 +72,7 @@
   "audio": "(binary)",
   "recipient_id": "922f8476-c5f4-4024-8ba2-1a0d1cd22d71",
   "recipient_alias": "user",
-  "extra" : "nullable|array" //extra data you can store on the message to be returned as json with message
+  "extra" : "nullable|array|json"
 }
 ```
 #### Response:
@@ -179,6 +179,9 @@
       "system_message": false,
       "body": "Hello!",
       "edited": false,
+      "embeds": true,
+      "extra": null,
+      "reacted": false,
       "created_at": "2020-12-08T04:00:19.000000Z",
       "updated_at": "2020-12-08T04:00:19.000000Z",
       "meta": {
@@ -278,6 +281,9 @@
       "system_message": true,
       "body": "created Test Group",
       "edited": false,
+      "embeds": false,
+      "extra": null,
+      "reacted": false,
       "created_at": "2020-12-08T04:13:02.000000Z",
       "updated_at": "2020-12-08T04:13:02.000000Z",
       "meta": {
@@ -406,6 +412,9 @@
       "system_message": false,
       "body": "Hello!",
       "edited": false,
+      "embeds": true,
+      "extra": null,
+      "reacted": false,
       "created_at": "2020-12-08T04:00:19.000000Z",
       "updated_at": "2020-12-08T04:00:19.000000Z",
       "meta": {
@@ -505,6 +514,9 @@
           "system_message": true,
           "body": "added Jane Doe to the group",
           "edited": false,
+          "embeds": false,
+          "extra": null,
+          "reacted": false,
           "created_at": "2020-12-08T04:13:03.000000Z",
           "updated_at": "2020-12-08T04:13:03.000000Z",
           "meta": {
@@ -628,6 +640,9 @@
           "system_message": false,
           "body": "Hello!",
           "edited": false,
+          "embeds": true,
+          "extra": null,
+          "reacted": false,
           "created_at": "2020-12-08T04:09:01.000000Z",
           "updated_at": "2020-12-08T04:09:01.000000Z",
           "meta": {
@@ -739,6 +754,9 @@
       "system_message": true,
       "body": "added Jane Doe to the group",
       "edited": false,
+      "embeds": false,
+      "extra": null,
+      "reacted": false,
       "created_at": "2020-12-08T04:29:01.000000Z",
       "updated_at": "2020-12-08T04:29:01.000000Z",
       "meta": {
@@ -791,6 +809,9 @@
       "system_message": true,
       "body": "created Test Group!",
       "edited": false,
+      "embeds": false,
+      "extra": null,
+      "reacted": false,
       "created_at": "2020-12-08T04:28:59.000000Z",
       "updated_at": "2020-12-08T04:28:59.000000Z",
       "meta": {
@@ -1214,6 +1235,9 @@ Renders Group Avatar
                     "system_message": true,
                     "body": "was in a video call",
                     "edited": false,
+                    "embeds": false,
+                    "extra": null,
+                    "reacted": false,
                     "created_at": "2020-12-08T04:47:41.000000Z",
                     "updated_at": "2020-12-08T04:47:41.000000Z",
                     "meta": {
@@ -1255,6 +1279,9 @@ Renders Group Avatar
                     "system_message": false,
                     "body": "Hello!",
                     "edited": false,
+                    "embeds": true,
+                    "extra": null,
+                    "reacted": false,
                     "created_at": "2020-12-08T04:09:01.000000Z",
                     "updated_at": "2020-12-08T04:09:01.000000Z",
                     "meta": {
@@ -1308,6 +1335,9 @@ Renders Group Avatar
             "system_message": true,
             "body": "was in a video call",
             "edited": false,
+            "embeds": false,
+            "extra": null,
+            "reacted": false,
             "created_at": "2020-12-08T04:47:41.000000Z",
             "updated_at": "2020-12-08T04:47:41.000000Z",
             "meta": {
