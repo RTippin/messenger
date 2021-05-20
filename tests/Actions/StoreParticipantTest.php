@@ -78,7 +78,7 @@ class StoreParticipantTest extends FeatureTestCase
     public function it_restores_participant_if_check_restore_true()
     {
         $thread = Thread::factory()->group()->create();
-        $participant = Participant::factory()->for($thread)->owner($this->doe)->create(['deleted_at' => now()]);
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->trashed()->create();
 
         app(StoreParticipant::class)->execute($thread, $this->doe, [], true);
 

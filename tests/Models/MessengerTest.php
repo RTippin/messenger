@@ -10,41 +10,38 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class MessengerTest extends FeatureTestCase
 {
-    private Messenger $messengerModel;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->messengerModel = MessengerFacade::getProviderMessenger($this->tippin);
-    }
-
     /** @test */
     public function it_exists()
     {
+        $messenger = MessengerFacade::getProviderMessenger($this->tippin);
+
         $this->assertDatabaseHas('messengers', [
-            'id' => $this->messengerModel->id,
+            'id' => $messenger->id,
         ]);
-        $this->assertInstanceOf(Messenger::class, $this->messengerModel);
+        $this->assertInstanceOf(Messenger::class, $messenger);
     }
 
     /** @test */
     public function it_cast_attributes()
     {
-        $this->assertInstanceOf(Carbon::class, $this->messengerModel->created_at);
-        $this->assertInstanceOf(Carbon::class, $this->messengerModel->updated_at);
-        $this->assertTrue($this->messengerModel->message_popups);
-        $this->assertTrue($this->messengerModel->message_sound);
-        $this->assertTrue($this->messengerModel->call_ringtone_sound);
-        $this->assertTrue($this->messengerModel->notify_sound);
-        $this->assertTrue($this->messengerModel->dark_mode);
-        $this->assertSame(1, $this->messengerModel->online_status);
+        $messenger = MessengerFacade::getProviderMessenger($this->tippin);
+
+        $this->assertInstanceOf(Carbon::class, $messenger->created_at);
+        $this->assertInstanceOf(Carbon::class, $messenger->updated_at);
+        $this->assertTrue($messenger->message_popups);
+        $this->assertTrue($messenger->message_sound);
+        $this->assertTrue($messenger->call_ringtone_sound);
+        $this->assertTrue($messenger->notify_sound);
+        $this->assertTrue($messenger->dark_mode);
+        $this->assertSame(1, $messenger->online_status);
     }
 
     /** @test */
     public function it_has_relation()
     {
-        $this->assertSame($this->tippin->getKey(), $this->messengerModel->owner->getKey());
-        $this->assertInstanceOf(MessengerProvider::class, $this->messengerModel->owner);
+        $messenger = MessengerFacade::getProviderMessenger($this->tippin);
+
+        $this->assertSame($this->tippin->getKey(), $messenger->owner->getKey());
+        $this->assertInstanceOf(MessengerProvider::class, $messenger->owner);
     }
 }

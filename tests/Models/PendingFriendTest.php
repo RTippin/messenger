@@ -10,50 +10,49 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PendingFriendTest extends FeatureTestCase
 {
-    private PendingFriend $pending;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->pending = PendingFriend::factory()->providers($this->tippin, $this->doe)->create();
-    }
-
     /** @test */
     public function it_exists()
     {
+        $pending = PendingFriend::factory()->providers($this->tippin, $this->doe)->create();
+
         $this->assertDatabaseCount('pending_friends', 1);
         $this->assertDatabaseHas('pending_friends', [
-            'id' => $this->pending->id,
+            'id' => $pending->id,
         ]);
-        $this->assertInstanceOf(PendingFriend::class, $this->pending);
+        $this->assertInstanceOf(PendingFriend::class, $pending);
     }
 
     /** @test */
     public function it_cast_attributes()
     {
-        $this->assertInstanceOf(Carbon::class, $this->pending->created_at);
-        $this->assertInstanceOf(Carbon::class, $this->pending->updated_at);
+        $pending = PendingFriend::factory()->providers($this->tippin, $this->doe)->create();
+
+        $this->assertInstanceOf(Carbon::class, $pending->created_at);
+        $this->assertInstanceOf(Carbon::class, $pending->updated_at);
     }
 
     /** @test */
     public function it_has_relations()
     {
-        $this->assertSame($this->tippin->getKey(), $this->pending->sender->getKey());
-        $this->assertSame($this->doe->getKey(), $this->pending->recipient->getKey());
-        $this->assertInstanceOf(MessengerProvider::class, $this->pending->sender);
-        $this->assertInstanceOf(MessengerProvider::class, $this->pending->recipient);
+        $pending = PendingFriend::factory()->providers($this->tippin, $this->doe)->create();
+
+        $this->assertSame($this->tippin->getKey(), $pending->sender->getKey());
+        $this->assertSame($this->doe->getKey(), $pending->recipient->getKey());
+        $this->assertInstanceOf(MessengerProvider::class, $pending->sender);
+        $this->assertInstanceOf(MessengerProvider::class, $pending->recipient);
     }
 
     /** @test */
     public function sender_and_recipient_return_ghost_if_not_found()
     {
-        $this->pending->update([
+        $pending = PendingFriend::factory()->create([
             'sender_id' => 404,
+            'sender_type' => $this->tippin->getMorphClass(),
             'recipient_id' => 404,
+            'recipient_type' => $this->doe->getMorphClass(),
         ]);
 
-        $this->assertInstanceOf(GhostUser::class, $this->pending->sender);
-        $this->assertInstanceOf(GhostUser::class, $this->pending->recipient);
+        $this->assertInstanceOf(GhostUser::class, $pending->sender);
+        $this->assertInstanceOf(GhostUser::class, $pending->recipient);
     }
 }

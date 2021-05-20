@@ -5,49 +5,48 @@ namespace RTippin\Messenger\Tests\Models;
 use Illuminate\Support\Carbon;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
+use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class MessageReactionTest extends FeatureTestCase
 {
-    private Message $message;
-    private MessageReaction $reaction;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $group = $this->createGroupThread($this->tippin);
-        $this->message = $this->createMessage($group, $this->tippin);
-        $this->reaction = MessageReaction::factory()
-            ->for($this->message)
-            ->owner($this->tippin)
-            ->create([
-                'reaction' => ':joy:',
-            ]);
-    }
-
     /** @test */
     public function it_exists()
     {
+        $reaction = MessageReaction::factory()->for(
+            Message::factory()->for(
+                Thread::factory()->create()
+            )->owner($this->tippin)->create()
+        )->owner($this->tippin)->reaction(':test:')->create();
+
         $this->assertDatabaseCount('message_reactions', 1);
         $this->assertDatabaseHas('message_reactions', [
-            'id' => $this->reaction->id,
+            'id' => $reaction->id,
         ]);
-        $this->assertInstanceOf(MessageReaction::class, $this->reaction);
-        $this->assertSame(1, MessageReaction::reaction(':joy:')->count());
+        $this->assertInstanceOf(MessageReaction::class, $reaction);
+        $this->assertSame(1, MessageReaction::reaction(':test:')->count());
     }
 
     /** @test */
     public function it_cast_attributes()
     {
-        $this->assertInstanceOf(Carbon::class, $this->message->created_at);
+        $reaction = MessageReaction::factory()->for(
+            Message::factory()->for(
+                Thread::factory()->create()
+            )->owner($this->tippin)->create()
+        )->owner($this->tippin)->create();
+
+        $this->assertInstanceOf(Carbon::class, $reaction->created_at);
     }
 
     /** @test */
     public function it_has_relations()
     {
-        $this->assertInstanceOf(Message::class, $this->reaction->message);
-        $this->assertSame($this->tippin->getKey(), $this->reaction->owner->getKey());
-        $this->assertSame($this->message->id, $this->reaction->message->id);
+        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $reaction = MessageReaction::factory()->for($message)->owner($this->tippin)->create();
+
+        $this->assertInstanceOf(Message::class, $reaction->message);
+        $this->assertSame($this->tippin->getKey(), $reaction->owner->getKey());
+        $this->assertSame($message->id, $reaction->message->id);
     }
 }

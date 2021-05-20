@@ -85,4 +85,18 @@ class InviteFactory extends Factory
             ];
         });
     }
+
+    /**
+     * Indicate invite is soft deleted.
+     *
+     * @return Factory
+     */
+    public function trashed(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'deleted_at' => now(),
+            ];
+        });
+    }
 }

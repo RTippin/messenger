@@ -22,7 +22,9 @@ class ParticipantFactory extends Factory
      */
     public function definition(): array
     {
-        return Definitions::DefaultParticipant;
+        return array_merge(Definitions::DefaultParticipant, [
+            'muted' => false,
+        ]);
     }
 
     /**
@@ -86,6 +88,20 @@ class ParticipantFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'last_read' => now(),
+            ];
+        });
+    }
+
+    /**
+     * Indicate participant is soft deleted.
+     *
+     * @return Factory
+     */
+    public function trashed(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'deleted_at' => now(),
             ];
         });
     }

@@ -13,229 +13,210 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class MessageTest extends FeatureTestCase
 {
-    private Thread $group;
-    private Message $message;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin);
-        $this->message = $this->createMessage($this->group, $this->tippin);
-    }
-
     /** @test */
     public function it_exists()
     {
+        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+
         $this->assertDatabaseCount('messages', 1);
         $this->assertDatabaseHas('messages', [
-            'id' => $this->message->id,
+            'id' => $message->id,
         ]);
-        $this->assertInstanceOf(Message::class, $this->message);
+        $this->assertInstanceOf(Message::class, $message);
         $this->assertSame(1, Message::text()->count());
         $this->assertSame(1, Message::nonSystem()->count());
         $this->assertSame(0, Message::system()->count());
         $this->assertSame(0, Message::image()->count());
         $this->assertSame(0, Message::document()->count());
         $this->assertSame(0, Message::audio()->count());
-        $this->assertSame('MESSAGE', $this->message->getTypeVerbose());
-        $this->assertTrue($this->message->isText());
-        $this->assertTrue($this->message->showEmbeds());
-        $this->assertFalse($this->message->isEdited());
-        $this->assertFalse($this->message->isReacted());
-        $this->assertFalse($this->message->isSystemMessage());
-        $this->assertFalse($this->message->isImage());
-        $this->assertFalse($this->message->isDocument());
-        $this->assertFalse($this->message->hasTemporaryId());
+        $this->assertSame('MESSAGE', $message->getTypeVerbose());
+        $this->assertTrue($message->isText());
+        $this->assertTrue($message->showEmbeds());
+        $this->assertFalse($message->isEdited());
+        $this->assertFalse($message->isReacted());
+        $this->assertFalse($message->isSystemMessage());
+        $this->assertFalse($message->isImage());
+        $this->assertFalse($message->isDocument());
+        $this->assertFalse($message->hasTemporaryId());
     }
 
     /** @test */
     public function it_cast_attributes()
     {
-        $this->message->delete();
+        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->trashed()->create();
 
-        $this->assertInstanceOf(Carbon::class, $this->message->created_at);
-        $this->assertInstanceOf(Carbon::class, $this->message->updated_at);
-        $this->assertInstanceOf(Carbon::class, $this->message->deleted_at);
-        $this->assertSame(0, $this->message->type);
-        $this->assertFalse($this->message->edited);
-        $this->assertFalse($this->message->reacted);
-        $this->assertTrue($this->message->embeds);
+        $this->assertInstanceOf(Carbon::class, $message->created_at);
+        $this->assertInstanceOf(Carbon::class, $message->updated_at);
+        $this->assertInstanceOf(Carbon::class, $message->deleted_at);
+        $this->assertSame(0, $message->type);
+        $this->assertFalse($message->edited);
+        $this->assertFalse($message->reacted);
+        $this->assertTrue($message->embeds);
     }
 
     /** @test */
     public function it_sets_temporary_id()
     {
-        $this->message->setTemporaryId('1234');
+        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $message->setTemporaryId('1234');
 
-        $this->assertTrue($this->message->hasTemporaryId());
-        $this->assertSame('1234', $this->message->temporaryId());
+        $this->assertTrue($message->hasTemporaryId());
+        $this->assertSame('1234', $message->temporaryId());
     }
 
     /** @test */
     public function it_has_relations()
     {
-        $this->assertSame($this->tippin->getKey(), $this->message->owner->getKey());
-        $this->assertSame($this->group->id, $this->message->thread->id);
-        $this->assertInstanceOf(Thread::class, $this->message->thread);
-        $this->assertInstanceOf(MessengerProvider::class, $this->message->owner);
-        $this->assertInstanceOf(Collection::class, $this->message->edits);
-        $this->assertInstanceOf(Collection::class, $this->message->reactions);
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+
+        $this->assertSame($this->tippin->getKey(), $message->owner->getKey());
+        $this->assertSame($thread->id, $message->thread->id);
+        $this->assertInstanceOf(Thread::class, $message->thread);
+        $this->assertInstanceOf(MessengerProvider::class, $message->owner);
+        $this->assertInstanceOf(Collection::class, $message->edits);
+        $this->assertInstanceOf(Collection::class, $message->reactions);
     }
 
     /** @test */
     public function owner_returns_ghost_if_not_found()
     {
-        $this->message->update([
+        $message = Message::factory()->for(Thread::factory()->create())->create([
             'owner_id' => 404,
+            'owner_type' => $this->tippin->getMorphClass(),
         ]);
 
-        $this->assertInstanceOf(GhostUser::class, $this->message->owner);
+        $this->assertInstanceOf(GhostUser::class, $message->owner);
     }
 
     /** @test */
     public function it_has_storage_disk()
     {
-        $this->assertSame('messenger', $this->message->getStorageDisk());
+        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+
+        $this->assertSame('messenger', $message->getStorageDisk());
     }
 
     /** @test */
     public function it_has_storage_directory()
     {
-        $this->assertSame("threads/{$this->group->id}", $this->message->getStorageDirectory());
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+
+        $this->assertSame("threads/$thread->id", $message->getStorageDirectory());
     }
 
     /** @test */
     public function it_is_edited()
     {
-        $this->message->update([
-            'updated_at' => now()->addMinutes(10),
-            'edited' => true,
-        ]);
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->edited()->create();
 
-        $this->assertTrue($this->message->isEdited());
-        $this->assertSame("/api/messenger/threads/{$this->group->id}/messages/{$this->message->id}/history", $this->message->getEditHistoryRoute());
+        $this->assertTrue($message->isEdited());
+        $this->assertSame("/api/messenger/threads/$thread->id/messages/$message->id/history", $message->getEditHistoryRoute());
     }
 
     /** @test */
     public function it_has_reply_to_message()
     {
-        $replyMessage = $this->group->messages()->create([
-            'body' => 'First Reply Message',
-            'type' => 0,
-            'owner_id' => $this->tippin->getKey(),
-            'owner_type' => $this->tippin->getMorphClass(),
-            'reply_to_id' => $this->message->id,
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        $reply = Message::factory()->for($thread)->owner($this->tippin)->create([
+            'reply_to_id' => $message->id,
         ]);
 
-        $this->assertNull($this->message->replyTo);
-        $this->assertInstanceOf(Message::class, $replyMessage->replyTo);
-        $this->assertSame($this->message->id, $replyMessage->replyTo->id);
+        $this->assertNull($message->replyTo);
+        $this->assertInstanceOf(Message::class, $reply->replyTo);
+        $this->assertSame($message->id, $reply->replyTo->id);
     }
 
     /** @test */
     public function it_doesnt_have_reply_when_reply_message_deleted()
     {
-        $replyMessage = Message::factory()->for($this->group)->owner($this->tippin)->create(['reply_to_id' => $this->message->id]);
-        $this->message->forceDelete();
-
-        $this->assertDatabaseMissing('messages', [
-            'id' => $this->message->id,
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->trashed()->create();
+        $reply = Message::factory()->for($thread)->owner($this->tippin)->create([
+            'reply_to_id' => $message->id,
         ]);
-        $this->assertNull($replyMessage->replyTo);
+
+        $this->assertNull($reply->replyTo);
     }
 
     /** @test */
     public function it_has_reactions()
     {
-        $this->message->update([
-            'reacted' => true,
-        ]);
-        MessageReaction::factory()
-            ->for($this->message)
-            ->owner($this->tippin)
-            ->create([
-                'reaction' => ':joy:',
-            ]);
+        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->reacted()->create();
+        MessageReaction::factory()->for($message)->owner($this->tippin)->create();
 
-        $this->assertCount(1, $this->message->reactions()->get());
-        $this->assertTrue($this->message->isReacted());
+        $this->assertCount(1, $message->reactions()->get());
+        $this->assertTrue($message->isReacted());
     }
 
     /** @test */
     public function image_message()
     {
-        $this->message->update([
-            'type' => 1,
-            'body' => 'test.png',
-        ]);
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->image()->create();
 
-        $this->assertTrue($this->message->isImage());
-        $this->assertFalse($this->message->isSystemMessage());
-        $this->assertFalse($this->message->isDocument());
-        $this->assertFalse($this->message->isText());
-        $this->assertFalse($this->message->isAudio());
+        $this->assertTrue($message->isImage());
+        $this->assertFalse($message->isSystemMessage());
+        $this->assertFalse($message->isDocument());
+        $this->assertFalse($message->isText());
+        $this->assertFalse($message->isAudio());
         $this->assertSame(1, Message::image()->count());
-        $this->assertSame('IMAGE_MESSAGE', $this->message->getTypeVerbose());
-        $this->assertSame("threads/{$this->group->id}/images/test.png", $this->message->getImagePath());
-        $this->assertSame("/messenger/threads/{$this->group->id}/gallery/{$this->message->id}/sm/test.png", $this->message->getImageViewRoute());
-        $this->assertSame("/api/messenger/threads/{$this->group->id}/gallery/{$this->message->id}/lg/test.png", $this->message->getImageViewRoute('lg', true));
+        $this->assertSame('IMAGE_MESSAGE', $message->getTypeVerbose());
+        $this->assertSame("threads/$thread->id/images/picture.jpg", $message->getImagePath());
+        $this->assertSame("/messenger/threads/$thread->id/gallery/$message->id/sm/picture.jpg", $message->getImageViewRoute());
+        $this->assertSame("/api/messenger/threads/$thread->id/gallery/$message->id/lg/picture.jpg", $message->getImageViewRoute('lg', true));
     }
 
     /** @test */
     public function document_message()
     {
-        $this->message->update([
-            'type' => 2,
-            'body' => 'test.pdf',
-        ]);
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->document()->create();
 
-        $this->assertTrue($this->message->isDocument());
-        $this->assertFalse($this->message->isSystemMessage());
-        $this->assertFalse($this->message->isImage());
-        $this->assertFalse($this->message->isText());
-        $this->assertFalse($this->message->isAudio());
+        $this->assertTrue($message->isDocument());
+        $this->assertFalse($message->isSystemMessage());
+        $this->assertFalse($message->isImage());
+        $this->assertFalse($message->isText());
+        $this->assertFalse($message->isAudio());
         $this->assertSame(1, Message::document()->count());
-        $this->assertSame('DOCUMENT_MESSAGE', $this->message->getTypeVerbose());
-        $this->assertSame("threads/{$this->group->id}/documents/test.pdf", $this->message->getDocumentPath());
-        $this->assertSame("/messenger/threads/{$this->group->id}/files/{$this->message->id}/test.pdf", $this->message->getDocumentDownloadRoute());
-        $this->assertSame("/api/messenger/threads/{$this->group->id}/files/{$this->message->id}/test.pdf", $this->message->getDocumentDownloadRoute(true));
+        $this->assertSame('DOCUMENT_MESSAGE', $message->getTypeVerbose());
+        $this->assertSame("threads/$thread->id/documents/document.pdf", $message->getDocumentPath());
+        $this->assertSame("/messenger/threads/$thread->id/files/$message->id/document.pdf", $message->getDocumentDownloadRoute());
+        $this->assertSame("/api/messenger/threads/$thread->id/files/$message->id/document.pdf", $message->getDocumentDownloadRoute(true));
     }
 
     /** @test */
     public function audio_message()
     {
-        $this->message->update([
-            'type' => 3,
-            'body' => 'test.mp3',
-        ]);
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->audio()->create();
 
-        $this->assertTrue($this->message->isAudio());
-        $this->assertFalse($this->message->isDocument());
-        $this->assertFalse($this->message->isSystemMessage());
-        $this->assertFalse($this->message->isImage());
-        $this->assertFalse($this->message->isText());
+        $this->assertTrue($message->isAudio());
+        $this->assertFalse($message->isDocument());
+        $this->assertFalse($message->isSystemMessage());
+        $this->assertFalse($message->isImage());
+        $this->assertFalse($message->isText());
         $this->assertSame(1, Message::audio()->count());
-        $this->assertSame('AUDIO_MESSAGE', $this->message->getTypeVerbose());
-        $this->assertSame("threads/{$this->group->id}/audio/test.mp3", $this->message->getAudioPath());
-        $this->assertSame("/messenger/threads/{$this->group->id}/audio/{$this->message->id}/test.mp3", $this->message->getAudioDownloadRoute());
-        $this->assertSame("/api/messenger/threads/{$this->group->id}/audio/{$this->message->id}/test.mp3", $this->message->getAudioDownloadRoute(true));
+        $this->assertSame('AUDIO_MESSAGE', $message->getTypeVerbose());
+        $this->assertSame("threads/$thread->id/audio/sound.mp3", $message->getAudioPath());
+        $this->assertSame("/messenger/threads/$thread->id/audio/$message->id/sound.mp3", $message->getAudioDownloadRoute());
+        $this->assertSame("/api/messenger/threads/$thread->id/audio/$message->id/sound.mp3", $message->getAudioDownloadRoute(true));
     }
 
     /** @test */
     public function system_message()
     {
-        $this->message->update([
-            'type' => 93,
-            'body' => 'created First Test Group.',
-        ]);
+        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create(['type' => 93]);
 
-        $this->assertTrue($this->message->isSystemMessage());
-        $this->assertFalse($this->message->isDocument());
-        $this->assertFalse($this->message->isImage());
-        $this->assertFalse($this->message->isText());
-        $this->assertFalse($this->message->isAudio());
+        $this->assertTrue($message->isSystemMessage());
+        $this->assertFalse($message->isDocument());
+        $this->assertFalse($message->isImage());
+        $this->assertFalse($message->isText());
+        $this->assertFalse($message->isAudio());
         $this->assertSame(1, Message::system()->count());
-        $this->assertSame('GROUP_CREATED', $this->message->getTypeVerbose());
+        $this->assertSame('GROUP_CREATED', $message->getTypeVerbose());
     }
 }

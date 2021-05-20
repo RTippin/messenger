@@ -26,8 +26,7 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create([
-            'deleted_at' => now(),
+        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->trashed()->create([
             'expires_at' => now(),
             'max_use' => 10,
             'uses' => 1,
@@ -142,7 +141,7 @@ class InviteTest extends FeatureTestCase
     public function it_is_invalid_if_thread_removed()
     {
         $invite = Invite::factory()->for(
-            Thread::factory()->group()->create(['deleted_at' => now()])
+            Thread::factory()->group()->trashed()->create()
         )->owner($this->tippin)->create();
 
         $this->assertFalse($invite->isValid());

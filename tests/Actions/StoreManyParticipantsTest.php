@@ -92,7 +92,7 @@ class StoreManyParticipantsTest extends FeatureTestCase
     public function it_restores_participant_if_previously_soft_deleted()
     {
         $thread = $this->createGroupThread($this->tippin);
-        $participant = Participant::factory()->for($thread)->owner($this->doe)->create(['deleted_at' => now()]);
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->trashed()->create();
         $this->createFriends($this->tippin, $this->doe);
 
         app(StoreManyParticipants::class)->execute($thread, [

@@ -71,7 +71,7 @@ class JoinWithInviteTest extends FeatureTestCase
     {
         $thread = $this->createGroupThread($this->doe);
         $invite = Invite::factory()->for($thread)->owner($this->doe)->create();
-        $participant = Participant::factory()->for($thread)->owner($this->tippin)->create(['deleted_at' => now()]);
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->trashed()->create();
 
         app(JoinWithInvite::class)->execute($invite);
 
@@ -88,7 +88,7 @@ class JoinWithInviteTest extends FeatureTestCase
     {
         $thread = $this->createGroupThread($this->doe);
         $invite = Invite::factory()->for($thread)->owner($this->doe)->create();
-        $participant = Participant::factory()->for($thread)->owner($this->tippin)->admin()->create(['deleted_at' => now()]);
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->admin()->trashed()->create();
 
         app(JoinWithInvite::class)->execute($invite);
 

@@ -56,4 +56,18 @@ class ThreadFactory extends Factory
             ];
         });
     }
+
+    /**
+     * Indicate thread is soft deleted.
+     *
+     * @return Factory
+     */
+    public function trashed(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'deleted_at' => now(),
+            ];
+        });
+    }
 }

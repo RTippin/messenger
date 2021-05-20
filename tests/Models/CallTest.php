@@ -65,7 +65,7 @@ class CallTest extends FeatureTestCase
     /** @test */
     public function owner_returns_ghost_if_not_found()
     {
-        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create([
+        $call = Call::factory()->for(Thread::factory()->create())->create([
             'owner_id' => 404,
             'owner_type' => $this->tippin->getMorphClass(),
         ]);

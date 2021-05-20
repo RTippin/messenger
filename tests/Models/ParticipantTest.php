@@ -14,90 +14,88 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class ParticipantTest extends FeatureTestCase
 {
-    private Thread $group;
-    private Participant $admin;
-    private Message $message;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->group = $this->createGroupThread($this->tippin, $this->doe, $this->developers);
-        $this->admin = $this->group->participants()->forProvider($this->tippin)->first();
-        $this->message = $this->createMessage($this->group, $this->tippin);
-    }
-
     /** @test */
     public function it_exists()
     {
-        $this->assertDatabaseCount('participants', 3);
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
+
+        $this->assertDatabaseCount('participants', 2);
         $this->assertDatabaseHas('participants', [
-            'id' => $this->admin->id,
+            'id' => $participant->id,
         ]);
-        $this->assertInstanceOf(Participant::class, $this->admin);
+        $this->assertInstanceOf(Participant::class, $participant);
         $this->assertSame(1, Participant::admins()->count());
-        $this->assertSame(3, Participant::notMuted()->count());
-        $this->assertSame(3, Participant::notPending()->count());
-        $this->assertSame(3, Participant::validProviders()->count());
+        $this->assertSame(2, Participant::notMuted()->count());
+        $this->assertSame(2, Participant::notPending()->count());
+        $this->assertSame(2, Participant::validProviders()->count());
     }
 
     /** @test */
     public function it_cast_attributes()
     {
-        $this->admin->update([
-            'last_read' => now(),
-            'deleted_at' => now(),
-        ]);
+        $participant = Participant::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->admin()->read()->trashed()->create();
 
-        $this->assertInstanceOf(Carbon::class, $this->admin->created_at);
-        $this->assertInstanceOf(Carbon::class, $this->admin->updated_at);
-        $this->assertInstanceOf(Carbon::class, $this->admin->deleted_at);
-        $this->assertTrue($this->admin->admin);
-        $this->assertTrue($this->admin->send_messages);
-        $this->assertTrue($this->admin->send_knocks);
-        $this->assertTrue($this->admin->start_calls);
-        $this->assertTrue($this->admin->add_participants);
-        $this->assertTrue($this->admin->manage_invites);
-        $this->assertFalse($this->admin->muted);
-        $this->assertFalse($this->admin->pending);
+        $this->assertInstanceOf(Carbon::class, $participant->created_at);
+        $this->assertInstanceOf(Carbon::class, $participant->updated_at);
+        $this->assertInstanceOf(Carbon::class, $participant->deleted_at);
+        $this->assertTrue($participant->admin);
+        $this->assertTrue($participant->send_messages);
+        $this->assertTrue($participant->send_knocks);
+        $this->assertTrue($participant->start_calls);
+        $this->assertTrue($participant->add_participants);
+        $this->assertTrue($participant->manage_invites);
+        $this->assertFalse($participant->muted);
+        $this->assertFalse($participant->pending);
     }
 
     /** @test */
     public function it_has_relations()
     {
-        $this->assertSame($this->tippin->getKey(), $this->admin->owner->getKey());
-        $this->assertSame($this->group->id, $this->admin->thread->id);
-        $this->assertInstanceOf(Thread::class, $this->admin->thread);
-        $this->assertInstanceOf(MessengerProvider::class, $this->admin->owner);
-        $this->assertInstanceOf(Collection::class, $this->admin->messages);
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+
+        $this->assertSame($this->tippin->getKey(), $participant->owner->getKey());
+        $this->assertSame($thread->id, $participant->thread->id);
+        $this->assertInstanceOf(Thread::class, $participant->thread);
+        $this->assertInstanceOf(MessengerProvider::class, $participant->owner);
+        $this->assertInstanceOf(Collection::class, $participant->messages);
     }
 
     /** @test */
     public function owner_returns_ghost_if_not_found()
     {
-        $this->admin->update([
+        $participant = Participant::factory()->for(Thread::factory()->create())->create([
             'owner_id' => 404,
+            'owner_type' => $this->tippin->getMorphClass(),
         ]);
 
-        $this->assertInstanceOf(GhostUser::class, $this->admin->owner);
+        $this->assertInstanceOf(GhostUser::class, $participant->owner);
     }
 
     /** @test */
     public function it_has_last_seen_message()
     {
-        $this->admin->update([
-            'last_read' => now()->addMinutes(10),
-        ]);
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()->for($thread)->owner($this->doe)->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->read()->create();
 
-        $this->assertInstanceOf(Message::class, $this->admin->getLastSeenMessage());
-        $this->assertSame($this->message->id, $this->admin->getLastSeenMessage()->id);
+        $this->assertInstanceOf(Message::class, $participant->getLastSeenMessage());
+        $this->assertSame($message->id, $participant->getLastSeenMessage()->id);
     }
 
     /** @test */
     public function valid_providers_scope_ignores_company()
     {
         Messenger::setMessengerProviders(['user' => $this->getBaseProvidersConfig()['user']]);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->developers)->create();
 
-        $this->assertSame(2, Participant::validProviders()->count());
+        $this->assertSame(2, Participant::count());
+        $this->assertSame(1, Participant::validProviders()->count());
     }
 }
