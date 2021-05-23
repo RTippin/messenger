@@ -1549,7 +1549,8 @@ window.ThreadManager = (function () {
             methods.managePendingMessage('add', pending);
             let form = new FormData();
             if(audioMessage === true){
-                form.append(type.input, file, 'voice_message.webm');
+                form.append(type.input, file, 'audio_message.webm');
+                form.append('extra', JSON.stringify({audio_message : true}));
             }else {
                 form.append(type.input, file);
             }
@@ -2632,7 +2633,8 @@ window.ThreadManager = (function () {
                 let type = methods.sendUploadFiles(file, true);
                 form.append(type, file);
             } else if(voiceMessage === true) {
-                form.append('audio', audio, 'voice_message.webm');
+                form.append('audio', audio, 'audio_message.webm');
+                form.append('extra', JSON.stringify({audio_message : true}));
             } else {
                 if(!message_contents.trim().length) return;
                 form.append('message', message_contents);

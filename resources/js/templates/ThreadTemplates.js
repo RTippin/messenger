@@ -302,11 +302,12 @@ window.ThreadTemplates = (function () {
             if(reply === true){
                 switch(data.type){
                     case 1:
-                        return nolink === true ? '<i class="far fa-image"></i> Sent an image' : '<a target="_blank" href="'+data.image.lg+'"><i class="far fa-image"></i> Sent an image</a>';
+                        return nolink === true ?
+                            '<img height="100" src="'+data.image.md+'" />' : '<a target="_blank" href="'+data.image.lg+'"><img height="100" class="msg_image NS" src="'+data.image.md+'" /></a>';
                     case 2:
-                        return nolink === true ? '<i class="fas fa-file-download"></i> Sent a file' : '<a href="'+data.document+'" target="_blank"><i class="fas fa-file-download"></i> Sent a file</a>';
+                        return nolink === true ? '<i class="fas fa-file-download"></i> '+data.body : '<a href="'+data.document+'" target="_blank"><i class="fas fa-file-download"></i> '+data.body+'</a>';
                     case 3:
-                        return nolink === true ? '<i class="fas fa-music"></i> Sent an audio file' :  '<a href="'+data.audio+'" target="_blank"><i class="fas fa-music"></i> Sent an audio file</a>';
+                        return nolink === true ? '<i class="fas fa-music"></i> '+data.body :  '<a href="'+data.audio+'" target="_blank"><i class="fas fa-music"></i> '+data.body+'</a>';
                     default:
                         return methods.format_message_body(data.body, true);
                 }
@@ -320,10 +321,11 @@ window.ThreadTemplates = (function () {
                 case 2:
                     return '<a href="'+data.document+'" target="_blank"><i class="fas fa-file-download"></i> '+data.body+'</a>';
                 case 3:
-                    return '<a href="'+data.audio+'" target="_blank"><i class="fas fa-volume-up"></i> '+data.body+'</a><hr>' +
-                        '<audio controls preload="none">\n' +
-                        '  <source src="'+data.audio+'?stream=true">\n' +
-                        '</audio>';
+                    let audio = '<audio controls preload="none"><source src="'+data.audio+'?stream=true"></audio>';
+                    if(data.extra !== null && data.extra.audio_message){
+                        return '<a href="'+data.audio+'" target="_blank"><i class="fas fa-volume-up"></i> Audio Message</a><hr>' +audio;
+                    }
+                    return '<a href="'+data.audio+'" target="_blank"><i class="fas fa-volume-up"></i> '+data.body+'</a><hr>' +audio;
                 default:
                     let body = methods.format_message_body(data.body);
 

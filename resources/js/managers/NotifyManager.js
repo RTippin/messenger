@@ -376,6 +376,14 @@ window.NotifyManager = (function () {
                     toast : true,
                     theme : 'info',
                     toast_options : {
+                        onclick : function(){
+                            if(Messenger.common().modules.includes('ThreadManager')){
+                                ThreadManager.load().initiate_thread({thread_id : data.message.thread_id})
+                            }
+                            else {
+                                window.location.href = Messenger.common().WEB + '/'+data.message.thread_id
+                            }
+                        },
                         timeOut : 5000
                     }
                 });
