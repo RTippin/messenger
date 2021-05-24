@@ -2269,7 +2269,34 @@ window.ThreadManager = (function () {
         },
         generateInviteLink : function(){
             let expire = parseInt($("#grp_inv_expires").val()), uses = parseInt($("#grp_inv_uses").val()),
-                thread = (CallManager.state().initialized ? CallManager.state().thread_id : opt.thread.id);
+                thread = (CallManager.state().initialized ? CallManager.state().thread_id : opt.thread.id),
+                expires_at = null;
+            switch (expire) {
+                case 1:
+                    expires_at = moment().utc().add(30, 'minutes').format('YYYY-MM-DD HH:mm:ss');
+                break;
+                case 2:
+                    expires_at = moment().utc().add(1, 'hours').format('YYYY-MM-DD HH:mm:ss');
+                break;
+                case 3:
+                    expires_at = moment().utc().add(6, 'hours').format('YYYY-MM-DD HH:mm:ss');
+                break;
+                case 4:
+                    expires_at = moment().utc().add(12, 'hours').format('YYYY-MM-DD HH:mm:ss');
+                break;
+                case 5:
+                    expires_at = moment().utc().add(1, 'days').format('YYYY-MM-DD HH:mm:ss');
+                break;
+                case 6:
+                    expires_at = moment().utc().add(1, 'weeks').format('YYYY-MM-DD HH:mm:ss');
+                break;
+                case 7:
+                    expires_at = moment().utc().add(2, 'weeks').format('YYYY-MM-DD HH:mm:ss');
+                break;
+                case 8:
+                    expires_at = moment().utc().add(1, 'months').format('YYYY-MM-DD HH:mm:ss');
+                break;
+            }
             Messenger.alert().fillModal({
                 loader : true,
                 body : null,
@@ -2278,7 +2305,7 @@ window.ThreadManager = (function () {
             Messenger.xhr().payload({
                 route : Messenger.common().API + 'threads/' + thread + '/invites',
                 data : {
-                    expires : expire,
+                    expires : expires_at,
                     uses : uses
                 },
                 success : groups.viewInviteGenerator,

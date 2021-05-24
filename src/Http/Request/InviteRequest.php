@@ -14,7 +14,7 @@ class InviteRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'expires' => ['required', 'integer', 'between:0,8'],
+            'expires' => ['nullable', 'date', 'after:+5 minutes'],
             'uses' => ['required', 'integer', 'between:0,100'],
         ];
     }

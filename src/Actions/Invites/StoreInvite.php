@@ -71,7 +71,7 @@ class StoreInvite extends InviteAction
             'code' => $this->generateInviteCode(),
             'max_use' => $params['uses'],
             'uses' => 0,
-            'expires_at' => $this->setExpiresAt($params['expires']),
+            'expires_at' => $this->setExpiresAt($params['expires'] ?? null),
         ])
         ->setRelations([
             'owner' => $this->messenger->getProvider(),
@@ -82,31 +82,16 @@ class StoreInvite extends InviteAction
     }
 
     /**
-     * @param int $option
+     * @param string|null $expires
      * @return Carbon|null
      */
-    private function setExpiresAt(int $option): ?Carbon
+    private function setExpiresAt(?string $expires): ?Carbon
     {
-        switch ($option) {
-            case 1:
-                return now()->addMinutes(30);
-            case 2:
-                return now()->addHour();
-            case 3:
-                return now()->addHours(6);
-            case 4:
-                return now()->addHours(12);
-            case 5:
-                return now()->addDay();
-            case 6:
-                return now()->addWeek();
-            case 7:
-                return now()->addWeeks(2);
-            case 8:
-                return now()->addMonth();
-            default:
-                return null;
+        if (is_null($expires)) {
+            return null;
         }
+
+        return Carbon::parse($expires);
     }
 
     /**

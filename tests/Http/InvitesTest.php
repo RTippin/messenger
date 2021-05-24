@@ -171,7 +171,6 @@ class InvitesTest extends FeatureTestCase
         $this->postJson(route('api.messenger.threads.invites.store', [
             'thread' => $thread->id,
         ]), [
-            'expires' => 0,
             'uses' => 25,
         ])
             ->assertSuccessful()
@@ -191,7 +190,6 @@ class InvitesTest extends FeatureTestCase
         $this->postJson(route('api.messenger.threads.invites.store', [
             'thread' => $thread->id,
         ]), [
-            'expires' => 5,
             'uses' => 50,
         ])
             ->assertSuccessful();
@@ -208,7 +206,6 @@ class InvitesTest extends FeatureTestCase
         $this->postJson(route('api.messenger.threads.invites.store', [
             'thread' => $thread->id,
         ]), [
-            'expires' => 0,
             'uses' => 25,
         ])
             ->assertForbidden();
@@ -224,7 +221,6 @@ class InvitesTest extends FeatureTestCase
         $this->postJson(route('api.messenger.threads.invites.store', [
             'thread' => $thread->id,
         ]), [
-            'expires' => 0,
             'uses' => 25,
         ])
             ->assertForbidden();
@@ -240,7 +236,6 @@ class InvitesTest extends FeatureTestCase
         $this->postJson(route('api.messenger.threads.invites.store', [
             'thread' => $thread->id,
         ]), [
-            'expires' => 0,
             'uses' => 25,
         ])
             ->assertForbidden();
@@ -248,12 +243,29 @@ class InvitesTest extends FeatureTestCase
 
     /**
      * @test
-     * @dataProvider inviteValidation
-     * @param $expiresValue
+     * @dataProvider inviteValidationFailsUses
      * @param $usesValue
-     * @param $errors
      */
-    public function create_invite_fails_validation($expiresValue, $usesValue, $errors)
+    public function create_invite_fails_uses_validation($usesValue)
+    {
+        $thread = $this->createGroupThread($this->tippin);
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.invites.store', [
+            'thread' => $thread->id,
+        ]), [
+            'uses' => $usesValue,
+        ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('uses');
+    }
+
+    /**
+     * @test
+     * @dataProvider inviteValidationFailsExpires
+     * @param $expiresValue
+     */
+    public function create_invite_fails_expires_validation($expiresValue)
     {
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
@@ -262,22 +274,61 @@ class InvitesTest extends FeatureTestCase
             'thread' => $thread->id,
         ]), [
             'expires' => $expiresValue,
-            'uses' => $usesValue,
+            'uses' => 0,
         ])
             ->assertStatus(422)
-            ->assertJsonValidationErrors($errors);
+            ->assertJsonValidationErrors('expires');
     }
 
-    public function inviteValidation(): array
+    /**
+     * @test
+     * @dataProvider inviteValidationPassesExpires
+     * @param $expiresValue
+     */
+    public function create_invite_passes_expires_validation($expiresValue)
+    {
+        $thread = $this->createGroupThread($this->tippin);
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.invites.store', [
+            'thread' => $thread->id,
+        ]), [
+            'expires' => $expiresValue,
+            'uses' => 0,
+        ])
+            ->assertSuccessful();
+    }
+
+    public function inviteValidationFailsUses(): array
     {
         return [
-            'Fields cannot be empty' => ['', '', ['expires', 'uses']],
-            'Fields cannot be false' => [false, false, ['expires', 'uses']],
-            'Fields cannot be null' => [null, null, ['expires', 'uses']],
-            'Fields must be 0 or greater' => [-1, -1, ['expires', 'uses']],
-            'Fields cannot be an array' => [[1, 2], [1, 2], ['expires', 'uses']],
-            'Expires cannot be greater than 8' => [9, 0, ['expires']],
-            'Uses cannot be greater than 100' => [5, 101, ['uses']],
+            'Uses cannot be empty' => [''],
+            'Uses cannot be false' => [false],
+            'Uses cannot be null' => [null],
+            'Uses must be 0 or greater' => [-1],
+            'Uses cannot be an array' => [[1, 2]],
+            'Uses cannot be greater than 100' => [101],
+        ];
+    }
+
+    public function inviteValidationFailsExpires(): array
+    {
+        return [
+            'Expires cannot be array' => [[0,1]],
+            'Expires cannot be false' => [false],
+            'Expires cannot be integer' => [5],
+            'Expires cannot be now' => [now()],
+            'Expires cannot be before 5 minutes from now' => [now()->addMinutes(4)],
+        ];
+    }
+
+    public function inviteValidationPassesExpires(): array
+    {
+        return [
+            'Expires can be 10 minutes from now' => [now()->addMinutes(10)],
+            'Expires can be formatted year/month/day' => [now()->addWeek()->format('Y-m-d')],
+            'Expires can be formatted day/month/year' => [now()->addWeek()->format('d-m-Y')],
+            'Expires can be a year from now' => [now()->addYear()],
         ];
     }
 }

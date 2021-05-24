@@ -29,18 +29,16 @@ class StoreInviteTest extends FeatureTestCase
         $this->expectExceptionMessage('Group invites are currently disabled.');
 
         app(StoreInvite::class)->execute(Thread::factory()->group()->create(), [
-            'expires' => 0,
             'uses' => 0,
         ]);
     }
 
     /** @test */
-    public function it_stores_invite()
+    public function it_stores_invite_without_expiration()
     {
         $thread = Thread::factory()->group()->create();
 
         app(StoreInvite::class)->execute($thread, [
-            'expires' => 0,
             'uses' => 0,
         ]);
 
@@ -50,6 +48,26 @@ class StoreInviteTest extends FeatureTestCase
             'owner_type' => $this->tippin->getMorphClass(),
             'max_use' => 0,
             'expires_at' => null,
+        ]);
+    }
+
+    /** @test */
+    public function it_stores_invite_with_expiration()
+    {
+        $thread = Thread::factory()->group()->create();
+        $expires = now()->addHour();
+
+        app(StoreInvite::class)->execute($thread, [
+            'expires' => $expires,
+            'uses' => 0,
+        ]);
+
+        $this->assertDatabaseHas('thread_invites', [
+            'thread_id' => $thread->id,
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => $this->tippin->getMorphClass(),
+            'max_use' => 0,
+            'expires_at' => $expires,
         ]);
     }
 
