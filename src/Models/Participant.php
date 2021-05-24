@@ -87,26 +87,20 @@ class Participant extends Model
     protected $guarded = [];
 
     /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['last_read'];
-
-    /**
      * The attributes that should be cast.
      *
      * @var array
      */
     protected $casts = [
+        'add_participants' => 'boolean',
         'admin' => 'boolean',
+        'last_read' => 'datetime',
+        'manage_invites' => 'boolean',
         'muted' => 'boolean',
         'pending' => 'boolean',
-        'send_messages' => 'boolean',
         'send_knocks' => 'boolean',
+        'send_messages' => 'boolean',
         'start_calls' => 'boolean',
-        'add_participants' => 'boolean',
-        'manage_invites' => 'boolean',
     ];
 
     /**

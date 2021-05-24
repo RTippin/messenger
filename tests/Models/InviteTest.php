@@ -26,11 +26,12 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->trashed()->create([
+        Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->trashed()->create([
             'expires_at' => now(),
             'max_use' => 10,
             'uses' => 1,
         ]);
+        $invite = Invite::withTrashed()->first();
 
         $this->assertInstanceOf(Carbon::class, $invite->created_at);
         $this->assertInstanceOf(Carbon::class, $invite->updated_at);

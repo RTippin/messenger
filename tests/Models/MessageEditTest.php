@@ -29,11 +29,12 @@ class MessageEditTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        $edit = MessageEdit::factory()->for(
+        MessageEdit::factory()->for(
             Message::factory()->for(
                 Thread::factory()->create()
             )->owner($this->tippin)->create()
         )->create();
+        $edit = MessageEdit::first();
 
         $this->assertInstanceOf(Carbon::class, $edit->edited_at);
     }

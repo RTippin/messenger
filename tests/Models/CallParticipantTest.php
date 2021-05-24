@@ -71,14 +71,17 @@ class CallParticipantTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        $participant = CallParticipant::factory()->for(
+        CallParticipant::factory()->for(
             Call::factory()->for(
                 Thread::factory()->create()
             )->owner($this->tippin)->create()
-        )->owner($this->tippin)->create();
+        )->owner($this->tippin)->left()->create();
+
+        $participant = CallParticipant::first();
 
         $this->assertInstanceOf(Carbon::class, $participant->created_at);
         $this->assertInstanceOf(Carbon::class, $participant->updated_at);
+        $this->assertInstanceOf(Carbon::class, $participant->left_call);
         $this->assertFalse($participant->kicked);
     }
 }

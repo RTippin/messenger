@@ -25,7 +25,8 @@ class PendingFriendTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        $pending = PendingFriend::factory()->providers($this->tippin, $this->doe)->create();
+        PendingFriend::factory()->providers($this->tippin, $this->doe)->create();
+        $pending = PendingFriend::first();
 
         $this->assertInstanceOf(Carbon::class, $pending->created_at);
         $this->assertInstanceOf(Carbon::class, $pending->updated_at);

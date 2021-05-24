@@ -70,12 +70,8 @@ class Invite extends Model
     /**
      * @var array
      */
-    protected $dates = ['expires_at'];
-
-    /**
-     * @var array
-     */
     protected $casts = [
+        'expires_at' => 'datetime',
         'max_use' => 'integer',
         'uses' => 'integer',
     ];

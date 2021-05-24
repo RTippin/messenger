@@ -58,17 +58,11 @@ class CallParticipant extends Model
     protected $guarded = [];
 
     /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['left_call'];
-
-    /**
      * @var array
      */
     protected $casts = [
         'kicked' => 'boolean',
+        'left_call' => 'datetime',
     ];
 
     /**

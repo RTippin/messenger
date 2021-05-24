@@ -30,11 +30,12 @@ class MessageReactionTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        $reaction = MessageReaction::factory()->for(
+        MessageReaction::factory()->for(
             Message::factory()->for(
                 Thread::factory()->create()
             )->owner($this->tippin)->create()
         )->owner($this->tippin)->create();
+        $reaction = MessageReaction::first();
 
         $this->assertInstanceOf(Carbon::class, $reaction->created_at);
     }

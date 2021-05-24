@@ -35,13 +35,15 @@ class ParticipantTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        $participant = Participant::factory()->for(
+        Participant::factory()->for(
             Thread::factory()->group()->create()
         )->owner($this->tippin)->admin()->read()->trashed()->create();
+        $participant = Participant::withTrashed()->first();
 
         $this->assertInstanceOf(Carbon::class, $participant->created_at);
         $this->assertInstanceOf(Carbon::class, $participant->updated_at);
         $this->assertInstanceOf(Carbon::class, $participant->deleted_at);
+        $this->assertInstanceOf(Carbon::class, $participant->last_read);
         $this->assertTrue($participant->admin);
         $this->assertTrue($participant->send_messages);
         $this->assertTrue($participant->send_knocks);

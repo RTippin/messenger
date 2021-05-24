@@ -43,7 +43,8 @@ class MessageTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->trashed()->create();
+        Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->trashed()->create();
+        $message = Message::withTrashed()->first();
 
         $this->assertInstanceOf(Carbon::class, $message->created_at);
         $this->assertInstanceOf(Carbon::class, $message->updated_at);

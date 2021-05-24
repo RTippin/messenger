@@ -36,7 +36,8 @@ class ThreadTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        $thread = Thread::factory()->group()->trashed()->create(['subject' => 'Test']);
+        Thread::factory()->group()->trashed()->create(['subject' => 'Test']);
+        $thread = Thread::withTrashed()->first();
 
         $this->assertInstanceOf(Carbon::class, $thread->created_at);
         $this->assertInstanceOf(Carbon::class, $thread->updated_at);

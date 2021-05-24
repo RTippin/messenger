@@ -32,7 +32,8 @@ class CallTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->ended()->create();
+        Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->ended()->create();
+        $call = Call::first();
 
         $this->assertInstanceOf(Carbon::class, $call->created_at);
         $this->assertInstanceOf(Carbon::class, $call->updated_at);

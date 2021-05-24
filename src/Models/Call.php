@@ -74,6 +74,7 @@ class Call extends Model
      * @var array
      */
     protected $casts = [
+        'call_ended' => 'datetime',
         'room_id' => 'integer',
         'setup_complete' => 'boolean',
         'teardown_complete' => 'boolean',
@@ -84,13 +85,6 @@ class Call extends Model
      * @var null|CallParticipant
      */
     private ?CallParticipant $currentParticipantCache = null;
-
-    /**
-     * The attributes that should be mutated to dates.
-     *
-     * @var array
-     */
-    protected $dates = ['call_ended'];
 
     /**
      * @return MorphTo|MessengerProvider
