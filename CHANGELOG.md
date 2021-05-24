@@ -3,6 +3,14 @@
 
 ---
 
+### [v0.33 (05-24-2021)]
+
+#### Changed
+- Any models using `protected $dates` were switched to using cast for `datetime`
+- Storing invite now accepts null or any valid timestamp more than 5 minutes in the future, for the `expires` time.
+
+---
+
 ### [v0.32 (05-18-2021)]
 
 #### Added

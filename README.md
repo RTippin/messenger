@@ -17,7 +17,7 @@
 ---
 
 ### Prerequisites
-- PHP >= 7.4||8.0
+- PHP >= 7.4 | 8.0
 - Laravel >= 8.42
 - laravel broadcast driver configured.
 
@@ -48,6 +48,7 @@
 - React / Vue frontend.
 - Configurable friend driver.
 - Language file support.
+- BOTs in group threads that respond to custom commands.
 
 ### Notes
 - If our event listeners are enabled in your config, the queue your worker must use is `messenger`, as all listeners are queued on that channel.

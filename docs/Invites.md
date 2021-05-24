@@ -87,9 +87,10 @@
 ---
 ### POST `/api/messenger/threads/{thread}/invites` | *api.messenger.threads.invites.store*
 #### Payload:
+- expires can be null, or a valid date format anytime more than 5 minutes in the future.
 ```json
 {
-  "expires": 7, 
+  "expires": "2020-12-09 10:00:00", 
   "uses": 25
 }
 ```
@@ -125,7 +126,7 @@
   "code": "7EIFRXXP",
   "max_use": 25,
   "uses": 0,
-  "expires_at": "2020-12-22T05:51:55.000000Z",
+  "expires_at": "2020-12-09T10:00:00.000000Z",
   "thread_id": "92313cf7-b356-4d74-944c-c799fcfc3b1e",
   "id": "92315aa0-c44b-4da8-8b7f-5d5529412874",
   "updated_at": "2020-12-08T05:51:55.000000Z",
