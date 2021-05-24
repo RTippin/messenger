@@ -314,7 +314,7 @@ class InvitesTest extends FeatureTestCase
     public function inviteValidationFailsExpires(): array
     {
         return [
-            'Expires cannot be array' => [[0,1]],
+            'Expires cannot be array' => [[0, 1]],
             'Expires cannot be false' => [false],
             'Expires cannot be integer' => [5],
             'Expires cannot be now' => [now()],
