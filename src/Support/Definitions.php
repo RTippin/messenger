@@ -112,19 +112,4 @@ class Definitions
         'send_knocks' => true,
         'send_messages' => true,
     ];
-
-    /**
-     * Invite expires at post meanings.
-     */
-    const InviteExpires = [
-        0 => 'NEVER',
-        1 => 'THIRTY_MINUTES',
-        2 => 'ONE_HOUR',
-        3 => 'SIX_HOURS',
-        4 => 'TWELVE_HOURS',
-        5 => 'ONE_DAY',
-        6 => 'ONE_WEEK',
-        7 => 'TWO_WEEKS',
-        8 => 'ONE_MONTH',
-    ];
 }
