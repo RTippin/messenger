@@ -61,9 +61,8 @@
 - You may view our demo laravel 8 source with this package installed, including a live demo: 
   - [Demo Source][link-demo-source]
   - [Live Demo][link-live-demo]
-- Demo models for how we integrate them with our contracts:
+- Demo User model for how we integrate them with our contracts:
   - [User Model][link-demo-user]
-  - [Company Model][link-demo-company]
 - Demo console kernel utilizes our commands to track active calls, purge archived files, etc
   - [Console Kernel][link-demo-kernel]
 
@@ -905,7 +904,6 @@ If you discover any security related issues, please email author email instead o
 [link-demo-source]: https://github.com/RTippin/messenger-demo
 [link-live-demo]: https://tippindev.com
 [link-demo-user]: https://github.com/RTippin/messenger-demo/blob/master/app/Models/User.php
-[link-demo-company]: https://github.com/RTippin/messenger-demo/blob/master/app/Models/Company.php
 [link-demo-kernel]: https://github.com/RTippin/messenger-demo/blob/master/app/Console/Kernel.php
 [link-janus-server]: https://janus.conf.meetecho.com/docs/
 [link-janus-video]: https://janus.conf.meetecho.com/docs/videoroom.html
