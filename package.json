@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@joeattardi/emoji-button": "^4.6.0",
+    "audio-recorder-polyfill": "^0.4.1",
     "autolinker": "^2.2.2",
     "bootstrap": "^4.5.0",
     "datatables.net": "^1.10.21",

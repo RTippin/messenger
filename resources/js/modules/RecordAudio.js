@@ -1,3 +1,9 @@
+import AudioRecorder from 'audio-recorder-polyfill';
+import mpegEncoder from 'audio-recorder-polyfill/mpeg-encoder';
+AudioRecorder.encoder = mpegEncoder;
+AudioRecorder.prototype.mimeType = 'audio/mpeg';
+window.MediaRecorder = AudioRecorder;
+
 window.RecordAudio = (function () {
     var opt = {
         lock : true,
@@ -16,7 +22,6 @@ window.RecordAudio = (function () {
             ctx : null,
             animator : null,
             recorder : null,
-            chunks : [],
             final_blob : null,
         },
     },
@@ -60,11 +65,8 @@ window.RecordAudio = (function () {
             opt.elements.visualizerCtx = opt.elements.visualizer.getContext("2d");
             opt.elements.visualizer.width = opt.elements.visualizer.parentElement.offsetWidth-10;
             opt.audio.stream = stream;
-            opt.audio.recorder = new MediaRecorder(opt.audio.stream, {mimeType : 'audio/webm'});
-            opt.audio.recorder.onstop = methods.stopped;
-            opt.audio.recorder.ondataavailable = function(e) {
-                opt.audio.chunks.push(e.data);
-            }
+            opt.audio.recorder = new MediaRecorder(opt.audio.stream);
+            opt.audio.recorder.addEventListener('dataavailable', methods.stopped)
             methods.visualize(opt.audio.stream);
         },
         start : function(){
@@ -94,9 +96,8 @@ window.RecordAudio = (function () {
             methods.closed();
             Messenger.alert().destroyModal();
         },
-        stopped : function(){
-            opt.audio.final_blob = new Blob(opt.audio.chunks, {type : 'audio/webm'});
-            opt.audio.chunks = [];
+        stopped : function(e){
+            opt.audio.final_blob = e.data;
             opt.elements.completed_audio.src = window.URL.createObjectURL(opt.audio.final_blob);
         },
         visualize : function(stream){
@@ -160,7 +161,6 @@ window.RecordAudio = (function () {
                     stream : null,
                     ctx : null,
                     recorder : null,
-                    chunks : [],
                     final_blob : null,
                 },
             };

@@ -130,6 +130,7 @@ window.CallManager = (function () {
                 return;
             }
             opt._call = call;
+            opt.call_admin = call.options.admin;
             opt.room_id = parseInt(call.options.room_id);
             opt.room_pin = call.options.room_pin;
             if(reloaded){
