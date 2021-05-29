@@ -11,11 +11,13 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use RTippin\Messenger\Database\Factories\ThreadFactory;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
+use RTippin\MessengerBots\Models\Bot;
 
 /**
  * @property string $id
@@ -40,6 +42,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read Collection|\RTippin\Messenger\Models\Participant[] $participants
  * @property-read int|null $participants_count
  * @property-read \RTippin\Messenger\Models\Message|null $latestMessage
+ * @property-read \RTippin\MessengerBots\Models\Bot[] $bots
  * @method static Builder|Thread group()
  * @method static Builder|Thread private()
  * @method static \Illuminate\Database\Query\Builder|Thread onlyTrashed()
@@ -124,7 +127,7 @@ class Thread extends Model
     /**
      * @return HasMany|Participant|Collection
      */
-    public function participants()
+    public function participants(): HasMany
     {
         return $this->hasMany(
             Participant::class,
@@ -136,7 +139,7 @@ class Thread extends Model
     /**
      * @return HasMany|Message|Collection
      */
-    public function messages()
+    public function messages(): HasMany
     {
         return $this->hasMany(
             Message::class,
@@ -148,7 +151,7 @@ class Thread extends Model
     /**
      * @return HasMany|Call|Collection
      */
-    public function calls()
+    public function calls(): HasMany
     {
         return $this->hasMany(
             Call::class,
@@ -160,7 +163,7 @@ class Thread extends Model
     /**
      * @return HasMany|Invite|Collection
      */
-    public function invites()
+    public function invites(): HasMany
     {
         return $this->hasMany(Invite::class);
     }
@@ -176,7 +179,7 @@ class Thread extends Model
             'id'
         )
             ->whereNull('call_ended')
-            ->latestOfMany();
+            ->latest();
     }
 
     /**
@@ -189,6 +192,23 @@ class Thread extends Model
             'thread_id',
             'id'
         )->latestOfMany();
+    }
+
+    /**
+     * @return HasMany|Bot|Collection
+     * @throws FeatureDisabledException
+     */
+    public function bots(): HasMany
+    {
+        if (class_exists(Bot::class)) {
+            return $this->hasMany(
+                Bot::class,
+                'thread_id',
+                'id'
+            );
+        }
+
+        throw new FeatureDisabledException('Messenger Bots is not installed.');
     }
 
     /**

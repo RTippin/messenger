@@ -106,7 +106,7 @@ class Participant extends Model
     /**
      * @return BelongsTo|Thread
      */
-    public function thread()
+    public function thread(): BelongsTo
     {
         return $this->belongsTo(
             Thread::class,
@@ -116,9 +116,9 @@ class Participant extends Model
     }
 
     /**
-     * @return HasMany|Collection
+     * @return HasMany|Message|Collection
      */
-    public function messages()
+    public function messages(): HasMany
     {
         return $this->hasMany(
             Message::class,
@@ -132,7 +132,7 @@ class Participant extends Model
     /**
      * @return MorphTo|MessengerProvider
      */
-    public function owner()
+    public function owner(): MorphTo
     {
         return $this->morphTo()->withDefault(function () {
             return Messenger::getGhostProvider();

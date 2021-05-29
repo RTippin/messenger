@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Models;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\GhostUser;
@@ -60,6 +61,17 @@ class ThreadTest extends FeatureTestCase
         $this->assertInstanceOf(Collection::class, $thread->messages);
         $this->assertInstanceOf(Collection::class, $thread->calls);
         $this->assertInstanceOf(Collection::class, $thread->invites);
+    }
+
+    /** @test */
+    public function it_doesnt_have_bot_relation()
+    {
+        $thread = Thread::factory()->group()->create();
+
+        $this->expectException(FeatureDisabledException::class);
+        $this->expectExceptionMessage('Messenger Bots is not installed.');
+
+        $bots = $thread->bots;
     }
 
     /** @test */

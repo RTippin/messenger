@@ -53,7 +53,7 @@ class Friend extends Model
     /**
      * @return MorphTo|MessengerProvider
      */
-    public function owner()
+    public function owner(): MorphTo
     {
         return $this->morphTo()->withDefault(function () {
             return Messenger::getGhostProvider();
@@ -63,7 +63,7 @@ class Friend extends Model
     /**
      * @return MorphTo|MessengerProvider
      */
-    public function party()
+    public function party(): MorphTo
     {
         return $this->morphTo()->withDefault(function () {
             return Messenger::getGhostProvider();

@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -112,7 +113,7 @@ class Message extends Model
     /**
      * @return BelongsTo|Thread
      */
-    public function thread()
+    public function thread(): BelongsTo
     {
         return $this->belongsTo(
             Thread::class,
@@ -124,7 +125,7 @@ class Message extends Model
     /**
      * @return MorphTo|MessengerProvider
      */
-    public function owner()
+    public function owner(): MorphTo
     {
         return $this->morphTo()->withDefault(function () {
             return Messenger::getGhostProvider();
@@ -132,17 +133,17 @@ class Message extends Model
     }
 
     /**
-     * @return HasMany|MessageEdit[]
+     * @return HasMany|MessageEdit|Collection
      */
-    public function edits()
+    public function edits(): HasMany
     {
         return $this->hasMany(MessageEdit::class);
     }
 
     /**
-     * @return HasMany|MessageReaction
+     * @return HasMany|MessageReaction|Collection
      */
-    public function reactions()
+    public function reactions(): HasMany
     {
         return $this->hasMany(MessageReaction::class);
     }

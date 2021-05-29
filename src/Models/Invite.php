@@ -79,7 +79,7 @@ class Invite extends Model
     /**
      * @return MorphTo|MessengerProvider
      */
-    public function owner()
+    public function owner(): MorphTo
     {
         return $this->morphTo()->withDefault(function () {
             return Messenger::getGhostProvider();
@@ -89,7 +89,7 @@ class Invite extends Model
     /**
      * @return BelongsTo|Thread
      */
-    public function thread()
+    public function thread(): BelongsTo
     {
         return $this->belongsTo(
             Thread::class,

@@ -68,7 +68,7 @@ class CallParticipant extends Model
     /**
      * @return MorphTo|MessengerProvider
      */
-    public function owner()
+    public function owner(): MorphTo
     {
         return $this->morphTo()->withDefault(function () {
             return Messenger::getGhostProvider();
@@ -78,7 +78,7 @@ class CallParticipant extends Model
     /**
      * @return BelongsTo|Call
      */
-    public function call()
+    public function call(): BelongsTo
     {
         return $this->belongsTo(Call::class);
     }

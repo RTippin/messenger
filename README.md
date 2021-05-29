@@ -42,13 +42,13 @@
 - All in one system ready to plug into any laravel app. You may even choose to utilize only our API, and disable the web routes and published frontend assets.
 
 ### Upcoming
+- Bots addon package, allowing bots with custom actions/triggers to be added to any thread.
 - Route params for API results / better pagination.
 - Resizing and saving images when uploaded instead of on the fly.
 - Video message type.
 - React / Vue frontend.
 - Configurable friend driver.
 - Language file support.
-- BOTs in group threads that respond to custom commands.
 
 ### Notes
 - If our event listeners are enabled in your config, the queue your worker must use is `messenger`, as all listeners are queued on that channel.

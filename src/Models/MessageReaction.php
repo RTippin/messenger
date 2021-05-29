@@ -78,7 +78,7 @@ class MessageReaction extends Model
     /**
      * @return BelongsTo|Message
      */
-    public function message()
+    public function message(): BelongsTo
     {
         return $this->belongsTo(
             Message::class,
@@ -90,7 +90,7 @@ class MessageReaction extends Model
     /**
      * @return MorphTo|MessengerProvider
      */
-    public function owner()
+    public function owner(): MorphTo
     {
         return $this->morphTo()->withDefault(function () {
             return Messenger::getGhostProvider();

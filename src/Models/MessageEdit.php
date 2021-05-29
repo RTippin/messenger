@@ -68,7 +68,7 @@ class MessageEdit extends Model
     /**
      * @return BelongsTo|Message
      */
-    public function message()
+    public function message(): BelongsTo
     {
         return $this->belongsTo(
             Message::class,

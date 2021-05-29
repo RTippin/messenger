@@ -53,7 +53,7 @@ class PendingFriend extends Model
     /**
      * @return MorphTo|MessengerProvider
      */
-    public function sender()
+    public function sender(): MorphTo
     {
         return $this->morphTo()->withDefault(function () {
             return Messenger::getGhostProvider();
@@ -63,7 +63,7 @@ class PendingFriend extends Model
     /**
      * @return MorphTo|MessengerProvider
      */
-    public function recipient()
+    public function recipient(): MorphTo
     {
         return $this->morphTo()->withDefault(function () {
             return Messenger::getGhostProvider();
