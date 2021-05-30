@@ -12,6 +12,7 @@ use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Support\ProvidersVerification;
+use RTippin\MessengerBots\MessengerBotsServiceProvider;
 
 /**
  * @property-read Collection $providers
@@ -127,6 +128,11 @@ trait MessengerConfig
      * @var bool
      */
     private bool $calling;
+
+    /**
+     * @var bool
+     */
+    private bool $botsInstalled;
 
     /**
      * @var bool
@@ -329,6 +335,7 @@ trait MessengerConfig
         'defaultThreadAvatars',
         'avatarStorage',
         'threadStorage',
+        'botsInstalled',
     ];
 
     /**
@@ -557,6 +564,14 @@ trait MessengerConfig
     public function isCallingEnabled(): bool
     {
         return $this->calling;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMessengerBotsInstalled(): bool
+    {
+        return $this->botsInstalled;
     }
 
     /**
@@ -1459,5 +1474,6 @@ trait MessengerConfig
         $this->searchRateLimit = $this->configRepo->get('messenger.rate_limits.search');
         $this->messageRateLimit = $this->configRepo->get('messenger.rate_limits.message');
         $this->attachmentRateLimit = $this->configRepo->get('messenger.rate_limits.attachment');
+        $this->botsInstalled = class_exists(MessengerBotsServiceProvider::class);
     }
 }

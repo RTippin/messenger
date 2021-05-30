@@ -82,6 +82,7 @@ class Definitions
         'add_participants' => false,
         'messaging' => true,
         'knocks' => true,
+        'chat_bots' => false,
         'lockout' => false,
     ];
 
@@ -90,6 +91,7 @@ class Definitions
      */
     const DefaultParticipant = [
         'add_participants' => false,
+        'manage_bots' => false,
         'manage_invites' => false,
         'admin' => false,
         'deleted_at' => null,
@@ -104,6 +106,7 @@ class Definitions
      */
     const DefaultAdminParticipant = [
         'add_participants' => true,
+        'manage_bots' => true,
         'manage_invites' => true,
         'admin' => true,
         'deleted_at' => null,

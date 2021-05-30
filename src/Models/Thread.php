@@ -28,6 +28,7 @@ use RTippin\MessengerBots\Models\Bot;
  * @property bool $calling
  * @property bool $messaging
  * @property bool $knocks
+ * @property bool $chat_bots
  * @property bool $lockout
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -102,6 +103,7 @@ class Thread extends Model
         'knocks' => 'boolean',
         'type' => 'integer',
         'lockout' => 'boolean',
+        'chat_bots' => 'boolean',
     ];
 
     /**
@@ -200,15 +202,15 @@ class Thread extends Model
      */
     public function bots(): HasMany
     {
-        if (class_exists(Bot::class)) {
-            return $this->hasMany(
-                Bot::class,
-                'thread_id',
-                'id'
-            );
+        if (! Messenger::isMessengerBotsInstalled()) {
+            throw new FeatureDisabledException('Messenger Bots is not installed.');
         }
 
-        throw new FeatureDisabledException('Messenger Bots is not installed.');
+        return $this->hasMany(
+            Bot::class,
+            'thread_id',
+            'id'
+        );
     }
 
     /**

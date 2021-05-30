@@ -31,6 +31,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property bool $send_messages
  * @property bool $add_participants
  * @property bool $manage_invites
+ * @property bool $manage_bots
  * @property \Illuminate\Support\Carbon|null $last_read
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
@@ -95,6 +96,7 @@ class Participant extends Model
         'add_participants' => 'boolean',
         'admin' => 'boolean',
         'last_read' => 'datetime',
+        'manage_bots' => 'boolean',
         'manage_invites' => 'boolean',
         'muted' => 'boolean',
         'pending' => 'boolean',

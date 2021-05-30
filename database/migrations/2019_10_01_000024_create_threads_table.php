@@ -23,6 +23,7 @@ class CreateThreadsTable extends Migration
             $table->boolean('calling')->default(true);
             $table->boolean('messaging')->default(true);
             $table->boolean('knocks')->default(true);
+            $table->boolean('chat_bots')->default(false);
             $table->boolean('lockout')->default(false);
             $table->timestamps(6);
             $table->softDeletes();

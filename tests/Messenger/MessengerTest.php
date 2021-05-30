@@ -499,6 +499,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame('jpg,jpeg,png,bmp,gif,webp', $this->messenger->getProviderAvatarMimeTypes());
         $this->assertSame('jpg,jpeg,png,bmp,gif,webp', $this->messenger->getThreadAvatarMimeTypes());
         $this->assertSame('aac,mp3,oga,wav,weba,webm', $this->messenger->getMessageAudioMimeTypes());
+        $this->assertFalse($this->messenger->isMessengerBotsInstalled());
     }
 
     /** @test */

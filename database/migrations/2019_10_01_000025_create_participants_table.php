@@ -26,6 +26,7 @@ class CreateParticipantsTable extends Migration
             $table->boolean('send_messages')->default(true);
             $table->boolean('add_participants')->default(false);
             $table->boolean('manage_invites')->default(false);
+            $table->boolean('manage_bots')->default(false);
             $table->timestamp('last_read', 6)->nullable()->default(null);
             $table->timestamps(6);
             $table->softDeletes();

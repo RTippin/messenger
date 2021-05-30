@@ -50,6 +50,7 @@ class ParticipantTest extends FeatureTestCase
         $this->assertTrue($participant->start_calls);
         $this->assertTrue($participant->add_participants);
         $this->assertTrue($participant->manage_invites);
+        $this->assertTrue($participant->manage_bots);
         $this->assertFalse($participant->muted);
         $this->assertFalse($participant->pending);
     }
