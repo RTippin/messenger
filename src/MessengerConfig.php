@@ -376,7 +376,7 @@ trait MessengerConfig
     public function getConfig(): array
     {
         return (new Collection(get_object_vars($this)))->reject(function ($value, $key) {
-            return in_array($key, self::$guarded) && ! in_array($key, ['isProvidersCached']);
+            return in_array($key, self::$guarded) && ! in_array($key, ['botsInstalled', 'isProvidersCached']);
         })
             ->merge([
                 'providers' => $this->providers->map(function ($provider) {

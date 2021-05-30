@@ -52,7 +52,8 @@ abstract class NewThreadAction extends BaseMessengerAction
     protected function generateResource(): self
     {
         $this->setJsonResource(new ThreadResource(
-            $this->getThread()->fresh()
+            $this->getThread()->fresh(),
+            true
         ));
 
         return $this;

@@ -65,7 +65,7 @@ class ThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_doesnt_have_bot_relation()
+    public function it_throws_exception_for_bot_relation_if_not_installed()
     {
         $thread = Thread::factory()->group()->create();
 

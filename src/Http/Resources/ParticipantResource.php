@@ -51,6 +51,7 @@ class ParticipantResource extends JsonResource
             'send_messages' => $this->participant->send_messages,
             'add_participants' => $this->participant->add_participants,
             'manage_invites' => $this->participant->manage_invites,
+            'manage_bots' => $this->participant->manage_bots,
             'start_calls' => $this->participant->start_calls,
             'owner_id' => $this->participant->owner_id,
             'owner_type' => $this->participant->owner_type,

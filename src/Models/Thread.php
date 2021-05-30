@@ -524,12 +524,20 @@ class Thread extends Model
     /**
      * @return bool
      */
-    public function canInviteParticipants(): bool
+    public function hasInvitationsFeature(): bool
     {
         return Messenger::isThreadInvitesEnabled()
-            && ! $this->isLocked()
             && $this->isGroup()
-            && $this->invitations
+            && $this->invitations;
+    }
+
+    /**
+     * @return bool
+     */
+    public function canInviteParticipants(): bool
+    {
+        return $this->hasInvitationsFeature()
+            && ! $this->isLocked()
             && ($this->currentParticipant()->manage_invites
                 || $this->isAdmin());
     }
@@ -539,12 +547,20 @@ class Thread extends Model
      */
     public function canJoinWithInvite(): bool
     {
-        return Messenger::isThreadInvitesEnabled()
+        return $this->hasInvitationsFeature()
             && Messenger::isProviderSet()
-            && $this->isGroup()
             && ! $this->lockout
-            && $this->invitations
             && ! $this->hasCurrentProvider();
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasCallingFeature(): bool
+    {
+        return Messenger::isCallingEnabled()
+            && ! Messenger::isCallingTemporarilyDisabled()
+            && $this->calling;
     }
 
     /**
@@ -552,11 +568,9 @@ class Thread extends Model
      */
     public function canCall(): bool
     {
-        return Messenger::isCallingEnabled()
-            && ! Messenger::isCallingTemporarilyDisabled()
+        return $this->hasCallingFeature()
             && ! $this->isLocked()
             && ! $this->isPending()
-            && $this->calling
             && ($this->isPrivate()
                 || ($this->currentParticipant()->start_calls
                     || $this->isAdmin()));
@@ -565,15 +579,41 @@ class Thread extends Model
     /**
      * @return bool
      */
+    public function hasKnocksFeature(): bool
+    {
+        return Messenger::isKnockKnockEnabled() && $this->knocks;
+    }
+
+    /**
+     * @return bool
+     */
     public function canKnock(): bool
     {
-        return Messenger::isKnockKnockEnabled()
+        return $this->hasKnocksFeature()
             && ! $this->isLocked()
             && ! $this->isPending()
-            && $this->knocks
             && ($this->isPrivate()
                 || ($this->currentParticipant()->send_knocks
                     || $this->isAdmin()));
+    }
+
+    /**
+     * @return bool
+     */
+    public function hasBotsFeature(): bool
+    {
+        return Messenger::isMessengerBotsInstalled() && $this->chat_bots;
+    }
+
+    /**
+     * @return bool
+     */
+    public function canManageBots(): bool
+    {
+        return $this->hasBotsFeature()
+            && ! $this->isLocked()
+            && ($this->isAdmin()
+                || $this->currentParticipant()->manage_bots);
     }
 
     /**

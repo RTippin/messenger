@@ -21,6 +21,11 @@ class ThreadResource extends JsonResource
     /**
      * @var false
      */
+    private bool $addSystemFeatures;
+
+    /**
+     * @var false
+     */
     private bool $addParticipants;
 
     /**
@@ -37,11 +42,13 @@ class ThreadResource extends JsonResource
      * ThreadResource constructor.
      *
      * @param Thread $thread
+     * @param bool $addSystemFeatures
      * @param bool $addParticipants
      * @param bool $addMessages
      * @param bool $addCalls
      */
     public function __construct(Thread $thread,
+                                bool $addSystemFeatures = false,
                                 bool $addParticipants = false,
                                 bool $addMessages = false,
                                 bool $addCalls = false)
@@ -49,6 +56,7 @@ class ThreadResource extends JsonResource
         parent::__construct($thread);
 
         $this->thread = $thread;
+        $this->addSystemFeatures = $addSystemFeatures;
         $this->addParticipants = $addParticipants;
         $this->addMessages = $addMessages;
         $this->addCalls = $addCalls;
@@ -79,6 +87,8 @@ class ThreadResource extends JsonResource
             'updated_at' => $this->thread->updated_at,
             'options' => [
                 'admin' => $this->thread->isAdmin(),
+                'manage_bots' => $this->thread->canManageBots(),
+                'view_bots' => $this->thread->hasBotsFeature(),
                 'muted' => $this->thread->isMuted(),
                 'add_participants' => $this->thread->canAddParticipants(),
                 'invitations' => $this->thread->canInviteParticipants(),
@@ -89,6 +99,9 @@ class ThreadResource extends JsonResource
                     fn () => $this->thread->isAwaitingMyApproval()
                 ),
             ],
+            'system_features' => $this->when($this->addSystemFeatures,
+                fn () => (new SystemFeaturesResource(null))->resolve()
+            ),
             'resources' => [
                 'recipient' => $this->when($this->thread->isPrivate(),
                     fn () => $this->addRecipient()

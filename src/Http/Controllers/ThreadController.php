@@ -66,7 +66,7 @@ class ThreadController
             'participants.owner',
             'latestMessage.owner',
             'activeCall.participants.owner',
-        ]));
+        ]), true);
     }
 
     /**

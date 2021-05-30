@@ -38,7 +38,7 @@ class ThreadLoader
             return $this->withRelations($thread, $relations);
         }
 
-        return new ThreadResource($thread->load(self::LOAD));
+        return new ThreadResource($thread->load(self::LOAD), true);
     }
 
     /**
@@ -58,6 +58,7 @@ class ThreadLoader
 
         return new ThreadResource(
             $thread->load(self::LOAD),
+            true,
             in_array('participants', $options),
             in_array('messages', $options),
             in_array('calls', $options)
