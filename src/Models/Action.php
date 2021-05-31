@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Database\Factories\ActionFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Traits\Uuids;
-use RTippin\Messenger\Database\Factories\ActionFactory;
 
 /**
  * @property string $id

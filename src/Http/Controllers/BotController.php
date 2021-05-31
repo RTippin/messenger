@@ -2,11 +2,12 @@
 
 namespace RTippin\Messenger\Http\Controllers;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Models\Thread;
 
 class BotController
 {
@@ -15,6 +16,8 @@ class BotController
     /**
      * Display a listing of thread bots.
      *
+     * @param Thread $thread
+     * @throws AuthorizationException
      */
     public function index(Thread $thread)
     {
@@ -28,8 +31,13 @@ class BotController
 
     /**
      * Display the bot.
+     *
+     * @param Thread $thread
+     * @param Bot $bot
+     * @return Bot
+     * @throws AuthorizationException
      */
-    public function show(Thread $thread, Bot $bot)
+    public function show(Thread $thread, Bot $bot): Bot
     {
         $this->authorize('view', [
             Bot::class,
@@ -42,6 +50,10 @@ class BotController
     /**
      * Store a bot.
      *
+     * @param Request $request
+     * @param Thread $thread
+     * @return Bot
+     * @throws AuthorizationException
      */
     public function store(Request $request, Thread $thread)
     {
@@ -58,8 +70,7 @@ class BotController
     }
 
     /**
-     * Update the .
-     *
+     * Update the bot.
      */
     public function update()
     {
@@ -67,8 +78,7 @@ class BotController
     }
 
     /**
-     * Remove the .
-     *
+     * Remove the bot.
      */
     public function destroy()
     {

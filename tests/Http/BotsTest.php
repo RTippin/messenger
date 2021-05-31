@@ -49,7 +49,7 @@ class BotsTest extends FeatureTestCase
 
         $this->getJson(route('api.messenger.threads.bots.show', [
             'thread' => $thread->id,
-            'bot' => $bot->id
+            'bot' => $bot->id,
         ]))
             ->assertSuccessful()
             ->assertJson([

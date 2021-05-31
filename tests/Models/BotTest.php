@@ -5,10 +5,10 @@ namespace RTippin\Messenger\Tests\Models;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Models\GhostUser;
-use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Models\Action;
 use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Models\GhostUser;
+use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class BotTest extends FeatureTestCase

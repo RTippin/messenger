@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Models;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\GhostUser;

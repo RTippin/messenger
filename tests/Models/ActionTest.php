@@ -4,9 +4,9 @@ namespace RTippin\Messenger\Tests\Models;
 
 use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Action;
+use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class ActionTest extends FeatureTestCase

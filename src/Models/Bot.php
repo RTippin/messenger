@@ -11,11 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Database\Factories\BotFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
-use RTippin\Messenger\Database\Factories\BotFactory;
 
 /**
  * @property string $id
