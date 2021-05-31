@@ -3,6 +3,7 @@
 namespace RTippin\Messenger;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
 use LogicException;
@@ -25,6 +26,7 @@ use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Http\Middleware\MessengerApi;
+use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Services\EmojiService;
 
 class MessengerServiceProvider extends ServiceProvider
@@ -46,6 +48,10 @@ class MessengerServiceProvider extends ServiceProvider
         $this->registerPolicies();
         $this->registerListeners();
         $this->registerChannels();
+
+        Relation::morphMap([
+            'bots' => Bot::class,
+        ]);
 
         Collection::macro('forProvider', function (MessengerProvider $provider, string $morph = 'owner') {
             /** @var Collection $this */

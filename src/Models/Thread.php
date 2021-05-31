@@ -11,13 +11,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use RTippin\Messenger\Database\Factories\ThreadFactory;
-use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
-use RTippin\MessengerBots\Models\Bot;
 
 /**
  * @property string $id
@@ -43,7 +41,7 @@ use RTippin\MessengerBots\Models\Bot;
  * @property-read Collection|\RTippin\Messenger\Models\Participant[] $participants
  * @property-read int|null $participants_count
  * @property-read \RTippin\Messenger\Models\Message|null $latestMessage
- * @property-read \RTippin\MessengerBots\Models\Bot[] $bots
+ * @property-read \RTippin\Messenger\Models\Bot[] $bots
  * @method static Builder|Thread group()
  * @method static Builder|Thread private()
  * @method static \Illuminate\Database\Query\Builder|Thread onlyTrashed()
@@ -198,14 +196,9 @@ class Thread extends Model
 
     /**
      * @return HasMany|Bot|Collection
-     * @throws FeatureDisabledException
      */
     public function bots(): HasMany
     {
-        if (! Messenger::isMessengerBotsInstalled()) {
-            throw new FeatureDisabledException('Messenger Bots is not installed.');
-        }
-
         return $this->hasMany(
             Bot::class,
             'thread_id',

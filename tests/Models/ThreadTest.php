@@ -62,17 +62,7 @@ class ThreadTest extends FeatureTestCase
         $this->assertInstanceOf(Collection::class, $thread->messages);
         $this->assertInstanceOf(Collection::class, $thread->calls);
         $this->assertInstanceOf(Collection::class, $thread->invites);
-    }
-
-    /** @test */
-    public function it_throws_exception_for_bot_relation_if_not_installed()
-    {
-        $thread = Thread::factory()->group()->create();
-
-        $this->expectException(FeatureDisabledException::class);
-        $this->expectExceptionMessage('Messenger Bots is not installed.');
-
-        $bots = $thread->bots;
+        $this->assertInstanceOf(Collection::class, $thread->bots);
     }
 
     /** @test */

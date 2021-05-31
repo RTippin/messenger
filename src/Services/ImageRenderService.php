@@ -9,6 +9,7 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
 use Intervention\Image\ImageManager;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Support\Definitions;
@@ -177,6 +178,43 @@ class ImageRenderService
         return $this->filesystemManager
             ->disk($thread->getStorageDisk())
             ->response($thread->getAvatarPath());
+    }
+
+    /**
+     * @param Bot $bot
+     * @param string $size
+     * @param string $fileNameChallenge
+     * @return StreamedResponse|BinaryFileResponse
+     * @throws FileNotFoundException
+     */
+    public function renderBotAvatar(Bot $bot,
+                                    string $size,
+                                    string $fileNameChallenge)
+    {
+        if ($fileNameChallenge !== $bot->avatar) {
+            return $this->renderDefaultImage();
+        }
+
+        if (! $this->filesystemManager
+            ->disk($bot->getStorageDisk())
+            ->exists($bot->getAvatarPath())) {
+            return $this->renderDefaultImage();
+        }
+
+        $extension = pathinfo($this->filesystemManager->disk($bot->getStorageDisk())->path($bot->getAvatarPath()), PATHINFO_EXTENSION);
+
+        if ($this->shouldResize($extension) && $size !== 'lg') {
+            return $this->renderImageSize(
+                $this->filesystemManager
+                    ->disk($bot->getStorageDisk())
+                    ->get($bot->getAvatarPath()),
+                $size
+            );
+        }
+
+        return $this->filesystemManager
+            ->disk($bot->getStorageDisk())
+            ->response($bot->getAvatarPath());
     }
 
     /**

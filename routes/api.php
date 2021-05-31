@@ -18,6 +18,7 @@ use RTippin\Messenger\Http\Controllers\Actions\MarkThreadRead;
 use RTippin\Messenger\Http\Controllers\Actions\MuteThread;
 use RTippin\Messenger\Http\Controllers\Actions\PrivateThreadApproval;
 use RTippin\Messenger\Http\Controllers\Actions\PromoteAdmin;
+use RTippin\Messenger\Http\Controllers\Actions\RenderBotAvatar;
 use RTippin\Messenger\Http\Controllers\Actions\RenderGroupAvatar;
 use RTippin\Messenger\Http\Controllers\Actions\RenderMessageImage;
 use RTippin\Messenger\Http\Controllers\Actions\RenderProviderAvatar;
@@ -28,6 +29,7 @@ use RTippin\Messenger\Http\Controllers\Actions\ThreadLoader;
 use RTippin\Messenger\Http\Controllers\Actions\UnmuteThread;
 use RTippin\Messenger\Http\Controllers\Actions\UnreadThreadsCount;
 use RTippin\Messenger\Http\Controllers\AudioMessageController;
+use RTippin\Messenger\Http\Controllers\BotController;
 use RTippin\Messenger\Http\Controllers\CallController;
 use RTippin\Messenger\Http\Controllers\CallParticipantController;
 use RTippin\Messenger\Http\Controllers\DocumentMessageController;
@@ -112,6 +114,7 @@ Route::name('api.messenger.')->group(function () {
         Route::put('settings', [GroupThreadController::class, 'updateSettings'])->name('settings.update');
         Route::post('avatar', [GroupThreadController::class, 'updateAvatar'])->name('avatar.update');
         Route::get('avatar/{size}/{image}', RenderGroupAvatar::class)->name('avatar.render');
+        Route::get('bots/{bot}/avatar/{size}/{image}', RenderBotAvatar::class)->name('bots.avatar.render');
         Route::get('add-participants', FilterAddParticipants::class)->name('add.participants');
         //Privates
         Route::post('approval', PrivateThreadApproval::class)->name('approval');
@@ -124,6 +127,7 @@ Route::name('api.messenger.')->group(function () {
         Route::post('promote', PromoteAdmin::class)->name('promote');
         Route::post('demote', DemoteAdmin::class)->name('demote');
     });
+    Route::apiResource('threads.bots', BotController::class);
     Route::apiResource('threads.messages', MessageController::class);
     Route::apiResource('threads.messages.reactions', MessageReactionController::class)->only(['index', 'store', 'destroy']);
     Route::apiResource('threads.images', ImageMessageController::class)->only(['index', 'store']);
