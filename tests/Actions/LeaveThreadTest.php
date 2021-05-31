@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
@@ -10,8 +9,7 @@ use RTippin\Messenger\Actions\Threads\LeaveThread;
 use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
 use RTippin\Messenger\Events\ThreadLeftEvent;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Listeners\ArchiveEmptyThread;
-use RTippin\Messenger\Listeners\ThreadLeftMessage;
+use RTippin\Messenger\Jobs\ThreadLeftMessage;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -30,11 +28,29 @@ class LeaveThreadTest extends FeatureTestCase
     {
         $thread = Thread::factory()->group()->create();
         $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
 
         app(LeaveThread::class)->execute($thread);
 
         $this->assertSoftDeleted('participants', [
             'id' => $participant->id,
+        ]);
+        $this->assertSame(1, Participant::count());
+    }
+
+    /** @test */
+    public function it_soft_deletes_participant_and_thread_when_last_participant()
+    {
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
+
+        app(LeaveThread::class)->execute($thread);
+
+        $this->assertSoftDeleted('participants', [
+            'id' => $participant->id,
+        ]);
+        $this->assertSoftDeleted('threads', [
+            'id' => $thread->id,
         ]);
     }
 
@@ -48,6 +64,7 @@ class LeaveThreadTest extends FeatureTestCase
         ]);
         $thread = Thread::factory()->group()->create();
         $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create();
 
         app(LeaveThread::class)->execute($thread);
 
@@ -67,19 +84,54 @@ class LeaveThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_dispatches_listeners()
+    public function it_doesnt_fire_events_if_last_participant()
+    {
+        BaseMessengerAction::enableEvents();
+        $thread = $this->createGroupThread($this->tippin);
+
+        $this->doesntExpectEvents([
+            ThreadLeftBroadcast::class,
+            ThreadLeftEvent::class,
+        ]);
+
+        app(LeaveThread::class)->execute($thread);
+    }
+
+    /** @test */
+    public function it_dispatches_subscriber_job()
     {
         BaseMessengerAction::enableEvents();
         Bus::fake();
-        $thread = $this->createGroupThread($this->tippin);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
 
         app(LeaveThread::class)->withoutBroadcast()->execute($thread);
 
-        Bus::assertDispatched(function (CallQueuedListener $job) {
-            return $job->class === ArchiveEmptyThread::class;
-        });
-        Bus::assertDispatched(function (CallQueuedListener $job) {
-            return $job->class === ThreadLeftMessage::class;
-        });
+        Bus::assertDispatched(ThreadLeftMessage::class);
+    }
+
+    /** @test */
+    public function it_runs_subscriber_job_now()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setSystemMessageSubscriber('queued', false);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+
+        app(LeaveThread::class)->withoutBroadcast()->execute($thread);
+
+        Bus::assertDispatchedSync(ThreadLeftMessage::class);
+    }
+
+    /** @test */
+    public function it_doesnt_dispatch_subscriber_job_if_disabled()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setSystemMessageSubscriber('enabled', false);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+
+        app(LeaveThread::class)->withoutBroadcast()->execute($thread);
+
+        Bus::assertNotDispatched(ThreadLeftMessage::class);
     }
 }

@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
@@ -10,7 +9,7 @@ use RTippin\Messenger\Actions\Threads\UpdateGroupSettings;
 use RTippin\Messenger\Broadcasting\ThreadSettingsBroadcast;
 use RTippin\Messenger\Events\ThreadSettingsEvent;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Listeners\ThreadNameMessage;
+use RTippin\Messenger\Jobs\ThreadNameMessage;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -129,7 +128,7 @@ class UpdateGroupSettingsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_dispatches_listeners()
+    public function it_dispatches_subscriber_job()
     {
         BaseMessengerAction::enableEvents();
         Bus::fake();
@@ -139,8 +138,36 @@ class UpdateGroupSettingsTest extends FeatureTestCase
             'subject' => 'Rename Test Group',
         ]);
 
-        Bus::assertDispatched(function (CallQueuedListener $job) {
-            return $job->class === ThreadNameMessage::class;
-        });
+        Bus::assertDispatched(ThreadNameMessage::class);
+    }
+
+    /** @test */
+    public function it_runs_subscriber_job_now()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setSystemMessageSubscriber('queued', false);
+        $thread = Thread::factory()->group()->create(['subject' => 'Test']);
+
+        app(UpdateGroupSettings::class)->execute($thread, [
+            'subject' => 'Rename Test Group',
+        ]);
+
+        Bus::assertDispatchedSync(ThreadNameMessage::class);
+    }
+
+    /** @test */
+    public function it_doesnt_dispatch_subscriber_job_if_disabled()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setSystemMessageSubscriber('enabled', false);
+        $thread = Thread::factory()->group()->create(['subject' => 'Test']);
+
+        app(UpdateGroupSettings::class)->execute($thread, [
+            'subject' => 'Rename Test Group',
+        ]);
+
+        Bus::assertNotDispatched(ThreadNameMessage::class);
     }
 }

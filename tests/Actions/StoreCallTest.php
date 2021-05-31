@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
@@ -15,7 +14,7 @@ use RTippin\Messenger\Events\CallStartedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\NewCallException;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Listeners\SetupCall;
+use RTippin\Messenger\Jobs\SetupCall;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -140,15 +139,37 @@ class StoreCallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_dispatches_listeners()
+    public function it_dispatches_subscriber_job()
     {
         BaseMessengerAction::enableEvents();
         Bus::fake();
 
         app(StoreCall::class)->execute(Thread::factory()->create());
 
-        Bus::assertDispatched(function (CallQueuedListener $job) {
-            return $job->class === SetupCall::class;
-        });
+        Bus::assertDispatched(SetupCall::class);
+    }
+
+    /** @test */
+    public function it_runs_subscriber_job_now()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setCallSubscriber('queued', false);
+
+        app(StoreCall::class)->execute(Thread::factory()->create());
+
+        Bus::assertDispatchedSync(SetupCall::class);
+    }
+
+    /** @test */
+    public function it_doesnt_dispatch_subscriber_job_if_disabled()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setCallSubscriber('enabled', false);
+
+        app(StoreCall::class)->execute(Thread::factory()->create());
+
+        Bus::assertNotDispatched(SetupCall::class);
     }
 }

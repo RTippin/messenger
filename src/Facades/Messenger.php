@@ -146,6 +146,12 @@ use RTippin\Messenger\Models\Participant;
  * @method static \RTippin\Messenger\Messenger setMessageAudioSizeLimit(int $messageAudioSizeLimit)
  * @method static string getMessageAudioMimeTypes()
  * @method static \RTippin\Messenger\Messenger setMessageAudioMimeTypes(string $messageAudioMimeTypes)
+ * @method static bool|string getBotSubscriber(string $option)
+ * @method static bool|string getCallSubscriber(string $option)
+ * @method static bool|string getSystemMessageSubscriber(string $option)
+ * @method static \RTippin\Messenger\Messenger setBotSubscriber(string $option, $value)
+ * @method static \RTippin\Messenger\Messenger setCallSubscriber(string $option, $value)
+ * @method static \RTippin\Messenger\Messenger setSystemMessageSubscriber(string $option, $value)
  *
  * @mixin \RTippin\Messenger\Messenger
  * @see \RTippin\Messenger\Messenger

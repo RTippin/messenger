@@ -1356,7 +1356,7 @@ trait MessengerConfig
      * @param string $option
      * @return bool|string
      */
-    public function getBotsSubscriber(string $option)
+    public function getBotSubscriber(string $option)
     {
         return $this->subscribers['bots'][$option];
     }
@@ -1366,7 +1366,7 @@ trait MessengerConfig
      * @param bool|string $value
      * @return $this
      */
-    public function setBotsSubscriber(string $option, $value): self
+    public function setBotSubscriber(string $option, $value): self
     {
         $this->subscribers['bots'][$option] = $value;
 
@@ -1377,7 +1377,7 @@ trait MessengerConfig
      * @param string $option
      * @return bool|string
      */
-    public function getCallsSubscriber(string $option)
+    public function getCallSubscriber(string $option)
     {
         return $this->subscribers['calls'][$option];
     }
@@ -1387,7 +1387,7 @@ trait MessengerConfig
      * @param bool|string $value
      * @return $this
      */
-    public function setCallsSubscriber(string $option, $value): self
+    public function setCallSubscriber(string $option, $value): self
     {
         $this->subscribers['calls'][$option] = $value;
 
@@ -1398,7 +1398,7 @@ trait MessengerConfig
      * @param string $option
      * @return bool|string
      */
-    public function getSystemMessagesSubscriber(string $option)
+    public function getSystemMessageSubscriber(string $option)
     {
         return $this->subscribers['system_messages'][$option];
     }
@@ -1408,7 +1408,7 @@ trait MessengerConfig
      * @param bool|string $value
      * @return $this
      */
-    public function setSystemMessagesSubscriber(string $option, $value): self
+    public function setSystemMessageSubscriber(string $option, $value): self
     {
         $this->subscribers['system_messages'][$option] = $value;
 

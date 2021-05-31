@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
@@ -11,7 +10,8 @@ use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Calls\LeaveCall;
 use RTippin\Messenger\Broadcasting\CallLeftBroadcast;
 use RTippin\Messenger\Events\CallLeftEvent;
-use RTippin\Messenger\Listeners\EndCallIfEmpty;
+use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Jobs\EndCallIfEmpty;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
@@ -73,7 +73,7 @@ class LeaveCallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_dispatches_listeners()
+    public function it_dispatches_subscriber_job()
     {
         BaseMessengerAction::enableEvents();
         Bus::fake();
@@ -82,8 +82,34 @@ class LeaveCallTest extends FeatureTestCase
 
         app(LeaveCall::class)->execute($call, $participant);
 
-        Bus::assertDispatched(function (CallQueuedListener $job) {
-            return $job->class === EndCallIfEmpty::class;
-        });
+        Bus::assertDispatched(EndCallIfEmpty::class);
+    }
+
+    /** @test */
+    public function it_runs_subscriber_job_now()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setCallSubscriber('queued', false);
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
+        $participant = CallParticipant::factory()->for($call)->owner($this->tippin)->create();
+
+        app(LeaveCall::class)->execute($call, $participant);
+
+        Bus::assertDispatchedSync(EndCallIfEmpty::class);
+    }
+
+    /** @test */
+    public function it_doesnt_dispatch_subscriber_job_if_disabled()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setCallSubscriber('enabled', false);
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
+        $participant = CallParticipant::factory()->for($call)->owner($this->tippin)->create();
+
+        app(LeaveCall::class)->execute($call, $participant);
+
+        Bus::assertNotDispatched(EndCallIfEmpty::class);
     }
 }

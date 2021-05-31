@@ -2,14 +2,15 @@
 
 namespace RTippin\Messenger\Actions\Threads;
 
-use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Database\DatabaseManager;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\ThreadLeftBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\ThreadLeftEvent;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
+use Throwable;
 
 class LeaveThread extends BaseMessengerAction
 {
@@ -29,50 +30,77 @@ class LeaveThread extends BaseMessengerAction
     private Messenger $messenger;
 
     /**
+     * @var DatabaseManager
+     */
+    private DatabaseManager $database;
+
+    /**
+     * @var bool
+     */
+    private bool $threadArchived = false;
+
+    /**
      * LeaveThread constructor.
      *
      * @param Messenger $messenger
      * @param BroadcastDriver $broadcaster
      * @param Dispatcher $dispatcher
+     * @param DatabaseManager $database
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
-                                Dispatcher $dispatcher)
+                                Dispatcher $dispatcher,
+                                DatabaseManager $database)
     {
         $this->broadcaster = $broadcaster;
         $this->dispatcher = $dispatcher;
         $this->messenger = $messenger;
+        $this->database = $database;
     }
 
     /**
-     * Leave the group thread.
+     * Leave the group thread. Archive the group if no one ie left.
      *
      * @param mixed ...$parameters
      * @var Thread[0]
      * @return $this
-     * @throws Exception
+     * @throws Throwable
      */
     public function execute(...$parameters): self
     {
-        $this->setThread($parameters[0])
-            ->removeParticipant()
-            ->fireBroadcast()
-            ->fireEvents();
+        $this->setThread($parameters[0])->handleTransactions();
+
+        if (! $this->threadArchived) {
+            $this->fireBroadcast()->fireEvents();
+        }
 
         return $this;
     }
 
     /**
-     * @return $this
-     * @throws Exception
+     * @throws Throwable
      */
-    private function removeParticipant(): self
+    private function handleTransactions(): void
     {
-        $this->getThread()
-            ->currentParticipant()
-            ->delete();
+        if ($this->isChained()) {
+            $this->executeTransactions();
+        } else {
+            $this->database->transaction(fn () => $this->executeTransactions());
+        }
+    }
 
-        return $this;
+    /**
+     * Archive the current participant. If no participants
+     * are left, archive the thread.
+     */
+    private function executeTransactions(): void
+    {
+        $this->getThread()->currentParticipant()->delete();
+
+        if (! $this->getThread()->participants()->count()) {
+            $this->getThread()->delete();
+            $this->threadArchived = true;
+        }
     }
 
     /**

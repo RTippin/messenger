@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
@@ -11,8 +10,9 @@ use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Calls\EndCall;
 use RTippin\Messenger\Broadcasting\CallEndedBroadcast;
 use RTippin\Messenger\Events\CallEndedEvent;
-use RTippin\Messenger\Listeners\CallEndedMessage;
-use RTippin\Messenger\Listeners\TeardownCall;
+use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Jobs\CallEndedMessage;
+use RTippin\Messenger\Jobs\TeardownCall;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
@@ -100,7 +100,7 @@ class EndCallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_dispatches_listeners()
+    public function it_dispatches_subscriber_jobs()
     {
         BaseMessengerAction::enableEvents();
         Bus::fake();
@@ -108,11 +108,37 @@ class EndCallTest extends FeatureTestCase
 
         app(EndCall::class)->withoutBroadcast()->execute($call);
 
-        Bus::assertDispatched(function (CallQueuedListener $job) {
-            return $job->class === TeardownCall::class;
-        });
-        Bus::assertDispatched(function (CallQueuedListener $job) {
-            return $job->class === CallEndedMessage::class;
-        });
+        Bus::assertDispatched(TeardownCall::class);
+        Bus::assertDispatched(CallEndedMessage::class);
+    }
+
+    /** @test */
+    public function it_runs_subscriber_jobs_now()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setSystemMessageSubscriber('queued', false);
+        Messenger::setCallSubscriber('queued', false);
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
+
+        app(EndCall::class)->withoutBroadcast()->execute($call);
+
+        Bus::assertDispatchedSync(TeardownCall::class);
+        Bus::assertDispatchedSync(CallEndedMessage::class);
+    }
+
+    /** @test */
+    public function it_doesnt_dispatch_subscriber_jobs_if_disabled()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setSystemMessageSubscriber('enabled', false);
+        Messenger::setCallSubscriber('enabled', false);
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
+
+        app(EndCall::class)->withoutBroadcast()->execute($call);
+
+        Bus::assertNotDispatched(TeardownCall::class);
+        Bus::assertNotDispatched(CallEndedMessage::class);
     }
 }

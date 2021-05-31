@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
@@ -10,7 +9,7 @@ use RTippin\Messenger\Actions\Threads\ArchiveThread;
 use RTippin\Messenger\Broadcasting\ThreadArchivedBroadcast;
 use RTippin\Messenger\Events\ThreadArchivedEvent;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Listeners\ThreadArchivedMessage;
+use RTippin\Messenger\Jobs\ThreadArchivedMessage;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -62,7 +61,7 @@ class ArchiveThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_dispatched_listeners()
+    public function it_dispatches_subscriber_job()
     {
         BaseMessengerAction::enableEvents();
         Bus::fake();
@@ -70,8 +69,32 @@ class ArchiveThreadTest extends FeatureTestCase
 
         app(ArchiveThread::class)->withoutBroadcast()->execute($thread);
 
-        Bus::assertDispatched(function (CallQueuedListener $job) {
-            return $job->class === ThreadArchivedMessage::class;
-        });
+        Bus::assertDispatched(ThreadArchivedMessage::class);
+    }
+
+    /** @test */
+    public function it_runs_subscriber_job_now()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setSystemMessageSubscriber('queued', false);
+        $thread = $this->createGroupThread($this->tippin);
+
+        app(ArchiveThread::class)->withoutBroadcast()->execute($thread);
+
+        Bus::assertDispatchedSync(ThreadArchivedMessage::class);
+    }
+
+    /** @test */
+    public function it_doesnt_dispatch_subscriber_job_if_disabled()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setSystemMessageSubscriber('enabled', false);
+        $thread = $this->createGroupThread($this->tippin);
+
+        app(ArchiveThread::class)->withoutBroadcast()->execute($thread);
+
+        Bus::assertNotDispatched(ThreadArchivedMessage::class);
     }
 }

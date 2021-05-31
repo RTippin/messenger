@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
@@ -10,7 +9,7 @@ use RTippin\Messenger\Actions\Threads\StoreManyParticipants;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Listeners\ParticipantsAddedMessage;
+use RTippin\Messenger\Jobs\ParticipantsAddedMessage;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -180,7 +179,7 @@ class StoreManyParticipantsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_dispatches_listeners()
+    public function it_dispatches_subscriber_job()
     {
         BaseMessengerAction::enableEvents();
         Bus::fake();
@@ -193,8 +192,42 @@ class StoreManyParticipantsTest extends FeatureTestCase
             ],
         ]);
 
-        Bus::assertDispatched(function (CallQueuedListener $job) {
-            return $job->class === ParticipantsAddedMessage::class;
-        });
+        Bus::assertDispatched(ParticipantsAddedMessage::class);
+    }
+
+    /** @test */
+    public function it_runs_subscriber_job_now()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setSystemMessageSubscriber('queued', false);
+        $this->createFriends($this->tippin, $this->doe);
+
+        app(StoreManyParticipants::class)->execute(Thread::factory()->group()->create(), [
+            [
+                'id' => $this->doe->getKey(),
+                'alias' => 'user',
+            ],
+        ]);
+
+        Bus::assertDispatchedSync(ParticipantsAddedMessage::class);
+    }
+
+    /** @test */
+    public function it_doesnt_dispatch_subscriber_job_if_disabled()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setSystemMessageSubscriber('enabled', false);
+        $this->createFriends($this->tippin, $this->doe);
+
+        app(StoreManyParticipants::class)->execute(Thread::factory()->group()->create(), [
+            [
+                'id' => $this->doe->getKey(),
+                'alias' => 'user',
+            ],
+        ]);
+
+        Bus::assertNotDispatched(ParticipantsAddedMessage::class);
     }
 }

@@ -138,7 +138,7 @@ class GroupThreadController
      * @param LeaveThread $leaveThread
      * @param Thread $thread
      * @return JsonResponse
-     * @throws AuthorizationException|Exception
+     * @throws AuthorizationException|Throwable
      */
     public function leave(LeaveThread $leaveThread, Thread $thread): JsonResponse
     {

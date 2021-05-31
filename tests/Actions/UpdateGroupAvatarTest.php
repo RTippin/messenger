@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Illuminate\Events\CallQueuedListener;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
@@ -13,7 +12,7 @@ use RTippin\Messenger\Broadcasting\ThreadAvatarBroadcast;
 use RTippin\Messenger\Events\ThreadAvatarEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Listeners\ThreadAvatarMessage;
+use RTippin\Messenger\Jobs\ThreadAvatarMessage;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -135,7 +134,7 @@ class UpdateGroupAvatarTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_dispatches_listeners()
+    public function it_dispatches_subscriber_job()
     {
         BaseMessengerAction::enableEvents();
         Bus::fake();
@@ -145,8 +144,36 @@ class UpdateGroupAvatarTest extends FeatureTestCase
             'default' => '1.png',
         ]);
 
-        Bus::assertDispatched(function (CallQueuedListener $job) {
-            return $job->class === ThreadAvatarMessage::class;
-        });
+        Bus::assertDispatched(ThreadAvatarMessage::class);
+    }
+
+    /** @test */
+    public function it_runs_subscriber_job_now()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setSystemMessageSubscriber('queued', false);
+        $thread = Thread::factory()->group()->create(['image' => '5.png']);
+
+        app(UpdateGroupAvatar::class)->withoutBroadcast()->execute($thread, [
+            'default' => '1.png',
+        ]);
+
+        Bus::assertDispatchedSync(ThreadAvatarMessage::class);
+    }
+
+    /** @test */
+    public function it_doesnt_dispatch_subscriber_job_if_disabled()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setSystemMessageSubscriber('enabled', false);
+        $thread = Thread::factory()->group()->create(['image' => '5.png']);
+
+        app(UpdateGroupAvatar::class)->withoutBroadcast()->execute($thread, [
+            'default' => '1.png',
+        ]);
+
+        Bus::assertNotDispatched(ThreadAvatarMessage::class);
     }
 }

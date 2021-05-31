@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Illuminate\Events\CallQueuedListener;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
@@ -10,7 +9,7 @@ use RTippin\Messenger\Actions\Invites\JoinWithInvite;
 use RTippin\Messenger\Events\InviteUsedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Listeners\JoinedWithInviteMessage;
+use RTippin\Messenger\Jobs\JoinedWithInviteMessage;
 use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
@@ -122,7 +121,7 @@ class JoinWithInviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_dispatches_listeners()
+    public function it_dispatches_subscriber_job()
     {
         BaseMessengerAction::enableEvents();
         Bus::fake();
@@ -130,8 +129,32 @@ class JoinWithInviteTest extends FeatureTestCase
 
         app(JoinWithInvite::class)->execute($invite);
 
-        Bus::assertDispatched(function (CallQueuedListener $job) {
-            return $job->class === JoinedWithInviteMessage::class;
-        });
+        Bus::assertDispatched(JoinedWithInviteMessage::class);
+    }
+
+    /** @test */
+    public function it_runs_subscriber_job_now()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setSystemMessageSubscriber('queued', false);
+        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->doe)->create();
+
+        app(JoinWithInvite::class)->execute($invite);
+
+        Bus::assertDispatchedSync(JoinedWithInviteMessage::class);
+    }
+
+    /** @test */
+    public function it_doesnt_dispatch_subscriber_job_if_disabled()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setSystemMessageSubscriber('enabled', false);
+        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->doe)->create();
+
+        app(JoinWithInvite::class)->execute($invite);
+
+        Bus::assertNotDispatched(JoinedWithInviteMessage::class);
     }
 }
