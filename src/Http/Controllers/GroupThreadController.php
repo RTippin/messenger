@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Http\Controllers;
 
-use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
