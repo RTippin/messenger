@@ -26,6 +26,7 @@ use RTippin\Messenger\Listeners\ParticipantsAddedMessage;
 use RTippin\Messenger\Listeners\PromotedAdminMessage;
 use RTippin\Messenger\Listeners\RemovedFromThreadMessage;
 use RTippin\Messenger\Listeners\SetupCall;
+use RTippin\Messenger\Listeners\SystemMessageSubscriber;
 use RTippin\Messenger\Listeners\TeardownCall;
 use RTippin\Messenger\Listeners\ThreadArchivedMessage;
 use RTippin\Messenger\Listeners\ThreadAvatarMessage;
@@ -91,14 +92,16 @@ trait EventMap
      */
     private function registerListeners()
     {
-        if (config('messenger.queued_event_listeners')) {
+//        if (config('messenger.queued_event_listeners')) {
             $events = $this->app->make(Dispatcher::class);
 
             foreach ($this->events as $event => $listeners) {
                 foreach ($listeners as $listener) {
                     $events->listen($event, $listener);
                 }
-            }
+//            }
+
+//            $events->subscribe(SystemMessageSubscriber::class);
         }
     }
 }

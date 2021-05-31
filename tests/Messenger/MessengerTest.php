@@ -499,6 +499,15 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame('jpg,jpeg,png,bmp,gif,webp', $this->messenger->getProviderAvatarMimeTypes());
         $this->assertSame('jpg,jpeg,png,bmp,gif,webp', $this->messenger->getThreadAvatarMimeTypes());
         $this->assertSame('aac,mp3,oga,wav,weba,webm', $this->messenger->getMessageAudioMimeTypes());
+        $this->assertTrue($this->messenger->getBotsSubscriber('enabled'));
+        $this->assertTrue($this->messenger->getCallsSubscriber('enabled'));
+        $this->assertTrue($this->messenger->getSystemMessagesSubscriber('enabled'));
+        $this->assertTrue($this->messenger->getBotsSubscriber('queued'));
+        $this->assertTrue($this->messenger->getCallsSubscriber('queued'));
+        $this->assertTrue($this->messenger->getSystemMessagesSubscriber('queued'));
+        $this->assertSame('messenger', $this->messenger->getBotsSubscriber('channel'));
+        $this->assertSame('messenger', $this->messenger->getCallsSubscriber('channel'));
+        $this->assertSame('messenger', $this->messenger->getSystemMessagesSubscriber('channel'));
     }
 
     /** @test */
@@ -578,6 +587,15 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->setMessageAudioMimeTypes('mp3');
         $this->messenger->setProviderAvatarMimeTypes('jpeg,png');
         $this->messenger->setThreadAvatarMimeTypes('jpeg,png');
+        $this->messenger->setBotsSubscriber('enabled', false);
+        $this->messenger->setCallsSubscriber('enabled', false);
+        $this->messenger->setSystemMessagesSubscriber('enabled', false);
+        $this->messenger->setBotsSubscriber('queued', false);
+        $this->messenger->setCallsSubscriber('queued', false);
+        $this->messenger->setSystemMessagesSubscriber('queued', false);
+        $this->messenger->setBotsSubscriber('channel', 'test');
+        $this->messenger->setCallsSubscriber('channel', 'test');
+        $this->messenger->setSystemMessagesSubscriber('channel', 'test');
         $this->messenger->setMessengerProviders([
             'user' => [
                 'model' => UserModel::class,
@@ -637,5 +655,14 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame('mp3', $this->messenger->getMessageAudioMimeTypes());
         $this->assertSame('jpeg,png', $this->messenger->getProviderAvatarMimeTypes());
         $this->assertSame('jpeg,png', $this->messenger->getThreadAvatarMimeTypes());
+        $this->assertFalse($this->messenger->getBotsSubscriber('enabled'));
+        $this->assertFalse($this->messenger->getCallsSubscriber('enabled'));
+        $this->assertFalse($this->messenger->getSystemMessagesSubscriber('enabled'));
+        $this->assertFalse($this->messenger->getBotsSubscriber('queued'));
+        $this->assertFalse($this->messenger->getCallsSubscriber('queued'));
+        $this->assertFalse($this->messenger->getSystemMessagesSubscriber('queued'));
+        $this->assertSame('test', $this->messenger->getBotsSubscriber('channel'));
+        $this->assertSame('test', $this->messenger->getCallsSubscriber('channel'));
+        $this->assertSame('test', $this->messenger->getSystemMessagesSubscriber('channel'));
     }
 }

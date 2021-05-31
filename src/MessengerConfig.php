@@ -304,6 +304,11 @@ trait MessengerConfig
     private int $callsPageCount;
 
     /**
+     * @var array
+     */
+    private array $subscribers;
+
+    /**
      * @var string[]
      */
     private static array $guarded = [
@@ -329,7 +334,7 @@ trait MessengerConfig
         'defaultThreadAvatars',
         'avatarStorage',
         'threadStorage',
-        'botsInstalled',
+        'subscribers',
     ];
 
     /**
@@ -370,7 +375,7 @@ trait MessengerConfig
     public function getConfig(): array
     {
         return (new Collection(get_object_vars($this)))->reject(function ($value, $key) {
-            return in_array($key, self::$guarded) && ! in_array($key, ['botsInstalled', 'isProvidersCached']);
+            return in_array($key, self::$guarded);
         })
             ->merge([
                 'providers' => $this->providers->map(function ($provider) {
@@ -1202,7 +1207,7 @@ trait MessengerConfig
      * @param string|null $config
      * @return array|string
      */
-    public function getAvatarStorage(string $config = null)
+    public function getAvatarStorage(?string $config = null)
     {
         if (! is_null($config)) {
             return trim($this->avatarStorage[$config], '/');
@@ -1215,7 +1220,7 @@ trait MessengerConfig
      * @param string|null $config
      * @return array|string
      */
-    public function getThreadStorage(string $config = null)
+    public function getThreadStorage(?string $config = null)
     {
         if (! is_null($config)) {
             return trim($this->threadStorage[$config], '/');
@@ -1338,13 +1343,76 @@ trait MessengerConfig
      * @param string|null $image
      * @return array|string
      */
-    public function getDefaultThreadAvatars(string $image = null)
+    public function getDefaultThreadAvatars(?string $image = null)
     {
         if (! is_null($image)) {
             return $this->defaultThreadAvatars[$image];
         }
 
         return $this->defaultThreadAvatars;
+    }
+
+    /**
+     * @param string $option
+     * @return bool|string
+     */
+    public function getBotsSubscriber(string $option)
+    {
+        return $this->subscribers['bots'][$option];
+    }
+
+    /**
+     * @param string $option
+     * @param bool|string $value
+     * @return $this
+     */
+    public function setBotsSubscriber(string $option, $value): self
+    {
+        $this->subscribers['bots'][$option] = $value;
+
+        return $this;
+    }
+
+    /**
+     * @param string $option
+     * @return bool|string
+     */
+    public function getCallsSubscriber(string $option)
+    {
+        return $this->subscribers['calls'][$option];
+    }
+
+    /**
+     * @param string $option
+     * @param bool|string $value
+     * @return $this
+     */
+    public function setCallsSubscriber(string $option, $value): self
+    {
+        $this->subscribers['calls'][$option] = $value;
+
+        return $this;
+    }
+
+    /**
+     * @param string $option
+     * @return bool|string
+     */
+    public function getSystemMessagesSubscriber(string $option)
+    {
+        return $this->subscribers['system_messages'][$option];
+    }
+
+    /**
+     * @param string $option
+     * @param bool|string $value
+     * @return $this
+     */
+    public function setSystemMessagesSubscriber(string $option, $value): self
+    {
+        $this->subscribers['system_messages'][$option] = $value;
+
+        return $this;
     }
 
     /**
@@ -1460,5 +1528,6 @@ trait MessengerConfig
         $this->searchRateLimit = $this->configRepo->get('messenger.rate_limits.search');
         $this->messageRateLimit = $this->configRepo->get('messenger.rate_limits.message');
         $this->attachmentRateLimit = $this->configRepo->get('messenger.rate_limits.attachment');
+        $this->subscribers = $this->configRepo->get('messenger.subscribers');
     }
 }

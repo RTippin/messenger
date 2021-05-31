@@ -31,17 +31,33 @@ return [
 
     /*
     |--------------------------------------------------------------------------
-    | Included Queued Event Listeners
+    | Event Subscribers
     |--------------------------------------------------------------------------
     |
-    | This package includes several event listeners out of the box, to handle
-    | system messages to setting up a call. All listeners are queued on the
-    | 'messenger' channel, so you will need to setup a queue worker to monitor
-    | that channel. You may also disable out listeners and setup your own! Feel
-    | free to check ours out to see how we do things :)
+    | We utilize multiple event subscribers to observe and react to specific
+    | events. You may specify if each subscriber should be enabled, and whether
+    | to dispatch the job onto the queue, or execute immediately. If queued,
+    | you may define the queue channel as well. These actions will handle
+    | emitting system messages, managing calls, chat bots, and more.
     |
     */
-    'queued_event_listeners' => true,
+    'subscribers' => [
+        'bots' => [
+            'enabled' => true,
+            'queued' => true,
+            'channel' => 'messenger',
+        ],
+        'calls' => [
+            'enabled' => true,
+            'queued' => true,
+            'channel' => 'messenger',
+        ],
+        'system_messages' => [
+            'enabled' => true,
+            'queued' => true,
+            'channel' => 'messenger',
+        ],
+    ],
 
     /*
     |--------------------------------------------------------------------------
