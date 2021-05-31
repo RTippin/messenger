@@ -79,7 +79,6 @@ use RTippin\Messenger\Models\Participant;
  * @method static string getBroadcastDriver()
  * @method static string getVideoDriver()
  * @method static bool isPushNotificationsEnabled()
- * @method static bool isMessengerBotsInstalled()
  * @method static \RTippin\Messenger\Messenger setPushNotifications(bool $pushNotifications)
  * @method static \RTippin\Messenger\Messenger setProviderToOnline($provider = null)
  * @method static \RTippin\Messenger\Messenger setProviderToOffline($provider = null)

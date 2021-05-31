@@ -15,7 +15,10 @@ use RTippin\Messenger\Models\Invite;
 
 class ArchiveInvalidInvites implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable,
+        InteractsWithQueue,
+        Queueable,
+        SerializesModels;
 
     /**
      * @var Collection

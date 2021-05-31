@@ -17,7 +17,7 @@ class SystemFeaturesResource extends JsonResource
     public function toArray($request): array
     {
         return [
-            'bots' => Messenger::isMessengerBotsInstalled(),
+            'bots' => false,
             'calling' => Messenger::isCallingEnabled(),
             'invitations' => Messenger::isThreadInvitesEnabled(),
             'invitations_max' => Messenger::getThreadMaxInvitesCount(),

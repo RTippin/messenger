@@ -12,7 +12,10 @@ use RTippin\Messenger\Actions\Messages\PurgeDocumentMessages as PurgeDocumentMes
 
 class PurgeDocumentMessages implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable,
+        InteractsWithQueue,
+        Queueable,
+        SerializesModels;
 
     /**
      * @var Collection

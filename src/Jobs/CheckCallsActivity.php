@@ -14,7 +14,10 @@ use Throwable;
 
 class CheckCallsActivity implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable,
+        InteractsWithQueue,
+        Queueable,
+        SerializesModels;
 
     /**
      * @var Collection

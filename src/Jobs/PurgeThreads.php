@@ -12,7 +12,10 @@ use RTippin\Messenger\Actions\Threads\PurgeThreads as PurgeThreadsAction;
 
 class PurgeThreads implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable,
+        InteractsWithQueue,
+        Queueable,
+        SerializesModels;
 
     /**
      * @var Collection

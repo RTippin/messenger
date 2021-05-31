@@ -12,7 +12,10 @@ use RTippin\Messenger\Actions\Messages\PurgeImageMessages as PurgeImageMessagesA
 
 class PurgeImageMessages implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable,
+        InteractsWithQueue,
+        Queueable,
+        SerializesModels;
 
     /**
      * @var Collection

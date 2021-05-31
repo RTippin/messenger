@@ -12,7 +12,10 @@ use RTippin\Messenger\Actions\Messages\PurgeAudioMessages as PurgeAudioMessagesA
 
 class PurgeAudioMessages implements ShouldQueue
 {
-    use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
+    use Dispatchable,
+        InteractsWithQueue,
+        Queueable,
+        SerializesModels;
 
     /**
      * @var Collection
