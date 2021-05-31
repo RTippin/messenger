@@ -3,6 +3,7 @@
 namespace RTippin\Messenger;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
@@ -26,15 +27,38 @@ use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Http\Middleware\MessengerApi;
+use RTippin\Messenger\Listeners\CallSubscriber;
+use RTippin\Messenger\Listeners\SystemMessageSubscriber;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Services\EmojiService;
 
 class MessengerServiceProvider extends ServiceProvider
 {
-    use ChannelMap;
-    use EventMap;
-    use PolicyMap;
-    use RouteMap;
+    use ChannelMap,
+        PolicyMap,
+        RouteMap;
+
+    /**
+     * Register Messenger's services.
+     *
+     * @return void
+     */
+    public function register(): void
+    {
+        $this->mergeConfigFrom(__DIR__.'/../config/messenger.php', 'messenger');
+
+        $this->app->singleton(Messenger::class, Messenger::class);
+
+        $this->app->alias(Messenger::class, 'messenger');
+
+        $this->app->singleton(FriendDriver::class, FriendBroker::class);
+
+        $this->app->singleton(EmojiInterface::class, EmojiService::class);
+
+        $this->app->bind(BroadcastDriver::class, $this->getBroadcastImplementation());
+
+        $this->app->bind(VideoDriver::class, $this->getVideoImplementation());
+    }
 
     /**
      * Perform post-registration booting of services.
@@ -46,7 +70,7 @@ class MessengerServiceProvider extends ServiceProvider
     {
         $this->registerRouterServices();
         $this->registerPolicies();
-        $this->registerListeners();
+        $this->registerSubscribers();
         $this->registerChannels();
 
         Relation::morphMap([
@@ -119,25 +143,17 @@ class MessengerServiceProvider extends ServiceProvider
     }
 
     /**
-     * Register Messenger's services.
+     * Register the Event Subscribers.
      *
      * @return void
+     * @throws BindingResolutionException
      */
-    public function register(): void
+    private function registerSubscribers()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/messenger.php', 'messenger');
+        $events = $this->app->make(Dispatcher::class);
 
-        $this->app->singleton(Messenger::class, Messenger::class);
-
-        $this->app->alias(Messenger::class, 'messenger');
-
-        $this->app->singleton(FriendDriver::class, FriendBroker::class);
-
-        $this->app->singleton(EmojiInterface::class, EmojiService::class);
-
-        $this->app->bind(BroadcastDriver::class, $this->getBroadcastImplementation());
-
-        $this->app->bind(VideoDriver::class, $this->getVideoImplementation());
+        $events->subscribe(CallSubscriber::class);
+        $events->subscribe(SystemMessageSubscriber::class);
     }
 
     /**
