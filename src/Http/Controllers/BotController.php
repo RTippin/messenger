@@ -65,7 +65,7 @@ class BotController
         return $thread->bots()->create([
             'owner_id' => Messenger::getProvider()->getKey(),
             'owner_type' => Messenger::getProvider()->getMorphClass(),
-            'name' => $request->input('name')
+            'name' => $request->input('name'),
         ]);
     }
 
