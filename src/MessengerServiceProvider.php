@@ -152,8 +152,13 @@ class MessengerServiceProvider extends ServiceProvider
     {
         $events = $this->app->make(Dispatcher::class);
 
-        $events->subscribe(CallSubscriber::class);
-        $events->subscribe(SystemMessageSubscriber::class);
+        if (config('messenger.subscribers.calls.enabled')) {
+            $events->subscribe(CallSubscriber::class);
+        }
+
+        if (config('messenger.subscribers.system_messages.enabled')) {
+            $events->subscribe(SystemMessageSubscriber::class);
+        }
     }
 
     /**

@@ -18,8 +18,10 @@ class CreateBotActionsTable extends Migration
             $table->uuid('id')->primary();
             $table->uuid('bot_id');
             Helpers::SchemaMorphType('owner', $table);
+            $table->string('event');
+            $table->string('trigger')->nullable();
+            $table->text('payload')->nullable()->default(null);
             $table->timestamps();
-            $table->softDeletes();
             $table->foreign('bot_id')
                 ->references('id')
                 ->on('bots')

@@ -21,7 +21,9 @@ class ActionFactory extends Factory
      */
     public function definition(): array
     {
-        return [];
+        return [
+            'event' => 'NewMessageEvent',
+        ];
     }
 
     /**

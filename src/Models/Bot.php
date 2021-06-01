@@ -24,6 +24,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string $owner_type
  * @property string $name
  * @property string $avatar
+ * @property bool $enabled
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \RTippin\Messenger\Models\Thread $thread
@@ -61,6 +62,13 @@ class Bot extends Model implements MessengerProvider
      * @var array
      */
     protected $guarded = [];
+
+    /**
+     * @var array
+     */
+    protected $casts = [
+        'enabled' => 'boolean',
+    ];
 
     /**
      * @return MorphTo|MessengerProvider

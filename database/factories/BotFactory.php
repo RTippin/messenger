@@ -23,6 +23,7 @@ class BotFactory extends Factory
     {
         return [
             'name' => $this->faker->name,
+            'enabled' => true,
         ];
     }
 
@@ -35,5 +36,19 @@ class BotFactory extends Factory
     public function owner($owner): Factory
     {
         return $this->for($owner, 'owner');
+    }
+
+    /**
+     * Indicate thread is locked.
+     *
+     * @return Factory
+     */
+    public function disabled(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'enabled' => false,
+            ];
+        });
     }
 }

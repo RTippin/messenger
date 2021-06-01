@@ -17,6 +17,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string $bot_id
  * @property string|int $owner_id
  * @property string $owner_type
+ * @property string $trigger
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @mixin Model|\Eloquent

@@ -20,6 +20,7 @@ class CreateBotsTable extends Migration
             Helpers::SchemaMorphType('owner', $table);
             $table->string('name');
             $table->string('avatar')->nullable();
+            $table->boolean('enabled')->default(true);
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('thread_id')
