@@ -20,6 +20,7 @@ class CreateBotActionsTable extends Migration
             Helpers::SchemaMorphType('owner', $table);
             $table->string('event');
             $table->string('trigger')->nullable();
+            $table->boolean('admin_trigger')->default(false);
             $table->text('payload')->nullable()->default(null);
             $table->timestamps();
             $table->foreign('bot_id')

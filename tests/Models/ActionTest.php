@@ -55,5 +55,6 @@ class ActionTest extends FeatureTestCase
 
         $this->assertInstanceOf(Carbon::class, $action->created_at);
         $this->assertInstanceOf(Carbon::class, $action->updated_at);
+        $this->assertFalse($action->admin_trigger);
     }
 }

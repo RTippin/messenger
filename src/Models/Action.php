@@ -18,6 +18,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string|int $owner_id
  * @property string $owner_type
  * @property string $trigger
+ * @property bool $admin_trigger
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @mixin Model|\Eloquent
@@ -52,6 +53,13 @@ class Action extends Model
      * @var array
      */
     protected $guarded = [];
+
+    /**
+     * @var array
+     */
+    protected $casts = [
+        'admin_trigger' => 'boolean',
+    ];
 
     /**
      * @return BelongsTo|Bot

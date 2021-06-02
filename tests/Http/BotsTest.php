@@ -31,6 +31,7 @@ class BotsTest extends FeatureTestCase
             'thread' => $thread->id,
         ]), [
             'name' => 'Test Bot',
+            'enabled' => true,
         ])
             ->assertSuccessful()
             ->assertJson([

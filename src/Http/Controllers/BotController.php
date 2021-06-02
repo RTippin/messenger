@@ -4,8 +4,9 @@ namespace RTippin\Messenger\Http\Controllers;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\Request;
-use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Actions\Bots\StoreBot;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
+use RTippin\Messenger\Http\Request\BotRequest;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Thread;
 
@@ -50,23 +51,23 @@ class BotController
     /**
      * Store a bot.
      *
-     * @param Request $request
+     * @param BotRequest $request
+     * @param StoreBot $storeBot
      * @param Thread $thread
      * @return Bot
-     * @throws AuthorizationException
+     * @throws AuthorizationException|FeatureDisabledException
      */
-    public function store(Request $request, Thread $thread)
+    public function store(BotRequest $request, StoreBot $storeBot, Thread $thread): Bot
     {
         $this->authorize('create', [
             Bot::class,
             $thread,
         ]);
 
-        return $thread->bots()->create([
-            'owner_id' => Messenger::getProvider()->getKey(),
-            'owner_type' => Messenger::getProvider()->getMorphClass(),
-            'name' => $request->input('name'),
-        ]);
+        return $storeBot->execute(
+            $thread,
+            $request->validated()
+        )->getJsonResource();
     }
 
     /**

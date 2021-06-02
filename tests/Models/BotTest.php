@@ -63,6 +63,7 @@ class BotTest extends FeatureTestCase
 
         $this->assertInstanceOf(Carbon::class, $bot->created_at);
         $this->assertInstanceOf(Carbon::class, $bot->updated_at);
+        $this->assertTrue($bot->enabled);
     }
 
     /** @test */

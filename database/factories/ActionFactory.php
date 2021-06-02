@@ -23,6 +23,7 @@ class ActionFactory extends Factory
     {
         return [
             'event' => 'NewMessageEvent',
+            'admin_trigger' => false,
         ];
     }
 
