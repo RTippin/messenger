@@ -108,11 +108,11 @@ abstract class NewMessageAction extends BaseMessengerAction
      */
     protected function setMessageOptionalParameters(array $parameters): self
     {
-        $this->setMessageTemporaryId($parameters['temporary_id'] ?? null);
+        $this->messageTemporaryId = $parameters['temporary_id'] ?? null;
+
+        $this->messageExtraData = $parameters['extra'] ?? null;
 
         $this->setReplyingToMessage($parameters['reply_to_id'] ?? null);
-
-        $this->setMessageExtraData($parameters['extra'] ?? null);
 
         return $this;
     }
@@ -187,22 +187,6 @@ abstract class NewMessageAction extends BaseMessengerAction
         }
 
         return $this;
-    }
-
-    /**
-     * @param string|null $temporaryId
-     */
-    private function setMessageTemporaryId(?string $temporaryId = null): void
-    {
-        $this->messageTemporaryId = ! is_null($temporaryId) ? $temporaryId : null;
-    }
-
-    /**
-     * @param array|null $extra
-     */
-    private function setMessageExtraData(?array $extra = null): void
-    {
-        $this->messageExtraData = ! is_null($extra) ? $extra : null;
     }
 
     /**

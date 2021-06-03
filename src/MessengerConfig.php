@@ -12,6 +12,7 @@ use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Support\ProvidersVerification;
+use RTippin\Messenger\Traits\ChecksReflection;
 
 /**
  * @property-read Collection $providers
@@ -23,6 +24,8 @@ use RTippin\Messenger\Support\ProvidersVerification;
  */
 trait MessengerConfig
 {
+    use ChecksReflection;
+
     /**
      * @var string
      */
@@ -67,16 +70,6 @@ trait MessengerConfig
      * @var string
      */
     private string $socketEndpoint;
-
-    /**
-     * @var string
-     */
-    private string $broadcastDriver;
-
-    /**
-     * @var string
-     */
-    private string $videoDriver;
 
     /**
      * @var bool
@@ -127,6 +120,11 @@ trait MessengerConfig
      * @var bool
      */
     private bool $calling;
+
+    /**
+     * @var bool
+     */
+    private bool $systemMessages;
 
     /**
      * @var bool
@@ -572,6 +570,25 @@ trait MessengerConfig
     public function setCalling(bool $calling): self
     {
         $this->calling = $calling;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSystemMessagesEnabled(): bool
+    {
+        return $this->systemMessages;
+    }
+
+    /**
+     * @param bool $systemMessages
+     * @return $this
+     */
+    public function setSystemMessages(bool $systemMessages): self
+    {
+        $this->systemMessages = $systemMessages;
 
         return $this;
     }
@@ -1230,22 +1247,15 @@ trait MessengerConfig
     }
 
     /**
-     * @return string
-     */
-    public function getBroadcastDriver(): string
-    {
-        return $this->broadcastDriver;
-    }
-
-    /**
-     * @param string $driverAlias
+     * @param string $driver
      * @return $this
+     * @throws \InvalidArgumentException
      */
-    public function setBroadcastDriver(string $driverAlias): self
+    public function setBroadcastDriver(string $driver): self
     {
-        $this->broadcastDriver = $driverAlias;
-
-        $driver = $this->configRepo->get('messenger.drivers.broadcasting')[$driverAlias];
+        if (! $this->checkImplementsInterface($driver, BroadcastDriver::class)) {
+            throw new \InvalidArgumentException("The given driver { $driver } must implement our interface ".BroadcastDriver::class);
+        }
 
         $this->app->singleton(BroadcastDriver::class, $driver);
 
@@ -1253,22 +1263,15 @@ trait MessengerConfig
     }
 
     /**
-     * @return string
-     */
-    public function getVideoDriver(): string
-    {
-        return $this->videoDriver;
-    }
-
-    /**
-     * @param string $driverAlias
+     * @param string $driver
      * @return $this
+     * @throws \InvalidArgumentException
      */
-    public function setVideoDriver(string $driverAlias): self
+    public function setVideoDriver(string $driver): self
     {
-        $this->videoDriver = $driverAlias;
-
-        $driver = $this->configRepo->get('messenger.drivers.calling')[$driverAlias];
+        if (! $this->checkImplementsInterface($driver, VideoDriver::class)) {
+            throw new \InvalidArgumentException("The given driver { $driver } must implement our interface ".VideoDriver::class);
+        }
 
         $this->app->singleton(VideoDriver::class, $driver);
 
@@ -1485,9 +1488,7 @@ trait MessengerConfig
         $this->threadStorage = $this->configRepo->get('messenger.storage.threads');
         $this->defaultNotFoundImage = $this->configRepo->get('messenger.files.default_not_found_image');
         $this->defaultThreadAvatars = $this->configRepo->get('messenger.files.default_thread_avatars');
-        $this->broadcastDriver = $this->configRepo->get('messenger.broadcasting.driver') ?? 'null';
-        $this->videoDriver = $this->configRepo->get('messenger.calling.driver') ?? 'null';
-        $this->pushNotifications = $this->configRepo->get('messenger.push_notifications.enabled');
+        $this->pushNotifications = $this->configRepo->get('messenger.push_notifications');
         $this->knockKnock = $this->configRepo->get('messenger.knocks.enabled');
         $this->knockTimeout = $this->configRepo->get('messenger.knocks.timeout');
         $this->messageEdits = $this->configRepo->get('messenger.message_edits.enabled');
@@ -1499,6 +1500,7 @@ trait MessengerConfig
         $this->onlineStatus = $this->configRepo->get('messenger.online_status.enabled');
         $this->onlineCacheLifetime = $this->configRepo->get('messenger.online_status.lifetime');
         $this->calling = $this->configRepo->get('messenger.calling.enabled');
+        $this->systemMessages = $this->configRepo->get('messenger.system_messages.enabled');
         $this->providerAvatarUpload = $this->configRepo->get('messenger.files.provider_avatars.upload');
         $this->providerAvatarRemoval = $this->configRepo->get('messenger.files.provider_avatars.removal');
         $this->providerAvatarSizeLimit = $this->configRepo->get('messenger.files.provider_avatars.size_limit');
@@ -1528,6 +1530,10 @@ trait MessengerConfig
         $this->searchRateLimit = $this->configRepo->get('messenger.rate_limits.search');
         $this->messageRateLimit = $this->configRepo->get('messenger.rate_limits.message');
         $this->attachmentRateLimit = $this->configRepo->get('messenger.rate_limits.attachment');
-        $this->subscribers = $this->configRepo->get('messenger.subscribers');
+        $this->subscribers = [
+            'bots' => $this->configRepo->get('messenger.bots.subscriber'),
+            'calls' => $this->configRepo->get('messenger.calling.subscriber'),
+            'system_messages' => $this->configRepo->get('messenger.system_messages.subscriber'),
+        ];
     }
 }

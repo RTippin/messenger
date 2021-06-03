@@ -8,7 +8,9 @@ use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\BaseMessengerAction;
+use RTippin\Messenger\Brokers\NullVideoBroker;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Facades\Messenger;
 
 class FeatureTestCase extends MessengerTestCase
 {
@@ -40,6 +42,7 @@ class FeatureTestCase extends MessengerTestCase
         BaseMessengerAction::disableEvents();
         Storage::fake('public');
         Storage::fake('messenger');
+        Messenger::setVideoDriver(NullVideoBroker::class);
         $this->withoutMiddleware(ThrottleRequests::class);
     }
 

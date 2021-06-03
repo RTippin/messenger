@@ -7,7 +7,7 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Illuminate\Support\ServiceProvider;
-use LogicException;
+use RTippin\Messenger\Brokers\BroadcastBroker;
 use RTippin\Messenger\Brokers\FriendBroker;
 use RTippin\Messenger\Commands\CallsActivityCheckCommand;
 use RTippin\Messenger\Commands\CallsDownCommand;
@@ -25,7 +25,6 @@ use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\EmojiInterface;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Http\Middleware\MessengerApi;
 use RTippin\Messenger\Listeners\CallSubscriber;
 use RTippin\Messenger\Listeners\SystemMessageSubscriber;
@@ -55,9 +54,7 @@ class MessengerServiceProvider extends ServiceProvider
 
         $this->app->singleton(EmojiInterface::class, EmojiService::class);
 
-        $this->app->bind(BroadcastDriver::class, $this->getBroadcastImplementation());
-
-        $this->app->bind(VideoDriver::class, $this->getVideoImplementation());
+        $this->app->bind(BroadcastDriver::class, BroadcastBroker::class);
     }
 
     /**
@@ -152,11 +149,11 @@ class MessengerServiceProvider extends ServiceProvider
     {
         $events = $this->app->make(Dispatcher::class);
 
-        if (config('messenger.subscribers.calls.enabled')) {
+        if (config('messenger.calling.subscriber.enabled')) {
             $events->subscribe(CallSubscriber::class);
         }
 
-        if (config('messenger.subscribers.system_messages.enabled')) {
+        if (config('messenger.system_messages.subscriber.enabled')) {
             $events->subscribe(SystemMessageSubscriber::class);
         }
     }
@@ -175,49 +172,5 @@ class MessengerServiceProvider extends ServiceProvider
         array_push($merged, 'throttle:messenger-api');
 
         return $merged;
-    }
-
-    /**
-     * Get the driver set in config for our services broadcasting feature.
-     *
-     * @return string
-     */
-    private function getBroadcastImplementation(): string
-    {
-        $broadcastDrivers = config('messenger.drivers.broadcasting');
-        $alias = config('messenger.broadcasting.driver') ?? 'null';
-
-        if (! array_key_exists($alias, $broadcastDrivers)) {
-            $this->throwDriverNotExist($alias);
-        }
-
-        return $broadcastDrivers[$alias];
-    }
-
-    /**
-     * Get the driver set in config for our services video feature.
-     *
-     * @return string
-     * @throws LogicException
-     */
-    private function getVideoImplementation(): string
-    {
-        $videoDrivers = config('messenger.drivers.calling');
-        $alias = config('messenger.calling.driver') ?? 'null';
-
-        if (! array_key_exists($alias, $videoDrivers)) {
-            $this->throwDriverNotExist($alias);
-        }
-
-        return $videoDrivers[$alias];
-    }
-
-    /**
-     * @param string $driverName
-     * @throws LogicException
-     */
-    private function throwDriverNotExist(string $driverName)
-    {
-        throw new LogicException("The $driverName driver does not exist.");
     }
 }

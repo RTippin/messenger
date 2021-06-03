@@ -15,9 +15,9 @@ use RTippin\Messenger\Support\ProvidersVerification;
  */
 final class Messenger
 {
-    use MessengerProviders;
-    use MessengerConfig;
-    use MessengerOnline;
+    use MessengerProviders,
+        MessengerConfig,
+        MessengerOnline;
 
     /**
      * @var Application

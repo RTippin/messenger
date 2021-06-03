@@ -2,8 +2,11 @@
 
 namespace RTippin\Messenger\Tests\Messenger;
 
+use InvalidArgumentException;
+use RTippin\Messenger\Brokers\BroadcastBroker;
 use RTippin\Messenger\Brokers\JanusBroker;
 use RTippin\Messenger\Brokers\NullBroadcastBroker;
+use RTippin\Messenger\Brokers\NullVideoBroker;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\VideoDriver;
@@ -442,8 +445,6 @@ class MessengerTest extends MessengerTestCase
     public function it_can_get_configs()
     {
         $this->assertSame('Messenger-Testbench', $this->messenger->getSiteName());
-        $this->assertSame('default', $this->messenger->getBroadcastDriver());
-        $this->assertSame('null', $this->messenger->getVideoDriver());
         $this->assertSame('/messenger', $this->messenger->getWebEndpoint());
         $this->assertSame('/api/messenger', $this->messenger->getApiEndpoint());
         $this->assertSame(config('app.url'), $this->messenger->getSocketEndpoint());
@@ -459,6 +460,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame('images', $this->messenger->getAvatarStorage('directory'));
         $this->assertSame(4, $this->messenger->getOnlineCacheLifetime());
         $this->assertTrue($this->messenger->isCallingEnabled());
+        $this->assertTrue($this->messenger->isSystemMessagesEnabled());
         $this->assertSame(5, $this->messenger->getKnockTimeout());
         $this->assertTrue($this->messenger->isKnockKnockEnabled());
         $this->assertSame(25, $this->messenger->getSearchPageCount());
@@ -525,21 +527,34 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_can_set_drivers()
     {
-        $this->assertSame('default', $this->messenger->getBroadcastDriver());
-        $this->assertSame('null', $this->messenger->getVideoDriver());
+        $this->messenger->setBroadcastDriver(NullBroadcastBroker::class);
+        $this->messenger->setVideoDriver(NullVideoBroker::class);
 
-        $this->messenger->setBroadcastDriver('null');
-        $this->messenger->setVideoDriver('janus');
+        $this->assertInstanceOf(NullBroadcastBroker::class, app(BroadcastDriver::class));
+        $this->assertInstanceOf(NullVideoBroker::class, app(VideoDriver::class));
 
         $this->mock(VideoRoomService::class);
+        $this->messenger->setBroadcastDriver(BroadcastBroker::class);
+        $this->messenger->setVideoDriver(JanusBroker::class);
 
-        $broadcastDriver = app(BroadcastDriver::class);
-        $videoDriver = app(VideoDriver::class);
+        $this->assertInstanceOf(BroadcastBroker::class, app(BroadcastDriver::class));
+        $this->assertInstanceOf(JanusBroker::class, app(VideoDriver::class));
+    }
 
-        $this->assertSame('null', $this->messenger->getBroadcastDriver());
-        $this->assertInstanceOf(NullBroadcastBroker::class, $broadcastDriver);
-        $this->assertSame('janus', $this->messenger->getVideoDriver());
-        $this->assertInstanceOf(JanusBroker::class, $videoDriver);
+    /** @test */
+    public function it_throws_exception_if_invalid_broadcast_driver()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The given driver { RTippin\Messenger\Brokers\NullVideoBroker } must implement our interface RTippin\Messenger\Contracts\BroadcastDriver');
+        $this->messenger->setBroadcastDriver(NullVideoBroker::class);
+    }
+
+    /** @test */
+    public function it_throws_exception_if_invalid_video_driver()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The given driver { RTippin\Messenger\Brokers\NullBroadcastBroker } must implement our interface RTippin\Messenger\Contracts\VideoDriver');
+        $this->messenger->setVideoDriver(NullBroadcastBroker::class);
     }
 
     /** @test */
@@ -549,6 +564,7 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->setPushNotifications(true);
         $this->messenger->setOnlineCacheLifetime(10);
         $this->messenger->setCalling(false);
+        $this->messenger->setSystemMessages(false);
         $this->messenger->setKnockTimeout(10);
         $this->messenger->setKnockKnock(false);
         $this->messenger->setSearchPageCount(5);
@@ -615,6 +631,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertTrue($this->messenger->isPushNotificationsEnabled());
         $this->assertSame(10, $this->messenger->getOnlineCacheLifetime());
         $this->assertFalse($this->messenger->isCallingEnabled());
+        $this->assertFalse($this->messenger->isSystemMessagesEnabled());
         $this->assertSame(10, $this->messenger->getKnockTimeout());
         $this->assertFalse($this->messenger->isKnockKnockEnabled());
         $this->assertSame(5, $this->messenger->getSearchPageCount());
