@@ -192,7 +192,7 @@ abstract class NewMessageAction extends BaseMessengerAction
     /**
      * @param string|null $replyToId
      */
-    private function setReplyingToMessage(?string $replyToId = null): void
+    private function setReplyingToMessage(?string $replyToId): void
     {
         if (! is_null($replyToId)) {
             $this->replyingTo = $this->getThread()

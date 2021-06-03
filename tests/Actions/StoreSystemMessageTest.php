@@ -8,6 +8,7 @@ use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
 use RTippin\Messenger\Events\NewMessageEvent;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -40,6 +41,23 @@ class StoreSystemMessageTest extends FeatureTestCase
             'id' => $thread->id,
             'updated_at' => $updated,
         ]);
+    }
+
+    /** @test */
+    public function it_does_nothing_if_disabled()
+    {
+        BaseMessengerAction::enableEvents();
+        Messenger::setSystemMessages(false);
+        $thread = Thread::factory()->group()->create();
+
+        $this->doesntExpectEvents([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+
+        app(StoreSystemMessage::class)->execute($thread, $this->tippin, 'system', 'GROUP_CREATED');
+
+        $this->assertDatabaseCount('messages', 0);
     }
 
     /** @test */
