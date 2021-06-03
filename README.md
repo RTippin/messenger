@@ -703,7 +703,7 @@ class AppServiceProvider extends ServiceProvider
 
 - Our default broadcast driver ([BroadcastBroker][link-broadcast-broker]) is responsible for extracting private/presence channel names and dispatching the broadcast event that any action in our system calls for.
   - If push notifications are enabled, this broker will also forward its data to our [PushNotificationService][link-push-notify]. The service will then fire a [PushNotificationEvent][link-push-event] that you can attach a listener to handle your own FCM / other service.
-  - If using your own broadcast driver, your class must implement our [BroadcastDriver][link-broadcast-driver] contract. You may then declare your driver within your AppServiceProvider.
+- If using your own broadcast driver, your class must implement our [BroadcastDriver][link-broadcast-driver] contract. You may then declare your driver within your AppServiceProvider.
 
 ***Set the broadcast driver in your AppServiceProvider boot method:***
 ```php
