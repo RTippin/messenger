@@ -15,6 +15,7 @@
 
 #### Changed
 - Default broadcast driver set in the service provider.
+- `push_notifications` in config no longer nested array.
 
 #### Removed
 - Drivers section from config.
