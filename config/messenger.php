@@ -245,9 +245,9 @@ return [
     |
     | Messenger::setVideoDriver(JanusBroker::class);
     |
-    | We also provide an event subscriber to listen and react to events relating
-    | to calls. You may choose to enable it, whether it puts jobs on the queue
-    | or not, and which queue channel.
+    | We provide an event subscriber to listen and react to calling events. You
+    | may choose to enable it, whether it puts jobs on the queue or not, and
+    | which queue channel its jobs are dispatched on.
     */
     'calling' => [
         'enabled' => env('MESSENGER_CALLING_ENABLED', false),
@@ -267,9 +267,10 @@ return [
     | to give feedback in the thread history. Actions such as: call ended, left
     | group, promoted admin, etc.
     |
-    | We also provide an event subscriber to listen and react to events that will
-    | generate the system messages. You may choose to enable it, whether it puts
-    | jobs on the queue or not, and which queue channel.
+    | We provide an event subscriber to listen and react to events that will
+    | generate the system messages. You may choose to enable it, whether it
+    | puts jobs on the queue or not, and which queue channel its jobs are
+    | dispatched on.
     */
     'system_messages' => [
         'enabled' => env('MESSENGER_SYSTEM_MESSAGES_ENABLED', true),

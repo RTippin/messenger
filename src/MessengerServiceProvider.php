@@ -118,6 +118,10 @@ class MessengerServiceProvider extends ServiceProvider
         ], 'messenger.config');
 
         $this->publishes([
+            __DIR__.'/../config/janus.php' => config_path('janus.php'),
+        ], 'messenger.janus.config');
+
+        $this->publishes([
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'messenger.migrations');
 
@@ -130,12 +134,6 @@ class MessengerServiceProvider extends ServiceProvider
             $this->publishes([
                 __DIR__.'/../public' => public_path('vendor/messenger'),
             ], 'messenger.assets');
-        }
-
-        if (config('messenger.calling.driver') === 'janus') {
-            $this->publishes([
-                __DIR__.'/../config/janus.php' => config_path('janus.php'),
-            ], 'messenger.janus.config');
         }
     }
 

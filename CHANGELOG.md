@@ -3,6 +3,26 @@
 
 ---
 
+### [v0.34 (06-03-2021)]
+
+#### Added
+- Event subscribers for calling and system messages. More config for these to toggle on or off, set queued, and queue channel.
+- Config option to toggle system messages on or off.
+- boolean column `chat_bots` on `threads` table.
+- boolean column `manage_bots` on `participants` table.
+- `SystemFeaturesResource` attached to threads collection and thread resource. Shows the current system feature statuses.
+- Groundwork for upcoming bots feature.
+
+#### Changed
+- Default broadcast driver set in the service provider.
+
+#### Removed
+- Drivers section from config.
+- ALL queued listeners and the Event => Listener map.
+- `getBroadcastDriver()` and `getVideoDriver()` methods from messenger.
+
+---
+
 ### [v0.33 (05-24-2021)]
 
 #### Changed
