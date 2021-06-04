@@ -14,7 +14,7 @@ class BotService
      */
     public function handle(Message $message): void
     {
-        $actions = Action::whereHas('bot', function(Builder $query) use ($message) {
+        $actions = Action::whereHas('bot', function (Builder $query) use ($message) {
             return $query->where('thread_id', '=', $message->thread_id)
                 ->where('enabled', '=', true);
         })->get();
@@ -24,6 +24,7 @@ class BotService
         foreach ($actions as $action) {
             if ($this->matches($body, $action->trigger)) {
                 $this->execute($action, $message);
+
                 return;
             }
         }
