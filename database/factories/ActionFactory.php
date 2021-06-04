@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use RTippin\Messenger\Bots\ReplyBot;
 use RTippin\Messenger\Models\Action;
 
 class ActionFactory extends Factory
@@ -23,7 +22,7 @@ class ActionFactory extends Factory
     public function definition(): array
     {
         return [
-            'handler' => ReplyBot::class,
+            'handler' => 'ReplyBot',
             'admin_trigger' => false,
             'exact_match' => false,
             'trigger' => '!hello',
@@ -60,10 +59,10 @@ class ActionFactory extends Factory
     /**
      * Set the actions trigger.
      *
-     * @param string $trigger
+     * @param string|null $trigger
      * @return Factory
      */
-    public function trigger(string $trigger): Factory
+    public function trigger(?string $trigger): Factory
     {
         return $this->state(function (array $attributes) use ($trigger) {
             return [
@@ -75,10 +74,10 @@ class ActionFactory extends Factory
     /**
      * Set the actions payload.
      *
-     * @param string $payload
+     * @param string|null $payload
      * @return Factory
      */
-    public function payload(string $payload): Factory
+    public function payload(?string $payload): Factory
     {
         return $this->state(function (array $attributes) use ($payload) {
             return [
