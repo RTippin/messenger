@@ -233,6 +233,7 @@ return [
             '5.png' => public_path('vendor/messenger/images/5.png'),
         ],
         'default_not_found_image' => public_path('vendor/messenger/images/image404.png'),
+        'default_bot_avatar' => public_path('vendor/messenger/images/bots.png'),
     ],
 
     /*
@@ -286,14 +287,21 @@ return [
     | Bots
     |--------------------------------------------------------------------------
     |
-    | TODO
+    | Enable or disable the bots feature. When enabled, bots may be created
+    | within group threads. Bot may contain many actions and triggers to
+    | respond to messages or events.
+    |
+    | We provide an event subscriber to listen and react to events that may
+    | trigger a bot response. You may choose to enable it, whether it puts
+    | jobs on the queue or not, and which queue channel its jobs are
+    | dispatched on.
     */
     'bots' => [
         'enabled' => env('MESSENGER_BOTS_ENABLED', false),
         'subscriber' => [
             'enabled' => true,
             'queued' => true,
-            'channel' => 'messenger',
+            'channel' => 'messenger-bots',
         ],
     ],
 

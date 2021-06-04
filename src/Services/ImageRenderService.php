@@ -192,13 +192,13 @@ class ImageRenderService
                                     string $fileNameChallenge)
     {
         if ($fileNameChallenge !== $bot->avatar) {
-            return $this->renderDefaultImage();
+            return $this->renderDefaultImage('bot');
         }
 
         if (! $this->filesystemManager
             ->disk($bot->getStorageDisk())
             ->exists($bot->getAvatarPath())) {
-            return $this->renderDefaultImage();
+            return $this->renderDefaultImage('bot');
         }
 
         $extension = pathinfo($this->filesystemManager->disk($bot->getStorageDisk())->path($bot->getAvatarPath()), PATHINFO_EXTENSION);

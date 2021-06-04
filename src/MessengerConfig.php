@@ -11,6 +11,7 @@ use Illuminate\Support\Collection;
 use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
+use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Support\ProvidersVerification;
 use RTippin\Messenger\Traits\ChecksReflection;
 
@@ -120,6 +121,11 @@ trait MessengerConfig
      * @var bool
      */
     private bool $calling;
+
+    /**
+     * @var bool
+     */
+    private bool $bots;
 
     /**
      * @var bool
@@ -570,6 +576,25 @@ trait MessengerConfig
     public function setCalling(bool $calling): self
     {
         $this->calling = $calling;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isBotsEnabled(): bool
+    {
+        return $this->bots;
+    }
+
+    /**
+     * @param bool $bots
+     * @return $this
+     */
+    public function setBots(bool $bots): self
+    {
+        $this->bots = $bots;
 
         return $this;
     }
@@ -1434,7 +1459,9 @@ trait MessengerConfig
     public function setMessengerProviders(array $providers = []): void
     {
         if (count($providers)) {
-            $this->providers = $this->providersVerification->formatValidProviders($providers);
+            $this->providers = $this->mergeBotProvider(
+                $this->providersVerification->formatValidProviders($providers)
+            );
         } elseif ($this->isProvidersCached) {
             $providersFile = $this->loadCachedProvidersFile();
             if ($providersFile) {
@@ -1452,9 +1479,32 @@ trait MessengerConfig
      */
     private function setProvidersFromConfig(): void
     {
-        $this->providers = $this->providersVerification->formatValidProviders(
-            $this->configRepo->get('messenger.providers')
+        $this->providers = $this->mergeBotProvider(
+            $this->providersVerification->formatValidProviders($this->configRepo->get('messenger.providers'))
         );
+    }
+
+    /**
+     * @param Collection $providers
+     * @return Collection
+     */
+    private function mergeBotProvider(Collection $providers): Collection
+    {
+        $providers['bot'] = [
+            'model' => Bot::class,
+            'morph_class' => 'bots',
+            'searchable' => false,
+            'friendable' => false,
+            'devices' => false,
+            'default_avatar' => $this->configRepo->get('messenger.files.default_bot_avatar'),
+            'provider_interactions' => [
+                'can_message' => [],
+                'can_search' => [],
+                'can_friend' => [],
+            ],
+        ];
+
+        return $providers;
     }
 
     /**
@@ -1500,6 +1550,7 @@ trait MessengerConfig
         $this->onlineStatus = $this->configRepo->get('messenger.online_status.enabled');
         $this->onlineCacheLifetime = $this->configRepo->get('messenger.online_status.lifetime');
         $this->calling = $this->configRepo->get('messenger.calling.enabled');
+        $this->bots = $this->configRepo->get('messenger.bots.enabled');
         $this->systemMessages = $this->configRepo->get('messenger.system_messages.enabled');
         $this->providerAvatarUpload = $this->configRepo->get('messenger.files.provider_avatars.upload');
         $this->providerAvatarRemoval = $this->configRepo->get('messenger.files.provider_avatars.removal');

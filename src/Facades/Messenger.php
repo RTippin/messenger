@@ -30,6 +30,8 @@ use RTippin\Messenger\Models\Participant;
  * @method static \RTippin\Messenger\Messenger removeTemporaryCallShutdown()
  * @method static bool isCallingEnabled()
  * @method static \RTippin\Messenger\Messenger setCalling(bool $calling)
+ * @method static bool isBotsEnabled()
+ * @method static \RTippin\Messenger\Messenger setBots(bool $bots)
  * @method static bool isSystemMessagesEnabled()
  * @method static \RTippin\Messenger\Messenger setSystemMessages(bool $systemMessages)
  * @method static \RTippin\Messenger\Messenger setThreadInvites(bool $invites)

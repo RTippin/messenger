@@ -176,6 +176,7 @@ class MessengerTest extends MessengerTestCase
         $expected = [
             (new $user)->getMorphClass(),
             (new $company)->getMorphClass(),
+            'bots',
         ];
 
         $this->assertSame($expected, $this->messenger->getAllMessengerProviders());
@@ -460,6 +461,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame('images', $this->messenger->getAvatarStorage('directory'));
         $this->assertSame(4, $this->messenger->getOnlineCacheLifetime());
         $this->assertTrue($this->messenger->isCallingEnabled());
+        $this->assertFalse($this->messenger->isBotsEnabled());
         $this->assertTrue($this->messenger->isSystemMessagesEnabled());
         $this->assertSame(5, $this->messenger->getKnockTimeout());
         $this->assertTrue($this->messenger->isKnockKnockEnabled());
@@ -481,7 +483,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertTrue($this->messenger->isThreadAvatarUploadEnabled());
         $this->assertTrue($this->messenger->isProviderAvatarUploadEnabled());
         $this->assertTrue($this->messenger->isProviderAvatarRemovalEnabled());
-        $this->assertCount(2, $this->messenger->getMessengerProviders());
+        $this->assertCount(3, $this->messenger->getMessengerProviders());
         $this->assertSame(1000, $this->messenger->getApiRateLimit());
         $this->assertSame(45, $this->messenger->getSearchRateLimit());
         $this->assertSame(60, $this->messenger->getMessageRateLimit());
@@ -507,7 +509,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertTrue($this->messenger->getBotSubscriber('queued'));
         $this->assertTrue($this->messenger->getCallSubscriber('queued'));
         $this->assertTrue($this->messenger->getSystemMessageSubscriber('queued'));
-        $this->assertSame('messenger', $this->messenger->getBotSubscriber('channel'));
+        $this->assertSame('messenger-bots', $this->messenger->getBotSubscriber('channel'));
         $this->assertSame('messenger', $this->messenger->getCallSubscriber('channel'));
         $this->assertSame('messenger', $this->messenger->getSystemMessageSubscriber('channel'));
     }
@@ -564,6 +566,7 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->setPushNotifications(true);
         $this->messenger->setOnlineCacheLifetime(10);
         $this->messenger->setCalling(false);
+        $this->messenger->setBots(true);
         $this->messenger->setSystemMessages(false);
         $this->messenger->setKnockTimeout(10);
         $this->messenger->setKnockKnock(false);
@@ -631,6 +634,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertTrue($this->messenger->isPushNotificationsEnabled());
         $this->assertSame(10, $this->messenger->getOnlineCacheLifetime());
         $this->assertFalse($this->messenger->isCallingEnabled());
+        $this->assertTrue($this->messenger->isBotsEnabled());
         $this->assertFalse($this->messenger->isSystemMessagesEnabled());
         $this->assertSame(10, $this->messenger->getKnockTimeout());
         $this->assertFalse($this->messenger->isKnockKnockEnabled());
@@ -656,7 +660,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame(5, $this->messenger->getSearchRateLimit());
         $this->assertSame(5, $this->messenger->getMessageRateLimit());
         $this->assertSame(5, $this->messenger->getAttachmentRateLimit());
-        $this->assertCount(1, $this->messenger->getMessengerProviders());
+        $this->assertCount(2, $this->messenger->getMessengerProviders());
         $this->assertFalse($this->messenger->isMessageEditsEnabled());
         $this->assertFalse($this->messenger->isMessageEditsViewEnabled());
         $this->assertFalse($this->messenger->isMessageEditsEnabled());

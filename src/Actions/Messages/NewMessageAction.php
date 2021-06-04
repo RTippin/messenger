@@ -182,7 +182,8 @@ abstract class NewMessageAction extends BaseMessengerAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new NewMessageEvent(
-                $this->getMessage(true)
+                $this->getMessage(true),
+                $this->getThread(true)
             ));
         }
 

@@ -31,7 +31,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property bool $edited
  * @property bool $reacted
  * @property bool $embeds
- * @property string $extra
+ * @property string|array|null $extra
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at

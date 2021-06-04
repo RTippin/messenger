@@ -18,7 +18,7 @@ class CreateBotActionsTable extends Migration
             $table->uuid('id')->primary();
             $table->uuid('bot_id');
             Helpers::SchemaMorphType('owner', $table);
-            $table->string('event');
+            $table->string('handler');
             $table->string('trigger')->nullable();
             $table->boolean('admin_trigger')->default(false);
             $table->text('payload')->nullable()->default(null);

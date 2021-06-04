@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use RTippin\Messenger\Contracts\BotHandlerInterface;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\ActionFactory;
 use RTippin\Messenger\Facades\Messenger;
@@ -17,7 +18,9 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string $bot_id
  * @property string|int $owner_id
  * @property string $owner_type
+ * @property string|BotHandlerInterface $handler
  * @property string $trigger
+ * @property string|null $payload
  * @property bool $admin_trigger
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at

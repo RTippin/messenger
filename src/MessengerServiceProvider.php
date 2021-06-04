@@ -26,6 +26,7 @@ use RTippin\Messenger\Contracts\EmojiInterface;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Http\Middleware\MessengerApi;
+use RTippin\Messenger\Listeners\BotSubscriber;
 use RTippin\Messenger\Listeners\CallSubscriber;
 use RTippin\Messenger\Listeners\SystemMessageSubscriber;
 use RTippin\Messenger\Models\Bot;
@@ -153,6 +154,10 @@ class MessengerServiceProvider extends ServiceProvider
 
         if (config('messenger.system_messages.subscriber.enabled')) {
             $events->subscribe(SystemMessageSubscriber::class);
+        }
+
+        if (config('messenger.bots.subscriber.enabled')) {
+            $events->subscribe(BotSubscriber::class);
         }
     }
 

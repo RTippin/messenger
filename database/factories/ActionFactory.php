@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use RTippin\Messenger\Bots\ReplyBot;
 use RTippin\Messenger\Models\Action;
 
 class ActionFactory extends Factory
@@ -22,8 +23,10 @@ class ActionFactory extends Factory
     public function definition(): array
     {
         return [
-            'event' => 'NewMessageEvent',
+            'handler' => ReplyBot::class,
             'admin_trigger' => false,
+            'trigger' => '!hello',
+            'payload' => '{"reply":"world"}',
         ];
     }
 
