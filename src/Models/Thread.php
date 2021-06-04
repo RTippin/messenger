@@ -177,9 +177,9 @@ class Thread extends Model
             Call::class,
             'thread_id',
             'id'
-        )
-            ->whereNull('call_ended')
-            ->latest();
+        )->ofMany(['id' => 'MAX'], function(Builder $query) {
+            return $query->whereNull('call_ended');
+        });
     }
 
     /**
