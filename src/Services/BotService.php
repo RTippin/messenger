@@ -22,7 +22,7 @@ class BotService
         $body = $this->prepare($message->body);
 
         foreach ($actions as $action) {
-            if ($this->matches($body, $action->trigger)) {
+            if ($this->matches($action, $body)) {
                 $this->execute($action, $message);
 
                 return;
@@ -40,15 +40,19 @@ class BotService
     }
 
     /**
+     * @param Action $action
      * @param string $message
-     * @param string $trigger
      * @return bool
      */
-    public function matches(string $message, string $trigger): bool
+    public function matches(Action $action, string $message): bool
     {
-        return Str::startsWith($message, $trigger)
-            && (Str::contains($message, $trigger.' ')
-                || $message === $trigger);
+        if ($action->exact_match) {
+            return $message === $action->trigger;
+        }
+
+        return Str::startsWith($message, $action->trigger)
+            && (Str::contains($message, $action->trigger.' ')
+                || $message === $action->trigger);
     }
 
     /**

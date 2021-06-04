@@ -3,14 +3,14 @@
 namespace RTippin\Messenger\Bots;
 
 use RTippin\Messenger\Actions\Messages\StoreMessage;
-use RTippin\Messenger\Contracts\BotHandlerInterface;
+use RTippin\Messenger\Contracts\BotHandler;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Action;
 use RTippin\Messenger\Models\Message;
 use Throwable;
 
-class ReplyBot implements BotHandlerInterface
+class ReplyBot implements BotHandler
 {
     /**
      * @var Messenger

@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Contracts;
 use RTippin\Messenger\Models\Action;
 use RTippin\Messenger\Models\Message;
 
-interface BotHandlerInterface
+interface BotHandler
 {
     /**
      * Executes the bots action, allowing variable number of params.

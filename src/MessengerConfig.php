@@ -1480,7 +1480,9 @@ trait MessengerConfig
     private function setProvidersFromConfig(): void
     {
         $this->providers = $this->mergeBotProvider(
-            $this->providersVerification->formatValidProviders($this->configRepo->get('messenger.providers'))
+            $this->providersVerification->formatValidProviders(
+                $this->configRepo->get('messenger.providers')
+            )
         );
     }
 
