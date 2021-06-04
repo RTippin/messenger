@@ -4,11 +4,15 @@ namespace RTippin\Messenger\Services;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
+use RTippin\Messenger\Contracts\BotHandler;
 use RTippin\Messenger\Models\Action;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Traits\ChecksReflection;
 
 class BotService
 {
+    use ChecksReflection;
+
     /**
      * @param Message $message
      */
@@ -61,7 +65,8 @@ class BotService
      */
     private function execute(Action $action, Message $message): void
     {
-        if (class_exists($action->handler)) {
+        if (class_exists($action->handler)
+            && $this->checkImplementsInterface($action->handler, BotHandler::class)) {
             app($action->handler)->execute($action, $message);
         }
     }
