@@ -23,24 +23,13 @@ class BotService
                 ->where('enabled', '=', true);
         })->get();
 
-        $body = $this->prepare($message->body);
-
         foreach ($actions as $action) {
-            if ($this->matches($action, $body)) {
+            if ($this->matches($action, $message->body)) {
                 $this->execute($action, $message);
 
                 return;
             }
         }
-    }
-
-    /**
-     * @param string $body
-     * @return string
-     */
-    public function prepare(string $body): string
-    {
-        return trim(Str::lower($body));
     }
 
     /**
@@ -50,13 +39,56 @@ class BotService
      */
     public function matches(Action $action, string $message): bool
     {
-        if ($action->exact_match) {
-            return $message === $action->trigger;
-        }
+        $message = $this->prepare($message);
 
-        return Str::startsWith($message, $action->trigger)
-            && (Str::contains($message, $action->trigger.' ')
-                || $message === $action->trigger);
+        switch ($action->match_method) {
+            case 'contains': return $this->matchContains($action->trigger, $message);
+            case 'exact': return $this->matchExact($action->trigger, $message);
+            case 'starts-with': return $this->matchStartsWith($action->trigger, $message);
+            default: return false;
+        }
+    }
+
+    /**
+     * @param string $body
+     * @return string
+     */
+    private function prepare(string $body): string
+    {
+        return trim(Str::lower($body));
+    }
+
+    /**
+     * @param string $trigger
+     * @param string $message
+     * @return bool
+     */
+    private function matchExact(string $trigger, string $message): bool
+    {
+        return $message === $trigger;
+    }
+
+    /**
+     * @param string $trigger
+     * @param string $message
+     * @return bool
+     */
+    private function matchContains(string $trigger, string $message): bool
+    {
+        return Str::contains($message, $trigger.' ')
+            || Str::endsWith($message, $trigger)
+            || $this->matchExact($trigger, $message);
+    }
+
+    /**
+     * @param string $trigger
+     * @param string $message
+     * @return bool
+     */
+    private function matchStartsWith(string $trigger, string $message): bool
+    {
+        return Str::startsWith($message, $trigger)
+            && $this->matchContains($trigger, $message);
     }
 
     /**

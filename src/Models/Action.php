@@ -21,8 +21,8 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string|BotHandler $handler
  * @property string $trigger
  * @property string|null $payload
- * @property bool $admin_trigger
- * @property bool $exact_match
+ * @property bool $admin_only
+ * @property string $match_method
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @mixin Model|\Eloquent
@@ -33,6 +33,15 @@ class Action extends Model
 {
     use HasFactory;
     use Uuids;
+
+    /**
+     * Methods we may use to match a trigger from within a string.
+     */
+    const MatchMethods = [
+        'contains',
+        'exact',
+        'starts-with',
+    ];
 
     /**
      * The database table used by the model.
@@ -62,8 +71,7 @@ class Action extends Model
      * @var array
      */
     protected $casts = [
-        'admin_trigger' => 'boolean',
-        'exact_match' => 'boolean',
+        'admin_only' => 'boolean',
     ];
 
     /**

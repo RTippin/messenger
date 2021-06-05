@@ -23,10 +23,10 @@ class ActionFactory extends Factory
     {
         return [
             'handler' => 'ReplyBot',
-            'admin_trigger' => false,
-            'exact_match' => false,
+            'admin_only' => false,
+            'match_method' => 'exact',
             'trigger' => '!hello',
-            'payload' => '{"reply":"world"}',
+            'payload' => null,
         ];
     }
 
@@ -74,10 +74,10 @@ class ActionFactory extends Factory
     /**
      * Set the actions payload.
      *
-     * @param string|null $payload
+     * @param string $payload
      * @return Factory
      */
-    public function payload(?string $payload): Factory
+    public function payload(string $payload): Factory
     {
         return $this->state(function (array $attributes) use ($payload) {
             return [
@@ -87,15 +87,16 @@ class ActionFactory extends Factory
     }
 
     /**
-     * Indicate the trigger should be exact.
+     * Indicate the method used for matching trigger.
      *
+     * @param string $match
      * @return Factory
      */
-    public function exact(): Factory
+    public function match(string $match): Factory
     {
-        return $this->state(function (array $attributes) {
+        return $this->state(function (array $attributes) use ($match) {
             return [
-                'exact_match' => true,
+                'match_method' => $match,
             ];
         });
     }
