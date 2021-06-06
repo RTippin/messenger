@@ -39,56 +39,84 @@ class BotService
      */
     public function matches(Action $action, string $message): bool
     {
-        $message = $this->prepare($message);
-
         switch ($action->match_method) {
             case 'contains': return $this->matchContains($action->trigger, $message);
+            case 'contains:caseless': return $this->matchContains($action->trigger, $message, true);
+            case 'contains:any': return $this->matchContainsAny($action->trigger, $message);
+            case 'contains:any:caseless': return $this->matchContainsAny($action->trigger, $message, true);
             case 'exact': return $this->matchExact($action->trigger, $message);
-            case 'starts-with': return $this->matchStartsWith($action->trigger, $message);
+            case 'exact:caseless': return $this->matchExact($action->trigger, $message, true);
+            case 'starts:with': return $this->matchStartsWith($action->trigger, $message);
+            case 'starts:with:caseless': return $this->matchStartsWith($action->trigger, $message, true);
             default: return false;
         }
     }
 
     /**
-     * @param string $body
+     * @param string $trigger
+     * @param string $message
+     * @param bool $caseless
+     * @return bool
+     */
+    public function matchExact(string $trigger, string $message, bool $caseless = false): bool
+    {
+        $trigger = $caseless ? Str::lower($trigger) : $trigger;
+        $message = $this->prepareMessage($message, $caseless);
+
+        return $trigger === $message;
+    }
+
+    /**
+     * @param string $trigger
+     * @param string $message
+     * @param bool $caseless
+     * @return bool
+     */
+    public function matchContains(string $trigger, string $message, bool $caseless = false): bool
+    {
+        $trigger = $caseless ? Str::lower($trigger) : $trigger;
+        $message = $this->prepareMessage($message, $caseless);
+
+        return (bool) preg_match('/(?<=[\s,.:;"\']|^)'.$trigger.'(?=[\s,.:;"\']|$)/', $message);
+    }
+
+    /**
+     * @param string $trigger
+     * @param string $message
+     * @param bool $caseless
+     * @return bool
+     */
+    public function matchContainsAny(string $trigger, string $message, bool $caseless = false): bool
+    {
+        $trigger = $caseless ? Str::lower($trigger) : $trigger;
+        $message = $this->prepareMessage($message, $caseless);
+
+        return Str::contains($message, $trigger);
+    }
+
+    /**
+     * @param string $trigger
+     * @param string $message
+     * @param bool $caseless
+     * @return bool
+     */
+    public function matchStartsWith(string $trigger, string $message, bool $caseless = false): bool
+    {
+        $trigger = $caseless ? Str::lower($trigger) : $trigger;
+        $message = $this->prepareMessage($message, $caseless);
+
+        return Str::startsWith($message, $trigger)
+            && $this->matchContains($trigger, $message, $caseless);
+    }
+
+    /**
+     * @param string $string
+     * @param bool $lower
      * @return string
      */
-    private function prepare(string $body): string
+    private function prepareMessage(string $string, bool $lower): string
     {
-        return trim(Str::lower($body));
-    }
-
-    /**
-     * @param string $trigger
-     * @param string $message
-     * @return bool
-     */
-    private function matchExact(string $trigger, string $message): bool
-    {
-        return $message === $trigger;
-    }
-
-    /**
-     * @param string $trigger
-     * @param string $message
-     * @return bool
-     */
-    private function matchContains(string $trigger, string $message): bool
-    {
-        return Str::contains($message, $trigger.' ')
-            || Str::endsWith($message, $trigger)
-            || $this->matchExact($trigger, $message);
-    }
-
-    /**
-     * @param string $trigger
-     * @param string $message
-     * @return bool
-     */
-    private function matchStartsWith(string $trigger, string $message): bool
-    {
-        return Str::startsWith($message, $trigger)
-            && $this->matchContains($trigger, $message);
+        return trim($lower ? Str::lower($string) : $string);
     }
 
     /**

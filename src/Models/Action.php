@@ -35,15 +35,6 @@ class Action extends Model
     use Uuids;
 
     /**
-     * Methods we may use to match a trigger from within a string.
-     */
-    const MatchMethods = [
-        'contains',
-        'exact',
-        'starts-with',
-    ];
-
-    /**
      * The database table used by the model.
      *
      * @var string
