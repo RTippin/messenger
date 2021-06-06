@@ -39,8 +39,7 @@ class BotSubscriber
      */
     private function shouldDispatch(NewMessageEvent $event): bool
     {
-        return Messenger::isBotsEnabled()
-            && Messenger::getBotSubscriber('enabled')
+        return Messenger::getBotSubscriber('enabled')
             && $event->message->isText()
             && $event->message->owner_type !== 'bots'
             && $event->thread->hasBotsFeature();
