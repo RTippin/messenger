@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use Illuminate\Contracts\Console\Kernel as ConsoleKernelContract;
 use Illuminate\Filesystem\Filesystem;
 use LogicException;
+use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Support\ProvidersVerification;
 use Throwable;
 
@@ -96,8 +97,12 @@ class ProvidersCacheCommand extends Command
 
         $app->make(ConsoleKernelContract::class)->bootstrap();
 
-        return $this->providersVerification->formatValidProviders(
-            $app['config']['messenger']['providers']
+        $messenger = $app->make(Messenger::class);
+
+        return $messenger->mergeBotProvider(
+            $this->providersVerification->formatValidProviders(
+                $app['config']['messenger']['providers']
+            )
         )->toArray();
     }
 }

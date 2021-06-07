@@ -1465,7 +1465,7 @@ trait MessengerConfig
         } elseif ($this->isProvidersCached) {
             $providersFile = $this->loadCachedProvidersFile();
             if ($providersFile) {
-                $this->providers = collect($providersFile);
+                $this->providers = new Collection($providersFile);
             } else {
                 $this->setProvidersFromConfig();
             }
@@ -1475,22 +1475,10 @@ trait MessengerConfig
     }
 
     /**
-     * Set providers from config.
-     */
-    private function setProvidersFromConfig(): void
-    {
-        $this->providers = $this->mergeBotProvider(
-            $this->providersVerification->formatValidProviders(
-                $this->configRepo->get('messenger.providers')
-            )
-        );
-    }
-
-    /**
      * @param Collection $providers
      * @return Collection
      */
-    private function mergeBotProvider(Collection $providers): Collection
+    public function mergeBotProvider(Collection $providers): Collection
     {
         $providers['bot'] = [
             'model' => Bot::class,
@@ -1507,6 +1495,18 @@ trait MessengerConfig
         ];
 
         return $providers;
+    }
+
+    /**
+     * Set providers from config.
+     */
+    private function setProvidersFromConfig(): void
+    {
+        $this->providers = $this->mergeBotProvider(
+            $this->providersVerification->formatValidProviders(
+                $this->configRepo->get('messenger.providers')
+            )
+        );
     }
 
     /**
