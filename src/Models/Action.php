@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -28,6 +29,8 @@ use RTippin\Messenger\Traits\Uuids;
  * @mixin Model|\Eloquent
  * @property-read Model|Bot $bot
  * @property-read Model|MessengerProvider $owner
+ * @method static Builder|Action validHandler()
+ * @method static Builder|Action fromThread(string $threadId)
  */
 class Action extends Model
 {
@@ -80,6 +83,32 @@ class Action extends Model
     {
         return $this->morphTo()->withDefault(function () {
             return Messenger::getGhostProvider();
+        });
+    }
+
+    /**
+     * Scope actions that have a valid handler set.
+     *
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopeValidHandler(Builder $query): Builder
+    {
+        return $query->whereIn('handler', Messenger::getBotActions());
+    }
+
+    /**
+     * Scope actions that belong to a bot using thread id, and is enabled.
+     *
+     * @param Builder $query
+     * @param string $threadId
+     * @return Builder
+     */
+    public function scopeFromThread(Builder $query, string $threadId): Builder
+    {
+        return $query->whereHas('bot', function (Builder $query) use ($threadId) {
+            return $query->where('thread_id', '=', $threadId)
+                ->where('enabled', '=', true);
         });
     }
 

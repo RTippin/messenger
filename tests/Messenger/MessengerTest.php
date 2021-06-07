@@ -7,13 +7,16 @@ use RTippin\Messenger\Brokers\BroadcastBroker;
 use RTippin\Messenger\Brokers\JanusBroker;
 use RTippin\Messenger\Brokers\NullBroadcastBroker;
 use RTippin\Messenger\Brokers\NullVideoBroker;
+use RTippin\Messenger\Contracts\BotHandler;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Facades\Messenger as MessengerFacade;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\Action;
 use RTippin\Messenger\Models\GhostUser;
+use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Services\Janus\VideoRoomService;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
@@ -462,6 +465,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame(4, $this->messenger->getOnlineCacheLifetime());
         $this->assertTrue($this->messenger->isCallingEnabled());
         $this->assertFalse($this->messenger->isBotsEnabled());
+        $this->assertSame([], $this->messenger->getBotActions());
         $this->assertTrue($this->messenger->isSystemMessagesEnabled());
         $this->assertSame(5, $this->messenger->getKnockTimeout());
         $this->assertTrue($this->messenger->isKnockKnockEnabled());
@@ -557,6 +561,31 @@ class MessengerTest extends MessengerTestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The given driver { RTippin\Messenger\Brokers\NullBroadcastBroker } must implement our interface RTippin\Messenger\Contracts\VideoDriver');
         $this->messenger->setVideoDriver(NullBroadcastBroker::class);
+    }
+
+    /** @test */
+    public function it_can_set_bot_actions()
+    {
+        $actions = [
+            BotAction::class,
+        ];
+
+        $this->messenger->setBotActions($actions);
+
+        $this->assertSame($actions, $this->messenger->getBotActions());
+    }
+
+    /** @test */
+    public function it_ignores_invalid_bot_actions()
+    {
+        $actions = [
+            BotAction::class,
+            InvalidBotAction::class,
+        ];
+
+        $this->messenger->setBotActions($actions);
+
+        $this->assertSame([BotAction::class], $this->messenger->getBotActions());
     }
 
     /** @test */
@@ -685,5 +714,21 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame('test', $this->messenger->getBotSubscriber('channel'));
         $this->assertSame('test', $this->messenger->getCallSubscriber('channel'));
         $this->assertSame('test', $this->messenger->getSystemMessageSubscriber('channel'));
+    }
+}
+
+class BotAction implements BotHandler
+{
+    public function execute(Action $action, Message $message): void
+    {
+        //
+    }
+}
+
+class InvalidBotAction
+{
+    public function handle(): void
+    {
+        //
     }
 }

@@ -9,6 +9,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Psr\SimpleCache\InvalidArgumentException;
+use RTippin\Messenger\Contracts\BotHandler;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Models\Bot;
@@ -126,6 +127,11 @@ trait MessengerConfig
      * @var bool
      */
     private bool $bots;
+
+    /**
+     * @var array
+     */
+    private array $botActions = [];
 
     /**
      * @var bool
@@ -597,6 +603,33 @@ trait MessengerConfig
         $this->bots = $bots;
 
         return $this;
+    }
+
+    /**
+     * @param array|null $actions
+     * @return $this
+     */
+    public function setBotActions(?array $actions): self
+    {
+        $this->botActions = [];
+
+        if (is_array($actions) && count($actions)) {
+            foreach ($actions as $action) {
+                if ($this->checkImplementsInterface($action, BotHandler::class)) {
+                    array_push($this->botActions, $action);
+                }
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return array
+     */
+    public function getBotActions(): array
+    {
+        return $this->botActions;
     }
 
     /**

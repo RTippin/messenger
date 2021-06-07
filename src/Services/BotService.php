@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Services;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
 use RTippin\Messenger\Contracts\BotHandler;
 use RTippin\Messenger\Models\Action;
@@ -18,10 +17,7 @@ class BotService
      */
     public function handle(Message $message): void
     {
-        $actions = Action::whereHas('bot', function (Builder $query) use ($message) {
-            return $query->where('thread_id', '=', $message->thread_id)
-                ->where('enabled', '=', true);
-        })->get();
+        $actions = Action::validHandler()->fromThread($message->thread_id)->get();
 
         foreach ($actions as $action) {
             if ($this->matches($action, $message->body)) {
