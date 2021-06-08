@@ -25,6 +25,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string $name
  * @property string $avatar
  * @property bool $enabled
+ * @property int $cooldown
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \RTippin\Messenger\Models\Thread $thread

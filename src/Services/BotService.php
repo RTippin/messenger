@@ -2,7 +2,9 @@
 
 namespace RTippin\Messenger\Services;
 
+use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Support\Str;
+use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Contracts\BotHandler;
 use RTippin\Messenger\Models\Action;
 use RTippin\Messenger\Models\Message;
@@ -13,7 +15,21 @@ class BotService
     use ChecksReflection;
 
     /**
+     * @var Repository
+     */
+    private Repository $cacheDriver;
+
+    /**
+     * BotService constructor.
+     */
+    public function __construct(Repository $cacheDriver)
+    {
+        $this->cacheDriver = $cacheDriver;
+    }
+
+    /**
      * @param Message $message
+     * @throws InvalidArgumentException
      */
     public function handle(Message $message): void
     {
@@ -118,12 +134,41 @@ class BotService
     /**
      * @param Action $action
      * @param Message $message
+     * @throws InvalidArgumentException
      */
     private function execute(Action $action, Message $message): void
     {
         if (class_exists($action->handler)
-            && $this->checkImplementsInterface($action->handler, BotHandler::class)) {
+            && $this->checkImplementsInterface($action->handler, BotHandler::class)
+            && ! $this->hasCooldown($action)) {
+            $this->setCooldown($action);
+
             app($action->handler)->execute($action, $message);
+        }
+    }
+
+    /**
+     * @param Action $action
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    private function hasCooldown(Action $action): bool
+    {
+        return $this->cacheDriver->has("bot:$action->bot_id:cooldown")
+            || $this->cacheDriver->has("bot:$action->bot_id:$action->id:cooldown");
+    }
+
+    /**
+     * @param Action $action
+     */
+    private function setCooldown(Action $action): void
+    {
+        if ($action->bot->cooldown > 0) {
+            $this->cacheDriver->put("bot:$action->bot_id:cooldown", true, now()->addSeconds($action->bot->cooldown));
+        }
+
+        if ($action->cooldown > 0) {
+            $this->cacheDriver->put("bot:$action->bot_id:$action->id:cooldown", true, now()->addSeconds($action->cooldown));
         }
     }
 }

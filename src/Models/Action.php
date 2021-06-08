@@ -24,6 +24,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string|null $payload
  * @property bool $admin_only
  * @property string $match_method
+ * @property int $cooldown
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @mixin Model|\Eloquent

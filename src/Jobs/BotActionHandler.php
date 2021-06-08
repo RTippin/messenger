@@ -7,6 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Services\BotService;
 
@@ -35,6 +36,7 @@ class BotActionHandler implements ShouldQueue
      *
      * @param BotService $service
      * @return void
+     * @throws InvalidArgumentException
      */
     public function handle(BotService $service): void
     {

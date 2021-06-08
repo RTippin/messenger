@@ -22,6 +22,7 @@ class CreateBotActionsTable extends Migration
             $table->string('trigger')->nullable()->index();
             $table->boolean('admin_only')->default(false);
             $table->string('match_method')->default('exact');
+            $table->integer('cooldown')->default(0);
             $table->text('payload')->nullable()->default(null);
             $table->timestamps();
             $table->foreign('bot_id')
