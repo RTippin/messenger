@@ -21,7 +21,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string|int $owner_id
  * @property string $owner_type
  * @property string|BotHandler $handler
- * @property string $trigger
+ * @property string $triggers
  * @property string|null $payload
  * @property bool $admin_only
  * @property string $match_method

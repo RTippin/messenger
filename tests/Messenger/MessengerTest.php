@@ -744,7 +744,7 @@ class MessengerTest extends MessengerTestCase
 
 class BotAction implements BotHandler
 {
-    public function execute(Action $action, Message $message): void
+    public function execute(Action $action, Message $message, string $matchingTrigger): void
     {
         //
     }

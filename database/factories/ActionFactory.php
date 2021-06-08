@@ -25,7 +25,7 @@ class ActionFactory extends Factory
             'handler' => 'ReplyBot',
             'admin_only' => false,
             'match_method' => 'exact',
-            'trigger' => '!hello',
+            'triggers' => '!hello',
             'payload' => null,
         ];
     }
@@ -59,14 +59,14 @@ class ActionFactory extends Factory
     /**
      * Set the actions trigger.
      *
-     * @param string|null $trigger
+     * @param string|null $triggers
      * @return Factory
      */
-    public function trigger(?string $trigger): Factory
+    public function triggers(?string $triggers): Factory
     {
-        return $this->state(function (array $attributes) use ($trigger) {
+        return $this->state(function (array $attributes) use ($triggers) {
             return [
-                'trigger' => $trigger,
+                'triggers' => $triggers,
             ];
         });
     }

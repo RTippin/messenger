@@ -19,7 +19,7 @@ class CreateBotActionsTable extends Migration
             $table->uuid('bot_id');
             Helpers::SchemaMorphType('owner', $table);
             $table->string('handler');
-            $table->string('trigger')->nullable()->index();
+            $table->string('triggers')->nullable()->index();
             $table->boolean('admin_only')->default(false);
             $table->string('match_method')->default('exact');
             $table->integer('cooldown')->default(0);

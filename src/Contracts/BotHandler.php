@@ -12,7 +12,8 @@ interface BotHandler
      *
      * @param Action $action
      * @param Message $message
+     * @param string $matchingTrigger
      * @return void
      */
-    public function execute(Action $action, Message $message): void;
+    public function execute(Action $action, Message $message, string $matchingTrigger): void;
 }

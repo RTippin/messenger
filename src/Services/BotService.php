@@ -14,6 +14,11 @@ class BotService
     use ChecksReflection;
 
     /**
+     * @var string
+     */
+    private string $matchingTrigger;
+
+    /**
      * @param Message $message
      */
     public function handle(Message $message): void
@@ -21,7 +26,7 @@ class BotService
         $actions = Action::validHandler()->fromThread($message->thread_id)->get();
 
         foreach ($actions as $action) {
-            if ($this->matches($action, $message->body)) {
+            if ($this->matches($action->match_method, $action->triggers, $message->body)) {
                 $this->execute($action, $message);
 
                 return;
@@ -30,21 +35,41 @@ class BotService
     }
 
     /**
-     * @param Action $action
+     * @param string $matchMethod
+     * @param string $triggers
      * @param string $message
      * @return bool
      */
-    public function matches(Action $action, string $message): bool
+    public function matches(string $matchMethod, string $triggers, string $message): bool
     {
-        switch ($action->match_method) {
-            case 'contains': return $this->matchContains($action->trigger, $message);
-            case 'contains:caseless': return $this->matchContains($action->trigger, $message, true);
-            case 'contains:any': return $this->matchContainsAny($action->trigger, $message);
-            case 'contains:any:caseless': return $this->matchContainsAny($action->trigger, $message, true);
-            case 'exact': return $this->matchExact($action->trigger, $message);
-            case 'exact:caseless': return $this->matchExact($action->trigger, $message, true);
-            case 'starts:with': return $this->matchStartsWith($action->trigger, $message);
-            case 'starts:with:caseless': return $this->matchStartsWith($action->trigger, $message, true);
+        foreach (explode('|', $triggers) as $trigger) {
+            if ($this->doesMatch($matchMethod, $trigger, $message)) {
+                $this->matchingTrigger = $trigger;
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @param string $method
+     * @param string $trigger
+     * @param string $message
+     * @return bool
+     */
+    private function doesMatch(string $method, string $trigger, string $message): bool
+    {
+        switch ($method) {
+            case 'contains': return $this->matchContains($trigger, $message);
+            case 'contains:caseless': return $this->matchContains($trigger, $message, true);
+            case 'contains:any': return $this->matchContainsAny($trigger, $message);
+            case 'contains:any:caseless': return $this->matchContainsAny($trigger, $message, true);
+            case 'exact': return $this->matchExact($trigger, $message);
+            case 'exact:caseless': return $this->matchExact($trigger, $message, true);
+            case 'starts:with': return $this->matchStartsWith($trigger, $message);
+            case 'starts:with:caseless': return $this->matchStartsWith($trigger, $message, true);
             default: return false;
         }
     }
@@ -55,7 +80,7 @@ class BotService
      * @param bool $caseless
      * @return bool
      */
-    public function matchExact(string $trigger, string $message, bool $caseless = false): bool
+    private function matchExact(string $trigger, string $message, bool $caseless = false): bool
     {
         $trigger = $caseless ? Str::lower($trigger) : $trigger;
         $message = $this->prepareMessage($message, $caseless);
@@ -69,7 +94,7 @@ class BotService
      * @param bool $caseless
      * @return bool
      */
-    public function matchContains(string $trigger, string $message, bool $caseless = false): bool
+    private function matchContains(string $trigger, string $message, bool $caseless = false): bool
     {
         $trigger = $caseless ? Str::lower($trigger) : $trigger;
         $message = $this->prepareMessage($message, $caseless);
@@ -83,7 +108,7 @@ class BotService
      * @param bool $caseless
      * @return bool
      */
-    public function matchContainsAny(string $trigger, string $message, bool $caseless = false): bool
+    private function matchContainsAny(string $trigger, string $message, bool $caseless = false): bool
     {
         $trigger = $caseless ? Str::lower($trigger) : $trigger;
         $message = $this->prepareMessage($message, $caseless);
@@ -97,7 +122,7 @@ class BotService
      * @param bool $caseless
      * @return bool
      */
-    public function matchStartsWith(string $trigger, string $message, bool $caseless = false): bool
+    private function matchStartsWith(string $trigger, string $message, bool $caseless = false): bool
     {
         $trigger = $caseless ? Str::lower($trigger) : $trigger;
         $message = $this->prepareMessage($message, $caseless);
@@ -127,7 +152,7 @@ class BotService
         if ($this->shouldExecute($action, $message)) {
             $this->setCooldown($action);
 
-            app($action->handler)->execute($action, $message);
+            app($action->handler)->execute($action, $message, $this->matchingTrigger);
         }
     }
 
