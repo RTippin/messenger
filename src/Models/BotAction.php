@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\BotHandler;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Database\Factories\ActionFactory;
+use RTippin\Messenger\Database\Factories\BotActionFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Traits\Uuids;
 
@@ -31,10 +31,10 @@ use RTippin\Messenger\Traits\Uuids;
  * @mixin Model|\Eloquent
  * @property-read Model|Bot $bot
  * @property-read Model|MessengerProvider $owner
- * @method static Builder|Action validHandler()
- * @method static Builder|Action fromThread(string $threadId)
+ * @method static Builder|BotAction validHandler()
+ * @method static Builder|BotAction fromThread(string $threadId)
  */
-class Action extends Model
+class BotAction extends Model
 {
     use HasFactory;
     use Uuids;
@@ -147,6 +147,6 @@ class Action extends Model
      */
     protected static function newFactory(): Factory
     {
-        return ActionFactory::new();
+        return BotActionFactory::new();
     }
 }

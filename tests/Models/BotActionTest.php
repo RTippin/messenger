@@ -4,17 +4,17 @@ namespace RTippin\Messenger\Tests\Models;
 
 use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Models\Action;
+use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
-class ActionTest extends FeatureTestCase
+class BotActionTest extends FeatureTestCase
 {
     /** @test */
     public function it_exists()
     {
-        $action = Action::factory()->for(
+        $action = BotAction::factory()->for(
             Bot::factory()->for(
                 Thread::factory()->group()->create()
             )->owner($this->tippin)->create()
@@ -24,14 +24,14 @@ class ActionTest extends FeatureTestCase
         $this->assertDatabaseHas('bot_actions', [
             'id' => $action->id,
         ]);
-        $this->assertInstanceOf(Action::class, $action);
-        $this->assertSame(1, Action::count());
+        $this->assertInstanceOf(BotAction::class, $action);
+        $this->assertSame(1, BotAction::count());
     }
 
     /** @test */
     public function it_has_relations()
     {
-        $action = Action::factory()->for(
+        $action = BotAction::factory()->for(
             Bot::factory()->for(
                 Thread::factory()->group()->create()
             )->owner($this->tippin)->create()
@@ -46,12 +46,12 @@ class ActionTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        Action::factory()->for(
+        BotAction::factory()->for(
             Bot::factory()->for(
                 Thread::factory()->group()->create()
             )->owner($this->tippin)->create()
         )->owner($this->tippin)->create();
-        $action = Action::first();
+        $action = BotAction::first();
 
         $this->assertInstanceOf(Carbon::class, $action->created_at);
         $this->assertInstanceOf(Carbon::class, $action->updated_at);

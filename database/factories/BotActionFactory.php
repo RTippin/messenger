@@ -3,16 +3,16 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use RTippin\Messenger\Models\Action;
+use RTippin\Messenger\Models\BotAction;
 
-class ActionFactory extends Factory
+class BotActionFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Action::class;
+    protected $model = BotAction::class;
 
     /**
      * Define the model's default state.

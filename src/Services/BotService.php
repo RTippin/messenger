@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Services;
 
 use Illuminate\Support\Str;
 use RTippin\Messenger\Contracts\BotHandler;
-use RTippin\Messenger\Models\Action;
+use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Traits\ChecksReflection;
@@ -23,7 +23,7 @@ class BotService
      */
     public function handle(Message $message): void
     {
-        $actions = Action::validHandler()->fromThread($message->thread_id)->get();
+        $actions = BotAction::validHandler()->fromThread($message->thread_id)->get();
 
         foreach ($actions as $action) {
             if ($this->matches($action->match_method, $action->triggers, $message->body)) {
@@ -144,10 +144,10 @@ class BotService
     /**
      * Check if we should execute the action. Set the cooldown if we do execute.
      *
-     * @param Action $action
+     * @param BotAction $action
      * @param Message $message
      */
-    private function execute(Action $action, Message $message): void
+    private function execute(BotAction $action, Message $message): void
     {
         if ($this->shouldExecute($action, $message)) {
             $this->setCooldown($action);
@@ -161,11 +161,11 @@ class BotService
      * not have an active cooldown. If the action has the admin_only flag, check
      * the message owner is a thread admin.
      *
-     * @param Action $action
+     * @param BotAction $action
      * @param Message $message
      * @return bool
      */
-    private function shouldExecute(Action $action, Message $message): bool
+    private function shouldExecute(BotAction $action, Message $message): bool
     {
         return class_exists($action->handler)
             && $this->checkImplementsInterface($action->handler, BotHandler::class)
@@ -174,11 +174,11 @@ class BotService
     }
 
     /**
-     * @param Action $action
+     * @param BotAction $action
      * @param Message $message
      * @return bool
      */
-    private function hasPermissionToTrigger(Action $action, Message $message): bool
+    private function hasPermissionToTrigger(BotAction $action, Message $message): bool
     {
         if ($action->admin_only) {
             return Participant::admins()
@@ -191,18 +191,18 @@ class BotService
     }
 
     /**
-     * @param Action $action
+     * @param BotAction $action
      * @return bool
      */
-    private function hasCooldown(Action $action): bool
+    private function hasCooldown(BotAction $action): bool
     {
         return $action->hasCooldown() || $action->bot->hasCooldown();
     }
 
     /**
-     * @param Action $action
+     * @param BotAction $action
      */
-    private function setCooldown(Action $action): void
+    private function setCooldown(BotAction $action): void
     {
         if ($action->bot->cooldown > 0) {
             $action->bot->setCooldown();

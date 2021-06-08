@@ -14,7 +14,7 @@ use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Facades\Messenger as MessengerFacade;
 use RTippin\Messenger\Messenger;
-use RTippin\Messenger\Models\Action;
+use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
@@ -591,7 +591,7 @@ class MessengerTest extends MessengerTestCase
     public function it_can_set_bot_actions()
     {
         $actions = [
-            BotAction::class,
+            BotActionHandler::class,
         ];
 
         $this->messenger->setBotActions($actions);
@@ -603,14 +603,14 @@ class MessengerTest extends MessengerTestCase
     public function it_ignores_invalid_and_missing_bot_actions()
     {
         $actions = [
-            BotAction::class,
+            BotActionHandler::class,
             InvalidBotAction::class,
             MissingAction::class,
         ];
 
         $this->messenger->setBotActions($actions);
 
-        $this->assertSame([BotAction::class], $this->messenger->getBotActions());
+        $this->assertSame([BotActionHandler::class], $this->messenger->getBotActions());
     }
 
     /** @test */
@@ -742,9 +742,9 @@ class MessengerTest extends MessengerTestCase
     }
 }
 
-class BotAction implements BotHandler
+class BotActionHandler implements BotHandler
 {
-    public function execute(Action $action, Message $message, string $matchingTrigger): void
+    public function execute(BotAction $action, Message $message, string $matchingTrigger): void
     {
         //
     }

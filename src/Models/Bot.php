@@ -30,7 +30,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \RTippin\Messenger\Models\Thread $thread
- * @property-read \RTippin\Messenger\Models\Action[]|Collection $actions
+ * @property-read \RTippin\Messenger\Models\BotAction[]|Collection $actions
  * @mixin Model|\Eloquent
  * @property-read Model|MessengerProvider $owner
  */
@@ -91,11 +91,11 @@ class Bot extends Model implements MessengerProvider
     }
 
     /**
-     * @return HasMany|Action|Collection
+     * @return HasMany|BotAction|Collection
      */
     public function actions(): HasMany
     {
-        return $this->hasMany(Action::class);
+        return $this->hasMany(BotAction::class);
     }
 
     /**
