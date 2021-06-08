@@ -61,6 +61,11 @@ trait MessengerProviders
     private ?GhostUser $ghost = null;
 
     /**
+     * @var null|GhostUser
+     */
+    private ?GhostUser $ghostBot = null;
+
+    /**
      * @var null|Participant
      */
     private ?Participant $ghostParticipant = null;
@@ -250,6 +255,20 @@ trait MessengerProviders
     }
 
     /**
+     * Get the ghost model.
+     *
+     * @return GhostUser
+     */
+    public function getGhostBot(): GhostUser
+    {
+        if ($this->ghostBot) {
+            return $this->ghostBot;
+        }
+
+        return $this->setGhostBot();
+    }
+
+    /**
      * Get a ghost participant model.
      *
      * @param $threadId
@@ -325,6 +344,14 @@ trait MessengerProviders
     private function setGhostProvider(): GhostUser
     {
         return $this->ghost = new GhostUser;
+    }
+
+    /**
+     * @return GhostUser
+     */
+    private function setGhostBot(): GhostUser
+    {
+        return $this->ghostBot = (new GhostUser)->ghostBot();
     }
 
     /**

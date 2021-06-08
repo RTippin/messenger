@@ -238,6 +238,7 @@ class MessengerTest extends MessengerTestCase
         $ghost = $this->messenger->getGhostProvider();
 
         $this->assertInstanceOf(GhostUser::class, $ghost);
+        $this->assertSame('Ghost Profile', $ghost->getProviderName());
     }
 
     /** @test */
@@ -252,6 +253,29 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->reset();
 
         $this->assertNotSame($ghost, $this->messenger->getGhostProvider());
+    }
+
+    /** @test */
+    public function it_resolves_ghost_bot_when_requested()
+    {
+        $ghost = $this->messenger->getGhostBot();
+
+        $this->assertInstanceOf(GhostUser::class, $ghost);
+        $this->assertSame('Bot', $ghost->getProviderName());
+    }
+
+    /** @test */
+    public function it_resolves_ghost_bot_once()
+    {
+        $ghost = $this->messenger->getGhostBot();
+
+        $this->assertSame($ghost, $this->messenger->getGhostBot());
+        $this->assertSame($ghost, messenger()->getGhostBot());
+        $this->assertSame($ghost, MessengerFacade::getGhostBot());
+
+        $this->messenger->reset();
+
+        $this->assertNotSame($ghost, $this->messenger->getGhostBot());
     }
 
     /** @test */
@@ -576,11 +600,12 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function it_ignores_invalid_bot_actions()
+    public function it_ignores_invalid_and_missing_bot_actions()
     {
         $actions = [
             BotAction::class,
             InvalidBotAction::class,
+            MissingAction::class,
         ];
 
         $this->messenger->setBotActions($actions);

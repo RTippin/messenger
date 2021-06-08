@@ -21,25 +21,33 @@ class GhostUser extends Eloquent
     public $keyType = 'string';
 
     /**
-     * @var array
+     * @var string
      */
-    protected $attributes = [
-        'id' => '12345678-1234-5678-9123-123456789874',
-        'first' => 'Ghost',
-        'last' => 'Profile',
-        'slug' => 'ghost',
-        'picture' => null,
-        'email' => 'ghost@example.org',
-        'created_at' => null,
-        'updated_at' => null,
-    ];
+    private string $name = 'Ghost Profile';
+
+    /**
+     * @var bool
+     */
+    private bool $ghostBot = false;
+
+    /**
+     * Set the ghost to being a bot.
+     */
+    public function ghostBot(): self
+    {
+        $this->ghostBot = true;
+
+        $this->name = 'Bot';
+
+        return $this;
+    }
 
     /**
      * @return string
      */
     public function getProviderName(): string
     {
-        return 'Ghost Profile';
+        return $this->name;
     }
 
     /**
@@ -75,7 +83,7 @@ class GhostUser extends Eloquent
     {
         return Helpers::Route(($api ? 'api.' : '').'avatar.render',
             [
-                'alias' => 'ghost',
+                'alias' => $this->ghostBot ? 'bot' : 'ghost',
                 'id' => 'ghost',
                 'size' => $size,
                 'image' => 'default.png',

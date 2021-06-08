@@ -94,6 +94,16 @@ trait MessengerConfig
     private string $defaultNotFoundImage;
 
     /**
+     * @var string
+     */
+    private string $defaultGhostAvatar;
+
+    /**
+     * @var string
+     */
+    private string $defaultBotAvatar;
+
+    /**
      * @var array
      */
     private array $defaultThreadAvatars;
@@ -342,6 +352,8 @@ trait MessengerConfig
         'providersVerification',
         'defaultNotFoundImage',
         'defaultThreadAvatars',
+        'defaultGhostAvatar',
+        'defaultBotAvatar',
         'avatarStorage',
         'threadStorage',
         'subscribers',
@@ -1395,6 +1407,22 @@ trait MessengerConfig
     /**
      * @return string
      */
+    public function getDefaultGhostAvatar(): string
+    {
+        return $this->defaultGhostAvatar;
+    }
+
+    /**
+     * @return string
+     */
+    public function getDefaultBotAvatar(): string
+    {
+        return $this->defaultBotAvatar;
+    }
+
+    /**
+     * @return string
+     */
     public function getDefaultNotFoundImage(): string
     {
         return $this->defaultNotFoundImage;
@@ -1519,7 +1547,7 @@ trait MessengerConfig
             'searchable' => false,
             'friendable' => false,
             'devices' => false,
-            'default_avatar' => $this->configRepo->get('messenger.files.default_bot_avatar'),
+            'default_avatar' => null,
             'provider_interactions' => [
                 'can_message' => [],
                 'can_search' => [],
@@ -1572,6 +1600,8 @@ trait MessengerConfig
         $this->avatarStorage = $this->configRepo->get('messenger.storage.avatars');
         $this->threadStorage = $this->configRepo->get('messenger.storage.threads');
         $this->defaultNotFoundImage = $this->configRepo->get('messenger.files.default_not_found_image');
+        $this->defaultGhostAvatar = $this->configRepo->get('messenger.files.default_ghost_avatar');
+        $this->defaultBotAvatar = $this->configRepo->get('messenger.files.default_bot_avatar');
         $this->defaultThreadAvatars = $this->configRepo->get('messenger.files.default_thread_avatars');
         $this->pushNotifications = $this->configRepo->get('messenger.push_notifications');
         $this->knockKnock = $this->configRepo->get('messenger.knocks.enabled');

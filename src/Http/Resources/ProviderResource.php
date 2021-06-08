@@ -9,6 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Support\Definitions;
 
 class ProviderResource extends JsonResource
@@ -51,9 +52,7 @@ class ProviderResource extends JsonResource
         $this->addOptions = $addOptions;
         $this->forceFriendStatus = $forceFriendStatus;
         $this->addBaseModel = $addBaseModel;
-        $this->provider = Messenger::isValidMessengerProvider($provider)
-            ? $provider
-            : Messenger::getGhostProvider();
+        $this->setProvider($provider);
     }
 
     /**
@@ -77,6 +76,19 @@ class ProviderResource extends JsonResource
             ),
             $this->merge($this->addAvatar()),
         ];
+    }
+
+    /**
+     * @param mixed $provider
+     */
+    private function setProvider($provider): void
+    {
+        if (Messenger::isValidMessengerProvider($provider)
+            || $provider instanceof GhostUser) {
+            $this->provider = $provider;
+        } else {
+            $this->provider = Messenger::getGhostProvider();
+        }
     }
 
     /**
@@ -157,9 +169,7 @@ class ProviderResource extends JsonResource
      */
     private function canFriend(bool $isFriendable): bool
     {
-        return $isFriendable
-            ? Messenger::canFriendProvider($this->provider)
-            : false;
+        return $isFriendable && Messenger::canFriendProvider($this->provider);
     }
 
     /**
@@ -176,9 +186,7 @@ class ProviderResource extends JsonResource
      */
     private function canSearch(bool $isSearchable): bool
     {
-        return $isSearchable
-            ? Messenger::canSearchProvider($this->provider)
-            : false;
+        return $isSearchable && Messenger::canSearchProvider($this->provider);
     }
 
     /**

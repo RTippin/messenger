@@ -217,6 +217,8 @@ final class Messenger
     {
         $this->ghost = null;
 
+        $this->ghostBot = null;
+
         $this->ghostParticipant = null;
 
         $this->unsetProvider()->boot();
@@ -229,9 +231,9 @@ final class Messenger
     {
         $this->isProvidersCached = $this->isProvidersCached();
 
-        $this->setMessengerProviders();
-
         $this->setMessengerConfig();
+
+        $this->setMessengerProviders();
     }
 
     /**

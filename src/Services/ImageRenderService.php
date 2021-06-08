@@ -223,9 +223,15 @@ class ImageRenderService
      */
     private function renderDefaultImage(?string $alias = null): BinaryFileResponse
     {
-        $default = ! is_null($alias)
-            ? $this->messenger->getProviderDefaultAvatarPath($alias)
-            : null;
+        switch ($alias) {
+            case 'ghost':
+                $default = $this->messenger->getDefaultGhostAvatar();
+            break;
+            case 'bot':
+                $default = $this->messenger->getDefaultBotAvatar();
+            break;
+            default : $default = $this->messenger->getProviderDefaultAvatarPath($alias);
+        }
 
         if (! is_null($default) && file_exists($default)) {
             return $this->responseFactory->file($default);

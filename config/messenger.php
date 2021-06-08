@@ -233,6 +233,7 @@ return [
             '5.png' => public_path('vendor/messenger/images/5.png'),
         ],
         'default_not_found_image' => public_path('vendor/messenger/images/image404.png'),
+        'default_ghost_avatar' => public_path('vendor/messenger/images/users.png'),
         'default_bot_avatar' => public_path('vendor/messenger/images/bots.png'),
     ],
 
