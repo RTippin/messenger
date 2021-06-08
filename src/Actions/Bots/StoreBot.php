@@ -39,7 +39,7 @@ class StoreBot extends BaseMessengerAction
     }
 
     /**
-     * Create a new thread invite!
+     * Create a new thread bot!
      *
      * @param mixed ...$parameters
      * @var Thread[0]

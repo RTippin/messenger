@@ -8,6 +8,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use LogicException;
 use RTippin\Messenger\Contracts\Action;
+use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Message;
@@ -63,6 +64,11 @@ abstract class BaseMessengerAction implements Action
      * @var Call|null
      */
     private ?Call $call = null;
+
+    /**
+     * @var Bot|null
+     */
+    private ?Bot $bot = null;
 
     /**
      * @var bool
@@ -142,7 +148,7 @@ abstract class BaseMessengerAction implements Action
      */
     public function chain(string $abstractAction): Action
     {
-        if ($this->checkIsSubclassOf($abstractAction, Action::class)) {
+        if ($this->checkIsSubclassOf($abstractAction, self::class)) {
             return app($abstractAction)->continuesChain();
         }
 
@@ -209,8 +215,7 @@ abstract class BaseMessengerAction implements Action
      */
     public function getData(bool $withoutRelations = false)
     {
-        if ($withoutRelations
-            && ! is_null($this->data)) {
+        if ($withoutRelations && ! is_null($this->data)) {
             return $this->data->withoutRelations();
         }
 
@@ -232,8 +237,7 @@ abstract class BaseMessengerAction implements Action
      */
     public function getThread(bool $withoutRelations = false): ?Thread
     {
-        if ($withoutRelations
-            && ! is_null($this->thread)) {
+        if ($withoutRelations && ! is_null($this->thread)) {
             return $this->thread->withoutRelations();
         }
 
@@ -257,8 +261,7 @@ abstract class BaseMessengerAction implements Action
      */
     public function getParticipant(bool $withoutRelations = false): ?Participant
     {
-        if ($withoutRelations
-            && ! is_null($this->participant)) {
+        if ($withoutRelations && ! is_null($this->participant)) {
             return $this->participant->withoutRelations();
         }
 
@@ -282,8 +285,7 @@ abstract class BaseMessengerAction implements Action
      */
     public function getCallParticipant(bool $withoutRelations = false): ?CallParticipant
     {
-        if ($withoutRelations
-            && ! is_null($this->callParticipant)) {
+        if ($withoutRelations && ! is_null($this->callParticipant)) {
             return $this->callParticipant->withoutRelations();
         }
 
@@ -307,8 +309,7 @@ abstract class BaseMessengerAction implements Action
      */
     public function getMessage(bool $withoutRelations = false): ?Message
     {
-        if ($withoutRelations
-            && ! is_null($this->message)) {
+        if ($withoutRelations && ! is_null($this->message)) {
             return $this->message->withoutRelations();
         }
 
@@ -332,8 +333,7 @@ abstract class BaseMessengerAction implements Action
      */
     public function getCall(bool $withoutRelations = false): ?Call
     {
-        if ($withoutRelations
-            && ! is_null($this->call)) {
+        if ($withoutRelations && ! is_null($this->call)) {
             return $this->call->withoutRelations();
         }
 
@@ -347,6 +347,30 @@ abstract class BaseMessengerAction implements Action
     {
         if (! is_null($call)) {
             $this->call = $call;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getBot(bool $withoutRelations = false): ?Bot
+    {
+        if ($withoutRelations && ! is_null($this->bot)) {
+            return $this->bot->withoutRelations();
+        }
+
+        return $this->bot;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setBot(?Bot $bot = null): self
+    {
+        if (! is_null($bot)) {
+            $this->bot = $bot;
         }
 
         return $this;

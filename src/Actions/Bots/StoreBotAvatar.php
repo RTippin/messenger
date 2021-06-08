@@ -1,40 +1,53 @@
 <?php
 
-namespace RTippin\Messenger\Actions\Messenger;
+namespace RTippin\Messenger\Actions\Bots;
 
 use Exception;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\FileServiceException;
-use RTippin\Messenger\Http\Request\MessengerAvatarRequest;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Services\FileService;
 use Throwable;
 
-class StoreMessengerAvatar extends MessengerAvatarAction
+class StoreBotAvatar extends BotAvatarAction
 {
     /**
-     * StoreMessengerAvatar constructor.
+     * StoreBotAvatar constructor.
      *
      * @param Messenger $messenger
      * @param FileService $fileService
+     * @param Dispatcher $dispatcher
      */
-    public function __construct(Messenger $messenger, FileService $fileService)
+    public function __construct(Messenger $messenger,
+                                FileService $fileService,
+                                Dispatcher $dispatcher)
     {
-        parent::__construct($messenger, $fileService);
+        parent::__construct(
+            $messenger,
+            $fileService,
+            $dispatcher
+        );
     }
 
     /**
      * @param mixed ...$parameters
-     * @var MessengerAvatarRequest[0]
+     * @var Bot[0]
+     * @var UploadedFile[1]['image']
      * @return $this
      * @throws FeatureDisabledException|FileServiceException|Exception
      */
     public function execute(...$parameters): self
     {
-        $this->isAvatarUploadEnabled();
+        $this->isBotAvatarUploadEnabled();
 
-        $this->attemptTransactionOrRollbackFile($this->upload($parameters[0]['image']));
+        $this->setBot($parameters[0]);
+
+        $this->attemptTransactionOrRollbackFile($this->upload($parameters[1]['image']));
+
+        $this->fireEvents();
 
         return $this;
     }
@@ -50,11 +63,11 @@ class StoreMessengerAvatar extends MessengerAvatarAction
     private function attemptTransactionOrRollbackFile(string $fileName): void
     {
         try {
-            $this->removeOldIfExist()->updateProviderAvatar($fileName);
+            $this->removeOldIfExist()->updateBotAvatar($fileName);
         } catch (Throwable $e) {
             $this->fileService
-                ->setDisk($this->messenger->getAvatarStorage('disk'))
-                ->destroy("{$this->getDirectory()}/$fileName");
+                ->setDisk($this->getBot()->getStorageDisk())
+                ->destroy("{$this->getBot()->getAvatarDirectory()}/$fileName");
 
             throw new Exception($e->getMessage(), $e->getCode(), $e);
         }
@@ -63,10 +76,11 @@ class StoreMessengerAvatar extends MessengerAvatarAction
     /**
      * @throws FeatureDisabledException
      */
-    private function isAvatarUploadEnabled(): void
+    private function isBotAvatarUploadEnabled(): void
     {
-        if (! $this->messenger->isProviderAvatarUploadEnabled()) {
-            throw new FeatureDisabledException('Avatar upload is currently disabled.');
+        if (! $this->messenger->isBotsEnabled()
+            || ! $this->messenger->isThreadAvatarUploadEnabled()) {
+            throw new FeatureDisabledException('Bot Avatar upload is currently disabled.');
         }
     }
 
@@ -79,8 +93,8 @@ class StoreMessengerAvatar extends MessengerAvatarAction
     {
         return $this->fileService
             ->setType('image')
-            ->setDisk($this->messenger->getAvatarStorage('disk'))
-            ->setDirectory($this->getDirectory())
+            ->setDisk($this->getBot()->getStorageDisk())
+            ->setDirectory($this->getBot()->getAvatarDirectory())
             ->upload($file);
     }
 }
