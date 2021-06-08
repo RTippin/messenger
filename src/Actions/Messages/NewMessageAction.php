@@ -12,6 +12,7 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Http\Request\BaseMessageRequest;
 use RTippin\Messenger\Http\Resources\MessageResource;
+use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Support\Definitions;
 use Throwable;
@@ -216,12 +217,23 @@ abstract class NewMessageAction extends BaseMessengerAction
         if ($this->shouldExecuteChains()) {
             $this->getThread()->touch();
 
-            if (in_array($this->messageType, Message::NonSystemTypes)) {
+            if ($this->shouldMarkRead()) {
                 $this->chain(MarkParticipantRead::class)
                     ->withoutDispatches()
                     ->execute($this->getThread()->currentParticipant());
             }
         }
+    }
+
+    /**
+     * Only mark read when not a system message and not a message sent from a bot.
+     *
+     * @return bool
+     */
+    private function shouldMarkRead(): bool
+    {
+        return in_array($this->messageType, Message::NonSystemTypes)
+            && ! $this->messageOwner instanceof Bot;
     }
 
     /**
