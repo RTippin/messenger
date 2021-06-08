@@ -32,6 +32,7 @@ class BotsTest extends FeatureTestCase
         ]), [
             'name' => 'Test Bot',
             'enabled' => true,
+            'cooldown' => 0,
         ])
             ->assertSuccessful()
             ->assertJson([

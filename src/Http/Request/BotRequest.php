@@ -16,6 +16,7 @@ class BotRequest extends FormRequest
         return [
             'name' => ['required', 'min:2'],
             'enabled' => ['required', 'boolean'],
+            'cooldown' => ['required', 'integer', 'between:0,900'],
         ];
     }
 }

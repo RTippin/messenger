@@ -67,6 +67,7 @@ class StoreBot extends BaseMessengerAction
             'owner_type' => $this->messenger->getProvider()->getMorphClass(),
             'enabled' => $params['enabled'],
             'name' => $params['name'],
+            'cooldown' => $params['cooldown'],
             'avatar' => null,
         ])
         ->setRelations([

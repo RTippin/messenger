@@ -3,10 +3,10 @@
 namespace RTippin\Messenger\Services;
 
 use Illuminate\Support\Str;
-use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Contracts\BotHandler;
 use RTippin\Messenger\Models\Action;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Traits\ChecksReflection;
 
 class BotService
@@ -117,18 +117,52 @@ class BotService
     }
 
     /**
+     * Check if we should execute the action. Set the cooldown if we do execute.
+     *
      * @param Action $action
      * @param Message $message
      */
     private function execute(Action $action, Message $message): void
     {
-        if (class_exists($action->handler)
-            && $this->checkImplementsInterface($action->handler, BotHandler::class)
-            && ! $this->hasCooldown($action)) {
+        if ($this->shouldExecute($action, $message)) {
             $this->setCooldown($action);
 
             app($action->handler)->execute($action, $message);
         }
+    }
+
+    /**
+     * Check the handler class exists and implements our interface. It must also
+     * not have an active cooldown. If the action has the admin_only flag, check
+     * the message owner is a thread admin.
+     *
+     * @param Action $action
+     * @param Message $message
+     * @return bool
+     */
+    private function shouldExecute(Action $action, Message $message): bool
+    {
+        return class_exists($action->handler)
+            && $this->checkImplementsInterface($action->handler, BotHandler::class)
+            && ! $this->hasCooldown($action)
+            && $this->hasPermissionToTrigger($action, $message);
+    }
+
+    /**
+     * @param Action $action
+     * @param Message $message
+     * @return bool
+     */
+    private function hasPermissionToTrigger(Action $action, Message $message): bool
+    {
+        if ($action->admin_only) {
+            return Participant::admins()
+                ->forProviderWithModel($message)
+                ->where('thread_id', '=', $message->thread_id)
+                ->exists();
+        }
+
+        return true;
     }
 
     /**
