@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\BotFactory;
 use RTippin\Messenger\Facades\Messenger;
@@ -192,6 +193,32 @@ class Bot extends Model implements MessengerProvider
     public function getProviderOnlineStatusVerbose(): string
     {
         return 'offline';
+    }
+
+    /**
+     * Does the bot have an active cooldown?
+     *
+     * @return bool
+     */
+    public function hasCooldown(): bool
+    {
+        return Cache::has("bot:$this->id:cooldown");
+    }
+
+    /**
+     * Set the bots cooldown.
+     */
+    public function setCooldown(): void
+    {
+        Cache::put("bot:$this->id:cooldown", true, now()->addSeconds($this->cooldown));
+    }
+
+    /**
+     * Clear the bots cooldown.
+     */
+    public function clearCooldown(): void
+    {
+        Cache::forget("bot:$this->id:cooldown");
     }
 
     /**

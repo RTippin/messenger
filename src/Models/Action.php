@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\BotHandler;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\ActionFactory;
@@ -111,6 +112,32 @@ class Action extends Model
             return $query->where('thread_id', '=', $threadId)
                 ->where('enabled', '=', true);
         });
+    }
+
+    /**
+     * Does the action have an active cooldown?
+     *
+     * @return bool
+     */
+    public function hasCooldown(): bool
+    {
+        return Cache::has("bot:$this->bot_id:$this->id:cooldown");
+    }
+
+    /**
+     * Set the action cooldown.
+     */
+    public function setCooldown(): void
+    {
+        Cache::put("bot:$this->bot_id:$this->id:cooldown", true, now()->addSeconds($this->cooldown));
+    }
+
+    /**
+     * Clear the action cooldown.
+     */
+    public function clearCooldown(): void
+    {
+        Cache::forget("bot:$this->bot_id:$this->id:cooldown");
     }
 
     /**
