@@ -3,7 +3,8 @@
 namespace RTippin\Messenger\Services;
 
 use Illuminate\Support\Str;
-use RTippin\Messenger\Contracts\BotHandler;
+use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\Contracts\ActionHandler;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
@@ -21,13 +22,13 @@ class BotService
     /**
      * @param Message $message
      */
-    public function handle(Message $message): void
+    public function handleMessage(Message $message): void
     {
         $actions = BotAction::validHandler()->fromThread($message->thread_id)->get();
 
         foreach ($actions as $action) {
             if ($this->matches($action->match_method, $action->triggers, $message->body)) {
-                $this->execute($action, $message);
+                $this->executeMessage($action, $message);
 
                 return;
             }
@@ -147,12 +148,15 @@ class BotService
      * @param BotAction $action
      * @param Message $message
      */
-    private function execute(BotAction $action, Message $message): void
+    private function executeMessage(BotAction $action, Message $message): void
     {
         if ($this->shouldExecute($action, $message)) {
             $this->setCooldown($action);
 
-            app($action->handler)->execute($action, $message, $this->matchingTrigger);
+            app($action->handler)
+                ->setAction($action)
+                ->setMessage($message, $this->matchingTrigger)
+                ->handle();
         }
     }
 
@@ -168,7 +172,7 @@ class BotService
     private function shouldExecute(BotAction $action, Message $message): bool
     {
         return class_exists($action->handler)
-            && $this->checkImplementsInterface($action->handler, BotHandler::class)
+            && $this->checkIsSubclassOf($action->handler, BotActionHandler::class)
             && ! $this->hasCooldown($action)
             && $this->hasPermissionToTrigger($action, $message);
     }

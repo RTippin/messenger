@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Listeners;
 use Illuminate\Events\Dispatcher;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Jobs\BotActionHandler;
+use RTippin\Messenger\Jobs\BotActionMessageHandler;
 
 class BotSubscriber
 {
@@ -28,8 +28,8 @@ class BotSubscriber
         if ($this->shouldDispatch($event)) {
             $data = $event->message->setRelation('thread', $event->thread);
             Messenger::getBotSubscriber('queued')
-                ? BotActionHandler::dispatch($data)->onQueue(Messenger::getBotSubscriber('channel'))
-                : BotActionHandler::dispatchSync($data);
+                ? BotActionMessageHandler::dispatch($data)->onQueue(Messenger::getBotSubscriber('channel'))
+                : BotActionMessageHandler::dispatchSync($data);
         }
     }
 

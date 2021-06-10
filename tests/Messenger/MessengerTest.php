@@ -3,20 +3,18 @@
 namespace RTippin\Messenger\Tests\Messenger;
 
 use InvalidArgumentException;
+use RTippin\Messenger\Actions\Bots\BotActionHandler;
 use RTippin\Messenger\Brokers\BroadcastBroker;
 use RTippin\Messenger\Brokers\JanusBroker;
 use RTippin\Messenger\Brokers\NullBroadcastBroker;
 use RTippin\Messenger\Brokers\NullVideoBroker;
-use RTippin\Messenger\Contracts\BotHandler;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Facades\Messenger as MessengerFacade;
 use RTippin\Messenger\Messenger;
-use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\GhostUser;
-use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Services\Janus\VideoRoomService;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
@@ -591,7 +589,7 @@ class MessengerTest extends MessengerTestCase
     public function it_can_set_bot_actions()
     {
         $actions = [
-            BotActionHandler::class,
+            TestBot::class,
         ];
 
         $this->messenger->setBotActions($actions);
@@ -603,14 +601,14 @@ class MessengerTest extends MessengerTestCase
     public function it_ignores_invalid_and_missing_bot_actions()
     {
         $actions = [
-            BotActionHandler::class,
+            TestBot::class,
             InvalidBotAction::class,
             MissingAction::class,
         ];
 
         $this->messenger->setBotActions($actions);
 
-        $this->assertSame([BotActionHandler::class], $this->messenger->getBotActions());
+        $this->assertSame([TestBot::class], $this->messenger->getBotActions());
     }
 
     /** @test */
@@ -742,9 +740,9 @@ class MessengerTest extends MessengerTestCase
     }
 }
 
-class BotActionHandler implements BotHandler
+class TestBot extends BotActionHandler
 {
-    public function execute(BotAction $action, Message $message, string $matchingTrigger): void
+    public function handle(): void
     {
         //
     }

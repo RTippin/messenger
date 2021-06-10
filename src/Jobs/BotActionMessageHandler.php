@@ -10,7 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Services\BotService;
 
-class BotActionHandler implements ShouldQueue
+class BotActionMessageHandler implements ShouldQueue
 {
     use Dispatchable,
         InteractsWithQueue,
@@ -38,6 +38,6 @@ class BotActionHandler implements ShouldQueue
      */
     public function handle(BotService $service): void
     {
-        $service->handle($this->message);
+        $service->handleMessage($this->message);
     }
 }

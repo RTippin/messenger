@@ -9,7 +9,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
 use Psr\SimpleCache\InvalidArgumentException;
-use RTippin\Messenger\Contracts\BotHandler;
+use RTippin\Messenger\Actions\Bots\BotActionHandler;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Models\Bot;
@@ -627,7 +627,7 @@ trait MessengerConfig
 
         if (is_array($actions) && count($actions)) {
             foreach ($actions as $action) {
-                if ($this->checkImplementsInterface($action, BotHandler::class)) {
+                if ($this->checkIsSubclassOf($action, BotActionHandler::class)) {
                     array_push($this->botActions, $action);
                 }
             }
