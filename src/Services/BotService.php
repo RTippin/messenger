@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Services;
 
 use Illuminate\Support\Str;
 use RTippin\Messenger\Actions\Bots\BotActionHandler;
-use RTippin\Messenger\Contracts\ActionHandler;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
