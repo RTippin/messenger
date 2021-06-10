@@ -488,7 +488,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame('images', $this->messenger->getAvatarStorage('directory'));
         $this->assertSame(4, $this->messenger->getOnlineCacheLifetime());
         $this->assertTrue($this->messenger->isCallingEnabled());
-        $this->assertFalse($this->messenger->isBotsEnabled());
+        $this->assertTrue($this->messenger->isBotsEnabled());
         $this->assertSame([], $this->messenger->getBotActions());
         $this->assertTrue($this->messenger->isSystemMessagesEnabled());
         $this->assertSame(5, $this->messenger->getKnockTimeout());
@@ -620,7 +620,7 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->setPushNotifications(true);
         $this->messenger->setOnlineCacheLifetime(10);
         $this->messenger->setCalling(false);
-        $this->messenger->setBots(true);
+        $this->messenger->setBots(false);
         $this->messenger->setSystemMessages(false);
         $this->messenger->setKnockTimeout(10);
         $this->messenger->setKnockKnock(false);
@@ -688,7 +688,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertTrue($this->messenger->isPushNotificationsEnabled());
         $this->assertSame(10, $this->messenger->getOnlineCacheLifetime());
         $this->assertFalse($this->messenger->isCallingEnabled());
-        $this->assertTrue($this->messenger->isBotsEnabled());
+        $this->assertFalse($this->messenger->isBotsEnabled());
         $this->assertFalse($this->messenger->isSystemMessagesEnabled());
         $this->assertSame(10, $this->messenger->getKnockTimeout());
         $this->assertFalse($this->messenger->isKnockKnockEnabled());

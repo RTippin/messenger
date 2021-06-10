@@ -23,6 +23,7 @@ class StoreBotAvatarTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_bots_disabled()
     {
+        Messenger::setBots(false);
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
 
         $this->expectException(FeatureDisabledException::class);
@@ -36,7 +37,7 @@ class StoreBotAvatarTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_thread_avatar_disabled()
     {
-        Messenger::setBots(true)->setThreadAvatarUpload(false);
+        Messenger::setThreadAvatarUpload(false);
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
 
         $this->expectException(FeatureDisabledException::class);
@@ -50,7 +51,6 @@ class StoreBotAvatarTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_transaction_fails_and_removes_uploaded_avatar()
     {
-        Messenger::setBots(true);
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['avatar' => 'avatar.jpg']);
 
         $this->expectException(Exception::class);
@@ -72,7 +72,6 @@ class StoreBotAvatarTest extends FeatureTestCase
     /** @test */
     public function it_updates_bot_avatar()
     {
-        Messenger::setBots(true);
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
         Carbon::setTestNow($updated = now()->addMinutes(5));
 
@@ -90,7 +89,6 @@ class StoreBotAvatarTest extends FeatureTestCase
     /** @test */
     public function it_stores_bot_avatar()
     {
-        Messenger::setBots(true);
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
 
         app(StoreBotAvatar::class)->execute($bot, [
@@ -103,7 +101,6 @@ class StoreBotAvatarTest extends FeatureTestCase
     /** @test */
     public function it_removes_existing_avatar_from_disk()
     {
-        Messenger::setBots(true);
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['avatar' => 'avatar.jpg']);
         UploadedFile::fake()->image('avatar.jpg')->storeAs($bot->getAvatarDirectory(), 'avatar.jpg', [
             'disk' => 'messenger',
@@ -122,7 +119,7 @@ class StoreBotAvatarTest extends FeatureTestCase
     public function it_fires_events()
     {
         BaseMessengerAction::enableEvents();
-        Messenger::setProvider($this->tippin)->setBots(true);
+        Messenger::setProvider($this->tippin);
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
         Event::fake([
             BotAvatarEvent::class,

@@ -19,6 +19,7 @@ class DestroyBotAvatarTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_disabled()
     {
+        Messenger::setBots(false);
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
 
         $this->expectException(FeatureDisabledException::class);
@@ -30,7 +31,6 @@ class DestroyBotAvatarTest extends FeatureTestCase
     /** @test */
     public function it_updates_bot_avatar()
     {
-        Messenger::setBots(true);
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['avatar' => 'avatar.jpg']);
 
         app(DestroyBotAvatar::class)->execute($bot);
@@ -44,7 +44,6 @@ class DestroyBotAvatarTest extends FeatureTestCase
     /** @test */
     public function it_removes_avatar_from_disk()
     {
-        Messenger::setBots(true);
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['avatar' => 'avatar.jpg']);
         UploadedFile::fake()->image('avatar.jpg')->storeAs($bot->getAvatarDirectory(), 'avatar.jpg', [
             'disk' => 'messenger',
@@ -59,7 +58,7 @@ class DestroyBotAvatarTest extends FeatureTestCase
     public function it_fires_events()
     {
         BaseMessengerAction::enableEvents();
-        Messenger::setProvider($this->tippin)->setBots(true);
+        Messenger::setProvider($this->tippin);
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['avatar' => 'avatar.jpg']);
         Event::fake([
             BotAvatarEvent::class,

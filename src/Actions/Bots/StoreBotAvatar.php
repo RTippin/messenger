@@ -3,35 +3,14 @@
 namespace RTippin\Messenger\Actions\Bots;
 
 use Exception;
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\FileServiceException;
-use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Bot;
-use RTippin\Messenger\Services\FileService;
 use Throwable;
 
 class StoreBotAvatar extends BotAvatarAction
 {
-    /**
-     * StoreBotAvatar constructor.
-     *
-     * @param Messenger $messenger
-     * @param FileService $fileService
-     * @param Dispatcher $dispatcher
-     */
-    public function __construct(Messenger $messenger,
-                                FileService $fileService,
-                                Dispatcher $dispatcher)
-    {
-        parent::__construct(
-            $messenger,
-            $fileService,
-            $dispatcher
-        );
-    }
-
     /**
      * @param mixed ...$parameters
      * @var Bot[0]

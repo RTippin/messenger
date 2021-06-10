@@ -40,6 +40,7 @@ class MessengerTestCase extends TestCase
 
         $config->set('messenger.provider_uuids', self::UseUUID);
         $config->set('messenger.calling.enabled', true);
+        $config->set('messenger.bots.enabled', true);
         $config->set('messenger.storage.avatars.disk', 'public');
         $config->set('messenger.storage.threads.disk', 'messenger');
         $config->set('messenger.providers', $this->getBaseProvidersConfig());
