@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests\Messenger;
 
 use InvalidArgumentException;
-use RTippin\Messenger\Actions\Bots\BotActionHandler;
 use RTippin\Messenger\Brokers\BroadcastBroker;
 use RTippin\Messenger\Brokers\JanusBroker;
 use RTippin\Messenger\Brokers\NullBroadcastBroker;
@@ -487,7 +486,6 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame(4, $this->messenger->getOnlineCacheLifetime());
         $this->assertTrue($this->messenger->isCallingEnabled());
         $this->assertTrue($this->messenger->isBotsEnabled());
-        $this->assertSame([], $this->messenger->getBotActions());
         $this->assertTrue($this->messenger->isSystemMessagesEnabled());
         $this->assertSame(5, $this->messenger->getKnockTimeout());
         $this->assertTrue($this->messenger->isKnockKnockEnabled());
@@ -583,32 +581,6 @@ class MessengerTest extends MessengerTestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The given driver { RTippin\Messenger\Brokers\NullBroadcastBroker } must implement our interface RTippin\Messenger\Contracts\VideoDriver');
         $this->messenger->setVideoDriver(NullBroadcastBroker::class);
-    }
-
-    /** @test */
-    public function it_can_set_bot_actions()
-    {
-        $actions = [
-            TestBot::class,
-        ];
-
-        $this->messenger->setBotActions($actions);
-
-        $this->assertSame($actions, $this->messenger->getBotActions());
-    }
-
-    /** @test */
-    public function it_ignores_invalid_and_missing_bot_actions()
-    {
-        $actions = [
-            TestBot::class,
-            InvalidBotAction::class,
-            MissingAction::class,
-        ];
-
-        $this->messenger->setBotActions($actions);
-
-        $this->assertSame([TestBot::class], $this->messenger->getBotActions());
     }
 
     /** @test */
@@ -737,21 +709,5 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame('test', $this->messenger->getBotSubscriber('channel'));
         $this->assertSame('test', $this->messenger->getCallSubscriber('channel'));
         $this->assertSame('test', $this->messenger->getSystemMessageSubscriber('channel'));
-    }
-}
-
-class TestBot extends BotActionHandler
-{
-    public function handle(): void
-    {
-        //
-    }
-}
-
-class InvalidBotAction
-{
-    public function handle(): void
-    {
-        //
     }
 }

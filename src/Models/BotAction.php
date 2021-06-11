@@ -14,6 +14,7 @@ use RTippin\Messenger\Contracts\ActionHandler;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\BotActionFactory;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
@@ -97,7 +98,7 @@ class BotAction extends Model
      */
     public function scopeValidHandler(Builder $query): Builder
     {
-        return $query->whereIn('handler', Messenger::getBotActions());
+        return $query->whereIn('handler', MessengerBots::getActions());
     }
 
     /**

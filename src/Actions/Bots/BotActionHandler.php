@@ -29,6 +29,11 @@ abstract class BotActionHandler implements ActionHandler
     protected ?string $matchingTrigger = null;
 
     /**
+     * @var array|null
+     */
+    protected ?array $payload = null;
+
+    /**
      * Handle the bot actions intent.
      */
     abstract public function handle(): void;
@@ -41,6 +46,18 @@ abstract class BotActionHandler implements ActionHandler
     public function rules(): array
     {
         return [];
+    }
+
+    /**
+     * If storing payload data, return the json encoded string.
+     *
+     * @return string|null
+     */
+    public function serializePayload(): ?string
+    {
+        return is_null($this->payload)
+            ? null
+            : json_encode($this->payload);
     }
 
     /**

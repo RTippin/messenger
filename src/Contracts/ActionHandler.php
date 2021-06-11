@@ -36,4 +36,11 @@ interface ActionHandler
      * @return array
      */
     public function rules(): array;
+
+    /**
+     * If storing payload data, return the json encoded string.
+     *
+     * @return string|null
+     */
+    public function serializePayload(): ?string;
 }

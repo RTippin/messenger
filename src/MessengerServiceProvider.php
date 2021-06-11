@@ -51,6 +51,10 @@ class MessengerServiceProvider extends ServiceProvider
 
         $this->app->alias(Messenger::class, 'messenger');
 
+        $this->app->singleton(MessengerBots::class, MessengerBots::class);
+
+        $this->app->alias(MessengerBots::class, 'messenger-bots');
+
         $this->app->singleton(FriendDriver::class, FriendBroker::class);
 
         $this->app->singleton(EmojiInterface::class, EmojiService::class);
