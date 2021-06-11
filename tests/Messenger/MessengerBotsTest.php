@@ -108,15 +108,22 @@ class TestBot extends BotActionHandler
     {
         return 'fun_bot';
     }
+
     public static function getDescription(): string
     {
         return 'This is a fun bot.';
     }
+
     public static function getName(): string
     {
         return 'Fun Bot';
     }
-    public function handle(): void {}
+
+    public function handle(): void
+    {
+        //
+    }
+
     public function rules(): array
     {
         return ['test' => 'required'];
@@ -129,15 +136,22 @@ class TestBotTwo extends BotActionHandler
     {
         return 'silly_bot';
     }
+
     public static function getDescription(): string
     {
         return 'This is a silly bot.';
     }
+
     public static function getName(): string
     {
         return 'Silly Bot';
     }
-    public function handle(): void {}
+
+    public function handle(): void
+    {
+        //
+    }
+
     public function rules(): array
     {
         return ['test_two' => 'required'];
