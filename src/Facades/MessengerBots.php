@@ -5,8 +5,8 @@ namespace RTippin\Messenger\Facades;
 use Illuminate\Support\Facades\Facade;
 
 /**
- * @method static array getActions()
- * @method static \RTippin\Messenger\MessengerBots setActions(?array $actions)
+ * @method static array getHandlers()
+ * @method static \RTippin\Messenger\MessengerBots setHandlers(?array $actions)
  * @method static \RTippin\Messenger\MessengerBots getInstance()
  *
  * @mixin \RTippin\Messenger\MessengerBots

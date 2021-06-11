@@ -8,6 +8,28 @@ use RTippin\Messenger\Models\Message;
 interface ActionHandler
 {
     /**
+     * Set the alias we will use when attaching the handler to
+     * a bot model via a form post.
+     *
+     * @return string
+     */
+    public static function getAlias(): string;
+
+    /**
+     * Set the description of the handler.
+     *
+     * @return string
+     */
+    public static function getDescription(): string;
+
+    /**
+     * Set the name of the handler we will display to the frontend.
+     *
+     * @return string
+     */
+    public static function getName(): string;
+
+    /**
      * Handle the bot actions intent. This is the last
      * method called when executing the handler.
      */

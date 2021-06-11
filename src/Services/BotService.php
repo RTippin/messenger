@@ -2,8 +2,10 @@
 
 namespace RTippin\Messenger\Services;
 
+use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
-use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\Exceptions\BotException;
+use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
@@ -14,12 +16,26 @@ class BotService
     use ChecksReflection;
 
     /**
+     * @var MessengerBots
+     */
+    private MessengerBots $bots;
+
+    /**
      * @var string
      */
     private string $matchingTrigger;
 
     /**
+     * BotService constructor.
+     */
+    public function __construct(MessengerBots $bots)
+    {
+        $this->bots = $bots;
+    }
+
+    /**
      * @param Message $message
+     * @throws BindingResolutionException|BotException
      */
     public function handleMessage(Message $message): void
     {
@@ -146,13 +162,15 @@ class BotService
      *
      * @param BotAction $action
      * @param Message $message
+     * @throws BindingResolutionException|BotException
      */
     private function executeMessage(BotAction $action, Message $message): void
     {
         if ($this->shouldExecute($action, $message)) {
             $this->setCooldown($action);
 
-            app($action->handler)
+            $this->bots
+                ->initializeHandler($action->handler)
                 ->setAction($action)
                 ->setMessage($message, $this->matchingTrigger)
                 ->handle();
@@ -170,8 +188,7 @@ class BotService
      */
     private function shouldExecute(BotAction $action, Message $message): bool
     {
-        return class_exists($action->handler)
-            && $this->checkIsSubclassOf($action->handler, BotActionHandler::class)
+        return $this->bots->isValidHandler($action->handler)
             && ! $this->hasCooldown($action)
             && $this->hasPermissionToTrigger($action, $message);
     }

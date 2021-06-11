@@ -13,7 +13,7 @@ class BotServiceTest extends FeatureTestCase
     {
         parent::setUp();
 
-        $this->botService = new BotService;
+        $this->botService = app(BotService::class);
     }
 
     /**

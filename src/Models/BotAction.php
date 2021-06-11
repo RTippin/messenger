@@ -98,7 +98,7 @@ class BotAction extends Model
      */
     public function scopeValidHandler(Builder $query): Builder
     {
-        return $query->whereIn('handler', MessengerBots::getActions());
+        return $query->whereIn('handler', MessengerBots::getHandlers());
     }
 
     /**
