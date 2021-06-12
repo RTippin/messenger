@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Services;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Support\Str;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\MessengerBots;
@@ -35,7 +34,7 @@ class BotService
 
     /**
      * @param Message $message
-     * @throws BindingResolutionException|BotException
+     * @throws BotException
      */
     public function handleMessage(Message $message): void
     {
@@ -162,7 +161,7 @@ class BotService
      *
      * @param BotAction $action
      * @param Message $message
-     * @throws BindingResolutionException|BotException
+     * @throws BotException
      */
     private function executeMessage(BotAction $action, Message $message): void
     {

@@ -43,7 +43,8 @@ interface ActionHandler
     public function setMessage(Message $message, string $matchingTrigger);
 
     /**
-     * Set the BotAction.
+     * Set the BotAction. We will also set the messenger provider to
+     * the bot the action belongs to.
      *
      * @param BotAction $action
      * @return $this

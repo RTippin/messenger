@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Jobs;
 
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
@@ -37,7 +36,7 @@ class BotActionMessageHandler implements ShouldQueue
      *
      * @param BotService $service
      * @return void
-     * @throws BindingResolutionException|BotException
+     * @throws BotException
      */
     public function handle(BotService $service): void
     {

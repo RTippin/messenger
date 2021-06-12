@@ -29,7 +29,6 @@ abstract class BotActionHandler implements ActionHandler
      */
     protected ?array $payload = null;
 
-
     /**
      * @inheritDoc
      */
