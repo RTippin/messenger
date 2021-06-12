@@ -8,26 +8,24 @@ use RTippin\Messenger\Models\Message;
 interface ActionHandler
 {
     /**
-     * Set the alias we will use when attaching the handler to
-     * a bot model via a form post.
+     * Set the given settings for the handler. Return an array containing the
+     * handlers settings. The alias we will use when attaching the handler
+     * to a bot model via a form post. The name and description will be
+     * displayed to the frontend. Unique will only allow the handler to
+     * be used once in a given thread.
      *
-     * @return string
-     */
-    public static function getAlias(): string;
-
-    /**
-     * Set the description of the handler.
+     * <code>
+     * return [
+     *     'alias' => 'bot_alias',
+     *     'description' => 'Bot description.',
+     *     'name' => 'Bot Name',
+     *     'unique' => false,
+     * ];
+     * </code>
      *
-     * @return string
+     * @return array
      */
-    public static function getDescription(): string;
-
-    /**
-     * Set the name of the handler we will display to the frontend.
-     *
-     * @return string
-     */
-    public static function getName(): string;
+    public static function getSettings(): array;
 
     /**
      * Handle the bot actions intent. This is the last

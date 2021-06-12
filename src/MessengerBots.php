@@ -111,11 +111,7 @@ final class MessengerBots
             foreach ($actions as $action) {
                 if ($this->checkIsSubclassOf($action, BotActionHandler::class)) {
                     /** @var BotActionHandler $action */
-                    $this->handlers[$action] = [
-                        'alias' => $action::getAlias(),
-                        'description' => $action::getDescription(),
-                        'name' => $action::getName(),
-                    ];
+                    $this->handlers[$action] = $action::getSettings();
                 }
             }
         }

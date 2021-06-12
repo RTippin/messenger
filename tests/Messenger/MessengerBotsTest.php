@@ -104,19 +104,14 @@ class MessengerBotsTest extends MessengerTestCase
 
 class TestBot extends BotActionHandler
 {
-    public static function getAlias(): string
+    public static function getSettings(): array
     {
-        return 'fun_bot';
-    }
-
-    public static function getDescription(): string
-    {
-        return 'This is a fun bot.';
-    }
-
-    public static function getName(): string
-    {
-        return 'Fun Bot';
+        return [
+            'alias' => 'fun_bot',
+            'description' => 'This is a fun bot.',
+            'name' => 'Fun Bot',
+            'unique' => false,
+        ];
     }
 
     public function handle(): void
@@ -132,19 +127,14 @@ class TestBot extends BotActionHandler
 
 class TestBotTwo extends BotActionHandler
 {
-    public static function getAlias(): string
+    public static function getSettings(): array
     {
-        return 'silly_bot';
-    }
-
-    public static function getDescription(): string
-    {
-        return 'This is a silly bot.';
-    }
-
-    public static function getName(): string
-    {
-        return 'Silly Bot';
+        return [
+            'alias' => 'silly_bot',
+            'description' => 'This is a silly bot.',
+            'name' => 'Silly Bot',
+            'unique' => true,
+        ];
     }
 
     public function handle(): void

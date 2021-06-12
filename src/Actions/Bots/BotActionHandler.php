@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Actions\Bots;
 
 use RTippin\Messenger\Contracts\ActionHandler;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 
@@ -28,37 +29,19 @@ abstract class BotActionHandler implements ActionHandler
      */
     protected ?array $payload = null;
 
-    /**
-     * Set the alias we will use when attaching the handler to
-     * a bot model via a form post.
-     *
-     * @return string
-     */
-    abstract public static function getAlias(): string;
 
     /**
-     * Set the description of the handler.
-     *
-     * @return string
+     * @inheritDoc
      */
-    abstract public static function getDescription(): string;
+    abstract public static function getSettings(): array;
 
     /**
-     * Set the name of the handler we will display to the frontend.
-     *
-     * @return string
-     */
-    abstract public static function getName(): string;
-
-    /**
-     * Handle the bot actions intent.
+     * @inheritDoc
      */
     abstract public function handle(): void;
 
     /**
-     * Return the validation rules used when adding the action to a bot.
-     *
-     * @return array
+     * @inheritDoc
      */
     public function rules(): array
     {
@@ -66,9 +49,7 @@ abstract class BotActionHandler implements ActionHandler
     }
 
     /**
-     * If storing payload data, return the json encoded string.
-     *
-     * @return string|null
+     * @inheritDoc
      */
     public function serializePayload(): ?string
     {
@@ -78,20 +59,19 @@ abstract class BotActionHandler implements ActionHandler
     }
 
     /**
-     * @param BotAction $action
-     * @return $this
+     * @inheritDoc
      */
     public function setAction(BotAction $action): self
     {
         $this->action = $action;
 
+        Messenger::setProvider($action->bot);
+
         return $this;
     }
 
     /**
-     * @param Message $message
-     * @param string $matchingTrigger
-     * @return $this
+     * @inheritDoc
      */
     public function setMessage(Message $message, string $matchingTrigger): self
     {
