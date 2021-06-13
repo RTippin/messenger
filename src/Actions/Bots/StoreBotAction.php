@@ -5,8 +5,10 @@ namespace RTippin\Messenger\Actions\Bots;
 use Illuminate\Contracts\Events\Dispatcher;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Events\NewBotActionEvent;
+use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\Bot;
 
 class StoreBotAction extends BaseMessengerAction
@@ -22,25 +24,34 @@ class StoreBotAction extends BaseMessengerAction
     private Messenger $messenger;
 
     /**
+     * @var MessengerBots
+     */
+    private MessengerBots $bots;
+
+    /**
      * StoreBotAction constructor.
      *
      * @param Messenger $messenger
+     * @param MessengerBots $bots
      * @param Dispatcher $dispatcher
      */
-    public function __construct(Messenger $messenger, Dispatcher $dispatcher)
+    public function __construct(Messenger $messenger,
+                                MessengerBots $bots,
+                                Dispatcher $dispatcher)
     {
         $this->dispatcher = $dispatcher;
         $this->messenger = $messenger;
+        $this->bots = $bots;
     }
 
     /**
      * @param mixed ...$parameters
      * @var Bot[0]
-     * @throws FeatureDisabledException
+     * @throws FeatureDisabledException|BotException
      */
     public function execute(...$parameters): self
     {
-        $this->isBotsEnabled();
+        $this->checkCanAddBotAction();
 
         $this->setBot($parameters[0]);
 
@@ -48,12 +59,16 @@ class StoreBotAction extends BaseMessengerAction
     }
 
     /**
-     * @throws FeatureDisabledException
+     * @throws FeatureDisabledException|BotException
      */
-    private function isBotsEnabled(): void
+    private function checkCanAddBotAction(): void
     {
         if (! $this->messenger->isBotsEnabled()) {
             throw new FeatureDisabledException('Bots are currently disabled.');
+        }
+
+        if (! $this->bots->isActiveHandlerSet()) {
+            throw new BotException('No bot handler has been set.');
         }
     }
 
@@ -63,16 +78,22 @@ class StoreBotAction extends BaseMessengerAction
      */
     private function storeBotAction(array $params): self
     {
-        $this->getBot()->actions()->create([
-            'owner_id' => $this->messenger->getProvider()->getKey(),
-            'owner_type' => $this->messenger->getProvider()->getMorphClass(),
-            'enabled' => $params['enabled'],
-            'cooldown' => $params['cooldown'],
-            'triggers' => $params['triggers'],
-            'admin_only' => $params['admin_only'],
-            'match_method' => $params['match_method'],
-            'payload' => $params['payload'],
-        ]);
+        $this->setBotAction(
+            $this->getBot()->actions()->create([
+                'owner_id' => $this->messenger->getProvider()->getKey(),
+                'owner_type' => $this->messenger->getProvider()->getMorphClass(),
+                'enabled' => $params['enabled'],
+                'cooldown' => $params['cooldown'],
+                'triggers' => $params['triggers'],
+                'admin_only' => $params['admin_only'],
+                'match_method' => $params['match_method'],
+                'payload' => $params['payload'],
+            ])
+                ->setRelations([
+                    'owner' => $this->messenger->getProvider(),
+                    'bot' => $this->getBot(),
+                ])
+        );
 
         return $this;
     }

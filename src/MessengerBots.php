@@ -143,6 +143,14 @@ final class MessengerBots
     }
 
     /**
+     * @return bool
+     */
+    public function isActiveHandlerSet(): bool
+    {
+        return ! is_null($this->activeHandler);
+    }
+
+    /**
      * Return the current active handler.
      *
      * @return BotActionHandler|null

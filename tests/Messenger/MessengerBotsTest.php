@@ -228,6 +228,7 @@ class MessengerBotsTest extends MessengerTestCase
         $this->bots->initializeHandler(TestBot::class);
 
         $this->assertInstanceOf(TestBot::class, $this->bots->getActiveHandler());
+        $this->assertTrue($this->bots->isActiveHandlerSet());
     }
 
     /** @test */
@@ -236,6 +237,7 @@ class MessengerBotsTest extends MessengerTestCase
         $this->bots->setHandlers([TestBot::class]);
 
         $this->assertNull($this->bots->getActiveHandler());
+        $this->assertFalse($this->bots->isActiveHandlerSet());
     }
 }
 
