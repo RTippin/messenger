@@ -5,9 +5,12 @@ namespace RTippin\Messenger\Actions\Bots;
 use Illuminate\Contracts\Events\Dispatcher;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Events\NewBotActionEvent;
+use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Models\Thread;
 
 class StoreBotAction extends BaseMessengerAction
 {
@@ -35,16 +38,19 @@ class StoreBotAction extends BaseMessengerAction
 
     /**
      * @param mixed ...$parameters
-     * @var Bot[0]
-     * @var array[1]
-     * @throws FeatureDisabledException
+     * @var Thread[0]
+     * @var Bot[1]
+     * @var array[2]
+     * @see MessengerBots::generateHandlerData()
+     * @throws FeatureDisabledException|BotException
      */
     public function execute(...$parameters): self
     {
-        $this->checkCanAddBotAction();
+        $this->setThread($parameters[0])->setBot($parameters[1]);
 
-        $this->setBot($parameters[0])
-            ->storeBotAction($parameters[1])
+        $this->checkCanAddBotAction($parameters[2]);
+
+        $this->storeBotAction($parameters[2])
             ->generateResource()
             ->fireEvents();
 
@@ -52,13 +58,29 @@ class StoreBotAction extends BaseMessengerAction
     }
 
     /**
-     * @throws FeatureDisabledException
+     * @throws FeatureDisabledException|BotException
      */
-    private function checkCanAddBotAction(): void
+    private function checkCanAddBotAction(array $params): void
     {
         if (! $this->messenger->isBotsEnabled()) {
             throw new FeatureDisabledException('Bots are currently disabled.');
         }
+
+        if ($params['unique'] && $this->botHandlerExists($params['handler'])) {
+            throw new BotException("You may only have one ({$params['name']}) in a thread at a time.");
+        }
+    }
+
+    /**
+     * @param string $handler
+     * @return bool
+     */
+    private function botHandlerExists(string $handler): bool
+    {
+        return $this->getThread()
+            ->bots()
+            ->hasActionWithHandler($handler)
+            ->exists();
     }
 
     /**
@@ -89,6 +111,7 @@ class StoreBotAction extends BaseMessengerAction
     }
 
     /**
+     * TODO
      * @return $this
      */
     private function generateResource(): self

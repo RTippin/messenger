@@ -36,7 +36,8 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read Model|MessengerProvider $owner
  * @method static Builder|BotAction enabled()
  * @method static Builder|BotAction validHandler()
- * @method static Builder|BotAction fromThread(string $threadId)
+ * @method static Builder|BotAction handler(string $handler)
+ * @method static Builder|BotAction hasEnabledBotFromThread(string $threadId)
  */
 class BotAction extends Model
 {
@@ -116,13 +117,25 @@ class BotAction extends Model
     }
 
     /**
+     * Scope actions that have a valid handler set.
+     *
+     * @param Builder $query
+     * @param string $handler
+     * @return Builder
+     */
+    public function scopeHandler(Builder $query, string $handler): Builder
+    {
+        return $query->where('handler', '=', $handler);
+    }
+
+    /**
      * Scope actions that belong to a bot using thread id, and is enabled.
      *
      * @param Builder $query
      * @param string $threadId
      * @return Builder
      */
-    public function scopeFromThread(Builder $query, string $threadId): Builder
+    public function scopeHasEnabledBotFromThread(Builder $query, string $threadId): Builder
     {
         return $query->whereHas('bot', function (Builder $query) use ($threadId) {
             return $query->where('thread_id', '=', $threadId)

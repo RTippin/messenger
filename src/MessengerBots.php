@@ -221,8 +221,7 @@ final class MessengerBots
             'handler' => ['required', Rule::in($this->getAliases())],
         ])->validate()['handler'];
 
-        // Set the handler class used, and initialize it.
-        $this->handlerOverrides['handler'] = $this->findHandler($handler);
+        // Initialize the handler using the validated alias
         $this->initializeHandler($handler);
 
         // Return the final data array to our validated and merged properties
@@ -276,7 +275,9 @@ final class MessengerBots
     private function generateHandlerData(array $data): array
     {
         return [
-            'handler' => $this->handlerOverrides['handler'],
+            'handler' => get_class($this->getActiveHandler()),
+            'unique' => $this->getActiveHandler()::getSettings()['unique'],
+            'name' => $this->getActiveHandler()::getSettings()['name'],
             'match' => $this->handlerOverrides['match'] ?? $data['match'],
             'triggers' => $this->handlerOverrides['triggers'] ?? $this->formatTriggers($data['triggers']),
             'admin_only' => $data['admin_only'],
@@ -316,7 +317,7 @@ final class MessengerBots
     private function formatTriggers($triggers): string
     {
         $triggers = is_array($triggers)
-            ? (new Collection($triggers))->implode('|')
+            ? implode('|', $triggers)
             : $triggers;
 
         return (new Collection(preg_split('/[|,]/', $triggers)))

@@ -48,7 +48,11 @@ class BotActionController
     {
         $resolved = $bots->resolveHandlerData($request->all());
 
-        return $storeBotAction->execute($bot, $resolved)->getJsonResource();
+        return $storeBotAction->execute(
+            $thread,
+            $bot,
+            $resolved
+        )->getJsonResource();
     }
 
     /**

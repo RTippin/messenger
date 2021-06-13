@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -33,6 +34,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read \RTippin\Messenger\Models\BotAction[]|Collection $actions
  * @mixin Model|\Eloquent
  * @property-read Model|MessengerProvider $owner
+ * @method static Builder|BotAction hasActionWithHandler(string $handler)
  */
 class Bot extends Model implements MessengerProvider
 {
@@ -96,6 +98,18 @@ class Bot extends Model implements MessengerProvider
     public function actions(): HasMany
     {
         return $this->hasMany(BotAction::class);
+    }
+
+    /**
+     * Scope bots that have a specified handler.
+     *
+     * @param Builder $query
+     * @param string $handler
+     * @return Builder
+     */
+    public function scopeHasActionWithHandler(Builder $query, string $handler): Builder
+    {
+        return $query->whereHas('actions', fn (Builder $query) => $query->handler($handler));
     }
 
     /**
