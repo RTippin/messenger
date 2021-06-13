@@ -75,4 +75,11 @@ interface ActionHandler
      * @return string|null
      */
     public function serializePayload(?array $payload): ?string;
+
+    /**
+     * Decode the actions payload.
+     *
+     * @return array|null
+     */
+    public function decodePayload(): ?array;
 }

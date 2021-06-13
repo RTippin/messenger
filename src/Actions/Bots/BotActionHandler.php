@@ -55,6 +55,14 @@ abstract class BotActionHandler implements ActionHandler
     /**
      * @inheritDoc
      */
+    public function decodePayload(): ?array
+    {
+        return json_decode($this->action->payload, true);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function setAction(BotAction $action): self
     {
         $this->action = $action;

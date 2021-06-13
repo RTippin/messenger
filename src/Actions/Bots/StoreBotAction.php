@@ -27,7 +27,7 @@ class StoreBotAction extends BaseMessengerAction
      * @param Messenger $messenger
      * @param Dispatcher $dispatcher
      */
-    public function __construct(Messenger $messenger,Dispatcher $dispatcher)
+    public function __construct(Messenger $messenger, Dispatcher $dispatcher)
     {
         $this->dispatcher = $dispatcher;
         $this->messenger = $messenger;
