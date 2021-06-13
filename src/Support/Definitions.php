@@ -115,18 +115,4 @@ class Definitions
         'send_knocks' => true,
         'send_messages' => true,
     ];
-
-    /**
-     * Methods we may use to match a trigger from within a message.
-     */
-    const BotActionMatchMethods = [
-        'contains' => 'The trigger can be anywhere within a message. Cannot be part of or inside another word.',
-        'contains:caseless' => 'Same as "contains", but is case insensitive.',
-        'contains:any' => 'The trigger can be anywhere within a message, including inside another word.',
-        'contains:any:caseless' => 'Same as "contains any", but is case insensitive.',
-        'exact' => 'The trigger must match the message exactly.',
-        'exact:caseless' => 'Same as "exact", but is case insensitive.',
-        'starts:with' => 'The trigger must be the lead phrase within the message. Cannot be part of or inside another word.',
-        'starts:with:caseless' => 'Same as "starts with", but is case insensitive.',
-    ];
 }

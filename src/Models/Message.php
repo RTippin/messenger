@@ -355,6 +355,14 @@ class Message extends Model
     /**
      * @return bool
      */
+    public function isFromBot(): bool
+    {
+        return $this->owner_type === 'bots';
+    }
+
+    /**
+     * @return bool
+     */
     public function isEdited(): bool
     {
         return $this->isText() && $this->edited;

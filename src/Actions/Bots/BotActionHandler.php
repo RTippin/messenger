@@ -25,11 +25,6 @@ abstract class BotActionHandler implements ActionHandler
     protected ?string $matchingTrigger = null;
 
     /**
-     * @var array|null
-     */
-    protected ?array $payload = null;
-
-    /**
      * @inheritDoc
      */
     abstract public static function getSettings(): array;
@@ -50,11 +45,11 @@ abstract class BotActionHandler implements ActionHandler
     /**
      * @inheritDoc
      */
-    public function serializePayload(): ?string
+    public function serializePayload(?array $payload): ?string
     {
-        return is_null($this->payload)
+        return is_null($payload)
             ? null
-            : json_encode($this->payload);
+            : json_encode($payload);
     }
 
     /**

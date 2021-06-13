@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Models;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
@@ -105,6 +106,24 @@ class MessageTest extends FeatureTestCase
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
 
         $this->assertSame("threads/$thread->id", $message->getStorageDirectory());
+    }
+
+    /** @test */
+    public function it_is_not_from_bot()
+    {
+        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+
+        $this->assertFalse($message->isFromBot());
+    }
+
+    /** @test */
+    public function it_is_from_bot()
+    {
+        $thread = Thread::factory()->group()->create();
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $message = Message::factory()->for($thread)->owner($bot)->create();
+
+        $this->assertTrue($message->isFromBot());
     }
 
     /** @test */

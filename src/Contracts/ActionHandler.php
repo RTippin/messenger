@@ -8,18 +8,28 @@ use RTippin\Messenger\Models\Message;
 interface ActionHandler
 {
     /**
-     * Set the given settings for the handler. Return an array containing the
-     * handlers settings. The alias we will use when attaching the handler
-     * to a bot model via a form post. The name and description will be
-     * displayed to the frontend. Unique will only allow the handler to
-     * be used once in a given thread.
+     * Return an array containing the handlers settings and overrides we will use.
+     * REQUIRED
+     * - 'alias' will be used to locate and attach your handler to a bot.
+     * - 'description' displayed to the frontend.
+     * - 'name' displayed to the frontend.
+     * OVERRIDES
+     * 'unique' When set and true, the handler may only be used once on any bots within a thread.
+     * 'triggers' overrides allowing end user to set the triggers. Only the given
+     * trigger(s) will be used. Separate multiple via the pipe (|)
+     * 'match' overrides allowing end user to select matching method.
+     * Available match methods:
+     * contains | contains:caseless | contains:any | contains:any:caseless
+     * exact | exact:caseless | starts:with | starts:with:caseless
      *
      * <code>
      * return [
      *     'alias' => 'bot_alias',
      *     'description' => 'Bot description.',
      *     'name' => 'Bot Name',
-     *     'unique' => false,
+     *     'unique' => true, //optional
+     *     'triggers' => '!h|!help', //optional
+     *     'match' => 'exact' //optional
      * ];
      * </code>
      *
@@ -61,7 +71,8 @@ interface ActionHandler
     /**
      * If storing payload data, return the json encoded string.
      *
+     * @param array|null $payload
      * @return string|null
      */
-    public function serializePayload(): ?string;
+    public function serializePayload(?array $payload): ?string;
 }

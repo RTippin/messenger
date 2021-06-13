@@ -44,7 +44,7 @@ class BotService
             ->get();
 
         foreach ($actions as $action) {
-            if ($this->matches($action->match_method, $action->triggers, $message->body)) {
+            if ($this->matches($action->match, $action->getTriggers(), $message->body)) {
                 $this->executeMessage($action, $message);
 
                 return;
@@ -54,13 +54,13 @@ class BotService
 
     /**
      * @param string $matchMethod
-     * @param string $triggers
+     * @param array $triggers
      * @param string $message
      * @return bool
      */
-    public function matches(string $matchMethod, string $triggers, string $message): bool
+    public function matches(string $matchMethod, array $triggers, string $message): bool
     {
-        foreach (explode('|', $triggers) as $trigger) {
+        foreach ($triggers as $trigger) {
             if ($this->doesMatch($matchMethod, $trigger, $message)) {
                 $this->matchingTrigger = $trigger;
 

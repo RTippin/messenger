@@ -86,7 +86,7 @@ class StoreBotAction extends BaseMessengerAction
                 'cooldown' => $params['cooldown'],
                 'triggers' => $params['triggers'],
                 'admin_only' => $params['admin_only'],
-                'match_method' => $params['match_method'],
+                'match' => $params['match'],
                 'payload' => $params['payload'],
             ])
                 ->setRelations([

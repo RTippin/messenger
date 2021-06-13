@@ -26,7 +26,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string $triggers
  * @property string|null $payload
  * @property bool $admin_only
- * @property string $match_method
+ * @property string $match
  * @property int $cooldown
  * @property bool $enabled
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -128,6 +128,16 @@ class BotAction extends Model
             return $query->where('thread_id', '=', $threadId)
                 ->where('enabled', '=', true);
         });
+    }
+
+    /**
+     * Get all triggers for the action.
+     *
+     * @return array
+     */
+    public function getTriggers(): array
+    {
+        return explode('|', $this->triggers);
     }
 
     /**

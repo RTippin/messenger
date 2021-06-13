@@ -23,7 +23,7 @@ class BotServiceTest extends FeatureTestCase
      */
     public function it_matches_exact($string)
     {
-        $this->assertTrue($this->botService->matches('exact', '!Exact', $string));
+        $this->assertTrue($this->botService->matches('exact', ['!Exact'], $string));
     }
 
     /**
@@ -33,7 +33,7 @@ class BotServiceTest extends FeatureTestCase
      */
     public function it_matches_exact_caseless($string)
     {
-        $this->assertTrue($this->botService->matches('exact:caseless', '!Exact', $string));
+        $this->assertTrue($this->botService->matches('exact:caseless', ['!Exact'], $string));
     }
 
     /**
@@ -43,7 +43,7 @@ class BotServiceTest extends FeatureTestCase
      */
     public function it_matches_multiple_triggers($string)
     {
-        $this->assertTrue($this->botService->matches('exact', '!Exact|!e|test|bafOOn', $string));
+        $this->assertTrue($this->botService->matches('exact', ['!Exact', '!e', 'test', 'bafOOn'], $string));
     }
 
     /**
@@ -53,7 +53,7 @@ class BotServiceTest extends FeatureTestCase
      */
     public function it_doesnt_match_exact($string)
     {
-        $this->assertFalse($this->botService->matches('exact', '!Exact', $string));
+        $this->assertFalse($this->botService->matches('exact', ['!Exact'], $string));
     }
 
     /**
@@ -63,7 +63,7 @@ class BotServiceTest extends FeatureTestCase
      */
     public function it_doesnt_match_exact_caseless($string)
     {
-        $this->assertFalse($this->botService->matches('exact:caseless', '!Exact', $string));
+        $this->assertFalse($this->botService->matches('exact:caseless', ['!Exact'], $string));
     }
 
     /**
@@ -73,7 +73,7 @@ class BotServiceTest extends FeatureTestCase
      */
     public function it_matches_starts_with($string)
     {
-        $this->assertTrue($this->botService->matches('starts:with', '!Starts', $string));
+        $this->assertTrue($this->botService->matches('starts:with', ['!Starts'], $string));
     }
 
     /**
@@ -83,7 +83,7 @@ class BotServiceTest extends FeatureTestCase
      */
     public function it_matches_starts_with_caseless($string)
     {
-        $this->assertTrue($this->botService->matches('starts:with:caseless', '!Starts', $string));
+        $this->assertTrue($this->botService->matches('starts:with:caseless', ['!Starts'], $string));
     }
 
     /**
@@ -93,7 +93,7 @@ class BotServiceTest extends FeatureTestCase
      */
     public function it_doesnt_match_starts_with($string)
     {
-        $this->assertFalse($this->botService->matches('starts:with', '!Starts', $string));
+        $this->assertFalse($this->botService->matches('starts:with', ['!Starts'], $string));
     }
 
     /**
@@ -103,7 +103,7 @@ class BotServiceTest extends FeatureTestCase
      */
     public function it_doesnt_match_starts_with_caseless($string)
     {
-        $this->assertFalse($this->botService->matches('starts:with:caseless', '!Starts', $string));
+        $this->assertFalse($this->botService->matches('starts:with:caseless', ['!Starts'], $string));
     }
 
     /**
@@ -113,7 +113,7 @@ class BotServiceTest extends FeatureTestCase
      */
     public function it_matches_contains($string)
     {
-        $this->assertTrue($this->botService->matches('contains', '!Contains', $string));
+        $this->assertTrue($this->botService->matches('contains', ['!Contains'], $string));
     }
 
     /**
@@ -123,7 +123,7 @@ class BotServiceTest extends FeatureTestCase
      */
     public function it_matches_contains_caseless($string)
     {
-        $this->assertTrue($this->botService->matches('contains:caseless', '!Contains', $string));
+        $this->assertTrue($this->botService->matches('contains:caseless', ['!Contains'], $string));
     }
 
     /**
@@ -133,7 +133,7 @@ class BotServiceTest extends FeatureTestCase
      */
     public function it_doesnt_match_contains($string)
     {
-        $this->assertFalse($this->botService->matches('contains', '!Contains', $string));
+        $this->assertFalse($this->botService->matches('contains', ['!Contains'], $string));
     }
 
     /**
@@ -143,7 +143,7 @@ class BotServiceTest extends FeatureTestCase
      */
     public function it_doesnt_match_contains_caseless($string)
     {
-        $this->assertFalse($this->botService->matches('contains:caseless', '!Contains', $string));
+        $this->assertFalse($this->botService->matches('contains:caseless', ['!Contains'], $string));
     }
 
     /**
@@ -154,7 +154,7 @@ class BotServiceTest extends FeatureTestCase
      */
     public function it_matches_contains_any($string)
     {
-        $this->assertTrue($this->botService->matches('contains:any', '!Contains', $string));
+        $this->assertTrue($this->botService->matches('contains:any', ['!Contains'], $string));
     }
 
     /**
@@ -165,7 +165,7 @@ class BotServiceTest extends FeatureTestCase
      */
     public function it_matches_contains_any_caseless($string)
     {
-        $this->assertTrue($this->botService->matches('contains:any:caseless', '!Contains', $string));
+        $this->assertTrue($this->botService->matches('contains:any:caseless', ['!Contains'], $string));
     }
 
     /**
@@ -175,7 +175,7 @@ class BotServiceTest extends FeatureTestCase
      */
     public function it_doesnt_match_contains_any($string)
     {
-        $this->assertFalse($this->botService->matches('contains:any', '!Contains', $string));
+        $this->assertFalse($this->botService->matches('contains:any', ['!Contains'], $string));
     }
 
     /**
@@ -185,7 +185,7 @@ class BotServiceTest extends FeatureTestCase
      */
     public function it_doesnt_match_contains_any_caseless($string)
     {
-        $this->assertFalse($this->botService->matches('contains:any:caseless', '!Contains', $string));
+        $this->assertFalse($this->botService->matches('contains:any:caseless', ['!Contains'], $string));
     }
 
     public function stringMatchesExact(): array

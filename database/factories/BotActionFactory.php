@@ -23,11 +23,12 @@ class BotActionFactory extends Factory
     {
         return [
             'handler' => 'ReplyBot',
-            'admin_only' => false,
-            'match_method' => 'exact',
+            'match' => 'exact',
             'triggers' => '!hello',
             'enabled' => true,
             'payload' => null,
+            'cooldown' => 0,
+            'admin_only' => false,
         ];
     }
 
@@ -111,7 +112,7 @@ class BotActionFactory extends Factory
     {
         return $this->state(function (array $attributes) use ($match) {
             return [
-                'match_method' => $match,
+                'match' => $match,
             ];
         });
     }
@@ -125,7 +126,7 @@ class BotActionFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'admin_trigger' => true,
+                'admin_only' => true,
             ];
         });
     }
