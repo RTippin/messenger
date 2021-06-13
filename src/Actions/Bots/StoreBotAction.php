@@ -4,8 +4,10 @@ namespace RTippin\Messenger\Actions\Bots;
 
 use Illuminate\Contracts\Events\Dispatcher;
 use RTippin\Messenger\Actions\BaseMessengerAction;
+use RTippin\Messenger\Events\NewBotActionEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\Bot;
 
 class StoreBotAction extends BaseMessengerAction
 {
@@ -32,12 +34,16 @@ class StoreBotAction extends BaseMessengerAction
     }
 
     /**
-     * //TODO
-     *
      * @param mixed ...$parameters
+     * @var Bot[0]
+     * @throws FeatureDisabledException
      */
     public function execute(...$parameters): self
     {
+        $this->isBotsEnabled();
+
+        $this->setBot($parameters[0]);
+
         return $this;
     }
 
@@ -57,6 +63,17 @@ class StoreBotAction extends BaseMessengerAction
      */
     private function storeBotAction(array $params): self
     {
+        $this->getBot()->actions()->create([
+            'owner_id' => $this->messenger->getProvider()->getKey(),
+            'owner_type' => $this->messenger->getProvider()->getMorphClass(),
+            'enabled' => $params['enabled'],
+            'cooldown' => $params['cooldown'],
+            'triggers' => $params['triggers'],
+            'admin_only' => $params['admin_only'],
+            'match_method' => $params['match_method'],
+            'payload' => $params['payload'],
+        ]);
+
         return $this;
     }
 
@@ -73,8 +90,10 @@ class StoreBotAction extends BaseMessengerAction
      */
     private function fireEvents(): void
     {
-//        if ($this->shouldFireEvents()) {
-//            $this->dispatcher->dispatch();
-//        }
+        if ($this->shouldFireEvents()) {
+            $this->dispatcher->dispatch(new NewBotActionEvent(
+                $this->getBotAction(true)
+            ));
+        }
     }
 }

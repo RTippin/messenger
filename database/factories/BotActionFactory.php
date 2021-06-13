@@ -26,6 +26,7 @@ class BotActionFactory extends Factory
             'admin_only' => false,
             'match_method' => 'exact',
             'triggers' => '!hello',
+            'enabled' => true,
             'payload' => null,
         ];
     }
@@ -39,6 +40,20 @@ class BotActionFactory extends Factory
     public function owner($owner): Factory
     {
         return $this->for($owner, 'owner');
+    }
+
+    /**
+     * Indicate thread is locked.
+     *
+     * @return Factory
+     */
+    public function disabled(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'enabled' => false,
+            ];
+        });
     }
 
     /**

@@ -38,7 +38,10 @@ class BotService
      */
     public function handleMessage(Message $message): void
     {
-        $actions = BotAction::validHandler()->fromThread($message->thread_id)->get();
+        $actions = BotAction::enabled()
+            ->validHandler()
+            ->fromThread($message->thread_id)
+            ->get();
 
         foreach ($actions as $action) {
             if ($this->matches($action->match_method, $action->triggers, $message->body)) {

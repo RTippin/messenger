@@ -28,11 +28,13 @@ use RTippin\Messenger\Traits\Uuids;
  * @property bool $admin_only
  * @property string $match_method
  * @property int $cooldown
+ * @property bool $enabled
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @mixin Model|\Eloquent
  * @property-read Model|Bot $bot
  * @property-read Model|MessengerProvider $owner
+ * @method static Builder|BotAction enabled()
  * @method static Builder|BotAction validHandler()
  * @method static Builder|BotAction fromThread(string $threadId)
  */
@@ -70,6 +72,7 @@ class BotAction extends Model
      */
     protected $casts = [
         'admin_only' => 'boolean',
+        'enabled' => 'boolean',
     ];
 
     /**
@@ -88,6 +91,17 @@ class BotAction extends Model
         return $this->morphTo()->withDefault(function () {
             return Messenger::getGhostProvider();
         });
+    }
+
+    /**
+     * Scope actions that are enabled.
+     *
+     * @param Builder $query
+     * @return Builder
+     */
+    public function scopeEnabled(Builder $query): Builder
+    {
+        return $query->where('enabled', '=', true);
     }
 
     /**

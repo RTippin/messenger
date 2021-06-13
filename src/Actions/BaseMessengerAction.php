@@ -9,6 +9,7 @@ use Illuminate\Http\Resources\Json\JsonResource;
 use LogicException;
 use RTippin\Messenger\Contracts\Action;
 use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Message;
@@ -69,6 +70,11 @@ abstract class BaseMessengerAction implements Action
      * @var Bot|null
      */
     private ?Bot $bot = null;
+
+    /**
+     * @var BotAction|null
+     */
+    private ?BotAction $botAction = null;
 
     /**
      * @var bool
@@ -371,6 +377,30 @@ abstract class BaseMessengerAction implements Action
     {
         if (! is_null($bot)) {
             $this->bot = $bot;
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getBotAction(bool $withoutRelations = false): ?BotAction
+    {
+        if ($withoutRelations && ! is_null($this->bot)) {
+            return $this->botAction->withoutRelations();
+        }
+
+        return $this->botAction;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setBotAction(?BotAction $botAction = null): self
+    {
+        if (! is_null($botAction)) {
+            $this->botAction = $botAction;
         }
 
         return $this;

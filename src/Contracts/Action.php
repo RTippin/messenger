@@ -7,6 +7,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use LogicException;
 use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Message;
@@ -194,6 +195,20 @@ interface Action
      * @return $this
      */
     public function setBot(?Bot $bot = null);
+
+    /**
+     * Get the bot action model the action may be holding.
+     *
+     * @param bool $withoutRelations
+     * @return BotAction|null
+     */
+    public function getBotAction(bool $withoutRelations = false): ?BotAction;
+
+    /**
+     * @param BotAction|null $botAction
+     * @return mixed
+     */
+    public function setBotAction(?BotAction $botAction = null);
 
     /**
      * Disable any event dispatches that the action may hold.
