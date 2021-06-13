@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Commands;
 
 use Illuminate\Console\Command;
-use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Messenger;
 
 class CallsUpCommand extends Command
@@ -27,7 +26,6 @@ class CallsUpCommand extends Command
      *
      * @param Messenger $messenger
      * @return void
-     * @throws InvalidArgumentException
      */
     public function handle(Messenger $messenger): void
     {

@@ -2,13 +2,9 @@
 
 namespace RTippin\Messenger;
 
-use Illuminate\Contracts\Cache\Repository;
-use Psr\SimpleCache\InvalidArgumentException;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\MessengerProvider;
 
-/**
- * @property-read Repository $cacheDriver
- */
 trait MessengerOnline
 {
     /**
@@ -26,7 +22,7 @@ trait MessengerOnline
                 if ($this->getOnlineStatusSetting($this->getProvider()) === 2) {
                     $this->setProviderToAway();
                 } else {
-                    $this->cacheDriver->put(
+                    Cache::put(
                         "{$this->getProviderAlias()}:online:{$this->getProvider()->getKey()}",
                         'online',
                         now()->addMinutes($this->getOnlineCacheLifetime())
@@ -38,7 +34,7 @@ trait MessengerOnline
                 if ($this->getOnlineStatusSetting($provider) === 2) {
                     $this->setProviderToAway($provider);
                 } else {
-                    $this->cacheDriver->put(
+                    Cache::put(
                         "{$this->findProviderAlias($provider)}:online:{$provider->getKey()}",
                         'online',
                         now()->addMinutes($this->getOnlineCacheLifetime())
@@ -60,9 +56,9 @@ trait MessengerOnline
     {
         if ($this->isOnlineStatusEnabled()) {
             if (! $provider && $this->isProviderSet()) {
-                $this->cacheDriver->forget("{$this->getProviderAlias()}:online:{$this->getProvider()->getKey()}");
+                Cache::forget("{$this->getProviderAlias()}:online:{$this->getProvider()->getKey()}");
             } elseif ($provider && $this->isValidMessengerProvider($provider)) {
-                $this->cacheDriver->forget("{$this->findProviderAlias($provider)}:online:{$provider->getKey()}");
+                Cache::forget("{$this->findProviderAlias($provider)}:online:{$provider->getKey()}");
             }
         }
 
@@ -81,7 +77,7 @@ trait MessengerOnline
             if (! $provider
                 && $this->isProviderSet()
                 && $this->getOnlineStatusSetting($this->getProvider()) !== 0) {
-                $this->cacheDriver->put(
+                Cache::put(
                     "{$this->getProviderAlias()}:online:{$this->getProvider()->getKey()}",
                     'away',
                     now()->addMinutes($this->getOnlineCacheLifetime())
@@ -89,7 +85,7 @@ trait MessengerOnline
             } elseif ($provider
                 && $this->isValidMessengerProvider($provider)
                 && $this->getOnlineStatusSetting($provider) !== 0) {
-                $this->cacheDriver->put(
+                Cache::put(
                     "{$this->findProviderAlias($provider)}:online:{$provider->getKey()}",
                     'away',
                     now()->addMinutes($this->getOnlineCacheLifetime())
@@ -109,16 +105,12 @@ trait MessengerOnline
     public function isProviderOnline($provider = null): bool
     {
         if ($this->isOnlineStatusEnabled()) {
-            try {
-                if (! $provider && $this->isProviderSet()) {
-                    return $this->cacheDriver->get("{$this->getProviderAlias()}:online:{$this->getProvider()->getKey()}") === 'online';
-                }
-
-                return $this->isValidMessengerProvider($provider)
-                    && $this->cacheDriver->get("{$this->findProviderAlias($provider)}:online:{$provider->getKey()}") === 'online';
-            } catch (InvalidArgumentException $e) {
-                report($e);
+            if (! $provider && $this->isProviderSet()) {
+                return Cache::get("{$this->getProviderAlias()}:online:{$this->getProvider()->getKey()}") === 'online';
             }
+
+            return $this->isValidMessengerProvider($provider)
+                && Cache::get("{$this->findProviderAlias($provider)}:online:{$provider->getKey()}") === 'online';
         }
 
         return false;
@@ -133,16 +125,12 @@ trait MessengerOnline
     public function isProviderAway($provider = null): bool
     {
         if ($this->isOnlineStatusEnabled()) {
-            try {
-                if (! $provider && $this->isProviderSet()) {
-                    return $this->cacheDriver->get("{$this->getProviderAlias()}:online:{$this->getProvider()->getKey()}") === 'away';
-                }
-
-                return $this->isValidMessengerProvider($provider)
-                    && $this->cacheDriver->get("{$this->findProviderAlias($provider)}:online:{$provider->getKey()}") === 'away';
-            } catch (InvalidArgumentException $e) {
-                report($e);
+            if (! $provider && $this->isProviderSet()) {
+                return Cache::get("{$this->getProviderAlias()}:online:{$this->getProvider()->getKey()}") === 'away';
             }
+
+            return $this->isValidMessengerProvider($provider)
+                && Cache::get("{$this->findProviderAlias($provider)}:online:{$provider->getKey()}") === 'away';
         }
 
         return false;
@@ -158,18 +146,14 @@ trait MessengerOnline
     public function getProviderOnlineStatus($provider = null): int
     {
         if ($this->isOnlineStatusEnabled()) {
-            try {
-                if (! $provider
-                    && $this->isProviderSet()
-                    && $self_cache = $this->cacheDriver->get("{$this->getProviderAlias()}:online:{$this->getProvider()->getKey()}")) {
-                    return $self_cache === 'online' ? 1 : 2;
-                }
-                if ($provider && $this->isValidMessengerProvider($provider)
-                    && $cache = $this->cacheDriver->get("{$this->findProviderAlias($provider)}:online:{$provider->getKey()}")) {
-                    return $cache === 'online' ? 1 : 2;
-                }
-            } catch (InvalidArgumentException $e) {
-                report($e);
+            if (! $provider
+                && $this->isProviderSet()
+                && $self_cache = Cache::get("{$this->getProviderAlias()}:online:{$this->getProvider()->getKey()}")) {
+                return $self_cache === 'online' ? 1 : 2;
+            }
+            if ($provider && $this->isValidMessengerProvider($provider)
+                && $cache = Cache::get("{$this->findProviderAlias($provider)}:online:{$provider->getKey()}")) {
+                return $cache === 'online' ? 1 : 2;
             }
         }
 

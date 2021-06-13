@@ -2,9 +2,8 @@
 
 namespace RTippin\Messenger\Actions\Calls;
 
-use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Database\Eloquent\Collection;
-use Psr\SimpleCache\InvalidArgumentException;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
@@ -23,24 +22,15 @@ class CallActivityChecker extends BaseMessengerAction
     private LeaveCall $leaveCall;
 
     /**
-     * @var Repository
-     */
-    private Repository $cacheDriver;
-
-    /**
      * CallActivityChecker constructor.
      *
-     * @param Repository $cacheDriver
      * @param EndCall $endCall
      * @param LeaveCall $leaveCall
      */
-    public function __construct(Repository $cacheDriver,
-                                EndCall $endCall,
-                                LeaveCall $leaveCall)
+    public function __construct(EndCall $endCall, LeaveCall $leaveCall)
     {
         $this->endCall = $endCall;
         $this->leaveCall = $leaveCall;
-        $this->cacheDriver = $cacheDriver;
     }
 
     /**
@@ -51,7 +41,7 @@ class CallActivityChecker extends BaseMessengerAction
      * @param mixed ...$parameters
      * @var Collection[0]
      * @return $this
-     * @throws Throwable|InvalidArgumentException
+     * @throws Throwable
      */
     public function execute(...$parameters): self
     {
@@ -65,7 +55,7 @@ class CallActivityChecker extends BaseMessengerAction
 
     /**
      * @param Call $call
-     * @throws Throwable|InvalidArgumentException
+     * @throws Throwable
      */
     private function performActivityChecks(Call $call): void
     {
@@ -77,7 +67,7 @@ class CallActivityChecker extends BaseMessengerAction
     /**
      * @param Call $call
      * @return bool
-     * @throws Throwable|InvalidArgumentException
+     * @throws Throwable
      */
     private function endIfEmpty(Call $call): bool
     {
@@ -101,11 +91,10 @@ class CallActivityChecker extends BaseMessengerAction
     /**
      * @param Call $call
      * @param CallParticipant $participant
-     * @throws InvalidArgumentException
      */
     private function removeIfNotInCache(Call $call, CallParticipant $participant): void
     {
-        if (! $this->cacheDriver->has("call:$call->id:$participant->id")) {
+        if (! Cache::has("call:$call->id:$participant->id")) {
             $this->leaveCall->execute($call, $participant);
         }
     }

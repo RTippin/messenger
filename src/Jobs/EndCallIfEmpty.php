@@ -7,7 +7,6 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Actions\Calls\EndCall;
 use RTippin\Messenger\Events\CallLeftEvent;
 use Throwable;
@@ -39,7 +38,7 @@ class EndCallIfEmpty implements ShouldQueue
      *
      * @param EndCall $endCall
      * @return void
-     * @throws Throwable|InvalidArgumentException
+     * @throws Throwable
      */
     public function handle(EndCall $endCall): void
     {

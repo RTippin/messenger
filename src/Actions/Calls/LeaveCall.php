@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Actions\Calls;
 
-use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
 use RTippin\Messenger\Broadcasting\CallLeftBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
@@ -26,16 +25,11 @@ class LeaveCall extends CallParticipantAction
     /**
      * LeaveCall constructor.
      *
-     * @param Repository $cacheDriver
      * @param BroadcastDriver $broadcaster
      * @param Dispatcher $dispatcher
      */
-    public function __construct(Repository $cacheDriver,
-                                BroadcastDriver $broadcaster,
-                                Dispatcher $dispatcher)
+    public function __construct(BroadcastDriver $broadcaster, Dispatcher $dispatcher)
     {
-        parent::__construct($cacheDriver);
-
         $this->broadcaster = $broadcaster;
         $this->dispatcher = $dispatcher;
     }

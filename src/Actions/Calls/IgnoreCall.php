@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Actions\Calls;
 
 use Illuminate\Contracts\Events\Dispatcher;
-use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\CallIgnoredBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
@@ -63,7 +62,7 @@ class IgnoreCall extends BaseMessengerAction
      * @return $this
      * @var Thread[0]
      * @var Call[1]
-     * @throws Throwable|InvalidArgumentException
+     * @throws Throwable
      */
     public function execute(...$parameters): self
     {
@@ -85,7 +84,7 @@ class IgnoreCall extends BaseMessengerAction
     /**
      * End the private call that was ignored.
      *
-     * @throws Throwable|InvalidArgumentException
+     * @throws Throwable
      */
     private function endCall(): void
     {

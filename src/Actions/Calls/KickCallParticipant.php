@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Actions\Calls;
 
-use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
 use RTippin\Messenger\Broadcasting\KickedFromCallBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
@@ -34,15 +33,11 @@ class KickCallParticipant extends CallParticipantAction
      * @param Messenger $messenger
      * @param BroadcastDriver $broadcaster
      * @param Dispatcher $dispatcher
-     * @param Repository $cacheDriver
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
-                                Dispatcher $dispatcher,
-                                Repository $cacheDriver)
+                                Dispatcher $dispatcher)
     {
-        parent::__construct($cacheDriver);
-
         $this->messenger = $messenger;
         $this->broadcaster = $broadcaster;
         $this->dispatcher = $dispatcher;

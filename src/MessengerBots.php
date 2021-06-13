@@ -37,10 +37,7 @@ final class MessengerBots
      */
     public function getHandlerClasses(): array
     {
-        return $this->handlers
-            ->map(fn ($settings, $handler) => $handler)
-            ->flatten()
-            ->toArray();
+        return $this->handlers->keys()->toArray();
     }
 
     /**

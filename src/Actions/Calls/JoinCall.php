@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Actions\Calls;
 
-use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
 use RTippin\Messenger\Broadcasting\CallJoinedBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
@@ -32,18 +31,14 @@ class JoinCall extends CallParticipantAction
     /**
      * JoinCall constructor.
      *
-     * @param Repository $cacheDriver
      * @param Messenger $messenger
      * @param BroadcastDriver $broadcaster
      * @param Dispatcher $dispatcher
      */
-    public function __construct(Repository $cacheDriver,
-                                Messenger $messenger,
+    public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
                                 Dispatcher $dispatcher)
     {
-        parent::__construct($cacheDriver);
-
         $this->broadcaster = $broadcaster;
         $this->dispatcher = $dispatcher;
         $this->messenger = $messenger;

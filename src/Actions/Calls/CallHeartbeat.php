@@ -2,21 +2,10 @@
 
 namespace RTippin\Messenger\Actions\Calls;
 
-use Illuminate\Contracts\Cache\Repository;
 use RTippin\Messenger\Models\Call;
 
 class CallHeartbeat extends CallParticipantAction
 {
-    /**
-     * CallHeartbeat constructor.
-     *
-     * @param Repository $cacheDriver
-     */
-    public function __construct(Repository $cacheDriver)
-    {
-        parent::__construct($cacheDriver);
-    }
-
     /**
      * Keeps the call participant in cache to show we are still in the call.
      *

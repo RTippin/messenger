@@ -2,11 +2,9 @@
 
 namespace RTippin\Messenger\Actions\Calls;
 
-use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Support\Collection;
-use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\NewCallException;
@@ -28,19 +26,16 @@ class StoreCall extends NewCallAction
      * @param BroadcastDriver $broadcaster
      * @param Dispatcher $dispatcher
      * @param DatabaseManager $database
-     * @param Repository $cacheDriver
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
                                 Dispatcher $dispatcher,
-                                DatabaseManager $database,
-                                Repository $cacheDriver)
+                                DatabaseManager $database)
     {
         parent::__construct(
             $messenger,
             $broadcaster,
-            $dispatcher,
-            $cacheDriver
+            $dispatcher
         );
 
         $this->database = $database;
@@ -56,7 +51,7 @@ class StoreCall extends NewCallAction
      * @var Thread[0]
      * @var bool|null[1]
      * @return $this
-     * @throws NewCallException|Throwable|InvalidArgumentException|FeatureDisabledException
+     * @throws NewCallException|Throwable|FeatureDisabledException
      */
     public function execute(...$parameters): self
     {

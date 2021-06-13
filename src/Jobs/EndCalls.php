@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Actions\Calls\EndCall;
 use RTippin\Messenger\Models\Call;
 use Throwable;
@@ -40,7 +39,7 @@ class EndCalls implements ShouldQueue
      *
      * @param EndCall $endCall
      * @return void
-     * @throws Throwable|InvalidArgumentException
+     * @throws Throwable
      */
     public function handle(EndCall $endCall): void
     {

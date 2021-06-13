@@ -3,12 +3,10 @@
 namespace RTippin\Messenger;
 
 use Exception;
-use Illuminate\Contracts\Cache\Repository as CacheRepository;
-use Illuminate\Contracts\Config\Repository as ConfigRepository;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Collection;
-use Psr\SimpleCache\InvalidArgumentException;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\File;
+use InvalidArgumentException;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Models\Bot;
@@ -17,10 +15,6 @@ use RTippin\Messenger\Traits\ChecksReflection;
 
 /**
  * @property-read Collection $providers
- * @property-read Application $app
- * @property-read CacheRepository $cacheDriver
- * @property-read ConfigRepository $configRepo
- * @property-read Filesystem $filesystem
  * @property-read ProvidersVerification $providersVerification
  */
 trait MessengerConfig
@@ -326,10 +320,6 @@ trait MessengerConfig
      * @var string[]
      */
     private static array $guarded = [
-        'app',
-        'cacheDriver',
-        'configRepo',
-        'filesystem',
         'provider',
         'id',
         'alias',
@@ -361,7 +351,7 @@ trait MessengerConfig
     public function isProvidersCached(): bool
     {
         return $this->isProvidersCached
-            ?: $this->filesystem->exists($this->app->bootstrapPath('cache/messenger.php'));
+            ?: File::exists(app()->bootstrapPath('cache/messenger.php'));
     }
 
     /**
@@ -546,28 +536,26 @@ trait MessengerConfig
      */
     public function disableCallsTemporarily(int $minutesDisabled): self
     {
-        $this->cacheDriver->put('messenger:calls:down', true, now()->addMinutes($minutesDisabled));
+        Cache::put('messenger:calls:down', true, now()->addMinutes($minutesDisabled));
 
         return $this;
     }
 
     /**
      * @return bool
-     * @throws InvalidArgumentException
      */
     public function isCallingTemporarilyDisabled(): bool
     {
-        return $this->cacheDriver->has('messenger:calls:down');
+        return Cache::has('messenger:calls:down');
     }
 
     /**
      * @return $this
-     * @throws InvalidArgumentException
      */
     public function removeTemporaryCallShutdown(): self
     {
         if ($this->isCallingTemporarilyDisabled()) {
-            $this->cacheDriver->forget('messenger:calls:down');
+            Cache::forget('messenger:calls:down');
         }
 
         return $this;
@@ -1286,15 +1274,15 @@ trait MessengerConfig
     /**
      * @param string $driver
      * @return $this
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function setBroadcastDriver(string $driver): self
     {
         if (! $this->checkImplementsInterface($driver, BroadcastDriver::class)) {
-            throw new \InvalidArgumentException("The given driver { $driver } must implement our interface ".BroadcastDriver::class);
+            throw new InvalidArgumentException("The given driver { $driver } must implement our interface ".BroadcastDriver::class);
         }
 
-        $this->app->singleton(BroadcastDriver::class, $driver);
+        app()->singleton(BroadcastDriver::class, $driver);
 
         return $this;
     }
@@ -1302,15 +1290,15 @@ trait MessengerConfig
     /**
      * @param string $driver
      * @return $this
-     * @throws \InvalidArgumentException
+     * @throws InvalidArgumentException
      */
     public function setVideoDriver(string $driver): self
     {
         if (! $this->checkImplementsInterface($driver, VideoDriver::class)) {
-            throw new \InvalidArgumentException("The given driver { $driver } must implement our interface ".VideoDriver::class);
+            throw new InvalidArgumentException("The given driver { $driver } must implement our interface ".VideoDriver::class);
         }
 
-        $this->app->singleton(VideoDriver::class, $driver);
+        app()->singleton(VideoDriver::class, $driver);
 
         return $this;
     }
@@ -1532,7 +1520,7 @@ trait MessengerConfig
     {
         $this->providers = $this->mergeBotProvider(
             $this->providersVerification->formatValidProviders(
-                $this->configRepo->get('messenger.providers')
+                config('messenger.providers')
             )
         );
     }
@@ -1544,7 +1532,7 @@ trait MessengerConfig
     private function loadCachedProvidersFile()
     {
         try {
-            return require $this->app->bootstrapPath('cache/messenger.php');
+            return require app()->bootstrapPath('cache/messenger.php');
         } catch (Exception $e) {
             report($e);
 
@@ -1557,66 +1545,66 @@ trait MessengerConfig
      */
     private function setMessengerConfig(): void
     {
-        $this->siteName = $this->configRepo->get('messenger.site_name');
-        $this->apiEndpoint = '/'.$this->configRepo->get('messenger.routing.api.prefix');
-        $this->webEndpoint = '/'.$this->configRepo->get('messenger.routing.web.prefix');
-        $this->webRoutes = $this->configRepo->get('messenger.routing.web.enabled');
-        $this->providerAvatarRoutes = $this->configRepo->get('messenger.routing.provider_avatar.enabled');
-        $this->channelRoutes = $this->configRepo->get('messenger.routing.channels.enabled');
-        $this->socketEndpoint = $this->configRepo->get('messenger.socket_endpoint');
-        $this->avatarStorage = $this->configRepo->get('messenger.storage.avatars');
-        $this->threadStorage = $this->configRepo->get('messenger.storage.threads');
-        $this->defaultNotFoundImage = $this->configRepo->get('messenger.files.default_not_found_image');
-        $this->defaultGhostAvatar = $this->configRepo->get('messenger.files.default_ghost_avatar');
-        $this->defaultBotAvatar = $this->configRepo->get('messenger.files.default_bot_avatar');
-        $this->defaultThreadAvatars = $this->configRepo->get('messenger.files.default_thread_avatars');
-        $this->pushNotifications = $this->configRepo->get('messenger.push_notifications');
-        $this->knockKnock = $this->configRepo->get('messenger.knocks.enabled');
-        $this->knockTimeout = $this->configRepo->get('messenger.knocks.timeout');
-        $this->messageEdits = $this->configRepo->get('messenger.message_edits.enabled');
-        $this->messageEditsView = $this->configRepo->get('messenger.message_edits.history_view');
-        $this->messageReactions = $this->configRepo->get('messenger.message_reactions.enabled');
-        $this->messageReactionsMax = $this->configRepo->get('messenger.message_reactions.max_unique');
-        $this->threadInvites = $this->configRepo->get('messenger.invites.enabled');
-        $this->threadInvitesMax = $this->configRepo->get('messenger.invites.max_per_thread');
-        $this->onlineStatus = $this->configRepo->get('messenger.online_status.enabled');
-        $this->onlineCacheLifetime = $this->configRepo->get('messenger.online_status.lifetime');
-        $this->calling = $this->configRepo->get('messenger.calling.enabled');
-        $this->bots = $this->configRepo->get('messenger.bots.enabled');
-        $this->systemMessages = $this->configRepo->get('messenger.system_messages.enabled');
-        $this->providerAvatarUpload = $this->configRepo->get('messenger.files.provider_avatars.upload');
-        $this->providerAvatarRemoval = $this->configRepo->get('messenger.files.provider_avatars.removal');
-        $this->providerAvatarSizeLimit = $this->configRepo->get('messenger.files.provider_avatars.size_limit');
-        $this->providerAvatarMimeTypes = $this->configRepo->get('messenger.files.provider_avatars.mime_types');
-        $this->messageImageUpload = $this->configRepo->get('messenger.files.message_images.upload');
-        $this->messageImageSizeLimit = $this->configRepo->get('messenger.files.message_images.size_limit');
-        $this->messageImageMimeTypes = $this->configRepo->get('messenger.files.message_images.mime_types');
-        $this->messageAudioUpload = $this->configRepo->get('messenger.files.message_audio.upload');
-        $this->messageAudioSizeLimit = $this->configRepo->get('messenger.files.message_audio.size_limit');
-        $this->messageAudioMimeTypes = $this->configRepo->get('messenger.files.message_audio.mime_types');
-        $this->messageDocumentUpload = $this->configRepo->get('messenger.files.message_documents.upload');
-        $this->messageDocumentSizeLimit = $this->configRepo->get('messenger.files.message_documents.size_limit');
-        $this->messageDocumentMimeTypes = $this->configRepo->get('messenger.files.message_documents.mime_types');
-        $this->threadAvatarUpload = $this->configRepo->get('messenger.files.thread_avatars.upload');
-        $this->threadAvatarSizeLimit = $this->configRepo->get('messenger.files.thread_avatars.size_limit');
-        $this->threadAvatarMimeTypes = $this->configRepo->get('messenger.files.thread_avatars.mime_types');
-        $this->searchPageCount = $this->configRepo->get('messenger.collections.search.page_count');
-        $this->threadsIndexCount = $this->configRepo->get('messenger.collections.threads.index_count');
-        $this->threadsPageCount = $this->configRepo->get('messenger.collections.threads.page_count');
-        $this->participantsIndexCount = $this->configRepo->get('messenger.collections.participants.index_count');
-        $this->participantsPageCount = $this->configRepo->get('messenger.collections.participants.page_count');
-        $this->messagesIndexCount = $this->configRepo->get('messenger.collections.messages.index_count');
-        $this->messagesPageCount = $this->configRepo->get('messenger.collections.messages.page_count');
-        $this->callsIndexCount = $this->configRepo->get('messenger.collections.calls.index_count');
-        $this->callsPageCount = $this->configRepo->get('messenger.collections.calls.page_count');
-        $this->apiRateLimit = $this->configRepo->get('messenger.rate_limits.api');
-        $this->searchRateLimit = $this->configRepo->get('messenger.rate_limits.search');
-        $this->messageRateLimit = $this->configRepo->get('messenger.rate_limits.message');
-        $this->attachmentRateLimit = $this->configRepo->get('messenger.rate_limits.attachment');
+        $this->siteName = config('messenger.site_name');
+        $this->apiEndpoint = '/'.config('messenger.routing.api.prefix');
+        $this->webEndpoint = '/'.config('messenger.routing.web.prefix');
+        $this->webRoutes = config('messenger.routing.web.enabled');
+        $this->providerAvatarRoutes = config('messenger.routing.provider_avatar.enabled');
+        $this->channelRoutes = config('messenger.routing.channels.enabled');
+        $this->socketEndpoint = config('messenger.socket_endpoint');
+        $this->avatarStorage = config('messenger.storage.avatars');
+        $this->threadStorage = config('messenger.storage.threads');
+        $this->defaultNotFoundImage = config('messenger.files.default_not_found_image');
+        $this->defaultGhostAvatar = config('messenger.files.default_ghost_avatar');
+        $this->defaultBotAvatar = config('messenger.files.default_bot_avatar');
+        $this->defaultThreadAvatars = config('messenger.files.default_thread_avatars');
+        $this->pushNotifications = config('messenger.push_notifications');
+        $this->knockKnock = config('messenger.knocks.enabled');
+        $this->knockTimeout = config('messenger.knocks.timeout');
+        $this->messageEdits = config('messenger.message_edits.enabled');
+        $this->messageEditsView = config('messenger.message_edits.history_view');
+        $this->messageReactions = config('messenger.message_reactions.enabled');
+        $this->messageReactionsMax = config('messenger.message_reactions.max_unique');
+        $this->threadInvites = config('messenger.invites.enabled');
+        $this->threadInvitesMax = config('messenger.invites.max_per_thread');
+        $this->onlineStatus = config('messenger.online_status.enabled');
+        $this->onlineCacheLifetime = config('messenger.online_status.lifetime');
+        $this->calling = config('messenger.calling.enabled');
+        $this->bots = config('messenger.bots.enabled');
+        $this->systemMessages = config('messenger.system_messages.enabled');
+        $this->providerAvatarUpload = config('messenger.files.provider_avatars.upload');
+        $this->providerAvatarRemoval = config('messenger.files.provider_avatars.removal');
+        $this->providerAvatarSizeLimit = config('messenger.files.provider_avatars.size_limit');
+        $this->providerAvatarMimeTypes = config('messenger.files.provider_avatars.mime_types');
+        $this->messageImageUpload = config('messenger.files.message_images.upload');
+        $this->messageImageSizeLimit = config('messenger.files.message_images.size_limit');
+        $this->messageImageMimeTypes = config('messenger.files.message_images.mime_types');
+        $this->messageAudioUpload = config('messenger.files.message_audio.upload');
+        $this->messageAudioSizeLimit = config('messenger.files.message_audio.size_limit');
+        $this->messageAudioMimeTypes = config('messenger.files.message_audio.mime_types');
+        $this->messageDocumentUpload = config('messenger.files.message_documents.upload');
+        $this->messageDocumentSizeLimit = config('messenger.files.message_documents.size_limit');
+        $this->messageDocumentMimeTypes = config('messenger.files.message_documents.mime_types');
+        $this->threadAvatarUpload = config('messenger.files.thread_avatars.upload');
+        $this->threadAvatarSizeLimit = config('messenger.files.thread_avatars.size_limit');
+        $this->threadAvatarMimeTypes = config('messenger.files.thread_avatars.mime_types');
+        $this->searchPageCount = config('messenger.collections.search.page_count');
+        $this->threadsIndexCount = config('messenger.collections.threads.index_count');
+        $this->threadsPageCount = config('messenger.collections.threads.page_count');
+        $this->participantsIndexCount = config('messenger.collections.participants.index_count');
+        $this->participantsPageCount = config('messenger.collections.participants.page_count');
+        $this->messagesIndexCount = config('messenger.collections.messages.index_count');
+        $this->messagesPageCount = config('messenger.collections.messages.page_count');
+        $this->callsIndexCount = config('messenger.collections.calls.index_count');
+        $this->callsPageCount = config('messenger.collections.calls.page_count');
+        $this->apiRateLimit = config('messenger.rate_limits.api');
+        $this->searchRateLimit = config('messenger.rate_limits.search');
+        $this->messageRateLimit = config('messenger.rate_limits.message');
+        $this->attachmentRateLimit = config('messenger.rate_limits.attachment');
         $this->subscribers = [
-            'bots' => $this->configRepo->get('messenger.bots.subscriber'),
-            'calls' => $this->configRepo->get('messenger.calling.subscriber'),
-            'system_messages' => $this->configRepo->get('messenger.system_messages.subscriber'),
+            'bots' => config('messenger.bots.subscriber'),
+            'calls' => config('messenger.calling.subscriber'),
+            'system_messages' => config('messenger.system_messages.subscriber'),
         ];
     }
 }

@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Http\Controllers\Actions;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
-use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Actions\Threads\SendKnock;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\KnockException;
@@ -38,7 +37,7 @@ class KnockKnock
      * @param SendKnock $sendKnock
      * @param Thread $thread
      * @return JsonResponse
-     * @throws AuthorizationException|FeatureDisabledException|KnockException|InvalidArgumentException
+     * @throws AuthorizationException|FeatureDisabledException|KnockException
      */
     public function __invoke(SendKnock $sendKnock, Thread $thread): JsonResponse
     {

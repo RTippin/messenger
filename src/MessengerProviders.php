@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger;
 
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
@@ -10,9 +9,6 @@ use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Messenger as MessengerModel;
 use RTippin\Messenger\Models\Participant;
 
-/**
- * @property-read Application $app
- */
 trait MessengerProviders
 {
     /**
@@ -102,7 +98,7 @@ trait MessengerProviders
         $this->providerCanSearch = $interactions['can_search'];
         $this->providerIsSet = true;
 
-        $this->app->instance(MessengerProvider::class, $provider);
+        app()->instance(MessengerProvider::class, $provider);
 
         return $this;
     }
@@ -142,7 +138,6 @@ trait MessengerProviders
      * Unset the active provider.
      *
      * @return $this
-     * @noinspection PhpUndefinedMethodInspection
      */
     public function unsetProvider(): self
     {
@@ -155,7 +150,7 @@ trait MessengerProviders
         $this->providerCanSearch = [];
         $this->providerIsSet = false;
 
-        $this->app->forgetInstance(MessengerProvider::class);
+        app()->forgetInstance(MessengerProvider::class);
 
         return $this;
     }

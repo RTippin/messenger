@@ -2,10 +2,9 @@
 
 namespace RTippin\Messenger\Actions\Calls;
 
-use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
-use Psr\SimpleCache\InvalidArgumentException;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\CallEndedBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
@@ -20,11 +19,6 @@ class EndCall extends BaseMessengerAction
      * @var BroadcastDriver
      */
     private BroadcastDriver $broadcaster;
-
-    /**
-     * @var Repository
-     */
-    private Repository $cacheDriver;
 
     /**
      * @var DatabaseManager
@@ -42,17 +36,14 @@ class EndCall extends BaseMessengerAction
      * @param BroadcastDriver $broadcaster
      * @param DatabaseManager $database
      * @param Dispatcher $dispatcher
-     * @param Repository $cacheDriver
      */
     public function __construct(BroadcastDriver $broadcaster,
                                 DatabaseManager $database,
-                                Dispatcher $dispatcher,
-                                Repository $cacheDriver)
+                                Dispatcher $dispatcher)
     {
         $this->broadcaster = $broadcaster;
         $this->database = $database;
         $this->dispatcher = $dispatcher;
-        $this->cacheDriver = $cacheDriver;
     }
 
     /**
@@ -62,7 +53,7 @@ class EndCall extends BaseMessengerAction
      * @param mixed ...$parameters
      * @return $this
      * @var Call[0]
-     * @throws Throwable|InvalidArgumentException
+     * @throws Throwable
      */
     public function execute(...$parameters): self
     {
@@ -83,11 +74,10 @@ class EndCall extends BaseMessengerAction
 
     /**
      * @return bool
-     * @throws InvalidArgumentException
      */
     private function hasNoEndingLockout(): bool
     {
-        return $this->cacheDriver->has("call:{$this->getCall()->id}:ending");
+        return Cache::has("call:{$this->getCall()->id}:ending");
     }
 
     /**
@@ -95,7 +85,7 @@ class EndCall extends BaseMessengerAction
      */
     private function setEndingLockout(): void
     {
-        $this->cacheDriver->put("call:{$this->getCall()->id}:ending", true, 10);
+        Cache::put("call:{$this->getCall()->id}:ending", true, 10);
     }
 
     /**

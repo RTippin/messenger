@@ -4,8 +4,6 @@ namespace RTippin\Messenger\Brokers;
 
 use Illuminate\Broadcasting\BroadcastException;
 use Illuminate\Contracts\Broadcasting\Factory;
-use Illuminate\Contracts\Container\BindingResolutionException;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Collection;
 use RTippin\Messenger\Broadcasting\MessengerBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
@@ -56,11 +54,6 @@ class BroadcastBroker implements BroadcastDriver
     protected Factory $broadcast;
 
     /**
-     * @var Application
-     */
-    protected Application $app;
-
-    /**
      * @var bool
      */
     protected bool $usingPresence = false;
@@ -77,18 +70,15 @@ class BroadcastBroker implements BroadcastDriver
      * @param ParticipantRepository $participantRepository
      * @param PushNotificationService $pushNotification
      * @param Factory $broadcast
-     * @param Application $app
      */
     public function __construct(Messenger $messenger,
                                 ParticipantRepository $participantRepository,
                                 PushNotificationService $pushNotification,
-                                Factory $broadcast,
-                                Application $app)
+                                Factory $broadcast)
     {
         $this->messenger = $messenger;
         $this->participantRepository = $participantRepository;
         $this->broadcast = $broadcast;
-        $this->app = $app;
         $this->pushNotification = $pushNotification;
     }
 
@@ -282,12 +272,11 @@ class BroadcastBroker implements BroadcastDriver
     {
         try {
             $this->broadcast->event(
-                $this->app
-                    ->make($abstractBroadcast)
+                app($abstractBroadcast)
                     ->setResource($this->with)
                     ->setChannels($channels->values()->toArray())
             );
-        } catch (BroadcastException | BindingResolutionException | Throwable $e) {
+        } catch (BroadcastException | Throwable $e) {
             // Should a broadcast fail, we do not want to
             // halt further code execution. Continue on!
         }

@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Http\Controllers;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Actions\Calls\StoreCall;
 use RTippin\Messenger\Exceptions\NewCallException;
 use RTippin\Messenger\Http\Collections\CallCollection;
@@ -71,7 +70,7 @@ class CallController
      * @param StoreCall $storeCall
      * @param Thread $thread
      * @return CallResource
-     * @throws AuthorizationException|Throwable|InvalidArgumentException|NewCallException
+     * @throws AuthorizationException|Throwable|NewCallException
      */
     public function store(StoreCall $storeCall, Thread $thread): CallResource
     {

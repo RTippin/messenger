@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Database\Eloquent\Collection;
-use Psr\SimpleCache\InvalidArgumentException;
 use RTippin\Messenger\Jobs\EndCalls;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Call;
@@ -32,7 +31,6 @@ class CallsDownCommand extends Command
      *
      * @param Messenger $messenger
      * @return void
-     * @throws InvalidArgumentException
      */
     public function handle(Messenger $messenger): void
     {

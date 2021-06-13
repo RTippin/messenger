@@ -2,9 +2,8 @@
 
 namespace RTippin\Messenger\Actions\Calls;
 
-use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
-use Psr\SimpleCache\InvalidArgumentException;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\CallStartedBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
@@ -18,11 +17,6 @@ use RTippin\Messenger\Support\Definitions;
 
 abstract class NewCallAction extends BaseMessengerAction
 {
-    /**
-     * @var Repository
-     */
-    protected Repository $cacheDriver;
-
     /**
      * @var Messenger
      */
@@ -44,14 +38,11 @@ abstract class NewCallAction extends BaseMessengerAction
      * @param Messenger $messenger
      * @param BroadcastDriver $broadcaster
      * @param Dispatcher $dispatcher
-     * @param Repository $cacheDriver
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
-                                Dispatcher $dispatcher,
-                                Repository $cacheDriver)
+                                Dispatcher $dispatcher)
     {
-        $this->cacheDriver = $cacheDriver;
         $this->messenger = $messenger;
         $this->broadcaster = $broadcaster;
         $this->dispatcher = $dispatcher;
@@ -113,7 +104,7 @@ abstract class NewCallAction extends BaseMessengerAction
 
     /**
      * @return $this
-     * @throws FeatureDisabledException|NewCallException|InvalidArgumentException
+     * @throws FeatureDisabledException|NewCallException
      */
     protected function canInitiateCall(): self
     {
@@ -126,7 +117,7 @@ abstract class NewCallAction extends BaseMessengerAction
             throw new NewCallException("{$this->getThread()->name()} already has an active call.");
         }
 
-        if ($this->cacheDriver->get("call:{$this->getThread()->id}:starting")) {
+        if (Cache::get("call:{$this->getThread()->id}:starting")) {
             throw new NewCallException("{$this->getThread()->name()} has a call awaiting creation.");
         }
 
@@ -138,7 +129,7 @@ abstract class NewCallAction extends BaseMessengerAction
      */
     protected function setCallLockout(): self
     {
-        $this->cacheDriver->put("call:{$this->getThread()->id}:starting", true, 10);
+        Cache::put("call:{$this->getThread()->id}:starting", true, 10);
 
         return $this;
     }

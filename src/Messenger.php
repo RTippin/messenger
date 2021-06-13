@@ -2,11 +2,7 @@
 
 namespace RTippin\Messenger;
 
-use Illuminate\Contracts\Cache\Repository as CacheRepository;
-use Illuminate\Contracts\Config\Repository as ConfigRepository;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Filesystem\Filesystem;
 use RTippin\Messenger\Support\ProvidersVerification;
 
 /**
@@ -20,26 +16,6 @@ final class Messenger
         MessengerOnline;
 
     /**
-     * @var Application
-     */
-    private Application $app;
-
-    /**
-     * @var CacheRepository
-     */
-    private CacheRepository $cacheDriver;
-
-    /**
-     * @var Filesystem
-     */
-    private Filesystem $filesystem;
-
-    /**
-     * @var ConfigRepository
-     */
-    private ConfigRepository $configRepo;
-
-    /**
      * @var ProvidersVerification
      */
     private ProvidersVerification $providersVerification;
@@ -48,22 +24,10 @@ final class Messenger
      * Messenger constructor.
      * Load config values to use at runtime.
      *
-     * @param Application $app
-     * @param CacheRepository $cacheDriver
-     * @param Filesystem $filesystem
-     * @param ConfigRepository $configRepo
      * @param ProvidersVerification $providersVerification
      */
-    public function __construct(Application $app,
-                                CacheRepository $cacheDriver,
-                                Filesystem $filesystem,
-                                ConfigRepository $configRepo,
-                                ProvidersVerification $providersVerification)
+    public function __construct(ProvidersVerification $providersVerification)
     {
-        $this->app = $app;
-        $this->cacheDriver = $cacheDriver;
-        $this->filesystem = $filesystem;
-        $this->configRepo = $configRepo;
         $this->providersVerification = $providersVerification;
         $this->boot();
     }

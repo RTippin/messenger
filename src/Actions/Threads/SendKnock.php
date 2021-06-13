@@ -2,9 +2,8 @@
 
 namespace RTippin\Messenger\Actions\Threads;
 
-use Illuminate\Contracts\Cache\Repository;
 use Illuminate\Contracts\Events\Dispatcher;
-use Psr\SimpleCache\InvalidArgumentException;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\KnockBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
@@ -17,11 +16,6 @@ use RTippin\Messenger\Models\Thread;
 
 class SendKnock extends BaseMessengerAction
 {
-    /**
-     * @var Repository
-     */
-    private Repository $cacheDriver;
-
     /**
      * @var Messenger
      */
@@ -43,14 +37,11 @@ class SendKnock extends BaseMessengerAction
      * @param Messenger $messenger
      * @param BroadcastDriver $broadcaster
      * @param Dispatcher $dispatcher
-     * @param Repository $cacheDriver
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
-                                Dispatcher $dispatcher,
-                                Repository $cacheDriver)
+                                Dispatcher $dispatcher)
     {
-        $this->cacheDriver = $cacheDriver;
         $this->messenger = $messenger;
         $this->broadcaster = $broadcaster;
         $this->dispatcher = $dispatcher;
@@ -62,7 +53,7 @@ class SendKnock extends BaseMessengerAction
      * @param mixed ...$parameters
      * @var Thread[0]
      * @return $this
-     * @throws FeatureDisabledException|KnockException|InvalidArgumentException
+     * @throws FeatureDisabledException|KnockException
      */
     public function execute(...$parameters): self
     {
@@ -78,7 +69,7 @@ class SendKnock extends BaseMessengerAction
 
     /**
      * @return $this
-     * @throws FeatureDisabledException|KnockException|InvalidArgumentException
+     * @throws FeatureDisabledException|KnockException
      */
     private function checkCanKnockAtThread(): self
     {
@@ -97,22 +88,20 @@ class SendKnock extends BaseMessengerAction
 
     /**
      * @return bool
-     * @throws InvalidArgumentException
      */
     private function hasPrivateThreadLockout(): bool
     {
         return $this->getThread()->isPrivate()
-            && $this->cacheDriver->has("knock.knock.{$this->getThread()->id}.{$this->messenger->getProvider()->getKey()}");
+            && Cache::has("knock.knock.{$this->getThread()->id}.{$this->messenger->getProvider()->getKey()}");
     }
 
     /**
      * @return bool
-     * @throws InvalidArgumentException
      */
     private function hasGroupThreadLockout(): bool
     {
         return $this->getThread()->isGroup()
-            && $this->cacheDriver->has("knock.knock.{$this->getThread()->id}");
+            && Cache::has("knock.knock.{$this->getThread()->id}");
     }
 
     /**
@@ -162,7 +151,7 @@ class SendKnock extends BaseMessengerAction
     private function storeCacheTimeout(): self
     {
         if ($this->messenger->getKnockTimeout() !== 0) {
-            $this->cacheDriver->put(
+            Cache::put(
                 $this->generateCacheKey(),
                 true,
                 now()->addMinutes($this->messenger->getKnockTimeout())

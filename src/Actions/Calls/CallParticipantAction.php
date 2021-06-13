@@ -2,28 +2,13 @@
 
 namespace RTippin\Messenger\Actions\Calls;
 
-use Illuminate\Contracts\Cache\Repository;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\CallParticipant;
 
 abstract class CallParticipantAction extends BaseMessengerAction
 {
-    /**
-     * @var Repository
-     */
-    protected Repository $cacheDriver;
-
-    /**
-     * CallParticipantAction constructor.
-     *
-     * @param Repository $cacheDriver
-     */
-    public function __construct(Repository $cacheDriver)
-    {
-        $this->cacheDriver = $cacheDriver;
-    }
-
     /**
      * Store a fresh new participant.
      *
@@ -68,7 +53,7 @@ abstract class CallParticipantAction extends BaseMessengerAction
      */
     protected function setParticipantInCallCache(CallParticipant $participant): self
     {
-        $this->cacheDriver->put("call:{$this->getCall()->id}:$participant->id", true, 60);
+        Cache::put("call:{$this->getCall()->id}:$participant->id", true, 60);
 
         return $this;
     }
@@ -81,7 +66,7 @@ abstract class CallParticipantAction extends BaseMessengerAction
      */
     protected function removeParticipantInCallCache(CallParticipant $participant): self
     {
-        $this->cacheDriver->forget("call:{$this->getCall()->id}:$participant->id");
+        Cache::forget("call:{$this->getCall()->id}:$participant->id");
 
         return $this;
     }
