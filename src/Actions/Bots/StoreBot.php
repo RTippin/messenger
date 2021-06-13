@@ -90,7 +90,7 @@ class StoreBot extends BaseMessengerAction
     }
 
     /**
-     * TODO
+     * TODO.
      * @return $this
      */
     private function generateResource(): self
