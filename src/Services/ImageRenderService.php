@@ -230,7 +230,9 @@ class ImageRenderService
             case 'bot':
                 $default = $this->messenger->getDefaultBotAvatar();
             break;
-            default: $default = $this->messenger->getProviderDefaultAvatarPath($alias);
+            default: $default = is_null($alias)
+                ? null
+                : $this->messenger->getProviderDefaultAvatarPath($alias);
         }
 
         if (! is_null($default) && file_exists($default)) {
