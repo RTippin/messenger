@@ -16,11 +16,11 @@ interface ActionHandler
      * OVERRIDES
      * 'unique' When set and true, the handler may only be used once on any bots within a thread.
      * 'triggers' overrides allowing end user to set the triggers. Only the given
-     * trigger(s) will be used. Separate multiple via the pipe (|)
+     * trigger(s) will be used. Separate multiple via the pipe (|) or use an array.
      * 'match' overrides allowing end user to select matching method.
      * Available match methods:
-     * contains | contains:caseless | contains:any | contains:any:caseless
-     * exact | exact:caseless | starts:with | starts:with:caseless
+     * ( contains | contains:caseless | contains:any | contains:any:caseless )
+     * ( exact | exact:caseless | starts:with | starts:with:caseless )
      *
      * <code>
      * return [

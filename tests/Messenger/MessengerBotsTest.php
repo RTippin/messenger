@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Messenger;
 
+use Illuminate\Validation\ValidationException;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Facades\MessengerBots as BotsFacade;
 use RTippin\Messenger\MessengerBots;
@@ -266,22 +267,21 @@ class MessengerBotsTest extends MessengerTestCase
     {
         $this->bots->setHandlers([TestBotHandler::class]);
 
-//        try {
-//            $this->bots->resolveHandlerFromRequest([
-//                'handler' => 'fun_bot',
-//                'match' => 'exact',
-//                'cooldown' => 0,
-//                'admin_only' => false,
-//                'enabled' => true,
-//                'triggers' => '!e,shit | fucker',
-//                'test' => ['1', '2', 'three baby'],
-//                'more' => 'shit',
-//            ]);
-//        } catch (ValidationException $e) {
-//            dump($e->errors());
-//        }
-//
-//        dump($this->bots->getResolvedHandlerData());
+        try {
+            $test = $this->bots->resolveHandlerData([
+                'handler' => 'fun_bot',
+                'match' => 'exact',
+                'cooldown' => 0,
+                'admin_only' => false,
+                'enabled' => true,
+                'triggers' => ['!e | testing', 'lol'],
+                'test' => ['1', '2', 'three baby'],
+                'more' => 'stuff',
+            ]);
+//            dump($test);
+        } catch (ValidationException $e) {
+            dump($e->errors());
+        }
 
         $this->assertTrue(true);
     }

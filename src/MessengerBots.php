@@ -45,11 +45,6 @@ final class MessengerBots
     private array $handlerOverrides;
 
     /**
-     * @var array
-     */
-    private array $resolvedHandlerData;
-
-    /**
      * MessengerBots constructor.
      */
     public function __construct()
@@ -57,7 +52,6 @@ final class MessengerBots
         $this->handlers = new Collection([]);
         $this->activeHandler = null;
         $this->handlerOverrides = [];
-        $this->resolvedHandlerData = [];
     }
 
     /**
@@ -203,14 +197,6 @@ final class MessengerBots
     }
 
     /**
-     * @return array
-     */
-    public function getResolvedHandlerData(): array
-    {
-        return $this->resolvedHandlerData;
-    }
-
-    /**
      * @return $this
      */
     public function getInstance(): self
@@ -219,41 +205,48 @@ final class MessengerBots
     }
 
     /**
-     * @param array $request
-     * @return $this
+     * Resolve a bot handler using the data parameters. Validate against our base
+     * ruleset and any custom rules or overrides on the handler class itself. Set
+     * the final data array we will use to store the BotAction model.
+     *
+     * @param array $data
+     * @return array
      * @throws BotException|ValidationException
      */
-    public function resolveHandlerFromRequest(array $request): self
+    public function resolveHandlerData(array $data): array
     {
+        // Reset the data array
         $this->handlerOverrides = [];
-        $this->resolvedHandlerData = [];
 
-        $handler = Validator::make($request, [
+        // Validate the handler alias
+        $handler = Validator::make($data, [
             'handler' => ['required', Rule::in($this->getAliases())],
         ])->validate()['handler'];
 
+        // Set the handler class used, and initialize it.
         $this->handlerOverrides['handler'] = $this->findHandler($handler);
-
         $this->initializeHandler($handler);
 
-        $this->resolvedHandlerData = $this->mergeFinalRules(
-            $this->validateHandlerSettings($request)
+        // Return the final data array to our validated and merged properties
+        return $this->generateHandlerData(
+            $this->validateHandlerSettings($data)
         );
-
-        return $this;
     }
 
     /**
-     * @param array $request
+     * @param array $data
      * @return array
      * @throws ValidationException
      */
-    private function validateHandlerSettings(array $request): array
+    private function validateHandlerSettings(array $data): array
     {
-        return Validator::make($request, $this->generateRules())->validate();
+        return Validator::make($data, $this->generateRules())->validate();
     }
 
     /**
+     * Merge our base ruleset with the handlers defined rules. Remove and set
+     * any overrides before validation.
+     *
      * @return array
      */
     private function generateRules(): array
@@ -276,10 +269,12 @@ final class MessengerBots
     }
 
     /**
+     * Make the final data array we will pass to create a new BotAction.
+     *
      * @param array $data
      * @return array
      */
-    private function mergeFinalRules(array $data): array
+    private function generateHandlerData(array $data): array
     {
         return [
             'handler' => $this->handlerOverrides['handler'],
@@ -293,6 +288,9 @@ final class MessengerBots
     }
 
     /**
+     * Strip any non-base rules from the array, then call to the handlers
+     * serialize to json encode our payload.
+     *
      * @param array $data
      * @return string|null
      */
@@ -310,11 +308,17 @@ final class MessengerBots
     }
 
     /**
-     * @param string $triggers
+     * Combine the final triggers to be a single string, separated by the pipe (|)
+     *
+     * @param string|array $triggers
      * @return string
      */
-    private function formatTriggers(string $triggers): string
+    private function formatTriggers($triggers): string
     {
+        $triggers = is_array($triggers)
+            ? (new Collection($triggers))->implode('|')
+            : $triggers;
+
         return (new Collection(preg_split('/[|,]/', $triggers)))
             ->transform(fn ($item) => trim($item))
             ->implode('|');
@@ -332,7 +336,7 @@ final class MessengerBots
             'cooldown' => ['required', 'integer', 'between:0,900'],
             'admin_only' => ['required', 'boolean'],
             'enabled' => ['required', 'boolean'],
-            'triggers' => ['required', 'string'],
+            'triggers' => ['required'],
         ];
     }
 }

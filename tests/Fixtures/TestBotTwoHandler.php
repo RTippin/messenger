@@ -23,6 +23,6 @@ class TestBotTwoHandler extends BotActionHandler
 
     public function rules(): array
     {
-        return ['test' => 'required'];
+        return [];
     }
 }
