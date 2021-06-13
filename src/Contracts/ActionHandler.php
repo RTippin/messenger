@@ -19,8 +19,8 @@ interface ActionHandler
      * trigger(s) will be used. Separate multiple via the pipe (|) or use an array.
      * 'match' overrides allowing end user to select matching method.
      * Available match methods:
-     * ( contains | contains:caseless | contains:any | contains:any:caseless )
-     * ( exact | exact:caseless | starts:with | starts:with:caseless )
+     * ( contains | contains:caseless | contains:any | contains:any:caseless ).
+     * ( exact | exact:caseless | starts:with | starts:with:caseless ).
      *
      * <code>
      * return [

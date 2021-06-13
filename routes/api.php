@@ -29,6 +29,7 @@ use RTippin\Messenger\Http\Controllers\Actions\ThreadLoader;
 use RTippin\Messenger\Http\Controllers\Actions\UnmuteThread;
 use RTippin\Messenger\Http\Controllers\Actions\UnreadThreadsCount;
 use RTippin\Messenger\Http\Controllers\AudioMessageController;
+use RTippin\Messenger\Http\Controllers\BotActionController;
 use RTippin\Messenger\Http\Controllers\BotController;
 use RTippin\Messenger\Http\Controllers\CallController;
 use RTippin\Messenger\Http\Controllers\CallParticipantController;
@@ -128,6 +129,7 @@ Route::name('api.messenger.')->group(function () {
         Route::post('demote', DemoteAdmin::class)->name('demote');
     });
     Route::apiResource('threads.bots', BotController::class);
+    Route::apiResource('threads.bots.actions', BotActionController::class);
     Route::apiResource('threads.messages', MessageController::class);
     Route::apiResource('threads.messages.reactions', MessageReactionController::class)->only(['index', 'store', 'destroy']);
     Route::apiResource('threads.images', ImageMessageController::class)->only(['index', 'store']);

@@ -274,7 +274,7 @@ class MessengerBotsTest extends MessengerTestCase
                 'cooldown' => 0,
                 'admin_only' => false,
                 'enabled' => true,
-                'triggers' => ['!e | testing', 'lol'],
+                'triggers' => ['1','3|4,5,3'],
                 'test' => ['1', '2', 'three baby'],
                 'more' => 'stuff',
             ]);

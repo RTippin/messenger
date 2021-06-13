@@ -101,9 +101,7 @@ final class MessengerBots
      */
     public function getMatchMethods(): array
     {
-        return (new Collection(self::BotActionMatchMethods))
-            ->keys()
-            ->toArray();
+        return array_keys(self::BotActionMatchMethods);
     }
 
     /**
@@ -206,8 +204,8 @@ final class MessengerBots
 
     /**
      * Resolve a bot handler using the data parameters. Validate against our base
-     * ruleset and any custom rules or overrides on the handler class itself. Set
-     * the final data array we will use to store the BotAction model.
+     * ruleset and any custom rules or overrides on the handler class itself.
+     * Return the final data array we will use to store the BotAction model.
      *
      * @param array $data
      * @return array
@@ -262,6 +260,7 @@ final class MessengerBots
 
         if (array_key_exists('triggers', $overrides)) {
             Arr::forget($mergedRuleset, 'triggers');
+            Arr::forget($mergedRuleset, 'triggers.*');
             $this->handlerOverrides['triggers'] = $this->formatTriggers($overrides['triggers']);
         }
 
@@ -308,7 +307,8 @@ final class MessengerBots
     }
 
     /**
-     * Combine the final triggers to be a single string, separated by the pipe (|)
+     * Combine the final triggers to be a single string, separated by the
+     * pipe (|), and removing duplicates.
      *
      * @param string|array $triggers
      * @return string
@@ -321,6 +321,7 @@ final class MessengerBots
 
         return (new Collection(preg_split('/[|,]/', $triggers)))
             ->transform(fn ($item) => trim($item))
+            ->unique()
             ->implode('|');
     }
 
@@ -336,7 +337,8 @@ final class MessengerBots
             'cooldown' => ['required', 'integer', 'between:0,900'],
             'admin_only' => ['required', 'boolean'],
             'enabled' => ['required', 'boolean'],
-            'triggers' => ['required'],
+            'triggers' => ['required', 'array', 'min:1'],
+            'triggers.*' => ['required', 'string'],
         ];
     }
 }
