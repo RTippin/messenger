@@ -54,7 +54,8 @@ class MessageReactionPolicy
     {
         return $this->messenger->isMessageReactionsEnabled()
         && ! $message->isSystemMessage()
-        && $thread->canMessage()
+        && ! $thread->isLocked()
+        && ! $thread->isAwaitingMyApproval()
             ? $this->allow()
             : $this->deny('Not authorized to react to message.');
     }

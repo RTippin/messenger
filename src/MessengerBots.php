@@ -216,18 +216,27 @@ final class MessengerBots
         // Reset the data array
         $this->handlerOverrides = [];
 
-        // Validate the handler alias
-        $handler = Validator::make($data, [
-            'handler' => ['required', Rule::in($this->getAliases())],
-        ])->validate()['handler'];
-
-        // Initialize the handler using the validated alias
-        $this->initializeHandler($handler);
+        // Validate and initialize the handler
+        $this->initializeHandler(
+            $this->validateHandlerAlias($data)
+        );
 
         // Return the final data array to our validated and merged properties
         return $this->generateHandlerData(
             $this->validateHandlerSettings($data)
         );
+    }
+
+    /**
+     * @param array $data
+     * @return string
+     * @throws ValidationException
+     */
+    private function validateHandlerAlias(array $data): string
+    {
+       return Validator::make($data, [
+           'handler' => ['required', Rule::in($this->getAliases())],
+       ])->validate()['handler'];
     }
 
     /**
