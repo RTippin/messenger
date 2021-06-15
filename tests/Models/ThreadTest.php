@@ -47,7 +47,7 @@ class ThreadTest extends FeatureTestCase
         $this->assertTrue($thread->calling);
         $this->assertTrue($thread->messaging);
         $this->assertTrue($thread->knocks);
-        $this->assertFalse($thread->chat_bots);
+        $this->assertTrue($thread->chat_bots);
         $this->assertSame(2, $thread->type);
         $this->assertSame('Test', $thread->subject);
     }

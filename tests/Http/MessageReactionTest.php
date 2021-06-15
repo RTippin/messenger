@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Database\Eloquent\Factories\Sequence;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
 use RTippin\Messenger\Models\Participant;
@@ -131,6 +132,40 @@ class MessageReactionTest extends FeatureTestCase
                     'total_unique' => 6,
                 ],
             ]);
+    }
+
+    /** @test */
+    public function forbidden_to_react_when_disabled_in_config()
+    {
+        Messenger::setMessageReactions(false);
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.messages.reactions.store', [
+            'thread' => $thread->id,
+            'message' => $message->id,
+        ]), [
+            'reaction' => ':joy:',
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function forbidden_to_remove_own_reaction_when_disabled_in_config()
+    {
+        Messenger::setMessageReactions(false);
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        $reaction = MessageReaction::factory()->for($message)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->deleteJson(route('api.messenger.threads.messages.reactions.destroy', [
+            'thread' => $thread->id,
+            'message' => $message->id,
+            'reaction' => $reaction->id,
+        ]))
+            ->assertForbidden();
     }
 
     /** @test */

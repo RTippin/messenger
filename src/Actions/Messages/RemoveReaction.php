@@ -9,6 +9,7 @@ use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\ReactionRemovedBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\ReactionRemovedEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
@@ -74,10 +75,12 @@ class RemoveReaction extends BaseMessengerAction
      * @var Message[1]
      * @var MessageReaction[2]
      * @return $this
-     * @throws Throwable
+     * @throws Throwable|FeatureDisabledException
      */
     public function execute(...$parameters): self
     {
+        $this->isReactionsEnabled();
+
         $this->setThread($parameters[0])->setMessage($parameters[1]);
         $this->reaction = $parameters[2];
         $this->reactionsCount = $this->getMessage()->reactions()->count();
@@ -87,6 +90,17 @@ class RemoveReaction extends BaseMessengerAction
             ->fireEvents();
 
         return $this;
+    }
+
+    /**
+     * @return void
+     * @throws FeatureDisabledException
+     */
+    private function isReactionsEnabled(): void
+    {
+        if (! $this->messenger->isMessageReactionsEnabled()) {
+            throw new FeatureDisabledException('Message reactions are currently disabled.');
+        }
     }
 
     /**

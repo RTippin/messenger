@@ -141,7 +141,6 @@ class MessagePolicy
     {
         return ! $thread->isLocked()
         && $message->isText()
-        && $this->messenger->isMessageEditsEnabled()
         && (string) $this->messenger->getProvider()->getKey() === (string) $message->owner_id
         && $this->messenger->getProvider()->getMorphClass() === $message->owner_type
             ? $this->allow()

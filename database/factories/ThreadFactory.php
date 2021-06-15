@@ -39,6 +39,7 @@ class ThreadFactory extends Factory
                 'image' => rand(1, 5).'.png',
                 'add_participants' => true,
                 'invitations' => true,
+                'chat_bots' => true,
             ];
         });
     }

@@ -47,9 +47,7 @@ class BotPolicy
      */
     public function create($user, Thread $thread): Response
     {
-        return ! $thread->isLocked()
-        && ($thread->isAdmin()
-            || $thread->currentParticipant()->manage_bots)
+        return $thread->canManageBots()
             ? $this->allow()
             : $this->deny('Not authorized to create a bot.');
     }
@@ -63,9 +61,7 @@ class BotPolicy
      */
     public function update($user, Thread $thread): Response
     {
-        return ! $thread->isLocked()
-        && ($thread->isAdmin()
-            || $thread->currentParticipant()->manage_bots)
+        return $thread->canManageBots()
             ? $this->allow()
             : $this->deny('Not authorized to update bot.');
     }
@@ -79,9 +75,7 @@ class BotPolicy
      */
     public function delete($user, Thread $thread): Response
     {
-        return ! $thread->isLocked()
-        && ($thread->isAdmin()
-            || $thread->currentParticipant()->manage_bots)
+        return $thread->canManageBots()
             ? $this->allow()
             : $this->deny('Not authorized to remove bot.');
     }

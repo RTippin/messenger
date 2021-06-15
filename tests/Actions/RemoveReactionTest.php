@@ -7,6 +7,7 @@ use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Messages\RemoveReaction;
 use RTippin\Messenger\Broadcasting\ReactionRemovedBroadcast;
 use RTippin\Messenger\Events\ReactionRemovedEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
@@ -20,6 +21,20 @@ class RemoveReactionTest extends FeatureTestCase
         parent::setUp();
 
         Messenger::setProvider($this->tippin);
+    }
+
+    /** @test */
+    public function it_throws_exception_if_disabled()
+    {
+        Messenger::setMessageReactions(false);
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->reacted()->create();
+        $reaction = MessageReaction::factory()->for($message)->owner($this->tippin)->create();
+
+        $this->expectException(FeatureDisabledException::class);
+        $this->expectExceptionMessage('Message reactions are currently disabled.');
+
+        app(RemoveReaction::class)->execute($thread, $message, $reaction);
     }
 
     /** @test */

@@ -52,8 +52,7 @@ class MessageReactionPolicy
      */
     public function create($user, Thread $thread, Message $message): Response
     {
-        return $this->messenger->isMessageReactionsEnabled()
-        && ! $message->isSystemMessage()
+        return ! $message->isSystemMessage()
         && ! $thread->isLocked()
         && ! $thread->isAwaitingMyApproval()
             ? $this->allow()
@@ -70,8 +69,7 @@ class MessageReactionPolicy
      */
     public function delete($user, MessageReaction $reaction, Thread $thread): Response
     {
-        return $this->messenger->isMessageReactionsEnabled()
-        && ! $thread->isLocked()
+        return ! $thread->isLocked()
         && (((string) $this->messenger->getProvider()->getKey() === (string) $reaction->owner_id
                 && $this->messenger->getProvider()->getMorphClass() === $reaction->owner_type)
             || $thread->isAdmin())
