@@ -7,6 +7,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use RTippin\Messenger\Actions\Bots\ArchiveBot;
 use RTippin\Messenger\Actions\Bots\StoreBot;
+use RTippin\Messenger\Actions\Bots\UpdateBot;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Request\BotRequest;
 use RTippin\Messenger\Models\Bot;
@@ -75,11 +76,26 @@ class BotController
     }
 
     /**
-     * Update the bot.
+     * @param BotRequest $request
+     * @param UpdateBot $updateBot
+     * @param Thread $thread
+     * @param Bot $bot
+     * @throws AuthorizationException|FeatureDisabledException
      */
-    public function update()
+    public function update(BotRequest $request,
+                           UpdateBot $updateBot,
+                           Thread $thread,
+                           Bot $bot)
     {
-        //
+        $this->authorize('update', [
+            Bot::class,
+            $thread,
+        ]);
+
+        return $updateBot->execute(
+            $bot,
+            $request->validated()
+        )->getJsonResource();
     }
 
     /**

@@ -212,6 +212,104 @@ class BotsTest extends FeatureTestCase
             ->assertForbidden();
     }
 
+    /** @test */
+    public function admin_can_update_bot()
+    {
+        $thread = $this->createGroupThread($this->tippin);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->putJson(route('api.messenger.threads.bots.update', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]), [
+            'name' => 'Renamed',
+            'enabled' => false,
+            'cooldown' => 99,
+        ])
+            ->assertSuccessful()
+            ->assertJson([
+                'name' => 'Renamed',
+                'enabled' => false,
+                'cooldown' => 99,
+            ]);
+    }
+
+    /** @test */
+    public function participant_with_permission_can_update_bot()
+    {
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create(['manage_bots' => true]);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->doe);
+
+        $this->putJson(route('api.messenger.threads.bots.update', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]), [
+            'name' => 'Renamed',
+            'enabled' => false,
+            'cooldown' => 99,
+        ])
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function participant_without_permission_forbidden_to_update_bot()
+    {
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->doe);
+
+        $this->putJson(route('api.messenger.threads.bots.update', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]), [
+            'name' => 'Renamed',
+            'enabled' => false,
+            'cooldown' => 99,
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function forbidden_to_update_bot_when_disabled_in_config()
+    {
+        Messenger::setBots(false);
+        $thread = $this->createGroupThread($this->tippin);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->putJson(route('api.messenger.threads.bots.update', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]), [
+            'name' => 'Renamed',
+            'enabled' => false,
+            'cooldown' => 99,
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function forbidden_to_update_bot_when_disabled_in_thread()
+    {
+        $thread = Thread::factory()->group()->create(['chat_bots' => false]);
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->putJson(route('api.messenger.threads.bots.update', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]), [
+            'name' => 'Renamed',
+            'enabled' => false,
+            'cooldown' => 99,
+        ])
+            ->assertForbidden();
+    }
+
     /**
      * @test
      * @dataProvider botFailsValidation
@@ -250,6 +348,56 @@ class BotsTest extends FeatureTestCase
 
         $this->postJson(route('api.messenger.threads.bots.store', [
             'thread' => $thread->id,
+        ]), [
+            'name' => $name,
+            'enabled' => $enabled,
+            'cooldown' => $cooldown,
+        ])
+            ->assertSuccessful();
+    }
+
+    /**
+     * @test
+     * @dataProvider botFailsValidation
+     * @param $name
+     * @param $enabled
+     * @param $cooldown
+     * @param $errors
+     */
+    public function update_bot_fails_validation($name, $enabled, $cooldown, $errors)
+    {
+        $thread = $this->createGroupThread($this->tippin);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->putJson(route('api.messenger.threads.bots.update', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]), [
+            'name' => $name,
+            'enabled' => $enabled,
+            'cooldown' => $cooldown,
+        ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors($errors);
+    }
+
+    /**
+     * @test
+     * @dataProvider botPassesValidation
+     * @param $name
+     * @param $enabled
+     * @param $cooldown
+     */
+    public function update_bot_passes_validation($name, $enabled, $cooldown)
+    {
+        $thread = $this->createGroupThread($this->tippin);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.bots.store', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
         ]), [
             'name' => $name,
             'enabled' => $enabled,
