@@ -334,7 +334,7 @@ class MessengerBotsTest extends MessengerTestCase
             'cooldown' => 0,
             'admin_only' => true,
             'enabled' => true,
-            'triggers' => ['test']
+            'triggers' => ['test'],
         ]);
 
         $this->assertSame($expects, $results);
@@ -360,7 +360,7 @@ class MessengerBotsTest extends MessengerTestCase
             'cooldown' => 0,
             'admin_only' => true,
             'enabled' => true,
-            'triggers' => ['test']
+            'triggers' => ['test'],
         ], TestBotTwoHandler::class);
 
         $this->assertSame($expects, $results);
@@ -487,7 +487,7 @@ class MessengerBotsTest extends MessengerTestCase
                 'cooldown' => $cooldown,
                 'admin_only' => $admin,
                 'enabled' => $enabled,
-                'triggers' => $triggers
+                'triggers' => $triggers,
             ]);
         } catch (ValidationException $e) {
             $this->assertArrayHasKey('match', $e->errors());
