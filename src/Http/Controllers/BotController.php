@@ -4,6 +4,8 @@ namespace RTippin\Messenger\Http\Controllers;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
+use RTippin\Messenger\Actions\Bots\ArchiveBot;
 use RTippin\Messenger\Actions\Bots\StoreBot;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Request\BotRequest;
@@ -57,7 +59,9 @@ class BotController
      * @return Bot
      * @throws AuthorizationException|FeatureDisabledException
      */
-    public function store(BotRequest $request, StoreBot $storeBot, Thread $thread): Bot
+    public function store(BotRequest $request,
+                          StoreBot $storeBot,
+                          Thread $thread): Bot
     {
         $this->authorize('create', [
             Bot::class,
@@ -80,9 +84,22 @@ class BotController
 
     /**
      * Remove the bot.
+     *
+     * @param ArchiveBot $archiveBot
+     * @param Thread $thread
+     * @param Bot $bot
+     * @return JsonResponse
+     * @throws AuthorizationException|FeatureDisabledException
      */
-    public function destroy()
+    public function destroy(ArchiveBot $archiveBot,
+                            Thread $thread,
+                            Bot $bot): JsonResponse
     {
-        //
+        $this->authorize('delete', [
+            Bot::class,
+            $thread,
+        ]);
+
+        return $archiveBot->execute($bot)->getMessageResponse();
     }
 }

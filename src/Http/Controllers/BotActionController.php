@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Http\Controllers;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -10,6 +11,7 @@ use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Thread;
 
 class BotActionController
@@ -18,18 +20,39 @@ class BotActionController
 
     /**
      * Display a listing of bot actions.
+     *
+     * @param Thread $thread
+     * @param Bot $bot
+     * @throws AuthorizationException
      */
-    public function index(Thread $thread)
+    public function index(Thread $thread, Bot $bot)
     {
-        //
+        $this->authorize('viewAny', [
+            Bot::class,
+            $thread,
+        ]);
+
+        return $bot->actions;
     }
+
 
     /**
      * Display the bot action.
+     *
+     * @param Thread $thread
+     * @param Bot $bot
+     * @param BotAction $action
+     * @return BotAction
+     * @throws AuthorizationException
      */
-    public function show()
+    public function show(Thread $thread, Bot $bot, BotAction $action)
     {
-        //
+        $this->authorize('view', [
+            Bot::class,
+            $thread,
+        ]);
+
+        return $action;
     }
 
     /**
@@ -38,7 +61,7 @@ class BotActionController
      * @param StoreBotAction $storeBotAction
      * @param Thread $thread
      * @param Bot $bot
-     * @throws FeatureDisabledException|ValidationException|BotException
+     * @throws FeatureDisabledException|ValidationException|BotException|AuthorizationException
      */
     public function store(Request $request,
                           MessengerBots $bots,
@@ -46,6 +69,11 @@ class BotActionController
                           Thread $thread,
                           Bot $bot)
     {
+        $this->authorize('create', [
+            Bot::class,
+            $thread,
+        ]);
+
         $resolved = $bots->resolveHandlerData($request->all());
 
         return $storeBotAction->execute(
