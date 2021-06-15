@@ -4,8 +4,10 @@ namespace RTippin\Messenger\Http\Controllers;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use RTippin\Messenger\Actions\Bots\RemoveBotAction;
 use RTippin\Messenger\Actions\Bots\StoreBotAction;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
@@ -92,9 +94,24 @@ class BotActionController
 
     /**
      * Remove the bot action.
+     *
+     * @param RemoveBotAction $removeBotAction
+     * @param Thread $thread
+     * @param Bot $bot
+     * @param BotAction $action
+     * @return JsonResponse
+     * @throws AuthorizationException|FeatureDisabledException
      */
-    public function destroy()
+    public function destroy(RemoveBotAction $removeBotAction,
+                            Thread $thread,
+                            Bot $bot,
+                            BotAction $action): JsonResponse
     {
-        //
+        $this->authorize('delete', [
+            Bot::class,
+            $thread,
+        ]);
+
+        return $removeBotAction->execute($action)->getMessageResponse();
     }
 }

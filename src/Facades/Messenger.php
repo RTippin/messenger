@@ -90,7 +90,7 @@ use RTippin\Messenger\Models\Participant;
  * @method static int getProviderOnlineStatus($provider = null)
  * @method static \RTippin\Messenger\Models\Messenger|null getProviderMessenger($provider = null)
  * @method static \RTippin\Messenger\Messenger unsetProvider()
- * @method static MessengerProvider|null getProvider()
+ * @method static MessengerProvider|null getProvider(bool $withoutRelations = false)
  * @method static string|null getProviderAlias()
  * @method static bool providerHasFriends()
  * @method static bool providerHasDevices()

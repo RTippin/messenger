@@ -158,10 +158,15 @@ trait MessengerProviders
     /**
      * Get the current Messenger Provider.
      *
+     * @param bool $withoutRelations
      * @return MessengerProvider|Model|null
      */
-    public function getProvider(): ?MessengerProvider
+    public function getProvider(bool $withoutRelations = false): ?MessengerProvider
     {
+        if ($withoutRelations && $this->isProviderSet()) {
+            return $this->provider->withoutRelations();
+        }
+
         return $this->provider;
     }
 

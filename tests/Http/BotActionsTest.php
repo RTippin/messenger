@@ -195,4 +195,87 @@ class BotActionsTest extends FeatureTestCase
         ])
             ->assertForbidden();
     }
+
+    /** @test */
+    public function admin_can_remove_action()
+    {
+        $thread = $this->createGroupThread($this->tippin);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->deleteJson(route('api.messenger.threads.bots.actions.destroy', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+            'action' => $action->id,
+        ]))
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function participant_with_permission_can_remove_action()
+    {
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create(['manage_bots' => true]);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->create();
+        $this->actingAs($this->doe);
+
+        $this->deleteJson(route('api.messenger.threads.bots.actions.destroy', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+            'action' => $action->id,
+        ]))
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function participant_without_permission_forbidden_to_remove_action()
+    {
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->create();
+        $this->actingAs($this->doe);
+
+        $this->deleteJson(route('api.messenger.threads.bots.actions.destroy', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+            'action' => $action->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function forbidden_to_remove_action_when_disabled_in_config()
+    {
+        Messenger::setBots(false);
+        $thread = $this->createGroupThread($this->tippin);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->deleteJson(route('api.messenger.threads.bots.actions.destroy', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+            'action' => $action->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function forbidden_to_remove_action_when_disabled_in_thread_settings()
+    {
+        $thread = Thread::factory()->group()->create(['chat_bots' => false]);
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->deleteJson(route('api.messenger.threads.bots.actions.destroy', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+            'action' => $action->id,
+        ]))
+            ->assertForbidden();
+    }
 }
