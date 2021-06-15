@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use RTippin\Messenger\Actions\Bots\RemoveBotAction;
 use RTippin\Messenger\Actions\Bots\StoreBotAction;
+use RTippin\Messenger\Actions\Bots\UpdateBotAction;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\MessengerBots;
@@ -62,7 +63,8 @@ class BotActionController
      * @param StoreBotAction $storeBotAction
      * @param Thread $thread
      * @param Bot $bot
-     * @throws FeatureDisabledException|ValidationException|BotException|AuthorizationException
+     * @throws FeatureDisabledException|ValidationException
+     * @throws BotException|AuthorizationException
      */
     public function store(Request $request,
                           MessengerBots $bots,
@@ -85,11 +87,33 @@ class BotActionController
     }
 
     /**
-     * Update the bot action.
+     * @param Request $request
+     * @param MessengerBots $bots
+     * @param UpdateBotAction $updateBotAction
+     * @param Thread $thread
+     * @param Bot $bot
+     * @param BotAction $action
+     * @throws FeatureDisabledException|ValidationException
+     * @throws BotException|AuthorizationException
      */
-    public function update()
+    public function update(Request $request,
+                           MessengerBots $bots,
+                           UpdateBotAction $updateBotAction,
+                           Thread $thread,
+                           Bot $bot,
+                           BotAction $action)
     {
-        //
+        $this->authorize('update', [
+            Bot::class,
+            $thread,
+        ]);
+
+        $resolved = $bots->resolveHandlerData($request->all(), $action->handler);
+
+        return $updateBotAction->execute(
+            $action,
+            $resolved
+        )->getJsonResource();
     }
 
     /**

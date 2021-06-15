@@ -278,4 +278,129 @@ class BotActionsTest extends FeatureTestCase
         ]))
             ->assertForbidden();
     }
+
+    /** @test */
+    public function admin_can_update_action()
+    {
+        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $this->actingAs($this->tippin);
+
+        $this->putJson(route('api.messenger.threads.bots.actions.update', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+            'action' => $action->id,
+        ]), [
+            'match' => 'contains',
+            'cooldown' => 99,
+            'admin_only' => true,
+            'enabled' => false,
+            'triggers' => ['test', 'more'],
+        ])
+            ->assertSuccessful()
+            ->assertJson([
+                'match' => 'contains',
+                'cooldown' => 99,
+                'admin_only' => true,
+                'enabled' => false,
+                'triggers' => 'test|more',
+            ]);
+    }
+
+    /** @test */
+    public function participant_with_permission_can_update_action()
+    {
+        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create(['manage_bots' => true]);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $this->actingAs($this->doe);
+
+        $this->putJson(route('api.messenger.threads.bots.actions.update', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+            'action' => $action->id,
+        ]), [
+            'match' => 'contains',
+            'cooldown' => 99,
+            'admin_only' => true,
+            'enabled' => false,
+            'triggers' => ['test', 'more'],
+        ])
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function forbidden_to_update_action_when_disabled_in_config()
+    {
+        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        Messenger::setBots(false);
+        $thread = $this->createGroupThread($this->tippin);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $this->actingAs($this->tippin);
+
+        $this->putJson(route('api.messenger.threads.bots.actions.update', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+            'action' => $action->id,
+        ]), [
+            'match' => 'contains',
+            'cooldown' => 99,
+            'admin_only' => true,
+            'enabled' => false,
+            'triggers' => ['test', 'more'],
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function forbidden_to_update_action_when_disabled_in_thread()
+    {
+        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        $thread = Thread::factory()->group()->create(['chat_bots' => false]);
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $this->actingAs($this->tippin);
+
+        $this->putJson(route('api.messenger.threads.bots.actions.update', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+            'action' => $action->id,
+        ]), [
+            'match' => 'contains',
+            'cooldown' => 99,
+            'admin_only' => true,
+            'enabled' => false,
+            'triggers' => ['test', 'more'],
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function participant_without_permission_forbidden_to_update_action()
+    {
+        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $this->actingAs($this->doe);
+
+        $this->putJson(route('api.messenger.threads.bots.actions.update', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+            'action' => $action->id,
+        ]), [
+            'match' => 'contains',
+            'cooldown' => 99,
+            'admin_only' => true,
+            'enabled' => false,
+            'triggers' => ['test', 'more'],
+        ])
+            ->assertForbidden();
+    }
 }

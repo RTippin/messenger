@@ -107,10 +107,10 @@ final class MessengerBots
     /**
      * Locate a valid handler class using the class itself, or an alias.
      *
-     * @param string $handlerOrAlias
+     * @param string|null $handlerOrAlias
      * @return string|null
      */
-    public function findHandler(string $handlerOrAlias): ?string
+    public function findHandler(?string $handlerOrAlias = null): ?string
     {
         if ($this->handlers->has($handlerOrAlias)) {
             return $handlerOrAlias;
@@ -127,7 +127,7 @@ final class MessengerBots
      * @param string|null $handlerOrAlias
      * @return bool
      */
-    public function isValidHandler(?string $handlerOrAlias): bool
+    public function isValidHandler(?string $handlerOrAlias = null): bool
     {
         return (bool) $this->findHandler($handlerOrAlias ?? '');
     }
@@ -159,11 +159,11 @@ final class MessengerBots
     /**
      * Instantiate the concrete handler class using the class or alias provided.
      *
-     * @param string $handlerOrAlias
+     * @param string|null $handlerOrAlias
      * @return BotActionHandler
      * @throws BotException
      */
-    public function initializeHandler(string $handlerOrAlias): BotActionHandler
+    public function initializeHandler(?string $handlerOrAlias = null): BotActionHandler
     {
         $handler = $this->findHandler($handlerOrAlias);
 
@@ -206,22 +206,25 @@ final class MessengerBots
      * Resolve a bot handler using the data parameters. Validate against our base
      * ruleset and any custom rules or overrides on the handler class itself.
      * Return the final data array we will use to store the BotAction model.
+     * The handler validator can be overwritten if an actions handler class
+     * is supplied. We will then attempt to initialize it directly.
      *
      * @param array $data
+     * @param string|null $handlerOrAlias
      * @return array
-     * @throws BotException|ValidationException
+     * @throws ValidationException|BotException
      */
-    public function resolveHandlerData(array $data): array
+    public function resolveHandlerData(array $data, ?string $handlerOrAlias = null): array
     {
         // Reset the data array
         $this->handlerOverrides = [];
 
         // Validate and initialize the handler
         $this->initializeHandler(
-            $this->validateHandlerAlias($data)
+            $handlerOrAlias ?? $this->validateHandlerAlias($data)
         );
 
-        // Return the final data array to our validated and merged properties
+        // Return the final data array from our validated and merged properties
         return $this->generateHandlerData(
             $this->validateHandlerSettings($data)
         );
@@ -332,6 +335,7 @@ final class MessengerBots
         return (new Collection(preg_split('/[|,]/', $triggers)))
             ->transform(fn ($item) => trim($item))
             ->unique()
+            ->reject(fn ($value) => empty($value))
             ->implode('|');
     }
 

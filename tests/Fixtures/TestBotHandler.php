@@ -28,6 +28,7 @@ class TestBotHandler extends BotActionHandler
         return [
             'test' => ['required', 'array', 'min:1'],
             'test.*' => ['required', 'string'],
+            'special' => ['nullable', 'boolean'],
         ];
     }
 }

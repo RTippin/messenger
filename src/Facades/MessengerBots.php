@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use RTippin\Messenger\Models\BotAction;
 
 /**
  * @method static array getHandlerClasses()
@@ -16,7 +17,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static \RTippin\Messenger\Actions\Bots\BotActionHandler initializeHandler(string $handlerOrAlias)
  * @method static bool isActiveHandlerSet()
  * @method static \RTippin\Messenger\Actions\Bots\BotActionHandler|null getActiveHandler()
- * @method static array resolveHandlerData(array $data)
+ * @method static array resolveHandlerData(array $data, ?BotAction $action = null)
  *
  * @mixin \RTippin\Messenger\MessengerBots
  * @see \RTippin\Messenger\MessengerBots
