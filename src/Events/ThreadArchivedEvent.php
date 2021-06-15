@@ -16,17 +16,17 @@ class ThreadArchivedEvent
     public Thread $thread;
 
     /**
-     * @var MessengerProvider
+     * @var null|MessengerProvider
      */
-    public MessengerProvider $provider;
+    public ?MessengerProvider $provider;
 
     /**
      * Create a new event instance.
      *
-     * @param MessengerProvider $provider
+     * @param null|MessengerProvider $provider
      * @param Thread $thread
      */
-    public function __construct(MessengerProvider $provider, Thread $thread)
+    public function __construct(?MessengerProvider $provider, Thread $thread)
     {
         $this->thread = $thread;
         $this->provider = $provider;

@@ -102,7 +102,7 @@ class PromoteAdmin extends ThreadParticipantAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new PromotedAdminEvent(
-                $this->messenger->getProvider()->withoutRelations(),
+                $this->messenger->getProvider(true),
                 $this->getThread(true),
                 $this->getParticipant(true)
             ));

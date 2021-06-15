@@ -98,7 +98,7 @@ class ArchiveMessage extends BaseMessengerAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new MessageArchivedEvent(
-                $this->messenger->getProvider()->withoutRelations(),
+                $this->messenger->getProvider(true),
                 $this->getMessage(true)
             ));
         }

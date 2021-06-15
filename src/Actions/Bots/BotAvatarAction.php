@@ -72,7 +72,7 @@ abstract class BotAvatarAction extends BaseMessengerAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new BotAvatarEvent(
-                $this->messenger->getProvider(),
+                $this->messenger->getProvider(true),
                 $this->getBot(true)
             ));
         }

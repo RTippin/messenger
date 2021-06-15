@@ -79,6 +79,7 @@ class ArchiveBot extends BaseMessengerAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new BotArchivedEvent(
+                $this->messenger->getProvider(true),
                 $this->getBot(true)
             ));
         }

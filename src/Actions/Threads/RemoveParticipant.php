@@ -98,7 +98,7 @@ class RemoveParticipant extends BaseMessengerAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new RemovedFromThreadEvent(
-                $this->messenger->getProvider()->withoutRelations(),
+                $this->messenger->getProvider(true),
                 $this->getThread(true),
                 $this->getParticipant(true)
             ));

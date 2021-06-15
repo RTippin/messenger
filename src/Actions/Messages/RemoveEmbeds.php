@@ -107,7 +107,7 @@ class RemoveEmbeds extends BaseMessengerAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new EmbedsRemovedEvent(
-                $this->messenger->getProvider()->withoutRelations(),
+                $this->messenger->getProvider(true),
                 $this->getMessage(true)
             ));
         }

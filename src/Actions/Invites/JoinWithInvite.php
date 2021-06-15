@@ -128,7 +128,7 @@ class JoinWithInvite extends InviteAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new InviteUsedEvent(
-                $this->messenger->getProvider()->withoutRelations(),
+                $this->messenger->getProvider(true),
                 $this->getThread(true),
                 $this->invite->withoutRelations()
             ));

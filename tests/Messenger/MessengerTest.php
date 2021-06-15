@@ -323,6 +323,7 @@ class MessengerTest extends MessengerTestCase
         ];
 
         $this->assertSame($provider, $this->messenger->getProvider());
+        $this->assertNotSame($provider, $this->messenger->getProvider(true));
         $this->assertSame('user', $this->messenger->getProviderAlias());
         $this->assertSame(1, $this->messenger->getProvider()->getKey());
         $this->assertSame($this->getModelUser(), get_class($this->messenger->getProvider()));
@@ -478,6 +479,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertTrue($this->messenger->isChannelRoutesEnabled());
         $this->assertFalse($this->messenger->isProviderSet());
         $this->assertNull($this->messenger->getProvider());
+        $this->assertNull($this->messenger->getProvider(true));
         $this->assertFalse($this->messenger->isPushNotificationsEnabled());
         $this->assertSame('messenger', $this->messenger->getThreadStorage('disk'));
         $this->assertSame('threads', $this->messenger->getThreadStorage('directory'));

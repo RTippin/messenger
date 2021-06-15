@@ -31,7 +31,9 @@ class PushNotificationEvent
      * @param array $data
      * @param Collection $recipients
      */
-    public function __construct(string $broadcastAs, array $data, Collection $recipients)
+    public function __construct(string $broadcastAs,
+                                array $data,
+                                Collection $recipients)
     {
         $this->broadcastAs = $broadcastAs;
         $this->recipients = $recipients;

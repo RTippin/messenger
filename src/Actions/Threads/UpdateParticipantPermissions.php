@@ -103,7 +103,7 @@ class UpdateParticipantPermissions extends ThreadParticipantAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ParticipantPermissionsEvent(
-                $this->messenger->getProvider()->withoutRelations(),
+                $this->messenger->getProvider(true),
                 $this->getThread(true),
                 $this->getParticipant(true)
             ));

@@ -117,7 +117,7 @@ class KickCallParticipant extends CallParticipantAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new KickedFromCallEvent(
-                $this->messenger->getProvider()->withoutRelations(),
+                $this->messenger->getProvider(true),
                 $this->getCall(true),
                 $this->getCallParticipant(true)
             ));

@@ -177,7 +177,7 @@ class RemoveReaction extends BaseMessengerAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ReactionRemovedEvent(
-                $this->messenger->getProvider()->withoutRelations(),
+                $this->messenger->getProvider(true),
                 $this->reaction->toArray()
             ));
         }

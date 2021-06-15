@@ -102,7 +102,7 @@ class DemoteAdmin extends ThreadParticipantAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new DemotedAdminEvent(
-                $this->messenger->getProvider()->withoutRelations(),
+                $this->messenger->getProvider(true),
                 $this->getThread(true),
                 $this->getParticipant(true)
             ));

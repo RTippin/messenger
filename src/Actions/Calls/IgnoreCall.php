@@ -124,7 +124,7 @@ class IgnoreCall extends BaseMessengerAction
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new CallIgnoredEvent(
                 $this->getCall(true),
-                $this->messenger->getProvider()->withoutRelations()
+                $this->messenger->getProvider(true)
             ));
         }
     }

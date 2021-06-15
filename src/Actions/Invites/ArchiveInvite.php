@@ -69,6 +69,7 @@ class ArchiveInvite extends InviteAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new InviteArchivedEvent(
+                $this->messenger->getProvider(true),
                 $this->invite->withoutRelations()
             ));
         }

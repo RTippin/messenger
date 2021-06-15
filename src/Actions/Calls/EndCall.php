@@ -10,6 +10,7 @@ use RTippin\Messenger\Broadcasting\CallEndedBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\CallEndedEvent;
 use RTippin\Messenger\Http\Resources\Broadcast\CallBroadcastResource;
+use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Call;
 use Throwable;
 
@@ -31,19 +32,27 @@ class EndCall extends BaseMessengerAction
     private Dispatcher $dispatcher;
 
     /**
+     * @var Messenger
+     */
+    private Messenger $messenger;
+
+    /**
      * EndCall constructor.
      *
+     * @param Messenger $messenger
      * @param BroadcastDriver $broadcaster
      * @param DatabaseManager $database
      * @param Dispatcher $dispatcher
      */
-    public function __construct(BroadcastDriver $broadcaster,
+    public function __construct(Messenger $messenger,
+                                BroadcastDriver $broadcaster,
                                 DatabaseManager $database,
                                 Dispatcher $dispatcher)
     {
         $this->broadcaster = $broadcaster;
         $this->database = $database;
         $this->dispatcher = $dispatcher;
+        $this->messenger = $messenger;
     }
 
     /**
@@ -149,6 +158,7 @@ class EndCall extends BaseMessengerAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new CallEndedEvent(
+                $this->messenger->getProvider(true),
                 $this->getCall(true)
             ));
         }

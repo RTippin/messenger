@@ -25,8 +25,7 @@ class FriendApprovedEvent
      * @param Friend $friend
      * @param Friend $inverseFriend
      */
-    public function __construct(Friend $friend,
-                                Friend $inverseFriend)
+    public function __construct(Friend $friend, Friend $inverseFriend)
     {
         $this->friend = $friend;
         $this->inverseFriend = $inverseFriend;

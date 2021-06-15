@@ -183,7 +183,7 @@ class StoreGroupThread extends NewThreadAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new NewThreadEvent(
-                $this->messenger->getProvider()->withoutRelations(),
+                $this->messenger->getProvider(true),
                 $this->getThread(true),
             ));
         }

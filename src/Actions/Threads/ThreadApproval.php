@@ -110,7 +110,7 @@ class ThreadApproval extends ThreadParticipantAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new ThreadApprovalEvent(
-                $this->messenger->getProvider()->withoutRelations(),
+                $this->messenger->getProvider(true),
                 $this->getThread(true),
                 $this->approved
             ));
