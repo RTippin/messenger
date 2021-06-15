@@ -35,7 +35,6 @@ class BotActionController
         return $bot->actions;
     }
 
-
     /**
      * Display the bot action.
      *

@@ -234,9 +234,9 @@ final class MessengerBots
      */
     private function validateHandlerAlias(array $data): string
     {
-       return Validator::make($data, [
-           'handler' => ['required', Rule::in($this->getAliases())],
-       ])->validate()['handler'];
+        return Validator::make($data, [
+            'handler' => ['required', Rule::in($this->getAliases())],
+        ])->validate()['handler'];
     }
 
     /**
