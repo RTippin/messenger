@@ -386,7 +386,7 @@ class MessengerBotsTest extends MessengerTestCase
             'cooldown' => 0,
             'admin_only' => true,
             'enabled' => true,
-            'triggers' => ['test']
+            'triggers' => ['test'],
         ], 'silly_bot');
 
         $this->assertSame($expects, $results);
