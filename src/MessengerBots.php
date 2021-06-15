@@ -207,7 +207,7 @@ final class MessengerBots
      * ruleset and any custom rules or overrides on the handler class itself.
      * Return the final data array we will use to store the BotAction model.
      * The handler validator can be overwritten if an actions handler class
-     * is supplied. We will then attempt to initialize it directly.
+     * or alias is supplied. We will then attempt to initialize it directly.
      *
      * @param array $data
      * @param string|null $handlerOrAlias
@@ -216,18 +216,23 @@ final class MessengerBots
      */
     public function resolveHandlerData(array $data, ?string $handlerOrAlias = null): array
     {
-        // Reset the data array
+        // Reset the overrides array
         $this->handlerOverrides = [];
 
-        // Validate and initialize the handler
+        // Validate and initialize the handler / alias
         $this->initializeHandler(
             $handlerOrAlias ?? $this->validateHandlerAlias($data)
         );
 
-        // Return the final data array from our validated and merged properties
-        return $this->generateHandlerData(
+        // Gather the generated data array from our validated and merged properties
+        $generated = $this->generateHandlerData(
             $this->validateHandlerSettings($data)
         );
+
+        // Validate the final formatted triggers to ensure it is not empty
+        $this->validateFormattedTriggers($generated);
+
+        return $generated;
     }
 
     /**
@@ -250,6 +255,18 @@ final class MessengerBots
     private function validateHandlerSettings(array $data): array
     {
         return Validator::make($data, $this->generateRules())->validate();
+    }
+
+    /**
+     * @param array $data
+     * @return void
+     * @throws ValidationException
+     */
+    private function validateFormattedTriggers(array $data): void
+    {
+        Validator::make($data, [
+            'triggers' => ['required', 'string'],
+        ])->validate();
     }
 
     /**

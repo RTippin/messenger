@@ -613,60 +613,61 @@ class MessengerBotsTest extends MessengerTestCase
     public function baseRulesetFailsValidation(): array
     {
         return [
-            [null, null, null, null, null],
-            [true, 'test', 'test', 'test', true],
-            [true, -1, 'test', 'test', true],
-            ['unknown', 999, null, null, 'test'],
-            ['exact:lol', 999, null, null, []],
-            ['exact:something', 1500, 'test', 'test', false],
+            'Attempt 1' => [null, null, null, null, null],
+            'Attempt 2' => [true, 'test', 'test', 'test', true],
+            'Attempt 3' => [true, -1, 'test', 'test', true],
+            'Attempt 4' => ['unknown', 999, null, null, 'test'],
+            'Attempt 5' => ['exact:lol', 999, null, null, []],
+            'Attempt 6' => ['exact:something', 1500, 'test', 'test', false],
         ];
     }
 
     public function triggersFailValidation(): array
     {
         return [
-            [[[]], ['triggers.0']],
-            [[null, 1], ['triggers.0', 'triggers.1']],
-            [[1, 1, []], ['triggers.0', 'triggers.1', 'triggers.2']],
-            [['test', 1], ['triggers.1']],
-            [['test', true], ['triggers.1']],
-            [['test', false], ['triggers.1']],
-            [[1, 1.1, -1], ['triggers.0', 'triggers.1', 'triggers.2']],
+            'Cannot be empty array' => [[[]], ['triggers.0']],
+            'Cannot be null or integer' => [[null, 1], ['triggers.0', 'triggers.1']],
+            'Cannot be integer or nested array' => [[1, 1, []], ['triggers.0', 'triggers.1', 'triggers.2']],
+            'Second value fails' => [['test', 1], ['triggers.1']],
+            'Cannot be boolean true' => [['test', true], ['triggers.1']],
+            'Cannot be boolean false' => [['test', false], ['triggers.1']],
+            'Cannot be floats or negative or integers' => [[1, 1.1, -1], ['triggers.0', 'triggers.1', 'triggers.2']],
+            'Cannot be only comma or pipe, end triggers will be empty' => [[',', '|', ', |'], ['triggers']],
         ];
     }
 
     public function passesValidatingMatches(): array
     {
         return [
-            ['contains'],
-            ['contains:caseless'],
-            ['contains:any'],
-            ['contains:any:caseless'],
-            ['exact'],
-            ['exact:caseless'],
-            ['starts:with'],
-            ['starts:with:caseless'],
+            'contains' => ['contains'],
+            'contains caseless' => ['contains:caseless'],
+            'contains any' => ['contains:any'],
+            'contains any caseless' => ['contains:any:caseless'],
+            'exact' => ['exact'],
+            'exact caseless' => ['exact:caseless'],
+            'starts with' => ['starts:with'],
+            'starts with caseless' => ['starts:with:caseless'],
         ];
     }
 
     public function passesValidatingCooldown(): array
     {
         return [
-            [0],
-            [55],
-            [899],
-            [900],
-            [1],
+            'Can be lowest value' => [0],
+            'Can be random value' => [55],
+            'Can be almost highest value' => [899],
+            'Can be highest value' => [900],
+            'Can be 1' => [1],
         ];
     }
 
     public function handlerRulesFailValidation(): array
     {
         return [
-            [null, ['test']],
-            [[null], ['test.0']],
-            [[0, 2], ['test.0', 'test.1']],
-            [['test', false, null], ['test.1', 'test.2']],
+            'Attempt 1' => [null, ['test']],
+            'Attempt 2' => [[null], ['test.0']],
+            'Attempt 3' => [[0, 2], ['test.0', 'test.1']],
+            'Attempt 4' => [['test', false, null], ['test.1', 'test.2']],
         ];
     }
 
