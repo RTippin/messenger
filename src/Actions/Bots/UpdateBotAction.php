@@ -6,6 +6,7 @@ use Illuminate\Contracts\Events\Dispatcher;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Events\BotActionUpdatedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
+use RTippin\Messenger\Http\Resources\BotActionResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\BotAction;
 
@@ -82,12 +83,13 @@ class UpdateBotAction extends BaseMessengerAction
     }
 
     /**
-     * TODO.
      * @return $this
      */
     private function generateResource(): self
     {
-        $this->setJsonResource($this->getBotAction());
+        $this->setJsonResource(new BotActionResource(
+            $this->getBotAction()
+        ));
 
         return $this;
     }

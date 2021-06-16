@@ -16,9 +16,10 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function admin_can_view_actions()
     {
+        MessengerBots::setHandlers([TestBotTwoHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        BotAction::factory()->for($bot)->owner($this->tippin)->count(2)->create();
+        BotAction::factory()->for($bot)->owner($this->tippin)->count(2)->handler(TestBotTwoHandler::class)->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.bots.actions.index', [
@@ -32,9 +33,10 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function participant_can_view_actions()
     {
+        MessengerBots::setHandlers([TestBotTwoHandler::class]);
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        BotAction::factory()->for($bot)->owner($this->tippin)->create();
+        BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
         $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.bots.actions.index', [
@@ -48,9 +50,10 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function admin_can_view_action()
     {
+        MessengerBots::setHandlers([TestBotTwoHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        $action = BotAction::factory()->for($bot)->owner($this->tippin)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.bots.actions.show', [
@@ -67,9 +70,10 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function participant_can_view_action()
     {
+        MessengerBots::setHandlers([TestBotTwoHandler::class]);
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        $action = BotAction::factory()->for($bot)->owner($this->tippin)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
         $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.bots.actions.show', [
@@ -305,7 +309,7 @@ class BotActionsTest extends FeatureTestCase
                 'cooldown' => 99,
                 'admin_only' => true,
                 'enabled' => false,
-                'triggers' => 'test|more',
+                'triggers' => ['test', 'more'],
             ]);
     }
 

@@ -57,7 +57,8 @@ class BotController
         ]);
 
         return new BotResource(
-            $bot->loadCount('validActions')
+            $bot->load('owner')
+                ->loadCount('validActions')
         );
     }
 

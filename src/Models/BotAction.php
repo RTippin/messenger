@@ -154,6 +154,26 @@ class BotAction extends Model
     }
 
     /**
+     * Get the handler settings.
+     *
+     * @return array|null
+     */
+    public function getDetails(): ?array
+    {
+        return MessengerBots::getHandlerSettings($this->handler);
+    }
+
+    /**
+     * @return array|null
+     */
+    public function getPayload(): ?array
+    {
+        return is_null($this->payload)
+            ? null
+            : json_decode($this->payload, true);
+    }
+
+    /**
      * Does the action have an active cooldown?
      *
      * @return bool

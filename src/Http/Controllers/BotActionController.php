@@ -12,6 +12,8 @@ use RTippin\Messenger\Actions\Bots\StoreBotAction;
 use RTippin\Messenger\Actions\Bots\UpdateBotAction;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
+use RTippin\Messenger\Http\Collections\BotActionCollection;
+use RTippin\Messenger\Http\Resources\BotActionResource;
 use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
@@ -26,16 +28,21 @@ class BotActionController
      *
      * @param Thread $thread
      * @param Bot $bot
+     * @return BotActionCollection
      * @throws AuthorizationException
      */
-    public function index(Thread $thread, Bot $bot)
+    public function index(Thread $thread, Bot $bot): BotActionCollection
     {
         $this->authorize('viewAny', [
             Bot::class,
             $thread,
         ]);
 
-        return $bot->actions;
+        return new BotActionCollection(
+            $bot->validActions()
+                ->with('owner')
+                ->get()
+        );
     }
 
     /**
@@ -44,17 +51,21 @@ class BotActionController
      * @param Thread $thread
      * @param Bot $bot
      * @param BotAction $action
-     * @return BotAction
+     * @return BotActionResource
      * @throws AuthorizationException
      */
-    public function show(Thread $thread, Bot $bot, BotAction $action)
+    public function show(Thread $thread,
+                         Bot $bot,
+                         BotAction $action): BotActionResource
     {
         $this->authorize('view', [
             Bot::class,
             $thread,
         ]);
 
-        return $action;
+        return new BotActionResource(
+            $action->load('owner')
+        );
     }
 
     /**
@@ -63,6 +74,7 @@ class BotActionController
      * @param StoreBotAction $storeBotAction
      * @param Thread $thread
      * @param Bot $bot
+     * @return BotActionResource
      * @throws FeatureDisabledException|ValidationException
      * @throws BotException|AuthorizationException
      */
@@ -70,7 +82,7 @@ class BotActionController
                           MessengerBots $bots,
                           StoreBotAction $storeBotAction,
                           Thread $thread,
-                          Bot $bot)
+                          Bot $bot): BotActionResource
     {
         $this->authorize('create', [
             Bot::class,
@@ -93,6 +105,7 @@ class BotActionController
      * @param Thread $thread
      * @param Bot $bot
      * @param BotAction $action
+     * @return BotActionResource
      * @throws FeatureDisabledException|ValidationException
      * @throws BotException|AuthorizationException
      */
@@ -101,7 +114,7 @@ class BotActionController
                            UpdateBotAction $updateBotAction,
                            Thread $thread,
                            Bot $bot,
-                           BotAction $action)
+                           BotAction $action): BotActionResource
     {
         $this->authorize('update', [
             Bot::class,
