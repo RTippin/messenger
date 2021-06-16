@@ -7,6 +7,7 @@ use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Events\NewBotEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Request\BotRequest;
+use RTippin\Messenger\Http\Resources\BotResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 
@@ -90,12 +91,13 @@ class StoreBot extends BaseMessengerAction
     }
 
     /**
-     * TODO.
      * @return $this
      */
     private function generateResource(): self
     {
-        $this->setJsonResource($this->getBot());
+        $this->setJsonResource(new BotResource(
+            $this->getBot()
+        ));
 
         return $this;
     }

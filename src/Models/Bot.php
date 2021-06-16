@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\BotFactory;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
@@ -28,6 +29,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string $avatar
  * @property bool $enabled
  * @property int $cooldown
+ * @property int $valid_actions_count
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \RTippin\Messenger\Models\Thread $thread
@@ -98,6 +100,15 @@ class Bot extends Model implements MessengerProvider
     public function actions(): HasMany
     {
         return $this->hasMany(BotAction::class);
+    }
+
+    /**
+     * @return HasMany|BotAction|Collection
+     */
+    public function validActions(): HasMany
+    {
+        return $this->hasMany(BotAction::class)
+            ->whereIn('handler', MessengerBots::getHandlerClasses());
     }
 
     /**
