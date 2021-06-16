@@ -167,12 +167,11 @@ class BotService
     private function executeMessage(BotAction $action, Message $message): void
     {
         if ($this->shouldExecute($action, $message)) {
-            $this->setCooldown($action);
-
             $this->bots
                 ->initializeHandler($action->handler)
                 ->setAction($action)
                 ->setMessage($message, $this->matchingTrigger)
+                ->startCooldown()
                 ->handle();
         }
     }
@@ -189,7 +188,7 @@ class BotService
     private function shouldExecute(BotAction $action, Message $message): bool
     {
         return $this->bots->isValidHandler($action->handler)
-            && ! $this->hasCooldown($action)
+            && ! $action->hasAnyCooldown()
             && $this->hasPermissionToTrigger($action, $message);
     }
 
@@ -208,28 +207,5 @@ class BotService
         }
 
         return true;
-    }
-
-    /**
-     * @param BotAction $action
-     * @return bool
-     */
-    private function hasCooldown(BotAction $action): bool
-    {
-        return $action->hasCooldown() || $action->bot->hasCooldown();
-    }
-
-    /**
-     * @param BotAction $action
-     */
-    private function setCooldown(BotAction $action): void
-    {
-        if ($action->bot->cooldown > 0) {
-            $action->bot->setCooldown();
-        }
-
-        if ($action->cooldown > 0) {
-            $action->setCooldown();
-        }
     }
 }

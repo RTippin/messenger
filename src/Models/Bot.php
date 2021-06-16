@@ -222,15 +222,15 @@ class Bot extends Model implements MessengerProvider
     /**
      * Set the bots cooldown.
      */
-    public function setCooldown(): void
+    public function startCooldown(): void
     {
         Cache::put("bot:$this->id:cooldown", true, now()->addSeconds($this->cooldown));
     }
 
     /**
-     * Clear the bots cooldown.
+     * Release the bots cooldown.
      */
-    public function clearCooldown(): void
+    public function releaseCooldown(): void
     {
         Cache::forget("bot:$this->id:cooldown");
     }

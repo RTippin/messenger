@@ -62,6 +62,22 @@ interface ActionHandler
     public function setAction(BotAction $action);
 
     /**
+     * Set the cooldown for the bot action before running. If the parent bot
+     * has a cooldown defined, set that as well.
+     *
+     * @return $this
+     */
+    public function startCooldown();
+
+    /**
+     * Should the handler not perform an action, you may call this to remove
+     * the cooldown set on the bot and the bot action.
+     *
+     * @return $this
+     */
+    public function releaseCooldown();
+
+    /**
      * Return the validation rules used when adding the action to a bot.
      *
      * @return array
@@ -79,7 +95,8 @@ interface ActionHandler
     /**
      * Decode the actions payload.
      *
-     * @return array|null
+     * @param string|null $key
+     * @return array|string|null
      */
-    public function decodePayload(): ?array;
+    public function getPayload(?string $key = null);
 }

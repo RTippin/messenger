@@ -89,4 +89,26 @@ class BotTest extends FeatureTestCase
         $this->assertSame($apiAvatarApi['md'], $bot->getProviderAvatarRoute('md', true));
         $this->assertSame($apiAvatarApi['lg'], $bot->getProviderAvatarRoute('lg', true));
     }
+
+    /** @test */
+    public function it_can_set_cooldown()
+    {
+        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['cooldown' => 5]);
+
+        $bot->startCooldown();
+
+        $this->assertTrue($bot->hasCooldown());
+    }
+
+    /** @test */
+    public function it_can_release_cooldown()
+    {
+        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['cooldown' => 5]);
+
+        $bot->startCooldown();
+        $this->assertTrue($bot->hasCooldown());
+
+        $bot->releaseCooldown();
+        $this->assertFalse($bot->hasCooldown());
+    }
 }

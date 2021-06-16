@@ -164,17 +164,27 @@ class BotAction extends Model
     }
 
     /**
+     * Does the action or the actions bot have an active cooldown?
+     *
+     * @return bool
+     */
+    public function hasAnyCooldown(): bool
+    {
+        return $this->hasCooldown() || $this->bot->hasCooldown();
+    }
+
+    /**
      * Set the action cooldown.
      */
-    public function setCooldown(): void
+    public function startCooldown(): void
     {
         Cache::put("bot:$this->bot_id:$this->id:cooldown", true, now()->addSeconds($this->cooldown));
     }
 
     /**
-     * Clear the action cooldown.
+     * Release the action cooldown.
      */
-    public function clearCooldown(): void
+    public function releaseCooldown(): void
     {
         Cache::forget("bot:$this->bot_id:$this->id:cooldown");
     }

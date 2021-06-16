@@ -55,9 +55,15 @@ abstract class BotActionHandler implements ActionHandler
     /**
      * @inheritDoc
      */
-    public function decodePayload(): ?array
+    public function getPayload(?string $key = null)
     {
-        return json_decode($this->action->payload, true);
+        $payload = json_decode($this->action->payload, true);
+
+        if (! is_null($payload) && ! is_null($key)) {
+            return $payload[$key];
+        }
+
+        return $payload;
     }
 
     /**
@@ -80,6 +86,34 @@ abstract class BotActionHandler implements ActionHandler
         $this->message = $message;
 
         $this->matchingTrigger = $matchingTrigger;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function startCooldown(): self
+    {
+        if ($this->action->bot->cooldown > 0) {
+            $this->action->bot->startCooldown();
+        }
+
+        if ($this->action->cooldown > 0) {
+            $this->action->startCooldown();
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function releaseCooldown(): self
+    {
+        $this->action->bot->releaseCooldown();
+
+        $this->action->releaseCooldown();
 
         return $this;
     }
