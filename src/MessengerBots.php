@@ -105,6 +105,17 @@ final class MessengerBots
     }
 
     /**
+     * Get the description for the match method.
+     *
+     * @param string|null $match
+     * @return string|null
+     */
+    public function getMatchDescription(?string $match = null): ?string
+    {
+        return self::BotActionMatchMethods[$match] ?? null;
+    }
+
+    /**
      * Locate a valid handler class using the class itself, or an alias.
      *
      * @param string|null $handlerOrAlias

@@ -164,6 +164,14 @@ class BotAction extends Model
     }
 
     /**
+     * @return string|null
+     */
+    public function getMatchDescription(): ?string
+    {
+        return MessengerBots::getMatchDescription($this->match);
+    }
+
+    /**
      * @return array|null
      */
     public function getPayload(): ?array

@@ -76,6 +76,19 @@ class MessengerBotsTest extends MessengerTestCase
     }
 
     /** @test */
+    public function it_can_get_bot_match_description()
+    {
+        $this->assertSame('The trigger must match the message exactly.', $this->bots->getMatchDescription('exact'));
+    }
+
+    /** @test */
+    public function it_returns_null_description_if_no_matching_match_method()
+    {
+        $this->assertNull($this->bots->getMatchDescription('exactt'));
+        $this->assertNull($this->bots->getMatchDescription());
+    }
+
+    /** @test */
     public function it_can_get_all_bot_settings()
     {
         $handlers = [

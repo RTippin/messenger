@@ -10,6 +10,7 @@ use RTippin\Messenger\Models\BotAction;
  * @method static array|null getHandlerSettings(?string $handlerOrAlias = null)
  * @method static array getAliases()
  * @method static array getMatchMethods()
+ * @method static string|null getMatchDescription(?string $match = null)
  * @method static string|null findHandler(string $handlerOrAlias)
  * @method static bool isValidHandler(?string $handlerOrAlias)
  * @method static \RTippin\Messenger\MessengerBots setHandlers(array $actions, bool $overwrite = false)

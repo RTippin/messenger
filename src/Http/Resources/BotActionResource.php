@@ -31,6 +31,7 @@ class BotActionResource extends JsonResource
             'cooldown' => $action->cooldown,
             'has_cooldown' => $action->hasCooldown(),
             'match' => $action->match,
+            'match_description' => $action->getMatchDescription(),
             'triggers' => $action->getTriggers(),
             'details' => $action->getDetails(),
             'payload' => $action->getPayload(),
