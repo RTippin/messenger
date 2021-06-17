@@ -12,7 +12,6 @@ class TestBotHandler extends BotActionHandler
             'alias' => 'fun_bot',
             'description' => 'This is a fun bot.',
             'name' => 'Fun Bot',
-            'unique' => false,
             'triggers' => '!test|!more',
             'match' => 'exact:caseless',
         ];

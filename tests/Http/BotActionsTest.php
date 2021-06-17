@@ -9,6 +9,7 @@ use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\Fixtures\TestBotHandler;
 use RTippin\Messenger\Tests\Fixtures\TestBotTwoHandler;
 
 class BotActionsTest extends FeatureTestCase
@@ -90,7 +91,7 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function admin_can_store_action()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([TestBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -99,12 +100,13 @@ class BotActionsTest extends FeatureTestCase
             'thread' => $thread->id,
             'bot' => $bot->id,
         ]), [
-            'handler' => 'silly_bot',
+            'handler' => 'fun_bot',
             'match' => 'exact',
             'cooldown' => 0,
             'admin_only' => false,
             'enabled' => true,
             'triggers' => ['test'],
+            'test' => ['test'],
         ])
             ->assertSuccessful();
     }
@@ -112,7 +114,7 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function participant_with_permission_can_store_action()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([TestBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->doe)->create(['manage_bots' => true]);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
@@ -122,12 +124,13 @@ class BotActionsTest extends FeatureTestCase
             'thread' => $thread->id,
             'bot' => $bot->id,
         ]), [
-            'handler' => 'silly_bot',
+            'handler' => 'fun_bot',
             'match' => 'exact',
             'cooldown' => 0,
             'admin_only' => false,
             'enabled' => true,
             'triggers' => ['test'],
+            'test' => ['test'],
         ])
             ->assertSuccessful();
     }

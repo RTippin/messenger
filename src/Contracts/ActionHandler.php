@@ -16,6 +16,8 @@ interface ActionHandler
      * - 'name' displayed to the frontend.
      * OVERRIDES
      * 'unique' When set and true, the handler may only be used once on any bots within a thread.
+     * 'authorize' When set and true, the handler needs to pass the authorize method to be viewed
+     * in the list of available handlers, as well as to be added to a bot.
      * 'triggers' overrides allowing end user to set the triggers. Only the given
      * trigger(s) will be used. Separate multiple via the pipe (|) or use an array.
      * 'match' overrides allowing end user to select matching method.
@@ -29,6 +31,7 @@ interface ActionHandler
      *     'description' => 'Bot description.',
      *     'name' => 'Bot Name',
      *     'unique' => true, //optional
+     *     'authorize' => true, //optional
      *     'triggers' => '!h|!help', //optional
      *     'match' => 'exact' //optional
      * ];

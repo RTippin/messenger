@@ -9,6 +9,7 @@ use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Resources\BotActionResource;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Thread;
 
@@ -25,15 +26,24 @@ class StoreBotAction extends BaseMessengerAction
     private Messenger $messenger;
 
     /**
+     * @var MessengerBots
+     */
+    private MessengerBots $bots;
+
+    /**
      * StoreBotAction constructor.
      *
      * @param Messenger $messenger
+     * @param MessengerBots $bots
      * @param Dispatcher $dispatcher
      */
-    public function __construct(Messenger $messenger, Dispatcher $dispatcher)
+    public function __construct(Messenger $messenger,
+                                MessengerBots $bots,
+                                Dispatcher $dispatcher)
     {
         $this->dispatcher = $dispatcher;
         $this->messenger = $messenger;
+        $this->bots = $bots;
     }
 
     /**
@@ -67,8 +77,22 @@ class StoreBotAction extends BaseMessengerAction
         }
 
         if ($params['unique'] && $this->botHandlerExists($params['handler'])) {
-            throw new BotException("You may only have one ({$params['name']}) in a thread at a time.");
+            throw new BotException("You may only have one ({$params['name']}) in {$this->getThread()->name()} at a time.");
         }
+
+        if ($params['authorize'] && ! $this->authorizeHandler($params['handler'])) {
+            throw new BotException("Not authorized to add ({$params['name']}) to {$this->getThread()->name()}.");
+        }
+    }
+
+    /**
+     * @param string $handler
+     * @return bool
+     * @throws BotException
+     */
+    private function authorizeHandler(string $handler): bool
+    {
+        return $this->bots->initializeHandler($handler)->authorize();
     }
 
     /**

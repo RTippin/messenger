@@ -13,6 +13,7 @@ class TestBotTwoHandler extends BotActionHandler
             'description' => 'This is a silly bot.',
             'name' => 'Silly Bot',
             'unique' => true,
+            'authorize' => true,
         ];
     }
 
@@ -24,5 +25,10 @@ class TestBotTwoHandler extends BotActionHandler
     public function rules(): array
     {
         return [];
+    }
+
+    public function authorize(): bool
+    {
+        return false;
     }
 }

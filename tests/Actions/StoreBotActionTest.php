@@ -9,10 +9,12 @@ use RTippin\Messenger\Events\NewBotActionEvent;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\Fixtures\TestBotTwoHandler;
 
 class StoreBotActionTest extends FeatureTestCase
 {
@@ -39,18 +41,43 @@ class StoreBotActionTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_handler_unique_and_already_exists_in_thread()
     {
-        $thread = Thread::factory()->group()->create();
+        $thread = Thread::factory()->group()->create(['subject' => 'Test']);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         BotAction::factory()->for(
             Bot::factory()->for($thread)->owner($this->tippin)->create()
         )->owner($this->tippin)->handler('ReplyBot')->create();
 
         $this->expectException(BotException::class);
-        $this->expectExceptionMessage('You may only have one (Bot Name) in a thread at a time.');
+        $this->expectExceptionMessage('You may only have one (Bot Name) in Test at a time.');
 
         app(StoreBotAction::class)->execute($thread, $bot, [
             'handler' => 'ReplyBot',
             'unique' => true,
+            'authorize' => false,
+            'name' => 'Bot Name',
+            'match' => 'exact',
+            'triggers' => 'test',
+            'admin_only' => false,
+            'cooldown' => 0,
+            'enabled' => true,
+            'payload' => null,
+        ]);
+    }
+
+    /** @test */
+    public function it_throws_exception_if_handler_fails_authorization()
+    {
+        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        $thread = Thread::factory()->group()->create(['subject' => 'Test']);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+
+        $this->expectException(BotException::class);
+        $this->expectExceptionMessage('Not authorized to add (Bot Name) to Test.');
+
+        app(StoreBotAction::class)->execute($thread, $bot, [
+            'handler' => TestBotTwoHandler::class,
+            'unique' => true,
+            'authorize' => true,
             'name' => 'Bot Name',
             'match' => 'exact',
             'triggers' => 'test',
@@ -70,6 +97,7 @@ class StoreBotActionTest extends FeatureTestCase
         app(StoreBotAction::class)->execute($thread, $bot, [
             'handler' => 'ReplyBot',
             'unique' => false,
+            'authorize' => false,
             'name' => 'Bot Name',
             'match' => 'exact',
             'triggers' => 'test',
@@ -105,6 +133,7 @@ class StoreBotActionTest extends FeatureTestCase
         app(StoreBotAction::class)->execute($thread, $bot, [
             'handler' => 'ReplyBot',
             'unique' => false,
+            'authorize' => false,
             'name' => 'Bot Name',
             'match' => 'exact',
             'triggers' => 'test',
@@ -130,6 +159,7 @@ class StoreBotActionTest extends FeatureTestCase
         app(StoreBotAction::class)->execute($thread, $bot, [
             'handler' => 'ReplyBot',
             'unique' => false,
+            'authorize' => false,
             'name' => 'Bot Name',
             'match' => 'exact',
             'triggers' => 'test',

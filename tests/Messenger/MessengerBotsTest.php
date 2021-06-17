@@ -100,7 +100,6 @@ class MessengerBotsTest extends MessengerTestCase
                 'alias' => 'fun_bot',
                 'description' => 'This is a fun bot.',
                 'name' => 'Fun Bot',
-                'unique' => false,
                 'triggers' => '!test|!more',
                 'match' => 'exact:caseless',
             ],
@@ -109,6 +108,7 @@ class MessengerBotsTest extends MessengerTestCase
                 'description' => 'This is a silly bot.',
                 'name' => 'Silly Bot',
                 'unique' => true,
+                'authorize' => true,
             ],
         ];
 
@@ -129,6 +129,7 @@ class MessengerBotsTest extends MessengerTestCase
             'description' => 'This is a silly bot.',
             'name' => 'Silly Bot',
             'unique' => true,
+            'authorize' => true,
         ];
 
         $this->bots->setHandlers($handlers);
@@ -250,6 +251,27 @@ class MessengerBotsTest extends MessengerTestCase
     }
 
     /** @test */
+    public function it_returns_same_instance_if_initializing_already_active_handler()
+    {
+        $this->bots->setHandlers([TestBotHandler::class]);
+        $original = $this->bots->initializeHandler(TestBotHandler::class);
+
+        $this->assertSame($original, $this->bots->initializeHandler(TestBotHandler::class));
+    }
+
+    /** @test */
+    public function it_returns_new_instance_if_initializing_different_handler_when_another_set()
+    {
+        $this->bots->setHandlers([
+            TestBotHandler::class,
+            TestBotTwoHandler::class,
+        ]);
+        $original = $this->bots->initializeHandler(TestBotHandler::class);
+
+        $this->assertNotSame($original, $this->bots->initializeHandler(TestBotTwoHandler::class));
+    }
+
+    /** @test */
     public function it_throws_exception_if_invalid_bot()
     {
         $this->expectException(BotException::class);
@@ -333,6 +355,7 @@ class MessengerBotsTest extends MessengerTestCase
         $expects = [
             'handler' => TestBotTwoHandler::class,
             'unique' => true,
+            'authorize' => true,
             'name' => 'Silly Bot',
             'match' => 'exact',
             'triggers' => 'test',
@@ -360,6 +383,7 @@ class MessengerBotsTest extends MessengerTestCase
         $expects = [
             'handler' => TestBotTwoHandler::class,
             'unique' => true,
+            'authorize' => true,
             'name' => 'Silly Bot',
             'match' => 'exact',
             'triggers' => 'test',
@@ -386,6 +410,7 @@ class MessengerBotsTest extends MessengerTestCase
         $expects = [
             'handler' => TestBotTwoHandler::class,
             'unique' => true,
+            'authorize' => true,
             'name' => 'Silly Bot',
             'match' => 'exact',
             'triggers' => 'test',
@@ -412,6 +437,7 @@ class MessengerBotsTest extends MessengerTestCase
         $expects = [
             'handler' => TestBotHandler::class,
             'unique' => false,
+            'authorize' => false,
             'name' => 'Fun Bot',
             'match' => 'exact:caseless', //overwritten
             'triggers' => '!test|!more', //overwritten
@@ -440,6 +466,7 @@ class MessengerBotsTest extends MessengerTestCase
         $expects = [
             'handler' => TestBotHandler::class,
             'unique' => false,
+            'authorize' => false,
             'name' => 'Fun Bot',
             'match' => 'exact:caseless', //overwritten
             'triggers' => '!test|!more', //overwritten

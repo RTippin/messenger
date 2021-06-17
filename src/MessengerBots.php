@@ -40,6 +40,11 @@ final class MessengerBots
     private ?BotActionHandler $activeHandler;
 
     /**
+     * @var string|null
+     */
+    private ?string $activeHandlerClass;
+
+    /**
      * @var array
      */
     private array $handlerOverrides;
@@ -51,6 +56,7 @@ final class MessengerBots
     {
         $this->handlers = new Collection([]);
         $this->activeHandler = null;
+        $this->activeHandlerClass = null;
         $this->handlerOverrides = [];
     }
 
@@ -169,6 +175,7 @@ final class MessengerBots
 
     /**
      * Instantiate the concrete handler class using the class or alias provided.
+     * If the handler matches what is already initialized, return that instead.
      *
      * @param string|null $handlerOrAlias
      * @return BotActionHandler
@@ -182,7 +189,13 @@ final class MessengerBots
             throw new BotException('Invalid bot handler.');
         }
 
+        if ($this->isActiveHandlerSet()
+            && $this->activeHandlerClass === $handler) {
+            return $this->activeHandler;
+        }
+
         $this->activeHandler = app($handler);
+        $this->activeHandlerClass = $handler;
 
         return $this->activeHandler;
     }
@@ -314,10 +327,13 @@ final class MessengerBots
      */
     private function generateHandlerData(array $data): array
     {
+        $settings = $this->getActiveHandler()::getSettings();
+
         return [
-            'handler' => get_class($this->getActiveHandler()),
-            'unique' => $this->getActiveHandler()::getSettings()['unique'],
-            'name' => $this->getActiveHandler()::getSettings()['name'],
+            'handler' => $this->activeHandlerClass,
+            'unique' => $settings['unique'] ?? false,
+            'authorize' => $settings['authorize'] ?? false,
+            'name' => $settings['name'],
             'match' => $this->handlerOverrides['match'] ?? $data['match'],
             'triggers' => $this->handlerOverrides['triggers'] ?? $this->formatTriggers($data['triggers']),
             'admin_only' => $data['admin_only'],
