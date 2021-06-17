@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Contracts;
 
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\Thread;
 
 interface ActionHandler
 {
@@ -44,15 +45,6 @@ interface ActionHandler
     public function handle(): void;
 
     /**
-     * Set the message and trigger used for a message handler.
-     *
-     * @param Message $message
-     * @param string $matchingTrigger
-     * @return $this
-     */
-    public function setMessage(Message $message, string $matchingTrigger);
-
-    /**
      * Set the BotAction. We also set the messenger provider to the
      * bot the action belongs to.
      *
@@ -60,6 +52,23 @@ interface ActionHandler
      * @return $this
      */
     public function setAction(BotAction $action);
+
+    /**
+     * Set the thread we are working with.
+     *
+     * @param Thread $thread
+     * @return $this
+     */
+    public function setThread(Thread $thread);
+
+    /**
+     * Set the message and trigger used for a message handler.
+     *
+     * @param Message $message
+     * @param string $matchingTrigger
+     * @return $this
+     */
+    public function setMessage(Message $message, string $matchingTrigger);
 
     /**
      * Set the cooldown for the bot action before running. If the parent bot

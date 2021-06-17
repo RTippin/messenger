@@ -7,7 +7,7 @@ use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
-use RTippin\Messenger\Models\Participant;
+use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Traits\ChecksReflection;
 
 class BotService
@@ -34,18 +34,27 @@ class BotService
 
     /**
      * @param Message $message
+     * @param Thread $thread
+     * @param bool $isGroupAdmin
      * @throws BotException
      */
-    public function handleMessage(Message $message): void
+    public function handleMessage(Message $message,
+                                  Thread $thread,
+                                  bool $isGroupAdmin): void
     {
         $actions = BotAction::enabled()
-            ->hasEnabledBotFromThread($message->thread_id)
+            ->hasEnabledBotFromThread($thread->id)
             ->validHandler()
             ->get();
 
         foreach ($actions as $action) {
             if ($this->matches($action->match, $action->getTriggers(), $message->body)) {
-                $this->executeMessage($action, $message);
+                $this->executeMessage(
+                    $action,
+                    $message,
+                    $thread,
+                    $isGroupAdmin
+                );
             }
         }
     }
@@ -162,14 +171,20 @@ class BotService
      *
      * @param BotAction $action
      * @param Message $message
+     * @param Thread $thread
+     * @param bool $isGroupAdmin
      * @throws BotException
      */
-    private function executeMessage(BotAction $action, Message $message): void
+    private function executeMessage(BotAction $action,
+                                    Message $message,
+                                    Thread $thread,
+                                    bool $isGroupAdmin): void
     {
-        if ($this->shouldExecute($action, $message)) {
+        if ($this->shouldExecute($action, $isGroupAdmin)) {
             $this->bots
                 ->initializeHandler($action->handler)
                 ->setAction($action)
+                ->setThread($thread)
                 ->setMessage($message, $this->matchingTrigger)
                 ->startCooldown()
                 ->handle();
@@ -182,30 +197,25 @@ class BotService
      * the message owner is a thread admin.
      *
      * @param BotAction $action
-     * @param Message $message
+     * @param bool $isGroupAdmin
      * @return bool
      */
-    private function shouldExecute(BotAction $action, Message $message): bool
+    private function shouldExecute(BotAction $action, bool $isGroupAdmin): bool
     {
         return $this->bots->isValidHandler($action->handler)
             && $action->notOnAnyCooldown()
-            && $this->hasPermissionToTrigger($action, $message);
+            && $this->hasPermissionToTrigger($action, $isGroupAdmin);
     }
 
     /**
      * @param BotAction $action
-     * @param Message $message
+     * @param bool $isGroupAdmin
      * @return bool
      */
-    private function hasPermissionToTrigger(BotAction $action, Message $message): bool
+    private function hasPermissionToTrigger(BotAction $action, bool $isGroupAdmin): bool
     {
-        if ($action->admin_only) {
-            return Participant::admins()
-                ->forProviderWithModel($message)
-                ->where('thread_id', '=', $message->thread_id)
-                ->exists();
-        }
-
-        return true;
+        return $action->admin_only
+            ? $isGroupAdmin
+            : true;
     }
 }

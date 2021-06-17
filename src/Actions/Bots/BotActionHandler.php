@@ -6,6 +6,7 @@ use RTippin\Messenger\Contracts\ActionHandler;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\Thread;
 
 abstract class BotActionHandler implements ActionHandler
 {
@@ -13,6 +14,11 @@ abstract class BotActionHandler implements ActionHandler
      * @var BotAction|null
      */
     protected ?BotAction $action = null;
+
+    /**
+     * @var Thread|null
+     */
+    protected ?Thread $thread = null;
 
     /**
      * @var Message|null
@@ -76,6 +82,16 @@ abstract class BotActionHandler implements ActionHandler
         $this->action = $action;
 
         Messenger::setProvider($action->bot);
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setThread(Thread $thread): self
+    {
+        $this->thread = $thread;
 
         return $this;
     }

@@ -7,8 +7,8 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Exceptions\BotException;
-use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Services\BotService;
 
 class BotActionMessageHandler implements ShouldQueue
@@ -19,16 +19,16 @@ class BotActionMessageHandler implements ShouldQueue
         SerializesModels;
 
     /**
-     * @var Message
+     * @var NewMessageEvent
      */
-    private Message $message;
+    private NewMessageEvent $event;
 
     /**
      * Create a new job instance.
      */
-    public function __construct(Message $message)
+    public function __construct(NewMessageEvent $event)
     {
-        $this->message = $message;
+        $this->event = $event;
     }
 
     /**
@@ -40,6 +40,10 @@ class BotActionMessageHandler implements ShouldQueue
      */
     public function handle(BotService $service): void
     {
-        $service->handleMessage($this->message);
+        $service->handleMessage(
+            $this->event->message,
+            $this->event->thread,
+            $this->event->isGroupAdmin
+        );
     }
 }

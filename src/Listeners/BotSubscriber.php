@@ -26,10 +26,9 @@ class BotSubscriber
     public function newMessage(NewMessageEvent $event): void
     {
         if ($this->shouldDispatch($event)) {
-            $data = $event->message->setRelation('thread', $event->thread);
             Messenger::getBotSubscriber('queued')
-                ? BotActionMessageHandler::dispatch($data)->onQueue(Messenger::getBotSubscriber('channel'))
-                : BotActionMessageHandler::dispatchSync($data);
+                ? BotActionMessageHandler::dispatch($event)->onQueue(Messenger::getBotSubscriber('channel'))
+                : BotActionMessageHandler::dispatchSync($event);
         }
     }
 

@@ -23,7 +23,7 @@ class NewMessageEvent
     /**
      * @var bool
      */
-    private bool $isGroupAdmin;
+    public bool $isGroupAdmin;
 
     /**
      * Create a new event instance.
