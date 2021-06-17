@@ -88,6 +88,19 @@ final class MessengerBots
     }
 
     /**
+     * Returns the handler settings the end user is authorized to view.
+     *
+     * @return array
+     */
+    public function getAuthorizedHandlers(): array
+    {
+        return $this->handlers
+            ->values()
+            ->filter(fn ($settings) => $this->authorizesHandler($settings))
+            ->toArray();
+    }
+
+    /**
      * Get all bot handler aliases.
      *
      * @return array
@@ -398,5 +411,22 @@ final class MessengerBots
             'triggers' => ['required', 'array', 'min:1'],
             'triggers.*' => ['required', 'string'],
         ];
+    }
+
+    /**
+     * If authorize is set and true, initialize the handler to
+     * pass its authorize method, otherwise returning true.
+     *
+     * @param $settings
+     * @return bool
+     * @throws BotException
+     */
+    private function authorizesHandler($settings): bool
+    {
+        if ($settings['authorize'] ?? false) {
+            return $this->initializeHandler($settings['alias'])->authorize();
+        }
+
+        return true;
     }
 }

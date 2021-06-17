@@ -8,6 +8,7 @@ use RTippin\Messenger\Models\BotAction;
 /**
  * @method static array getHandlerClasses()
  * @method static array|null getHandlerSettings(?string $handlerOrAlias = null)
+ * @method static array getAuthorizedHandlers()
  * @method static array getAliases()
  * @method static array getMatchMethods()
  * @method static string|null getMatchDescription(?string $match = null)

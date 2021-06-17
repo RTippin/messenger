@@ -29,6 +29,6 @@ class AvailableBotHandlers
             $thread,
         ]);
 
-        return new BotHandlerCollection($bots->getHandlerSettings());
+        return new BotHandlerCollection($bots->getAuthorizedHandlers());
     }
 }

@@ -140,6 +140,18 @@ class MessengerBotsTest extends MessengerTestCase
     }
 
     /** @test */
+    public function it_can_get_authorized_handler_settings()
+    {
+        $this->bots->setHandlers([
+            TestBotHandler::class,
+            TestBotTwoHandler::class,
+        ]);
+
+        $this->assertCount(2, $this->bots->getHandlerSettings());
+        $this->assertCount(1, $this->bots->getAuthorizedHandlers());
+    }
+
+    /** @test */
     public function it_ignores_invalid_and_missing_bot_handlers()
     {
         $actions = [
