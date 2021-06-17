@@ -33,8 +33,8 @@ class BotActionResource extends JsonResource
             'match' => $action->match,
             'match_description' => $action->getMatchDescription(),
             'triggers' => $action->getTriggers(),
-            'details' => $action->getDetails(),
             'payload' => $action->getPayload(),
+            'handler' => (new BotHandlerResource($action->getHandlerDetails()))->resolve(),
             'owner' => (new ProviderResource($action->owner))->resolve(),
         ];
     }

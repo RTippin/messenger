@@ -158,7 +158,7 @@ class BotAction extends Model
      *
      * @return array|null
      */
-    public function getDetails(): ?array
+    public function getHandlerDetails(): ?array
     {
         return MessengerBots::getHandlerSettings($this->handler);
     }

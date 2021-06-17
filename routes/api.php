@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use RTippin\Messenger\Http\Controllers\Actions\AvailableBotHandlers;
 use RTippin\Messenger\Http\Controllers\Actions\CallHeartbeat;
 use RTippin\Messenger\Http\Controllers\Actions\DemoteAdmin;
 use RTippin\Messenger\Http\Controllers\Actions\DownloadMessageAudio;
@@ -115,7 +116,7 @@ Route::name('api.messenger.')->group(function () {
         Route::put('settings', [GroupThreadController::class, 'updateSettings'])->name('settings.update');
         Route::post('avatar', [GroupThreadController::class, 'updateAvatar'])->name('avatar.update');
         Route::get('avatar/{size}/{image}', RenderGroupAvatar::class)->name('avatar.render');
-        Route::get('bots/{bot}/avatar/{size}/{image}', RenderBotAvatar::class)->name('bots.avatar.render');
+
         Route::get('add-participants', FilterAddParticipants::class)->name('add.participants');
         //Privates
         Route::post('approval', PrivateThreadApproval::class)->name('approval');
@@ -130,6 +131,10 @@ Route::name('api.messenger.')->group(function () {
     });
     Route::apiResource('threads.bots', BotController::class);
     Route::apiResource('threads.bots.actions', BotActionController::class);
+    Route::prefix('threads/{thread}/bots/{bot}')->name('threads.bots.')->group(function () {
+        Route::get('add-handlers', AvailableBotHandlers::class)->name('handlers');
+        Route::get('avatar/{size}/{image}', RenderBotAvatar::class)->name('avatar.render');
+    });
     Route::apiResource('threads.messages', MessageController::class);
     Route::apiResource('threads.messages.reactions', MessageReactionController::class)->only(['index', 'store', 'destroy']);
     Route::apiResource('threads.images', ImageMessageController::class)->only(['index', 'store']);
