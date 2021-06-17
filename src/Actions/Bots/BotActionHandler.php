@@ -45,6 +45,14 @@ abstract class BotActionHandler implements ActionHandler
     /**
      * @inheritDoc
      */
+    public function authorize(): bool
+    {
+        return true;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function serializePayload(?array $payload): ?string
     {
         return is_null($payload)
@@ -57,13 +65,7 @@ abstract class BotActionHandler implements ActionHandler
      */
     public function getPayload(?string $key = null)
     {
-        $payload = json_decode($this->action->payload, true);
-
-        if (! is_null($payload) && ! is_null($key)) {
-            return $payload[$key];
-        }
-
-        return $payload;
+        return $this->action->getPayload($key);
     }
 
     /**

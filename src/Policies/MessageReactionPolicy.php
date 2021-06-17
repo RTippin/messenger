@@ -52,7 +52,7 @@ class MessageReactionPolicy
      */
     public function create($user, Thread $thread, Message $message): Response
     {
-        return ! $message->isSystemMessage()
+        return $message->notSystemMessage()
         && ! $thread->isLocked()
         && ! $thread->isAwaitingMyApproval()
             ? $this->allow()

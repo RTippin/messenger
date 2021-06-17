@@ -184,11 +184,25 @@ abstract class NewMessageAction extends BaseMessengerAction
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new NewMessageEvent(
                 $this->getMessage(true),
-                $this->getThread(true)
+                $this->getThread(true),
+                $this->isGroupAdmin()
             ));
         }
 
         return $this;
+    }
+
+    /**
+     * Add the admin flag when not from bot and not a system message.
+     *
+     * @return bool
+     */
+    private function isGroupAdmin(): bool
+    {
+        return $this->getThread()->isGroup()
+            && $this->getMessage()->notFromBot()
+            && $this->getMessage()->notSystemMessage()
+            && $this->getThread()->isAdmin();
     }
 
     /**

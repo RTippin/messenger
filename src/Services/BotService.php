@@ -188,7 +188,7 @@ class BotService
     private function shouldExecute(BotAction $action, Message $message): bool
     {
         return $this->bots->isValidHandler($action->handler)
-            && ! $action->hasAnyCooldown()
+            && $action->notOnAnyCooldown()
             && $this->hasPermissionToTrigger($action, $message);
     }
 

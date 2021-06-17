@@ -177,7 +177,7 @@ class MessagePolicy
     public function delete($user, Message $message, Thread $thread): Response
     {
         return ! $thread->isLocked()
-        && ! $message->isSystemMessage()
+        && $message->notSystemMessage()
         && (((string) $this->messenger->getProvider()->getKey() === (string) $message->owner_id
                 && $this->messenger->getProvider()->getMorphClass() === $message->owner_type)
             || $thread->isAdmin())

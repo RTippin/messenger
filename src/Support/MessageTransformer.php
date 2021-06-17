@@ -22,7 +22,7 @@ class MessageTransformer
     public static function transform(Message $message): string
     {
         try {
-            if (! $message->isSystemMessage()) {
+            if ($message->notSystemMessage()) {
                 return self::sanitizedBody($message->body);
             }
 

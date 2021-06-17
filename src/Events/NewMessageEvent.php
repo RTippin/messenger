@@ -21,14 +21,23 @@ class NewMessageEvent
     public Thread $thread;
 
     /**
+     * @var bool
+     */
+    private bool $isGroupAdmin;
+
+    /**
      * Create a new event instance.
      *
      * @param Message $message
      * @param Thread $thread
+     * @param bool $isGroupAdmin
      */
-    public function __construct(Message $message, Thread $thread)
+    public function __construct(Message $message,
+                                Thread $thread,
+                                bool $isGroupAdmin)
     {
         $this->message = $message;
         $this->thread = $thread;
+        $this->isGroupAdmin = $isGroupAdmin;
     }
 }

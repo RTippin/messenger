@@ -70,7 +70,8 @@ class BotActionTest extends FeatureTestCase
 
         $action->startCooldown();
 
-        $this->assertTrue($action->hasCooldown());
+        $this->assertTrue($action->isOnCooldown());
+        $this->assertFalse($action->notOnCooldown());
     }
 
     /** @test */
@@ -83,10 +84,12 @@ class BotActionTest extends FeatureTestCase
         )->owner($this->tippin)->create(['cooldown' => 5]);
 
         $action->startCooldown();
-        $this->assertTrue($action->hasCooldown());
+        $this->assertTrue($action->isOnCooldown());
+        $this->assertFalse($action->notOnCooldown());
 
         $action->releaseCooldown();
-        $this->assertFalse($action->hasCooldown());
+        $this->assertFalse($action->isOnCooldown());
+        $this->assertTrue($action->notOnCooldown());
     }
 
     /** @test */
@@ -96,8 +99,8 @@ class BotActionTest extends FeatureTestCase
         $action = BotAction::factory()->for($bot)->owner($this->tippin)->create(['cooldown' => 5]);
         $bot->startCooldown();
 
-        $this->assertFalse($action->hasCooldown());
-        $this->assertTrue($action->hasAnyCooldown());
+        $this->assertFalse($action->isOnCooldown());
+        $this->assertTrue($action->isOnAnyCooldown());
     }
 
     /** @test */
@@ -110,8 +113,8 @@ class BotActionTest extends FeatureTestCase
         )->owner($this->tippin)->create(['cooldown' => 5]);
         $action->startCooldown();
 
-        $this->assertFalse($action->bot->hasCooldown());
-        $this->assertTrue($action->hasAnyCooldown());
+        $this->assertFalse($action->bot->isOnCooldown());
+        $this->assertTrue($action->isOnAnyCooldown());
     }
 
     /** @test */
@@ -122,8 +125,8 @@ class BotActionTest extends FeatureTestCase
         $bot->startCooldown();
         $action->startCooldown();
 
-        $this->assertTrue($action->bot->hasCooldown());
-        $this->assertTrue($action->hasCooldown());
-        $this->assertTrue($action->hasAnyCooldown());
+        $this->assertTrue($action->bot->isOnCooldown());
+        $this->assertTrue($action->isOnCooldown());
+        $this->assertTrue($action->isOnAnyCooldown());
     }
 }

@@ -36,6 +36,7 @@ class MessageTest extends FeatureTestCase
         $this->assertFalse($message->isEdited());
         $this->assertFalse($message->isReacted());
         $this->assertFalse($message->isSystemMessage());
+        $this->assertTrue($message->notSystemMessage());
         $this->assertFalse($message->isImage());
         $this->assertFalse($message->isDocument());
         $this->assertFalse($message->hasTemporaryId());
@@ -180,6 +181,7 @@ class MessageTest extends FeatureTestCase
 
         $this->assertTrue($message->isImage());
         $this->assertFalse($message->isSystemMessage());
+        $this->assertTrue($message->notSystemMessage());
         $this->assertFalse($message->isDocument());
         $this->assertFalse($message->isText());
         $this->assertFalse($message->isAudio());
@@ -198,6 +200,7 @@ class MessageTest extends FeatureTestCase
 
         $this->assertTrue($message->isDocument());
         $this->assertFalse($message->isSystemMessage());
+        $this->assertTrue($message->notSystemMessage());
         $this->assertFalse($message->isImage());
         $this->assertFalse($message->isText());
         $this->assertFalse($message->isAudio());
@@ -217,6 +220,7 @@ class MessageTest extends FeatureTestCase
         $this->assertTrue($message->isAudio());
         $this->assertFalse($message->isDocument());
         $this->assertFalse($message->isSystemMessage());
+        $this->assertTrue($message->notSystemMessage());
         $this->assertFalse($message->isImage());
         $this->assertFalse($message->isText());
         $this->assertSame(1, Message::audio()->count());
@@ -232,6 +236,7 @@ class MessageTest extends FeatureTestCase
         $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create(['type' => 93]);
 
         $this->assertTrue($message->isSystemMessage());
+        $this->assertFalse($message->notSystemMessage());
         $this->assertFalse($message->isDocument());
         $this->assertFalse($message->isImage());
         $this->assertFalse($message->isText());

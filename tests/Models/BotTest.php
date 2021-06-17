@@ -97,7 +97,8 @@ class BotTest extends FeatureTestCase
 
         $bot->startCooldown();
 
-        $this->assertTrue($bot->hasCooldown());
+        $this->assertTrue($bot->isOnCooldown());
+        $this->assertFalse($bot->notOnCooldown());
     }
 
     /** @test */
@@ -106,9 +107,11 @@ class BotTest extends FeatureTestCase
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['cooldown' => 5]);
 
         $bot->startCooldown();
-        $this->assertTrue($bot->hasCooldown());
+        $this->assertTrue($bot->isOnCooldown());
+        $this->assertFalse($bot->notOnCooldown());
 
         $bot->releaseCooldown();
-        $this->assertFalse($bot->hasCooldown());
+        $this->assertFalse($bot->isOnCooldown());
+        $this->assertTrue($bot->notOnCooldown());
     }
 }

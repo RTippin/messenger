@@ -225,9 +225,19 @@ class Bot extends Model implements MessengerProvider
      *
      * @return bool
      */
-    public function hasCooldown(): bool
+    public function isOnCooldown(): bool
     {
         return Cache::has("bot:$this->id:cooldown");
+    }
+
+    /**
+     * Is the bot available?
+     *
+     * @return bool
+     */
+    public function notOnCooldown(): bool
+    {
+        return ! $this->isOnCooldown();
     }
 
     /**

@@ -363,6 +363,14 @@ class Message extends Model
     /**
      * @return bool
      */
+    public function notFromBot(): bool
+    {
+        return ! $this->isFromBot();
+    }
+
+    /**
+     * @return bool
+     */
     public function isEdited(): bool
     {
         return $this->isText() && $this->edited;
@@ -373,7 +381,7 @@ class Message extends Model
      */
     public function isReacted(): bool
     {
-        return ! $this->isSystemMessage() && $this->reacted;
+        return $this->notSystemMessage() && $this->reacted;
     }
 
     /**
@@ -398,6 +406,14 @@ class Message extends Model
     public function isSystemMessage(): bool
     {
         return ! in_array($this->type, self::NonSystemTypes);
+    }
+
+    /**
+     * @return bool
+     */
+    public function notSystemMessage(): bool
+    {
+        return ! $this->isSystemMessage();
     }
 
     /**

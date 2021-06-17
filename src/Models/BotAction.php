@@ -172,13 +172,21 @@ class BotAction extends Model
     }
 
     /**
-     * @return array|null
+     * @return array|string|null
      */
-    public function getPayload(): ?array
+    public function getPayload(?string $key = null)
     {
-        return is_null($this->payload)
-            ? null
-            : json_decode($this->payload, true);
+        if (is_null($this->payload)) {
+            return null;
+        }
+
+        $payload = json_decode($this->payload, true);
+
+        if (! is_null($payload) && ! is_null($key)) {
+            return $payload[$key];
+        }
+
+        return $payload;
     }
 
     /**
@@ -186,9 +194,19 @@ class BotAction extends Model
      *
      * @return bool
      */
-    public function hasCooldown(): bool
+    public function isOnCooldown(): bool
     {
         return Cache::has("bot:$this->bot_id:$this->id:cooldown");
+    }
+
+    /**
+     * Is the action available?
+     *
+     * @return bool
+     */
+    public function notOnCooldown(): bool
+    {
+        return ! $this->isOnCooldown();
     }
 
     /**
@@ -196,9 +214,19 @@ class BotAction extends Model
      *
      * @return bool
      */
-    public function hasAnyCooldown(): bool
+    public function isOnAnyCooldown(): bool
     {
-        return $this->hasCooldown() || $this->bot->hasCooldown();
+        return $this->isOnCooldown() || $this->bot->isOnCooldown();
+    }
+
+    /**
+     * Is the action and bot available?
+     *
+     * @return bool
+     */
+    public function notOnAnyCooldown(): bool
+    {
+        return ! $this->isOnAnyCooldown();
     }
 
     /**

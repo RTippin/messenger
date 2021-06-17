@@ -41,7 +41,7 @@ class BotSubscriber
     {
         return Messenger::getBotSubscriber('enabled')
             && $event->message->isText()
-            && ! $event->message->isFromBot()
+            && $event->message->notFromBot()
             && $event->thread->hasBotsFeature();
     }
 }
