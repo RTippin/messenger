@@ -29,7 +29,7 @@ class BotActionResource extends JsonResource
             'enabled' => $action->enabled,
             'admin_only' => $action->admin_only,
             'cooldown' => $action->cooldown,
-            'has_cooldown' => $action->isOnCooldown(),
+            'on_cooldown' => $action->isOnCooldown(),
             'match' => $action->match,
             'match_description' => $action->getMatchDescription(),
             'triggers' => $action->getTriggers(),

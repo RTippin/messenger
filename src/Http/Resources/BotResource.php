@@ -30,7 +30,7 @@ class BotResource extends JsonResource
             'name' => $bot->getProviderName(),
             'enabled' => $bot->enabled,
             'cooldown' => $bot->cooldown,
-            'has_cooldown' => $bot->isOnCooldown(),
+            'on_cooldown' => $bot->isOnCooldown(),
             'actions_count' => $this->addValidActionsCount($bot),
             $this->merge($this->addAvatar($bot)),
         ];
