@@ -39,4 +39,5 @@
             ThreadTemplates : {src : 'ThreadTemplates.js'},
             MessengerSettings : {src : 'MessengerSettings.js'},
             EmojiPicker : {src : 'EmojiPicker.js'},
+            ThreadBots : {src : 'ThreadBots.js'},
         @endpush

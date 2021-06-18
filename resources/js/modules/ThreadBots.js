@@ -3,10 +3,15 @@ window.ThreadBots = (function () {
         lock : true,
         thread : null,
         bots_table : null,
+        current_bot : null,
+        avatar_input : null,
     },
     mounted = {
         Initialize : function () {
             opt.lock = false;
+            $('body').append(templates.avatar_input());
+            opt.avatar_input = document.getElementById('bot_avatar_upload');
+            opt.avatar_input.addEventListener('change', methods.uploadAvatar, false);
         }
     },
     methods = {
@@ -92,14 +97,16 @@ window.ThreadBots = (function () {
             let gather = () => {
                 Messenger.xhr().request({
                     route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots/'+id,
-                    success : function(data){
+                    success : function(bot){
+                        opt.current_bot = bot;
                         Messenger.alert().fillModal({
-                            body : templates.view_bot(data),
-                            title : data.name
+                            body : templates.view_bot(bot),
+                            title : bot.name
                         });
-                        if (data.hasOwnProperty('actions')) {
+                        if (bot.hasOwnProperty('actions')) {
                             methods.loadDataTable($("#view_bots_actions_table"), 'actions')
                         }
+                        PageListeners.listen().tooltips();
                     },
                     fail_alert : true
                 })
@@ -119,17 +126,22 @@ window.ThreadBots = (function () {
         editBot : function(id){
             if (!methods.setThread()) return;
             let gather = () => {
+                let fill = (bot) => {
+                    Messenger.alert().fillModal({
+                        body : templates.edit_bot(bot),
+                        title : 'Editing '+bot.name
+                    });
+                    $(".m_setting_toggle").change(function(){
+                        $(this).is(':checked') ? $(this).closest('tr').addClass('alert-success') : $(this).closest('tr').removeClass('alert-success')
+                    })
+                }
+                if(opt.current_bot && opt.current_bot.id === id){
+                    fill(opt.current_bot);
+                    return;
+                }
                 Messenger.xhr().request({
                     route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots/'+id,
-                    success : function(data){
-                        Messenger.alert().fillModal({
-                            body : templates.edit_bot(data),
-                            title : 'Editing '+data.name
-                        });
-                        $(".m_setting_toggle").change(function(){
-                            $(this).is(':checked') ? $(this).closest('tr').addClass('alert-success') : $(this).closest('tr').removeClass('alert-success')
-                        })
-                    },
+                    success : fill,
                     fail_alert : true
                 })
             };
@@ -142,24 +154,78 @@ window.ThreadBots = (function () {
                 unlock_buttons : false,
                 h4 : false,
                 size : 'md',
-                onReady : gather
+                onReady : gather,
+                cb_btn_txt : 'Save Bot',
+                cb_btn_icon : 'robot',
+                cb_btn_theme : 'success',
+                callback : function(){
+                    methods.updateBot(id)
+                }
             });
         },
         storeBot : function(){
             if (!methods.setThread()) return;
-            let cooldown =  $("#g_s_bot_cooldown");
             Messenger.xhr().payload({
                 route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots',
                 data : {
                     name : $('#g_s_bot_name').val(),
                     enabled : $("#g_s_bot_enabled").is(":checked"),
                     hide_actions : $("#g_s_hide_actions").is(":checked"),
-                    cooldown : cooldown.val().length ? cooldown.val() : 0,
+                    cooldown : $("#g_s_bot_cooldown").val(),
                 },
-                success : methods.viewBots,
+                success : function(data){
+                    methods.viewBot(data.id)
+                },
                 fail_alert : true,
             });
-        }
+        },
+        updateBot : function(id){
+            if (!methods.setThread()) return;
+            Messenger.xhr().payload({
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots/'+id,
+                data : {
+                    name : $('#g_s_bot_name').val(),
+                    enabled : $("#g_s_bot_enabled").is(":checked"),
+                    hide_actions : $("#g_s_hide_actions").is(":checked"),
+                    cooldown : $("#g_s_bot_cooldown").val(),
+                },
+                success : function(data){
+                    methods.viewBot(data.id)
+                },
+                fail_alert : true,
+            }, 'put');
+        },
+        uploadAvatar : function () {
+            console.log('avatar');
+            // if(opt.lock || !opt.elements.profile_avatar_upload.files.length) return;
+            // opt.lock = true;
+            // let data = new FormData();
+            // data.append('image', opt.elements.profile_avatar_upload.files[0]);
+            // PageListeners.listen().disposeTooltips();
+            // if(!$('#main_modal').length){
+            //     Messenger.alert().Modal({
+            //         size : 'sm',
+            //         icon : 'cloud-upload-alt',
+            //         pre_loader : true,
+            //         centered : true,
+            //         unlock_buttons : false,
+            //         allow_close : false,
+            //         backdrop_ctrl : false,
+            //         title: 'Uploading...',
+            //         theme: 'primary'
+            //     });
+            // }
+            // else{
+            //     Messenger.alert().fillModal({loader : true, no_close : true, body : null, title : 'Uploading...'});
+            // }
+            // Messenger.xhr().payload({
+            //     route : Messenger.common().API + 'avatar',
+            //     data : data,
+            //     success : methods.manageNewAvatar,
+            //     fail_alert : true,
+            //     close_modal : true
+            // });
+        },
     },
     templates = {
         view_bots : function(bots){
@@ -185,7 +251,10 @@ window.ThreadBots = (function () {
                 table_bot = '</tbody></table></div></div></div>',
                 table_fill = '';
             let bot_fill = (bot) => {
-                let online = bot.enabled ? (bot.on_cooldown ? 'away' : 'online') : 'offline';
+                let online = bot.enabled ? (bot.on_cooldown ? 'away' : 'online') : 'offline',
+                    manage = '<a class="dropdown-item" onclick="ThreadBots.editBot(\''+bot.id+'\'); return false;" href="#" title="Edit"><i class="fas fa-edit"></i> Edit</a>' +
+                        '<a class="dropdown-item" onclick="return false;" href="#" title="Add Actions"><i class="fas fa-server"></i> Add Actions</a>' +
+                        '<a class="dropdown-item" onclick="return false;" href="#" title="Remove"><i class="fas fa-trash-alt"></i> Remove</a>';
                 return '<tr id="row_'+bot.id+'">\n' +
                     '     <td class="pointer_area" onclick="ThreadBots.viewBot(\''+bot.id+'\')">\n' +
                     '      <div class="table_links">\n' +
@@ -208,7 +277,7 @@ window.ThreadBots = (function () {
                     '    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="fas fa-cog"></i></button>\n' +
                     '    <div class="dropdown-menu dropdown-menu-right">\n' +
                     '       <a class="dropdown-item" onclick="ThreadBots.viewBot(\''+bot.id+'\'); return false;" href="#" title="View"><i class="fas fa-robot"></i> View</a>' +
-                    '       <a class="dropdown-item" onclick="ThreadBots.editBot(\''+bot.id+'\'); return false;" href="#" title="View"><i class="fas fa-edit"></i> Edit</a>' +
+                            (opt.thread.options.manage_bots ? manage : '') +
                     ' </span>\n' +
                     ' </div></div></td>\n' +
                     '</tr>'
@@ -308,13 +377,13 @@ window.ThreadBots = (function () {
                 '                    </span></div>\n' +
                 '                </td>\n' +
                 '            </tr>\n' +
-                '            <tr class="'+(bot.admin_only ? 'alert-success' : '')+'">\n' +
+                '            <tr class="'+(bot.hide_actions ? 'alert-success' : '')+'">\n' +
                 '                <td class="pointer_area" onclick="$(\'#g_s_hide_actions\').click()">\n' +
                 '                    <div class="h4 mt-1"><i class="fas fa-caret-right"></i> <span class="h5">Hide Actions</span></div>\n' +
                 '                </td>\n' +
                 '                <td>\n' +
                 '                    <div class="mt-1 float-right"><span class="switch switch-sm mt-1">\n' +
-                '                        <input class="switch switch_input m_setting_toggle" id="g_s_hide_actions" name="g_s_hide_actions" type="checkbox" '+(bot.admin_only ? 'checked' : '')+'>\n' +
+                '                        <input class="switch switch_input m_setting_toggle" id="g_s_hide_actions" name="g_s_hide_actions" type="checkbox" '+(bot.hide_actions ? 'checked' : '')+'>\n' +
                 '                        <label for="g_s_hide_actions"></label>\n' +
                 '                    </span></div>\n' +
                 '                </td>\n' +
@@ -331,16 +400,23 @@ window.ThreadBots = (function () {
         },
         view_bot : function(bot){
             let online = bot.enabled ? (bot.on_cooldown ? 'away' : 'online') : 'offline',
-                actions = '',
+                actions = '<div class="col-12 mt-5 text-center h2"><span class="badge badge-light"><i class="fas fa-eye-slash"></i> Actions are hidden</span></div>',
                 editable = '<hr class="mt-2"><div class="row"><div class="col-12 text-center">' +
-                    '<button onclick="" type="button" class="btn btn-primary mr-3">Add Actions <i class="fas fa-robot"></i></button>' +
+                    '<button onclick="" type="button" class="btn btn-primary mr-3">Add Actions <i class="fas fa-server"></i></button>' +
                     '<button onclick="ThreadBots.editBot(\''+bot.id+'\')" type="button" class="btn btn-primary">Edit Bot <i class="fas fa-edit"></i></button>' +
-                    '</div></div><hr>';
+                    '</div></div><hr>',
+                avatar = '<img alt="Avatar" height="75" width="75" class="float-left mr-3 rounded avatar-is-'+online+'" src="'+bot.avatar.md+'"/>',
+                edit_avatar = '<div class="btn-group-vertical float-left mr-2">' +
+                    '  <button onclick="$(\'#bot_avatar_upload\').click()" data-toggle="tooltip" data-placement="right" title="Upload New Avatar" onclick="" class="btn btn-sm btn-outline-success"><i class="fas fa-image"></i></button>'+
+                    '  <button data-toggle="tooltip" data-placement="right" title="Remove Avatar" onclick="" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>' +
+                    '</div>' + avatar;
             if (bot.hasOwnProperty('actions')) {
                 actions = templates.bot_actions_table(bot.actions);
             }
-            return '<div class="row"><div class="col-12 col-md-6 mb-3">' +
-                '<img alt="Avatar" height="75" width="75" class="float-left mr-3 rounded avatar-is-'+online+'" src="'+bot.avatar.md+'"/>\n' +
+
+            return '<div class="row">' +
+                '<div class="col-12 col-md-6 mb-3">' +
+                (opt.thread.options.manage_bots ? edit_avatar : avatar) +
                 '<h3 class="font-weight-bold">'+bot.name+'</h3>' +
                 '<h5>Creator: '+bot.owner.name+'</h4>' +
                 '</div>' +
@@ -409,6 +485,9 @@ window.ThreadBots = (function () {
                     return replies + '</ul>';
             }
             return 'N/A';
+        },
+        avatar_input : function () {
+            return '<input style="display: none;" class="NS" id="bot_avatar_upload" type="file" name="profile_avatar_upload" accept="image/*">';
         }
     };
     return {
