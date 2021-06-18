@@ -28,6 +28,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string $name
  * @property string $avatar
  * @property bool $enabled
+ * @property bool $hide_actions
  * @property int $cooldown
  * @property int $valid_actions_count
  * @property \Illuminate\Support\Carbon|null $created_at
@@ -74,6 +75,7 @@ class Bot extends Model implements MessengerProvider
      */
     protected $casts = [
         'enabled' => 'boolean',
+        'hide_actions' => 'boolean',
     ];
 
     /**

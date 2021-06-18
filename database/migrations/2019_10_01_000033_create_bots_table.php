@@ -21,6 +21,7 @@ class CreateBotsTable extends Migration
             $table->string('name');
             $table->string('avatar')->nullable();
             $table->boolean('enabled')->default(true);
+            $table->boolean('hide_actions')->default(false);
             $table->integer('cooldown')->default(0);
             $table->timestamps();
             $table->softDeletes();

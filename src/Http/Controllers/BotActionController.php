@@ -34,8 +34,9 @@ class BotActionController
     public function index(Thread $thread, Bot $bot): BotActionCollection
     {
         $this->authorize('viewAny', [
-            Bot::class,
+            BotAction::class,
             $thread,
+            $bot,
         ]);
 
         return new BotActionCollection(
@@ -59,8 +60,9 @@ class BotActionController
                          BotAction $action): BotActionResource
     {
         $this->authorize('view', [
-            Bot::class,
+            BotAction::class,
             $thread,
+            $bot,
         ]);
 
         return new BotActionResource(
@@ -85,7 +87,7 @@ class BotActionController
                           Bot $bot): BotActionResource
     {
         $this->authorize('create', [
-            Bot::class,
+            BotAction::class,
             $thread,
         ]);
 
@@ -117,7 +119,7 @@ class BotActionController
                            BotAction $action): BotActionResource
     {
         $this->authorize('update', [
-            Bot::class,
+            BotAction::class,
             $thread,
         ]);
 
@@ -145,7 +147,7 @@ class BotActionController
                             BotAction $action): JsonResponse
     {
         $this->authorize('delete', [
-            Bot::class,
+            BotAction::class,
             $thread,
         ]);
 

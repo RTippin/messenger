@@ -6,6 +6,7 @@ use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Foundation\Application;
 use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Friend;
@@ -16,6 +17,7 @@ use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\PendingFriend;
 use RTippin\Messenger\Models\SentFriend;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Policies\BotActionPolicy;
 use RTippin\Messenger\Policies\BotPolicy;
 use RTippin\Messenger\Policies\CallParticipantPolicy;
 use RTippin\Messenger\Policies\CallPolicy;
@@ -40,6 +42,7 @@ trait PolicyMap
      */
     private array $policies = [
         Bot::class => BotPolicy::class,
+        BotAction::class => BotActionPolicy::class,
         Call::class => CallPolicy::class,
         CallParticipant::class => CallParticipantPolicy::class,
         Thread::class => ThreadPolicy::class,

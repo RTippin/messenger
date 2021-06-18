@@ -25,6 +25,34 @@ class BotsTest extends FeatureTestCase
     }
 
     /** @test */
+    public function forbidden_to_view_bots_when_disabled_in_config()
+    {
+        Messenger::setBots(false);
+        $thread = $this->createGroupThread($this->tippin);
+        Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.bots.index', [
+            'thread' => $thread->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function forbidden_to_view_bots_when_disabled_in_thread()
+    {
+        $thread = Thread::factory()->group()->create(['chat_bots' => false]);
+        Participant::factory()->for($thread)->admin()->owner($this->tippin)->create();
+        Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.bots.index', [
+            'thread' => $thread->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function non_admin_can_view_bots()
     {
         $thread = $this->createGroupThread($this->tippin, $this->doe);
@@ -49,6 +77,7 @@ class BotsTest extends FeatureTestCase
         ]), [
             'name' => 'Test Bot',
             'enabled' => true,
+            'hide_actions' => false,
             'cooldown' => 0,
         ])
             ->assertSuccessful()
@@ -71,6 +100,7 @@ class BotsTest extends FeatureTestCase
         ]), [
             'name' => 'Test Bot',
             'enabled' => true,
+            'hide_actions' => false,
             'cooldown' => 0,
         ])
             ->assertSuccessful()
@@ -93,6 +123,7 @@ class BotsTest extends FeatureTestCase
         ]), [
             'name' => 'Test Bot',
             'enabled' => true,
+            'hide_actions' => false,
             'cooldown' => 0,
         ])
             ->assertForbidden();
@@ -110,6 +141,7 @@ class BotsTest extends FeatureTestCase
         ]), [
             'name' => 'Test Bot',
             'enabled' => true,
+            'hide_actions' => false,
             'cooldown' => 0,
         ])
             ->assertForbidden();
@@ -126,6 +158,7 @@ class BotsTest extends FeatureTestCase
         ]), [
             'name' => 'Test Bot',
             'enabled' => true,
+            'hide_actions' => false,
             'cooldown' => 0,
         ])
             ->assertForbidden();
@@ -148,6 +181,36 @@ class BotsTest extends FeatureTestCase
                 'owner_id' => $this->tippin->getKey(),
                 'owner_type' => $this->tippin->getMorphClass(),
             ]);
+    }
+
+    /** @test */
+    public function forbidden_to_view_bot_when_disabled_in_config()
+    {
+        Messenger::setBots(false);
+        $thread = $this->createGroupThread($this->tippin);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.bots.show', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function forbidden_to_view_bot_when_disabled_in_thread_settings()
+    {
+        $thread = Thread::factory()->group()->create(['chat_bots' => false]);
+        Participant::factory()->for($thread)->admin()->owner($this->tippin)->create();
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.bots.show', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]))
+            ->assertForbidden();
     }
 
     /** @test */
@@ -225,12 +288,14 @@ class BotsTest extends FeatureTestCase
         ]), [
             'name' => 'Renamed',
             'enabled' => false,
+            'hide_actions' => true,
             'cooldown' => 99,
         ])
             ->assertSuccessful()
             ->assertJson([
                 'name' => 'Renamed',
                 'enabled' => false,
+                'hide_actions' => true,
                 'cooldown' => 99,
             ]);
     }
@@ -249,6 +314,7 @@ class BotsTest extends FeatureTestCase
         ]), [
             'name' => 'Renamed',
             'enabled' => false,
+            'hide_actions' => false,
             'cooldown' => 99,
         ])
             ->assertSuccessful();
@@ -267,6 +333,7 @@ class BotsTest extends FeatureTestCase
         ]), [
             'name' => 'Renamed',
             'enabled' => false,
+            'hide_actions' => false,
             'cooldown' => 99,
         ])
             ->assertForbidden();
@@ -286,6 +353,7 @@ class BotsTest extends FeatureTestCase
         ]), [
             'name' => 'Renamed',
             'enabled' => false,
+            'hide_actions' => false,
             'cooldown' => 99,
         ])
             ->assertForbidden();
@@ -305,6 +373,7 @@ class BotsTest extends FeatureTestCase
         ]), [
             'name' => 'Renamed',
             'enabled' => false,
+            'hide_actions' => false,
             'cooldown' => 99,
         ])
             ->assertForbidden();
@@ -315,10 +384,11 @@ class BotsTest extends FeatureTestCase
      * @dataProvider botFailsValidation
      * @param $name
      * @param $enabled
+     * @param $hide
      * @param $cooldown
      * @param $errors
      */
-    public function store_bot_fails_validation($name, $enabled, $cooldown, $errors)
+    public function store_bot_fails_validation($name, $enabled, $hide, $cooldown, $errors)
     {
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
@@ -328,6 +398,7 @@ class BotsTest extends FeatureTestCase
         ]), [
             'name' => $name,
             'enabled' => $enabled,
+            'hide_actions' => $hide,
             'cooldown' => $cooldown,
         ])
             ->assertStatus(422)
@@ -339,9 +410,10 @@ class BotsTest extends FeatureTestCase
      * @dataProvider botPassesValidation
      * @param $name
      * @param $enabled
+     * @param $hide
      * @param $cooldown
      */
-    public function store_bot_passes_validation($name, $enabled, $cooldown)
+    public function store_bot_passes_validation($name, $enabled, $hide, $cooldown)
     {
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
@@ -351,6 +423,7 @@ class BotsTest extends FeatureTestCase
         ]), [
             'name' => $name,
             'enabled' => $enabled,
+            'hide_actions' => $hide,
             'cooldown' => $cooldown,
         ])
             ->assertSuccessful();
@@ -364,7 +437,7 @@ class BotsTest extends FeatureTestCase
      * @param $cooldown
      * @param $errors
      */
-    public function update_bot_fails_validation($name, $enabled, $cooldown, $errors)
+    public function update_bot_fails_validation($name, $enabled, $hide, $cooldown, $errors)
     {
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
@@ -376,6 +449,7 @@ class BotsTest extends FeatureTestCase
         ]), [
             'name' => $name,
             'enabled' => $enabled,
+            'hide_actions' => $hide,
             'cooldown' => $cooldown,
         ])
             ->assertStatus(422)
@@ -387,9 +461,10 @@ class BotsTest extends FeatureTestCase
      * @dataProvider botPassesValidation
      * @param $name
      * @param $enabled
+     * @param $hide
      * @param $cooldown
      */
-    public function update_bot_passes_validation($name, $enabled, $cooldown)
+    public function update_bot_passes_validation($name, $enabled, $hide, $cooldown)
     {
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
@@ -401,6 +476,7 @@ class BotsTest extends FeatureTestCase
         ]), [
             'name' => $name,
             'enabled' => $enabled,
+            'hide_actions' => $hide,
             'cooldown' => $cooldown,
         ])
             ->assertSuccessful();
@@ -409,20 +485,20 @@ class BotsTest extends FeatureTestCase
     public function botFailsValidation(): array
     {
         return [
-            'All values required' => [null, null, null, ['name', 'enabled', 'cooldown']],
-            'Name and cooldown cannot be boolean' => [true, false, false, ['name', 'cooldown']],
-            'Name must be at least two characters' => ['T', false, 0, ['name']],
-            'Cooldown cannot be negative' => ['Test', false, -1, ['cooldown']],
-            'Cooldown cannot be over 900' => ['Test', false, 901, ['cooldown']],
+            'All values required' => [null, null, null, null, ['name', 'enabled', 'hide_actions', 'cooldown']],
+            'Name and cooldown cannot be boolean' => [true, false, false, false, ['name', 'cooldown']],
+            'Name must be at least two characters' => ['T', false, false, 0, ['name']],
+            'Cooldown cannot be negative' => ['Test', false, false, -1, ['cooldown']],
+            'Cooldown cannot be over 900' => ['Test', false, false, 901, ['cooldown']],
         ];
     }
 
     public function botPassesValidation(): array
     {
         return [
-            ['Te', false, 0],
-            ['Test', true, 900],
-            ['Test More', true, 1],
+            ['Te', false, false, 0],
+            ['Test', true, true, 900],
+            ['Test More', true, true, 1],
         ];
     }
 }

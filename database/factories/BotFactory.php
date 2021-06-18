@@ -24,6 +24,8 @@ class BotFactory extends Factory
         return [
             'name' => $this->faker->name,
             'enabled' => true,
+            'cooldown' => 0,
+            'hide_actions' => false,
         ];
     }
 
@@ -48,6 +50,20 @@ class BotFactory extends Factory
         return $this->state(function (array $attributes) {
             return [
                 'enabled' => false,
+            ];
+        });
+    }
+
+    /**
+     * Indicate thread is locked.
+     *
+     * @return Factory
+     */
+    public function hideActions(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'hide_actions' => true,
             ];
         });
     }

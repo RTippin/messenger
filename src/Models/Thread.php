@@ -595,7 +595,9 @@ class Thread extends Model
      */
     public function hasBotsFeature(): bool
     {
-        return Messenger::isBotsEnabled() && $this->chat_bots;
+        return Messenger::isBotsEnabled()
+            && $this->isGroup()
+            && $this->chat_bots;
     }
 
     /**

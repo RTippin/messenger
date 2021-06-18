@@ -4,9 +4,10 @@ namespace RTippin\Messenger\Policies;
 
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
+use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Thread;
 
-class BotPolicy
+class BotActionPolicy
 {
     use HandlesAuthorization;
 
@@ -15,14 +16,17 @@ class BotPolicy
      *
      * @param $user
      * @param Thread $thread
+     * @param Bot $bot
      * @return Response
      */
-    public function viewAny($user, Thread $thread): Response
+    public function viewAny($user, Thread $thread, Bot $bot): Response
     {
         return $thread->hasBotsFeature()
         && $thread->hasCurrentProvider()
+        && ! $thread->isLocked()
+        && (! $bot->hide_actions || $thread->canManageBots())
             ? $this->allow()
-            : $this->deny('Not authorized to view bots.');
+            : $this->deny('Not authorized to view bot actions.');
     }
 
     /**
@@ -30,14 +34,17 @@ class BotPolicy
      *
      * @param $user
      * @param Thread $thread
+     * @param Bot $bot
      * @return Response
      */
-    public function view($user, Thread $thread): Response
+    public function view($user, Thread $thread, Bot $bot): Response
     {
         return $thread->hasBotsFeature()
         && $thread->hasCurrentProvider()
+        && ! $thread->isLocked()
+        && (! $bot->hide_actions || $thread->canManageBots())
             ? $this->allow()
-            : $this->deny('Not authorized to view bot.');
+            : $this->deny('Not authorized to view bot action.');
     }
 
     /**
@@ -51,7 +58,7 @@ class BotPolicy
     {
         return $thread->canManageBots()
             ? $this->allow()
-            : $this->deny('Not authorized to create a bot.');
+            : $this->deny('Not authorized add a bot action.');
     }
 
     /**
@@ -65,7 +72,7 @@ class BotPolicy
     {
         return $thread->canManageBots()
             ? $this->allow()
-            : $this->deny('Not authorized to update bot.');
+            : $this->deny('Not authorized to update the bot action.');
     }
 
     /**
@@ -79,6 +86,6 @@ class BotPolicy
     {
         return $thread->canManageBots()
             ? $this->allow()
-            : $this->deny('Not authorized to remove bot.');
+            : $this->deny('Not authorized to remove bot action.');
     }
 }

@@ -29,6 +29,7 @@ class BotResource extends JsonResource
             'updated_at' => $bot->updated_at,
             'name' => $bot->getProviderName(),
             'enabled' => $bot->enabled,
+            'hide_actions' => $bot->hide_actions,
             'cooldown' => $bot->cooldown,
             'on_cooldown' => $bot->isOnCooldown(),
             'actions_count' => $this->addValidActionsCount($bot),

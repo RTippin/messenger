@@ -32,6 +32,40 @@ class BotActionsTest extends FeatureTestCase
     }
 
     /** @test */
+    public function forbidden_to_view_actions_when_disabled_in_config()
+    {
+        Messenger::setBots(false);
+        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.bots.actions.index', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function forbidden_to_view_actions_when_disabled_in_thread_settings()
+    {
+        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        $thread = Thread::factory()->group()->create(['chat_bots' => false]);
+        Participant::factory()->for($thread)->admin()->owner($this->tippin)->create();
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.bots.actions.index', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function participant_can_view_actions()
     {
         MessengerBots::setHandlers([TestBotTwoHandler::class]);
@@ -46,6 +80,54 @@ class BotActionsTest extends FeatureTestCase
         ]))
             ->assertSuccessful()
             ->assertJsonCount(1);
+    }
+
+    /** @test */
+    public function participant_without_permission_forbidden_to_view_hidden_actions()
+    {
+        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->hideActions()->create();
+        BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $this->actingAs($this->doe);
+
+        $this->getJson(route('api.messenger.threads.bots.actions.index', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function participant_with_permission_can_view_hidden_actions()
+    {
+        MessengerBots::setHandlers([TestBotHandler::class]);
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->doe)->create(['manage_bots' => true]);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->hideActions()->create();
+        $this->actingAs($this->doe);
+
+        $this->getJson(route('api.messenger.threads.bots.actions.index', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]))
+            ->assertSuccessful();
+    }
+
+    /** @test */
+    public function admin_can_view_actions_when_hidden()
+    {
+        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->hideActions()->create();
+        BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.bots.actions.index', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]))
+            ->assertSuccessful();
     }
 
     /** @test */
@@ -66,6 +148,42 @@ class BotActionsTest extends FeatureTestCase
             ->assertJson([
                 'id' => $action->id,
             ]);
+    }
+
+    /** @test */
+    public function forbidden_to_view_action_when_disabled_in_config()
+    {
+        Messenger::setBots(false);
+        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.bots.actions.show', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+            'action' => $action->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function forbidden_to_view_action_when_disabled_in_thread_settings()
+    {
+        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        $thread = Thread::factory()->group()->create(['chat_bots' => false]);
+        Participant::factory()->for($thread)->admin()->owner($this->tippin)->create();
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.bots.actions.show', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+            'action' => $action->id,
+        ]))
+            ->assertForbidden();
     }
 
     /** @test */
@@ -109,6 +227,28 @@ class BotActionsTest extends FeatureTestCase
             'test' => ['test'],
         ])
             ->assertSuccessful();
+    }
+
+    /** @test */
+    public function forbidden_to_store_action_when_handler_auth_fails()
+    {
+        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.bots.actions.store', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]), [
+            'handler' => 'silly_bot',
+            'match' => 'exact',
+            'cooldown' => 0,
+            'admin_only' => false,
+            'enabled' => true,
+            'triggers' => ['test'],
+        ])
+            ->assertForbidden();
     }
 
     /** @test */

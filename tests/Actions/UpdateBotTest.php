@@ -33,6 +33,7 @@ class UpdateBotTest extends FeatureTestCase
         app(UpdateBot::class)->execute($bot, [
             'name' => 'Test Bot',
             'enabled' => true,
+            'hide_actions' => true,
             'cooldown' => 0,
         ]);
     }
@@ -45,6 +46,7 @@ class UpdateBotTest extends FeatureTestCase
         app(UpdateBot::class)->execute($bot, [
             'name' => 'Renamed',
             'enabled' => false,
+            'hide_actions' => false,
             'cooldown' => 99,
         ]);
 
@@ -52,6 +54,7 @@ class UpdateBotTest extends FeatureTestCase
             'id' => $bot->id,
             'name' => 'Renamed',
             'enabled' => false,
+            'hide_actions' => false,
             'cooldown' => 99,
         ]);
     }
@@ -68,6 +71,7 @@ class UpdateBotTest extends FeatureTestCase
         app(UpdateBot::class)->execute($bot, [
             'name' => 'Renamed',
             'enabled' => false,
+            'hide_actions' => false,
             'cooldown' => 99,
         ]);
 
