@@ -57,8 +57,8 @@ class BotController
         ]);
 
         return new BotResource(
-            $bot->load('owner')
-                ->loadCount('validActions')
+            $bot,
+            $bot->isActionsVisible($thread)
         );
     }
 

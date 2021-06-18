@@ -24,7 +24,7 @@ class BotActionPolicy
         return $thread->hasBotsFeature()
         && $thread->hasCurrentProvider()
         && ! $thread->isLocked()
-        && (! $bot->hide_actions || $thread->canManageBots())
+        && $bot->isActionsVisible($thread)
             ? $this->allow()
             : $this->deny('Not authorized to view bot actions.');
     }
@@ -42,7 +42,7 @@ class BotActionPolicy
         return $thread->hasBotsFeature()
         && $thread->hasCurrentProvider()
         && ! $thread->isLocked()
-        && (! $bot->hide_actions || $thread->canManageBots())
+        && $bot->isActionsVisible($thread)
             ? $this->allow()
             : $this->deny('Not authorized to view bot action.');
     }

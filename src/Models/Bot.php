@@ -223,6 +223,21 @@ class Bot extends Model implements MessengerProvider
     }
 
     /**
+     * Are actions visible to regular participants?
+     *
+     * @param Thread|null $thread
+     * @return bool
+     */
+    public function isActionsVisible(?Thread $thread = null): bool
+    {
+        if (is_null($thread)) {
+            return ! $this->hide_actions || $this->thread->canManageBots();
+        }
+
+        return ! $this->hide_actions || $thread->canManageBots();
+    }
+
+    /**
      * Does the bot have an active cooldown?
      *
      * @return bool

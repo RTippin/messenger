@@ -4,10 +4,26 @@ namespace RTippin\Messenger\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use RTippin\Messenger\Http\Collections\BotActionCollection;
 use RTippin\Messenger\Models\Bot;
 
 class BotResource extends JsonResource
 {
+    /**
+     * @var bool
+     */
+    private bool $addActions;
+
+    /**
+     * BotResource constructor.
+     */
+    public function __construct(Bot $bot, bool $addActions = false)
+    {
+        parent::__construct($bot);
+
+        $this->addActions = $addActions;
+    }
+
     /**
      * Transform the resource into an array.
      *
@@ -32,7 +48,12 @@ class BotResource extends JsonResource
             'hide_actions' => $bot->hide_actions,
             'cooldown' => $bot->cooldown,
             'on_cooldown' => $bot->isOnCooldown(),
-            'actions_count' => $this->addValidActionsCount($bot),
+            'actions_count' => $this->when(! $this->addActions,
+                fn () => $this->addValidActionsCount($bot)
+            ),
+            'actions' => $this->when($this->addActions,
+                fn () => $this->addValidActions($bot)
+            ),
             $this->merge($this->addAvatar($bot)),
         ];
     }
@@ -64,5 +85,18 @@ class BotResource extends JsonResource
     private function addValidActionsCount(Bot $bot): int
     {
         return $bot->valid_actions_count ?? $bot->validActions()->count();
+    }
+
+    /**
+     * @param Bot $bot
+     * @return array
+     */
+    private function addValidActions(Bot $bot): array
+    {
+        return (new BotActionCollection(
+            $bot->validActions()
+                ->with('owner')
+                ->get()
+        ))->resolve();
     }
 }
