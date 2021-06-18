@@ -601,7 +601,11 @@ window.ThreadTemplates = (function () {
             let knok = '<button onclick="ThreadManager.calls().sendKnock()" id="knok_btn" data-toggle="tooltip" title="Knock at '+Messenger.format().escapeHtml(data.name)+'" ' +
                 'data-placement="bottom" class="btn btn-lg text-secondary btn-light pt-1 pb-0 px-2" type="button"><i class="fas fa-hand-rock fa-2x"></i></button>',
             invites = '<a class="dropdown-item" onclick="ThreadManager.group().viewInviteGenerator(); return false;" id="threadOptionLink" href="#"><i class="fas fa-link"></i> Invitations</a>\n',
-            admin = '<a class="dropdown-item" onclick="ThreadManager.group().viewSettings(); return false;" id="threadOptionLink" href="#"><i class="fas fa-cog"></i> Settings</a>\n';
+            admin = '<a class="dropdown-item" onclick="ThreadManager.group().viewSettings(); return false;" id="threadOptionLink" href="#"><i class="fas fa-cog"></i> Settings</a>\n',
+            add_participants = '<a class="dropdown-item" onclick="ThreadManager.group().addParticipants(); return false;" id="addParticipantLink" href="#"><i class="fas fa-user-plus"></i> Add participants</a>',
+            view_participants = '<a class="dropdown-item" onclick="ThreadManager.group().viewParticipants(); return false;" id="viewParticipantLink" href="#"><i class="fas fa-users"></i> '+(data.options.admin && !data.locked ? 'Manage' : 'View')+' participants</a>\n',
+            view_bots = '<a class="dropdown-item" onclick="ThreadBots.viewBots(); return false;" id="viewBotsLink" href="#"><i class="fas fa-robot"></i> '+(data.options.manage_bots ? 'Manage' : 'View')+' Bots</a>\n';
+
             return '<div id="thread_header_area"><div class="dropdown float-right">\n' +
                     templates.thread_socket_error(true)+
                     '<span id="thread_option_call">'+templates.thread_call_state(data)+'</span>\n' +
@@ -611,8 +615,9 @@ window.ThreadTemplates = (function () {
                     '        <div class="dropdown-header py-0 h6 text-dark"><img id="group_avatar_'+data.id+'" alt="Group Image" class="show_group_avatar_'+data.id+' rounded-circle small_img" src="'+data.avatar.sm+'"/>' +
                     '           <span id="group_name_area">'+data.name+'</span></div>\n' +
                         templates.thread_resource_dropdown() +
-                    (!data.locked && data.options.add_participants ? '<a class="dropdown-item" onclick="ThreadManager.group().addParticipants(); return false;" id="addParticipantLink" href="#"><i class="fas fa-user-plus"></i> Add participants</a>' : '')+
-                    '        <a class="dropdown-item" onclick="ThreadManager.group().viewParticipants(); return false;" id="viewParticipantLink" href="#"><i class="fas fa-users"></i> '+(data.options.admin && !data.locked ? 'Manage' : 'View')+' participants</a>\n' +
+                    (!data.locked && data.options.add_participants ? add_participants : '')+
+                    view_participants +
+                    (!data.locked && data.options.chat_bots ? view_bots : '')+
                     (!data.locked && data.options.invitations ? invites : '')+
                     (!data.locked && data.options.admin ? admin : '')+
                     '<div class="dropdown-divider"></div>' +
@@ -835,6 +840,17 @@ window.ThreadTemplates = (function () {
                 '                    </span></div>\n' +
                 '                </td>\n' +
                 '            </tr>\n' +
+                '            <tr class="'+(settings.chat_bots ? 'alert-success' : '')+'">\n' +
+                '                <td class="pointer_area" onclick="$(\'#g_s_bots\').click()">\n' +
+                '                    <div class="h4 mt-1"><i class="fas fa-caret-right"></i> <span class="h5">Chat Bots</span></div>\n' +
+                '                </td>\n' +
+                '                <td>\n' +
+                '                    <div class="mt-1 float-right"><span class="switch switch-sm mt-1">\n' +
+                '                        <input class="switch switch_input m_setting_toggle" id="g_s_bots" name="g_s_bots" type="checkbox" '+(settings.chat_bots ? 'checked' : '')+'>\n' +
+                '                        <label for="g_s_bots"></label>\n' +
+                '                    </span></div>\n' +
+                '                </td>\n' +
+                '            </tr>\n' +
                 '            </tbody>\n' +
                 '        </table>\n' +
                 '    </div>\n' +
@@ -1052,6 +1068,7 @@ window.ThreadTemplates = (function () {
                 if(participant.manage_invites) permissions += '<span title="Manage Invites" class="badge badge-primary mr-1"><i class="fas fa-link"></i></span>';
                 if(participant.send_knocks) permissions += '<span title="Send knocks" class="badge badge-primary mr-1"><i class="fas fa-hand-rock"></i></span>';
                 if(participant.start_calls) permissions += '<span title="Start Calls" class="badge badge-primary mr-1"><i class="fas fa-video"></i></span>';
+                if(participant.manage_bots) permissions += '<span title="Manage Bots" class="badge badge-primary mr-1"><i class="fas fa-robot"></i></span>';
             }
 
             return permissions;
@@ -1164,6 +1181,10 @@ window.ThreadTemplates = (function () {
                 '<tr class="'+(participant.start_calls ? 'bg-light' : '')+'">\n' +
                 '<td class="pointer_area" onclick="$(\'#p_start_calls\').click()"><div class="h4 mt-1"><i class="fas fa-caret-right"></i> <span class="h5">Start Calls</span></div></td>\n' +
                 '<td><div class="mt-1 float-right"><span class="switch switch-sm mt-1"><input class="switch switch_input m_setting_toggle" id="p_start_calls" name="p_start_calls" type="checkbox" '+(participant.start_calls ? 'checked' : '')+'/><label for="p_start_calls"></label></span></div></td>\n' +
+                '</tr>\n' +
+                '<tr class="'+(participant.manage_bots ? 'bg-light' : '')+'">\n' +
+                '<td class="pointer_area" onclick="$(\'#p_manage_bots\').click()"><div class="h4 mt-1"><i class="fas fa-caret-right"></i> <span class="h5">Manage Bots</span></div></td>\n' +
+                '<td><div class="mt-1 float-right"><span class="switch switch-sm mt-1"><input class="switch switch_input m_setting_toggle" id="p_manage_bots" name="p_manage_bots" type="checkbox" '+(participant.manage_bots ? 'checked' : '')+'/><label for="p_manage_bots"></label></span></div></td>\n' +
                 '</tr>\n' +
                 '</tbody></table>\n'
         },

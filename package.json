@@ -26,7 +26,7 @@
     "@joeattardi/emoji-button": "^4.6.0",
     "audio-recorder-polyfill": "^0.4.1",
     "autolinker": "^2.2.2",
-    "bootstrap": "^4.5.0",
+    "bootstrap": "^4.6.0",
     "datatables.net": "^1.10.21",
     "datatables.net-bs4": "^1.10.21",
     "janus-gateway": "git://github.com/meetecho/janus-gateway.git",
@@ -38,8 +38,5 @@
     "uuid": "^3.4.0",
     "vanilla-lazyload": "^15.2.0",
     "webrtc-adapter": "^7.6.3"
-  },
-  "resolutions": {
-    "is-svg": "^4.2.0"
   }
 }

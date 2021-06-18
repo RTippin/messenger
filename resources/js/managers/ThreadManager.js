@@ -25,7 +25,8 @@ window.ThreadManager = (function () {
             history_route : null,
             history_loading : false,
             initializing : false,
-            _id : null
+            _id : null,
+            _thread : null,
         },
         states : {
             lock : true,
@@ -239,7 +240,8 @@ window.ThreadManager = (function () {
                     history_route : null,
                     history_loading : false,
                     initializing : false,
-                    _id : null
+                    _id : null,
+                    _thread : null,
                 },
                 states : {
                     lock : lock,
@@ -820,6 +822,7 @@ window.ThreadManager = (function () {
             if(!noHistory) window.history.pushState({type : 1, thread_id : data.id}, null, Messenger.common().WEB + '/'+data.id);
             opt.thread.created_at = data.created_at;
             opt.thread.muted = data.options.muted;
+            opt.thread._thread = data;
             mounted.Initialize({
                 type : data.type,
                 thread_id : data.id,
@@ -852,6 +855,7 @@ window.ThreadManager = (function () {
             if(!noHistory) window.history.pushState({type : 2, thread_id : data.id}, null, Messenger.common().WEB + '/'+data.id);
             opt.thread.created_at = data.created_at;
             opt.thread.muted = data.options.muted;
+            opt.thread._thread = data;
             mounted.Initialize({
                 type : data.type,
                 thread_id : data.id,
@@ -2431,6 +2435,7 @@ window.ThreadManager = (function () {
                     calling : $("#g_s_admin_call").is(":checked"),
                     messaging : $("#g_s_send_message").is(":checked"),
                     knocks : $("#g_s_knocks").is(":checked"),
+                    chat_bots : $("#g_s_bots").is(":checked"),
                 },
                 success : function(data){
                     Messenger.alert().Alert({
@@ -2576,7 +2581,8 @@ window.ThreadManager = (function () {
                     manage_invites : $("#p_manage_invites").is(":checked"),
                     send_messages : $("#p_send_messages").is(":checked"),
                     send_knocks : $("#p_send_knocks").is(":checked"),
-                    start_calls : $("#p_start_calls").is(":checked")
+                    start_calls : $("#p_start_calls").is(":checked"),
+                    manage_bots : $("#p_manage_bots").is(":checked"),
                 },
                 success : function(participant){
                     Messenger.alert().Alert({
@@ -3223,6 +3229,7 @@ window.ThreadManager = (function () {
                 type : opt.thread.type,
                 thread_admin : opt.thread.admin,
                 t_name : opt.thread.name,
+                _thread : opt.thread._thread,
                 online_status : opt.socket.online_status_setting,
                 socketStatusCheck : Health.checkConnection,
                 reConnected : Health.reConnected,

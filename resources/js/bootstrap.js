@@ -69,6 +69,7 @@ import {CallManager} from './managers/CallManager';
 import {NotifyManager} from './managers/NotifyManager';
 import {FriendsManager} from './managers/FriendsManager';
 import {ThreadManager} from './managers/ThreadManager';
+import {ThreadBots} from './modules/ThreadBots';
 import {ThreadTemplates} from './templates/ThreadTemplates';
 import {MessengerSettings} from './modules/MessengerSettings';
 import {RecordAudio} from './modules/RecordAudio';
