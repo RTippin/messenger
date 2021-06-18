@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -59,6 +60,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
             'add_participants' => true,
             'invitations' => true,
             'calling' => true,
+            'chat_bots' => true,
             'messaging' => true,
             'knocks' => true,
         ])
@@ -78,6 +80,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
             'add_participants' => false,
             'invitations' => false,
             'calling' => false,
+            'chat_bots' => false,
             'messaging' => false,
             'knocks' => false,
         ])
@@ -87,8 +90,41 @@ class GroupThreadSettingsTest extends FeatureTestCase
                 'add_participants' => false,
                 'invitations' => false,
                 'calling' => false,
+                'chat_bots' => false,
                 'messaging' => false,
                 'knocks' => false,
+            ]);
+    }
+
+    /** @test */
+    public function updating_group_settings_ignores_fields_when_feature_disabled()
+    {
+        Messenger::setBots(false)->setCalling(false)->setThreadInvites(false)->setKnockKnock(false);
+        $thread = $this->createGroupThread($this->tippin);
+        $this->actingAs($this->tippin);
+
+        $this->putJson(route('api.messenger.threads.settings', [
+            'thread' => $thread->id,
+        ]), [
+            'subject' => 'New',
+            'add_participants' => false,
+            'messaging' => false,
+        ])
+            ->assertSuccessful()
+            ->assertJson([
+                'name' => 'New',
+                'add_participants' => false,
+                'invitations' => true,
+                'calling' => true,
+                'chat_bots' => true,
+                'messaging' => false,
+                'knocks' => true,
+                'system_features' => [
+                    'bots' => false,
+                    'calling' => false,
+                    'invitations' => false,
+                    'knocks' => false,
+                ],
             ]);
     }
 
@@ -106,6 +142,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
             'add_participants' => true,
             'invitations' => true,
             'calling' => true,
+            'chat_bots' => true,
             'messaging' => false,
             'knocks' => false,
         ])
@@ -130,6 +167,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
             'add_participants' => $fieldValue,
             'invitations' => $fieldValue,
             'calling' => $fieldValue,
+            'chat_bots' => $fieldValue,
             'knocks' => $fieldValue,
         ])
             ->assertStatus(422)
@@ -138,6 +176,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
                 'add_participants',
                 'invitations',
                 'calling',
+                'chat_bots',
                 'messaging',
                 'knocks',
             ]);
@@ -161,6 +200,7 @@ class GroupThreadSettingsTest extends FeatureTestCase
             'add_participants' => true,
             'invitations' => true,
             'calling' => true,
+            'chat_bots' => true,
             'knocks' => true,
         ])
             ->assertStatus(422)

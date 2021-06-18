@@ -32,6 +32,7 @@ class UpdateGroupSettingsTest extends FeatureTestCase
             'add_participants' => false,
             'invitations' => false,
             'calling' => false,
+            'chat_bots' => false,
             'messaging' => false,
             'knocks' => false,
         ]);
@@ -42,6 +43,7 @@ class UpdateGroupSettingsTest extends FeatureTestCase
             'add_participants' => false,
             'invitations' => false,
             'calling' => false,
+            'chat_bots' => false,
             'messaging' => false,
             'knocks' => false,
         ]);
@@ -91,6 +93,7 @@ class UpdateGroupSettingsTest extends FeatureTestCase
             'add_participants' => true,
             'invitations' => true,
             'calling' => true,
+            'chat_bots' => false,
             'messaging' => false,
             'knocks' => false,
         ]);
@@ -122,6 +125,7 @@ class UpdateGroupSettingsTest extends FeatureTestCase
             'add_participants' => true,
             'invitations' => true,
             'calling' => true,
+            'chat_bots' => true,
             'messaging' => true,
             'knocks' => true,
         ]);

@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Http\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Validator;
+use RTippin\Messenger\Facades\Messenger;
 
 class ThreadSettingsRequest extends FormRequest
 {
@@ -17,10 +18,7 @@ class ThreadSettingsRequest extends FormRequest
         return [
             'subject' => ['required', 'string', 'min:3'],
             'add_participants' => ['required', 'boolean'],
-            'invitations' => ['required', 'boolean'],
-            'calling' => ['required', 'boolean'],
             'messaging' => ['required', 'boolean'],
-            'knocks' => ['required', 'boolean'],
         ];
     }
 
@@ -32,6 +30,28 @@ class ThreadSettingsRequest extends FormRequest
      */
     public function withValidator(Validator $validator): void
     {
-//        $validator->sometimes();
+        $validator->sometimes(
+            'knocks',
+            ['required', 'boolean'],
+            fn () => Messenger::isKnockKnockEnabled()
+        );
+
+        $validator->sometimes(
+            'calling',
+            ['required', 'boolean'],
+            fn () => Messenger::isCallingEnabled()
+        );
+
+        $validator->sometimes(
+            'invitations',
+            ['required', 'boolean'],
+            fn () => Messenger::isThreadInvitesEnabled()
+        );
+
+        $validator->sometimes(
+            'chat_bots',
+            ['required', 'boolean'],
+            fn () => Messenger::isBotsEnabled()
+        );
     }
 }

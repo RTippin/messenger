@@ -25,7 +25,7 @@ class ThreadSettingsResource extends JsonResource
             'api_avatar' => $thread->threadAvatar(true),
             'avatar' => $thread->threadAvatar(),
             'add_participants' => $thread->add_participants,
-            'bots' => $thread->chat_bots,
+            'chat_bots' => $thread->chat_bots,
             'invitations' => $thread->invitations,
             'calling' => $thread->calling,
             'messaging' => $thread->messaging,
