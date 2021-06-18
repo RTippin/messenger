@@ -274,11 +274,11 @@ window.Messenger = (function () {
                 return "<div class='modal-footer'><div class='mx-auto'><button type='button' class='btn btn-sm btn-light modal_close' data-dismiss='modal'>"+options.close_btn_txt+"</button></div></div>";
             },
             body = function(options){
-                return (options.body || options.pre_loader ? "<div id='body_modal' class='modal-body text-dark "+(options.overflow ? 'modal-scroller' : '')+(options.h4 ? ' h4' : '')+"'>"+(options.pre_loader ? alerts.loader() : options.body)+"</div>" : "");
+                return (options.body || options.pre_loader ? "<div id='body_modal' class='modal-body text-dark "+(options.h4 ? ' h4' : '')+"'>"+(options.pre_loader ? alerts.loader() : options.body)+"</div>" : "");
             },
             template = function(options){
                 return "<div id='main_modal' class='modal fade' role='dialog'>" +
-                        "<div class='modal-dialog "+(options.centered ? 'modal-dialog-centered' : '')+" modal-"+options.size+"' role='document'>" +
+                        "<div class='modal-dialog modal-"+options.size+(options.centered ? ' modal-dialog-centered' : '')+(options.overflow ? ' modal-dialog-scrollable' : '')+" ' role='document'>" +
                         "<div class='modal-content'>" +
                         "<div class='modal-header pb-2 text-"+(options.theme === 'warning' ? 'dark' : 'light')+" bg-gradient-"+options.theme+"'>" +
                         "<span class='h5'><i class='fas fa-"+options.icon+"'></i> <strong><span id='title_modal'>"+options.title+"</span></strong></span>" +

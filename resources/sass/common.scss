@@ -1,3 +1,20 @@
+.modal-fullscreen.modal-dialog{
+  width: 100%;
+  max-width: none;
+  height: 100%;
+  margin: 0;
+}
+
+.modal-fullscreen .modal-content{
+  height: 100%;
+  border: 0;
+  border-radius: 0;
+}
+
+.modal-fullscreen .modal-body{
+  overflow-y: auto;
+}
+
 body, wrapper {
   min-height:100vh;
 }
@@ -197,11 +214,6 @@ body, wrapper {
   left: 50%;
   transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
-}
-
-.modal-scroller{
-  max-height: 60vh;
-  overflow-y: auto;
 }
 
 .btn-circle {
