@@ -17,6 +17,7 @@ use RTippin\Messenger\Models\Participant;
  * @method static bool isProvidersCached()
  * @method static \RTippin\Messenger\Messenger setConfig(array $params)
  * @method static array getConfig()
+ * @method static array getSystemFeatures()
  * @method static array getAllSearchableProviders()
  * @method static array getAllFriendableProviders()
  * @method static array getAllMessengerProviders()

@@ -398,6 +398,30 @@ trait MessengerConfig
     }
 
     /**
+     * Get all the base system features and their settings.
+     *
+     * @return array
+     */
+    public function getSystemFeatures(): array
+    {
+        return [
+            'bots' => $this->isBotsEnabled(),
+            'calling' => $this->isCallingEnabled(),
+            'invitations' => $this->isThreadInvitesEnabled(),
+            'invitations_max' => $this->getThreadMaxInvitesCount(),
+            'knocks' => $this->isKnockKnockEnabled(),
+            'audio_messages' => $this->isMessageAudioUploadEnabled(),
+            'document_messages' => $this->isMessageDocumentUploadEnabled(),
+            'image_messages' => $this->isMessageImageUploadEnabled(),
+            'message_edits' => $this->isMessageEditsEnabled(),
+            'message_edits_view' => $this->isMessageEditsViewEnabled(),
+            'message_reactions' => $this->isMessageReactionsEnabled(),
+            'message_reactions_max' => $this->getMessageReactionsMax(),
+            'thread_avatars' => $this->isThreadAvatarUploadEnabled(),
+        ];
+    }
+
+    /**
      * @param bool $pushNotifications
      * @return $this
      */

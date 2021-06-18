@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Http\Collections\CallCollection;
 use RTippin\Messenger\Http\Collections\MessageCollection;
 use RTippin\Messenger\Http\Collections\ParticipantCollection;
@@ -88,7 +89,7 @@ class ThreadResource extends JsonResource
             'options' => [
                 'admin' => $this->thread->isAdmin(),
                 'manage_bots' => $this->thread->canManageBots(),
-                'view_bots' => $this->thread->hasBotsFeature(),
+                'chat_bots' => $this->thread->hasBotsFeature(),
                 'muted' => $this->thread->isMuted(),
                 'add_participants' => $this->thread->canAddParticipants(),
                 'invitations' => $this->thread->canInviteParticipants(),
@@ -100,7 +101,7 @@ class ThreadResource extends JsonResource
                 ),
             ],
             'system_features' => $this->when($this->addSystemFeatures,
-                fn () => (new SystemFeaturesResource(null))->resolve()
+                fn () => Messenger::getSystemFeatures()
             ),
             'resources' => [
                 'recipient' => $this->when($this->thread->isPrivate(),

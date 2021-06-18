@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Http\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Validator;
 
 class ThreadSettingsRequest extends FormRequest
 {
@@ -21,5 +22,16 @@ class ThreadSettingsRequest extends FormRequest
             'messaging' => ['required', 'boolean'],
             'knocks' => ['required', 'boolean'],
         ];
+    }
+
+    /**
+     * Configure the validator instance.
+     *
+     * @param Validator $validator
+     * @return void
+     */
+    public function withValidator(Validator $validator)
+    {
+        $validator->sometimes();
     }
 }

@@ -468,6 +468,28 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
+    public function it_can_get_system_features()
+    {
+        $expected = [
+            'bots' => true,
+            'calling' => true,
+            'invitations' => true,
+            'invitations_max' => 3,
+            'knocks' => true,
+            'audio_messages' => true,
+            'document_messages' => true,
+            'image_messages' => true,
+            'message_edits' => true,
+            'message_edits_view' => true,
+            'message_reactions' => true,
+            'message_reactions_max' => 10,
+            'thread_avatars' => true,
+        ];
+
+        $this->assertSame($expected, $this->messenger->getSystemFeatures());
+    }
+
+    /** @test */
     public function it_can_get_configs()
     {
         $this->assertSame('Messenger-Testbench', $this->messenger->getSiteName());

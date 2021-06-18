@@ -4,8 +4,8 @@ namespace RTippin\Messenger\Http\Collections;
 
 use Exception;
 use Illuminate\Http\Request;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
-use RTippin\Messenger\Http\Resources\SystemFeaturesResource;
 use RTippin\Messenger\Http\Resources\ThreadResource;
 use Throwable;
 
@@ -49,7 +49,7 @@ class GroupThreadCollection extends MessengerCollection
                 'results' => $this->collection->count(),
                 'total' => $this->grandTotal(),
             ],
-            'system_features' => (new SystemFeaturesResource(null))->resolve(),
+            'system_features' => Messenger::getSystemFeatures(),
         ];
     }
 

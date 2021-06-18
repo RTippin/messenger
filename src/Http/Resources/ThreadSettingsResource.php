@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 
 class ThreadSettingsResource extends JsonResource
@@ -29,7 +30,7 @@ class ThreadSettingsResource extends JsonResource
             'calling' => $thread->calling,
             'messaging' => $thread->messaging,
             'knocks' => $thread->knocks,
-            'system_features' => (new SystemFeaturesResource(null))->resolve(),
+            'system_features' => Messenger::getSystemFeatures(),
         ];
     }
 }

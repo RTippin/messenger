@@ -429,4 +429,23 @@ final class MessengerBots
 
         return true;
     }
+
+    /**
+     * Generate the handler settings resource array.
+     *
+     * @param array $settings
+     * @return array
+     */
+    private function makeHandlerSettings(array $settings): array
+    {
+        return [
+            'alias' => $settings['alias'],
+            'description' => $settings['description'],
+            'name' => $settings['name'],
+            'unique' => $settings['unique'] ?? false,
+            'authorize' => $settings['authorize'] ?? false,
+            'triggers' => $settings['triggers'] ?? null,
+            'match' => $settings['match'] ?? null,
+        ];
+    }
 }
