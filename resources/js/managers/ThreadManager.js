@@ -1579,7 +1579,7 @@ window.ThreadManager = (function () {
         makePendingMessage : function(type, body){
             return {
                 body : body ? Messenger.format().escapeHtml(body) : null,
-                id : uuid(),
+                id : uuid.v4(),
                 type : type,
                 owner_id : Messenger.common().id,
                 thread_id : opt.thread.id,

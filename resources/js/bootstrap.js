@@ -47,7 +47,7 @@ if (token) {
  * Autosize allows textareas to grow dynamically
  * Validator is for BS3 and adds validation to forms using html5 attr
  */
-window.uuid = require('uuid/v1');
+window.uuid = require('uuid');
 window.Autolinker = require('autolinker');
 import dt from 'datatables.net-bs4';
 window.dt = require( 'datatables.net');
