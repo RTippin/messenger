@@ -30,8 +30,8 @@ class ThreadSettingsRequest extends FormRequest
      * @param Validator $validator
      * @return void
      */
-    public function withValidator(Validator $validator)
+    public function withValidator(Validator $validator): void
     {
-        $validator->sometimes();
+//        $validator->sometimes();
     }
 }

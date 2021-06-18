@@ -79,12 +79,18 @@ final class MessengerBots
     public function getHandlerSettings(?string $handlerOrAlias = null): ?array
     {
         if (is_null($handlerOrAlias)) {
-            return $this->handlers->values()->toArray();
+            return $this->handlers
+                ->sortBy('name')
+                ->values()
+                ->map(fn ($settings) => $this->makeHandlerSettings($settings))
+                ->toArray();
         }
 
         $handler = $this->findHandler($handlerOrAlias);
 
-        return $handler ? $this->handlers->get($handler) : null;
+        return $handler
+            ? $this->makeHandlerSettings($this->handlers->get($handler))
+            : null;
     }
 
     /**
@@ -95,8 +101,10 @@ final class MessengerBots
     public function getAuthorizedHandlers(): array
     {
         return $this->handlers
+            ->sortBy('name')
             ->values()
             ->filter(fn ($settings) => $this->authorizesHandler($settings))
+            ->map(fn ($settings) => $this->makeHandlerSettings($settings))
             ->toArray();
     }
 
@@ -108,6 +116,7 @@ final class MessengerBots
     public function getAliases(): array
     {
         return $this->handlers
+            ->sortBy('alias')
             ->map(fn ($settings) => $settings['alias'])
             ->flatten()
             ->toArray();

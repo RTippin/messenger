@@ -42,11 +42,11 @@ class MessengerBotsTest extends MessengerTestCase
     }
 
     /** @test */
-    public function it_can_get_bot_aliases()
+    public function it_can_get_bot_aliases_sorting_by_alias()
     {
         $handlers = [
-            TestBotHandler::class,
             TestBotTwoHandler::class,
+            TestBotHandler::class,
         ];
         $aliases = [
             'fun_bot',
@@ -89,17 +89,19 @@ class MessengerBotsTest extends MessengerTestCase
     }
 
     /** @test */
-    public function it_can_get_all_bot_settings()
+    public function it_can_get_all_bot_settings_sorting_by_name()
     {
         $handlers = [
-            TestBotHandler::class,
             TestBotTwoHandler::class,
+            TestBotHandler::class,
         ];
         $settings = [
             [
                 'alias' => 'fun_bot',
                 'description' => 'This is a fun bot.',
                 'name' => 'Fun Bot',
+                'unique' => false,
+                'authorize' => false,
                 'triggers' => '!test|!more',
                 'match' => 'exact:caseless',
             ],
@@ -109,6 +111,8 @@ class MessengerBotsTest extends MessengerTestCase
                 'name' => 'Silly Bot',
                 'unique' => true,
                 'authorize' => true,
+                'triggers' => null,
+                'match' => null,
             ],
         ];
 
@@ -130,6 +134,8 @@ class MessengerBotsTest extends MessengerTestCase
             'name' => 'Silly Bot',
             'unique' => true,
             'authorize' => true,
+            'triggers' => null,
+            'match' => null,
         ];
 
         $this->bots->setHandlers($handlers);
