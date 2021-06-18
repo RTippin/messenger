@@ -604,6 +604,7 @@ window.ThreadTemplates = (function () {
             admin = '<a class="dropdown-item" onclick="ThreadManager.group().viewSettings(); return false;" id="threadOptionLink" href="#"><i class="fas fa-cog"></i> Settings</a>\n',
             add_participants = '<a class="dropdown-item" onclick="ThreadManager.group().addParticipants(); return false;" id="addParticipantLink" href="#"><i class="fas fa-user-plus"></i> Add participants</a>',
             view_participants = '<a class="dropdown-item" onclick="ThreadManager.group().viewParticipants(); return false;" id="viewParticipantLink" href="#"><i class="fas fa-users"></i> '+(data.options.admin && !data.locked ? 'Manage' : 'View')+' participants</a>\n',
+            add_bots = '<a class="dropdown-item" onclick="ThreadBots.addBot(); return false;" id="addBotsLink" href="#"><i class="fas fa-user-plus"></i> Add Bots</a>',
             view_bots = '<a class="dropdown-item" onclick="ThreadBots.viewBots(); return false;" id="viewBotsLink" href="#"><i class="fas fa-robot"></i> '+(data.options.manage_bots ? 'Manage' : 'View')+' Bots</a>\n';
 
             return '<div id="thread_header_area"><div class="dropdown float-right">\n' +
@@ -618,6 +619,7 @@ window.ThreadTemplates = (function () {
                     (!data.locked && data.options.add_participants ? add_participants : '')+
                     view_participants +
                     (!data.locked && data.options.chat_bots ? view_bots : '')+
+                    (!data.locked && data.options.manage_bots ? add_bots : '')+
                     (!data.locked && data.options.invitations ? invites : '')+
                     (!data.locked && data.options.admin ? admin : '')+
                     '<div class="dropdown-divider"></div>' +

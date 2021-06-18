@@ -92,8 +92,10 @@ class MessageReaction extends Model
      */
     public function owner(): MorphTo
     {
-        return $this->morphTo()->withDefault(function () {
-            return Messenger::getGhostProvider();
+        return $this->morphTo()->withDefault(function (Model $owner) {
+            return $owner instanceof Bot
+                ? Messenger::getGhostBot()
+                : Messenger::getGhostProvider();
         });
     }
 

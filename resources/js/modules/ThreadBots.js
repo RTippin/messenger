@@ -47,9 +47,9 @@ window.ThreadBots = (function () {
             let gather = () => {
                 Messenger.xhr().request({
                     route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots',
-                    success : function(data){
+                    success : function(bots){
                         Messenger.alert().fillModal({
-                            body : templates.view_bots(data),
+                            body : templates.bots(bots),
                             title : opt.thread.name+' Bots'
                         });
                         methods.loadDataTable($("#view_bots_table"), 'bots')
@@ -106,7 +106,6 @@ window.ThreadBots = (function () {
                         if (bot.hasOwnProperty('actions')) {
                             methods.loadDataTable($("#view_bots_actions_table"), 'actions')
                         }
-                        PageListeners.listen().tooltips();
                     },
                     fail_alert : true
                 })
@@ -127,6 +126,7 @@ window.ThreadBots = (function () {
             if (!methods.setThread()) return;
             let gather = () => {
                 let fill = (bot) => {
+                    opt.current_bot = bot;
                     Messenger.alert().fillModal({
                         body : templates.edit_bot(bot),
                         title : 'Editing '+bot.name
@@ -163,6 +163,40 @@ window.ThreadBots = (function () {
                 }
             });
         },
+        removeBot : function(id){
+            if(!methods.setThread()) return;
+            if(opt.current_bot && opt.current_bot.id === id){
+                Messenger.alert().Modal({
+                    theme : 'danger',
+                    icon : 'trash',
+                    backdrop_ctrl : false,
+                    title : 'Remove Bot?',
+                    body : templates.warn_delete(),
+                    cb_btn_txt : 'Delete',
+                    cb_btn_icon : 'trash',
+                    cb_btn_theme : 'danger',
+                    callback : methods.deleteBot
+                })
+                return;
+            }
+            Messenger.xhr().request({
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots/'+id,
+                success : function(bot){
+                    opt.current_bot = bot;
+                    methods.removeBot(bot.id)
+                },
+                fail_alert : true
+            })
+        },
+        deleteBot : function(){
+            if(!methods.setThread() || !opt.current_bot) return;
+            Messenger.xhr().payload({
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots/'+opt.current_bot.id,
+                data : {},
+                success : methods.viewBots,
+                fail_alert : true
+            }, 'delete');
+        },
         storeBot : function(){
             if (!methods.setThread()) return;
             Messenger.xhr().payload({
@@ -173,8 +207,8 @@ window.ThreadBots = (function () {
                     hide_actions : $("#g_s_hide_actions").is(":checked"),
                     cooldown : $("#g_s_bot_cooldown").val(),
                 },
-                success : function(data){
-                    methods.viewBot(data.id)
+                success : function(bot){
+                    methods.viewBot(bot.id)
                 },
                 fail_alert : true,
             });
@@ -196,42 +230,34 @@ window.ThreadBots = (function () {
             }, 'put');
         },
         uploadAvatar : function () {
-            console.log('avatar');
-            // if(opt.lock || !opt.elements.profile_avatar_upload.files.length) return;
-            // opt.lock = true;
-            // let data = new FormData();
-            // data.append('image', opt.elements.profile_avatar_upload.files[0]);
-            // PageListeners.listen().disposeTooltips();
-            // if(!$('#main_modal').length){
-            //     Messenger.alert().Modal({
-            //         size : 'sm',
-            //         icon : 'cloud-upload-alt',
-            //         pre_loader : true,
-            //         centered : true,
-            //         unlock_buttons : false,
-            //         allow_close : false,
-            //         backdrop_ctrl : false,
-            //         title: 'Uploading...',
-            //         theme: 'primary'
-            //     });
-            // }
-            // else{
-            //     Messenger.alert().fillModal({loader : true, no_close : true, body : null, title : 'Uploading...'});
-            // }
-            // Messenger.xhr().payload({
-            //     route : Messenger.common().API + 'avatar',
-            //     data : data,
-            //     success : methods.manageNewAvatar,
-            //     fail_alert : true,
-            //     close_modal : true
-            // });
+            if(!methods.setThread() || !opt.current_bot || !opt.avatar_input.files.length) return;
+            let data = new FormData();
+            data.append('image', opt.avatar_input.files[0]);
+            PageListeners.listen().disposeTooltips();
+            Messenger.alert().fillModal({loader : true, no_close : true, body : null, title : 'Uploading...'});
+            Messenger.xhr().payload({
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots/'+opt.current_bot.id+'/avatar',
+                data : data,
+                success : function(data){
+                    methods.viewBot(data.id)
+                },
+                fail_alert : true
+            });
         },
+        removeAvatar : function(){
+            if(!methods.setThread() || !opt.current_bot) return;
+            Messenger.alert().fillModal({loader : true, no_close : true, body : null, title : 'Removing...'});
+            Messenger.xhr().payload({
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots/'+opt.current_bot.id+'/avatar',
+                data : {},
+                success : function(data){
+                    methods.viewBot(data.id)
+                },
+                fail_alert : true
+            }, 'delete');
+        }
     },
     templates = {
-        view_bots : function(bots){
-            let add_btn = '<div class="col-12 text-center mt-3"><button onclick="ThreadBots.addBot()" type="button" class="btn btn-success">Add Bot <i class="fas fa-robot"></i></button></div>';
-            return templates.bots(bots) + (opt.thread.options.manage_bots ? add_btn : '');
-        },
         bots : function(bots){
             let table_top = '<div class="row">\n' +
                 '    <div class="col-12">\n' +
@@ -253,8 +279,7 @@ window.ThreadBots = (function () {
             let bot_fill = (bot) => {
                 let online = bot.enabled ? (bot.on_cooldown ? 'away' : 'online') : 'offline',
                     manage = '<a class="dropdown-item" onclick="ThreadBots.editBot(\''+bot.id+'\'); return false;" href="#" title="Edit"><i class="fas fa-edit"></i> Edit</a>' +
-                        '<a class="dropdown-item" onclick="return false;" href="#" title="Add Actions"><i class="fas fa-server"></i> Add Actions</a>' +
-                        '<a class="dropdown-item" onclick="return false;" href="#" title="Remove"><i class="fas fa-trash-alt"></i> Remove</a>';
+                        '<a class="dropdown-item" onclick="ThreadBots.removeBot(\''+bot.id+'\'); return false;" href="#" title="Remove"><i class="fas fa-trash-alt"></i> Remove</a>';
                 return '<tr id="row_'+bot.id+'">\n' +
                     '     <td class="pointer_area" onclick="ThreadBots.viewBot(\''+bot.id+'\')">\n' +
                     '      <div class="table_links">\n' +
@@ -276,7 +301,7 @@ window.ThreadBots = (function () {
                     '  <div class="dropdown float-right">\n' +
                     '    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="fas fa-cog"></i></button>\n' +
                     '    <div class="dropdown-menu dropdown-menu-right">\n' +
-                    '       <a class="dropdown-item" onclick="ThreadBots.viewBot(\''+bot.id+'\'); return false;" href="#" title="View"><i class="fas fa-robot"></i> View</a>' +
+                    '       <a class="dropdown-item" onclick="ThreadBots.viewBot(\''+bot.id+'\'); return false;" href="#" title="View"><i class="fas fa-robot"></i> '+(opt.thread.options.manage_bots ? 'Manage' : 'View')+'</a>' +
                             (opt.thread.options.manage_bots ? manage : '') +
                     ' </span>\n' +
                     ' </div></div></td>\n' +
@@ -394,29 +419,32 @@ window.ThreadBots = (function () {
                 '    <hr>\n' +
                 '    <div class="text-center form-group mb-0 py-2 alert-danger shadow rounded">\n' +
                 '        <div class="mb-1 font-weight-bold">You will be asked to confirm this action</div>\n' +
-                '        <button onclick="" type="button" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Remove Bot</button>\n' +
+                '        <button onclick="ThreadBots.removeBot(\''+bot.id+'\')" type="button" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Remove Bot</button>\n' +
                 '    </div>\n' +
                 '</form>';
         },
         view_bot : function(bot){
             let online = bot.enabled ? (bot.on_cooldown ? 'away' : 'online') : 'offline',
                 actions = '<div class="col-12 mt-5 text-center h2"><span class="badge badge-light"><i class="fas fa-eye-slash"></i> Actions are hidden</span></div>',
-                editable = '<hr class="mt-2"><div class="row"><div class="col-12 text-center">' +
-                    '<button onclick="" type="button" class="btn btn-primary mr-3">Add Actions <i class="fas fa-server"></i></button>' +
-                    '<button onclick="ThreadBots.editBot(\''+bot.id+'\')" type="button" class="btn btn-primary">Edit Bot <i class="fas fa-edit"></i></button>' +
-                    '</div></div><hr>',
-                avatar = '<img alt="Avatar" height="75" width="75" class="float-left mr-3 rounded avatar-is-'+online+'" src="'+bot.avatar.md+'"/>',
-                edit_avatar = '<div class="btn-group-vertical float-left mr-2">' +
-                    '  <button onclick="$(\'#bot_avatar_upload\').click()" data-toggle="tooltip" data-placement="right" title="Upload New Avatar" onclick="" class="btn btn-sm btn-outline-success"><i class="fas fa-image"></i></button>'+
-                    '  <button data-toggle="tooltip" data-placement="right" title="Remove Avatar" onclick="" class="btn btn-sm btn-outline-danger"><i class="fas fa-trash"></i></button>' +
-                    '</div>' + avatar;
+                editable = '<hr class="mt-2"><div class="row"><div class="col-12">' +
+                    '<button onclick="ThreadBots.editBot(\''+bot.id+'\')" type="button" class="btn btn-sm btn-primary mr-3 mb-2">Edit <i class="fas fa-edit"></i></button>' +
+                    '<button onclick="" type="button" class="btn btn-sm btn-primary mr-3 mb-2">Add Actions <i class="fas fa-server"></i></button>' +
+                    '<button class="btn btn-sm btn-success dropdown-toggle mr-3 mb-2" type="button" id="botAvatarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' +
+                    '  Avatar <i class="fas fa-image"></i>' +
+                    '</button>\n' +
+                    '  <div class="dropdown-menu" aria-labelledby="botAvatarDropdown">\n' +
+                    '    <a onclick="$(\'#bot_avatar_upload\').click(); return false;" class="dropdown-item" href="#"><i class="fas fa-image"></i> Upload Avatar</a>\n' +
+                    '    <a onclick="ThreadBots.removeAvatar(); return false;" class="dropdown-item" href="#"><i class="fas fa-trash"></i> Remove Avatar</a>\n' +
+                    '  </div>\n' +
+                    '<button onclick="ThreadBots.removeBot(\''+bot.id+'\')" type="button" class="btn btn-sm btn-danger mr-3 mb-2">Remove <i class="fas fa-trash-alt"></i></button>' +
+                    '</div></div><hr>';
             if (bot.hasOwnProperty('actions')) {
                 actions = templates.bot_actions_table(bot.actions);
             }
 
             return '<div class="row">' +
                 '<div class="col-12 col-md-6 mb-3">' +
-                (opt.thread.options.manage_bots ? edit_avatar : avatar) +
+                '<img alt="Avatar" height="75" width="75" class="float-left mr-3 rounded avatar-is-'+online+'" src="'+bot.avatar.md+'"/>' +
                 '<h3 class="font-weight-bold">'+bot.name+'</h3>' +
                 '<h5>Creator: '+bot.owner.name+'</h4>' +
                 '</div>' +
@@ -426,7 +454,8 @@ window.ThreadBots = (function () {
                 '<div class="col-12 mb-2">Cooldown : <span class="badge badge-primary mr-3">'+bot.cooldown+' seconds</span></div>' +
                 '<div class="col-12">On cooldown? ' + (bot.on_cooldown ? '<span class="badge badge-danger"><i class="fas fa-hourglass-half"></i> Yes</span>' : '<span class="badge badge-success"><i class="fas fa-check"></i> No</span>') + '</div>' +
                 '</div></div></div>' +
-                (opt.thread.options.manage_bots ? editable : '') + actions;
+                (opt.thread.options.manage_bots ? editable : '') +
+                '<div id="bot_actions_container">' + actions + '</div>';
         },
         bot_actions_table : function(actions){
             let table_top = '<div class="row">\n' +
@@ -486,6 +515,11 @@ window.ThreadBots = (function () {
             }
             return 'N/A';
         },
+        warn_delete : function(){
+          return 'Really Delete <strong>'+opt.current_bot.name+'</strong>?'+
+              '<div class="card mt-3"><div class="card-body bg-warning shadow rounded"><h5>This cannot be undone. All actions will be removed from '+opt.current_bot.name+' as well. ' +
+              'Any previous interactions sent by '+opt.current_bot.name+' will be preserved.</h5></div></div>';
+        },
         avatar_input : function () {
             return '<input style="display: none;" class="NS" id="bot_avatar_upload" type="file" name="profile_avatar_upload" accept="image/*">';
         }
@@ -496,6 +530,8 @@ window.ThreadBots = (function () {
         addBot : methods.addBot,
         viewBot : methods.viewBot,
         editBot : methods.editBot,
+        removeAvatar : methods.removeAvatar,
+        removeBot : methods.removeBot,
         state : function(){
             return opt;
         },
