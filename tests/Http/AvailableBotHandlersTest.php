@@ -29,7 +29,7 @@ class AvailableBotHandlersTest extends FeatureTestCase
             ->assertJson([
                 [
                     'alias' => 'fun_bot',
-                ]
+                ],
             ]);
     }
 
@@ -114,5 +114,4 @@ class AvailableBotHandlersTest extends FeatureTestCase
         ]))
             ->assertForbidden();
     }
-
 }
