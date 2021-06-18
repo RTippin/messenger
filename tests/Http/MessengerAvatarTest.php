@@ -134,7 +134,7 @@ class MessengerAvatarTest extends FeatureTestCase
             'Avatar can be png' => [UploadedFile::fake()->create('image.png', 500, 'image/png')],
             'Avatar can be bmp' => [UploadedFile::fake()->create('image.bmp', 500, 'image/bmp')],
             'Avatar can be gif' => [UploadedFile::fake()->create('image.gif', 500, 'image/gif')],
-            'Avatar can be webp' => [UploadedFile::fake()->create('image.svg', 500, 'image/webp')],
+            'Avatar can be webp' => [UploadedFile::fake()->create('image.webp', 500, 'image/webp')],
             'Avatar can be 5120 kb max limit' => [UploadedFile::fake()->create('image.jpg', 5120, 'image/jpeg')],
         ];
     }

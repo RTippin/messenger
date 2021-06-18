@@ -21,7 +21,7 @@ class DestroyBotAvatar extends BotAvatarAction
             ->removeOldIfExist()
             ->updateBotAvatar(null);
 
-        $this->fireEvents();
+        $this->generateResource()->fireEvents();
 
         return $this;
     }

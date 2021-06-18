@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Actions\Bots;
 use Illuminate\Contracts\Events\Dispatcher;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Events\BotAvatarEvent;
+use RTippin\Messenger\Http\Resources\BotResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Services\FileService;
 
@@ -63,6 +64,18 @@ abstract class BotAvatarAction extends BaseMessengerAction
         $this->getBot()->update([
             'avatar' => $avatar,
         ]);
+    }
+
+    /**
+     * @return $this
+     */
+    protected function generateResource(): self
+    {
+        $this->setJsonResource(new BotResource(
+            $this->getBot()
+        ));
+
+        return $this;
     }
 
     /**

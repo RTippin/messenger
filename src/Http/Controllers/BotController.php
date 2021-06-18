@@ -6,10 +6,13 @@ use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
 use RTippin\Messenger\Actions\Bots\ArchiveBot;
+use RTippin\Messenger\Actions\Bots\DestroyBotAvatar;
 use RTippin\Messenger\Actions\Bots\StoreBot;
+use RTippin\Messenger\Actions\Bots\StoreBotAvatar;
 use RTippin\Messenger\Actions\Bots\UpdateBot;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Collections\BotCollection;
+use RTippin\Messenger\Http\Request\BotAvatarRequest;
 use RTippin\Messenger\Http\Request\BotRequest;
 use RTippin\Messenger\Http\Resources\BotResource;
 use RTippin\Messenger\Models\Bot;
@@ -110,6 +113,53 @@ class BotController
             $bot,
             $request->validated()
         )->getJsonResource();
+    }
+
+    /**
+     * Store the bots avatar.
+     *
+     * @param BotAvatarRequest $request
+     * @param StoreBotAvatar $storeBotAvatar
+     * @param Thread $thread
+     * @param Bot $bot
+     * @return BotResource
+     * @throws AuthorizationException|FeatureDisabledException
+     */
+    public function storeAvatar(BotAvatarRequest $request,
+                                StoreBotAvatar $storeBotAvatar,
+                                Thread $thread,
+                                Bot $bot): BotResource
+    {
+        $this->authorize('update', [
+            Bot::class,
+            $thread,
+        ]);
+
+        return $storeBotAvatar->execute(
+            $bot,
+            $request->validated()
+        )->getJsonResource();
+    }
+
+    /**
+     * Remove the bots avatar.
+     *
+     * @param DestroyBotAvatar $destroyBotAvatar
+     * @param Thread $thread
+     * @param Bot $bot
+     * @return BotResource
+     * @throws AuthorizationException|FeatureDisabledException
+     */
+    public function destroyAvatar(DestroyBotAvatar $destroyBotAvatar,
+                                  Thread $thread,
+                                  Bot $bot): BotResource
+    {
+        $this->authorize('update', [
+            Bot::class,
+            $thread,
+        ]);
+
+        return $destroyBotAvatar->execute($bot)->getJsonResource();
     }
 
     /**

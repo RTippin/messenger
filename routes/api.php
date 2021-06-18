@@ -134,6 +134,8 @@ Route::name('api.messenger.')->group(function () {
     Route::prefix('threads/{thread}/bots/{bot}')->name('threads.bots.')->group(function () {
         Route::get('add-handlers', AvailableBotHandlers::class)->name('handlers');
         Route::get('avatar/{size}/{image}', RenderBotAvatar::class)->name('avatar.render');
+        Route::post('avatar', [BotController::class, 'storeAvatar'])->name('avatar.store');
+        Route::delete('avatar', [BotController::class, 'destroyAvatar'])->name('avatar.destroy');
     });
     Route::apiResource('threads.messages', MessageController::class);
     Route::apiResource('threads.messages.reactions', MessageReactionController::class)->only(['index', 'store', 'destroy']);
