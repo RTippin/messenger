@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -23,6 +24,7 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
             'send_messages' => false,
             'add_participants' => true,
             'manage_invites' => true,
+            'manage_bots' => true,
             'start_calls' => true,
             'send_knocks' => true,
         ])
@@ -43,6 +45,7 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
             'send_messages' => true,
             'add_participants' => false,
             'manage_invites' => false,
+            'manage_bots' => false,
             'start_calls' => false,
             'send_knocks' => false,
         ])
@@ -63,6 +66,7 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
             'send_messages' => false,
             'add_participants' => true,
             'manage_invites' => true,
+            'manage_bots' => true,
             'start_calls' => true,
             'send_knocks' => true,
         ])
@@ -72,8 +76,39 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
                 'send_messages' => false,
                 'add_participants' => true,
                 'manage_invites' => true,
+                'manage_bots' => true,
                 'start_calls' => true,
                 'send_knocks' => true,
+                'owner' => [
+                    'name' => 'John Doe',
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function updating_permissions_ignores_fields_when_feature_disabled()
+    {
+        Messenger::setBots(false)->setCalling(false)->setThreadInvites(false)->setKnockKnock(false);
+        $thread = $this->createGroupThread($this->tippin);
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
+        $this->actingAs($this->tippin);
+
+        $this->putJson(route('api.messenger.threads.participants.update', [
+            'thread' => $thread->id,
+            'participant' => $participant->id,
+        ]), [
+            'send_messages' => false,
+            'add_participants' => true,
+        ])
+            ->assertSuccessful()
+            ->assertJson([
+                'id' => $participant->id,
+                'send_messages' => false,
+                'add_participants' => true,
+                'manage_invites' => false,
+                'manage_bots' => false,
+                'start_calls' => false,
+                'send_knocks' => false,
                 'owner' => [
                     'name' => 'John Doe',
                 ],
@@ -95,6 +130,7 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
             'send_messages' => false,
             'add_participants' => true,
             'manage_invites' => true,
+            'manage_bots' => true,
             'start_calls' => true,
             'send_knocks' => true,
         ])
@@ -119,6 +155,7 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
             'send_messages' => $permissionValue,
             'add_participants' => $permissionValue,
             'manage_invites' => $permissionValue,
+            'manage_bots' => $permissionValue,
             'start_calls' => $permissionValue,
             'send_knocks' => $permissionValue,
         ])
@@ -127,6 +164,7 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
                 'send_messages',
                 'add_participants',
                 'manage_invites',
+                'manage_bots',
                 'start_calls',
                 'send_knocks',
             ]);

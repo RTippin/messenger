@@ -31,6 +31,7 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
             'send_messages' => false,
             'add_participants' => true,
             'manage_invites' => true,
+            'manage_bots' => true,
             'start_calls' => true,
             'send_knocks' => true,
         ]);
@@ -40,6 +41,7 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
             'send_messages' => false,
             'add_participants' => true,
             'manage_invites' => true,
+            'manage_bots' => true,
             'start_calls' => true,
             'send_knocks' => true,
         ]);
@@ -60,6 +62,7 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
             'send_messages' => false,
             'add_participants' => true,
             'manage_invites' => true,
+            'manage_bots' => true,
             'start_calls' => true,
             'send_knocks' => true,
         ]);
@@ -95,6 +98,7 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
             'send_messages' => true,
             'add_participants' => false,
             'manage_invites' => false,
+            'manage_bots' => false,
             'start_calls' => false,
             'send_knocks' => false,
         ]);
