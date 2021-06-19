@@ -6,6 +6,7 @@ window.ThreadBots = (function () {
         current_bot : null,
         avatar_input : null,
         handlers : null,
+        current_handler : null,
     },
     mounted = {
         Initialize : function () {
@@ -39,7 +40,6 @@ window.ThreadBots = (function () {
                 "drawCallback": function(settings){
                     let api = new $.fn.DataTable.Api(settings), pagination = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate');
                     pagination.toggle(api.page.info().pages > 1);
-                    LazyImages.update();
                 },
                 "pageLength": 25
             });
@@ -106,7 +106,9 @@ window.ThreadBots = (function () {
                             title : bot.name
                         });
                         if (bot.hasOwnProperty('actions')) {
-                            methods.loadDataTable($("#view_bots_actions_table"), 'actions')
+                            setTimeout(function(){
+                                methods.loadDataTable($("#view_bots_actions_table"), 'actions')
+                            }, 100);
                         }
                     },
                     fail_alert : true
@@ -194,24 +196,34 @@ window.ThreadBots = (function () {
             }
             for(let i = 0; i < opt.handlers.length; i++) {
                 if (opt.handlers[i].alias === alias) {
-                    return methods.generateActionForm(opt.handlers[i]);
+                    opt.current_handler = opt.handlers[i];
+                    return methods.generateCreateActionForm();
                 }
             }
             console.log('error');
         },
-        generateActionForm : function(handler){
+        generateCreateActionForm : function(){
             let container = $("#bot_actions_container");
-
             container.html(
-                handlers.start(handler, false) +
+                handlers.start(opt.current_handler, false) +
                 handlers.base() +
-                handlers.triggers() +
-                handlers.match() +
+                handlers.triggers(null, opt.current_handler.triggers) +
+                handlers.match(null, opt.current_handler.match) +
                 handlers.end()
             );
             $(".m_setting_toggle").change(function(){
                 $(this).is(':checked') ? $(this).closest('tr').addClass('alert-success') : $(this).closest('tr').removeClass('alert-success')
             })
+        },
+        storeAction : function(){
+            if (!methods.setThread() || !opt.current_handler || !opt.current_bot) return;
+            Messenger.button().addLoader({id : '#save_bot_action_btn'});
+            Messenger.xhr().payload({
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots/'+opt.current_bot.id+'/actions',
+                data : methods.makeHandlerFormData(),
+                success : methods.reloadBotActions,
+                fail_alert : true,
+            });
         },
         reloadBotActions : function(){
             if (!methods.setThread() || !opt.current_bot) return;
@@ -225,6 +237,20 @@ window.ThreadBots = (function () {
                 },
                 fail_alert : true
             })
+        },
+        makeHandlerFormData : function(){
+            let form = {};
+            form.handler = opt.current_handler.alias;
+            form.cooldown = $("#g_s_bot_cooldown").val();
+            form.enabled = $("#g_s_action_enabled").is(":checked");
+            form.admin_only = $("#g_s_admin_only_action").is(":checked");
+            if(!opt.current_handler.triggers){
+                form.triggers = [$("#g_s_action_triggers").val()];
+            }
+            if(!opt.current_handler.match){
+                form.match = $("#g_s_action_match").val();
+            }
+            return form;
         },
         removeBot : function(id){
             if(!methods.setThread()) return;
@@ -347,7 +373,7 @@ window.ThreadBots = (function () {
                     '     <td class="pointer_area" onclick="ThreadBots.viewBot(\''+bot.id+'\')">\n' +
                     '      <div class="table_links">\n' +
                     '        <div class="nowrap">\n' +
-                    '          <img alt="Bot Avatar" class="lazy rounded-circle group-image avatar-is-'+online+'" data-src="'+bot.avatar.sm+'" />\n' +
+                    '          <img alt="Bot Avatar" class="rounded-circle group-image avatar-is-'+online+'" src="'+bot.avatar.sm+'" />\n' +
                     '          <span class="h5"><span class="badge badge-light">'+bot.name+'</span></span>\n' +
                     '         </div>\n' +
                     '       </div>\n' +
@@ -431,7 +457,7 @@ window.ThreadBots = (function () {
         edit_bot : function(bot){
             return '<form id="edit_bot_form" action="">\n' +
                 '<div class="form-row mx-n2 rounded bg-light text-dark pt-2 pb-3 px-2 shadow-sm">\n' +
-                '    <h5>Bot Name:</h5>' +
+                '    <h5 class="font-weight-bold">Bot Name:</h5>' +
                 '    <div class="input-group input-group-lg col-12 mb-0">\n' +
                 '        <div class="input-group-prepend">\n' +
                 '            <span class="input-group-text"><i class="fas fa-robot"></i></span>\n' +
@@ -441,7 +467,7 @@ window.ThreadBots = (function () {
                 '</div>' +
                 '<hr>' +
                 '<div class="form-row mx-n2 rounded bg-light text-dark pt-2 pb-3 px-2 shadow-sm">\n' +
-                '    <h5>Cooldown (in seconds):</h5>' +
+                '    <h5 class="font-weight-bold">Cooldown [in seconds]:</h5>' +
                 '    <div class="input-group input-group-lg col-12 mb-0">\n' +
                 '        <div class="input-group-prepend">\n' +
                 '            <span class="input-group-text"><i class="fas fa-clock"></i></span>\n' +
@@ -642,7 +668,7 @@ window.ThreadBots = (function () {
             return '</form></div>' +
                 '<hr><div class="col-12 text-center">' +
                 '<button onclick="ThreadBots.reloadBotActions()" type="button" class="btn btn-lg btn-info mr-3">Cancel <i class="fas fa-undo"></i></button>' +
-                '<button onclick="" type="button" class="btn btn-lg btn-success">Save <i class="fas fa-save"></i></button>' +
+                '<button id="save_bot_action_btn" onclick="ThreadBots.storeAction()" type="button" class="btn btn-lg btn-success">Save <i class="fas fa-save"></i></button>' +
                 '</div>';
         },
         base : function(values){
@@ -686,31 +712,63 @@ window.ThreadBots = (function () {
                 '        </table>\n' +
                 '    </div>';
         },
-        triggers : function(values, override){
+        triggers : function(values, overrides){
+            let triggers = '',
+                readonly = false,
+                text = '[Separate multiple triggers using commas ( , ) or the pipe ( | )]';
+            if(overrides && overrides.length){
+                triggers = overrides.join('|');
+                readonly = true;
+                text = '<span class="badge badge-warning">Cannot change</span>';
+            } else if(values && values.length) {
+                triggers = values.join('|');
+            }
             return '<hr><div class="form-row mx-n2 rounded bg-light text-dark pt-2 pb-3 px-2 shadow-sm">\n' +
-                '    <h5 class="font-weight-bold">Triggers: [Separate multiple triggers using commas ( , ) or the pipe ( | )]</h5>' +
+                '    <h5 class="font-weight-bold">Triggers: '+text+'</h5>' +
                 '    <div class="input-group input-group-lg col-12 mb-0">\n' +
                 '        <div class="input-group-prepend">\n' +
                 '            <span class="input-group-text"><i class="fas fa-laptop-code"></i></span>\n' +
                 '         </div>\n' +
-                '         <input autocomplete="off" class="form-control font-weight-bold shadow-sm" id="g_s_action_triggers" placeholder="Triggers: !command | hello | LOL" name="bot-triggers-'+Date.now()+'" required>' +
+                '         <input '+(readonly ? 'readonly' : '')+' autocomplete="off" class="form-control font-weight-bold shadow-sm" id="g_s_action_triggers" placeholder="!command | hello | LOL" name="bot-triggers-'+Date.now()+'" required value="'+triggers+'">' +
                 '     </div>\n' +
                 '</div>';
         },
         match : function(value, override){
+            let match = 'exact',
+                readonly = false,
+                text = '<span class="badge badge-warning">Cannot change</span>';
+            if(override){
+                match = override;
+                readonly = true;
+            } else if(value) {
+                match = value;
+            }
             return '<hr><div class="form-row mx-n2 rounded bg-light text-dark pt-2 pb-3 px-2 shadow-sm">\n' +
-                '    <h5 class="font-weight-bold">Match Method:</h5>' +
-                '<select class="custom-select" multiple>\n' +
-                '  <option value="contains">contains - The trigger can be anywhere within a message. Cannot be part of or inside another word.</option>\n' +
-                '  <option value="contains:caseless">contains:caseless - Same as "contains", but is case insensitive.</option>\n' +
-                '  <option value="contains:any">contains:any - The trigger can be anywhere within a message, including inside another word.</option>\n' +
-                '  <option value="contains:any:caseless">contains:any:caseless - Same as "contains any", but is case insensitive.</option>\n' +
-                '  <option value="exact">exact - The trigger must match the message exactly.</option>\n' +
-                '  <option value="exact:caseless">exact:caseless - Same as "exact", but is case insensitive.</option>\n' +
-                '  <option value="starts:with">starts:with - The trigger must be the lead phrase within the message. Cannot be part of or inside another word.</option>\n' +
-                '  <option value="starts:with:caseless">starts:with:caseless - Same as "starts with", but is case insensitive.</option>\n' +
-                '</select>'+
-                '</div>';
+                '    <h5 class="font-weight-bold">Match Method: '+(readonly ? text : '')+'</h5>' +
+                '<div class="col-12 mb-3"><div class="col-12 col-lg-8 offset-lg-2">' +
+                '<select id="g_s_action_match" class="custom-select custom-select-lg" '+(readonly ? 'disabled' : '')+'>\n' +
+                '  <option value="contains" '+(match === "contains" ? 'selected' : '')+'>contains</option>\n' +
+                '  <option value="contains:caseless" '+(match === "contains:caseless" ? 'selected' : '')+'>contains:caseless</option>\n' +
+                '  <option value="contains:any" '+(match === "contains:any" ? 'selected' : '')+'>contains:any</option>\n' +
+                '  <option value="contains:any:caseless" '+(match === "contains:any:caseless" ? 'selected' : '')+'>contains:any:caseless</option>\n' +
+                '  <option value="exact" '+(match === "exact" ? 'selected' : '')+'>exact</option>\n' +
+                '  <option value="exact:caseless" '+(match === "exact:caseless" ? 'selected' : '')+'>exact:caseless</option>\n' +
+                '  <option value="starts:with" '+(match === "starts:with" ? 'selected' : '')+'>starts:with</option>\n' +
+                '  <option value="starts:with:caseless" '+(match === "starts:with:caseless" ? 'selected' : '')+'>starts:with:caseless</option>\n' +
+                '</select>' +
+                '</div></div>'+
+                '<div class="col-12 h6">' +
+                '    <ul>' +
+                '        <li>contains - The trigger can be anywhere within a message. Cannot be part of or inside another word.</li>' +
+                '        <li>contains:caseless - Same as "contains", but is case insensitive.</li>' +
+                '        <li>contains:any - The trigger can be anywhere within a message, including inside another word.</li>' +
+                '        <li>contains:any:caseless - Same as "contains any", but is case insensitive.</li>' +
+                '        <li>exact - The trigger must match the message exactly.</li>' +
+                '        <li>exact:caseless - Same as "exact", but is case insensitive.</li>' +
+                '        <li>starts:with - The trigger must be the lead phrase within the message. Cannot be part of or inside another word.</li>' +
+                '        <li>starts:with:caseless - Same as "starts with", but is case insensitive.</li>' +
+                '    </ul>' +
+                '</div></div>';
         },
     };
     return {
@@ -724,6 +782,7 @@ window.ThreadBots = (function () {
         viewAvailableHandlers : methods.viewAvailableHandlers,
         reloadBotActions : methods.reloadBotActions,
         createAction : methods.createAction,
+        storeAction : methods.storeAction,
         state : function(){
             return opt;
         },
