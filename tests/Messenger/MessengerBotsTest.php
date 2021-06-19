@@ -102,7 +102,7 @@ class MessengerBotsTest extends MessengerTestCase
                 'name' => 'Fun Bot',
                 'unique' => false,
                 'authorize' => false,
-                'triggers' => '!test|!more',
+                'triggers' => ['!test', '!more'],
                 'match' => 'exact:caseless',
             ],
             [

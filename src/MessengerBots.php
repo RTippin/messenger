@@ -447,6 +447,10 @@ final class MessengerBots
      */
     private function makeHandlerSettings(array $settings): array
     {
+        if (array_key_exists('triggers', $settings)) {
+            $settings['triggers'] = explode('|', $this->formatTriggers($settings['triggers']));
+        }
+
         return [
             'alias' => $settings['alias'],
             'description' => $settings['description'],

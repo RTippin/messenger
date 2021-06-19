@@ -5,6 +5,7 @@ window.ThreadBots = (function () {
         bots_table : null,
         current_bot : null,
         avatar_input : null,
+        handlers : null,
     },
     mounted = {
         Initialize : function () {
@@ -39,7 +40,8 @@ window.ThreadBots = (function () {
                     let api = new $.fn.DataTable.Api(settings), pagination = $(this).closest('.dataTables_wrapper').find('.dataTables_paginate');
                     pagination.toggle(api.page.info().pages > 1);
                     LazyImages.update();
-                }
+                },
+                "pageLength": 25
             });
         },
         viewBots : function(){
@@ -162,6 +164,67 @@ window.ThreadBots = (function () {
                     methods.updateBot(id)
                 }
             });
+        },
+        viewAvailableHandlers : function(){
+            if (!methods.setThread() || !opt.current_bot) return;
+            let container = $("#bot_actions_container");
+            container.html(Messenger.alert().loader(true));
+            Messenger.xhr().request({
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots/'+opt.current_bot.id+'/add-handlers',
+                success : function(handlers){
+                    opt.handlers = handlers;
+                    container.html(templates.view_handlers(handlers));
+                    methods.loadDataTable($("#view_handlers_table"), 'actions')
+                },
+                fail_alert : true
+            })
+        },
+        createAction : function(alias){
+            if (!methods.setThread() || !opt.current_bot) return;
+            if(!opt.handlers){
+                Messenger.xhr().request({
+                    route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots/'+opt.current_bot.id+'/add-handlers',
+                    success : function(handlers){
+                        opt.handlers = handlers;
+                        methods.createAction(alias)
+                    },
+                    fail_alert : true
+                });
+                return;
+            }
+            for(let i = 0; i < opt.handlers.length; i++) {
+                if (opt.handlers[i].alias === alias) {
+                    return methods.generateActionForm(opt.handlers[i]);
+                }
+            }
+            console.log('error');
+        },
+        generateActionForm : function(handler){
+            let container = $("#bot_actions_container");
+
+            container.html(
+                handlers.start(handler, false) +
+                handlers.base() +
+                handlers.triggers() +
+                handlers.match() +
+                handlers.end()
+            );
+            $(".m_setting_toggle").change(function(){
+                $(this).is(':checked') ? $(this).closest('tr').addClass('alert-success') : $(this).closest('tr').removeClass('alert-success')
+            })
+        },
+        reloadBotActions : function(){
+            if (!methods.setThread() || !opt.current_bot) return;
+            let container = $("#bot_actions_container");
+            container.html(Messenger.alert().loader(true));
+            Messenger.xhr().request({
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots/'+opt.current_bot.id+'/actions',
+                success : function(actions){
+                    container.html(templates.bot_actions_table(actions));
+                    methods.loadDataTable($("#view_bots_actions_table"), 'actions')
+                },
+                fail_alert : true
+            })
         },
         removeBot : function(id){
             if(!methods.setThread()) return;
@@ -366,7 +429,7 @@ window.ThreadBots = (function () {
                 '</form>';
         },
         edit_bot : function(bot){
-            return '<form id="new_bot_form" action="">\n' +
+            return '<form id="edit_bot_form" action="">\n' +
                 '<div class="form-row mx-n2 rounded bg-light text-dark pt-2 pb-3 px-2 shadow-sm">\n' +
                 '    <h5>Bot Name:</h5>' +
                 '    <div class="input-group input-group-lg col-12 mb-0">\n' +
@@ -426,17 +489,17 @@ window.ThreadBots = (function () {
         view_bot : function(bot){
             let online = bot.enabled ? (bot.on_cooldown ? 'away' : 'online') : 'offline',
                 actions = '<div class="col-12 mt-5 text-center h2"><span class="badge badge-light"><i class="fas fa-eye-slash"></i> Actions are hidden</span></div>',
-                editable = '<hr class="mt-2"><div class="row"><div class="col-12">' +
-                    '<button onclick="ThreadBots.editBot(\''+bot.id+'\')" type="button" class="btn btn-sm btn-primary mr-3 mb-2">Edit <i class="fas fa-edit"></i></button>' +
-                    '<button onclick="" type="button" class="btn btn-sm btn-primary mr-3 mb-2">Add Actions <i class="fas fa-server"></i></button>' +
-                    '<button class="btn btn-sm btn-success dropdown-toggle mr-3 mb-2" type="button" id="botAvatarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' +
+                editable = '<hr class="mt-2"><div class="row"><div class="col-12 text-center">' +
+                    '<button onclick="ThreadBots.editBot(\''+bot.id+'\')" type="button" class="btn btn-sm btn-outline-success mr-3 mb-2">Edit <i class="fas fa-edit"></i></button>' +
+                    '<button onclick="ThreadBots.viewAvailableHandlers()" type="button" class="btn btn-sm btn-outline-success mr-3 mb-2">Add Actions <i class="fas fa-server"></i></button>' +
+                    '<button class="btn btn-sm btn-outline-success dropdown-toggle mr-3 mb-2" type="button" id="botAvatarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' +
                     '  Avatar <i class="fas fa-image"></i>' +
                     '</button>\n' +
                     '  <div class="dropdown-menu" aria-labelledby="botAvatarDropdown">\n' +
                     '    <a onclick="$(\'#bot_avatar_upload\').click(); return false;" class="dropdown-item" href="#"><i class="fas fa-image"></i> Upload Avatar</a>\n' +
                     '    <a onclick="ThreadBots.removeAvatar(); return false;" class="dropdown-item" href="#"><i class="fas fa-trash"></i> Remove Avatar</a>\n' +
                     '  </div>\n' +
-                    '<button onclick="ThreadBots.removeBot(\''+bot.id+'\')" type="button" class="btn btn-sm btn-danger mr-3 mb-2">Remove <i class="fas fa-trash-alt"></i></button>' +
+                    '<button onclick="ThreadBots.removeBot(\''+bot.id+'\')" type="button" class="btn btn-sm btn-outline-danger mr-3 mb-2">Remove <i class="fas fa-trash-alt"></i></button>' +
                     '</div></div><hr>';
             if (bot.hasOwnProperty('actions')) {
                 actions = templates.bot_actions_table(bot.actions);
@@ -483,16 +546,16 @@ window.ThreadBots = (function () {
                 action.triggers.forEach((trigger) => triggers += '<span class="badge badge-light mr-1">'+trigger+'</span>');
                 return '<tr id="row_'+action.id+'">\n' +
                     '  <td class="h5 nowrap">'+action.handler.name+'</td>'+
-                    '  <td class="h5 nowrap">'+action.handler.description+'</td>'+
+                    '  <td class="h6">'+action.handler.description+'</td>'+
                     '  <td class="h5">\n' +
-                    (action.enabled ? '<span class="badge badge-success"><i class="fas fa-check"></i></span>' : '<span class="badge badge-danger"><i class="fas fa-times"></i></span>') +
+                          (action.enabled ? '<span class="badge badge-success"><i class="fas fa-check"></i></span>' : '<span class="badge badge-danger"><i class="fas fa-times"></i></span>') +
                     '  </td>\n' +
                     '  <td class="h5">\n' +
-                    (action.on_cooldown ? '<span class="badge badge-danger"><i class="fas fa-hourglass-half"></i> Yes</span>' : '<span class="badge badge-success"><i class="fas fa-check"></i> No</span>') +
+                           (action.on_cooldown ? '<span class="badge badge-danger"><i class="fas fa-hourglass-half"></i> Yes</span>' : '<span class="badge badge-success"><i class="fas fa-check"></i> No</span>') +
                     '  </td>\n' +
                     '  <td class="h5"><span class="badge badge-primary">'+action.cooldown+' seconds</span></td>\n' +
                     '  <td class="h5">\n' +
-                    (action.admin_only ? '<span class="badge badge-success"><i class="fas fa-check"></i></span>' : '<span class="badge badge-danger"><i class="fas fa-times"></i></span>') +
+                           (action.admin_only ? '<span class="badge badge-success"><i class="fas fa-check"></i></span>' : '<span class="badge badge-danger"><i class="fas fa-times"></i></span>') +
                     '  </td>\n' +
                     '  <td class="h5">'+triggers+'</td>'+
                     '  <td class="h5"><span class="badge badge-primary">'+action.match+'</span></td>'+
@@ -515,6 +578,50 @@ window.ThreadBots = (function () {
             }
             return 'N/A';
         },
+        view_handlers : function(handlers){
+            let table_top = '<div class="col-12 my-3 text-center h2"><span class="badge badge-light"><i class="fas fa-list"></i> Select an action:</span></div>' +
+                '<div class="row">\n' +
+                '    <div class="col-12">\n' +
+                '        <div class="table-responsive-xl">\n' +
+                '            <table id="view_handlers_table" class="table table-sm table-hover">\n' +
+                '                <thead>\n' +
+                '                <tr>\n' +
+                '                    <th>Name</th>\n' +
+                '                    <th>Description</th>\n' +
+                '                    <th>Unique</th>\n' +
+                '                    <th>Preset Triggers</th>\n' +
+                '                    <th>Preset Match</th>\n' +
+                '                    <th>Options</th>\n' +
+                '                </tr>\n' +
+                '                </thead>\n' +
+                '                <tbody>',
+                table_fill = '',
+                table_bot = '</tbody></table></div></div></div>' +
+                    '<hr><div class="col-12 text-center">' +
+                    '<button onclick="ThreadBots.reloadBotActions()" type="button" class="btn btn-info">Cancel <i class="fas fa-undo"></i></button>' +
+                    '</div>';
+            let handler_fill = (handler) => {
+                let triggers = 'N\A';
+                if(handler.triggers && handler.triggers.length){
+                    triggers = '';
+                    handler.triggers.forEach((trigger) => triggers += '<span class="badge badge-light mr-1">'+trigger+'</span>');
+                }
+                return '<tr class="pointer_area" onclick="ThreadBots.createAction(\''+handler.alias+'\')">\n' +
+                    '  <td class="h5 nowrap">'+handler.name+'</td>'+
+                    '  <td class="h6">'+handler.description+'</td>'+
+                    '  <td class="h5">\n' +
+                          (handler.unique ? '<span class="badge badge-success"><i class="fas fa-check"></i></span>' : '<span class="badge badge-danger"><i class="fas fa-times"></i></span>') +
+                    '  </td>\n' +
+                    '  <td class="h5 nowrap">'+triggers+'</td>'+
+                    '  <td class="h5">'+(handler.match ?? 'N/A')+'</td>'+
+                    '  <td class="h5"><button type="button" class="btn btn-sm btn-primary">Select <i class="fas fa-server"></i></button></td>'+
+                    '</tr>'
+            };
+            if(handlers && handlers.length){
+                handlers.forEach((handler) => { table_fill += handler_fill(handler)})
+            }
+            return table_top+table_fill+table_bot
+        },
         warn_delete : function(){
           return 'Really Delete <strong>'+opt.current_bot.name+'</strong>?'+
               '<div class="card mt-3"><div class="card-body bg-warning shadow rounded"><h5>This cannot be undone. All actions will be removed from '+opt.current_bot.name+' as well. ' +
@@ -523,6 +630,88 @@ window.ThreadBots = (function () {
         avatar_input : function () {
             return '<input style="display: none;" class="NS" id="bot_avatar_upload" type="file" name="profile_avatar_upload" accept="image/*">';
         }
+    },
+    handlers = {
+        start : function(handler, edit){
+            return '<div class="col-12 my-3 text-center h2"><span class="badge badge-light"><i class="fas fa-edit"></i> '+(edit ? 'Editing' : 'Creating')+' '+handler.name+':</span></div>' +
+                '<div class="col-12 text-center h3 mb-4"><i class="fas fa-info-circle"></i> '+handler.description+'</div> ' +
+                '<div class="col-12 col-md-6 offset-md-3">' +
+                '<form id="bot_action_form" action="">';
+        },
+        end : function(edit){
+            return '</form></div>' +
+                '<hr><div class="col-12 text-center">' +
+                '<button onclick="ThreadBots.reloadBotActions()" type="button" class="btn btn-lg btn-info mr-3">Cancel <i class="fas fa-undo"></i></button>' +
+                '<button onclick="" type="button" class="btn btn-lg btn-success">Save <i class="fas fa-save"></i></button>' +
+                '</div>';
+        },
+        base : function(values){
+            return '<div class="form-row mx-n2 rounded bg-light text-dark pt-2 pb-3 px-2 shadow-sm">\n' +
+                '    <h5 class="font-weight-bold">Cooldown [in seconds]:</h5>' +
+                '    <div class="input-group input-group-lg col-12 mb-0">\n' +
+                '        <div class="input-group-prepend">\n' +
+                '            <span class="input-group-text"><i class="fas fa-clock"></i></span>\n' +
+                '         </div>\n' +
+                '         <input type="number" autocomplete="off" min="0" max="900" class="form-control font-weight-bold shadow-sm" id="g_s_bot_cooldown" placeholder="Bot Cooldown" name="bot-cooldown-'+Date.now()+'" required value="15">' +
+                '     </div>\n' +
+                '</div>'+
+                '    <hr>\n' +
+                '    <div class="form-row mx-n2 rounded bg-light text-dark pb-3 pt-2 px-3 shadow-sm">\n' +
+                '        <label class="font-weight-bold h5 control-label" for="g_s_table">Action Toggles:</label>\n' +
+                '        <table id="g_s_table" class="table mb-0 table-sm table-hover">\n' +
+                '            <tbody>\n' +
+                '            <tr class="alert-success">\n' +
+                '                <td class="pointer_area" onclick="$(\'#g_s_action_enabled\').click()">\n' +
+                '                    <div class="h4 mt-1"><i class="fas fa-caret-right"></i> <span class="h5">Enabled</span></div>\n' +
+                '                </td>\n' +
+                '                <td>\n' +
+                '                    <div class="mt-1 float-right"><span class="switch switch-sm mt-1">\n' +
+                '                        <input class="switch switch_input m_setting_toggle" id="g_s_action_enabled" name="g_s_action_enabled" type="checkbox" checked>\n' +
+                '                        <label for="g_s_action_enabled"></label>\n' +
+                '                    </span></div>\n' +
+                '                </td>\n' +
+                '            </tr>\n' +
+                '            <tr>' +
+                '                <td class="pointer_area" onclick="$(\'#g_s_admin_only_action\').click()">\n' +
+                '                    <div class="h4 mt-1"><i class="fas fa-caret-right"></i> <span class="h5">Admin Only</span></div>\n' +
+                '                </td>\n' +
+                '                <td>\n' +
+                '                    <div class="mt-1 float-right"><span class="switch switch-sm mt-1">\n' +
+                '                        <input class="switch switch_input m_setting_toggle" id="g_s_admin_only_action" name="g_s_admin_only_action" type="checkbox">\n' +
+                '                        <label for="g_s_admin_only_action"></label>\n' +
+                '                    </span></div>\n' +
+                '                </td>\n' +
+                '            </tr>\n' +
+                '            </tbody>\n' +
+                '        </table>\n' +
+                '    </div>';
+        },
+        triggers : function(values, override){
+            return '<hr><div class="form-row mx-n2 rounded bg-light text-dark pt-2 pb-3 px-2 shadow-sm">\n' +
+                '    <h5 class="font-weight-bold">Triggers: [Separate multiple triggers using commas ( , ) or the pipe ( | )]</h5>' +
+                '    <div class="input-group input-group-lg col-12 mb-0">\n' +
+                '        <div class="input-group-prepend">\n' +
+                '            <span class="input-group-text"><i class="fas fa-laptop-code"></i></span>\n' +
+                '         </div>\n' +
+                '         <input autocomplete="off" class="form-control font-weight-bold shadow-sm" id="g_s_action_triggers" placeholder="Triggers: !command | hello | LOL" name="bot-triggers-'+Date.now()+'" required>' +
+                '     </div>\n' +
+                '</div>';
+        },
+        match : function(value, override){
+            return '<hr><div class="form-row mx-n2 rounded bg-light text-dark pt-2 pb-3 px-2 shadow-sm">\n' +
+                '    <h5 class="font-weight-bold">Match Method:</h5>' +
+                '<select class="custom-select" multiple>\n' +
+                '  <option value="contains">contains - The trigger can be anywhere within a message. Cannot be part of or inside another word.</option>\n' +
+                '  <option value="contains:caseless">contains:caseless - Same as "contains", but is case insensitive.</option>\n' +
+                '  <option value="contains:any">contains:any - The trigger can be anywhere within a message, including inside another word.</option>\n' +
+                '  <option value="contains:any:caseless">contains:any:caseless - Same as "contains any", but is case insensitive.</option>\n' +
+                '  <option value="exact">exact - The trigger must match the message exactly.</option>\n' +
+                '  <option value="exact:caseless">exact:caseless - Same as "exact", but is case insensitive.</option>\n' +
+                '  <option value="starts:with">starts:with - The trigger must be the lead phrase within the message. Cannot be part of or inside another word.</option>\n' +
+                '  <option value="starts:with:caseless">starts:with:caseless - Same as "starts with", but is case insensitive.</option>\n' +
+                '</select>'+
+                '</div>';
+        },
     };
     return {
         init : mounted.Initialize,
@@ -532,6 +721,9 @@ window.ThreadBots = (function () {
         editBot : methods.editBot,
         removeAvatar : methods.removeAvatar,
         removeBot : methods.removeBot,
+        viewAvailableHandlers : methods.viewAvailableHandlers,
+        reloadBotActions : methods.reloadBotActions,
+        createAction : methods.createAction,
         state : function(){
             return opt;
         },
