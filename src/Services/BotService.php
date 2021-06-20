@@ -9,6 +9,7 @@ use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Traits\ChecksReflection;
+use Throwable;
 
 class BotService
 {
@@ -173,7 +174,6 @@ class BotService
      * @param Message $message
      * @param Thread $thread
      * @param bool $isGroupAdmin
-     * @throws BotException
      */
     private function executeMessage(BotAction $action,
                                     Message $message,
@@ -181,13 +181,17 @@ class BotService
                                     bool $isGroupAdmin): void
     {
         if ($this->shouldExecute($action, $isGroupAdmin)) {
-            $this->bots
-                ->initializeHandler($action->handler)
-                ->setAction($action)
-                ->setThread($thread)
-                ->setMessage($message, $this->matchingTrigger)
-                ->startCooldown()
-                ->handle();
+            try {
+                $this->bots
+                    ->initializeHandler($action->handler)
+                    ->setAction($action)
+                    ->setThread($thread)
+                    ->setMessage($message, $this->matchingTrigger)
+                    ->startCooldown()
+                    ->handle();
+            } catch (Throwable $e) {
+                report($e);
+            }
         }
     }
 

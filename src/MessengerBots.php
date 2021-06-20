@@ -95,7 +95,7 @@ final class MessengerBots
     }
 
     /**
-     * Returns the handler settings the end user is authorized to view.
+     * Returns the handler settings the end user is authorized to view/add.
      *
      * @return array
      */
@@ -173,8 +173,8 @@ final class MessengerBots
     }
 
     /**
-     * Set the handlers we want to register. You may add more dynamically,
-     * or choose to overwrite existing.
+     * Set the handlers we want to register. These can then be attached to
+     * a bots action, and executed when a match is found.
      *
      * @param array $handlers
      * @param bool $overwrite
@@ -200,7 +200,8 @@ final class MessengerBots
 
     /**
      * Instantiate the concrete handler class using the class or alias provided.
-     * If the handler matches what is already initialized, return that instead.
+     * If the handler matches what we already have initialized,
+     * return that instance instead.
      *
      * @param string|null $handlerOrAlias
      * @return BotActionHandler
