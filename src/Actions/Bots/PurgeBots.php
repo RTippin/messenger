@@ -48,7 +48,7 @@ class PurgeBots extends BaseMessengerAction
      */
     private function purge(Bot $bot): void
     {
-        $this->destroyBotAvatar($bot);
+        $this->destroyBotDirectory($bot);
 
         $this->destroyBot($bot);
     }
@@ -56,7 +56,7 @@ class PurgeBots extends BaseMessengerAction
     /**
      * @param Bot $bot
      */
-    private function destroyBotAvatar(Bot $bot): void
+    private function destroyBotDirectory(Bot $bot): void
     {
         $this->fileService
             ->setDisk($bot->getStorageDisk())
