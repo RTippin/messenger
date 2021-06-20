@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Messenger;
 
 use Illuminate\Validation\ValidationException;
+use InvalidArgumentException;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Facades\MessengerBots as BotsFacade;
 use RTippin\Messenger\MessengerBots;
@@ -158,17 +159,17 @@ class MessengerBotsTest extends MessengerTestCase
     }
 
     /** @test */
-    public function it_ignores_invalid_and_missing_bot_handlers()
+    public function it_throws_exception_if_invalid_handler()
     {
         $actions = [
             TestBotHandler::class,
             InvalidBotHandler::class,
-            MissingAction::class,
         ];
 
-        $this->bots->setHandlers($actions);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The given handler { RTippin\Messenger\Tests\Messenger\InvalidBotHandler } must extend our base handler RTippin\Messenger\Actions\Bots\BotActionHandler');
 
-        $this->assertSame([TestBotHandler::class], $this->bots->getHandlerClasses());
+        $this->bots->setHandlers($actions);
     }
 
     /** @test */
@@ -222,7 +223,6 @@ class MessengerBotsTest extends MessengerTestCase
         $handlers = [
             TestBotHandler::class,
             TestBotTwoHandler::class,
-            InvalidBotHandler::class,
         ];
 
         $this->bots->setHandlers($handlers);
@@ -241,7 +241,6 @@ class MessengerBotsTest extends MessengerTestCase
         $handlers = [
             TestBotHandler::class,
             TestBotTwoHandler::class,
-            InvalidBotHandler::class,
         ];
 
         $this->bots->setHandlers($handlers);

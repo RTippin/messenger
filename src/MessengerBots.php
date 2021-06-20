@@ -7,6 +7,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
+use InvalidArgumentException;
 use RTippin\Messenger\Actions\Bots\BotActionHandler;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Traits\ChecksReflection;
@@ -175,21 +176,23 @@ final class MessengerBots
      * Set the handlers we want to register. You may add more dynamically,
      * or choose to overwrite existing.
      *
-     * @param array $actions
+     * @param array $handlers
      * @param bool $overwrite
      * @return $this
      */
-    public function setHandlers(array $actions, bool $overwrite = false): self
+    public function setHandlers(array $handlers, bool $overwrite = false): self
     {
         if ($overwrite) {
             $this->handlers = new Collection([]);
         }
 
-        foreach ($actions as $action) {
-            if ($this->checkIsSubclassOf($action, BotActionHandler::class)) {
-                /** @var BotActionHandler $action */
-                $this->handlers[$action] = $action::getSettings();
+        foreach ($handlers as $handler) {
+            if (! $this->checkIsSubclassOf($handler, BotActionHandler::class)) {
+                throw new InvalidArgumentException("The given handler { $handler } must extend our base handler ".BotActionHandler::class);
             }
+
+            /** @var BotActionHandler $handler */
+            $this->handlers[$handler] = $handler::getSettings();
         }
 
         return $this;
