@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Tests\Fixtures;
 
 use RTippin\Messenger\Actions\Bots\BotActionHandler;
 
-class TestBotTwoHandler extends BotActionHandler
+class SillyBotHandler extends BotActionHandler
 {
     public static function getSettings(): array
     {

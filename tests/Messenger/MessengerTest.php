@@ -44,6 +44,12 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
+    public function messenger_alias_same_instance_as_container()
+    {
+        $this->assertSame($this->messenger, app('messenger'));
+    }
+
+    /** @test */
     public function it_checks_objects_and_class_strings_for_valid_provider()
     {
         $user = $this->getModelUser();

@@ -13,6 +13,7 @@
 - Migrations for `bots` and `bot_actions`.
 - `MessengerBots` facade.
 - Default bot avatar in published images.
+- global helpers for `broadcaster()` and `bots()`.
 
 #### Changed
 - Thread `activeCall` relationship to using proper `ofMany` query.

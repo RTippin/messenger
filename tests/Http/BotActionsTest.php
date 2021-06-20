@@ -9,18 +9,18 @@ use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\Fixtures\TestBotHandler;
-use RTippin\Messenger\Tests\Fixtures\TestBotTwoHandler;
+use RTippin\Messenger\Tests\Fixtures\FunBotHandler;
+use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;
 
 class BotActionsTest extends FeatureTestCase
 {
     /** @test */
     public function admin_can_view_actions()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        BotAction::factory()->for($bot)->owner($this->tippin)->count(2)->handler(TestBotTwoHandler::class)->create();
+        BotAction::factory()->for($bot)->owner($this->tippin)->count(2)->handler(SillyBotHandler::class)->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.bots.actions.index', [
@@ -35,10 +35,10 @@ class BotActionsTest extends FeatureTestCase
     public function forbidden_to_view_actions_when_disabled_in_config()
     {
         Messenger::setBots(false);
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.bots.actions.index', [
@@ -51,11 +51,11 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_view_actions_when_disabled_in_thread_settings()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = Thread::factory()->group()->create(['chat_bots' => false]);
         Participant::factory()->for($thread)->admin()->owner($this->tippin)->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.bots.actions.index', [
@@ -68,10 +68,10 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function participant_can_view_actions()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
         $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.bots.actions.index', [
@@ -85,10 +85,10 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function participant_without_permission_forbidden_to_view_hidden_actions()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->hideActions()->create();
-        BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
         $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.bots.actions.index', [
@@ -101,7 +101,7 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function participant_with_permission_can_view_hidden_actions()
     {
-        MessengerBots::setHandlers([TestBotHandler::class]);
+        MessengerBots::setHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->doe)->create(['manage_bots' => true]);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->hideActions()->create();
@@ -117,10 +117,10 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function admin_can_view_actions_when_hidden()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->hideActions()->create();
-        BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.bots.actions.index', [
@@ -133,10 +133,10 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function admin_can_view_action()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.bots.actions.show', [
@@ -154,10 +154,10 @@ class BotActionsTest extends FeatureTestCase
     public function forbidden_to_view_action_when_disabled_in_config()
     {
         Messenger::setBots(false);
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.bots.actions.show', [
@@ -171,11 +171,11 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_view_action_when_disabled_in_thread_settings()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = Thread::factory()->group()->create(['chat_bots' => false]);
         Participant::factory()->for($thread)->admin()->owner($this->tippin)->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.bots.actions.show', [
@@ -189,10 +189,10 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function participant_can_view_action()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
         $this->actingAs($this->doe);
 
         $this->getJson(route('api.messenger.threads.bots.actions.show', [
@@ -209,7 +209,7 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function admin_can_store_action()
     {
-        MessengerBots::setHandlers([TestBotHandler::class]);
+        MessengerBots::setHandlers([FunBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -232,7 +232,7 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_store_action_when_handler_auth_fails()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -254,7 +254,7 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function participant_with_permission_can_store_action()
     {
-        MessengerBots::setHandlers([TestBotHandler::class]);
+        MessengerBots::setHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->doe)->create(['manage_bots' => true]);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
@@ -278,7 +278,7 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function participant_without_permission_forbidden_to_store_action()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);
@@ -300,7 +300,7 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_store_action_when_bots_disabled_from_config()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         Messenger::setBots(false);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
@@ -323,7 +323,7 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_store_action_when_disabled_in_thread()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = Thread::factory()->group()->create(['chat_bots' => false]);
         Participant::factory()->for($thread)->admin()->owner($this->tippin)->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
@@ -429,10 +429,10 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function admin_can_update_action()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.bots.actions.update', [
@@ -459,11 +459,11 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function participant_with_permission_can_update_action()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->doe)->create(['manage_bots' => true]);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
         $this->actingAs($this->doe);
 
         $this->putJson(route('api.messenger.threads.bots.actions.update', [
@@ -483,11 +483,11 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_update_action_when_disabled_in_config()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         Messenger::setBots(false);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.bots.actions.update', [
@@ -507,11 +507,11 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_update_action_when_disabled_in_thread()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = Thread::factory()->group()->create(['chat_bots' => false]);
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.bots.actions.update', [
@@ -531,10 +531,10 @@ class BotActionsTest extends FeatureTestCase
     /** @test */
     public function participant_without_permission_forbidden_to_update_action()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(TestBotTwoHandler::class)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
         $this->actingAs($this->doe);
 
         $this->putJson(route('api.messenger.threads.bots.actions.update', [

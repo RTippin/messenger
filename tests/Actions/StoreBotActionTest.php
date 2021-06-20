@@ -14,7 +14,7 @@ use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
-use RTippin\Messenger\Tests\Fixtures\TestBotTwoHandler;
+use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;
 
 class StoreBotActionTest extends FeatureTestCase
 {
@@ -67,7 +67,7 @@ class StoreBotActionTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_handler_fails_authorization()
     {
-        MessengerBots::setHandlers([TestBotTwoHandler::class]);
+        MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = Thread::factory()->group()->create(['subject' => 'Test']);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
 
@@ -75,7 +75,7 @@ class StoreBotActionTest extends FeatureTestCase
         $this->expectExceptionMessage('Not authorized to add (Bot Name) to Test.');
 
         app(StoreBotAction::class)->execute($thread, $bot, [
-            'handler' => TestBotTwoHandler::class,
+            'handler' => SillyBotHandler::class,
             'unique' => true,
             'authorize' => true,
             'name' => 'Bot Name',

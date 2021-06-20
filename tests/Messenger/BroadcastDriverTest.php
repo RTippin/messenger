@@ -29,6 +29,12 @@ class BroadcastDriverTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_can_be_resolved_via_the_helper()
+    {
+        $this->assertInstanceOf(BroadcastBroker::class, broadcaster());
+    }
+
+    /** @test */
     public function it_ignores_invalid_event()
     {
         Event::fake([
