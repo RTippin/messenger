@@ -2929,9 +2929,8 @@ window.ThreadManager = (function () {
                 return;
             }
             Messenger.alert().Modal({
-                size : 'lg',
+                size : 'fullscreen',
                 backdrop_ctrl : false,
-                overflow : true,
                 theme : 'dark',
                 icon : 'images',
                 title: 'Loading Images...',
