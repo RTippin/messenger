@@ -14,6 +14,7 @@
 - `MessengerBots` facade.
 - Default bot avatar in published images.
 - global helpers for `broadcaster()` and `bots()`.
+- `messenger:purge:bots` command.
 
 #### Changed
 - Thread `activeCall` relationship to using proper `ofMany` query.

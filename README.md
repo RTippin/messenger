@@ -727,6 +727,10 @@ class AppServiceProvider extends ServiceProvider
     * We will purge all soft deleted threads that were archived past the set days (30 default). We run it through our action to remove the entire thread directory and sub files from storage and the thread from the database.
     * `--days=X` flag to set how many days in the past to start at.
     * `--now` flag to run immediately without dispatching jobs to queue.
+- `php artisan messenger:purge:bots` | `--now` | `--days=30`
+    * We will purge all soft deleted bots that were archived past the set days (30 default). We run it through our action to remove the entire bot directory and sub files from storage and the bot from the database.
+    * `--days=X` flag to set how many days in the past to start at.
+    * `--now` flag to run immediately without dispatching jobs to queue.
 
 ---
 
