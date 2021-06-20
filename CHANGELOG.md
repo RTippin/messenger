@@ -15,11 +15,11 @@
 - Default bot avatar in published images.
 
 #### Changed
-- Thread activeCall relationship to using proper `ofMany` query.
-- `messenger:providers:cache` command caches the merged bot provider.
+- Thread `activeCall` relationship to using proper `ofMany` query.
+- `messenger:providers:cache` command caches providers with the merged bot provider.
 - Switched injecting cache manager and config repository to using facade/helpers.
 - See above for `messenger.php` config changes.
-- upgraded UI packages.
+- upgraded UI packages, edited views, and recompiled assets.
 - `SystemFeaturesResource` implementation changed to using a direct call to the messenger service class.
 - When saving a group threads settings or updating a participants permissions, feature disabled values will be ignored.
 

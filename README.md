@@ -51,7 +51,7 @@
 - Language file support.
 
 ### Messenger Bots
-- Bot functionality is built into the core of this `MESSENGER` package, but you can create and use your own custom bot handlers.
+- Bot functionality is built into the core of this `MESSENGER` package, but you are responsible for registering your own bot handlers.
 - For a variety of ready-to-go bot action handlers, as well as documentation for bot configurations, please visit:
   - [Messenger Bots Package][link-messenger-bots]
 
@@ -61,6 +61,7 @@
 
 ### Notes
 - If our event subscribers are enabled, the default queue channel your worker must monitor is `messenger`. You may define custom queue channels yourself within our config.
+- The default bot subscriber will push jobs onto the `messenger-bots` queue channel.
 - Our included commands that queue a job also use the `messenger` queue channel.
 - If you enable calling, we support an included [Janus Media Server][link-janus-server] driver, however you will still need to install the media server yourself.
 - Read through our [`messenger.php`][link-config] config file before migrating!
