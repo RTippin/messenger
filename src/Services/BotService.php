@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Services;
 
 use Illuminate\Support\Str;
-use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
@@ -34,10 +33,13 @@ class BotService
     }
 
     /**
+     * Get all valid bot actions from the messages thread. Loop through each
+     * action to see if any triggers match the messages body. If a match is
+     * found, execute the handler.
+     *
      * @param Message $message
      * @param Thread $thread
      * @param bool $isGroupAdmin
-     * @throws BotException
      */
     public function handleMessage(Message $message,
                                   Thread $thread,
@@ -61,6 +63,9 @@ class BotService
     }
 
     /**
+     * Using the match method, loop through all triggers
+     * and attempt to match it against the message.
+     *
      * @param string $matchMethod
      * @param array $triggers
      * @param string $message
@@ -101,6 +106,8 @@ class BotService
     }
 
     /**
+     * The trigger must match the message exactly.
+     *
      * @param string $trigger
      * @param string $message
      * @param bool $caseless
@@ -115,6 +122,9 @@ class BotService
     }
 
     /**
+     * The trigger can be anywhere within a message.
+     * Cannot be part of or inside another word.
+     *
      * @param string $trigger
      * @param string $message
      * @param bool $caseless
@@ -129,6 +139,9 @@ class BotService
     }
 
     /**
+     * The trigger can be anywhere within a message,
+     * including inside another word.
+     *
      * @param string $trigger
      * @param string $message
      * @param bool $caseless
@@ -143,6 +156,9 @@ class BotService
     }
 
     /**
+     * The trigger must be the lead phrase within the message.
+     * Cannot be part of or inside another word.
+     *
      * @param string $trigger
      * @param string $message
      * @param bool $caseless
@@ -168,7 +184,9 @@ class BotService
     }
 
     /**
-     * Check if we should execute the action. Set the cooldown if we do execute.
+     * Check if we should execute the actions handler. When executing,
+     * set the proper data into the handler, and start the actions
+     * cooldown, if any.
      *
      * @param BotAction $action
      * @param Message $message
@@ -196,9 +214,9 @@ class BotService
     }
 
     /**
-     * Check the handler class exists and implements our interface. It must also
-     * not have an active cooldown. If the action has the admin_only flag, check
-     * the message owner is a thread admin.
+     * Check the actions handler is valid and that the action has no
+     * active cooldowns. If the action has the admin_only flag,
+     * the group admin flag must also be true.
      *
      * @param BotAction $action
      * @param bool $isGroupAdmin

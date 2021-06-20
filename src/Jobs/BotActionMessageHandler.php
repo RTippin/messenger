@@ -8,7 +8,6 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use RTippin\Messenger\Events\NewMessageEvent;
-use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Services\BotService;
 
 class BotActionMessageHandler implements ShouldQueue
@@ -36,7 +35,6 @@ class BotActionMessageHandler implements ShouldQueue
      *
      * @param BotService $service
      * @return void
-     * @throws BotException
      */
     public function handle(BotService $service): void
     {
