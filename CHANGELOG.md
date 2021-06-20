@@ -3,6 +3,31 @@
 
 ---
 
+### [v0.35 (06-20-2021)]
+
+#### Added
+- Group thread bots feature!
+- `Bot` and `BotAction` models.
+- `bots` config array
+- `default_bot_avatar` to files config array.
+- Migrations for `bots` and `bot_actions`.
+- `MessengerBots` facade.
+- Default bot avatar in published images.
+
+#### Changed
+- Thread activeCall relationship to using proper `ofMany` query.
+- `messenger:providers:cache` command caches the merged bot provider.
+- Switched injecting cache manager and config repository to using facade/helpers.
+- See above for `messenger.php` config changes.
+- upgraded UI packages.
+- `SystemFeaturesResource` implementation changed to using a direct call to the messenger service class.
+- When saving a group threads settings or updating a participants permissions, feature disabled values will be ignored.
+
+#### Removed
+- `SystemFeaturesResource` json resource.
+
+---
+
 ### [v0.34 (06-03-2021)]
 
 #### Added

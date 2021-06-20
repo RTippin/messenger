@@ -289,8 +289,8 @@ return [
     |--------------------------------------------------------------------------
     |
     | Enable or disable the bots feature. When enabled, bots may be created
-    | within group threads. Bot may contain many actions and triggers to
-    | respond to messages or events.
+    | within group threads. A bot may contain many actions with triggers
+    | that will respond to a message.
     |
     | We provide an event subscriber to listen and react to events that may
     | trigger a bot response. You may choose to enable it, whether it puts
