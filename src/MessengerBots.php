@@ -303,7 +303,11 @@ final class MessengerBots
      */
     private function validateHandlerSettings(array $data): array
     {
-        return Validator::make($data, $this->generateRules())->validate();
+        return Validator::make(
+            $data,
+            $this->generateRules(),
+            $this->generateErrorMessages()
+        )->validate();
     }
 
     /**
@@ -342,6 +346,19 @@ final class MessengerBots
         }
 
         return $mergedRuleset;
+    }
+
+    /**
+     * Merge our error messages with any custom messages defined on the handler.
+     *
+     * @return array
+     */
+    private function generateErrorMessages(): array
+    {
+        return array_merge(
+            $this->baseErrorMessages(),
+            $this->getActiveHandler()->errorMessages()
+        );
     }
 
     /**
@@ -422,6 +439,19 @@ final class MessengerBots
             'enabled' => ['required', 'boolean'],
             'triggers' => ['required', 'array', 'min:1'],
             'triggers.*' => ['required', 'string'],
+        ];
+    }
+
+    /**
+     * The default error messages should validation fail.
+     *
+     * @return array
+     */
+    private function baseErrorMessages(): array
+    {
+        return [
+            'triggers.*.required' => 'Trigger field is required.',
+            'triggers.*.string' => 'A trigger must be a string.',
         ];
     }
 

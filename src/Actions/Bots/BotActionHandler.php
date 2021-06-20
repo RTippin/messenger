@@ -51,6 +51,14 @@ abstract class BotActionHandler implements ActionHandler
     /**
      * @inheritDoc
      */
+    public function errorMessages(): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function authorize(): bool
     {
         return true;

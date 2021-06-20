@@ -99,9 +99,18 @@ interface ActionHandler
     public function rules(): array;
 
     /**
+     * If you define extra validation rules, you may also define the validator
+     * error messages here.
+     *
+     * @return array
+     */
+    public function errorMessages(): array;
+
+    /**
      * Authorize the end user add the action handler to a bot. If unauthorized, it will
      * also hide the handler from appearing in the available handlers list when
      * choosing one to add to a bot. Return true if no authorization is needed.
+     * This does NOT authorize being triggered once added to a bot action.
      *
      * @return bool
      */
