@@ -2,9 +2,7 @@
 
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\ImageRenderService;
@@ -13,8 +11,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class RenderBotAvatar
 {
-    use AuthorizesRequests;
-
     /**
      * Render group avatar.
      *
@@ -24,7 +20,7 @@ class RenderBotAvatar
      * @param string $size
      * @param string $image
      * @return StreamedResponse|BinaryFileResponse
-     * @throws FileNotFoundException|AuthorizationException
+     * @throws FileNotFoundException
      */
     public function __invoke(ImageRenderService $service,
                              Thread $thread,
@@ -32,11 +28,6 @@ class RenderBotAvatar
                              string $size,
                              string $image)
     {
-        $this->authorize('view', [
-            Bot::class,
-            $thread,
-        ]);
-
         return $service->renderBotAvatar($bot, $size, $image);
     }
 }
