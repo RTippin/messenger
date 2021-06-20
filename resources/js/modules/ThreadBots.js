@@ -4,9 +4,11 @@ window.ThreadBots = (function () {
         thread : null,
         bots_table : null,
         current_bot : null,
+        current_bot_action_container : null,
         avatar_input : null,
         handlers : null,
         current_handler : null,
+        current_action : null,
     },
     mounted = {
         Initialize : function () {
@@ -22,7 +24,6 @@ window.ThreadBots = (function () {
                 opt.thread = ThreadManager.state()._thread;
                 return true;
             }
-
             return false;
         },
         loadDataTable : function(elm, term){
@@ -105,6 +106,7 @@ window.ThreadBots = (function () {
                             body : templates.view_bot(bot),
                             title : bot.name
                         });
+                        opt.current_bot_action_container = $("#bot_actions_container");
                         if (bot.hasOwnProperty('actions')) {
                             setTimeout(function(){
                                 methods.loadDataTable($("#view_bots_actions_table"), 'actions')
@@ -146,7 +148,8 @@ window.ThreadBots = (function () {
                 Messenger.xhr().request({
                     route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots/'+id,
                     success : fill,
-                    fail_alert : true
+                    fail_alert : true,
+                    fail_keep_open : true,
                 })
             };
             Messenger.alert().Modal({
@@ -158,6 +161,7 @@ window.ThreadBots = (function () {
                 unlock_buttons : false,
                 h4 : false,
                 size : 'md',
+                overflow : true,
                 onReady : gather,
                 cb_btn_txt : 'Save Bot',
                 cb_btn_icon : 'robot',
@@ -167,15 +171,60 @@ window.ThreadBots = (function () {
                 }
             });
         },
+        editAction : function(id){
+            if (!methods.setThread() || !opt.current_bot) return;
+            if(!opt.current_bot.hasOwnProperty('actions') || !opt.current_bot.actions.length){
+                methods.reloadBotActions();
+            }
+            for(let i = 0; i < opt.current_bot.actions.length; i++) {
+                if (opt.current_bot.actions[i].id === id) {
+                    opt.current_action = opt.current_bot.actions[i];
+                    return methods.generateEditActionForm();
+                }
+            }
+            methods.reloadBotActions();
+        },
+        updateAction : function(){
+            if (!methods.setThread() || !opt.current_bot || !opt.current_action) return;
+            Messenger.button().addLoader({id : '#save_bot_action_btn'});
+            Messenger.xhr().payload({
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots/'+opt.current_bot.id+'/actions/'+opt.current_action.id,
+                data : methods.makeHandlerFormData(opt.current_action.handler),
+                success : methods.reloadBotActions,
+                fail_alert : true,
+                fail_keep_open : true,
+            }, 'put');
+        },
+        generateEditActionForm : function(){
+            let extra = '';
+            switch(opt.current_action.handler.alias){
+                case 'react':
+                    extra = handlers.reaction(opt.current_action.payload.reaction);
+                break;
+                case 'reply':
+                    extra = handlers.replies(opt.current_action.payload);
+                break;
+            }
+            opt.current_bot_action_container.html(
+                handlers.start(opt.current_action.handler, true) +
+                handlers.base(opt.current_action) +
+                handlers.triggers(opt.current_action.triggers, opt.current_action.handler.triggers) +
+                handlers.match(opt.current_action.match, opt.current_action.handler.match) +
+                extra +
+                handlers.end(true)
+            );
+            $(".m_setting_toggle").change(function(){
+                $(this).is(':checked') ? $(this).closest('tr').addClass('alert-success') : $(this).closest('tr').removeClass('alert-success')
+            })
+        },
         viewAvailableHandlers : function(){
             if (!methods.setThread() || !opt.current_bot) return;
-            let container = $("#bot_actions_container");
-            container.html(Messenger.alert().loader(true));
+            opt.current_bot_action_container.html(Messenger.alert().loader(true));
             Messenger.xhr().request({
                 route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots/'+opt.current_bot.id+'/add-handlers',
                 success : function(handlers){
                     opt.handlers = handlers;
-                    container.html(templates.view_handlers(handlers));
+                    opt.current_bot_action_container.html(templates.view_handlers(handlers));
                     methods.loadDataTable($("#view_handlers_table"), 'actions')
                 },
                 fail_alert : true
@@ -200,16 +249,25 @@ window.ThreadBots = (function () {
                     return methods.generateCreateActionForm();
                 }
             }
-            console.log('error');
+            methods.reloadBotActions();
         },
         generateCreateActionForm : function(){
-            let container = $("#bot_actions_container");
-            container.html(
+            let extra = '';
+            switch(opt.current_handler.alias){
+                case 'react':
+                    extra = handlers.reaction();
+                break;
+                case 'reply':
+                    extra = handlers.replies();
+                break;
+            }
+            opt.current_bot_action_container.html(
                 handlers.start(opt.current_handler, false) +
                 handlers.base() +
                 handlers.triggers(null, opt.current_handler.triggers) +
                 handlers.match(null, opt.current_handler.match) +
-                handlers.end()
+                extra +
+                handlers.end(false)
             );
             $(".m_setting_toggle").change(function(){
                 $(this).is(':checked') ? $(this).closest('tr').addClass('alert-success') : $(this).closest('tr').removeClass('alert-success')
@@ -220,35 +278,53 @@ window.ThreadBots = (function () {
             Messenger.button().addLoader({id : '#save_bot_action_btn'});
             Messenger.xhr().payload({
                 route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots/'+opt.current_bot.id+'/actions',
-                data : methods.makeHandlerFormData(),
+                data : methods.makeHandlerFormData(opt.current_handler),
                 success : methods.reloadBotActions,
                 fail_alert : true,
+                fail_keep_open : true,
             });
         },
         reloadBotActions : function(){
             if (!methods.setThread() || !opt.current_bot) return;
-            let container = $("#bot_actions_container");
-            container.html(Messenger.alert().loader(true));
+            opt.current_bot_action_container.html(Messenger.alert().loader(true));
             Messenger.xhr().request({
                 route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots/'+opt.current_bot.id+'/actions',
                 success : function(actions){
-                    container.html(templates.bot_actions_table(actions));
+                    opt.current_bot.actions = actions;
+                    opt.current_bot_action_container.html(templates.bot_actions_table(actions));
                     methods.loadDataTable($("#view_bots_actions_table"), 'actions')
                 },
                 fail_alert : true
             })
         },
-        makeHandlerFormData : function(){
+        makeHandlerFormData : function(handler){
             let form = {};
-            form.handler = opt.current_handler.alias;
+            form.handler = handler.alias;
             form.cooldown = $("#g_s_bot_cooldown").val();
             form.enabled = $("#g_s_action_enabled").is(":checked");
             form.admin_only = $("#g_s_admin_only_action").is(":checked");
-            if(!opt.current_handler.triggers){
+            if(!handler.triggers){
                 form.triggers = [$("#g_s_action_triggers").val()];
             }
-            if(!opt.current_handler.match){
+            if(!handler.match){
                 form.match = $("#g_s_action_match").val();
+            }
+            if(handler.alias === 'react'){
+                form.reaction = $("#g_s_bot_reaction").val();
+            }
+            if(handler.alias === 'reply'){
+                form.quote_original = $("#g_s_quote_original").is(":checked");
+                form.replies = [];
+                let replies = [
+                    $("#g_s_reply_1").val(),
+                    $("#g_s_reply_2").val(),
+                    $("#g_s_reply_3").val(),
+                    $("#g_s_reply_4").val(),
+                    $("#g_s_reply_5").val()
+                ];
+                replies.forEach((reply) => {
+                    if(reply.trim().length) form.replies.push(reply)
+                });
             }
             return form;
         },
@@ -277,6 +353,16 @@ window.ThreadBots = (function () {
                 fail_alert : true
             })
         },
+        removeAction : function(id){
+            if(!methods.setThread() || !opt.current_bot) return;
+            opt.current_bot_action_container.html(Messenger.alert().loader(true));
+            Messenger.xhr().payload({
+                route : Messenger.common().API + 'threads/' + opt.thread.id + '/bots/'+opt.current_bot.id+'/actions/'+id,
+                data : {},
+                success : methods.reloadBotActions,
+                fail_alert : true
+            }, 'delete');
+        },
         deleteBot : function(){
             if(!methods.setThread() || !opt.current_bot) return;
             Messenger.xhr().payload({
@@ -300,6 +386,7 @@ window.ThreadBots = (function () {
                     methods.viewBot(bot.id)
                 },
                 fail_alert : true,
+                fail_keep_open : true,
             });
         },
         updateBot : function(id){
@@ -316,6 +403,7 @@ window.ThreadBots = (function () {
                     methods.viewBot(data.id)
                 },
                 fail_alert : true,
+                fail_keep_open : true,
             }, 'put');
         },
         uploadAvatar : function () {
@@ -368,7 +456,7 @@ window.ThreadBots = (function () {
             let bot_fill = (bot) => {
                 let online = bot.enabled ? (bot.on_cooldown ? 'away' : 'online') : 'offline',
                     manage = '<a class="dropdown-item" onclick="ThreadBots.editBot(\''+bot.id+'\'); return false;" href="#" title="Edit"><i class="fas fa-edit"></i> Edit</a>' +
-                        '<a class="dropdown-item" onclick="ThreadBots.removeBot(\''+bot.id+'\'); return false;" href="#" title="Remove"><i class="fas fa-trash-alt"></i> Remove</a>';
+                        '<a class="dropdown-item" onclick="ThreadBots.removeBot(\''+bot.id+'\'); return false;" href="#" title="Remove"><i class="fas fa-trash-alt"></i> Delete</a>';
                 return '<tr id="row_'+bot.id+'">\n' +
                     '     <td class="pointer_area" onclick="ThreadBots.viewBot(\''+bot.id+'\')">\n' +
                     '      <div class="table_links">\n' +
@@ -390,10 +478,11 @@ window.ThreadBots = (function () {
                     '  <div class="dropdown float-right">\n' +
                     '    <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="fas fa-cog"></i></button>\n' +
                     '    <div class="dropdown-menu dropdown-menu-right">\n' +
-                    '       <a class="dropdown-item" onclick="ThreadBots.viewBot(\''+bot.id+'\'); return false;" href="#" title="View"><i class="fas fa-robot"></i> '+(opt.thread.options.manage_bots ? 'Manage' : 'View')+'</a>' +
+                    '       <a class="dropdown-item" onclick="ThreadBots.viewBot(\''+bot.id+'\'); return false;" href="#" title="View"><i class="fas fa-robot"></i> '+(opt.thread.options.manage_bots ? 'Manage Actions' : 'View Actions')+'</a>' +
                             (opt.thread.options.manage_bots ? manage : '') +
                     ' </span>\n' +
-                    ' </div></div></td>\n' +
+                    ' </div></div>' +
+                    '</td>\n' +
                     '</tr>'
             };
             if(bots && bots.length){
@@ -506,6 +595,13 @@ window.ThreadBots = (function () {
                 '        </table>\n' +
                 '    </div>\n' +
                 '    <hr>\n' +
+                '    <div class="form-group mb-0 py-2 alert-dark shadow rounded">\n' +
+                '    <div class="col-12">' +
+                '        <img alt="Avatar" height="62" width="62" class="mr-3 rounded avatar-is-offline" src="'+bot.avatar.sm+'"/>' +
+                '        <button onclick="$(\'#bot_avatar_upload\').click()" type="button" class="btn btn-sm btn-success mr-3"><i class="fas fa-image"></i> Upload Avatar</button>' +
+                '        <button onclick="ThreadBots.removeAvatar()" type="button" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Remove Avatar</button>' +
+                '    </div></div>\n' +
+                '    <hr>\n' +
                 '    <div class="text-center form-group mb-0 py-2 alert-danger shadow rounded">\n' +
                 '        <div class="mb-1 font-weight-bold">You will be asked to confirm this action</div>\n' +
                 '        <button onclick="ThreadBots.removeBot(\''+bot.id+'\')" type="button" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i> Remove Bot</button>\n' +
@@ -516,16 +612,16 @@ window.ThreadBots = (function () {
             let online = bot.enabled ? (bot.on_cooldown ? 'away' : 'online') : 'offline',
                 actions = '<div class="col-12 mt-5 text-center h2"><span class="badge badge-light"><i class="fas fa-eye-slash"></i> Actions are hidden</span></div>',
                 editable = '<hr class="mt-2"><div class="row"><div class="col-12 text-center">' +
-                    '<button onclick="ThreadBots.editBot(\''+bot.id+'\')" type="button" class="btn btn-sm btn-outline-success mr-3 mb-2">Edit <i class="fas fa-edit"></i></button>' +
+                    '<button onclick="ThreadBots.editBot(\''+bot.id+'\')" type="button" class="btn btn-sm btn-outline-success mr-3 mb-2">Edit Bot <i class="fas fa-edit"></i></button>' +
                     '<button onclick="ThreadBots.viewAvailableHandlers()" type="button" class="btn btn-sm btn-outline-success mr-3 mb-2">Add Actions <i class="fas fa-server"></i></button>' +
                     '<button class="btn btn-sm btn-outline-success dropdown-toggle mr-3 mb-2" type="button" id="botAvatarDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">\n' +
-                    '  Avatar <i class="fas fa-image"></i>' +
+                    '  Bot Avatar <i class="fas fa-image"></i>' +
                     '</button>\n' +
                     '  <div class="dropdown-menu" aria-labelledby="botAvatarDropdown">\n' +
                     '    <a onclick="$(\'#bot_avatar_upload\').click(); return false;" class="dropdown-item" href="#"><i class="fas fa-image"></i> Upload Avatar</a>\n' +
                     '    <a onclick="ThreadBots.removeAvatar(); return false;" class="dropdown-item" href="#"><i class="fas fa-trash"></i> Remove Avatar</a>\n' +
                     '  </div>\n' +
-                    '<button onclick="ThreadBots.removeBot(\''+bot.id+'\')" type="button" class="btn btn-sm btn-outline-danger mr-3 mb-2">Remove <i class="fas fa-trash-alt"></i></button>' +
+                    '<button onclick="ThreadBots.removeBot(\''+bot.id+'\')" type="button" class="btn btn-sm btn-outline-danger mr-3 mb-2">Delete Bot <i class="fas fa-trash-alt"></i></button>' +
                     '</div></div><hr>';
             if (bot.hasOwnProperty('actions')) {
                 actions = templates.bot_actions_table(bot.actions);
@@ -554,28 +650,38 @@ window.ThreadBots = (function () {
                 '                <thead>\n' +
                 '                <tr>\n' +
                 '                    <th>Name</th>\n' +
-                '                    <th>Description</th>\n' +
                 '                    <th>Enabled</th>\n' +
-                '                    <th>On Cooldown</th>\n' +
-                '                    <th>Cooldown</th>\n' +
-                '                    <th>Admin Only</th>\n' +
+                '                    <th>Description</th>\n' +
                 '                    <th>Triggers</th>\n' +
                 '                    <th>Match</th>\n' +
                 '                    <th>Payload</th>\n' +
+                '                    <th>On Cooldown</th>\n' +
+                '                    <th>Cooldown</th>\n' +
+                '                    <th>Admin Only</th>\n' +
+                                    (opt.thread.options.manage_bots ? ' <th>Options</th>' : '') +
                 '                </tr>\n' +
                 '                </thead>\n' +
                 '                <tbody>',
                 table_bot = '</tbody></table></div></div></div>',
                 table_fill = '';
             let action_fill = (action) => {
-                let triggers = '';
+                let triggers = '',
+                    options = '<td><div class="dropdown float-right">' +
+                        '<button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-toggle="dropdown"><i class="fas fa-cog"></i></button>' +
+                        '    <div class="dropdown-menu dropdown-menu-right">' +
+                        '       <a class="dropdown-item" onclick="ThreadBots.editAction(\''+action.id+'\'); return false;" href="#" title="Edit"><i class="fas fa-edit"></i> Edit</a>' +
+                        '       <a class="dropdown-item" onclick="ThreadBots.removeAction(\''+action.id+'\'); return false;" href="#" title="Delete"><i class="fas fa-trash-alt"></i> Delete</a>' +
+                        '</span></div></div></td>';
                 action.triggers.forEach((trigger) => triggers += '<span class="badge badge-light mr-1">'+trigger+'</span>');
                 return '<tr id="row_'+action.id+'">\n' +
                     '  <td class="h5 nowrap">'+action.handler.name+'</td>'+
-                    '  <td class="h6">'+action.handler.description+'</td>'+
                     '  <td class="h5">\n' +
                           (action.enabled ? '<span class="badge badge-success"><i class="fas fa-check"></i></span>' : '<span class="badge badge-danger"><i class="fas fa-times"></i></span>') +
                     '  </td>\n' +
+                    '  <td class="h6">'+action.handler.description+'</td>'+
+                    '  <td class="h5">'+triggers+'</td>'+
+                    '  <td class="h5"><span class="badge badge-primary">'+action.match+'</span></td>'+
+                    '  <td class="h5 nowrap action-payload">'+templates.handler_payload(action)+'</td>'+
                     '  <td class="h5">\n' +
                            (action.on_cooldown ? '<span class="badge badge-danger"><i class="fas fa-hourglass-half"></i> Yes</span>' : '<span class="badge badge-success"><i class="fas fa-check"></i> No</span>') +
                     '  </td>\n' +
@@ -583,9 +689,7 @@ window.ThreadBots = (function () {
                     '  <td class="h5">\n' +
                            (action.admin_only ? '<span class="badge badge-success"><i class="fas fa-check"></i></span>' : '<span class="badge badge-danger"><i class="fas fa-times"></i></span>') +
                     '  </td>\n' +
-                    '  <td class="h5">'+triggers+'</td>'+
-                    '  <td class="h5"><span class="badge badge-primary">'+action.match+'</span></td>'+
-                    '  <td class="h5 nowrap action-payload">'+templates.handler_payload(action)+'</td>'+
+                    (opt.thread.options.manage_bots ? options : '') +
                     '</tr>'
             };
             if(actions && actions.length){
@@ -599,7 +703,7 @@ window.ThreadBots = (function () {
                     return Messenger.format().shortcodeToImage(action.payload.reaction);
                 case 'reply':
                     let replies = '<ul class="p-0 my-0 mr-0 ml-1">';
-                    action.payload.replies.forEach((reply) => replies += '<li>'+reply+'</li>');
+                    action.payload.replies.forEach((reply) => replies += '<li>'+Messenger.format().shortcodeToImage(reply)+'</li>');
                     return replies + '</ul>';
             }
             return 'N/A';
@@ -660,25 +764,36 @@ window.ThreadBots = (function () {
     handlers = {
         start : function(handler, edit){
             return '<div class="col-12 my-3 text-center h2"><span class="badge badge-light"><i class="fas fa-edit"></i> '+(edit ? 'Editing' : 'Creating')+' '+handler.name+':</span></div>' +
-                '<div class="col-12 text-center h3 mb-4"><i class="fas fa-info-circle"></i> '+handler.description+'</div> ' +
+                '<div class="col-12 col-md-6 offset-md-3 text-center h3 mb-4"><i class="fas fa-info-circle"></i> '+handler.description+'</div> ' +
                 '<div class="col-12 col-md-6 offset-md-3">' +
                 '<form id="bot_action_form" action="">';
         },
         end : function(edit){
+            let delete_btn = '';
+            if(edit){
+                delete_btn = '<button onclick="ThreadBots.removeAction(\''+opt.current_action.id+'\')" type="button" class="btn btn-lg btn-danger mr-3">Delete <i class="fas fa-trash-alt"></i></button>';
+            }
             return '</form></div>' +
                 '<hr><div class="col-12 text-center">' +
                 '<button onclick="ThreadBots.reloadBotActions()" type="button" class="btn btn-lg btn-info mr-3">Cancel <i class="fas fa-undo"></i></button>' +
-                '<button id="save_bot_action_btn" onclick="ThreadBots.storeAction()" type="button" class="btn btn-lg btn-success">Save <i class="fas fa-save"></i></button>' +
+                delete_btn +
+                '<button id="save_bot_action_btn" onclick="'+(edit ? 'ThreadBots.updateAction()' : 'ThreadBots.storeAction()')+'" type="button" class="btn btn-lg btn-success">'+(edit ? 'Update' : 'Save')+' <i class="fas fa-save"></i></button>' +
                 '</div>';
         },
         base : function(values){
+            let cooldown = 15, enabled = true, admin_only = false;
+            if(values){
+                cooldown = values.cooldown;
+                enabled = values.enabled;
+                admin_only = values.admin_only;
+            }
             return '<div class="form-row mx-n2 rounded bg-light text-dark pt-2 pb-3 px-2 shadow-sm">\n' +
-                '    <h5 class="font-weight-bold">Cooldown [in seconds]:</h5>' +
+                '    <div class="col-12"><h5 class="font-weight-bold">Cooldown [in seconds]:</h5></div>' +
                 '    <div class="input-group input-group-lg col-12 mb-0">\n' +
                 '        <div class="input-group-prepend">\n' +
                 '            <span class="input-group-text"><i class="fas fa-clock"></i></span>\n' +
                 '         </div>\n' +
-                '         <input type="number" autocomplete="off" min="0" max="900" class="form-control font-weight-bold shadow-sm" id="g_s_bot_cooldown" placeholder="Bot Cooldown" name="bot-cooldown-'+Date.now()+'" required value="15">' +
+                '         <input type="number" autocomplete="off" min="0" max="900" class="form-control font-weight-bold shadow-sm" id="g_s_bot_cooldown" placeholder="Bot Cooldown" name="bot-cooldown-'+Date.now()+'" required value="'+cooldown+'">' +
                 '     </div>\n' +
                 '</div>'+
                 '    <hr>\n' +
@@ -686,24 +801,24 @@ window.ThreadBots = (function () {
                 '        <label class="font-weight-bold h5 control-label" for="g_s_table">Action Toggles:</label>\n' +
                 '        <table id="g_s_table" class="table mb-0 table-sm table-hover">\n' +
                 '            <tbody>\n' +
-                '            <tr class="alert-success">\n' +
+                '            <tr class="'+(enabled ? 'alert-success' : '')+'">\n' +
                 '                <td class="pointer_area" onclick="$(\'#g_s_action_enabled\').click()">\n' +
                 '                    <div class="h4 mt-1"><i class="fas fa-caret-right"></i> <span class="h5">Enabled</span></div>\n' +
                 '                </td>\n' +
                 '                <td>\n' +
                 '                    <div class="mt-1 float-right"><span class="switch switch-sm mt-1">\n' +
-                '                        <input class="switch switch_input m_setting_toggle" id="g_s_action_enabled" name="g_s_action_enabled" type="checkbox" checked>\n' +
+                '                        <input class="switch switch_input m_setting_toggle" id="g_s_action_enabled" name="g_s_action_enabled" type="checkbox" '+(enabled ? 'checked' : '')+'>\n' +
                 '                        <label for="g_s_action_enabled"></label>\n' +
                 '                    </span></div>\n' +
                 '                </td>\n' +
                 '            </tr>\n' +
-                '            <tr>' +
+                '            <tr class="'+(admin_only ? 'alert-success' : '')+'">' +
                 '                <td class="pointer_area" onclick="$(\'#g_s_admin_only_action\').click()">\n' +
                 '                    <div class="h4 mt-1"><i class="fas fa-caret-right"></i> <span class="h5">Admin Only</span></div>\n' +
                 '                </td>\n' +
                 '                <td>\n' +
                 '                    <div class="mt-1 float-right"><span class="switch switch-sm mt-1">\n' +
-                '                        <input class="switch switch_input m_setting_toggle" id="g_s_admin_only_action" name="g_s_admin_only_action" type="checkbox">\n' +
+                '                        <input class="switch switch_input m_setting_toggle" id="g_s_admin_only_action" name="g_s_admin_only_action" type="checkbox" '+(admin_only ? 'alert-success' : '')+'>\n' +
                 '                        <label for="g_s_admin_only_action"></label>\n' +
                 '                    </span></div>\n' +
                 '                </td>\n' +
@@ -724,12 +839,12 @@ window.ThreadBots = (function () {
                 triggers = values.join('|');
             }
             return '<hr><div class="form-row mx-n2 rounded bg-light text-dark pt-2 pb-3 px-2 shadow-sm">\n' +
-                '    <h5 class="font-weight-bold">Triggers: '+text+'</h5>' +
+                '    <div class="col-12"><h5 class="font-weight-bold">Triggers: '+text+'</h5></div>' +
                 '    <div class="input-group input-group-lg col-12 mb-0">\n' +
                 '        <div class="input-group-prepend">\n' +
                 '            <span class="input-group-text"><i class="fas fa-laptop-code"></i></span>\n' +
                 '         </div>\n' +
-                '         <input '+(readonly ? 'readonly' : '')+' autocomplete="off" class="form-control font-weight-bold shadow-sm" id="g_s_action_triggers" placeholder="!command | hello | LOL" name="bot-triggers-'+Date.now()+'" required value="'+triggers+'">' +
+                '         <input '+(readonly ? 'readonly' : '')+' autocomplete="off" class="form-control font-weight-bold shadow-sm" id="g_s_action_triggers" placeholder="!command | hello | sentence as a trigger" name="bot-triggers-'+Date.now()+'" required value="'+triggers+'">' +
                 '     </div>\n' +
                 '</div>';
         },
@@ -744,7 +859,7 @@ window.ThreadBots = (function () {
                 match = value;
             }
             return '<hr><div class="form-row mx-n2 rounded bg-light text-dark pt-2 pb-3 px-2 shadow-sm">\n' +
-                '    <h5 class="font-weight-bold">Match Method: '+(readonly ? text : '')+'</h5>' +
+                '<div class="col-12"><h5 class="font-weight-bold">Match Method: '+(readonly ? text : '')+'</h5></div>' +
                 '<div class="col-12 mb-3"><div class="col-12 col-lg-8 offset-lg-2">' +
                 '<select id="g_s_action_match" class="custom-select custom-select-lg" '+(readonly ? 'disabled' : '')+'>\n' +
                 '  <option value="contains" '+(match === "contains" ? 'selected' : '')+'>contains</option>\n' +
@@ -770,6 +885,56 @@ window.ThreadBots = (function () {
                 '    </ul>' +
                 '</div></div>';
         },
+        reaction : function(reaction){
+            let value = '';
+            if(reaction){
+                value = Messenger.format().shortcodeToUnicode(reaction);
+            }
+            return '<hr><div class="form-row mx-n2 rounded bg-light text-dark pt-2 pb-3 px-2 shadow-sm">\n' +
+                '    <div class="col-12"><h5 class="font-weight-bold">Reaction: [emoji]</h5></div>' +
+                '    <div class="input-group input-group-lg col-12 col-lg-6 offset-lg-3 mb-0">\n' +
+                '         <input onclick="EmojiPicker.botActionReact()" readonly autocomplete="off" class="form-control font-weight-bold shadow-sm" id="g_s_bot_reaction" placeholder="Pick an emoji!" name="bot-reaction-'+Date.now()+'" required value="'+value+'">' +
+                '         <div class="input-group-append">\n' +
+                '           <button onclick="EmojiPicker.botActionReact()" class="btn btn-danger" type="button" id="bot_reaction_emoji_btn"><i class="fas fa-grin"></i></button>\n' +
+                '         </div>' +
+                '     </div>\n' +
+                '</div>';
+        },
+        replies : function(payload){
+            let quote = false, reply1 = '', reply2 = '', reply3 = '', reply4 = '', reply5 = '';
+            if(payload){
+                quote = payload.quote_original;
+                reply1 = payload.replies[0] ? Messenger.format().shortcodeToUnicode(payload.replies[0]) : '';
+                reply2 = payload.replies[1] ? Messenger.format().shortcodeToUnicode(payload.replies[1]) : '';
+                reply3 = payload.replies[2] ? Messenger.format().shortcodeToUnicode(payload.replies[2]) : '';
+                reply4 = payload.replies[3] ? Messenger.format().shortcodeToUnicode(payload.replies[3]) : '';
+                reply5 = payload.replies[4] ? Messenger.format().shortcodeToUnicode(payload.replies[4]) : '';
+            }
+            return '<hr><div class="form-row mx-n2 rounded bg-light text-dark pb-3 pt-2 px-2 shadow-sm">\n' +
+                '    <div class="col-12"><h5 class="font-weight-bold">Replies: [One required. Max of 5]</h5></div>' +
+                '        <label class="control-label" for="g_replies_table"> - Quote matching message? When enabled, the first reply will use the matching message within the reply.</label>' +
+                '        <table id="g_replies_table" class="table table-sm table-hover">\n' +
+                '            <tbody>\n' +
+                '            <tr class="'+(quote ? 'alert-success' : '')+'">\n' +
+                '                <td class="pointer_area" onclick="$(\'#g_s_quote_original\').click()">\n' +
+                '                    <div class="h4 mt-1"><i class="fas fa-caret-right"></i> <span class="h5">Quote matching message?</span></div>\n' +
+                '                </td>\n' +
+                '                <td>\n' +
+                '                    <div class="mt-1 float-right"><span class="switch switch-sm mt-1">\n' +
+                '                        <input class="switch switch_input m_setting_toggle" id="g_s_quote_original" name="g_s_quote_original" type="checkbox" '+(quote ? 'checked' : '')+'>\n' +
+                '                        <label for="g_s_quote_original"></label>\n' +
+                '                    </span></div>\n' +
+                '                </td>\n' +
+                '            </tr>\n' +
+                '            </tbody>\n' +
+                '        </table>\n' +
+                '<input autocomplete="off" class="form-control form-control-lg font-weight-bold shadow-sm my-2" id="g_s_reply_1" placeholder="First reply..." name="bot-reply-'+Date.now()+'" value="'+reply1+'">' +
+                '<input autocomplete="off" class="form-control form-control-lg font-weight-bold shadow-sm mb-2" id="g_s_reply_2" placeholder="Second reply..." name="bot-reply-'+Date.now()+'" value="'+reply2+'">' +
+                '<input autocomplete="off" class="form-control form-control-lg font-weight-bold shadow-sm mb-2" id="g_s_reply_3" placeholder="Third reply..." name="bot-reply-'+Date.now()+'" value="'+reply3+'">' +
+                '<input autocomplete="off" class="form-control form-control-lg font-weight-bold shadow-sm mb-2" id="g_s_reply_4" placeholder="Fourth reply..." name="bot-reply-'+Date.now()+'" value="'+reply4+'">' +
+                '<input autocomplete="off" class="form-control form-control-lg font-weight-bold shadow-sm" id="g_s_reply_5" placeholder="Fifth reply..." name="bot-reply-'+Date.now()+'" value="'+reply5+'">' +
+                '</div>';
+        }
     };
     return {
         init : mounted.Initialize,
@@ -783,6 +948,9 @@ window.ThreadBots = (function () {
         reloadBotActions : methods.reloadBotActions,
         createAction : methods.createAction,
         storeAction : methods.storeAction,
+        editAction : methods.editAction,
+        updateAction : methods.updateAction,
+        removeAction : methods.removeAction,
         state : function(){
             return opt;
         },

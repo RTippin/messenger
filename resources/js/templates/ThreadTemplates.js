@@ -618,8 +618,8 @@ window.ThreadTemplates = (function () {
                         templates.thread_resource_dropdown() +
                     (!data.locked && data.options.add_participants ? add_participants : '')+
                     view_participants +
-                    (!data.locked && data.options.chat_bots ? view_bots : '')+
                     (!data.locked && data.options.manage_bots ? add_bots : '')+
+                    (!data.locked && data.options.chat_bots ? view_bots : '')+
                     (!data.locked && data.options.invitations ? invites : '')+
                     (!data.locked && data.options.admin ? admin : '')+
                     '<div class="dropdown-divider"></div>' +

@@ -387,7 +387,7 @@ window.Messenger = (function () {
             };
             img.onerror = function() {
                 alerts.fillModal({
-                    body : '<div class="text-center"><img src="/images/image404.png" class="img-fluid rounded" /></div>'
+                    body : '<div class="text-center"><img src="/vendor/messenger/images/image404.png" class="img-fluid rounded" /></div>'
                 });
             };
             img.src = avatar;
@@ -548,7 +548,7 @@ window.Messenger = (function () {
             XHR[flavor](tea)
         },
         xhrError : function(arg){
-            $('body').find("input[type!='hidden'], textarea, select, .btn").prop('disabled', false);
+            $('body').find(".btn").prop('disabled', false);
             let errMessages = function(){
                 switch(Math.floor(Math.random() * Math.floor(3))){
                     case 0: return 'Your request has encountered an error. We have been made aware of this issue';

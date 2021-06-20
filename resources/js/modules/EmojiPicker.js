@@ -11,6 +11,9 @@ window.EmojiPicker = (function () {
             editPicker : null,
             editPickerBtn : null,
             editPickerTextEml : null,
+            botReactionPicker : null,
+            botReactionBtn : null,
+            botReactionElm : null,
     },
     mounted = {
         Initialize : function () {
@@ -27,6 +30,9 @@ window.EmojiPicker = (function () {
             }
             if(opt.editPicker !== null){
                 opt.editPicker.setTheme(dark ? 'dark' : 'light')
+            }
+            if(opt.botReactionPicker !== null){
+                opt.botReactionPicker.setTheme(dark ? 'dark' : 'light')
             }
         },
         addReaction : function(messageId){
@@ -74,6 +80,17 @@ window.EmojiPicker = (function () {
             opt.editPickerBtn = document.getElementById('edit_message_emoji_btn');
             opt.editPicker.showPicker(opt.editPickerBtn);
         },
+        botActionReact : function(){
+            if(opt.botReactionPicker === null){
+                opt.botReactionPicker = new EmojiButton({
+                    theme: Messenger.common().dark_mode ? 'dark' : 'light',
+                });
+                opt.botReactionPicker.on('emoji', methods.botReactSelection);
+            }
+            opt.botReactionElm = document.getElementById('g_s_bot_reaction');
+            opt.botReactionBtn = document.getElementById('bot_reaction_emoji_btn');
+            opt.botReactionPicker.showPicker(opt.botReactionBtn);
+        },
         sendReaction : function(selection){
             ThreadManager.addNewReaction({
                 message_id : opt.reactionMessageId,
@@ -96,6 +113,9 @@ window.EmojiPicker = (function () {
             let curPos = opt.editPickerTextEml.selectionStart;
             let curVal = opt.editPickerTextEml.value;
             opt.editPickerTextEml.value = curVal.slice(0,curPos)+selection.emoji+curVal.slice(curPos)
+        },
+        botReactSelection : function(selection){
+            opt.botReactionElm.value = selection.emoji;
         }
     };
     return {
@@ -103,6 +123,7 @@ window.EmojiPicker = (function () {
         addReaction : methods.addReaction,
         addMessage : methods.addMessage,
         editMessage : methods.editMessage,
+        botActionReact : methods.botActionReact,
         updateThemes : methods.updateThemes,
         lock : function(arg){
             if(typeof arg === 'boolean') opt.lock = arg
