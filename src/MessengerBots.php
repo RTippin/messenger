@@ -106,6 +106,7 @@ final class MessengerBots
             ->values()
             ->filter(fn ($settings) => $this->authorizesHandler($settings))
             ->map(fn ($settings) => $this->makeHandlerSettings($settings))
+            ->values()
             ->toArray();
     }
 
