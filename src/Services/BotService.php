@@ -48,6 +48,7 @@ class BotService
         $actions = BotAction::enabled()
             ->hasEnabledBotFromThread($thread->id)
             ->validHandler()
+            ->with('bot')
             ->get();
 
         foreach ($actions as $action) {
