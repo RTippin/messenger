@@ -234,7 +234,9 @@ class BotAction extends Model
      */
     public function startCooldown(): void
     {
-        Cache::put("bot:$this->bot_id:$this->id:cooldown", true, now()->addSeconds($this->cooldown));
+        if ($this->cooldown > 0) {
+            Cache::put("bot:$this->bot_id:$this->id:cooldown", true, now()->addSeconds($this->cooldown));
+        }
     }
 
     /**

@@ -2,8 +2,10 @@
 
 namespace RTippin\Messenger\Services;
 
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use RTippin\Messenger\MessengerBots;
+use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
@@ -22,7 +24,9 @@ class BotService
     /**
      * @var string
      */
-    private string $matchingTrigger;
+    private string $lastMatchingTrigger;
+
+    private Collection $botsTriggered;
 
     /**
      * BotService constructor.
@@ -30,6 +34,7 @@ class BotService
     public function __construct(MessengerBots $bots)
     {
         $this->bots = $bots;
+        $this->botsTriggered = new Collection([]);
     }
 
     /**
@@ -61,6 +66,8 @@ class BotService
                 );
             }
         }
+
+        $this->startTriggeredBotCooldowns();
     }
 
     /**
@@ -76,7 +83,7 @@ class BotService
     {
         foreach ($triggers as $trigger) {
             if ($this->doesMatch($matchMethod, $trigger, $message)) {
-                $this->matchingTrigger = $trigger;
+                $this->lastMatchingTrigger = $trigger;
 
                 return true;
             }
@@ -188,6 +195,7 @@ class BotService
      * Check if we should execute the actions handler. When executing,
      * set the proper data into the handler, and start the actions
      * cooldown, if any.
+     * TODO : Fire success and fail events.
      *
      * @param BotAction $action
      * @param Message $message
@@ -200,17 +208,20 @@ class BotService
                                     bool $isGroupAdmin): void
     {
         if ($this->shouldExecute($action, $isGroupAdmin)) {
+            $this->botActionStarting($action);
+
             try {
                 $this->bots
                     ->initializeHandler($action->handler)
                     ->setAction($action)
                     ->setThread($thread)
-                    ->setMessage($message, $this->matchingTrigger)
-                    ->startCooldown()
+                    ->setMessage($message, $this->lastMatchingTrigger)
                     ->handle();
             } catch (Throwable $e) {
                 report($e);
             }
+
+            $this->botActionEnding($action);
         }
     }
 
@@ -240,5 +251,41 @@ class BotService
         return $action->admin_only
             ? $isGroupAdmin
             : true;
+    }
+
+    /**
+     * Set the bot being triggered, and start the action cooldown.
+     *
+     * @param BotAction $action
+     */
+    private function botActionStarting(BotAction $action): void
+    {
+        $this->botsTriggered->push($action->bot);
+
+        $action->startCooldown();
+    }
+
+    /**
+     * After the action completes, check if the handler
+     * wants to release the cooldown.
+     *
+     * @param BotAction $action
+     */
+    private function botActionEnding(BotAction $action): void
+    {
+        if ($this->bots->getActiveHandler()->shouldReleaseCooldown()) {
+            $action->releaseCooldown();
+        }
+    }
+
+    /**
+     * One all matching actions have been handled, we set any
+     * bot cooldowns from used actions.
+     */
+    private function startTriggeredBotCooldowns(): void
+    {
+        $this->botsTriggered
+            ->unique('id')
+            ->each(fn (Bot $bot) => $bot->startCooldown());
     }
 }

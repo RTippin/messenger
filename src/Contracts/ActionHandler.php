@@ -74,20 +74,19 @@ interface ActionHandler
     public function setMessage(Message $message, string $matchingTrigger);
 
     /**
-     * Set the cooldown for the bot action before running. If the parent bot
-     * has a cooldown defined, set that as well.
+     * Should the handler not perform an action, you may call this to instruct
+     * the handler to remove any cooldowns set after handle() completes.
      *
-     * @return $this
      */
-    public function startCooldown();
+    public function releaseCooldown(): void;
 
     /**
-     * Should the handler not perform an action, you may call this to remove
-     * the cooldown set on the bot and the bot action.
+     * If releaseCooldown() was called, this should return true.
+     * When true, the action and bot cooldowns will be removed.
      *
-     * @return $this
+     * @return bool
      */
-    public function releaseCooldown();
+    public function shouldReleaseCooldown(): bool;
 
     /**
      * Return the validation rules used when adding the action to a bot. Any rules

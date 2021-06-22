@@ -31,6 +31,11 @@ abstract class BotActionHandler implements ActionHandler
     protected ?string $matchingTrigger = null;
 
     /**
+     * @var bool
+     */
+    protected bool $shouldReleaseCooldown = false;
+
+    /**
      * @inheritDoc
      */
     abstract public static function getSettings(): array;
@@ -119,28 +124,16 @@ abstract class BotActionHandler implements ActionHandler
     /**
      * @inheritDoc
      */
-    public function startCooldown(): self
+    public function releaseCooldown(): void
     {
-        if ($this->action->bot->cooldown > 0) {
-            $this->action->bot->startCooldown();
-        }
-
-        if ($this->action->cooldown > 0) {
-            $this->action->startCooldown();
-        }
-
-        return $this;
+        $this->shouldReleaseCooldown = true;
     }
 
     /**
      * @inheritDoc
      */
-    public function releaseCooldown(): self
+    public function shouldReleaseCooldown(): bool
     {
-        $this->action->bot->releaseCooldown();
-
-        $this->action->releaseCooldown();
-
-        return $this;
+        return $this->shouldReleaseCooldown;
     }
 }
