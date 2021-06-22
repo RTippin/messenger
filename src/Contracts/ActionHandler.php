@@ -76,7 +76,6 @@ interface ActionHandler
     /**
      * Should the handler not perform an action, you may call this to instruct
      * the handler to remove any cooldowns set after handle() completes.
-     *
      */
     public function releaseCooldown(): void;
 
