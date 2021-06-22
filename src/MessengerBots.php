@@ -82,8 +82,8 @@ final class MessengerBots
         if (is_null($handlerOrAlias)) {
             return $this->handlers
                 ->sortBy('name')
-                ->values()
                 ->map(fn ($settings) => $this->makeHandlerSettings($settings))
+                ->values()
                 ->toArray();
         }
 
@@ -103,7 +103,6 @@ final class MessengerBots
     {
         return $this->handlers
             ->sortBy('name')
-            ->values()
             ->filter(fn ($settings) => $this->authorizesHandler($settings))
             ->map(fn ($settings) => $this->makeHandlerSettings($settings))
             ->values()
