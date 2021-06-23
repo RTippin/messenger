@@ -8,6 +8,15 @@ use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 
+/**
+ * To authorize the end user add the action handler to a bot, you must define the
+ * 'authorize()' method and return bool. If unauthorized, it will also hide the
+ * handler from appearing in the available handlers list when adding actions to
+ * a bot. Return true if no authorization is needed. This does NOT authorize
+ * being triggered once added to a bot action.
+ *
+ * @method bool authorize()
+ */
 abstract class BotActionHandler implements ActionHandler
 {
     /**

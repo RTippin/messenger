@@ -37,7 +37,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read \RTippin\Messenger\Models\BotAction[]|Collection $actions
  * @mixin Model|\Eloquent
  * @property-read Model|MessengerProvider $owner
- * @method static Builder|BotAction hasActionWithHandler(string $handler)
  */
 class Bot extends Model implements MessengerProvider
 {
@@ -111,18 +110,6 @@ class Bot extends Model implements MessengerProvider
     {
         return $this->hasMany(BotAction::class)
             ->whereIn('handler', MessengerBots::getHandlerClasses());
-    }
-
-    /**
-     * Scope bots that have a specified handler.
-     *
-     * @param Builder $query
-     * @param string $handler
-     * @return Builder
-     */
-    public function scopeHasActionWithHandler(Builder $query, string $handler): Builder
-    {
-        return $query->whereHas('actions', fn (Builder $query) => $query->handler($handler));
     }
 
     /**

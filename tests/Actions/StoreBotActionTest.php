@@ -14,6 +14,7 @@ use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\Fixtures\FunBotHandler;
 use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;
 
 class StoreBotActionTest extends FeatureTestCase
@@ -39,22 +40,21 @@ class StoreBotActionTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_throws_exception_if_handler_unique_and_already_exists_in_thread()
+    public function it_throws_exception_if_handler_unique_and_already_exists_on_bot()
     {
+        MessengerBots::setHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create(['subject' => 'Test']);
-        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        BotAction::factory()->for(
-            Bot::factory()->for($thread)->owner($this->tippin)->create()
-        )->owner($this->tippin)->handler('ReplyBot')->create();
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create(['name' => 'Mr. Bot']);
+        BotAction::factory()->for($bot)->owner($this->tippin)->handler(FunBotHandler::class)->create();
 
         $this->expectException(BotException::class);
-        $this->expectExceptionMessage('You may only have one (Bot Name) in Test at a time.');
+        $this->expectExceptionMessage('You may only have one (Fun Bot) on Mr. Bot at a time.');
 
         app(StoreBotAction::class)->execute($thread, $bot, [
-            'handler' => 'ReplyBot',
+            'handler' => FunBotHandler::class,
             'unique' => true,
             'authorize' => false,
-            'name' => 'Bot Name',
+            'name' => 'Fun Bot',
             'match' => 'exact',
             'triggers' => 'test',
             'admin_only' => false,
@@ -91,11 +91,12 @@ class StoreBotActionTest extends FeatureTestCase
     /** @test */
     public function it_stores_bot_action()
     {
+        MessengerBots::setHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
 
         app(StoreBotAction::class)->execute($thread, $bot, [
-            'handler' => 'ReplyBot',
+            'handler' => FunBotHandler::class,
             'unique' => false,
             'authorize' => false,
             'name' => 'Bot Name',
@@ -111,7 +112,7 @@ class StoreBotActionTest extends FeatureTestCase
             'bot_id' => $bot->id,
             'owner_id' => $this->tippin->getKey(),
             'owner_type' => $this->tippin->getMorphClass(),
-            'handler' => 'ReplyBot',
+            'handler' => FunBotHandler::class,
             'match' => 'exact',
             'triggers' => 'test',
             'admin_only' => false,
@@ -124,14 +125,13 @@ class StoreBotActionTest extends FeatureTestCase
     /** @test */
     public function it_stores_reused_handler_when_not_unique()
     {
+        MessengerBots::setHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
-        BotAction::factory()->for(
-            Bot::factory()->for($thread)->owner($this->tippin)->create()
-        )->owner($this->tippin)->handler('ReplyBot')->create();
+        BotAction::factory()->for($bot)->owner($this->tippin)->handler(FunBotHandler::class)->create();
 
         app(StoreBotAction::class)->execute($thread, $bot, [
-            'handler' => 'ReplyBot',
+            'handler' => FunBotHandler::class,
             'unique' => false,
             'authorize' => false,
             'name' => 'Bot Name',
@@ -149,6 +149,7 @@ class StoreBotActionTest extends FeatureTestCase
     /** @test */
     public function it_fires_events()
     {
+        MessengerBots::setHandlers([FunBotHandler::class]);
         BaseMessengerAction::enableEvents();
         $thread = Thread::factory()->group()->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
@@ -157,7 +158,7 @@ class StoreBotActionTest extends FeatureTestCase
         ]);
 
         app(StoreBotAction::class)->execute($thread, $bot, [
-            'handler' => 'ReplyBot',
+            'handler' => FunBotHandler::class,
             'unique' => false,
             'authorize' => false,
             'name' => 'Bot Name',

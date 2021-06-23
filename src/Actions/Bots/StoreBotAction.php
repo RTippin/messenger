@@ -76,8 +76,8 @@ class StoreBotAction extends BaseMessengerAction
             throw new FeatureDisabledException('Bots are currently disabled.');
         }
 
-        if ($params['unique'] && $this->botHandlerExists($params['handler'])) {
-            throw new BotException("You may only have one ({$params['name']}) in {$this->getThread()->name()} at a time.");
+        if ($params['unique'] && $this->botHasHandler($params['handler'])) {
+            throw new BotException("You may only have one ({$params['name']}) on {$this->getBot()->name} at a time.");
         }
 
         if ($params['authorize'] && ! $this->authorizeHandler($params['handler'])) {
@@ -99,11 +99,11 @@ class StoreBotAction extends BaseMessengerAction
      * @param string $handler
      * @return bool
      */
-    private function botHandlerExists(string $handler): bool
+    private function botHasHandler(string $handler): bool
     {
-        return $this->getThread()
-            ->bots()
-            ->hasActionWithHandler($handler)
+        return $this->getBot()
+            ->validActions()
+            ->handler($handler)
             ->exists();
     }
 
