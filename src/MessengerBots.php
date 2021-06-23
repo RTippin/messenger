@@ -82,7 +82,6 @@ final class MessengerBots
         if (is_null($handlerOrAlias)) {
             return $this->handlers
                 ->sortBy('name')
-                ->map(fn ($settings) => $this->makeHandlerSettings($settings))
                 ->values()
                 ->toArray();
         }
@@ -90,7 +89,7 @@ final class MessengerBots
         $handler = $this->findHandler($handlerOrAlias);
 
         return $handler
-            ? $this->makeHandlerSettings($this->handlers->get($handler))
+            ? $this->handlers->get($handler)
             : null;
     }
 
@@ -104,7 +103,6 @@ final class MessengerBots
         return $this->handlers
             ->sortBy('name')
             ->filter(fn ($settings) => $this->authorizesHandler($settings))
-            ->map(fn ($settings) => $this->makeHandlerSettings($settings))
             ->values()
             ->toArray();
     }
@@ -191,8 +189,7 @@ final class MessengerBots
                 throw new InvalidArgumentException("The given handler { $handler } must extend our base handler ".BotActionHandler::class);
             }
 
-            /** @var BotActionHandler $handler */
-            $this->handlers[$handler] = $handler::getSettings();
+            $this->handlers[$handler] = $this->makeHandlerSettings($handler);
         }
 
         return $this;
@@ -333,14 +330,14 @@ final class MessengerBots
     {
         $mergedRuleset = array_merge($this->baseRuleset(), $this->getActiveHandler()->rules());
 
-        $overrides = $this->getActiveHandler()::getSettings();
+        $overrides = $this->getHandlerSettings($this->activeHandlerClass);
 
-        if (array_key_exists('match', $overrides)) {
+        if (! is_null($overrides['match'])) {
             Arr::forget($mergedRuleset, 'match');
             $this->handlerOverrides['match'] = $overrides['match'];
         }
 
-        if (array_key_exists('triggers', $overrides)) {
+        if (! is_null($overrides['triggers'])) {
             Arr::forget($mergedRuleset, 'triggers');
             Arr::forget($mergedRuleset, 'triggers.*');
             $this->handlerOverrides['triggers'] = $this->formatTriggers($overrides['triggers']);
@@ -370,12 +367,12 @@ final class MessengerBots
      */
     private function generateHandlerData(array $data): array
     {
-        $settings = $this->getActiveHandler()::getSettings();
+        $settings = $this->getHandlerSettings($this->activeHandlerClass);
 
         return [
             'handler' => $this->activeHandlerClass,
-            'unique' => $settings['unique'] ?? false,
-            'authorize' => $settings['authorize'] ?? false,
+            'unique' => $settings['unique'],
+            'authorize' => $settings['authorize'],
             'name' => $settings['name'],
             'match' => $this->handlerOverrides['match'] ?? $data['match'],
             'triggers' => $this->handlerOverrides['triggers'] ?? $this->formatTriggers($data['triggers']),
@@ -476,11 +473,14 @@ final class MessengerBots
     /**
      * Generate the handler settings resource array.
      *
-     * @param array $settings
+     * @param string $handler
      * @return array
      */
-    private function makeHandlerSettings(array $settings): array
+    private function makeHandlerSettings(string $handler): array
     {
+        /** @var BotActionHandler $handler */
+        $settings = $handler::getSettings();
+
         if (array_key_exists('triggers', $settings)) {
             $settings['triggers'] = explode('|', $this->formatTriggers($settings['triggers']));
         }
@@ -490,7 +490,7 @@ final class MessengerBots
             'description' => $settings['description'],
             'name' => $settings['name'],
             'unique' => $settings['unique'] ?? false,
-            'authorize' => $settings['authorize'] ?? false,
+            'authorize' => method_exists($handler, 'authorize'),
             'triggers' => $settings['triggers'] ?? null,
             'match' => $settings['match'] ?? null,
         ];

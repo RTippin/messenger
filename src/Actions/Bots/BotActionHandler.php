@@ -64,14 +64,6 @@ abstract class BotActionHandler implements ActionHandler
     /**
      * @inheritDoc
      */
-    public function authorize(): bool
-    {
-        return true;
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function serializePayload(?array $payload): ?string
     {
         return is_null($payload)

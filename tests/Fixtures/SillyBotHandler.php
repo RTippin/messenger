@@ -13,18 +13,12 @@ class SillyBotHandler extends BotActionHandler
             'description' => 'This is a silly bot.',
             'name' => 'Silly Bot',
             'unique' => true,
-            'authorize' => true,
         ];
     }
 
     public function handle(): void
     {
         //
-    }
-
-    public function rules(): array
-    {
-        return [];
     }
 
     public function authorize(): bool

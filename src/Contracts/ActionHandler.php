@@ -6,6 +6,13 @@ use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 
+/**
+ * To authorize the end user add the action handler to a bot, you must define the
+ * 'authorize()' method and return bool. If unauthorized, it will also hide the
+ * handler from appearing in the available handlers list when adding actions to
+ * a bot. Return true if no authorization is needed. This does NOT authorize
+ * being triggered once added to a bot action.
+ */
 interface ActionHandler
 {
     /**
@@ -15,8 +22,7 @@ interface ActionHandler
      * - 'description' displayed to the frontend.
      * - 'name' displayed to the frontend.
      * OVERRIDES
-     * 'unique' When set and true, the handler may only be used once on any bots within a thread.
-     * 'authorize' When set and true, the handler needs to pass the authorize method to be viewed
+     * 'unique' When set and true, the handler may only be used once per bot.
      * in the list of available handlers, as well as to be added to a bot.
      * 'triggers' overrides allowing end user to set the triggers. Only the given
      * trigger(s) will be used. Separate multiple via the pipe (|) or use an array.
@@ -31,7 +37,6 @@ interface ActionHandler
      *     'description' => 'Bot description.',
      *     'name' => 'Bot Name',
      *     'unique' => true, //optional
-     *     'authorize' => true, //optional
      *     'triggers' => '!h|!help', //optional
      *     'match' => 'exact' //optional
      * ];
@@ -103,16 +108,6 @@ interface ActionHandler
      * @return array
      */
     public function errorMessages(): array;
-
-    /**
-     * Authorize the end user add the action handler to a bot. If unauthorized, it will
-     * also hide the handler from appearing in the available handlers list when
-     * choosing one to add to a bot. Return true if no authorization is needed.
-     * This does NOT authorize being triggered once added to a bot action.
-     *
-     * @return bool
-     */
-    public function authorize(): bool;
 
     /**
      * If storing payload data, return the json encoded string.

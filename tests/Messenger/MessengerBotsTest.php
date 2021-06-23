@@ -474,6 +474,7 @@ class MessengerBotsTest extends MessengerTestCase
             'enabled' => true,
             'payload' => '{"test":["test"]}',
         ];
+
         $results = $this->bots->resolveHandlerData([
             'handler' => 'fun_bot',
             'match' => 'contains',
