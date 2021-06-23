@@ -1,3 +1,4 @@
+/.github export-ignore
 .gitattributes     export-ignore
 .gitignore         export-ignore
 phpunit.xml        export-ignore
@@ -5,5 +6,5 @@ phpunit.xml        export-ignore
 /docs              export-ignore
 .editorconfig      export-ignore
 .styleci.yml       export-ignore
-changelog.md       export-ignore
+CHANGELOG.md       export-ignore
 contributing.md    export-ignore

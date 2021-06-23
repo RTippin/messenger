@@ -2,6 +2,7 @@
 
 [![Latest Version on Packagist][ico-version]][link-packagist]
 [![Total Downloads][ico-downloads]][link-downloads]
+[![Tests][ico-test]][link-test]
 [![StyleCI][ico-styleci]][link-styleci]
 [![License][ico-license]][link-license]
 
@@ -899,13 +900,13 @@ If you discover any security related issues, please email author email instead o
 
 [ico-version]: https://img.shields.io/packagist/v/rtippin/messenger.svg?style=plastic&cacheSeconds=3600
 [ico-downloads]: https://img.shields.io/packagist/dt/rtippin/messenger.svg?style=plastic&cacheSeconds=3600
-[ico-travis]: https://img.shields.io/travis/rtippin/messenger/master.svg?style=plastic&cacheSeconds=3600
 [ico-styleci]: https://styleci.io/repos/309521487/shield?style=plastic&cacheSeconds=3600
 [ico-license]: https://img.shields.io/github/license/RTippin/messenger?style=plastic
 [link-packagist]: https://packagist.org/packages/rtippin/messenger
+[link-test]: https://github.com/RTippin/messenger/actions
+[ico-test]: https://github.com/RTippin/messenger/workflows/tests/badge.svg
 [link-downloads]: https://packagist.org/packages/rtippin/messenger
 [link-license]: https://packagist.org/packages/rtippin/messenger
-[link-travis]: https://travis-ci.org/rtippin/messenger
 [link-styleci]: https://styleci.io/repos/309521487
 [link-author]: https://github.com/rtippin
 [link-config]: config/messenger.php
