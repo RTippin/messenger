@@ -904,7 +904,7 @@ If you discover any security related issues, please email author email instead o
 [ico-license]: https://img.shields.io/github/license/RTippin/messenger?style=plastic
 [link-packagist]: https://packagist.org/packages/rtippin/messenger
 [link-test]: https://github.com/RTippin/messenger/actions
-[ico-test]: https://github.com/RTippin/messenger/workflows/tests/badge.svg
+[ico-test]: https://img.shields.io/github/workflow/status/rtippin/messenger/tests?style=plastic
 [link-downloads]: https://packagist.org/packages/rtippin/messenger
 [link-license]: https://packagist.org/packages/rtippin/messenger
 [link-styleci]: https://styleci.io/repos/309521487
