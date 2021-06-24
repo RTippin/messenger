@@ -11,6 +11,7 @@
 
 #### Changed
 - Assets (avatars/images/documents) no longer require authorization.
+- Removed the bool parameter for api on the method`getProviderAvatarRoute()` from the `MessengerProvider` contract.
 
 #### Removed
 - Assets, views, web routes. Relocated to [Messenger UI](https://github.com/RTippin/messenger-ui) addon.

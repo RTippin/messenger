@@ -112,9 +112,8 @@ return [
     | Messenger routing config
     |--------------------------------------------------------------------------
     |
-    | Our API is the core of this package, and are the only routes that cannot
-    | be disabled. The api routes also bootstrap all of our policies and
-    | controllers for you. Our built in middleware 'messenger.provider'
+    | Our API is the core of this package, and bootstrap all of our policies
+    | and controllers for you. Our built in middleware 'messenger.provider'
     | simply takes the authenticated user via the request and sets them
     | as the current messenger provider. You are free to use your own
     | custom middleware to set your provider, as well as  any other
@@ -123,9 +122,8 @@ return [
     | All API routes return json, and are best used stateless through
     | auth:api such as passport or sanctum.
     |
-    | Invite view / redemption routes for both web and api have individual
-    | middleware control so you may allow both guest or authed users to
-    | access.
+    | Invite api has individual middleware control so you may allow
+    | both guest or authed users to access.
     |
     | *For the broadcasting channels to register, you must have already
     | setup/defined your laravel apps broadcast driver.

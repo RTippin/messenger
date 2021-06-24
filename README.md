@@ -21,6 +21,7 @@
 - PHP >= 7.4 | 8.0
 - Laravel >= 8.42
 - laravel broadcast driver configured.
+- `SubstituteBindings::class` route model binding enabled in your API / WEB middleware.
 
 ### Features
 - Realtime messaging between multiple models, such as a User, Admin, and Teacher model.
@@ -30,7 +31,7 @@
 - Permissions per participant within a group thread.
 - Send image, document or audio messages.
 - Message reactions, replies and edits.
-- Group thread bots.
+- Group thread chat-bots.
 - Friends system.
 - Search system.
 - Online status.
@@ -51,21 +52,25 @@
 - Configurable friend driver.
 - Language file support.
 
-### Messenger Bots
-- Bot functionality is built into the core of this `MESSENGER` package, but you are responsible for registering your own bot handlers.
-- For a variety of ready-to-go bot action handlers, as well as documentation for bot configurations, please visit:
-  - [Messenger Bots Package][link-messenger-bots]
-
-### Messenger Faker Commands
-- An addon package useful in dev environments to mock/seed realtime events and messages can be found here:
-  - [Messenger Faker Package][link-messenger-faker]
-
 ### Notes
 - If our event subscribers are enabled, the default queue channel your worker must monitor is `messenger`. You may define custom queue channels yourself within our config.
 - The default bot subscriber will push jobs onto the `messenger-bots` queue channel.
 - Our included commands that queue a job also use the `messenger` queue channel.
 - If you enable calling, we support an included [Janus Media Server][link-janus-server] driver, however you will still need to install the media server yourself.
 - Read through our [`messenger.php`][link-config] config file before migrating!
+
+### Messenger Bots
+- Bot functionality is built into the core of this `MESSENGER` package, but you are responsible for registering your own bot handlers.
+- For a variety of ready-to-go bot action handlers, as well as documentation for bot configurations, please visit:
+  - [Messenger Bots][link-messenger-bots]
+
+### Messenger Faker Commands
+- An addon package useful in dev environments to mock/seed realtime events and messages can be found here:
+  - [Messenger Faker][link-messenger-faker]
+
+### Messenger Web UI
+- Addon package containing ready-made web routes and publishable views / assets, including default images.
+  - [Messenger Web UI][link-messenger-ui]
 
 ### Messenger Demo
 - You may view our demo laravel 8 source with this package installed, including a live demo: 
@@ -86,29 +91,21 @@
 $ composer require rtippin/messenger
 ```
 
-### Publish Assets
-- If you enable our built in web routes and wish to use the included frontend scaffolding, you may publish our assets.
-  - This publishes our views / config / js assets in one easy command:
+### Publish Config
 ```bash
 $ php artisan messenger:publish
 ```
-- To publish individual assets, use:
+- If using janus video driver, you may publish the janus config:
 ```bash
-$ php artisan vendor:publish --tag=messenger.config
-$ php artisan vendor:publish --tag=messenger.views
-$ php artisan vendor:publish --tag=messenger.assets
-$ php artisan vendor:publish --tag=messenger.migrations
 $ php artisan vendor:publish --tag=messenger.janus.config
 ```
-***All publish commands accept the `--force` flag, which will overwrite existing files if already published!***
-
-***Migrations do not need to be published for them to run. It is recommended to leave those alone!***
 
 ### Migrate
 ***Check out the published [`messenger.php`][link-config] config file in your config directory. You are going to want to first specify if you plan to use UUIDs on your provider models before running the migrations. (False by default)***
 ```php
 'provider_uuids' => false,
 ```
+- Once uuids are set (true/false), go ahead and migrate!
 ```bash
 $ php artisan migrate
 ```
@@ -387,17 +384,9 @@ PushNotificationEvent::class => $data //Array
         'middleware' => ['web', 'auth', 'messenger.provider:required'],
         'invite_api_middleware' => ['web', 'auth.optional', 'messenger.provider'],
     ],
-    'web' => [
-        'enabled' => true,
+    'assets' => [
         'domain' => null,
-        'prefix' => 'messenger',
-        'middleware' => ['web', 'auth', 'messenger.provider'],
-        'invite_web_middleware' => ['web', 'auth.optional', 'messenger.provider'],
-    ],
-    'provider_avatar' => [
-        'enabled' => true,
-        'domain' => null,
-        'prefix' => 'images',
+        'prefix' => 'messenger/assets',
         'middleware' => ['web', 'cache.headers:public, max-age=86400;'],
     ],
     'channels' => [
@@ -408,9 +397,8 @@ PushNotificationEvent::class => $data //Array
     ],
 ],
 ```
-- Our API is the core of this package, and are the only routes that cannot be disabled. The api routes bootstrap all of our policies and controllers for you!
-- Web routes provide access to our included frontend/UI should you choose to not craft your own.
-- Provider avatar route gives fine grain control of how or to whom you want to display provider avatars to.
+- Our API is the core of this package. The api routes bootstrap all of our policies and controllers for you!
+- Asset routes deliver all files (images, avatars, documents, audio files, etc).
 - Channels are what we broadcast our realtime data over! The included private channel: `private-messenger.{alias}.{id}`. Thread presence channel: `presence-messenger.thread.{thread}`. Call presence channel: `presence-messenger.call.{call}.thread.{thread}`
 - For each section of routes, you may choose your desired endpoint domain, prefix and middleware.
 - The default `messenger.provider` middleware is included with this package and simply sets the active messenger provider by grabbing the authed user from `$request->user()`. See [SetMessengerProvider][link-set-provider-middleware] for more information.
@@ -691,8 +679,8 @@ class AppServiceProvider extends ServiceProvider
 # Commands
 
 - `php artisan messenger:publish` | `--force`
-    * Publish our views / js / css / config files.
-    * `--force` flag will publish or overwrite existing files.
+    * Publish our config files.
+    * `--force` flag will overwrite existing files.
 - `php artisan messenger:calls:check-activity` | `--now`
     * Check active calls for active participants, end calls with none.
     * `--now` flag to run immediately without dispatching jobs to queue.
@@ -938,6 +926,7 @@ If you discover any security related issues, please email author email instead o
 [link-push-notify]: src/Services/PushNotificationService.php
 [link-push-event]: src/Events/PushNotificationEvent.php
 [link-messenger-faker]: https://github.com/RTippin/messenger-faker
+[link-messenger-ui]: https://github.com/RTippin/messenger-ui
 [link-morph-maps]: https://laravel.com/docs/8.x/eloquent-relationships#custom-polymorphic-types
 [link-video-driver]: src/Contracts/VideoDriver.php
 [link-janus-broker]: src/Brokers/JanusBroker.php
