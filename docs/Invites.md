@@ -16,15 +16,10 @@
           "created_at": "2020-12-07T07:57:14.000000Z",
           "updated_at": "2020-12-08T05:53:08.000000Z"
         },
-        "api_avatar": {
-          "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-          "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-          "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-        },
         "avatar": {
-          "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-          "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-          "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+          "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+          "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+          "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
         }
       },
       "route": "http://localhost:8000/messenger/join/ZAJOR26J",
@@ -53,15 +48,10 @@
           "created_at": "2020-12-07T07:57:14.000000Z",
           "updated_at": "2020-12-08T05:53:08.000000Z"
         },
-        "api_avatar": {
-          "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-          "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-          "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-        },
         "avatar": {
-          "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-          "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-          "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+          "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+          "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+          "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
         }
       },
       "route": "http://localhost:8000/messenger/join/7EIFRXXP",
@@ -109,15 +99,10 @@
       "created_at": "2020-12-07T07:57:14.000000Z",
       "updated_at": "2020-12-08T05:51:08.000000Z"
     },
-    "api_avatar": {
-      "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-      "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-      "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-    },
     "avatar": {
-      "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-      "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-      "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+      "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+      "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+      "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
     }
   },
   "route": "http://localhost:8000/messenger/join/7EIFRXXP",
@@ -151,15 +136,10 @@
     "in_thread": false,
     "thread_name": "Test Party!",
     "is_valid": true,
-    "api_avatar": {
-      "sm": "/api/messenger/join/ZAJOR26J/avatar/sm/img_607623be2e2f65.12992837.gif",
-      "md": "/api/messenger/join/ZAJOR26J/avatar/md/img_607623be2e2f65.12992837.gif",
-      "lg": "/api/messenger/join/ZAJOR26J/avatar/lg/img_607623be2e2f65.12992837.gif"
-    },
     "avatar": {
-      "sm": "/messenger/join/ZAJOR26J/avatar/sm/img_607623be2e2f65.12992837.gif",
-      "md": "/messenger/join/ZAJOR26J/avatar/md/img_607623be2e2f65.12992837.gif",
-      "lg": "/messenger/join/ZAJOR26J/avatar/lg/img_607623be2e2f65.12992837.gif"
+      "sm": "/messenger/assets/invites/ZAJOR26J/avatar/sm/img_607623be2e2f65.12992837.gif",
+      "md": "/messenger/assets/invites/ZAJOR26J/avatar/md/img_607623be2e2f65.12992837.gif",
+      "lg": "/messenger/assets/invites/ZAJOR26J/avatar/lg/img_607623be2e2f65.12992837.gif"
     }
   },
   "route": "http://localhost:8000/messenger/join/ZAJOR26J",

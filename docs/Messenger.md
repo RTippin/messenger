@@ -69,15 +69,10 @@
       "created_at": "2020-12-07T07:57:14.000000Z",
       "updated_at": "2020-12-08T02:41:05.000000Z"
     },
-    "api_avatar": {
-      "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-      "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-      "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-    },
     "avatar": {
-      "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-      "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-      "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+      "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+      "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+      "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
     }
   },
   "owner_type": "App\\Models\\User",
@@ -120,15 +115,10 @@
       "created_at": "2020-12-07T07:57:14.000000Z",
       "updated_at": "2020-12-08T02:45:39.000000Z"
     },
-    "api_avatar": {
-      "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-      "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-      "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-    },
     "avatar": {
-      "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-      "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-      "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+      "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+      "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+      "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
     }
   },
   "owner_type": "App\\Models\\User",
@@ -166,15 +156,10 @@
       "created_at": "2020-12-07T07:57:14.000000Z",
       "updated_at": "2020-12-08T02:41:05.000000Z"
     },
-    "api_avatar": {
-      "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-      "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-      "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-    },
     "avatar": {
-      "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-      "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-      "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+      "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+      "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+      "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
     }
   },
   "owner_type": "App\\Models\\User",
@@ -206,15 +191,10 @@
       "created_at": "2020-12-07T07:57:14.000000Z",
       "updated_at": "2020-12-08T02:38:29.000000Z"
     },
-    "api_avatar": {
-      "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/default.png",
-      "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/default.png",
-      "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/default.png"
-    },
     "avatar": {
-      "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/default.png",
-      "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/default.png",
-      "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/default.png"
+      "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/default.png",
+      "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/default.png",
+      "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/default.png"
     }
   },
   "owner_type": "App\\Models\\User",
@@ -254,15 +234,10 @@
       "created_at": "2020-12-07T07:57:14.000000Z",
       "updated_at": "2020-12-08T02:43:39.000000Z"
     },
-    "api_avatar": {
-      "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-      "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-      "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-    },
     "avatar": {
-      "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-      "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-      "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+      "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+      "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+      "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
     }
   },
   "active_calls_count": 0,
@@ -322,15 +297,10 @@
         "friend_status_verbose": "NOT_FRIEND",
         "last_active": null
       },
-      "api_avatar": {
-        "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-        "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-        "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-      },
       "avatar": {
-        "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-        "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-        "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+        "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+        "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+        "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
       }
     }
   ],
@@ -399,15 +369,10 @@
         "created_at": "2020-12-07T07:57:14.000000Z",
         "updated_at": "2020-12-08T04:45:53.000000Z"
       },
-      "api_avatar": {
-        "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-        "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-        "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-      },
       "avatar": {
-        "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-        "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-        "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+        "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+        "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+        "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
       }
     },
     "meta": {
@@ -415,15 +380,10 @@
       "thread_type": 1,
       "thread_type_verbose": "PRIVATE",
       "thread_name": "Jane Doe",
-      "api_thread_avatar": {
-        "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-        "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-        "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-      },
       "thread_avatar": {
-        "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-        "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-        "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+        "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+        "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+        "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
       }
     },
     "options": {

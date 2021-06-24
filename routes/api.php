@@ -101,7 +101,6 @@ Route::name('api.messenger.')->group(function () {
         Route::get('settings', [GroupThreadController::class, 'settings'])->name('settings');
         Route::put('settings', [GroupThreadController::class, 'updateSettings'])->name('settings.update');
         Route::post('avatar', [GroupThreadController::class, 'updateAvatar'])->name('avatar.update');
-
         Route::get('add-participants', FilterAddParticipants::class)->name('add.participants');
         //Privates
         Route::post('approval', PrivateThreadApproval::class)->name('approval');

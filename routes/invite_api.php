@@ -11,4 +11,3 @@ use RTippin\Messenger\Http\Controllers\InviteController;
 */
 
 Route::get('join/{invite:code}', [InviteController::class, 'show'])->name('api.messenger.invites.join');
-

@@ -20,15 +20,10 @@
           "created_at": "2020-12-07T07:57:14.000000Z",
           "updated_at": "2020-12-08T05:39:08.000000Z"
         },
-        "api_avatar": {
-          "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-          "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-          "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-        },
         "avatar": {
-          "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-          "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-          "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+          "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+          "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+          "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
         }
       },
       "type": 3,
@@ -46,8 +41,7 @@
         "thread_type": 1,
         "thread_type_verbose": "PRIVATE"
       },
-      "api_audio": "/api/messenger/threads/923135d4-bcaa-4aa7-83a9-cc9765866b19/audio/92315377-0a5c-47ed-928e-45670dd6c341/test_1607405513.mp3",
-      "audio": "/messenger/threads/923135d4-bcaa-4aa7-83a9-cc9765866b19/audio/92315377-0a5c-47ed-928e-45670dd6c341/test_1607405513.mp3"
+      "audio": "/messenger/assets/threads/923135d4-bcaa-4aa7-83a9-cc9765866b19/audio/92315377-0a5c-47ed-928e-45670dd6c341/test_1607405513.mp3"
     }
   ],
   "meta": {
@@ -92,15 +86,10 @@
       "created_at": "2020-12-07T07:57:14.000000Z",
       "updated_at": "2020-12-08T05:31:08.000000Z"
     },
-    "api_avatar": {
-      "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-      "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-      "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-    },
     "avatar": {
-      "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-      "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-      "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+      "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+      "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+      "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
     }
   },
   "type": 3,
@@ -119,7 +108,6 @@
     "thread_type_verbose": "PRIVATE"
   },
   "temporary_id": "adb9c9b0-3916-11eb-985e-e58d0602db52",
-  "api_audio": "/api/messenger/threads/923135d4-bcaa-4aa7-83a9-cc9765866b19/audio/92315377-0a5c-47ed-928e-45670dd6c341/test_1607405513.mp3",
-  "audio": "/messenger/threads/923135d4-bcaa-4aa7-83a9-cc9765866b19/audio/92315377-0a5c-47ed-928e-45670dd6c341/test_1607405513.mp3"
+  "audio": "/messenger/assets/threads/923135d4-bcaa-4aa7-83a9-cc9765866b19/audio/92315377-0a5c-47ed-928e-45670dd6c341/test_1607405513.mp3"
 }
 ```

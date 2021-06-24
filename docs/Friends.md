@@ -28,15 +28,10 @@
         "last_active": "2020-12-08T03:51:36.000000Z",
         "friend_id": "92312fc9-6b24-42c8-9dcc-34a64bc6b55b"
       },
-      "api_avatar": {
-        "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-        "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-        "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-      },
       "avatar": {
-        "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-        "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-        "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+        "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+        "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+        "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
       }
     },
     "type_verbose": "FRIEND",
@@ -80,15 +75,10 @@
       "last_active": "2020-12-08T03:51:36.000000Z",
       "friend_id": "92312fc9-6b24-42c8-9dcc-34a64bc6b55b"
     },
-    "api_avatar": {
-      "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-      "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-      "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-    },
     "avatar": {
-      "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-      "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-      "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+      "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+      "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+      "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
     }
   },
   "type_verbose": "FRIEND",
@@ -117,15 +107,10 @@
     "created_at": "2020-12-07T07:57:14.000000Z",
     "updated_at": "2020-12-08T03:53:36.000000Z"
   },
-  "api_avatar": {
-    "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-    "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-    "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-  },
   "avatar": {
-    "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-    "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-    "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+    "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+    "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+    "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
   }
 }
 ```
@@ -166,15 +151,10 @@
       "last_active": null,
       "sent_friend_id": null
     },
-    "api_avatar": {
-      "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-      "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-      "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-    },
     "avatar": {
-      "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-      "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-      "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+      "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+      "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+      "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
     }
   },
   "type_verbose": "SENT_FRIEND_REQUEST",
@@ -218,15 +198,10 @@
         "last_active": null,
         "sent_friend_id": "92311d70-46a3-48d2-be8d-a1f5b6231ec0"
       },
-      "api_avatar": {
-        "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-        "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-        "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-      },
       "avatar": {
-        "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-        "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-        "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+        "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+        "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+        "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
       }
     },
     "type_verbose": "SENT_FRIEND_REQUEST",
@@ -270,15 +245,10 @@
       "last_active": null,
       "sent_friend_id": "92312e58-42e4-44a6-92a6-6aff5b8f9fcb"
     },
-    "api_avatar": {
-      "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-      "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-      "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-    },
     "avatar": {
-      "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-      "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-      "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+      "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+      "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+      "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
     }
   },
   "type_verbose": "SENT_FRIEND_REQUEST",
@@ -307,15 +277,10 @@
     "created_at": "2020-12-07T07:57:14.000000Z",
     "updated_at": "2020-12-08T03:40:00.000000Z"
   },
-  "api_avatar": {
-    "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-    "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-    "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-  },
   "avatar": {
-    "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-    "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-    "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+    "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+    "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+    "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
   }
 }
 ```
@@ -350,15 +315,10 @@
         "last_active": null,
         "pending_friend_id": "92311d70-46a3-48d2-be8d-a1f5b6231ec0"
       },
-      "api_avatar": {
-        "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-        "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-        "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-      },
       "avatar": {
-        "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-        "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-        "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+        "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+        "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+        "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
       }
     },
     "type_verbose": "PENDING_FRIEND_REQUEST",
@@ -402,15 +362,10 @@
       "last_active": null,
       "pending_friend_id": "92312e58-42e4-44a6-92a6-6aff5b8f9fcb"
     },
-    "api_avatar": {
-      "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-      "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-      "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-    },
     "avatar": {
-      "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-      "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-      "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+      "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+      "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+      "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
     }
   },
   "type_verbose": "PENDING_FRIEND_REQUEST",
@@ -439,15 +394,10 @@
     "created_at": "2020-12-07T07:57:14.000000Z",
     "updated_at": "2020-12-08T03:37:08.000000Z"
   },
-  "api_avatar": {
-    "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-    "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-    "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-  },
   "avatar": {
-    "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-    "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-    "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+    "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+    "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+    "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
   }
 }
 ```
@@ -485,15 +435,10 @@
       "last_active": "2020-12-08T03:41:40.000000Z",
       "friend_id": "92312cb2-3390-44a6-a8be-0d052b4395a5"
     },
-    "api_avatar": {
-      "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-      "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-      "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-    },
     "avatar": {
-      "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-      "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-      "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+      "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+      "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+      "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
     }
   },
   "type_verbose": "FRIEND",

@@ -26,15 +26,10 @@
       "friend_status_verbose": "NOT_FRIEND",
       "last_active": null
     },
-    "api_avatar": {
-      "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-      "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-      "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-    },
     "avatar": {
-      "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-      "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-      "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+      "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+      "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+      "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
     }
   },
   "thread_id": null
@@ -85,15 +80,10 @@
   "locked": false,
   "pending": true,
   "name": "Jane Doe",
-  "api_avatar": {
-    "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-    "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-    "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-  },
   "avatar": {
-    "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-    "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-    "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+    "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+    "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+    "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
   },
   "group": false,
   "unread": true,
@@ -135,15 +125,10 @@
         "friend_status_verbose": "NOT_FRIEND",
         "last_active": null
       },
-      "api_avatar": {
-        "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-        "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-        "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-      },
       "avatar": {
-        "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-        "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-        "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+        "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+        "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+        "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
       }
     },
     "latest_message": {
@@ -163,15 +148,10 @@
           "created_at": "2020-12-07T07:57:14.000000Z",
           "updated_at": "2020-12-08T03:59:39.000000Z"
         },
-        "api_avatar": {
-          "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-          "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-          "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-        },
         "avatar": {
-          "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-          "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-          "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+          "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+          "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+          "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
         }
       },
       "type": 0,
@@ -223,15 +203,10 @@
   "locked": false,
   "pending": false,
   "name": "Test Group",
-  "api_avatar": {
-    "sm": "/api/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/sm/5.png",
-    "md": "/api/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/md/5.png",
-    "lg": "/api/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/lg/5.png"
-  },
   "avatar": {
-    "sm": "/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/sm/5.png",
-    "md": "/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/md/5.png",
-    "lg": "/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/lg/5.png"
+    "sm": "/messenger/assets/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/sm/5.png",
+    "md": "/messenger/assets/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/md/5.png",
+    "lg": "/messenger/assets/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/lg/5.png"
   },
   "group": true,
   "unread": true,
@@ -265,15 +240,10 @@
           "created_at": "2020-12-07T07:57:14.000000Z",
           "updated_at": "2020-12-08T04:12:20.000000Z"
         },
-        "api_avatar": {
-          "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-          "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-          "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-        },
         "avatar": {
-          "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-          "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-          "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+          "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+          "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+          "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
         }
       },
       "type": 93,
@@ -291,15 +261,10 @@
         "thread_type": 2,
         "thread_type_verbose": "GROUP",
         "thread_name": "Test Group",
-        "api_thread_avatar": {
-          "sm": "/api/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/sm/5.png",
-          "md": "/api/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/md/5.png",
-          "lg": "/api/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/lg/5.png"
-        },
         "thread_avatar": {
-          "sm": "/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/sm/5.png",
-          "md": "/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/md/5.png",
-          "lg": "/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/lg/5.png"
+          "sm": "/messenger/assets/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/sm/5.png",
+          "md": "/messenger/assets/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/md/5.png",
+          "lg": "/messenger/assets/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/lg/5.png"
         }
       }
     }
@@ -318,15 +283,10 @@
   "locked": false,
   "pending": true,
   "name": "John Doe",
-  "api_avatar": {
-    "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-    "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-    "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-  },
   "avatar": {
-    "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-    "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-    "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+    "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+    "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+    "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
   },
   "group": false,
   "unread": true,
@@ -368,15 +328,10 @@
         "friend_status_verbose": "NOT_FRIEND",
         "last_active": null
       },
-      "api_avatar": {
-        "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-        "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-        "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-      },
       "avatar": {
-        "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-        "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-        "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+        "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+        "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+        "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
       }
     },
     "latest_message": {
@@ -396,15 +351,10 @@
           "created_at": "2020-12-07T07:57:14.000000Z",
           "updated_at": "2020-12-08T04:03:40.000000Z"
         },
-        "api_avatar": {
-          "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-          "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-          "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-        },
         "avatar": {
-          "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-          "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-          "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+          "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+          "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+          "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
         }
       },
       "type": 0,
@@ -456,15 +406,10 @@
       "locked": false,
       "pending": false,
       "name": "Test Group",
-      "api_avatar": {
-        "sm": "/api/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/sm/5.png",
-        "md": "/api/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/md/5.png",
-        "lg": "/api/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/lg/5.png"
-      },
       "avatar": {
-        "sm": "/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/sm/5.png",
-        "md": "/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/md/5.png",
-        "lg": "/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/lg/5.png"
+        "sm": "/messenger/assets/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/sm/5.png",
+        "md": "/messenger/assets/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/md/5.png",
+        "lg": "/messenger/assets/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/lg/5.png"
       },
       "group": true,
       "unread": false,
@@ -498,15 +443,10 @@
               "created_at": "2020-12-07T07:57:14.000000Z",
               "updated_at": "2020-12-08T04:15:07.000000Z"
             },
-            "api_avatar": {
-              "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-              "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-              "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-            },
             "avatar": {
-              "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-              "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-              "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+              "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+              "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+              "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
             }
           },
           "type": 99,
@@ -524,15 +464,10 @@
             "thread_type": 2,
             "thread_type_verbose": "GROUP",
             "thread_name": "Test Group",
-            "api_thread_avatar": {
-              "sm": "/api/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/sm/5.png",
-              "md": "/api/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/md/5.png",
-              "lg": "/api/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/lg/5.png"
-            },
             "thread_avatar": {
-              "sm": "/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/sm/5.png",
-              "md": "/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/md/5.png",
-              "lg": "/messenger/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/lg/5.png"
+              "sm": "/messenger/assets/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/sm/5.png",
+              "md": "/messenger/assets/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/md/5.png",
+              "lg": "/messenger/assets/threads/92313743-a3b3-433f-a2e2-f3ae35d636b0/avatar/lg/5.png"
             }
           }
         }
@@ -546,15 +481,10 @@
       "locked": false,
       "pending": false,
       "name": "Jane Doe",
-      "api_avatar": {
-        "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-        "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-        "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-      },
       "avatar": {
-        "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-        "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-        "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+        "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+        "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+        "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
       },
       "group": false,
       "unread": false,
@@ -596,15 +526,10 @@
             "last_active": "2020-12-08T04:13:36.000000Z",
             "friend_id": "923136b9-01b1-45d3-a844-c351fa440141"
           },
-          "api_avatar": {
-            "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-            "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-            "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-          },
           "avatar": {
-            "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-            "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-            "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+            "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+            "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+            "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
           }
         },
         "latest_message": {
@@ -624,15 +549,10 @@
               "created_at": "2020-12-07T07:57:14.000000Z",
               "updated_at": "2020-12-08T04:15:07.000000Z"
             },
-            "api_avatar": {
-              "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-              "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-              "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-            },
             "avatar": {
-              "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-              "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-              "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+              "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+              "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+              "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
             }
           },
           "type": 0,
@@ -738,15 +658,10 @@
           "created_at": "2020-12-07T07:57:14.000000Z",
           "updated_at": "2020-12-08T04:29:08.000000Z"
         },
-        "api_avatar": {
-          "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-          "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-          "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-        },
         "avatar": {
-          "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-          "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-          "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+          "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+          "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+          "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
         }
       },
       "type": 99,
@@ -764,15 +679,10 @@
         "thread_type": 2,
         "thread_type_verbose": "GROUP",
         "thread_name": "Test Group!",
-        "api_thread_avatar": {
-          "sm": "/api/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/2.png",
-          "md": "/api/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/2.png",
-          "lg": "/api/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/2.png"
-        },
         "thread_avatar": {
-          "sm": "/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/2.png",
-          "md": "/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/2.png",
-          "lg": "/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/2.png"
+          "sm": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/2.png",
+          "md": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/2.png",
+          "lg": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/2.png"
         }
       }
     },
@@ -793,15 +703,10 @@
           "created_at": "2020-12-07T07:57:14.000000Z",
           "updated_at": "2020-12-08T04:29:08.000000Z"
         },
-        "api_avatar": {
-          "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-          "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-          "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-        },
         "avatar": {
-          "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-          "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-          "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+          "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+          "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+          "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
         }
       },
       "type": 93,
@@ -819,15 +724,10 @@
         "thread_type": 2,
         "thread_type_verbose": "GROUP",
         "thread_name": "Test Group!",
-        "api_thread_avatar": {
-          "sm": "/api/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/2.png",
-          "md": "/api/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/2.png",
-          "lg": "/api/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/2.png"
-        },
         "thread_avatar": {
-          "sm": "/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/2.png",
-          "md": "/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/2.png",
-          "lg": "/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/2.png"
+          "sm": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/2.png",
+          "md": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/2.png",
+          "lg": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/2.png"
         }
       }
     }
@@ -875,15 +775,10 @@
                 "last_active": "2020-12-08T04:31:44.000000Z",
                 "friend_id": "92313e08-3966-415b-ad71-e6776c813a70"
             },
-            "api_avatar": {
-                "sm": "/api/messenger/images/user/922f8476-dfb5-45d5-8a76-ab6422e10e5d/sm/default.png",
-                "md": "/api/messenger/images/user/922f8476-dfb5-45d5-8a76-ab6422e10e5d/md/default.png",
-                "lg": "/api/messenger/images/user/922f8476-dfb5-45d5-8a76-ab6422e10e5d/lg/default.png"
-            },
             "avatar": {
-                "sm": "/images/user/922f8476-dfb5-45d5-8a76-ab6422e10e5d/sm/default.png",
-                "md": "/images/user/922f8476-dfb5-45d5-8a76-ab6422e10e5d/md/default.png",
-                "lg": "/images/user/922f8476-dfb5-45d5-8a76-ab6422e10e5d/lg/default.png"
+                "sm": "/messenger/assets/provider/user/922f8476-dfb5-45d5-8a76-ab6422e10e5d/sm/default.png",
+                "md": "/messenger/assets/provider/user/922f8476-dfb5-45d5-8a76-ab6422e10e5d/md/default.png",
+                "lg": "/messenger/assets/provider/user/922f8476-dfb5-45d5-8a76-ab6422e10e5d/lg/default.png"
             }
         },
         "type_verbose": "FRIEND",
@@ -915,15 +810,10 @@
 ```json
 {
   "name": "Test Group!",
-  "api_avatar": {
-    "sm": "/api/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/2.png",
-    "md": "/api/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/2.png",
-    "lg": "/api/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/2.png"
-  },
   "avatar": {
-    "sm": "/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/2.png",
-    "md": "/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/2.png",
-    "lg": "/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/2.png"
+    "sm": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/2.png",
+    "md": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/2.png",
+    "lg": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/2.png"
   },
   "add_participants": true,
   "invitations": true,
@@ -949,15 +839,10 @@
 ```json
 {
   "name": "Test Party!",
-  "api_avatar": {
-    "sm": "/api/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/2.png",
-    "md": "/api/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/2.png",
-    "lg": "/api/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/2.png"
-  },
   "avatar": {
-    "sm": "/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/2.png",
-    "md": "/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/2.png",
-    "lg": "/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/2.png"
+    "sm": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/2.png",
+    "md": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/2.png",
+    "lg": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/2.png"
   },
   "add_participants": false,
   "invitations": true,
@@ -983,15 +868,10 @@
 ```json
 {
   "name": "Test Party!",
-  "api_avatar": {
-    "sm": "/api/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/3.png",
-    "md": "/api/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/3.png",
-    "lg": "/api/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/3.png"
-  },
   "avatar": {
-    "sm": "/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/3.png",
-    "md": "/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/3.png",
-    "lg": "/messenger/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/3.png"
+    "sm": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/3.png",
+    "md": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/3.png",
+    "lg": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/3.png"
   },
   "add_participants": false,
   "invitations": true,
@@ -1018,15 +898,10 @@ Renders Group Avatar
     "locked": false,
     "pending": false,
     "name": "Jane Doe",
-    "api_avatar": {
-        "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-        "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-        "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-    },
     "avatar": {
-        "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-        "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-        "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+        "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+        "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+        "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
     },
     "group": false,
     "unread": false,
@@ -1068,15 +943,10 @@ Renders Group Avatar
                 "last_active": "2020-12-08T04:47:53.000000Z",
                 "friend_id": "923136b9-01b1-45d3-a844-c351fa440141"
             },
-            "api_avatar": {
-                "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-                "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-                "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-            },
             "avatar": {
-                "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-                "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-                "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+                "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+                "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+                "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
             }
         },
         "participants": {
@@ -1116,15 +986,10 @@ Renders Group Avatar
                             "friend_status_verbose": "NOT_FRIEND",
                             "last_active": null
                         },
-                        "api_avatar": {
-                            "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-                            "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-                            "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-                        },
                         "avatar": {
-                            "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-                            "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-                            "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+                            "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+                            "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+                            "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
                         }
                     },
                     "created_at": "2020-12-08T04:09:01.000000Z",
@@ -1170,15 +1035,10 @@ Renders Group Avatar
                             "last_active": "2020-12-08T04:47:53.000000Z",
                             "friend_id": "923136b9-01b1-45d3-a844-c351fa440141"
                         },
-                        "api_avatar": {
-                            "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-                            "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-                            "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-                        },
                         "avatar": {
-                            "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-                            "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-                            "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+                            "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+                            "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+                            "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
                         }
                     },
                     "created_at": "2020-12-08T04:09:01.000000Z",
@@ -1219,15 +1079,10 @@ Renders Group Avatar
                             "created_at": "2020-12-07T07:57:14.000000Z",
                             "updated_at": "2020-12-08T04:47:53.000000Z"
                         },
-                        "api_avatar": {
-                            "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-                            "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-                            "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-                        },
                         "avatar": {
-                            "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-                            "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-                            "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+                            "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+                            "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+                            "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
                         }
                     },
                     "type": 90,
@@ -1263,15 +1118,10 @@ Renders Group Avatar
                             "created_at": "2020-12-07T07:57:14.000000Z",
                             "updated_at": "2020-12-08T04:47:42.000000Z"
                         },
-                        "api_avatar": {
-                            "sm": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-                            "md": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-                            "lg": "/api/messenger/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
-                        },
                         "avatar": {
-                            "sm": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
-                            "md": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
-                            "lg": "/images/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
+                            "sm": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/sm/img_5fcee7c1e64404.55920965.jpg",
+                            "md": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/md/img_5fcee7c1e64404.55920965.jpg",
+                            "lg": "/messenger/assets/provider/user/922f8476-bdda-4ebd-b283-be23602c658d/lg/img_5fcee7c1e64404.55920965.jpg"
                         }
                     },
                     "type": 0,
@@ -1319,15 +1169,10 @@ Renders Group Avatar
                     "created_at": "2020-12-07T07:57:14.000000Z",
                     "updated_at": "2020-12-08T04:47:53.000000Z"
                 },
-                "api_avatar": {
-                    "sm": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-                    "md": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-                    "lg": "/api/messenger/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
-                },
                 "avatar": {
-                    "sm": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
-                    "md": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
-                    "lg": "/images/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
+                    "sm": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/sm/default.png",
+                    "md": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/md/default.png",
+                    "lg": "/messenger/assets/provider/user/922f8476-c5f4-4024-8ba2-1a0d1cd22d71/lg/default.png"
                 }
             },
             "type": 90,

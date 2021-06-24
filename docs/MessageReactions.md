@@ -25,15 +25,10 @@
             "created_at": "2021-03-30T21:17:01.000000Z",
             "updated_at": "2021-04-02T07:50:35.000000Z"
           },
-          "api_avatar": {
-            "sm": "/api/messenger/images/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/sm/default.png",
-            "md": "/api/messenger/images/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/md/default.png",
-            "lg": "/api/messenger/images/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/lg/default.png"
-          },
           "avatar": {
-            "sm": "/images/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/sm/default.png",
-            "md": "/images/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/md/default.png",
-            "lg": "/images/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/lg/default.png"
+            "sm": "/messenger/assets/provider/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/sm/default.png",
+            "md": "/messenger/assets/provider/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/md/default.png",
+            "lg": "/messenger/assets/provider/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/lg/default.png"
           }
         }
       },
@@ -58,15 +53,10 @@
             "created_at": "2021-03-30T21:17:02.000000Z",
             "updated_at": "2021-04-01T07:52:24.000000Z"
           },
-          "api_avatar": {
-            "sm": "/api/messenger/images/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/sm/default.png",
-            "md": "/api/messenger/images/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/md/default.png",
-            "lg": "/api/messenger/images/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/lg/default.png"
-          },
           "avatar": {
-            "sm": "/images/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/sm/default.png",
-            "md": "/images/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/md/default.png",
-            "lg": "/images/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/lg/default.png"
+            "sm": "/messenger/assets/provider/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/sm/default.png",
+            "md": "/messenger/assets/provider/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/md/default.png",
+            "lg": "/messenger/assets/provider/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/lg/default.png"
           }
         }
       }
@@ -93,15 +83,10 @@
             "created_at": "2021-03-30T21:17:02.000000Z",
             "updated_at": "2021-04-01T07:52:24.000000Z"
           },
-          "api_avatar": {
-            "sm": "/api/messenger/images/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/sm/default.png",
-            "md": "/api/messenger/images/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/md/default.png",
-            "lg": "/api/messenger/images/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/lg/default.png"
-          },
           "avatar": {
-            "sm": "/images/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/sm/default.png",
-            "md": "/images/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/md/default.png",
-            "lg": "/images/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/lg/default.png"
+            "sm": "/messenger/assets/provider/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/sm/default.png",
+            "md": "/messenger/assets/provider/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/md/default.png",
+            "lg": "/messenger/assets/provider/user/9313f3b2-43f1-4cc0-99b9-12f050e6aabc/lg/default.png"
           }
         }
       }
@@ -144,15 +129,10 @@
       "created_at": "2021-03-30T21:17:01.000000Z",
       "updated_at": "2021-04-02T07:52:36.000000Z"
     },
-    "api_avatar": {
-      "sm": "/api/messenger/images/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/sm/default.png",
-      "md": "/api/messenger/images/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/md/default.png",
-      "lg": "/api/messenger/images/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/lg/default.png"
-    },
     "avatar": {
-      "sm": "/images/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/sm/default.png",
-      "md": "/images/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/md/default.png",
-      "lg": "/images/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/lg/default.png"
+      "sm": "/messenger/assets/provider/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/sm/default.png",
+      "md": "/messenger/assets/provider/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/md/default.png",
+      "lg": "/messenger/assets/provider/user/9313f3b1-f0d1-467f-860c-b8983bdb7984/lg/default.png"
     }
   }
 }
