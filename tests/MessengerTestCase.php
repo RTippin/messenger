@@ -44,7 +44,6 @@ class MessengerTestCase extends TestCase
         $config->set('messenger.storage.avatars.disk', 'public');
         $config->set('messenger.storage.threads.disk', 'messenger');
         $config->set('messenger.providers', $this->getBaseProvidersConfig());
-        $config->set('messenger.site_name', 'Messenger-Testbench');
 
         if (self::UseMorphMap) {
             Relation::morphMap([

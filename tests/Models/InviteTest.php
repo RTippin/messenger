@@ -64,11 +64,11 @@ class InviteTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_has_route()
+    public function it_does_not_have_route()
     {
         $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->testing()->create();
 
-        $this->assertStringContainsString('/messenger/join/TEST1234', $invite->getInvitationRoute());
+        $this->assertNull($invite->getInvitationRoute());
     }
 
     /** @test */
@@ -78,18 +78,12 @@ class InviteTest extends FeatureTestCase
             Thread::factory()->group()->create(['image' => '5.png'])
         )->owner($this->tippin)->testing()->create();
         $inviteAvatar = [
-            'sm' => '/messenger/join/TEST1234/avatar/sm/5.png',
-            'md' => '/messenger/join/TEST1234/avatar/md/5.png',
-            'lg' => '/messenger/join/TEST1234/avatar/lg/5.png',
-        ];
-        $inviteAvatarApi = [
-            'sm' => '/api/messenger/join/TEST1234/avatar/sm/5.png',
-            'md' => '/api/messenger/join/TEST1234/avatar/md/5.png',
-            'lg' => '/api/messenger/join/TEST1234/avatar/lg/5.png',
+            'sm' => '/messenger/assets/invites/TEST1234/avatar/sm/5.png',
+            'md' => '/messenger/assets/invites/TEST1234/avatar/md/5.png',
+            'lg' => '/messenger/assets/invites/TEST1234/avatar/lg/5.png',
         ];
 
         $this->assertSame($inviteAvatar, $invite->inviteAvatar());
-        $this->assertSame($inviteAvatarApi, $invite->inviteAvatar(true));
     }
 
     /** @test */

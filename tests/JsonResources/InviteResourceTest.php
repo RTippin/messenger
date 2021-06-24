@@ -44,7 +44,6 @@ class InviteResourceTest extends FeatureTestCase
         $this->assertIsArray($resource['options']);
         $this->assertArrayNotHasKey('owner', $resource);
         $this->assertTrue($resource['options']['is_valid']);
-        $this->assertIsArray($resource['options']['api_avatar']);
         $this->assertIsArray($resource['options']['avatar']);
         $this->assertSame('Test', $resource['options']['thread_name']);
     }
@@ -59,7 +58,6 @@ class InviteResourceTest extends FeatureTestCase
         $this->assertIsArray($resource['options']);
         $this->assertArrayNotHasKey('owner', $resource);
         $this->assertFalse($resource['options']['is_valid']);
-        $this->assertNull($resource['options']['api_avatar']);
         $this->assertNull($resource['options']['avatar']);
         $this->assertNull($resource['options']['thread_name']);
     }

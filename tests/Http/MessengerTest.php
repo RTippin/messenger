@@ -33,7 +33,6 @@ class MessengerTest extends FeatureTestCase
         $this->getJson(route('api.messenger.info'))
             ->assertSuccessful()
             ->assertJson([
-                'siteName' => 'Messenger-Testbench',
                 'messageImageUpload' => true,
                 'calling' => true,
                 'threadsIndexCount' => 100,
@@ -51,7 +50,6 @@ class MessengerTest extends FeatureTestCase
         $this->getJson(route('api.messenger.info'))
             ->assertSuccessful()
             ->assertJson([
-                'siteName' => 'Messenger-Testbench',
                 'messageImageUpload' => false,
                 'calling' => false,
                 'threadsIndexCount' => 50,

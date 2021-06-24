@@ -188,8 +188,7 @@ class MessageTest extends FeatureTestCase
         $this->assertSame(1, Message::image()->count());
         $this->assertSame('IMAGE_MESSAGE', $message->getTypeVerbose());
         $this->assertSame("threads/$thread->id/images/picture.jpg", $message->getImagePath());
-        $this->assertSame("/messenger/threads/$thread->id/gallery/$message->id/sm/picture.jpg", $message->getImageViewRoute());
-        $this->assertSame("/api/messenger/threads/$thread->id/gallery/$message->id/lg/picture.jpg", $message->getImageViewRoute('lg', true));
+        $this->assertSame("/messenger/assets/threads/$thread->id/gallery/$message->id/sm/picture.jpg", $message->getImageViewRoute());
     }
 
     /** @test */
@@ -207,8 +206,7 @@ class MessageTest extends FeatureTestCase
         $this->assertSame(1, Message::document()->count());
         $this->assertSame('DOCUMENT_MESSAGE', $message->getTypeVerbose());
         $this->assertSame("threads/$thread->id/documents/document.pdf", $message->getDocumentPath());
-        $this->assertSame("/messenger/threads/$thread->id/files/$message->id/document.pdf", $message->getDocumentDownloadRoute());
-        $this->assertSame("/api/messenger/threads/$thread->id/files/$message->id/document.pdf", $message->getDocumentDownloadRoute(true));
+        $this->assertSame("/messenger/assets/threads/$thread->id/files/$message->id/document.pdf", $message->getDocumentDownloadRoute());
     }
 
     /** @test */
@@ -226,8 +224,7 @@ class MessageTest extends FeatureTestCase
         $this->assertSame(1, Message::audio()->count());
         $this->assertSame('AUDIO_MESSAGE', $message->getTypeVerbose());
         $this->assertSame("threads/$thread->id/audio/sound.mp3", $message->getAudioPath());
-        $this->assertSame("/messenger/threads/$thread->id/audio/$message->id/sound.mp3", $message->getAudioDownloadRoute());
-        $this->assertSame("/api/messenger/threads/$thread->id/audio/$message->id/sound.mp3", $message->getAudioDownloadRoute(true));
+        $this->assertSame("/messenger/assets/threads/$thread->id/audio/$message->id/sound.mp3", $message->getAudioDownloadRoute());
     }
 
     /** @test */

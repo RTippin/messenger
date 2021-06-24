@@ -90,14 +90,14 @@ class MessageResource extends JsonResource
             'reactions' => $this->when($this->addRelatedItems && $this->message->isReacted(),
                 fn () => $this->addReactions()
             ),
+            'document' => $this->when($this->message->isDocument(),
+                fn () => $this->message->getDocumentDownloadRoute()
+            ),
+            'audio' => $this->when($this->message->isAudio(),
+                fn () => $this->message->getAudioDownloadRoute()
+            ),
             $this->mergeWhen($this->message->isImage(),
                 fn () => $this->linksForImage()
-            ),
-            $this->mergeWhen($this->message->isDocument(),
-                fn () => $this->linksForDocument()
-            ),
-            $this->mergeWhen($this->message->isAudio(),
-                fn () => $this->linksForAudio()
             ),
             $this->mergeWhen($this->addRelatedItems && ! is_null($this->message->reply_to_id),
                 fn () => $this->addReplyToMessage()
@@ -137,38 +137,11 @@ class MessageResource extends JsonResource
     public function linksForImage(): array
     {
         return [
-            'api_image' => [
-                'sm' => $this->message->getImageViewRoute('sm', true),
-                'md' => $this->message->getImageViewRoute('md', true),
-                'lg' => $this->message->getImageViewRoute('lg', true),
-            ],
             'image' => [
                 'sm' => $this->message->getImageViewRoute('sm'),
                 'md' => $this->message->getImageViewRoute('md'),
                 'lg' => $this->message->getImageViewRoute('lg'),
             ],
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function linksForAudio(): array
-    {
-        return [
-            'api_audio' => $this->message->getAudioDownloadRoute(true),
-            'audio' => $this->message->getAudioDownloadRoute(),
-        ];
-    }
-
-    /**
-     * @return array
-     */
-    public function linksForDocument(): array
-    {
-        return [
-            'api_document' => $this->message->getDocumentDownloadRoute(true),
-            'document' => $this->message->getDocumentDownloadRoute(),
         ];
     }
 }

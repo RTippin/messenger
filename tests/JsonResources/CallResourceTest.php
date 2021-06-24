@@ -41,7 +41,6 @@ class CallResourceTest extends FeatureTestCase
         $this->assertSame(2, $resource['meta']['thread_type']);
         $this->assertSame('GROUP', $resource['meta']['thread_type_verbose']);
         $this->assertSame('Test', $resource['meta']['thread_name']);
-        $this->assertIsArray($resource['meta']['api_thread_avatar']);
         $this->assertIsArray($resource['meta']['thread_avatar']);
     }
 

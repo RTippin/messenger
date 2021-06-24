@@ -39,18 +39,14 @@ class MessageResourceTest extends FeatureTestCase
         $this->assertSame(1, $resource['meta']['thread_type']);
         $this->assertSame('PRIVATE', $resource['meta']['thread_type_verbose']);
         $this->assertArrayNotHasKey('thread_name', $resource['meta']);
-        $this->assertArrayNotHasKey('api_thread_avatar', $resource['meta']);
         $this->assertArrayNotHasKey('thread_avatar', $resource['meta']);
         $this->assertArrayNotHasKey('temporary_id', $resource);
         $this->assertArrayNotHasKey('edited_history_route', $resource);
         $this->assertArrayNotHasKey('reactions', $resource);
         $this->assertArrayNotHasKey('reply_to_id', $resource);
         $this->assertArrayNotHasKey('reply_to', $resource);
-        $this->assertArrayNotHasKey('api_image', $resource);
         $this->assertArrayNotHasKey('image', $resource);
-        $this->assertArrayNotHasKey('api_audio', $resource);
         $this->assertArrayNotHasKey('audio', $resource);
-        $this->assertArrayNotHasKey('api_document', $resource);
         $this->assertArrayNotHasKey('document', $resource);
     }
 
@@ -67,10 +63,8 @@ class MessageResourceTest extends FeatureTestCase
         $this->assertSame(2, $resource['meta']['thread_type']);
         $this->assertSame('GROUP', $resource['meta']['thread_type_verbose']);
         $this->assertArrayHasKey('thread_name', $resource['meta']);
-        $this->assertArrayHasKey('api_thread_avatar', $resource['meta']);
         $this->assertArrayHasKey('thread_avatar', $resource['meta']);
         $this->assertSame('Group', $resource['meta']['thread_name']);
-        $this->assertIsArray($resource['meta']['api_thread_avatar']);
         $this->assertIsArray($resource['meta']['thread_avatar']);
     }
 
@@ -137,9 +131,7 @@ class MessageResourceTest extends FeatureTestCase
 
         $this->assertSame(1, $resource['type']);
         $this->assertSame('IMAGE_MESSAGE', $resource['type_verbose']);
-        $this->assertArrayHasKey('api_image', $resource);
         $this->assertArrayHasKey('image', $resource);
-        $this->assertIsArray($resource['api_image']);
         $this->assertIsArray($resource['image']);
     }
 
@@ -153,7 +145,6 @@ class MessageResourceTest extends FeatureTestCase
 
         $this->assertSame(2, $resource['type']);
         $this->assertSame('DOCUMENT_MESSAGE', $resource['type_verbose']);
-        $this->assertArrayHasKey('api_document', $resource);
         $this->assertArrayHasKey('document', $resource);
     }
 
@@ -167,7 +158,6 @@ class MessageResourceTest extends FeatureTestCase
 
         $this->assertSame(3, $resource['type']);
         $this->assertSame('AUDIO_MESSAGE', $resource['type_verbose']);
-        $this->assertArrayHasKey('api_audio', $resource);
         $this->assertArrayHasKey('audio', $resource);
     }
 }

@@ -278,16 +278,15 @@ class Message extends Model
 
     /**
      * @param string $size
-     * @param bool $api
      * @return string|null
      */
-    public function getImageViewRoute(string $size = 'sm', bool $api = false): ?string
+    public function getImageViewRoute(string $size = 'sm'): ?string
     {
         if (! $this->isImage()) {
             return null;
         }
 
-        return Helpers::Route(($api ? 'api.' : '').'messenger.threads.gallery.render',
+        return Helpers::Route('messenger.threads.gallery.render',
             [
                 'thread' => $this->thread_id,
                 'message' => $this->id,
@@ -298,16 +297,15 @@ class Message extends Model
     }
 
     /**
-     * @param bool $api
      * @return string|null
      */
-    public function getDocumentDownloadRoute(bool $api = false): ?string
+    public function getDocumentDownloadRoute(): ?string
     {
         if (! $this->isDocument()) {
             return null;
         }
 
-        return Helpers::Route(($api ? 'api.' : '').'messenger.threads.files.download',
+        return Helpers::Route('messenger.threads.files.download',
             [
                 'thread' => $this->thread_id,
                 'message' => $this->id,
@@ -317,16 +315,15 @@ class Message extends Model
     }
 
     /**
-     * @param bool $api
      * @return string|null
      */
-    public function getAudioDownloadRoute(bool $api = false): ?string
+    public function getAudioDownloadRoute(): ?string
     {
         if (! $this->isAudio()) {
             return null;
         }
 
-        return Helpers::Route(($api ? 'api.' : '').'messenger.threads.audio.download',
+        return Helpers::Route('messenger.threads.audio.download',
             [
                 'thread' => $this->thread_id,
                 'message' => $this->id,

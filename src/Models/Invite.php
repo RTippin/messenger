@@ -145,6 +145,12 @@ class Invite extends Model
     }
 
     /**
+     * If you want a fully qualified web route to view join invite page,
+     * define your own web route with name 'messenger.invites.join'
+     * and with key parameter '{invite:code}'.
+     * Example:
+     * Route::get('join/{invite}', [ViewPortalController::class, 'showJoinWithInvite'])->name('messenger.invites.join');
+     *
      * @return string|null
      */
     public function getInvitationRoute(): ?string
@@ -159,12 +165,11 @@ class Invite extends Model
 
     /**
      * @param string $size
-     * @param bool $api
      * @return string|null
      */
-    public function getInvitationAvatarRoute(string $size = 'sm', bool $api = false): ?string
+    public function getInvitationAvatarRoute(string $size = 'sm'): ?string
     {
-        return Helpers::Route(($api ? 'api.' : '').'messenger.invites.avatar.render',
+        return Helpers::Route('messenger.invites.avatar.render',
             [
                 'invite' => $this->code,
                 'size' => $size,
@@ -174,15 +179,14 @@ class Invite extends Model
     }
 
     /**
-     * @param bool $api
      * @return array
      */
-    public function inviteAvatar(bool $api = false): array
+    public function inviteAvatar(): array
     {
         return [
-            'sm' => $this->getInvitationAvatarRoute('sm', $api),
-            'md' => $this->getInvitationAvatarRoute('md', $api),
-            'lg' => $this->getInvitationAvatarRoute('lg', $api),
+            'sm' => $this->getInvitationAvatarRoute('sm'),
+            'md' => $this->getInvitationAvatarRoute('md'),
+            'lg' => $this->getInvitationAvatarRoute('lg'),
         ];
     }
 
