@@ -61,11 +61,9 @@ trait RouteMap
             $this->loadRoutesFrom(__DIR__.'/../routes/invite_api.php');
         });
 
-        if (config('messenger.routing.provider_avatar.enabled')) {
-            $router->group($this->providerAvatarRouteConfiguration(), function () {
-                $this->loadRoutesFrom(__DIR__.'/../routes/avatar.php');
-            });
-        }
+        $router->group($this->assetsRouteConfiguration(), function () {
+            $this->loadRoutesFrom(__DIR__.'/../routes/assets.php');
+        });
     }
 
     /**
@@ -124,12 +122,12 @@ trait RouteMap
      *
      * @return array
      */
-    private function providerAvatarRouteConfiguration(): array
+    private function assetsRouteConfiguration(): array
     {
         return [
-            'domain' => config('messenger.routing.provider_avatar.domain'),
-            'prefix' => trim(config('messenger.routing.provider_avatar.prefix'), '/'),
-            'middleware' => config('messenger.routing.provider_avatar.middleware'),
+            'domain' => config('messenger.routing.assets.domain'),
+            'prefix' => trim(config('messenger.routing.assets.prefix'), '/'),
+            'middleware' => config('messenger.routing.assets.middleware'),
         ];
     }
 }

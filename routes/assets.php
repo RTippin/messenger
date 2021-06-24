@@ -1,0 +1,28 @@
+<?php
+
+use Illuminate\Support\Facades\Route;
+use RTippin\Messenger\Http\Controllers\Actions\DownloadMessageAudio;
+use RTippin\Messenger\Http\Controllers\Actions\DownloadMessageFile;
+use RTippin\Messenger\Http\Controllers\Actions\RenderBotAvatar;
+use RTippin\Messenger\Http\Controllers\Actions\RenderGroupAvatar;
+use RTippin\Messenger\Http\Controllers\Actions\RenderMessageImage;
+use RTippin\Messenger\Http\Controllers\Actions\RenderProviderAvatar;
+use RTippin\Messenger\Http\Controllers\InviteController;
+
+/*
+|--------------------------------------------------------------------------
+| Messenger Asset Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::name('messenger.')->group(function () {
+    Route::prefix('threads/{thread}')->name('threads.')->group(function () {
+        Route::get('avatar/{size}/{image}', RenderGroupAvatar::class)->name('avatar.render');
+        Route::get('bots/{bot}/avatar/{size}/{image}', RenderBotAvatar::class)->name('bots.avatar.render');
+        Route::get('gallery/{message}/{size}/{image}', RenderMessageImage::class)->name('gallery.render');
+        Route::get('files/{message}/{file}', DownloadMessageFile::class)->name('files.download');
+        Route::get('audio/{message}/{audio}', DownloadMessageAudio::class)->name('audio.download');
+    });
+    Route::get('invites/{invite:code}/avatar/{size}/{image}', [InviteController::class, 'renderAvatar'])->name('invites.avatar.render');
+    Route::get('provider/{alias}/{id}/{size}/{image}', RenderProviderAvatar::class)->name('avatar.render');
+});

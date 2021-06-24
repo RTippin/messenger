@@ -39,11 +39,6 @@ trait MessengerConfig
     /**
      * @var bool
      */
-    private bool $providerAvatarRoutes;
-
-    /**
-     * @var bool
-     */
     private bool $channelRoutes;
 
     /**
@@ -1318,14 +1313,6 @@ trait MessengerConfig
     /**
      * @return bool
      */
-    public function isProviderAvatarRoutesEnabled(): bool
-    {
-        return $this->providerAvatarRoutes;
-    }
-
-    /**
-     * @return bool
-     */
     public function isChannelRoutesEnabled(): bool
     {
         return $this->channelRoutes;
@@ -1518,7 +1505,6 @@ trait MessengerConfig
     private function setMessengerConfig(): void
     {
         $this->apiEndpoint = '/'.config('messenger.routing.api.prefix');
-        $this->providerAvatarRoutes = config('messenger.routing.provider_avatar.enabled');
         $this->channelRoutes = config('messenger.routing.channels.enabled');
         $this->avatarStorage = config('messenger.storage.avatars');
         $this->threadStorage = config('messenger.storage.threads');

@@ -10,4 +10,4 @@ use RTippin\Messenger\Http\Controllers\Actions\RenderProviderAvatar;
 */
 
 //Provider Avatars Render
-Route::get('{alias}/{id}/{size}/{image}', RenderProviderAvatar::class)->name('avatar.render');
+//Route::get('{alias}/{id}/{size}/{image}', RenderProviderAvatar::class)->name('avatar.render');

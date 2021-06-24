@@ -105,7 +105,6 @@ use RTippin\Messenger\Models\Participant;
  * @method static array getSearchableForCurrentProvider()
  * @method static array getFriendableForCurrentProvider()
  * @method static string getApiEndpoint()
- * @method static bool isProviderAvatarRoutesEnabled()
  * @method static bool isChannelRoutesEnabled()
  * @method static string|null getProviderDefaultAvatarPath(string $alias)
  * @method static string getDefaultNotFoundImage()

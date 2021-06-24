@@ -4,8 +4,6 @@ use Illuminate\Support\Facades\Route;
 use RTippin\Messenger\Http\Controllers\Actions\AvailableBotHandlers;
 use RTippin\Messenger\Http\Controllers\Actions\CallHeartbeat;
 use RTippin\Messenger\Http\Controllers\Actions\DemoteAdmin;
-use RTippin\Messenger\Http\Controllers\Actions\DownloadMessageAudio;
-use RTippin\Messenger\Http\Controllers\Actions\DownloadMessageFile;
 use RTippin\Messenger\Http\Controllers\Actions\EndCall;
 use RTippin\Messenger\Http\Controllers\Actions\FilterAddParticipants;
 use RTippin\Messenger\Http\Controllers\Actions\FindRecipientThread;
@@ -19,10 +17,6 @@ use RTippin\Messenger\Http\Controllers\Actions\MarkThreadRead;
 use RTippin\Messenger\Http\Controllers\Actions\MuteThread;
 use RTippin\Messenger\Http\Controllers\Actions\PrivateThreadApproval;
 use RTippin\Messenger\Http\Controllers\Actions\PromoteAdmin;
-use RTippin\Messenger\Http\Controllers\Actions\RenderBotAvatar;
-use RTippin\Messenger\Http\Controllers\Actions\RenderGroupAvatar;
-use RTippin\Messenger\Http\Controllers\Actions\RenderMessageImage;
-use RTippin\Messenger\Http\Controllers\Actions\RenderProviderAvatar;
 use RTippin\Messenger\Http\Controllers\Actions\Search;
 use RTippin\Messenger\Http\Controllers\Actions\StatusHeartbeat;
 use RTippin\Messenger\Http\Controllers\Actions\ThreadArchiveState;
@@ -54,11 +48,6 @@ use RTippin\Messenger\Http\Controllers\ThreadController;
 | Messenger API Routes
 |--------------------------------------------------------------------------
 */
-
-//Provider Avatars API render
-if (config('messenger.routing.provider_avatar.enabled')) {
-    Route::get(trim(config('messenger.routing.provider_avatar.prefix'), '/').'/{alias}/{id}/{size}/{image}', RenderProviderAvatar::class)->name('api.avatar.render');
-}
 
 Route::name('api.messenger.')->group(function () {
     //Messenger view service settings
@@ -99,9 +88,6 @@ Route::name('api.messenger.')->group(function () {
         Route::get('audio/page/{audio}', [AudioMessageController::class, 'paginate'])->name('audio.page');
         //Common
         Route::delete('messages/{message}/embeds', [MessageController::class, 'removeEmbeds'])->name('messages.embeds.destroy');
-        Route::get('gallery/{message}/{size}/{image}', RenderMessageImage::class)->name('gallery.render');
-        Route::get('files/{message}/{file}', DownloadMessageFile::class)->name('files.download');
-        Route::get('audio/{message}/{audio}', DownloadMessageAudio::class)->name('audio.download');
         Route::get('load/{relations?}', ThreadLoader::class)->name('loader');
         Route::get('logs', [SystemMessageController::class, 'index'])->name('logs');
         Route::get('mark-read', MarkThreadRead::class)->name('mark.read');
@@ -115,7 +101,6 @@ Route::name('api.messenger.')->group(function () {
         Route::get('settings', [GroupThreadController::class, 'settings'])->name('settings');
         Route::put('settings', [GroupThreadController::class, 'updateSettings'])->name('settings.update');
         Route::post('avatar', [GroupThreadController::class, 'updateAvatar'])->name('avatar.update');
-        Route::get('avatar/{size}/{image}', RenderGroupAvatar::class)->name('avatar.render');
 
         Route::get('add-participants', FilterAddParticipants::class)->name('add.participants');
         //Privates
@@ -133,7 +118,6 @@ Route::name('api.messenger.')->group(function () {
     Route::apiResource('threads.bots.actions', BotActionController::class);
     Route::prefix('threads/{thread}/bots/{bot}')->name('threads.bots.')->group(function () {
         Route::get('add-handlers', AvailableBotHandlers::class)->name('handlers');
-        Route::get('avatar/{size}/{image}', RenderBotAvatar::class)->name('avatar.render');
         Route::post('avatar', [BotController::class, 'storeAvatar'])->name('avatar.store');
         Route::delete('avatar', [BotController::class, 'destroyAvatar'])->name('avatar.destroy');
     });

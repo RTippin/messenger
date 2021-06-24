@@ -138,10 +138,9 @@ return [
             'middleware' => ['web', 'auth', 'messenger.provider:required'],
             'invite_api_middleware' => ['web', 'auth.optional', 'messenger.provider'],
         ],
-        'provider_avatar' => [
-            'enabled' => true,
+        'assets' => [
             'domain' => null,
-            'prefix' => 'images',
+            'prefix' => 'messenger/assets',
             'middleware' => ['web', 'cache.headers:public, max-age=86400;'],
         ],
         'channels' => [

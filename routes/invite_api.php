@@ -10,7 +10,5 @@ use RTippin\Messenger\Http\Controllers\InviteController;
 |--------------------------------------------------------------------------
 */
 
-Route::prefix('join/{invite:code}')->name('api.messenger.invites.')->group(function () {
-    Route::get('/', [InviteController::class, 'show'])->name('join');
-    Route::get('avatar/{size}/{image}', [InviteController::class, 'renderAvatar'])->name('avatar.render');
-});
+Route::get('join/{invite:code}', [InviteController::class, 'show'])->name('api.messenger.invites.join');
+
