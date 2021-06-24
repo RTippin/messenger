@@ -405,12 +405,11 @@ class Thread extends Model
 
     /**
      * @param string $size
-     * @param bool $api
      * @return string|null
      */
-    public function getThreadAvatarRoute(string $size = 'sm', bool $api = false): ?string
+    public function getThreadAvatarRoute(string $size = 'sm'): ?string
     {
-        return Helpers::Route(($api ? 'api.' : '').'messenger.threads.avatar.render',
+        return Helpers::Route('messenger.threads.avatar.render',
             [
                 'thread' => $this->id,
                 'size' => $size,
@@ -420,10 +419,9 @@ class Thread extends Model
     }
 
     /**
-     * @param bool $api
      * @return array
      */
-    public function threadAvatar(bool $api = false): array
+    public function threadAvatar(): array
     {
         if ($this->isPrivate()) {
             return [
@@ -434,9 +432,9 @@ class Thread extends Model
         }
 
         return [
-            'sm' => $this->getThreadAvatarRoute('sm', $api),
-            'md' => $this->getThreadAvatarRoute('md', $api),
-            'lg' => $this->getThreadAvatarRoute('lg', $api),
+            'sm' => $this->getThreadAvatarRoute('sm'),
+            'md' => $this->getThreadAvatarRoute('md'),
+            'lg' => $this->getThreadAvatarRoute('lg'),
         ];
     }
 

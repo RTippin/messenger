@@ -67,7 +67,6 @@ class CallResource extends JsonResource
                 'thread_type' => $this->thread->type,
                 'thread_type_verbose' => $this->thread->getTypeVerbose(),
                 'thread_name' => $this->thread->name(),
-                'api_thread_avatar' => $this->thread->threadAvatar(true),
                 'thread_avatar' => $this->thread->threadAvatar(),
             ],
             'options' => $this->when($this->call->isActive(),

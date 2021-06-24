@@ -79,7 +79,6 @@ class ThreadResource extends JsonResource
             'locked' => $this->thread->isLocked(),
             'pending' => $this->thread->isPending(),
             'name' => $this->thread->name(),
-            'api_avatar' => $this->thread->threadAvatar(true),
             'avatar' => $this->thread->threadAvatar(),
             'group' => $this->thread->isGroup(),
             'unread' => $this->thread->isUnread(),

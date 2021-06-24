@@ -233,30 +233,18 @@ class ThreadTest extends FeatureTestCase
         $group = Thread::factory()->group()->create(['image' => 'test.png']);
         $private = $this->createPrivateThread($this->tippin, $this->doe);
         $groupAvatar = [
-            'sm' => "/messenger/threads/$group->id/avatar/sm/test.png",
-            'md' => "/messenger/threads/$group->id/avatar/md/test.png",
-            'lg' => "/messenger/threads/$group->id/avatar/lg/test.png",
-        ];
-        $groupAvatarApi = [
-            'sm' => "/api/messenger/threads/$group->id/avatar/sm/test.png",
-            'md' => "/api/messenger/threads/$group->id/avatar/md/test.png",
-            'lg' => "/api/messenger/threads/$group->id/avatar/lg/test.png",
+            'sm' => "/messenger/assets/threads/$group->id/avatar/sm/test.png",
+            'md' => "/messenger/assets/threads/$group->id/avatar/md/test.png",
+            'lg' => "/messenger/assets/threads/$group->id/avatar/lg/test.png",
         ];
         $privateAvatar = [
-            'sm' => "/images/user/{$this->doe->getKey()}/sm/default.png",
-            'md' => "/images/user/{$this->doe->getKey()}/md/default.png",
-            'lg' => "/images/user/{$this->doe->getKey()}/lg/default.png",
-        ];
-        $privateAvatarApi = [
-            'sm' => "/api/messenger/images/user/{$this->doe->getKey()}/sm/default.png",
-            'md' => "/api/messenger/images/user/{$this->doe->getKey()}/md/default.png",
-            'lg' => "/api/messenger/images/user/{$this->doe->getKey()}/lg/default.png",
+            'sm' => "/messenger/assets/provider/user/{$this->doe->getKey()}/sm/default.png",
+            'md' => "/messenger/assets/provider/user/{$this->doe->getKey()}/md/default.png",
+            'lg' => "/messenger/assets/provider/user/{$this->doe->getKey()}/lg/default.png",
         ];
 
         $this->assertSame($groupAvatar, $group->threadAvatar());
-        $this->assertSame($groupAvatarApi, $group->threadAvatar(true));
         $this->assertSame($privateAvatar, $private->threadAvatar());
-        $this->assertSame($privateAvatarApi, $private->threadAvatar(true));
     }
 
     /** @test */

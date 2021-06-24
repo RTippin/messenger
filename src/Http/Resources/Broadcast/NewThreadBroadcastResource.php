@@ -61,7 +61,6 @@ class NewThreadBroadcastResource extends JsonResource
                 'created_at' => $this->thread->created_at,
                 $this->mergeWhen($this->thread->isGroup(), fn () => [
                     'name' => $this->thread->name(),
-                    'api_avatar' => $this->thread->threadAvatar(true),
                     'avatar' => $this->thread->threadAvatar(),
                 ]),
             ],

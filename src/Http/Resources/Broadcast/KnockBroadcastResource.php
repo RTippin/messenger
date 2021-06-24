@@ -50,7 +50,6 @@ class KnockBroadcastResource extends JsonResource
                 'group' => $this->thread->isGroup(),
                 $this->mergeWhen($this->thread->isGroup(), fn () => [
                     'name' => $this->thread->name(),
-                    'api_avatar' => $this->thread->threadAvatar(true),
                     'avatar' => $this->thread->threadAvatar(),
                 ]),
             ],

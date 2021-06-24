@@ -53,7 +53,6 @@ class NewCallBroadcastResource extends JsonResource
                 'updated_at' => $this->call->updated_at,
                 $this->mergeWhen($this->call->thread->isGroup(), fn () => [
                     'thread_name' => $this->call->thread->name(),
-                    'api_thread_avatar' => $this->call->thread->threadAvatar(true),
                     'thread_avatar' => $this->call->thread->threadAvatar(),
                 ]),
             ],

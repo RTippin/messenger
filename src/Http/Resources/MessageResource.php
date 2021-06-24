@@ -77,7 +77,6 @@ class MessageResource extends JsonResource
                 $this->mergeWhen($this->thread->isGroup(),
                     fn () => [
                         'thread_name' => $this->thread->name(),
-                        'api_thread_avatar' => $this->thread->threadAvatar(true),
                         'thread_avatar' => $this->thread->threadAvatar(),
                     ]
                 ),
