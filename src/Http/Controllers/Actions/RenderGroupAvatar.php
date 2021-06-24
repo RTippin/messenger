@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use RTippin\Messenger\Models\Thread;
@@ -22,15 +21,13 @@ class RenderGroupAvatar
      * @param string $size
      * @param string $image
      * @return StreamedResponse|BinaryFileResponse
-     * @throws AuthorizationException|FileNotFoundException|FileNotFoundException
+     * @throws FileNotFoundException|FileNotFoundException
      */
     public function __invoke(ImageRenderService $service,
                              Thread $thread,
                              string $size,
                              string $image)
     {
-        $this->authorize('groupMethod', $thread);
-
         return $service->renderGroupAvatar($thread, $size, $image);
     }
 }

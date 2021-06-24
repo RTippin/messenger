@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
@@ -47,18 +46,13 @@ class DownloadMessageAudio
      * @param Message $message
      * @param string $audio
      * @return BinaryFileResponse|StreamedResponse
-     * @throws AuthorizationException
+     * @throws FileNotFoundException
      */
     public function __invoke(Request $request,
                              Thread $thread,
                              Message $message,
                              string $audio)
     {
-        $this->authorize('view', [
-            Message::class,
-            $thread,
-        ]);
-
         $this->checkAudioExist($message, $audio);
 
         return $request->has('stream')
@@ -98,6 +92,7 @@ class DownloadMessageAudio
      * @param Message $message
      * @param string $audioNameChallenge
      * @return void
+     * @throws FileNotFoundException
      */
     private function checkAudioExist(Message $message, string $audioNameChallenge): void
     {

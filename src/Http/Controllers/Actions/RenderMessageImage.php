@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use RTippin\Messenger\Models\Message;
@@ -24,7 +23,7 @@ class RenderMessageImage
      * @param string $size
      * @param string $image
      * @return StreamedResponse|BinaryFileResponse
-     * @throws AuthorizationException|FileNotFoundException
+     * @throws FileNotFoundException
      */
     public function __invoke(ImageRenderService $service,
                              Thread $thread,
@@ -32,11 +31,6 @@ class RenderMessageImage
                              string $size,
                              string $image)
     {
-        $this->authorize('view', [
-            Message::class,
-            $thread,
-        ]);
-
         return $service->renderMessageImage($message, $size, $image);
     }
 }

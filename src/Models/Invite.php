@@ -149,7 +149,7 @@ class Invite extends Model
      * define your own web route with name 'messenger.invites.join'
      * and with key parameter '{invite:code}'.
      * Example:
-     * Route::get('join/{invite}', [ViewPortalController::class, 'showJoinWithInvite'])->name('messenger.invites.join');
+     * Route::get('join/{invite}', [ViewPortalController::class, 'showJoinWithInvite'])->name('messenger.invites.join');.
      *
      * @return string|null
      */

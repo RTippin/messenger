@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Filesystem\FilesystemManager;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use RTippin\Messenger\Exceptions\FileNotFoundException;
@@ -44,17 +43,12 @@ class DownloadMessageFile
      * @param Message $message
      * @param string $file
      * @return StreamedResponse
-     * @throws FileNotFoundException|AuthorizationException
+     * @throws FileNotFoundException
      */
     public function __invoke(Thread $thread,
                              Message $message,
                              string $file): StreamedResponse
     {
-        $this->authorize('view', [
-            Message::class,
-            $thread,
-        ]);
-
         $this->checkFileExist($message, $file);
 
         return $this->filesystemManager
