@@ -427,9 +427,9 @@ class Thread extends Model
     {
         if ($this->isPrivate()) {
             return [
-                'sm' => $this->recipient()->owner->getProviderAvatarRoute('sm', $api),
-                'md' => $this->recipient()->owner->getProviderAvatarRoute('md', $api),
-                'lg' => $this->recipient()->owner->getProviderAvatarRoute('lg', $api),
+                'sm' => $this->recipient()->owner->getProviderAvatarRoute('sm'),
+                'md' => $this->recipient()->owner->getProviderAvatarRoute('md'),
+                'lg' => $this->recipient()->owner->getProviderAvatarRoute('lg'),
             ];
         }
 

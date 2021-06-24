@@ -65,11 +65,6 @@ class BotResource extends JsonResource
     private function addAvatar(Bot $bot): array
     {
         return [
-            'api_avatar' => [
-                'sm' => $bot->getProviderAvatarRoute('sm', true),
-                'md' => $bot->getProviderAvatarRoute('md', true),
-                'lg' => $bot->getProviderAvatarRoute('lg', true),
-            ],
             'avatar' => [
                 'sm' => $bot->getProviderAvatarRoute('sm'),
                 'md' => $bot->getProviderAvatarRoute('md'),

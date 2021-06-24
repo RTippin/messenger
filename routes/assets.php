@@ -24,5 +24,5 @@ Route::name('messenger.')->group(function () {
         Route::get('audio/{message}/{audio}', DownloadMessageAudio::class)->name('audio.download');
     });
     Route::get('invites/{invite:code}/avatar/{size}/{image}', [InviteController::class, 'renderAvatar'])->name('invites.avatar.render');
-    Route::get('provider/{alias}/{id}/{size}/{image}', RenderProviderAvatar::class)->name('avatar.render');
+    Route::get('provider/{alias}/{id}/{size}/{image}', RenderProviderAvatar::class)->name('provider.avatar.render');
 });

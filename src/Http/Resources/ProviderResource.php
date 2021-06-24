@@ -97,11 +97,6 @@ class ProviderResource extends JsonResource
     private function addAvatar(): array
     {
         return [
-            'api_avatar' => [
-                'sm' => $this->provider->getProviderAvatarRoute('sm', true),
-                'md' => $this->provider->getProviderAvatarRoute('md', true),
-                'lg' => $this->provider->getProviderAvatarRoute('lg', true),
-            ],
             'avatar' => [
                 'sm' => $this->provider->getProviderAvatarRoute('sm'),
                 'md' => $this->provider->getProviderAvatarRoute('md'),

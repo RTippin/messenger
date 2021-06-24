@@ -79,12 +79,11 @@ trait Messageable
      * from our resource classes using sm/md/lg .
      *
      * @param string $size
-     * @param bool $api
      * @return string|null
      */
-    public function getProviderAvatarRoute(string $size = 'sm', bool $api = false): ?string
+    public function getProviderAvatarRoute(string $size = 'sm'): ?string
     {
-        return Helpers::Route(($api ? 'api.' : '').'avatar.render',
+        return Helpers::Route('messenger.provider.avatar.render',
             [
                 'alias' => Messenger::findProviderAlias($this),
                 'id' => $this->getKey(),

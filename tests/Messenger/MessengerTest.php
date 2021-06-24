@@ -498,12 +498,7 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_can_get_configs()
     {
-//        $this->assertSame('Messenger-Testbench', $this->messenger->getSiteName());
-//        $this->assertSame('/messenger', $this->messenger->getWebEndpoint());
         $this->assertSame('/api/messenger', $this->messenger->getApiEndpoint());
-//        $this->assertSame(config('app.url'), $this->messenger->getSocketEndpoint());
-//        $this->assertTrue($this->messenger->isWebRoutesEnabled());
-//        $this->assertTrue($this->messenger->isProviderAvatarRoutesEnabled());
         $this->assertTrue($this->messenger->isChannelRoutesEnabled());
         $this->assertFalse($this->messenger->isProviderSet());
         $this->assertNull($this->messenger->getProvider());

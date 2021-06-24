@@ -40,10 +40,9 @@ interface MessengerProvider
      * from our resource classes using sm/md/lg .
      *
      * @param string $size
-     * @param bool $api
      * @return string|null
      */
-    public function getProviderAvatarRoute(string $size = 'sm', bool $api = false): ?string;
+    public function getProviderAvatarRoute(string $size = 'sm'): ?string;
 
     /**
      * If your provider has a route/slug for a profile page,

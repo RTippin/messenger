@@ -177,12 +177,11 @@ class Bot extends Model implements MessengerProvider
 
     /**
      * @param string $size
-     * @param bool $api
      * @return string|null
      */
-    public function getProviderAvatarRoute(string $size = 'sm', bool $api = false): ?string
+    public function getProviderAvatarRoute(string $size = 'sm'): ?string
     {
-        return Helpers::Route(($api ? 'api.' : '').'messenger.threads.bots.avatar.render',
+        return Helpers::Route('messenger.threads.bots.avatar.render',
             [
                 'thread' => $this->thread_id,
                 'bot' => $this->id,

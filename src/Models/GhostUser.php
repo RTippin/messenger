@@ -76,12 +76,11 @@ class GhostUser extends Eloquent
 
     /**
      * @param string $size
-     * @param bool $api
      * @return string|null
      */
-    public function getProviderAvatarRoute(string $size = 'sm', bool $api = false): ?string
+    public function getProviderAvatarRoute(string $size = 'sm'): ?string
     {
-        return Helpers::Route(($api ? 'api.' : '').'avatar.render',
+        return Helpers::Route('messenger.provider.avatar.render',
             [
                 'alias' => $this->ghostBot ? 'bot' : 'ghost',
                 'id' => 'ghost',
