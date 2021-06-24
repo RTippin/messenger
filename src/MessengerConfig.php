@@ -22,11 +22,6 @@ trait MessengerConfig
     use ChecksReflection;
 
     /**
-     * @var string
-     */
-    private string $siteName;
-
-    /**
      * @var Collection
      */
     private Collection $providers;
@@ -42,16 +37,6 @@ trait MessengerConfig
     private string $apiEndpoint;
 
     /**
-     * @var string
-     */
-    private string $webEndpoint;
-
-    /**
-     * @var bool
-     */
-    private bool $webRoutes;
-
-    /**
      * @var bool
      */
     private bool $providerAvatarRoutes;
@@ -60,11 +45,6 @@ trait MessengerConfig
      * @var bool
      */
     private bool $channelRoutes;
-
-    /**
-     * @var string
-     */
-    private string $socketEndpoint;
 
     /**
      * @var bool
@@ -1336,38 +1316,6 @@ trait MessengerConfig
     }
 
     /**
-     * @return string
-     */
-    public function getWebEndpoint(): string
-    {
-        return $this->webEndpoint;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSocketEndpoint(): string
-    {
-        return $this->socketEndpoint;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSiteName(): string
-    {
-        return $this->siteName;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isWebRoutesEnabled(): bool
-    {
-        return $this->webRoutes;
-    }
-
-    /**
      * @return bool
      */
     public function isProviderAvatarRoutesEnabled(): bool
@@ -1569,13 +1517,9 @@ trait MessengerConfig
      */
     private function setMessengerConfig(): void
     {
-        $this->siteName = config('messenger.site_name');
         $this->apiEndpoint = '/'.config('messenger.routing.api.prefix');
-        $this->webEndpoint = '/'.config('messenger.routing.web.prefix');
-        $this->webRoutes = config('messenger.routing.web.enabled');
         $this->providerAvatarRoutes = config('messenger.routing.provider_avatar.enabled');
         $this->channelRoutes = config('messenger.routing.channels.enabled');
-        $this->socketEndpoint = config('messenger.socket_endpoint');
         $this->avatarStorage = config('messenger.storage.avatars');
         $this->threadStorage = config('messenger.storage.threads');
         $this->defaultNotFoundImage = config('messenger.files.default_not_found_image');

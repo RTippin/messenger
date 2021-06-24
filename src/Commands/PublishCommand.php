@@ -18,7 +18,7 @@ class PublishCommand extends Command
      *
      * @var string
      */
-    protected $description = 'Publish all of the main messenger resources!';
+    protected $description = 'Publish all of the main messenger config!';
 
     /**
      * Execute the console command.
@@ -34,20 +34,6 @@ class PublishCommand extends Command
             '--force' => $this->option('force'),
         ]);
 
-        $this->comment('Publishing Messenger Assets...');
-
-        $this->callSilent('vendor:publish', [
-            '--tag' => 'messenger.assets',
-            '--force' => $this->option('force'),
-        ]);
-
-        $this->comment('Publishing Messenger Views...');
-
-        $this->callSilent('vendor:publish', [
-            '--tag' => 'messenger.views',
-            '--force' => $this->option('force'),
-        ]);
-
-        $this->info('Messenger files published successfully!');
+        $this->info('Messenger config published successfully!');
     }
 }

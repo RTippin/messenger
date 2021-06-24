@@ -3,27 +3,6 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | The name of your application
-    |--------------------------------------------------------------------------
-    |
-    */
-    'site_name' => env('MESSENGER_SITE_NAME', 'Messenger'),
-
-    /*
-    |--------------------------------------------------------------------------
-    | Provider UUIDs
-    |--------------------------------------------------------------------------
-    |
-    | All of our tables that have relations to one of your providers will use
-    | a morphTo. If your providers use UUIDs (char 36) as their primary keys,
-    | then set this to true. Please note that if you use multiple providers,
-    | they all must have matching primary key types (int / char / etc).
-    |
-    */
-    'provider_uuids' => false,
-
-    /*
-    |--------------------------------------------------------------------------
     | Messenger Providers Configuration
     |--------------------------------------------------------------------------
     |
@@ -79,6 +58,19 @@ return [
             ],
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Provider UUIDs
+    |--------------------------------------------------------------------------
+    |
+    | All of our tables that have relations to one of your providers will use
+    | a morphTo. If your providers use UUIDs (char 36) as their primary keys,
+    | then set this to true. Please note that if you use multiple providers,
+    | they all must have matching primary key types (int / char / etc).
+    |
+    */
+    'provider_uuids' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -146,13 +138,6 @@ return [
             'middleware' => ['web', 'auth', 'messenger.provider:required'],
             'invite_api_middleware' => ['web', 'auth.optional', 'messenger.provider'],
         ],
-        'web' => [
-            'enabled' => true,
-            'domain' => null,
-            'prefix' => 'messenger',
-            'middleware' => ['web', 'auth', 'messenger.provider'],
-            'invite_web_middleware' => ['web', 'auth.optional', 'messenger.provider'],
-        ],
         'provider_avatar' => [
             'enabled' => true,
             'domain' => null,
@@ -179,14 +164,6 @@ return [
         'message' => 60,    // Applies to sending messages per thread
         'attachment' => 15, // Applies to uploading images/documents per thread
     ],
-
-    /*
-    |--------------------------------------------------------------------------
-    | Endpoint our javascript will use for socket.io
-    |--------------------------------------------------------------------------
-    |
-    */
-    'socket_endpoint' => env('MESSENGER_SOCKET_ENDPOINT', config('app.url')),
 
     /*
     |--------------------------------------------------------------------------

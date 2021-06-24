@@ -11,5 +11,5 @@ use RTippin\Messenger\Http\Controllers\ViewPortalController;
 |--------------------------------------------------------------------------
 */
 
-Route::get('join/{invite}', [ViewPortalController::class, 'showJoinWithInvite'])->name('messenger.invites.join');
-Route::get('join/{invite:code}/avatar/{size}/{image}', [InviteController::class, 'renderAvatar'])->name('messenger.invites.avatar.render');
+//Route::get('join/{invite}', [ViewPortalController::class, 'showJoinWithInvite'])->name('messenger.invites.join');
+//Route::get('join/{invite:code}/avatar/{size}/{image}', [InviteController::class, 'renderAvatar'])->name('messenger.invites.avatar.render');

@@ -80,15 +80,11 @@ class MessengerServiceProvider extends ServiceProvider
             'bots' => Bot::class,
         ]);
 
-        Collection::macro('forProvider', function (MessengerProvider $provider, string $morph = 'owner') {
+        Collection::macro('forProvider', function (MessengerProvider $provider, string $morph = 'owner'): Collection {
             /** @var Collection $this */
             return $this->where("{$morph}_id", '=', $provider->getKey())
                 ->where("{$morph}_type", '=', $provider->getMorphClass());
         });
-
-        if (config('messenger.routing.web.enabled')) {
-            $this->loadViewsFrom(__DIR__.'/../resources/views', 'messenger');
-        }
 
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
@@ -131,17 +127,6 @@ class MessengerServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'messenger.migrations');
-
-        // Only load our views and assets if web routes are enabled.
-        if (config('messenger.routing.web.enabled')) {
-            $this->publishes([
-                __DIR__.'/../resources/views' => base_path('resources/views/vendor/messenger'),
-            ], 'messenger.views');
-
-            $this->publishes([
-                __DIR__.'/../public' => public_path('vendor/messenger'),
-            ], 'messenger.assets');
-        }
     }
 
     /**

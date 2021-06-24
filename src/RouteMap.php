@@ -61,16 +61,6 @@ trait RouteMap
             $this->loadRoutesFrom(__DIR__.'/../routes/invite_api.php');
         });
 
-        if (config('messenger.routing.web.enabled')) {
-            $router->group($this->webRouteConfiguration(), function () {
-                $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
-            });
-
-            $router->group($this->webRouteConfiguration(true), function () {
-                $this->loadRoutesFrom(__DIR__.'/../routes/invite_web.php');
-            });
-        }
-
         if (config('messenger.routing.provider_avatar.enabled')) {
             $router->group($this->providerAvatarRouteConfiguration(), function () {
                 $this->loadRoutesFrom(__DIR__.'/../routes/avatar.php');
@@ -126,23 +116,6 @@ trait RouteMap
             'middleware' => $invite
                 ? $this->mergeApiMiddleware(config('messenger.routing.api.invite_api_middleware'))
                 : $this->mergeApiMiddleware(config('messenger.routing.api.middleware')),
-        ];
-    }
-
-    /**
-     * Get the Messenger API route group configuration array.
-     *
-     * @param bool $invite
-     * @return array
-     */
-    private function webRouteConfiguration(bool $invite = false): array
-    {
-        return [
-            'domain' => config('messenger.routing.web.domain'),
-            'prefix' => trim(config('messenger.routing.web.prefix'), '/'),
-            'middleware' => $invite
-                ? config('messenger.routing.web.invite_web_middleware')
-                : config('messenger.routing.web.middleware'),
         ];
     }
 
