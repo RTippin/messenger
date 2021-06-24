@@ -1,9 +1,6 @@
-/node_modules
 /vendor
 /.idea
 composer.lock
 .phpunit.result.cache
 _ide_helper.php
 .phpstorm.meta.php
-app.js.LICENSE.txt
-Emoji.js.LICENSE.txt
