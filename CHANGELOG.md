@@ -3,6 +3,25 @@
 
 ---
 
+### [v0.36 (06-24-2021)]
+
+#### Added
+- `assets` config array under the `routing` config section.
+- `assets.php` routing file.
+
+#### Changed
+- Assets (avatars/images/documents) no longer require authorization.
+
+#### Removed
+- Assets, views, web routes. Relocated to [Messenger UI](https://github.com/RTippin/messenger-ui) addon.
+- All API prefixed routes and responses for assets (images, documents, audio, avatars).
+- `site_name` from config.
+- `web` from `routing` config.
+- `provider_avatar` from `routing` config.
+- `getSiteName()`, `getWebEndpoint()`, `isWebRoutesEnabled()`, and `getSocketEndpoint()` methods from Messenger.
+
+---
+
 ### [v0.35 (06-20-2021)]
 
 #### Added
