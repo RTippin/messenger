@@ -66,10 +66,11 @@ interface ActionHandler
      * Set the message and trigger used for a message handler.
      *
      * @param Message $message
-     * @param string $matchingTrigger
+     * @param string|null $matchingTrigger
+     * @param string|null $senderIp
      * @return $this
      */
-    public function setMessage(Message $message, string $matchingTrigger);
+    public function setMessage(Message $message, ?string $matchingTrigger, ?string $senderIp);
 
     /**
      * Should the handler not perform an action, you may call this to instruct

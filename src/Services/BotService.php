@@ -22,10 +22,33 @@ class BotService
     private MessengerBots $bots;
 
     /**
+     * @var Thread
+     */
+    private Thread $thread;
+
+    /**
+     * @var Message
+     */
+    private Message $message;
+
+    /**
+     * @var bool
+     */
+    private bool $isGroupAdmin;
+
+    /**
+     * @var string|null
+     */
+    private ?string $senderIp;
+
+    /**
      * @var string
      */
     private string $lastMatchingTrigger;
 
+    /**
+     * @var Collection
+     */
     private Collection $botsTriggered;
 
     /**
@@ -45,11 +68,18 @@ class BotService
      * @param Message $message
      * @param Thread $thread
      * @param bool $isGroupAdmin
+     * @param string|null $senderIp
      */
     public function handleMessage(Message $message,
                                   Thread $thread,
-                                  bool $isGroupAdmin): void
+                                  bool $isGroupAdmin,
+                                  ?string $senderIp): void
     {
+        $this->thread = $thread;
+        $this->message = $message;
+        $this->isGroupAdmin = $isGroupAdmin;
+        $this->senderIp = $senderIp;
+
         $actions = BotAction::enabled()
             ->hasEnabledBotFromThread($thread->id)
             ->validHandler()
@@ -57,13 +87,8 @@ class BotService
             ->get();
 
         foreach ($actions as $action) {
-            if ($this->matches($action->match, $action->getTriggers(), $message->body)) {
-                $this->executeMessage(
-                    $action,
-                    $message,
-                    $thread,
-                    $isGroupAdmin
-                );
+            if ($this->matches($action->match, $action->getTriggers(), $this->message->body)) {
+                $this->executeMessage($action);
             }
         }
 
@@ -198,24 +223,22 @@ class BotService
      * TODO : Fire success and fail events.
      *
      * @param BotAction $action
-     * @param Message $message
-     * @param Thread $thread
-     * @param bool $isGroupAdmin
      */
-    private function executeMessage(BotAction $action,
-                                    Message $message,
-                                    Thread $thread,
-                                    bool $isGroupAdmin): void
+    private function executeMessage(BotAction $action): void
     {
-        if ($this->shouldExecute($action, $isGroupAdmin)) {
+        if ($this->shouldExecute($action)) {
             $this->botActionStarting($action);
 
             try {
                 $this->bots
                     ->initializeHandler($action->handler)
                     ->setAction($action)
-                    ->setThread($thread)
-                    ->setMessage($message, $this->lastMatchingTrigger)
+                    ->setThread($this->thread)
+                    ->setMessage(
+                        $this->message,
+                        $this->lastMatchingTrigger,
+                        $this->senderIp
+                    )
                     ->handle();
             } catch (Throwable $e) {
                 report($e);
@@ -231,25 +254,23 @@ class BotService
      * the group admin flag must also be true.
      *
      * @param BotAction $action
-     * @param bool $isGroupAdmin
      * @return bool
      */
-    private function shouldExecute(BotAction $action, bool $isGroupAdmin): bool
+    private function shouldExecute(BotAction $action): bool
     {
         return $this->bots->isValidHandler($action->handler)
             && $action->notOnAnyCooldown()
-            && $this->hasPermissionToTrigger($action, $isGroupAdmin);
+            && $this->hasPermissionToTrigger($action);
     }
 
     /**
      * @param BotAction $action
-     * @param bool $isGroupAdmin
      * @return bool
      */
-    private function hasPermissionToTrigger(BotAction $action, bool $isGroupAdmin): bool
+    private function hasPermissionToTrigger(BotAction $action): bool
     {
         return $action->admin_only
-            ? $isGroupAdmin
+            ? $this->isGroupAdmin
             : true;
     }
 

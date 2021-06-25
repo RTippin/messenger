@@ -41,7 +41,8 @@ class BotActionMessageHandler implements ShouldQueue
         $service->handleMessage(
             $this->event->message,
             $this->event->thread,
-            $this->event->isGroupAdmin
+            $this->event->isGroupAdmin,
+            $this->event->senderIp
         );
     }
 }

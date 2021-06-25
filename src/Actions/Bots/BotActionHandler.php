@@ -40,6 +40,11 @@ abstract class BotActionHandler implements ActionHandler
     protected ?string $matchingTrigger = null;
 
     /**
+     * @var string|null
+     */
+    protected ?string $senderIp = null;
+
+    /**
      * @var bool
      */
     protected bool $shouldReleaseCooldown = false;
@@ -113,11 +118,15 @@ abstract class BotActionHandler implements ActionHandler
     /**
      * @inheritDoc
      */
-    public function setMessage(Message $message, string $matchingTrigger): self
+    public function setMessage(Message $message,
+                               ?string $matchingTrigger,
+                               ?string $senderIp): self
     {
         $this->message = $message;
 
         $this->matchingTrigger = $matchingTrigger;
+
+        $this->senderIp = $senderIp;
 
         return $this;
     }
