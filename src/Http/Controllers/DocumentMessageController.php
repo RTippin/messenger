@@ -93,7 +93,8 @@ class DocumentMessageController extends Controller
 
         return $storeDocumentMessage->execute(
             $thread,
-            $request->validated()
+            $request->validated(),
+            $request->ip()
         )->getJsonResource();
     }
 }

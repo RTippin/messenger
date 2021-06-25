@@ -60,6 +60,11 @@ abstract class NewMessageAction extends BaseMessengerAction
     private ?Message $replyingTo = null;
 
     /**
+     * @var string|null
+     */
+    private ?string $senderIp = null;
+
+    /**
      * @var MessengerProvider
      */
     private MessengerProvider $messageOwner;
@@ -130,6 +135,17 @@ abstract class NewMessageAction extends BaseMessengerAction
     }
 
     /**
+     * @param string|null $senderIp
+     * @return $this
+     */
+    protected function setSenderIp(?string $senderIp): self
+    {
+        $this->senderIp = $senderIp;
+
+        return $this;
+    }
+
+    /**
      * @return $this
      * @throws Throwable
      */
@@ -185,7 +201,8 @@ abstract class NewMessageAction extends BaseMessengerAction
             $this->dispatcher->dispatch(new NewMessageEvent(
                 $this->getMessage(true),
                 $this->getThread(true),
-                $this->isGroupAdmin()
+                $this->isGroupAdmin(),
+                $this->senderIp
             ));
         }
 

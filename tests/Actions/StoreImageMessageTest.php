@@ -180,7 +180,28 @@ class StoreImageMessageTest extends FeatureTestCase
             return true;
         });
         Event::assertDispatched(function (NewMessageEvent $event) use ($thread) {
+            $this->assertNull($event->senderIp);
+
             return $thread->id === $event->message->thread_id;
+        });
+    }
+
+    /** @test */
+    public function it_fires_event_with_sender_ip()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+
+        app(StoreImageMessage::class)->execute($thread, [
+            'image' => UploadedFile::fake()->image('picture.jpg'),
+        ], '1.2.3.4');
+
+        Event::assertDispatched(function (NewMessageEvent $event) {
+            return '1.2.3.4' === $event->senderIp;
         });
     }
 }

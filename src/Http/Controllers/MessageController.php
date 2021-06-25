@@ -100,7 +100,8 @@ class MessageController extends Controller
 
         return $storeMessage->execute(
             $thread,
-            $request->validated()
+            $request->validated(),
+            $request->ip()
         )->getJsonResource();
     }
 

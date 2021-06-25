@@ -180,7 +180,28 @@ class StoreAudioMessageTest extends FeatureTestCase
             return true;
         });
         Event::assertDispatched(function (NewMessageEvent $event) use ($thread) {
+            $this->assertNull($event->senderIp);
+
             return $thread->id === $event->message->thread_id;
+        });
+    }
+
+    /** @test */
+    public function it_fires_event_with_sender_ip()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+
+        app(StoreAudioMessage::class)->execute($thread, [
+            'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
+        ], '1.2.3.4');
+
+        Event::assertDispatched(function (NewMessageEvent $event) {
+            return '1.2.3.4' === $event->senderIp;
         });
     }
 }

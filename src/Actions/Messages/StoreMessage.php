@@ -55,6 +55,7 @@ class StoreMessage extends NewMessageAction
      * @param mixed ...$parameters
      * @var Thread[0]
      * @var MessageRequest[1]
+     * @var string|null[2]
      * @return $this
      * @throws Throwable
      */
@@ -65,6 +66,7 @@ class StoreMessage extends NewMessageAction
             ->setMessageBody($this->emoji->toShort($parameters[1]['message']))
             ->setMessageOptionalParameters($parameters[1])
             ->setMessageOwner($this->messenger->getProvider())
+            ->setSenderIp($parameters[2] ?? null)
             ->handleTransactions()
             ->generateResource()
             ->fireBroadcast()

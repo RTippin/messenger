@@ -57,10 +57,11 @@ class StoreImageMessage extends NewMessageAction
      * updated_at, mark read for participant, broadcast.
      *
      * @param mixed ...$parameters
-     * @return $this
-     * @throws Throwable|FeatureDisabledException|FileServiceException
      * @var Thread[0]
      * @var ImageMessageRequest[1]
+     * @var string|null[2]
+     * @return $this
+     * @throws Throwable|FeatureDisabledException|FileServiceException
      */
     public function execute(...$parameters): self
     {
@@ -73,7 +74,8 @@ class StoreImageMessage extends NewMessageAction
         $this->setMessageType('IMAGE_MESSAGE')
             ->setMessageBody($image)
             ->setMessageOptionalParameters($parameters[1])
-            ->setMessageOwner($this->messenger->getProvider());
+            ->setMessageOwner($this->messenger->getProvider())
+            ->setSenderIp($parameters[2] ?? null);
 
         $this->attemptTransactionOrRollbackFile($image);
 

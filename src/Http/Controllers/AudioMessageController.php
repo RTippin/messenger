@@ -94,7 +94,8 @@ class AudioMessageController extends Controller
 
         return $storeAudioMessage->execute(
             $thread,
-            $request->validated()
+            $request->validated(),
+            $request->ip()
         )->getJsonResource();
     }
 }
