@@ -8,6 +8,7 @@
 #### Added
 - `assets` config array under the `routing` config section.
 - `assets.php` routing file.
+- `senderIp` to `NewMessageEvent`. Forward IP to bot handlers.
 
 #### Changed
 - Assets (avatars/images/documents) no longer require authorization.
