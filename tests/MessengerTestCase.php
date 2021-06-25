@@ -46,9 +46,6 @@ class MessengerTestCase extends TestCase
             $this->useMorphMap = true;
         }
 
-        dump($this->useUUID);
-        dump($this->useMorphMap);
-
         $config->set('messenger.provider_uuids', $this->useUUID);
         $config->set('messenger.calling.enabled', true);
         $config->set('messenger.bots.enabled', true);

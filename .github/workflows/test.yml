@@ -18,7 +18,7 @@ jobs:
         use-uuid: [false, true]
         morph-maps: [false, true]
 
-    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - Uuid ${{ matrix.use-uuid }} MorphMap ${{ matrix.morph-maps }}
+    name: PHP ${{ matrix.php }} - Laravel ${{ matrix.laravel }} - Uuid ${{ matrix.use-uuid }} - MorphMap ${{ matrix.morph-maps }}
 
     steps:
       - name: Checkout code
