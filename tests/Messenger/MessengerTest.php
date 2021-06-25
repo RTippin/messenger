@@ -96,7 +96,7 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_returns_valid_provider_class_using_morph_alias_if_morph_maps_set()
     {
-        if (self::UseMorphMap) {
+        if ($this->useMorphMap) {
             $this->assertSame($this->getModelUser(), $this->messenger->findAliasProvider('users'));
             $this->assertSame($this->getModelCompany(), $this->messenger->findAliasProvider('companies'));
         } else {

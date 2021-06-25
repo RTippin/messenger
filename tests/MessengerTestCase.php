@@ -19,13 +19,13 @@ class MessengerTestCase extends TestCase
      * Set TRUE to run all feature test with
      * provider models/tables using UUIDS.
      */
-    const UseUUID = false;
+    protected bool $useUUID = false;
 
     /**
      * Set TRUE to run all feature test with
      * relation morph map set for providers.
      */
-    const UseMorphMap = false;
+    protected bool $useMorphMap = false;
 
     protected function getPackageProviders($app): array
     {
@@ -38,14 +38,25 @@ class MessengerTestCase extends TestCase
     {
         $config = $app->get('config');
 
-        $config->set('messenger.provider_uuids', self::UseUUID);
+        if (env('USE_UUID') === true) {
+            $this->useUUID = true;
+        }
+
+        if (env('USE_MORPH_MAPS') === true) {
+            $this->useMorphMap = true;
+        }
+
+        dump($this->useUUID);
+        dump($this->useMorphMap);
+
+        $config->set('messenger.provider_uuids', $this->useUUID);
         $config->set('messenger.calling.enabled', true);
         $config->set('messenger.bots.enabled', true);
         $config->set('messenger.storage.avatars.disk', 'public');
         $config->set('messenger.storage.threads.disk', 'messenger');
         $config->set('messenger.providers', $this->getBaseProvidersConfig());
 
-        if (self::UseMorphMap) {
+        if ($this->useMorphMap) {
             Relation::morphMap([
                 'users' => $this->getModelUser(),
                 'companies' => $this->getModelCompany(),
@@ -88,7 +99,7 @@ class MessengerTestCase extends TestCase
      */
     protected function getModelUser(): string
     {
-        return self::UseUUID ? UserModelUuid::class : UserModel::class;
+        return $this->useUUID ? UserModelUuid::class : UserModel::class;
     }
 
     /**
@@ -96,6 +107,6 @@ class MessengerTestCase extends TestCase
      */
     protected function getModelCompany(): string
     {
-        return self::UseUUID ? CompanyModelUuid::class : CompanyModel::class;
+        return $this->useUUID ? CompanyModelUuid::class : CompanyModel::class;
     }
 }
