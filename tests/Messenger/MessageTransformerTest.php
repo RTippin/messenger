@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Messenger;
 
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Message;
@@ -198,6 +199,19 @@ class MessageTransformerTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_makes_bot_added()
+    {
+        $thread = Thread::factory()->group()->create();
+
+        $this->assertSame([
+            $thread,
+            $this->tippin,
+            'added a bot - Test Bot',
+            'BOT_ADDED',
+        ], MessageTransformer::makeBotAdded($thread, $this->tippin, 'Test Bot'));
+    }
+
+    /** @test */
     public function it_locates_content_owner_with_current_participant()
     {
         $thread = Thread::factory()->group()->create();
@@ -276,14 +290,6 @@ class MessageTransformerTest extends FeatureTestCase
         $this->assertSame('picture.jpg', MessageTransformer::transform($image));
         $this->assertSame('document.pdf', MessageTransformer::transform($document));
         $this->assertSame('sound.mp3', MessageTransformer::transform($audio));
-    }
-
-    /** @test */
-    public function it_returns_error_string_for_unknown_type()
-    {
-        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create(['type' => 404]);
-
-        $this->assertSame('Message Error', MessageTransformer::transform($message));
     }
 
     /** @test */
@@ -660,5 +666,20 @@ class MessageTransformerTest extends FeatureTestCase
             ]);
 
         $this->assertSame('added John Doe, Developers, Jane Smith, and 3 others', MessageTransformer::transform($message));
+    }
+
+    /** @test */
+    public function it_transforms_bot_added()
+    {
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()
+            ->for($thread)
+            ->owner($this->tippin)
+            ->create([
+                'type' => 100,
+                'body' => MessageTransformer::makeBotAdded($thread, $this->tippin, 'Test Bot')[2],
+            ]);
+
+        $this->assertSame('added a bot - Test Bot', MessageTransformer::transform($message));
     }
 }

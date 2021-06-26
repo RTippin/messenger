@@ -11,7 +11,7 @@ use RTippin\Messenger\Models\Participant;
  * @method static \RTippin\Messenger\Messenger setProvider($provider = null)
  * @method static bool isValidMessengerProvider($provider = null)
  * @method static string|null findProviderAlias($provider = null)
- * @method static string|null findAliasProvider(string $alias)
+ * @method static MessengerProvider|string|null findAliasProvider(string $alias)
  * @method static bool isProviderSearchable($provider = null)
  * @method static bool isProviderFriendable($provider = null)
  * @method static bool isProvidersCached()

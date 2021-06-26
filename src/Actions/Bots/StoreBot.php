@@ -79,6 +79,7 @@ class StoreBot extends BaseMessengerAction
                 'enabled' => $params['enabled'],
                 'name' => $params['name'],
                 'cooldown' => $params['cooldown'],
+                'hide_actions' => $params['hide_actions'],
                 'avatar' => null,
             ])
                 ->setRelations([
@@ -109,7 +110,7 @@ class StoreBot extends BaseMessengerAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new NewBotEvent(
-                $this->getBot(true)
+                $this->getBot()
             ));
         }
     }

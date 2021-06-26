@@ -30,17 +30,11 @@ class MessageTransformer
 
             switch ($message->type) {
                 case 90: return self::transformVideoCall($message, $bodyJson);
-                case 88: // participant joined with invite link
-                case 91: // group avatar updated
-                case 92: // thread archived
-                case 93: // created group
-                case 94: // renamed group
-                case 97: // participant left group
-                    return self::sanitizedBody($message->body);
                 case 95: return self::transformAdminRemoved($message, $bodyJson);
                 case 96: return self::transformAdminAdded($message, $bodyJson);
                 case 98: return self::transformParticipantRemoved($message, $bodyJson);
                 case 99: return self::transformParticipantsAdded($message, $bodyJson);
+                default: return self::sanitizedBody($message->body);
             }
         } catch (Exception $e) {
             report($e);
@@ -211,6 +205,19 @@ class MessageTransformer
         ])->toJson();
 
         return self::generateStoreResponse($thread, $provider, $body, 'PARTICIPANTS_ADDED');
+    }
+
+    /**
+     * @param Thread $thread
+     * @param MessengerProvider $provider
+     * @param string $botName
+     * @return array
+     */
+    public static function makeBotAdded(Thread $thread,
+                                        MessengerProvider $provider,
+                                        string $botName): array
+    {
+        return self::generateStoreResponse($thread, $provider, "added a bot - $botName", 'BOT_ADDED');
     }
 
     /**

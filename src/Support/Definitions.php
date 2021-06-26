@@ -31,6 +31,9 @@ class Definitions
         97 => 'PARTICIPANT_LEFT_GROUP',
         98 => 'PARTICIPANT_REMOVED',
         99 => 'PARTICIPANTS_ADDED',
+        100 => 'BOT_ADDED',
+        101 => 'BOT_RENAMED',
+        102 => 'BOT_REMOVED',
     ];
 
     /**

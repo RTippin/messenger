@@ -6,6 +6,7 @@ use Illuminate\Events\Dispatcher;
 use RTippin\Messenger\Events\CallEndedEvent;
 use RTippin\Messenger\Events\DemotedAdminEvent;
 use RTippin\Messenger\Events\InviteUsedEvent;
+use RTippin\Messenger\Events\NewBotEvent;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Events\PromotedAdminEvent;
 use RTippin\Messenger\Events\RemovedFromThreadEvent;
@@ -14,6 +15,7 @@ use RTippin\Messenger\Events\ThreadAvatarEvent;
 use RTippin\Messenger\Events\ThreadLeftEvent;
 use RTippin\Messenger\Events\ThreadSettingsEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Jobs\BotAddedMessage;
 use RTippin\Messenger\Jobs\CallEndedMessage;
 use RTippin\Messenger\Jobs\DemotedAdminMessage;
 use RTippin\Messenger\Jobs\JoinedWithInviteMessage;
@@ -45,6 +47,7 @@ class SystemMessageSubscriber
         $events->listen(ThreadAvatarEvent::class, [SystemMessageSubscriber::class, 'threadAvatarMessage']);
         $events->listen(ThreadLeftEvent::class, [SystemMessageSubscriber::class, 'threadLeftMessage']);
         $events->listen(ThreadSettingsEvent::class, [SystemMessageSubscriber::class, 'threadNameMessage']);
+        $events->listen(NewBotEvent::class, [SystemMessageSubscriber::class, 'botAddedMessage']);
     }
 
     /**
@@ -164,6 +167,18 @@ class SystemMessageSubscriber
             Messenger::getSystemMessageSubscriber('queued')
                 ? ThreadNameMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
                 : ThreadNameMessage::dispatchSync($event);
+        }
+    }
+
+    /**
+     * @param NewBotEvent $event
+     */
+    public function botAddedMessage(NewBotEvent $event): void
+    {
+        if (Messenger::getSystemMessageSubscriber('enabled')) {
+            Messenger::getSystemMessageSubscriber('queued')
+                ? BotAddedMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
+                : BotAddedMessage::dispatchSync($event);
         }
     }
 }

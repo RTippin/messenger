@@ -2,12 +2,14 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Bots\StoreBot;
 use RTippin\Messenger\Events\NewBotEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Jobs\BotAddedMessage;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -32,6 +34,7 @@ class StoreBotTest extends FeatureTestCase
         app(StoreBot::class)->execute($thread, [
             'name' => 'Test Bot',
             'enabled' => true,
+            'hide_actions' => false,
             'cooldown' => 0,
         ]);
     }
@@ -44,6 +47,7 @@ class StoreBotTest extends FeatureTestCase
         app(StoreBot::class)->execute($thread, [
             'name' => 'Test Bot',
             'enabled' => true,
+            'hide_actions' => true,
             'cooldown' => 0,
         ]);
 
@@ -53,6 +57,7 @@ class StoreBotTest extends FeatureTestCase
             'owner_type' => $this->tippin->getMorphClass(),
             'name' => 'Test Bot',
             'enabled' => true,
+            'hide_actions' => true,
             'cooldown' => 0,
         ]);
     }
@@ -69,11 +74,65 @@ class StoreBotTest extends FeatureTestCase
         app(StoreBot::class)->execute($thread, [
             'name' => 'Test Bot',
             'enabled' => true,
+            'hide_actions' => false,
             'cooldown' => 0,
         ]);
 
         Event::assertDispatched(function (NewBotEvent $event) use ($thread) {
             return $thread->id === $event->bot->thread_id;
         });
+    }
+
+    /** @test */
+    public function it_dispatches_subscriber_job()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        $thread = Thread::factory()->group()->create();
+
+        app(StoreBot::class)->execute($thread, [
+            'name' => 'Test Bot',
+            'enabled' => true,
+            'hide_actions' => false,
+            'cooldown' => 0,
+        ]);
+
+        Bus::assertDispatched(BotAddedMessage::class);
+    }
+
+    /** @test */
+    public function it_runs_subscriber_job_now()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setSystemMessageSubscriber('queued', false);
+        $thread = Thread::factory()->group()->create();
+
+        app(StoreBot::class)->execute($thread, [
+            'name' => 'Test Bot',
+            'enabled' => true,
+            'hide_actions' => false,
+            'cooldown' => 0,
+        ]);
+
+        Bus::assertDispatchedSync(BotAddedMessage::class);
+    }
+
+    /** @test */
+    public function it_doesnt_dispatch_subscriber_job_if_disabled()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setSystemMessageSubscriber('enabled', false);
+        $thread = Thread::factory()->group()->create();
+
+        app(StoreBot::class)->execute($thread, [
+            'name' => 'Test Bot',
+            'enabled' => true,
+            'hide_actions' => false,
+            'cooldown' => 0,
+        ]);
+
+        Bus::assertNotDispatched(BotAddedMessage::class);
     }
 }
