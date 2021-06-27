@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Services\Janus;
 
-use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Support\Str;
 
 class VideoRoomService
@@ -24,21 +23,14 @@ class VideoRoomService
     private JanusServer $janus;
 
     /**
-     * @var ConfigRepository
-     */
-    private ConfigRepository $configRepo;
-
-    /**
      * VideoRoomService constructor.
      *
-     * @param ConfigRepository $configRepo
      * @param JanusServer $janus
      */
-    public function __construct(ConfigRepository $configRepo, JanusServer $janus)
+    public function __construct(JanusServer $janus)
     {
         $this->janus = $janus;
-        $this->configRepo = $configRepo;
-        $this->PLUGIN_ADMIN_KEY = $this->configRepo->get('janus.video_room_secret');
+        $this->PLUGIN_ADMIN_KEY = config('janus.video_room_secret');
     }
 
     /**

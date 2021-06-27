@@ -2,11 +2,10 @@
 
 namespace RTippin\Messenger\Services\Janus;
 
-use Exception;
-use Illuminate\Contracts\Config\Repository as ConfigRepository;
-use Illuminate\Http\Client\Factory as HttpClient;
-use Illuminate\Log\Logger;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Throwable;
 
 /**
  * Janus Media Server REST interface
@@ -85,48 +84,16 @@ class JanusServer
     private array $pluginResponse = [];
 
     /**
-     * @var ConfigRepository
-     */
-    private ConfigRepository $configRepo;
-
-    /**
-     * @var HttpClient
-     */
-    private HttpClient $httpClient;
-
-    /**
-     * @var Logger
-     */
-    private Logger $logger;
-
-    /**
      * JanusServer constructor.
-     *
-     * @param ConfigRepository $configRepo
-     * @param HttpClient $httpClient
-     * @param Logger $logger
      */
-    public function __construct(ConfigRepository $configRepo,
-                                HttpClient $httpClient,
-                                Logger $logger)
+    public function __construct()
     {
-        $this->configRepo = $configRepo;
-        $this->httpClient = $httpClient;
-        $this->logger = $logger;
-        $this->boot();
-    }
-
-    /**
-     * Setup our config.
-     */
-    private function boot(): void
-    {
-        $this->apiSecret = $this->configRepo->get('janus.api_secret');
-        $this->logErrors = $this->configRepo->get('janus.log_failures');
-        $this->janusServer = $this->configRepo->get('janus.server_endpoint');
-        $this->janusAdminServer = $this->configRepo->get('janus.server_admin_endpoint');
-        $this->debug = $this->configRepo->get('janus.backend_debug');
-        $this->selfSigned = $this->configRepo->get('janus.backend_ssl');
+        $this->apiSecret = config('janus.api_secret');
+        $this->logErrors = config('janus.log_failures');
+        $this->janusServer = config('janus.server_endpoint');
+        $this->janusAdminServer = config('janus.server_admin_endpoint');
+        $this->debug = config('janus.backend_debug');
+        $this->selfSigned = config('janus.backend_ssl');
     }
 
     /**
@@ -139,7 +106,7 @@ class JanusServer
     private function logApiError($data = null, $route = null): void
     {
         if ($this->logErrors) {
-            $this->logger->warning('janus.api', [
+            Log::warning('janus.api', [
                 'payload' => $data,
                 'route' => $route,
                 'response' => $this->apiResponse,
@@ -157,7 +124,7 @@ class JanusServer
     public function logPluginError(string $action = '', array $extra = []): void
     {
         if ($this->logErrors) {
-            $this->logger->warning($this->plugin.' - '.$action, [
+            Log::warning($this->plugin.' - '.$action, [
                 'payload' => $this->pluginPayload,
                 'response' => $this->apiResponse,
                 'extra' => $extra,
@@ -219,23 +186,6 @@ class JanusServer
                 }
             }
         }
-
-        return $this;
-    }
-
-    /**
-     * Set the configs in the constructor back to defaults.
-     *
-     * @return $this
-     */
-    public function resetConfig(): self
-    {
-        $this->apiSecret = $this->configRepo->get('janus.api_secret');
-        $this->logErrors = $this->configRepo->get('janus.log_failures');
-        $this->janusServer = $this->configRepo->get('janus.server_endpoint');
-        $this->janusAdminServer = $this->configRepo->get('janus.server_admin_endpoint');
-        $this->debug = $this->configRepo->get('janus.backend_debug');
-        $this->selfSigned = $this->configRepo->get('janus.backend_ssl');
 
         return $this;
     }
@@ -435,7 +385,7 @@ class JanusServer
             return $this;
         }
 
-        $client = $this->httpClient->withOptions([
+        $client = Http::withOptions([
             'verify' => $this->selfSigned,
             'timeout' => 30,
         ]);
@@ -463,12 +413,11 @@ class JanusServer
                 dump($response->headers());
             }
 
-            $this->apiResponse = $response->json();
-        } catch (Exception $e) {
+            $this->apiResponse = $response->successful()
+                ? $response->json()
+                : [];
+        } catch (Throwable $e) {
             report($e);
-            if ($this->debug) {
-                dump($e);
-            }
             $this->apiResponse = [];
         }
 
