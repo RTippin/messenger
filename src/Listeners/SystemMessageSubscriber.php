@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Listeners;
 
 use Illuminate\Events\Dispatcher;
 use RTippin\Messenger\Events\BotArchivedEvent;
+use RTippin\Messenger\Events\BotUpdatedEvent;
 use RTippin\Messenger\Events\CallEndedEvent;
 use RTippin\Messenger\Events\DemotedAdminEvent;
 use RTippin\Messenger\Events\InviteUsedEvent;
@@ -17,6 +18,7 @@ use RTippin\Messenger\Events\ThreadLeftEvent;
 use RTippin\Messenger\Events\ThreadSettingsEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\BotAddedMessage;
+use RTippin\Messenger\Jobs\BotNameMessage;
 use RTippin\Messenger\Jobs\BotRemovedMessage;
 use RTippin\Messenger\Jobs\CallEndedMessage;
 use RTippin\Messenger\Jobs\DemotedAdminMessage;
@@ -50,6 +52,7 @@ class SystemMessageSubscriber
         $events->listen(ThreadLeftEvent::class, [SystemMessageSubscriber::class, 'threadLeftMessage']);
         $events->listen(ThreadSettingsEvent::class, [SystemMessageSubscriber::class, 'threadNameMessage']);
         $events->listen(NewBotEvent::class, [SystemMessageSubscriber::class, 'botAddedMessage']);
+        $events->listen(BotUpdatedEvent::class, [SystemMessageSubscriber::class, 'botNameMessage']);
         $events->listen(BotArchivedEvent::class, [SystemMessageSubscriber::class, 'botRemovedMessage']);
     }
 
@@ -182,6 +185,19 @@ class SystemMessageSubscriber
             Messenger::getSystemMessageSubscriber('queued')
                 ? BotAddedMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
                 : BotAddedMessage::dispatchSync($event);
+        }
+    }
+
+    /**
+     * @param BotUpdatedEvent $event
+     */
+    public function botNameMessage(BotUpdatedEvent $event): void
+    {
+        if (Messenger::getSystemMessageSubscriber('enabled')
+            && $event->originalName !== $event->bot->name) {
+            Messenger::getSystemMessageSubscriber('queued')
+                ? BotNameMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
+                : BotNameMessage::dispatchSync($event);
         }
     }
 

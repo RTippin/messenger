@@ -223,6 +223,21 @@ class MessageTransformer
     /**
      * @param Thread $thread
      * @param MessengerProvider $provider
+     * @param string $oldName
+     * @param string $botName
+     * @return array
+     */
+    public static function makeBotRenamed(Thread $thread,
+                                          MessengerProvider $provider,
+                                          string $oldName,
+                                          string $botName): array
+    {
+        return self::generateStoreResponse($thread, $provider, "renamed the BOT ( $oldName ) to $botName", 'BOT_RENAMED');
+    }
+
+    /**
+     * @param Thread $thread
+     * @param MessengerProvider $provider
      * @param string $botName
      * @return array
      */

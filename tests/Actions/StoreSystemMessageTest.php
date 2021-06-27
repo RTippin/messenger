@@ -117,6 +117,7 @@ class StoreSystemMessageTest extends FeatureTestCase
             ['PARTICIPANT_REMOVED', 98],
             ['PARTICIPANTS_ADDED', 99],
             ['BOT_ADDED', 100],
+            ['BOT_RENAMED', 101],
             ['BOT_REMOVED', 103],
         ];
     }

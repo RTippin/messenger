@@ -132,6 +132,26 @@ class UpdateGroupSettingsTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_doesnt_dispatch_subscriber_job_if_name_did_not_change()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        $thread = Thread::factory()->group()->create(['subject' => 'Test']);
+
+        app(UpdateGroupSettings::class)->execute($thread, [
+            'subject' => 'Test',
+            'add_participants' => true,
+            'invitations' => true,
+            'calling' => true,
+            'chat_bots' => false,
+            'messaging' => false,
+            'knocks' => false,
+        ]);
+
+        Bus::assertNotDispatched(ThreadNameMessage::class);
+    }
+
+    /** @test */
     public function it_dispatches_subscriber_job()
     {
         BaseMessengerAction::enableEvents();

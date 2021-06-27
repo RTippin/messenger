@@ -24,6 +24,11 @@ class UpdateBot extends BaseMessengerAction
     private Messenger $messenger;
 
     /**
+     * @var string
+     */
+    private string $originalName;
+
+    /**
      * UpdateBot constructor.
      *
      * @param Messenger $messenger
@@ -46,10 +51,15 @@ class UpdateBot extends BaseMessengerAction
     {
         $this->isBotsEnabled();
 
-        $this->setBot($parameters[0])
-            ->updateBot($parameters[1])
-            ->generateResource()
-            ->fireEvents();
+        $this->setBot($parameters[0]);
+
+        $this->originalName = $this->getBot()->name;
+
+        $this->updateBot($parameters[1])->generateResource();
+
+        if ($this->getBot()->wasChanged()) {
+            $this->fireEvents();
+        }
 
         return $this;
     }
@@ -76,15 +86,13 @@ class UpdateBot extends BaseMessengerAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    private function generateResource(): self
+    private function generateResource(): void
     {
         $this->setJsonResource(new BotResource(
             $this->getBot()
         ));
-
-        return $this;
     }
 
     /**
@@ -95,7 +103,8 @@ class UpdateBot extends BaseMessengerAction
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new BotUpdatedEvent(
                 $this->messenger->getProvider(true),
-                $this->getBot(true)
+                $this->getBot(true),
+                $this->originalName
             ));
         }
     }
