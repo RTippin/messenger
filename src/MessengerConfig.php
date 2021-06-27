@@ -292,6 +292,11 @@ trait MessengerConfig
     private array $subscribers;
 
     /**
+     * @var bool|null
+     */
+    private ?bool $callingTemporarilyDisabled = null;
+
+    /**
      * @var string[]
      */
     private static array $guarded = [
@@ -299,6 +304,7 @@ trait MessengerConfig
         'id',
         'alias',
         'ghost',
+        'ghostBot',
         'providerMessengerModel',
         'providerHasFriends',
         'ghostParticipant',
@@ -545,7 +551,11 @@ trait MessengerConfig
      */
     public function isCallingTemporarilyDisabled(): bool
     {
-        return Cache::has('messenger:calls:down');
+        if (! is_null($this->callingTemporarilyDisabled)) {
+            return $this->callingTemporarilyDisabled;
+        }
+
+        return $this->callingTemporarilyDisabled = Cache::has('messenger:calls:down');
     }
 
     /**
@@ -555,6 +565,7 @@ trait MessengerConfig
     {
         if ($this->isCallingTemporarilyDisabled()) {
             Cache::forget('messenger:calls:down');
+            $this->callingTemporarilyDisabled = false;
         }
 
         return $this;
