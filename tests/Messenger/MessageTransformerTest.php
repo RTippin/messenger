@@ -224,6 +224,19 @@ class MessageTransformerTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_makes_bot_avatar_changed()
+    {
+        $thread = Thread::factory()->group()->create();
+
+        $this->assertSame([
+            $thread,
+            $this->tippin,
+            'updated the avatar for Test Bot BOT',
+            'BOT_AVATAR_CHANGED',
+        ], MessageTransformer::makeBotAvatarChanged($thread, $this->tippin, 'Test Bot'));
+    }
+
+    /** @test */
     public function it_makes_bot_removed()
     {
         $thread = Thread::factory()->group()->create();
@@ -721,6 +734,21 @@ class MessageTransformerTest extends FeatureTestCase
             ]);
 
         $this->assertSame('renamed the BOT ( Test Bot ) to Renamed', MessageTransformer::transform($message));
+    }
+
+    /** @test */
+    public function it_transforms_bot_avatar_changed()
+    {
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()
+            ->for($thread)
+            ->owner($this->tippin)
+            ->create([
+                'type' => 102,
+                'body' => MessageTransformer::makeBotAvatarChanged($thread, $this->tippin, 'Test Bot')[2],
+            ]);
+
+        $this->assertSame('updated the avatar for Test Bot BOT', MessageTransformer::transform($message));
     }
 
     /** @test */

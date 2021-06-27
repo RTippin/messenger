@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Actions;
 use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Mockery;
@@ -13,6 +14,7 @@ use RTippin\Messenger\Actions\Bots\StoreBotAvatar;
 use RTippin\Messenger\Events\BotAvatarEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Jobs\BotAvatarMessage;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\FileService;
@@ -132,5 +134,50 @@ class StoreBotAvatarTest extends FeatureTestCase
         Event::assertDispatched(function (BotAvatarEvent $event) use ($bot) {
             return $bot->id === $event->bot->id;
         });
+    }
+
+    /** @test */
+    public function it_dispatches_subscriber_job()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setProvider($this->tippin);
+        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+
+        app(StoreBotAvatar::class)->execute($bot, [
+            'image' => UploadedFile::fake()->image('avatar.jpg'),
+        ]);
+
+        Bus::assertDispatched(BotAvatarMessage::class);
+    }
+
+    /** @test */
+    public function it_runs_subscriber_job_now()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setProvider($this->tippin)->setSystemMessageSubscriber('queued', false);
+        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+
+        app(StoreBotAvatar::class)->execute($bot, [
+            'image' => UploadedFile::fake()->image('avatar.jpg'),
+        ]);
+
+        Bus::assertDispatchedSync(BotAvatarMessage::class);
+    }
+
+    /** @test */
+    public function it_doesnt_dispatch_subscriber_job_if_disabled()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setProvider($this->tippin)->setSystemMessageSubscriber('enabled', false);
+        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+
+        app(StoreBotAvatar::class)->execute($bot, [
+            'image' => UploadedFile::fake()->image('avatar.jpg'),
+        ]);
+
+        Bus::assertNotDispatched(BotAvatarMessage::class);
     }
 }

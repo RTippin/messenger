@@ -241,6 +241,19 @@ class MessageTransformer
      * @param string $botName
      * @return array
      */
+    public static function makeBotAvatarChanged(Thread $thread,
+                                                MessengerProvider $provider,
+                                                string $botName): array
+    {
+        return self::generateStoreResponse($thread, $provider, "updated the avatar for $botName BOT", 'BOT_AVATAR_CHANGED');
+    }
+
+    /**
+     * @param Thread $thread
+     * @param MessengerProvider $provider
+     * @param string $botName
+     * @return array
+     */
     public static function makeBotRemoved(Thread $thread,
                                           MessengerProvider $provider,
                                           string $botName): array

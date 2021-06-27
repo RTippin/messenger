@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\BaseMessengerAction;
@@ -10,6 +11,7 @@ use RTippin\Messenger\Actions\Bots\DestroyBotAvatar;
 use RTippin\Messenger\Events\BotAvatarEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Jobs\BotAvatarMessage;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -69,5 +71,59 @@ class DestroyBotAvatarTest extends FeatureTestCase
         Event::assertDispatched(function (BotAvatarEvent $event) use ($bot) {
             return $bot->id === $event->bot->id;
         });
+    }
+
+    /** @test */
+    public function it_doesnt_fires_events_if_no_avatar_to_remove()
+    {
+        BaseMessengerAction::enableEvents();
+        Messenger::setProvider($this->tippin);
+        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['avatar' => null]);
+        Event::fake([
+            BotAvatarEvent::class,
+        ]);
+
+        app(DestroyBotAvatar::class)->execute($bot);
+
+        Event::assertNotDispatched(BotAvatarEvent::class);
+    }
+
+    /** @test */
+    public function it_dispatches_subscriber_job()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setProvider($this->tippin);
+        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['avatar' => 'avatar.jpg']);
+
+        app(DestroyBotAvatar::class)->execute($bot);
+
+        Bus::assertDispatched(BotAvatarMessage::class);
+    }
+
+    /** @test */
+    public function it_runs_subscriber_job_now()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setProvider($this->tippin)->setSystemMessageSubscriber('queued', false);
+        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['avatar' => 'avatar.jpg']);
+
+        app(DestroyBotAvatar::class)->execute($bot);
+
+        Bus::assertDispatchedSync(BotAvatarMessage::class);
+    }
+
+    /** @test */
+    public function it_doesnt_dispatch_subscriber_job_if_disabled()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        Messenger::setProvider($this->tippin)->setSystemMessageSubscriber('enabled', false);
+        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['avatar' => 'avatar.jpg']);
+
+        app(DestroyBotAvatar::class)->execute($bot);
+
+        Bus::assertNotDispatched(BotAvatarMessage::class);
     }
 }
