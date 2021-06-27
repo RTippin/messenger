@@ -217,7 +217,20 @@ class MessageTransformer
                                         MessengerProvider $provider,
                                         string $botName): array
     {
-        return self::generateStoreResponse($thread, $provider, "added a bot - $botName", 'BOT_ADDED');
+        return self::generateStoreResponse($thread, $provider, "added $botName BOT", 'BOT_ADDED');
+    }
+
+    /**
+     * @param Thread $thread
+     * @param MessengerProvider $provider
+     * @param string $botName
+     * @return array
+     */
+    public static function makeBotRemoved(Thread $thread,
+                                          MessengerProvider $provider,
+                                          string $botName): array
+    {
+        return self::generateStoreResponse($thread, $provider, "removed $botName BOT", 'BOT_REMOVED');
     }
 
     /**

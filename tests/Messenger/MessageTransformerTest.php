@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests\Messenger;
 
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Message;
@@ -206,9 +205,22 @@ class MessageTransformerTest extends FeatureTestCase
         $this->assertSame([
             $thread,
             $this->tippin,
-            'added a bot - Test Bot',
+            'added Test Bot BOT',
             'BOT_ADDED',
         ], MessageTransformer::makeBotAdded($thread, $this->tippin, 'Test Bot'));
+    }
+
+    /** @test */
+    public function it_makes_bot_removed()
+    {
+        $thread = Thread::factory()->group()->create();
+
+        $this->assertSame([
+            $thread,
+            $this->tippin,
+            'removed Test Bot BOT',
+            'BOT_REMOVED',
+        ], MessageTransformer::makeBotRemoved($thread, $this->tippin, 'Test Bot'));
     }
 
     /** @test */
@@ -680,6 +692,21 @@ class MessageTransformerTest extends FeatureTestCase
                 'body' => MessageTransformer::makeBotAdded($thread, $this->tippin, 'Test Bot')[2],
             ]);
 
-        $this->assertSame('added a bot - Test Bot', MessageTransformer::transform($message));
+        $this->assertSame('added Test Bot BOT', MessageTransformer::transform($message));
+    }
+
+    /** @test */
+    public function it_transforms_bot_removed()
+    {
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()
+            ->for($thread)
+            ->owner($this->tippin)
+            ->create([
+                'type' => 103,
+                'body' => MessageTransformer::makeBotRemoved($thread, $this->tippin, 'Test Bot')[2],
+            ]);
+
+        $this->assertSame('removed Test Bot BOT', MessageTransformer::transform($message));
     }
 }

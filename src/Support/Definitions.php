@@ -33,7 +33,8 @@ class Definitions
         99 => 'PARTICIPANTS_ADDED',
         100 => 'BOT_ADDED',
         101 => 'BOT_RENAMED',
-        102 => 'BOT_REMOVED',
+        102 => 'BOT_AVATAR_CHANGED',
+        103 => 'BOT_REMOVED',
     ];
 
     /**

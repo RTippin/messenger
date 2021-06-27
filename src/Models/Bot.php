@@ -124,7 +124,7 @@ class Bot extends Model implements MessengerProvider
      */
     public function getProviderName(): string
     {
-        return strip_tags(ucwords($this->name));
+        return strip_tags($this->name);
     }
 
     /**

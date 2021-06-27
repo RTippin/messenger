@@ -11,9 +11,9 @@ class BotArchivedEvent
     use SerializesModels;
 
     /**
-     * @var null|MessengerProvider
+     * @var MessengerProvider
      */
-    public ?MessengerProvider $provider;
+    public MessengerProvider $provider;
 
     /**
      * @var Bot
@@ -23,10 +23,10 @@ class BotArchivedEvent
     /**
      * Create a new event instance.
      *
-     * @param null|MessengerProvider $provider
+     * @param MessengerProvider $provider
      * @param Bot $bot
      */
-    public function __construct(?MessengerProvider $provider, Bot $bot)
+    public function __construct(MessengerProvider $provider, Bot $bot)
     {
         $this->bot = $bot;
         $this->provider = $provider;
