@@ -29,7 +29,7 @@ class StoreBotAvatarTest extends FeatureTestCase
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
 
         $this->expectException(FeatureDisabledException::class);
-        $this->expectExceptionMessage('Bot Avatar upload is currently disabled.');
+        $this->expectExceptionMessage('Bot avatars are currently disabled.');
 
         app(StoreBotAvatar::class)->execute($bot, [
             'image' => UploadedFile::fake()->image('avatar.jpg'),
@@ -37,13 +37,13 @@ class StoreBotAvatarTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_throws_exception_if_thread_avatar_disabled()
+    public function it_throws_exception_if_bot_avatar_disabled()
     {
-        Messenger::setThreadAvatarUpload(false);
+        Messenger::setBotAvatars(false);
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
 
         $this->expectException(FeatureDisabledException::class);
-        $this->expectExceptionMessage('Bot Avatar upload is currently disabled.');
+        $this->expectExceptionMessage('Bot avatars are currently disabled.');
 
         app(StoreBotAvatar::class)->execute($bot, [
             'image' => UploadedFile::fake()->image('avatar.jpg'),

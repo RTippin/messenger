@@ -645,31 +645,22 @@ class AppServiceProvider extends ServiceProvider
         'size_limit' => env('MESSENGER_MESSAGE_AUDIO_SIZE_LIMIT', 10240),
         'mime_types' => env('MESSENGER_MESSAGE_AUDIO_MIME_TYPES', 'aac,mp3,oga,ogg,wav,weba,webm'),
     ],
-    'thread_avatars' => [
-        'upload' => env('MESSENGER_THREAD_AVATAR_UPLOAD', true),
-        'size_limit' => env('MESSENGER_THREAD_AVATAR_SIZE_LIMIT', 5120),
-        'mime_types' => env('MESSENGER_THREAD_AVATAR_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,webp'),
-    ],
-    'provider_avatars' => [
-        'upload' => env('MESSENGER_PROVIDER_AVATAR_UPLOAD', true),
-        'removal' => env('MESSENGER_PROVIDER_AVATAR_REMOVAL', true),
-        'size_limit' => env('MESSENGER_PROVIDER_AVATAR_SIZE_LIMIT', 5120),
-        'mime_types' => env('MESSENGER_PROVIDER_AVATAR_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,webp'),
-    ],
-    'default_thread_avatars' => [
-        '1.png' => public_path('vendor/messenger/images/1.png'),
-        '2.png' => public_path('vendor/messenger/images/2.png'),
-        '3.png' => public_path('vendor/messenger/images/3.png'),
-        '4.png' => public_path('vendor/messenger/images/4.png'),
-        '5.png' => public_path('vendor/messenger/images/5.png'),
+    'avatars' => [
+        'providers' => env('MESSENGER_PROVIDER_AVATARS_ENABLED', true),
+        'threads' => env('MESSENGER_THREAD_AVATARS_ENABLED', true),
+        'bots' => env('MESSENGER_BOT_AVATARS_ENABLED', true),
+        'size_limit' => env('MESSENGER_AVATARS_SIZE_LIMIT', 5120),
+        'mime_types' => env('MESSENGER_AVATARS_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,webp'),
     ],
     'default_not_found_image' => public_path('vendor/messenger/images/image404.png'),
+    'default_ghost_avatar' => public_path('vendor/messenger/images/users.png'),
+    'default_thread_avatar' => public_path('vendor/messenger/images/threads.png'),
     'default_bot_avatar' => public_path('vendor/messenger/images/bots.png'),
 ],
 ```
 
-- Enable/disable the upload of avatars and message attachments.
-  - If thread avatar upload is disabled, bot avatar upload will also be disabled.
+- Enable/disable the upload message attachments.
+- Enable/disable the upload and removal of avatars for providers, threads, and bots.
 - Set upload max size limits, in kilobytes.
 - Set allowed mime types on uploaded files, using the extension separated by a comma (following laravels validation rule `mime:pdf,docx`).
 - Set a different default image to serve for a group thread, and the image used when another image is not found.

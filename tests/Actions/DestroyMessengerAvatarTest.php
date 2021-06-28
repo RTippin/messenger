@@ -24,7 +24,7 @@ class DestroyMessengerAvatarTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_disabled()
     {
-        Messenger::setProviderAvatarRemoval(false);
+        Messenger::setProviderAvatars(false);
 
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Avatar removal is currently disabled.');

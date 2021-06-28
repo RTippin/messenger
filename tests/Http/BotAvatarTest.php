@@ -29,9 +29,9 @@ class BotAvatarTest extends FeatureTestCase
     }
 
     /** @test */
-    public function forbidden_to_upload_avatar_when_thread_avatars_disabled_in_config()
+    public function forbidden_to_upload_avatar_when_bot_avatars_disabled_in_config()
     {
-        Messenger::setThreadAvatarUpload(false);
+        Messenger::setBotAvatars(false);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);

@@ -38,7 +38,7 @@ class DestroyMessengerAvatar extends MessengerAvatarAction
      */
     private function isAvatarRemovalEnabled(): void
     {
-        if (! $this->messenger->isProviderAvatarRemovalEnabled()) {
+        if (! $this->messenger->isProviderAvatarEnabled()) {
             throw new FeatureDisabledException('Avatar removal is currently disabled.');
         }
     }

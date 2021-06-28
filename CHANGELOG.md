@@ -3,16 +3,25 @@
 
 ---
 
-### [v0.37]
+### [v0.37 WIP]
 
 #### Added
 - System messages for bot events (create, delete, avatar, rename).
+- Proper store and destroy group thread avatar.
+- `avatars` and `default_thread_avatar` in `files` config array.
+- New methods for avatars (provider, thread, bot)
 
 #### Changed
 - Janus server bug fixes with improper types properties when http call fails.
+- Avatars (provider, thread, bot) share one config for size/mimes.
 
 #### Removed
-- WIP
+- Random of 5 default group thread avatars. Only one set now.
+- `thread_avatars` `provider_avatars` `default_thread_avatars` from `files` config array.
+- Following methods from Messenger: `getThreadAvatarSizeLimit` `setThreadAvatarSizeLimit` 
+  `getThreadAvatarMimeTypes` `setThreadAvatarMimeTypes` `isProviderAvatarRemovalEnabled` 
+  `setProviderAvatarRemoval` `getProviderAvatarSizeLimit` `setProviderAvatarSizeLimit` 
+  `getProviderAvatarMimeTypes` `setProviderAvatarMimeTypes`
 
 ---
 
@@ -33,7 +42,7 @@
 - `site_name` from config.
 - `web` from `routing` config.
 - `provider_avatar` from `routing` config.
-- `getSiteName()`, `getWebEndpoint()`, `isWebRoutesEnabled()`, and `getSocketEndpoint()` methods from Messenger.
+- `getSiteName()` `getWebEndpoint()` `isWebRoutesEnabled()` and `getSocketEndpoint()` methods from Messenger.
 
 ---
 

@@ -28,7 +28,7 @@ class StoreMessengerAvatarTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_disabled()
     {
-        Messenger::setProviderAvatarUpload(false);
+        Messenger::setProviderAvatars(false);
 
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Avatar upload is currently disabled.');

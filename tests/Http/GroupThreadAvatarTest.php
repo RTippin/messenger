@@ -70,7 +70,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_store_group_avatar_when_disabled_in_config()
     {
-        Messenger::setThreadAvatarUpload(false);
+        Messenger::setThreadAvatars(false);
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -97,7 +97,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function forbidden_to_destroy_group_avatar_when_disabled_in_config()
     {
-        Messenger::setThreadAvatarUpload(false);
+        Messenger::setThreadAvatars(false);
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -110,7 +110,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function group_avatar_mime_types_can_be_overwritten()
     {
-        Messenger::setThreadAvatarMimeTypes('cr2');
+        Messenger::setAvatarMimeTypes('cr2');
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -125,7 +125,7 @@ class GroupThreadAvatarTest extends FeatureTestCase
     /** @test */
     public function group_avatar_size_limit_can_be_overwritten()
     {
-        Messenger::setThreadAvatarSizeLimit(20480);
+        Messenger::setAvatarSizeLimit(20480);
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 

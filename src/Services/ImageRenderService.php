@@ -147,15 +147,10 @@ class ImageRenderService
                                       string $fileNameChallenge)
     {
         if (! $thread->isGroup()
+            || is_null($thread->image)
             || $fileNameChallenge !== $thread->image) {
-            return $this->renderDefaultImage();
+            return $this->renderDefaultImage('thread');
         }
-
-//        if (in_array($thread->image, Definitions::DefaultGroupAvatars)) {
-//            return $this->responseFactory->file(
-//                $this->messenger->getDefaultThreadAvatars($thread->image)
-//            );
-//        }
 
         if (! $this->filesystemManager
             ->disk($thread->getStorageDisk())
@@ -228,6 +223,9 @@ class ImageRenderService
             break;
             case 'bot':
                 $default = $this->messenger->getDefaultBotAvatar();
+            break;
+            case 'thread':
+                $default = $this->messenger->getDefaultThreadAvatar();
             break;
             default: $default = is_null($alias)
                 ? null

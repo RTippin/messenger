@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Actions\Bots;
 use Illuminate\Contracts\Events\Dispatcher;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Events\BotAvatarEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Resources\BotResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Services\FileService;
@@ -43,6 +44,17 @@ abstract class BotAvatarAction extends BaseMessengerAction
     }
 
     /**
+     * @throws FeatureDisabledException
+     */
+    protected function isBotAvatarEnabled(): void
+    {
+        if (! $this->messenger->isBotsEnabled()
+            || ! $this->messenger->isBotAvatarEnabled()) {
+            throw new FeatureDisabledException('Bot avatars are currently disabled.');
+        }
+    }
+
+    /**
      * @return $this
      */
     protected function removeOldIfExist(): self
@@ -58,12 +70,15 @@ abstract class BotAvatarAction extends BaseMessengerAction
 
     /**
      * @param string|null $avatar
+     * @return $this
      */
-    protected function updateBotAvatar(?string $avatar): void
+    protected function updateBotAvatar(?string $avatar): self
     {
         $this->getBot()->update([
             'avatar' => $avatar,
         ]);
+
+        return $this;
     }
 
     /**

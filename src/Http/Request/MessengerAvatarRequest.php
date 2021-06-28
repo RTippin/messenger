@@ -14,8 +14,8 @@ class MessengerAvatarRequest extends FormRequest
      */
     public function rules(): array
     {
-        $limit = Messenger::getProviderAvatarSizeLimit();
-        $mimes = Messenger::getProviderAvatarMimeTypes();
+        $limit = Messenger::getAvatarSizeLimit();
+        $mimes = Messenger::getAvatarMimeTypes();
 
         return [
             'image' => ['required', "max:$limit", 'file', "mimes:$mimes"],

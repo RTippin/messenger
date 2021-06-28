@@ -489,7 +489,9 @@ class MessengerTest extends MessengerTestCase
             'message_edits_view' => true,
             'message_reactions' => true,
             'message_reactions_max' => 10,
+            'provider_avatars' => true,
             'thread_avatars' => true,
+            'bot_avatars' => true,
         ];
 
         $this->assertSame($expected, $this->messenger->getSystemFeatures());
@@ -529,9 +531,9 @@ class MessengerTest extends MessengerTestCase
         $this->assertTrue($this->messenger->isMessageDocumentUploadEnabled());
         $this->assertTrue($this->messenger->isMessageImageUploadEnabled());
         $this->assertTrue($this->messenger->isMessageAudioUploadEnabled());
-        $this->assertTrue($this->messenger->isThreadAvatarUploadEnabled());
-        $this->assertTrue($this->messenger->isProviderAvatarUploadEnabled());
-        $this->assertTrue($this->messenger->isProviderAvatarRemovalEnabled());
+        $this->assertTrue($this->messenger->isThreadAvatarEnabled());
+        $this->assertTrue($this->messenger->isBotAvatarEnabled());
+        $this->assertTrue($this->messenger->isProviderAvatarEnabled());
         $this->assertCount(3, $this->messenger->getMessengerProviders());
         $this->assertSame(1000, $this->messenger->getApiRateLimit());
         $this->assertSame(45, $this->messenger->getSearchRateLimit());
@@ -544,13 +546,11 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame(10240, $this->messenger->getMessageDocumentSizeLimit());
         $this->assertSame(10240, $this->messenger->getMessageAudioSizeLimit());
         $this->assertSame(5120, $this->messenger->getMessageImageSizeLimit());
-        $this->assertSame(5120, $this->messenger->getProviderAvatarSizeLimit());
-        $this->assertSame(5120, $this->messenger->getThreadAvatarSizeLimit());
+        $this->assertSame(5120, $this->messenger->getAvatarSizeLimit());
         $this->assertFalse($this->messenger->isCallingTemporarilyDisabled());
         $this->assertSame('csv,doc,docx,json,pdf,ppt,pptx,rar,rtf,txt,xls,xlsx,xml,zip,7z', $this->messenger->getMessageDocumentMimeTypes());
         $this->assertSame('jpg,jpeg,png,bmp,gif,webp', $this->messenger->getMessageImageMimeTypes());
-        $this->assertSame('jpg,jpeg,png,bmp,gif,webp', $this->messenger->getProviderAvatarMimeTypes());
-        $this->assertSame('jpg,jpeg,png,bmp,gif,webp', $this->messenger->getThreadAvatarMimeTypes());
+        $this->assertSame('jpg,jpeg,png,bmp,gif,webp', $this->messenger->getAvatarMimeTypes());
         $this->assertSame('aac,mp3,oga,ogg,wav,weba,webm', $this->messenger->getMessageAudioMimeTypes());
         $this->assertTrue($this->messenger->getBotSubscriber('enabled'));
         $this->assertTrue($this->messenger->getCallSubscriber('enabled'));
@@ -634,9 +634,9 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->setMessageDocumentUpload(false);
         $this->messenger->setMessageImageUpload(false);
         $this->messenger->setMessageAudioUpload(false);
-        $this->messenger->setThreadAvatarUpload(false);
-        $this->messenger->setProviderAvatarUpload(false);
-        $this->messenger->setProviderAvatarRemoval(false);
+        $this->messenger->setThreadAvatars(false);
+        $this->messenger->setBotAvatars(false);
+        $this->messenger->setProviderAvatars(false);
         $this->messenger->setMessageEdits(false);
         $this->messenger->setMessageEditsView(false);
         $this->messenger->setMessageReactions(false);
@@ -648,13 +648,11 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->setMessageDocumentSizeLimit(5);
         $this->messenger->setMessageImageSizeLimit(5);
         $this->messenger->setMessageAudioSizeLimit(5);
-        $this->messenger->setProviderAvatarSizeLimit(5);
-        $this->messenger->setThreadAvatarSizeLimit(5);
+        $this->messenger->setAvatarSizeLimit(5);
         $this->messenger->setMessageDocumentMimeTypes('mov,mp3');
         $this->messenger->setMessageImageMimeTypes('jpeg,png');
         $this->messenger->setMessageAudioMimeTypes('mp3');
-        $this->messenger->setProviderAvatarMimeTypes('jpeg,png');
-        $this->messenger->setThreadAvatarMimeTypes('jpeg,png');
+        $this->messenger->setAvatarMimeTypes('jpeg,png');
         $this->messenger->setBotSubscriber('enabled', false);
         $this->messenger->setCallSubscriber('enabled', false);
         $this->messenger->setSystemMessageSubscriber('enabled', false);
@@ -702,9 +700,9 @@ class MessengerTest extends MessengerTestCase
         $this->assertFalse($this->messenger->isMessageDocumentUploadEnabled());
         $this->assertFalse($this->messenger->isMessageImageUploadEnabled());
         $this->assertFalse($this->messenger->isMessageAudioUploadEnabled());
-        $this->assertFalse($this->messenger->isThreadAvatarUploadEnabled());
-        $this->assertFalse($this->messenger->isProviderAvatarUploadEnabled());
-        $this->assertFalse($this->messenger->isProviderAvatarRemovalEnabled());
+        $this->assertFalse($this->messenger->isThreadAvatarEnabled());
+        $this->assertFalse($this->messenger->isProviderAvatarEnabled());
+        $this->assertFalse($this->messenger->isBotAvatarEnabled());
         $this->assertSame(5, $this->messenger->getApiRateLimit());
         $this->assertSame(5, $this->messenger->getSearchRateLimit());
         $this->assertSame(5, $this->messenger->getMessageRateLimit());
@@ -718,13 +716,11 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame(5, $this->messenger->getMessageDocumentSizeLimit());
         $this->assertSame(5, $this->messenger->getMessageImageSizeLimit());
         $this->assertSame(5, $this->messenger->getMessageAudioSizeLimit());
-        $this->assertSame(5, $this->messenger->getProviderAvatarSizeLimit());
-        $this->assertSame(5, $this->messenger->getThreadAvatarSizeLimit());
+        $this->assertSame(5, $this->messenger->getAvatarSizeLimit());
         $this->assertSame('mov,mp3', $this->messenger->getMessageDocumentMimeTypes());
         $this->assertSame('jpeg,png', $this->messenger->getMessageImageMimeTypes());
         $this->assertSame('mp3', $this->messenger->getMessageAudioMimeTypes());
-        $this->assertSame('jpeg,png', $this->messenger->getProviderAvatarMimeTypes());
-        $this->assertSame('jpeg,png', $this->messenger->getThreadAvatarMimeTypes());
+        $this->assertSame('jpeg,png', $this->messenger->getAvatarMimeTypes());
         $this->assertFalse($this->messenger->getBotSubscriber('enabled'));
         $this->assertFalse($this->messenger->getCallSubscriber('enabled'));
         $this->assertFalse($this->messenger->getSystemMessageSubscriber('enabled'));

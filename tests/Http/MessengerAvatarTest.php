@@ -11,7 +11,7 @@ class MessengerAvatarTest extends FeatureTestCase
     /** @test */
     public function user_forbidden_to_upload_avatar_when_disabled()
     {
-        Messenger::setProviderAvatarUpload(false);
+        Messenger::setProviderAvatars(false);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.avatar.update'), [
@@ -34,7 +34,7 @@ class MessengerAvatarTest extends FeatureTestCase
     /** @test */
     public function avatar_mime_types_can_be_overwritten()
     {
-        Messenger::setProviderAvatarMimeTypes('cr2');
+        Messenger::setAvatarMimeTypes('cr2');
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.avatar.update'), [
@@ -46,7 +46,7 @@ class MessengerAvatarTest extends FeatureTestCase
     /** @test */
     public function avatar_size_limit_can_be_overwritten()
     {
-        Messenger::setProviderAvatarSizeLimit(20480);
+        Messenger::setAvatarSizeLimit(20480);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.avatar.update'), [
@@ -74,7 +74,7 @@ class MessengerAvatarTest extends FeatureTestCase
     /** @test */
     public function user_forbidden_to_remove_avatar_when_disabled()
     {
-        Messenger::setProviderAvatarRemoval(false);
+        Messenger::setProviderAvatars(false);
         $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.avatar.destroy'))

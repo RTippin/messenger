@@ -65,7 +65,7 @@ class StoreMessengerAvatar extends MessengerAvatarAction
      */
     private function isAvatarUploadEnabled(): void
     {
-        if (! $this->messenger->isProviderAvatarUploadEnabled()) {
+        if (! $this->messenger->isProviderAvatarEnabled()) {
             throw new FeatureDisabledException('Avatar upload is currently disabled.');
         }
     }

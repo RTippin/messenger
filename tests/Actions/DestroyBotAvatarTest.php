@@ -25,7 +25,19 @@ class DestroyBotAvatarTest extends FeatureTestCase
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
 
         $this->expectException(FeatureDisabledException::class);
-        $this->expectExceptionMessage('Bot Avatar removal is currently disabled.');
+        $this->expectExceptionMessage('Bot avatars are currently disabled.');
+
+        app(DestroyBotAvatar::class)->execute($bot);
+    }
+
+    /** @test */
+    public function it_throws_exception_if_bot_avatar_disabled()
+    {
+        Messenger::setBotAvatars(false);
+        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+
+        $this->expectException(FeatureDisabledException::class);
+        $this->expectExceptionMessage('Bot avatars are currently disabled.');
 
         app(DestroyBotAvatar::class)->execute($bot);
     }

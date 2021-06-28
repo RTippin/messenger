@@ -20,13 +20,12 @@ class StoreBotAvatar extends BotAvatarAction
      */
     public function execute(...$parameters): self
     {
-        $this->isBotAvatarUploadEnabled();
+        $this->isBotAvatarEnabled();
 
-        $this->setBot($parameters[0]);
-
-        $this->attemptTransactionOrRollbackFile($this->upload($parameters[1]['image']));
-
-        $this->generateResource()->fireEvents();
+        $this->setBot($parameters[0])
+            ->attemptTransactionOrRollbackFile($this->upload($parameters[1]['image']))
+            ->generateResource()
+            ->fireEvents();
 
         return $this;
     }
@@ -37,29 +36,19 @@ class StoreBotAvatar extends BotAvatarAction
      * from storage and rethrow the exception.
      *
      * @param string $fileName
+     * @return $this
      * @throws Exception
      */
-    private function attemptTransactionOrRollbackFile(string $fileName): void
+    private function attemptTransactionOrRollbackFile(string $fileName): self
     {
         try {
-            $this->removeOldIfExist()->updateBotAvatar($fileName);
+            return $this->removeOldIfExist()->updateBotAvatar($fileName);
         } catch (Throwable $e) {
             $this->fileService
                 ->setDisk($this->getBot()->getStorageDisk())
                 ->destroy("{$this->getBot()->getAvatarDirectory()}/$fileName");
 
             throw new Exception($e->getMessage(), $e->getCode(), $e);
-        }
-    }
-
-    /**
-     * @throws FeatureDisabledException
-     */
-    private function isBotAvatarUploadEnabled(): void
-    {
-        if (! $this->messenger->isBotsEnabled()
-            || ! $this->messenger->isThreadAvatarUploadEnabled()) {
-            throw new FeatureDisabledException('Bot Avatar upload is currently disabled.');
         }
     }
 

@@ -15,28 +15,17 @@ class DestroyBotAvatar extends BotAvatarAction
      */
     public function execute(...$parameters): self
     {
-        $this->isBotAvatarRemovalEnabled();
+        $this->isBotAvatarEnabled();
 
         $this->setBot($parameters[0])
             ->removeOldIfExist()
-            ->updateBotAvatar(null);
-
-        $this->generateResource();
+            ->updateBotAvatar(null)
+            ->generateResource();
 
         if ($this->getBot()->wasChanged()) {
             $this->fireEvents();
         }
 
         return $this;
-    }
-
-    /**
-     * @throws FeatureDisabledException
-     */
-    private function isBotAvatarRemovalEnabled(): void
-    {
-        if (! $this->messenger->isBotsEnabled()) {
-            throw new FeatureDisabledException('Bot Avatar removal is currently disabled.');
-        }
     }
 }

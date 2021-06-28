@@ -31,7 +31,7 @@ class StoreGroupAvatarTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_disabled()
     {
-        Messenger::setThreadAvatarUpload(false);
+        Messenger::setThreadAvatars(false);
 
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Group avatars are currently disabled.');

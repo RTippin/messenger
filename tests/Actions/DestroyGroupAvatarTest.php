@@ -21,7 +21,7 @@ class DestroyGroupAvatarTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_disabled()
     {
-        Messenger::setThreadAvatarUpload(false);
+        Messenger::setThreadAvatars(false);
         $thread = Thread::factory()->group()->create();
 
         $this->expectException(FeatureDisabledException::class);

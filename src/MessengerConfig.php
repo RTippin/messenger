@@ -64,6 +64,11 @@ trait MessengerConfig
     /**
      * @var string
      */
+    private string $defaultThreadAvatar;
+
+    /**
+     * @var string
+     */
     private string $defaultGhostAvatar;
 
     /**
@@ -137,24 +142,29 @@ trait MessengerConfig
     private int $threadInvitesMax;
 
     /**
-     * @var bool
-     */
-    private bool $providerAvatarUpload;
-
-    /**
-     * @var bool
-     */
-    private bool $providerAvatarRemoval;
-
-    /**
      * @var int
      */
-    private int $providerAvatarSizeLimit;
+    private int $avatarSizeLimit;
 
     /**
      * @var string
      */
-    private string $providerAvatarMimeTypes;
+    private string $avatarMimeTypes;
+
+    /**
+     * @var bool
+     */
+    private bool $providerAvatars;
+
+    /**
+     * @var bool
+     */
+    private bool $threadAvatars;
+
+    /**
+     * @var bool
+     */
+    private bool $botAvatars;
 
     /**
      * @var bool
@@ -200,21 +210,6 @@ trait MessengerConfig
      * @var string
      */
     private string $messageAudioMimeTypes;
-
-    /**
-     * @var bool
-     */
-    private bool $threadAvatarUpload;
-
-    /**
-     * @var int
-     */
-    private int $threadAvatarSizeLimit;
-
-    /**
-     * @var string
-     */
-    private string $threadAvatarMimeTypes;
 
     /**
      * @var int
@@ -312,6 +307,7 @@ trait MessengerConfig
         'providersVerification',
         'defaultNotFoundImage',
         'defaultGhostAvatar',
+        'defaultThreadAvatar',
         'defaultBotAvatar',
         'avatarStorage',
         'threadStorage',
@@ -392,7 +388,9 @@ trait MessengerConfig
             'message_edits_view' => $this->isMessageEditsViewEnabled(),
             'message_reactions' => $this->isMessageReactionsEnabled(),
             'message_reactions_max' => $this->getMessageReactionsMax(),
-            'thread_avatars' => $this->isThreadAvatarUploadEnabled(),
+            'provider_avatars' => $this->isProviderAvatarEnabled(),
+            'thread_avatars' => $this->isThreadAvatarEnabled(),
+            'bot_avatars' => $this->isBotAvatarEnabled(),
         ];
     }
 
@@ -834,56 +832,18 @@ trait MessengerConfig
     /**
      * @return bool
      */
-    public function isThreadAvatarUploadEnabled(): bool
+    public function isProviderAvatarEnabled(): bool
     {
-        return $this->threadAvatarUpload;
+        return $this->providerAvatars;
     }
 
     /**
-     * @param bool $threadAvatarUpload
+     * @param bool $providerAvatars
      * @return $this
      */
-    public function setThreadAvatarUpload(bool $threadAvatarUpload): self
+    public function setProviderAvatars(bool $providerAvatars): self
     {
-        $this->threadAvatarUpload = $threadAvatarUpload;
-
-        return $this;
-    }
-
-    /**
-     * @return int
-     */
-    public function getThreadAvatarSizeLimit(): int
-    {
-        return $this->threadAvatarSizeLimit;
-    }
-
-    /**
-     * @param int $threadAvatarSizeLimit
-     * @return $this
-     */
-    public function setThreadAvatarSizeLimit(int $threadAvatarSizeLimit): self
-    {
-        $this->threadAvatarSizeLimit = $threadAvatarSizeLimit;
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function getThreadAvatarMimeTypes(): string
-    {
-        return $this->threadAvatarMimeTypes;
-    }
-
-    /**
-     * @param string $threadAvatarMimeTypes
-     * @return $this
-     */
-    public function setThreadAvatarMimeTypes(string $threadAvatarMimeTypes): self
-    {
-        $this->threadAvatarMimeTypes = $threadAvatarMimeTypes;
+        $this->providerAvatars = $providerAvatars;
 
         return $this;
     }
@@ -891,18 +851,18 @@ trait MessengerConfig
     /**
      * @return bool
      */
-    public function isProviderAvatarUploadEnabled(): bool
+    public function isThreadAvatarEnabled(): bool
     {
-        return $this->providerAvatarUpload;
+        return $this->threadAvatars;
     }
 
     /**
-     * @param bool $providerAvatarUpload
+     * @param bool $threadAvatars
      * @return $this
      */
-    public function setProviderAvatarUpload(bool $providerAvatarUpload): self
+    public function setThreadAvatars(bool $threadAvatars): self
     {
-        $this->providerAvatarUpload = $providerAvatarUpload;
+        $this->threadAvatars = $threadAvatars;
 
         return $this;
     }
@@ -910,18 +870,18 @@ trait MessengerConfig
     /**
      * @return bool
      */
-    public function isProviderAvatarRemovalEnabled(): bool
+    public function isBotAvatarEnabled(): bool
     {
-        return $this->providerAvatarRemoval;
+        return $this->botAvatars;
     }
 
     /**
-     * @param bool $providerAvatarRemoval
+     * @param bool $botAvatars
      * @return $this
      */
-    public function setProviderAvatarRemoval(bool $providerAvatarRemoval): self
+    public function setBotAvatars(bool $botAvatars): self
     {
-        $this->providerAvatarRemoval = $providerAvatarRemoval;
+        $this->botAvatars = $botAvatars;
 
         return $this;
     }
@@ -929,18 +889,18 @@ trait MessengerConfig
     /**
      * @return int
      */
-    public function getProviderAvatarSizeLimit(): int
+    public function getAvatarSizeLimit(): int
     {
-        return $this->providerAvatarSizeLimit;
+        return $this->avatarSizeLimit;
     }
 
     /**
-     * @param int $providerAvatarSizeLimit
+     * @param int $avatarSizeLimit
      * @return $this
      */
-    public function setProviderAvatarSizeLimit(int $providerAvatarSizeLimit): self
+    public function setAvatarSizeLimit(int $avatarSizeLimit): self
     {
-        $this->providerAvatarSizeLimit = $providerAvatarSizeLimit;
+        $this->avatarSizeLimit = $avatarSizeLimit;
 
         return $this;
     }
@@ -948,18 +908,18 @@ trait MessengerConfig
     /**
      * @return string
      */
-    public function getProviderAvatarMimeTypes(): string
+    public function getAvatarMimeTypes(): string
     {
-        return $this->providerAvatarMimeTypes;
+        return $this->avatarMimeTypes;
     }
 
     /**
-     * @param string $providerAvatarMimeTypes
+     * @param string $avatarMimeTypes
      * @return $this
      */
-    public function setProviderAvatarMimeTypes(string $providerAvatarMimeTypes): self
+    public function setAvatarMimeTypes(string $avatarMimeTypes): self
     {
-        $this->providerAvatarMimeTypes = $providerAvatarMimeTypes;
+        $this->avatarMimeTypes = $avatarMimeTypes;
 
         return $this;
     }
@@ -1334,6 +1294,14 @@ trait MessengerConfig
     /**
      * @return string
      */
+    public function getDefaultThreadAvatar(): string
+    {
+        return $this->defaultThreadAvatar;
+    }
+
+    /**
+     * @return string
+     */
     public function getDefaultBotAvatar(): string
     {
         return $this->defaultBotAvatar;
@@ -1502,6 +1470,7 @@ trait MessengerConfig
         $this->threadStorage = config('messenger.storage.threads');
         $this->defaultNotFoundImage = config('messenger.files.default_not_found_image');
         $this->defaultGhostAvatar = config('messenger.files.default_ghost_avatar');
+        $this->defaultThreadAvatar = config('messenger.files.default_thread_avatar');
         $this->defaultBotAvatar = config('messenger.files.default_bot_avatar');
         $this->pushNotifications = config('messenger.push_notifications');
         $this->knockKnock = config('messenger.knocks.enabled');
@@ -1517,10 +1486,11 @@ trait MessengerConfig
         $this->calling = config('messenger.calling.enabled');
         $this->bots = config('messenger.bots.enabled');
         $this->systemMessages = config('messenger.system_messages.enabled');
-        $this->providerAvatarUpload = config('messenger.files.provider_avatars.upload');
-        $this->providerAvatarRemoval = config('messenger.files.provider_avatars.removal');
-        $this->providerAvatarSizeLimit = config('messenger.files.provider_avatars.size_limit');
-        $this->providerAvatarMimeTypes = config('messenger.files.provider_avatars.mime_types');
+        $this->providerAvatars = config('messenger.files.avatars.providers');
+        $this->threadAvatars = config('messenger.files.avatars.threads');
+        $this->botAvatars = config('messenger.files.avatars.bots');
+        $this->avatarSizeLimit = config('messenger.files.avatars.size_limit');
+        $this->avatarMimeTypes = config('messenger.files.avatars.mime_types');
         $this->messageImageUpload = config('messenger.files.message_images.upload');
         $this->messageImageSizeLimit = config('messenger.files.message_images.size_limit');
         $this->messageImageMimeTypes = config('messenger.files.message_images.mime_types');
@@ -1530,9 +1500,6 @@ trait MessengerConfig
         $this->messageDocumentUpload = config('messenger.files.message_documents.upload');
         $this->messageDocumentSizeLimit = config('messenger.files.message_documents.size_limit');
         $this->messageDocumentMimeTypes = config('messenger.files.message_documents.mime_types');
-        $this->threadAvatarUpload = config('messenger.files.thread_avatars.upload');
-        $this->threadAvatarSizeLimit = config('messenger.files.thread_avatars.size_limit');
-        $this->threadAvatarMimeTypes = config('messenger.files.thread_avatars.mime_types');
         $this->searchPageCount = config('messenger.collections.search.page_count');
         $this->threadsIndexCount = config('messenger.collections.threads.index_count');
         $this->threadsPageCount = config('messenger.collections.threads.page_count');
