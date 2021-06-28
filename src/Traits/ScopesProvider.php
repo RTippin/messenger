@@ -81,6 +81,21 @@ trait ScopesProvider
         return $query->whereHas($relation, fn (Builder $query) => $this->scopeForProvider($query, $provider, $morph));
     }
 
+//    public function scopeHasProviderTest(Builder $query,
+//                                         string $parent,
+//                                         string $joins,
+//                                         MessengerProvider $provider,
+//                                         string $morph = 'owner'): Builder
+//    {
+//        $singularParent = Str::singular($parent);
+//
+//        return $query->addSelect("$parent.*")
+//            ->join($joins, "$parent.id", '=', "$joins.{$singularParent}_id")
+//            ->where($this->concatBuilder($morph), '=', $provider->getMorphClass().$provider->getKey())
+//            ->whereNull("$joins.deleted_at");
+//
+//    }
+
     /**
      * Scope a query for belonging to the given model using relation keys present.
      *
