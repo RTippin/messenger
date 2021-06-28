@@ -36,7 +36,7 @@ class ThreadFactory extends Factory
             return [
                 'type' => 2,
                 'subject' => $this->faker->company,
-                'image' => rand(1, 5).'.png',
+                'image' => null,
                 'add_participants' => true,
                 'invitations' => true,
                 'chat_bots' => true,

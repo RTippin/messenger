@@ -5,10 +5,12 @@ namespace RTippin\Messenger\Http\Controllers;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
+use RTippin\Messenger\Actions\Threads\DestroyGroupAvatar;
 use RTippin\Messenger\Actions\Threads\LeaveThread;
+use RTippin\Messenger\Actions\Threads\StoreGroupAvatar;
 use RTippin\Messenger\Actions\Threads\StoreGroupThread;
-use RTippin\Messenger\Actions\Threads\UpdateGroupAvatar;
 use RTippin\Messenger\Actions\Threads\UpdateGroupSettings;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Collections\GroupThreadCollection;
 use RTippin\Messenger\Http\Request\GroupAvatarRequest;
 use RTippin\Messenger\Http\Request\GroupThreadRequest;
@@ -94,24 +96,39 @@ class GroupThreadController
     }
 
     /**
-     * Update the group avatar.
+     * Store the group avatar.
      *
      * @param GroupAvatarRequest $request
-     * @param UpdateGroupAvatar $updateGroupAvatar
+     * @param StoreGroupAvatar $storeGroupAvatar
      * @param Thread $thread
      * @return ThreadSettingsResource
-     * @throws AuthorizationException
+     * @throws FeatureDisabledException|AuthorizationException
      */
-    public function updateAvatar(GroupAvatarRequest $request,
-                                 UpdateGroupAvatar $updateGroupAvatar,
-                                 Thread $thread): ThreadSettingsResource
+    public function storeAvatar(GroupAvatarRequest $request,
+                                StoreGroupAvatar $storeGroupAvatar,
+                                Thread $thread): ThreadSettingsResource
     {
         $this->authorize('settings', $thread);
 
-        return $updateGroupAvatar->execute(
+        return $storeGroupAvatar->execute(
             $thread,
             $request->validated()
         )->getJsonResource();
+    }
+
+    /**
+     * Remove the group avatar.
+     *
+     * @param DestroyGroupAvatar $destroyGroupAvatar
+     * @param Thread $thread
+     * @return ThreadSettingsResource
+     * @throws AuthorizationException|FeatureDisabledException
+     */
+    public function destroyAvatar(DestroyGroupAvatar $destroyGroupAvatar, Thread $thread): ThreadSettingsResource
+    {
+        $this->authorize('settings', $thread);
+
+        return $destroyGroupAvatar->execute($thread)->getJsonResource();
     }
 
     /**

@@ -64,17 +64,6 @@ class Definitions
     ];
 
     /**
-     * All default group thread avatars.
-     */
-    const DefaultGroupAvatars = [
-        '1.png',
-        '2.png',
-        '3.png',
-        '4.png',
-        '5.png',
-    ];
-
-    /**
      * Default thread attributes.
      */
     const DefaultThread = [

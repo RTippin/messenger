@@ -100,7 +100,8 @@ Route::name('api.messenger.')->group(function () {
         Route::post('leave', [GroupThreadController::class, 'leave'])->name('leave');
         Route::get('settings', [GroupThreadController::class, 'settings'])->name('settings');
         Route::put('settings', [GroupThreadController::class, 'updateSettings'])->name('settings.update');
-        Route::post('avatar', [GroupThreadController::class, 'updateAvatar'])->name('avatar.update');
+        Route::post('avatar', [GroupThreadController::class, 'storeAvatar'])->name('avatar.store');
+        Route::delete('avatar', [GroupThreadController::class, 'destroyAvatar'])->name('avatar.destroy');
         Route::get('add-participants', FilterAddParticipants::class)->name('add.participants');
         //Privates
         Route::post('approval', PrivateThreadApproval::class)->name('approval');

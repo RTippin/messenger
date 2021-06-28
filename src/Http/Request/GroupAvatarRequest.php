@@ -3,9 +3,7 @@
 namespace RTippin\Messenger\Http\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Support\Definitions;
 
 class GroupAvatarRequest extends FormRequest
 {
@@ -20,8 +18,7 @@ class GroupAvatarRequest extends FormRequest
         $mimes = Messenger::getThreadAvatarMimeTypes();
 
         return [
-            'image' => ['required_without:default', 'file', "max:$limit", "mimes:$mimes"],
-            'default' => ['required_without:image', 'string', Rule::in(Definitions::DefaultGroupAvatars)],
+            'image' => ['required', 'file', "max:$limit", "mimes:$mimes"],
         ];
     }
 }

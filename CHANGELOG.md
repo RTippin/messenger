@@ -3,6 +3,19 @@
 
 ---
 
+### [v0.37]
+
+#### Added
+- System messages for bot events (create, delete, avatar, rename).
+
+#### Changed
+- Janus server bug fixes with improper types properties when http call fails.
+
+#### Removed
+- WIP
+
+---
+
 ### [v0.36 (06-24-2021)]
 
 #### Added

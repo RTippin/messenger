@@ -110,7 +110,6 @@ use RTippin\Messenger\Models\Participant;
  * @method static string getDefaultNotFoundImage()
  * @method static string getDefaultGhostAvatar()
  * @method static string getDefaultBotAvatar()
- * @method static array|string getDefaultThreadAvatars(string $image = null)
  * @method static void reset()
  * @method static void setMessengerProviders(array $providers = [])
  * @method static array getMessengerProviders()

@@ -12,7 +12,6 @@ use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Support\Definitions;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
@@ -152,11 +151,11 @@ class ImageRenderService
             return $this->renderDefaultImage();
         }
 
-        if (in_array($thread->image, Definitions::DefaultGroupAvatars)) {
-            return $this->responseFactory->file(
-                $this->messenger->getDefaultThreadAvatars($thread->image)
-            );
-        }
+//        if (in_array($thread->image, Definitions::DefaultGroupAvatars)) {
+//            return $this->responseFactory->file(
+//                $this->messenger->getDefaultThreadAvatars($thread->image)
+//            );
+//        }
 
         if (! $this->filesystemManager
             ->disk($thread->getStorageDisk())

@@ -168,9 +168,6 @@ return [
     | Size limits are the max upload size in kilobytes.
     |--------------------------------------------------------------------------
     |
-    | *Default thread avatars can be any file type, but the
-    | array keys must be left as they are (1 - 5 .png)
-    |
     */
     'files' => [
         'message_documents' => [
@@ -193,21 +190,22 @@ return [
             'size_limit' => env('MESSENGER_THREAD_AVATAR_SIZE_LIMIT', 5120),
             'mime_types' => env('MESSENGER_THREAD_AVATAR_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,webp'),
         ],
+//        'avatars' => [
+//            'providers' => env('MESSENGER_PROVIDER_AVATARS_ENABLED', true),
+//            'threads' => env('MESSENGER_THREAD_AVATARS_ENABLED', true),
+//            'bots' => env('MESSENGER_BOT_AVATARS_ENABLED', true),
+//            'size_limit' => env('MESSENGER_AVATARS_SIZE_LIMIT', 5120),
+//            'mime_types' => env('MESSENGER_AVATARS_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,webp'),
+//        ],
         'provider_avatars' => [
             'upload' => env('MESSENGER_PROVIDER_AVATAR_UPLOAD', true),
             'removal' => env('MESSENGER_PROVIDER_AVATAR_REMOVAL', true),
             'size_limit' => env('MESSENGER_PROVIDER_AVATAR_SIZE_LIMIT', 5120),
             'mime_types' => env('MESSENGER_PROVIDER_AVATAR_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,webp'),
         ],
-        'default_thread_avatars' => [
-            '1.png' => public_path('vendor/messenger/images/1.png'),
-            '2.png' => public_path('vendor/messenger/images/2.png'),
-            '3.png' => public_path('vendor/messenger/images/3.png'),
-            '4.png' => public_path('vendor/messenger/images/4.png'),
-            '5.png' => public_path('vendor/messenger/images/5.png'),
-        ],
         'default_not_found_image' => public_path('vendor/messenger/images/image404.png'),
         'default_ghost_avatar' => public_path('vendor/messenger/images/users.png'),
+        'default_thread_avatar' => public_path('vendor/messenger/images/1.png'),
         'default_bot_avatar' => public_path('vendor/messenger/images/bots.png'),
     ],
 

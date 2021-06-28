@@ -173,7 +173,7 @@ class Invite extends Model
             [
                 'invite' => $this->code,
                 'size' => $size,
-                'image' => $this->thread->image,
+                'image' => $this->thread->image ?: 'default.png',
             ]
         );
     }

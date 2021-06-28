@@ -72,11 +72,6 @@ trait MessengerConfig
     private string $defaultBotAvatar;
 
     /**
-     * @var array
-     */
-    private array $defaultThreadAvatars;
-
-    /**
      * @var bool
      */
     private bool $knockKnock;
@@ -316,7 +311,6 @@ trait MessengerConfig
         'providerHasDevices',
         'providersVerification',
         'defaultNotFoundImage',
-        'defaultThreadAvatars',
         'defaultGhostAvatar',
         'defaultBotAvatar',
         'avatarStorage',
@@ -1354,19 +1348,6 @@ trait MessengerConfig
     }
 
     /**
-     * @param string|null $image
-     * @return array|string
-     */
-    public function getDefaultThreadAvatars(?string $image = null)
-    {
-        if (! is_null($image)) {
-            return $this->defaultThreadAvatars[$image];
-        }
-
-        return $this->defaultThreadAvatars;
-    }
-
-    /**
      * @param string $option
      * @return bool|string
      */
@@ -1522,7 +1503,6 @@ trait MessengerConfig
         $this->defaultNotFoundImage = config('messenger.files.default_not_found_image');
         $this->defaultGhostAvatar = config('messenger.files.default_ghost_avatar');
         $this->defaultBotAvatar = config('messenger.files.default_bot_avatar');
-        $this->defaultThreadAvatars = config('messenger.files.default_thread_avatars');
         $this->pushNotifications = config('messenger.push_notifications');
         $this->knockKnock = config('messenger.knocks.enabled');
         $this->knockTimeout = config('messenger.knocks.timeout');

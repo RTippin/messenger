@@ -413,7 +413,7 @@ class Thread extends Model
             [
                 'thread' => $this->id,
                 'size' => $size,
-                'image' => $this->image,
+                'image' => $this->image ?: 'default.png',
             ]
         );
     }
