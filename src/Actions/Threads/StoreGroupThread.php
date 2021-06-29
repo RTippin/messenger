@@ -118,7 +118,6 @@ class StoreGroupThread extends NewThreadAction
         return [
             'type' => 2,
             'subject' => $subject,
-            'image' => rand(1, 5).'.png',
             'add_participants' => true,
             'invitations' => true,
         ];
