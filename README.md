@@ -59,6 +59,10 @@
 - If you enable calling, we support an included [Janus Media Server][link-janus-server] driver, however you will still need to install the media server yourself.
 - Read through our [`messenger.php`][link-config] config file before migrating!
 
+---
+
+# Addons / Demo
+
 ### Messenger Bots
 - Bot functionality is built into the core of this `MESSENGER` package, but you are responsible for registering your own bot handlers.
 - For a variety of ready-to-go bot action handlers, as well as documentation for bot configurations, please visit:

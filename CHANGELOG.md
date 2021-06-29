@@ -3,13 +3,14 @@
 
 ---
 
-### [v0.37 WIP]
+### [v0.37 (06-29-2021)]
 
 #### Added
 - System messages for bot events (create, delete, avatar, rename).
 - Proper store and destroy group thread avatar.
 - `avatars` and `default_thread_avatar` in `files` config array.
 - New methods for avatars (provider, thread, bot)
+- Please see config: [messenger.php](https://github.com/RTippin/messenger/blob/acb8e5af518105d8c32684c387a48bbe6153e87c/config/messenger.php#L172)
 
 #### Changed
 - Janus server bug fixes with improper types properties when http call fails.
