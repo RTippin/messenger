@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\ThreadFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Definitions;
@@ -44,6 +45,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read \RTippin\Messenger\Models\Bot[] $bots
  * @method static Builder|Thread group()
  * @method static Builder|Thread private()
+ * @method static Builder|Thread hasProvider(MessengerProvider $provider)
  * @method static \Illuminate\Database\Query\Builder|Thread onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|Thread withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Thread withoutTrashed()
@@ -226,6 +228,19 @@ class Thread extends Model
     public function scopePrivate(Builder $query): Builder
     {
         return $query->where('type', '=', 1);
+    }
+
+    /**
+     * @param Builder $query
+     * @param MessengerProvider $provider
+     * @return Builder
+     */
+    public function scopeHasProvider(Builder $query, MessengerProvider $provider): Builder
+    {
+        return $query->select('threads.*')
+            ->join('participants', 'threads.id', '=', 'participants.thread_id')
+            ->where($this->concatBuilder('owner', 'participants'), '=', $provider->getMorphClass().$provider->getKey())
+            ->whereNull('participants.deleted_at');
     }
 
     /**

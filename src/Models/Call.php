@@ -36,6 +36,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read Model|MessengerProvider $owner
  * @method static Builder|Call videoCall()
  * @method static Builder|Call active()
+ * @method static Builder|Call hasProvider(MessengerProvider $provider)
  * @property string|null $payload
  * @property bool $setup_complete
  * @property bool $teardown_complete
@@ -143,6 +144,18 @@ class Call extends Model
     public function scopeActive(Builder $query): Builder
     {
         return $query->whereNull('call_ended');
+    }
+
+    /**
+     * @param Builder $query
+     * @param MessengerProvider $provider
+     * @return Builder
+     */
+    public function scopeHasProvider(Builder $query, MessengerProvider $provider): Builder
+    {
+        return $query->select('calls.*')
+            ->join('call_participants', 'calls.id', '=', 'call_participants.call_id')
+            ->where($this->concatBuilder('owner'), '=', $provider->getMorphClass().$provider->getKey());
     }
 
     /**

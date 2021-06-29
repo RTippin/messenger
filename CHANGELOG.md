@@ -14,6 +14,7 @@
 #### Changed
 - Janus server bug fixes with improper types properties when http call fails.
 - Avatars (provider, thread, bot) share one config for size/mimes.
+- Switched main queries used for locating threads/calls from using `whereHas` to custom scope using `join`.
 
 #### Removed
 - Random of 5 default group thread avatars. Only one set now.

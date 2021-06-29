@@ -24,7 +24,6 @@ use RTippin\Messenger\Models\Thread;
  * @method static Builder|Call|CallParticipant|Friend|Invite|Message|MessageReaction|Messenger|Participant|PendingFriend|SentFriend|Thread forProviderWithModel(Model $model, string $modelKey = 'owner', string $morphKey = 'owner')
  * @method static Builder|Call|CallParticipant|Friend|Invite|Message|MessageReaction|Messenger|Participant|PendingFriend|SentFriend|Thread notProvider(MessengerProvider $provider, string $morph = 'owner')
  * @method static Builder|Call|CallParticipant|Friend|Invite|Message|MessageReaction|Messenger|Participant|PendingFriend|SentFriend|Thread notProviderWithModel(Model $model, string $modelKey = 'owner', string $morphKey = 'owner')
- * @method static Builder|Call|CallParticipant|Friend|Invite|Message|MessageReaction|Messenger|Participant|PendingFriend|SentFriend|Thread hasProvider(string $relation, MessengerProvider $provider)
  */
 trait ScopesProvider
 {
@@ -63,38 +62,6 @@ trait ScopesProvider
     {
         return $this->scopeForProvider($query, $provider, $morph, true);
     }
-
-    /**
-     * Scope a query for belonging to the given provider.
-     *
-     * @param Builder $query
-     * @param string $relation
-     * @param MessengerProvider $provider
-     * @param string $morph
-     * @return Builder
-     */
-    public function scopeHasProvider(Builder $query,
-                                     string $relation,
-                                     MessengerProvider $provider,
-                                     string $morph = 'owner'): Builder
-    {
-        return $query->whereHas($relation, fn (Builder $query) => $this->scopeForProvider($query, $provider, $morph));
-    }
-
-//    public function scopeHasProviderTest(Builder $query,
-//                                         string $parent,
-//                                         string $joins,
-//                                         MessengerProvider $provider,
-//                                         string $morph = 'owner'): Builder
-//    {
-//        $singularParent = Str::singular($parent);
-//
-//        return $query->addSelect("$parent.*")
-//            ->join($joins, "$parent.id", '=', "$joins.{$singularParent}_id")
-//            ->where($this->concatBuilder($morph), '=', $provider->getMorphClass().$provider->getKey())
-//            ->whereNull("$joins.deleted_at");
-//
-//    }
 
     /**
      * Scope a query for belonging to the given model using relation keys present.
@@ -138,16 +105,18 @@ trait ScopesProvider
 
     /**
      * @param string $morph
+     * @param string|null $prefix
      * @return Expression
      */
-    private function concatBuilder(string $morph): Expression
+    private function concatBuilder(string $morph, ?string $prefix = null): Expression
     {
+        $type = $prefix ? "$prefix.{$morph}_type" : "{$morph}_type";
+        $id = $prefix ? "$prefix.{$morph}_id" : "{$morph}_id";
+
         if (DB::getDriverName() === 'sqlite') {
-            $query = "{$morph}_type || {$morph}_id";
-        } else {
-            $query = "CONCAT({$morph}_type, {$morph}_id)";
+            return new Expression("$type || $id");
         }
 
-        return new Expression($query);
+        return new Expression("CONCAT($type, $id)");
     }
 }

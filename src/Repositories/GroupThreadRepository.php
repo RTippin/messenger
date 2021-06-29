@@ -29,7 +29,7 @@ class GroupThreadRepository
      */
     public function getProviderGroupThreadsIndex(): Collection
     {
-        return Thread::hasProvider('participants', $this->messenger->getProvider())
+        return Thread::hasProvider($this->messenger->getProvider())
             ->group()
             ->latest('updated_at')
             ->with([
@@ -47,7 +47,7 @@ class GroupThreadRepository
      */
     public function getProviderGroupThreadsPage(Thread $thread): Collection
     {
-        return Thread::hasProvider('participants', $this->messenger->getProvider())
+        return Thread::hasProvider($this->messenger->getProvider())
             ->group()
             ->latest('updated_at')
             ->with([
@@ -66,7 +66,7 @@ class GroupThreadRepository
      */
     public function getProviderOldestGroupThread(): ?Thread
     {
-        return Thread::hasProvider('participants', $this->messenger->getProvider())
+        return Thread::hasProvider($this->messenger->getProvider())
             ->group()
             ->oldest('updated_at')
             ->first();

@@ -31,7 +31,7 @@ class CallRepository
      */
     public function getProviderCallsBuilder(): Builder
     {
-        return Call::videoCall()->hasProvider('participants', $this->messenger->getProvider());
+        return Call::hasProvider($this->messenger->getProvider())->videoCall();
     }
 
     /**
@@ -40,7 +40,7 @@ class CallRepository
     public function getProviderAllActiveCalls(): Collection
     {
         return Call::active()->whereIn('thread_id',
-            Thread::hasProvider('participants', $this->messenger->getProvider())
+            Thread::hasProvider($this->messenger->getProvider())
                 ->pluck('id')
                 ->toArray()
         )

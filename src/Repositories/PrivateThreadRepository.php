@@ -7,9 +7,12 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Support\Helpers;
+use RTippin\Messenger\Traits\ScopesProvider;
 
 class PrivateThreadRepository
 {
+    use ScopesProvider;
+
     /**
      * @var Messenger
      */
@@ -32,9 +35,11 @@ class PrivateThreadRepository
     public function getProviderPrivateThreadWithRecipient(MessengerProvider $recipient = null): ?Thread
     {
         if ($this->messenger->isValidMessengerProvider($recipient)) {
-            return Thread::hasProvider('participants', $this->messenger->getProvider())
+            return Thread::hasProvider($this->messenger->getProvider())
+                ->join('participants as recipients', 'recipients.thread_id', '=', 'threads.id')
+                ->where($this->concatBuilder('owner', 'recipients'), '=', $recipient->getMorphClass().$recipient->getKey())
+                ->whereNull('recipients.deleted_at')
                 ->private()
-                ->hasProvider('participants', $recipient)
                 ->first();
         }
 
@@ -46,7 +51,7 @@ class PrivateThreadRepository
      */
     public function getProviderPrivateThreadsIndex(): Collection
     {
-        return Thread::hasProvider('participants', $this->messenger->getProvider())
+        return Thread::hasProvider($this->messenger->getProvider())
             ->private()
             ->latest('updated_at')
             ->with([
@@ -64,7 +69,7 @@ class PrivateThreadRepository
      */
     public function getProviderPrivateThreadsPage(Thread $thread): Collection
     {
-        return Thread::hasProvider('participants', $this->messenger->getProvider())
+        return Thread::hasProvider($this->messenger->getProvider())
             ->private()
             ->latest('updated_at')
             ->with([
@@ -83,7 +88,7 @@ class PrivateThreadRepository
      */
     public function getProviderOldestPrivateThread(): ?Thread
     {
-        return Thread::hasProvider('participants', $this->messenger->getProvider())
+        return Thread::hasProvider($this->messenger->getProvider())
             ->private()
             ->oldest('updated_at')
             ->first();

@@ -65,11 +65,11 @@ abstract class MessengerCollection extends ResourceCollection
     {
         switch ($this->collectionType) {
             case 'threads':
-                return Thread::hasProvider('participants', Messenger::getProvider())->count();
+                return Thread::hasProvider(Messenger::getProvider())->count();
             case 'groups':
-                return Thread::hasProvider('participants', Messenger::getProvider())->group()->count();
+                return Thread::hasProvider(Messenger::getProvider())->group()->count();
             case 'privates':
-                return Thread::hasProvider('participants', Messenger::getProvider())->private()->count();
+                return Thread::hasProvider(Messenger::getProvider())->private()->count();
             case 'participants':
                 return $this->thread->participants()->count();
             case 'messages':
