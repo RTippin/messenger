@@ -304,7 +304,7 @@ class MessageTransformer
         if ($call && $call->participants_count > 1) {
             $names = '';
             $participants = $call->participants()
-                ->notProvider($message->owner)
+                ->notProviderWithModel($message)
                 ->with('owner')
                 ->limit(3)
                 ->get();

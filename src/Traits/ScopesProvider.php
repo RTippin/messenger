@@ -21,6 +21,7 @@ use RTippin\Messenger\Models\Thread;
  * @method static Builder|Call|CallParticipant|Friend|Invite|Message|MessageReaction|Messenger|Participant|PendingFriend|SentFriend|Thread forProvider(MessengerProvider $provider, string $morph = 'owner')
  * @method static Builder|Call|CallParticipant|Friend|Invite|Message|MessageReaction|Messenger|Participant|PendingFriend|SentFriend|Thread forProviderWithModel(Model $model, string $modelKey = 'owner', string $morphKey = 'owner')
  * @method static Builder|Call|CallParticipant|Friend|Invite|Message|MessageReaction|Messenger|Participant|PendingFriend|SentFriend|Thread notProvider(MessengerProvider $provider, string $morph = 'owner')
+ * @method static Builder|Call|CallParticipant|Friend|Invite|Message|MessageReaction|Messenger|Participant|PendingFriend|SentFriend|Thread notProviderWithModel(Model $model, string $modelKey = 'owner', string $morphKey = 'owner')
  */
 trait ScopesProvider
 {
@@ -66,16 +67,35 @@ trait ScopesProvider
      * @param Model $model
      * @param string $modelKey
      * @param string $morphKey
-     * @param bool $not
      * @return Builder
      */
     public function scopeForProviderWithModel(Builder $query,
                                               Model $model,
                                               string $modelKey = 'owner',
-                                              string $morphKey = 'owner',
-                                              bool $not = false): Builder
+                                              string $morphKey = 'owner'): Builder
     {
         return $query->where("{$morphKey}_id", '=', $model->{"{$modelKey}_id"})
             ->where("{$morphKey}_type", '=', $model->{"{$modelKey}_type"});
+    }
+
+    /**
+     * Scope a query not belonging to the given model using relation keys present.
+     *
+     * @param Builder $query
+     * @param Model $model
+     * @param string $modelKey
+     * @param string $morphKey
+     * @return Builder
+     */
+    public function scopeNotProviderWithModel(Builder $query,
+                                              Model $model,
+                                              string $modelKey = 'owner',
+                                              string $morphKey = 'owner'): Builder
+    {
+        $keyQuery = is_string($model->{$modelKey.'_id'})
+            ? "'".$model->{$modelKey.'_id'}."'"
+            : $model->{$modelKey.'_id'};
+
+        return $query->whereRaw("NOT ({$morphKey}_id=$keyQuery AND {$morphKey}_type='".$model->{$modelKey.'_type'}."')");
     }
 }

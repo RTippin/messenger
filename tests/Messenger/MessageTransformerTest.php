@@ -394,6 +394,40 @@ class MessageTransformerTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_transforms_video_call_with_missing_recipient()
+    {
+        $thread = Thread::factory()->create();
+        $call = $this->createCall($thread, $this->tippin, $this->doe);
+        $message = Message::factory()
+            ->for($thread)
+            ->owner($this->tippin)
+            ->create([
+                'type' => 90,
+                'body' => MessageTransformer::makeVideoCall($thread, $this->tippin, $call)[2],
+            ]);
+        $this->doe->delete();
+
+        $this->assertSame('was in a video call with Ghost Profile', MessageTransformer::transform($message));
+    }
+
+    /** @test */
+    public function it_transforms_video_call_with_missing_owner()
+    {
+        $thread = Thread::factory()->create();
+        $call = $this->createCall($thread, $this->doe, $this->tippin);
+        $message = Message::factory()
+            ->for($thread)
+            ->owner($this->doe)
+            ->create([
+                'type' => 90,
+                'body' => MessageTransformer::makeVideoCall($thread, $this->tippin, $call)[2],
+            ]);
+        $this->doe->delete();
+
+        $this->assertSame('was in a video call with Richard Tippin', MessageTransformer::transform($message));
+    }
+
+    /** @test */
     public function it_transforms_video_call_with_three_participants()
     {
         $thread = Thread::factory()->group()->create();
@@ -643,6 +677,25 @@ class MessageTransformerTest extends FeatureTestCase
             ]);
 
         $this->assertSame('added John Doe and Developers', MessageTransformer::transform($message));
+    }
+
+    /** @test */
+    public function it_transforms_participants_added_with_missing_participant()
+    {
+        $thread = Thread::factory()->group()->create();
+        $participant1 = Participant::factory()->for($thread)->owner($this->doe)->create();
+        $participant2 = Participant::factory()->for($thread)->owner($this->developers)->create();
+        $participants = collect([$participant1, $participant2]);
+        $message = Message::factory()
+            ->for($thread)
+            ->owner($this->tippin)
+            ->create([
+                'type' => 99,
+                'body' => MessageTransformer::makeParticipantsAdded($thread, $this->tippin, $participants)[2],
+            ]);
+        $this->doe->delete();
+
+        $this->assertSame('added Ghost Profile and Developers', MessageTransformer::transform($message));
     }
 
     /** @test */
