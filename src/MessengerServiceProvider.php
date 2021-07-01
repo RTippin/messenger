@@ -80,6 +80,10 @@ class MessengerServiceProvider extends ServiceProvider
             'bots' => Bot::class,
         ]);
 
+        if (config('messenger.provider_uuids')) {
+            MessengerBots::$useUuid = true;
+        }
+
         Collection::macro('forProvider', function (MessengerProvider $provider, string $morph = 'owner'): Collection {
             /** @var Collection $this */
             return $this->where("{$morph}_id", '=', $provider->getKey())

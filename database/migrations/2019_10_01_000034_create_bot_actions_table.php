@@ -16,7 +16,11 @@ class CreateBotActionsTable extends Migration
     {
         Schema::create('bot_actions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->uuid('bot_id');
+            if (config('messenger.provider_uuids')) {
+                $table->uuid('bot_id');
+            } else {
+                $table->unsignedBigInteger('bot_id');
+            }
             Helpers::SchemaMorphType('owner', $table);
             $table->string('handler');
             $table->string('triggers')->nullable()->index();

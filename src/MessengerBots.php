@@ -31,6 +31,13 @@ final class MessengerBots
     ];
 
     /**
+     * This determines if we use UUID or BigInt on the bot model.
+     *
+     * @var bool
+     */
+    public static bool $useUuid = false;
+
+    /**
      * @var Collection
      */
     private Collection $handlers;

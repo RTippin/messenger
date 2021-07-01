@@ -15,7 +15,11 @@ class CreateBotsTable extends Migration
     public function up()
     {
         Schema::create('bots', function (Blueprint $table) {
-            $table->uuid('id')->primary();
+            if (config('messenger.provider_uuids')) {
+                $table->uuid('id')->primary();
+            } else {
+                $table->id();
+            }
             $table->uuid('thread_id');
             Helpers::SchemaMorphType('owner', $table);
             $table->string('name');
