@@ -4,8 +4,6 @@ namespace RTippin\Messenger\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Query\Expression;
-use Illuminate\Support\Facades\DB;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
@@ -23,7 +21,6 @@ use RTippin\Messenger\Models\Thread;
  * @method static Builder|Call|CallParticipant|Friend|Invite|Message|MessageReaction|Messenger|Participant|PendingFriend|SentFriend|Thread forProvider(MessengerProvider $provider, string $morph = 'owner')
  * @method static Builder|Call|CallParticipant|Friend|Invite|Message|MessageReaction|Messenger|Participant|PendingFriend|SentFriend|Thread forProviderWithModel(Model $model, string $modelKey = 'owner', string $morphKey = 'owner')
  * @method static Builder|Call|CallParticipant|Friend|Invite|Message|MessageReaction|Messenger|Participant|PendingFriend|SentFriend|Thread notProvider(MessengerProvider $provider, string $morph = 'owner')
- * @method static Builder|Call|CallParticipant|Friend|Invite|Message|MessageReaction|Messenger|Participant|PendingFriend|SentFriend|Thread notProviderWithModel(Model $model, string $modelKey = 'owner', string $morphKey = 'owner')
  */
 trait ScopesProvider
 {
@@ -33,19 +30,14 @@ trait ScopesProvider
      * @param Builder $query
      * @param MessengerProvider $provider
      * @param string $morph
-     * @param bool $not
      * @return Builder
      */
     public function scopeForProvider(Builder $query,
                                      MessengerProvider $provider,
-                                     string $morph = 'owner',
-                                     bool $not = false): Builder
+                                     string $morph = 'owner'): Builder
     {
-        return $query->where(
-            $this->concatBuilder($morph),
-            $not ? '!=' : '=',
-            $provider->getMorphClass().$provider->getKey()
-        );
+        return $query->where("{$morph}_id", '=', $provider->getKey())
+            ->where("{$morph}_type", '=', $provider->getMorphClass());
     }
 
     /**
@@ -60,7 +52,11 @@ trait ScopesProvider
                                      MessengerProvider $provider,
                                      string $morph = 'owner'): Builder
     {
-        return $this->scopeForProvider($query, $provider, $morph, true);
+        $keyQuery = $provider->getKeyType() === 'string'
+            ? "'{$provider->getKey()}'"
+            : "{$provider->getKey()}";
+
+        return $query->whereRaw("NOT ({$morph}_id=$keyQuery AND {$morph}_type='{$provider->getMorphClass()}')");
     }
 
     /**
@@ -79,44 +75,7 @@ trait ScopesProvider
                                               string $morphKey = 'owner',
                                               bool $not = false): Builder
     {
-        return $query->where(
-            $this->concatBuilder($morphKey),
-            $not ? '!=' : '=',
-            $model->{$modelKey.'_type'}.$model->{$modelKey.'_id'}
-        );
-    }
-
-    /**
-     * Scope a query not belonging to the given model using relation keys present.
-     *
-     * @param Builder $query
-     * @param Model $model
-     * @param string $modelKey
-     * @param string $morphKey
-     * @return Builder
-     */
-    public function scopeNotProviderWithModel(Builder $query,
-                                              Model $model,
-                                              string $modelKey = 'owner',
-                                              string $morphKey = 'owner'): Builder
-    {
-        return $this->scopeForProviderWithModel($query, $model, $modelKey, $morphKey, true);
-    }
-
-    /**
-     * @param string $morph
-     * @param string|null $prefix
-     * @return Expression
-     */
-    private function concatBuilder(string $morph, ?string $prefix = null): Expression
-    {
-        $type = $prefix ? "$prefix.{$morph}_type" : "{$morph}_type";
-        $id = $prefix ? "$prefix.{$morph}_id" : "{$morph}_id";
-
-        if (DB::getDriverName() === 'sqlite') {
-            return new Expression("$type || $id");
-        }
-
-        return new Expression("CONCAT($type, $id)");
+        return $query->where("{$morphKey}_id", '=', $model->{"{$modelKey}_id"})
+            ->where("{$morphKey}_type", '=', $model->{"{$modelKey}_type"});
     }
 }

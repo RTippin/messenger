@@ -80,9 +80,7 @@ class MessengerServiceProvider extends ServiceProvider
             'bots' => Bot::class,
         ]);
 
-        if (config('messenger.provider_uuids')) {
-            MessengerBots::$useUuid = true;
-        }
+        MessengerBots::$useUuid = config('messenger.provider_uuids');
 
         Collection::macro('forProvider', function (MessengerProvider $provider, string $morph = 'owner'): Collection {
             /** @var Collection $this */

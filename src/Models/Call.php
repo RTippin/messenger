@@ -155,7 +155,8 @@ class Call extends Model
     {
         return $query->select('calls.*')
             ->join('call_participants', 'calls.id', '=', 'call_participants.call_id')
-            ->where($this->concatBuilder('owner'), '=', $provider->getMorphClass().$provider->getKey());
+            ->where('call_participants.owner_id', '=', $provider->getKey())
+            ->where('call_participants.owner_type', '=', $provider->getMorphClass());
     }
 
     /**

@@ -7,12 +7,9 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Support\Helpers;
-use RTippin\Messenger\Traits\ScopesProvider;
 
 class PrivateThreadRepository
 {
-    use ScopesProvider;
-
     /**
      * @var Messenger
      */
@@ -37,7 +34,8 @@ class PrivateThreadRepository
         if ($this->messenger->isValidMessengerProvider($recipient)) {
             return Thread::hasProvider($this->messenger->getProvider())
                 ->join('participants as recipients', 'recipients.thread_id', '=', 'threads.id')
-                ->where($this->concatBuilder('owner', 'recipients'), '=', $recipient->getMorphClass().$recipient->getKey())
+                ->where('recipients.owner_id', '=', $recipient->getKey())
+                ->where('recipients.owner_type', '=', $recipient->getMorphClass())
                 ->whereNull('recipients.deleted_at')
                 ->private()
                 ->first();

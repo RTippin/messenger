@@ -239,7 +239,8 @@ class Thread extends Model
     {
         return $query->select('threads.*')
             ->join('participants', 'threads.id', '=', 'participants.thread_id')
-            ->where($this->concatBuilder('owner', 'participants'), '=', $provider->getMorphClass().$provider->getKey())
+            ->where('participants.owner_id', '=', $provider->getKey())
+            ->where('participants.owner_type', '=', $provider->getMorphClass())
             ->whereNull('participants.deleted_at');
     }
 
