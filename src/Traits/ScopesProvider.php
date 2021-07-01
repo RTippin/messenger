@@ -53,11 +53,7 @@ trait ScopesProvider
                                      MessengerProvider $provider,
                                      string $morph = 'owner'): Builder
     {
-        $keyQuery = $provider->getKeyType() === 'string'
-            ? "'{$provider->getKey()}'"
-            : "{$provider->getKey()}";
-
-        return $query->whereRaw("NOT ({$morph}_id=$keyQuery AND {$morph}_type='{$provider->getMorphClass()}')");
+        return $query->whereRaw("NOT ({$morph}_id=? AND {$morph}_type=?)", [$provider->getKey(), $provider->getMorphClass()]);
     }
 
     /**
@@ -92,10 +88,6 @@ trait ScopesProvider
                                               string $modelKey = 'owner',
                                               string $morphKey = 'owner'): Builder
     {
-        $keyQuery = is_string($model->{$modelKey.'_id'})
-            ? "'".$model->{$modelKey.'_id'}."'"
-            : $model->{$modelKey.'_id'};
-
-        return $query->whereRaw("NOT ({$morphKey}_id=$keyQuery AND {$morphKey}_type='".$model->{$modelKey.'_type'}."')");
+        return $query->whereRaw("NOT ({$morphKey}_id=? AND {$morphKey}_type=?)", [$model->{$modelKey.'_id'}, $model->{$modelKey.'_type'}]);
     }
 }
