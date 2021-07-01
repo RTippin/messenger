@@ -3,6 +3,19 @@
 
 ---
 
+### [v0.38 (07-01-2021)]
+
+#### Changed
+- Bug fix for bots when end user providers using INT keys and not UUIDs. Bot primary key now matches end users messenger config `provider_uuids`.
+  - [View commit](https://github.com/RTippin/messenger/commit/9c3ae1a469e61e6a028c5757dea05be08880c90c)
+- Improved query performance for scopes providers 
+  - [View commit](https://github.com/RTippin/messenger/commit/f093d23e7e1e22c13ca4e45d2597a46e97203f80).
+
+#### Removed
+- `concatBuilder` from [ScopesProviders](https://github.com/RTippin/messenger/blob/664b991b05aa40bb0cdf24c8cea5a2171aef80c9/src/Traits/ScopesProvider.php#L111) trait.
+
+---
+
 ### [v0.37 (06-29-2021)]
 
 #### Added
