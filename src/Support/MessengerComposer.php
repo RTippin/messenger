@@ -2,11 +2,17 @@
 
 namespace RTippin\Messenger\Support;
 
+use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Actions\Messages\AddReaction;
+use RTippin\Messenger\Actions\Messages\StoreAudioMessage;
+use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
+use RTippin\Messenger\Actions\Messages\StoreImageMessage;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
+use RTippin\Messenger\Actions\Threads\SendKnock;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
+use RTippin\Messenger\Exceptions\KnockException;
 use RTippin\Messenger\Exceptions\MessengerComposerException;
 use RTippin\Messenger\Exceptions\ReactionException;
 use RTippin\Messenger\Messenger;
@@ -102,8 +108,7 @@ class MessengerComposer
      * @param string|null $replyingToId
      * @param array|null $extra
      * @return StoreMessage
-     * @throws MessengerComposerException
-     * @throws Throwable
+     * @throws MessengerComposerException|Throwable
      */
     public function message(string $message,
                             ?string $replyingToId = null,
@@ -125,11 +130,95 @@ class MessengerComposer
     }
 
     /**
+     * Send an image message. Optional reply to message ID and extra data allowed.
+     *
+     * @param UploadedFile $image
+     * @param string|null $replyingToId
+     * @param array|null $extra
+     * @return StoreImageMessage
+     * @throws MessengerComposerException|Throwable
+     */
+    public function image(UploadedFile $image,
+                          ?string $replyingToId = null,
+                          ?array $extra = null): StoreImageMessage
+    {
+        $action = app(StoreImageMessage::class);
+
+        $payload = [$this->resolveToThread(), [
+            'image' => $image,
+            'reply_to_id' => $replyingToId,
+            'extra' => $extra,
+        ]];
+
+        if ($this->silent) {
+            return $action->withoutBroadcast()->execute(...$payload);
+        }
+
+        return $action->execute(...$payload);
+    }
+
+    /**
+     * Send a document message. Optional reply to message ID and extra data allowed.
+     *
+     * @param UploadedFile $document
+     * @param string|null $replyingToId
+     * @param array|null $extra
+     * @return StoreDocumentMessage
+     * @throws MessengerComposerException|Throwable
+     */
+    public function document(UploadedFile $document,
+                             ?string $replyingToId = null,
+                             ?array $extra = null): StoreDocumentMessage
+    {
+        $action = app(StoreDocumentMessage::class);
+
+        $payload = [$this->resolveToThread(), [
+            'document' => $document,
+            'reply_to_id' => $replyingToId,
+            'extra' => $extra,
+        ]];
+
+        if ($this->silent) {
+            return $action->withoutBroadcast()->execute(...$payload);
+        }
+
+        return $action->execute(...$payload);
+    }
+
+    /**
+     * Send an audio message. Optional reply to message ID and extra data allowed.
+     *
+     * @param UploadedFile $audio
+     * @param string|null $replyingToId
+     * @param array|null $extra
+     * @return StoreAudioMessage
+     * @throws MessengerComposerException|Throwable
+     */
+    public function audio(UploadedFile $audio,
+                          ?string $replyingToId = null,
+                          ?array $extra = null): StoreAudioMessage
+    {
+        $action = app(StoreAudioMessage::class);
+
+        $payload = [$this->resolveToThread(), [
+            'audio' => $audio,
+            'reply_to_id' => $replyingToId,
+            'extra' => $extra,
+        ]];
+
+        if ($this->silent) {
+            return $action->withoutBroadcast()->execute(...$payload);
+        }
+
+        return $action->execute(...$payload);
+    }
+
+    /**
      * @param Message $message
      * @param string $reaction
      * @return AddReaction
-     * @throws MessengerComposerException
-     * @throws Throwable|FeatureDisabledException|ReactionException
+     * @throws MessengerComposerException|ReactionException
+     * @throws Throwable|FeatureDisabledException
      */
     public function reaction(Message $message, string $reaction): AddReaction
     {
@@ -142,6 +231,16 @@ class MessengerComposer
         }
 
         return $action->execute(...$payload);
+    }
+
+    /**
+     * @return SendKnock
+     * @throws FeatureDisabledException|KnockException
+     * @throws MessengerComposerException
+     */
+    public function knock(): SendKnock
+    {
+        return app(SendKnock::class)->execute($this->resolveToThread());
     }
 
     /**

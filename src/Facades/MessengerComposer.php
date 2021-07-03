@@ -2,9 +2,14 @@
 
 namespace RTippin\Messenger\Facades;
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Facade;
 use RTippin\Messenger\Actions\Messages\AddReaction;
+use RTippin\Messenger\Actions\Messages\StoreAudioMessage;
+use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
+use RTippin\Messenger\Actions\Messages\StoreImageMessage;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
+use RTippin\Messenger\Actions\Threads\SendKnock;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Message;
 
@@ -14,7 +19,11 @@ use RTippin\Messenger\Models\Message;
  * @method static \RTippin\Messenger\Support\MessengerComposer silent()
  * @method static \RTippin\Messenger\Support\MessengerComposer getInstance()
  * @method static StoreMessage message(string $message, ?string $replyingToId = null, ?array $extra = null)
+ * @method static StoreImageMessage image(UploadedFile $image, ?string $replyingToId = null, ?array $extra = null)
+ * @method static StoreDocumentMessage document(UploadedFile $document, ?string $replyingToId = null, ?array $extra = null)
+ * @method static StoreAudioMessage audio(UploadedFile $document, ?string $replyingToId = null, ?array $extra = null)
  * @method static AddReaction reaction(Message $message, string $reaction)
+ * @method static SendKnock knock()
  *
  * @mixin \RTippin\Messenger\Support\MessengerComposer
  * @see \RTippin\Messenger\Support\MessengerComposer

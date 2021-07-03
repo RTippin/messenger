@@ -2,9 +2,18 @@
 
 namespace RTippin\Messenger\Tests\Messenger;
 
+use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Actions\BaseMessengerAction;
+use RTippin\Messenger\Actions\Messages\AddReaction;
+use RTippin\Messenger\Actions\Messages\StoreAudioMessage;
+use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
+use RTippin\Messenger\Actions\Messages\StoreImageMessage;
+use RTippin\Messenger\Actions\Messages\StoreMessage;
+use RTippin\Messenger\Actions\Threads\SendKnock;
+use RTippin\Messenger\Broadcasting\KnockBroadcast;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
 use RTippin\Messenger\Broadcasting\ReactionAddedBroadcast;
+use RTippin\Messenger\Events\KnockEvent;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Events\ReactionAddedEvent;
 use RTippin\Messenger\Exceptions\MessengerComposerException;
@@ -28,6 +37,7 @@ class MessengerComposerTest extends FeatureTestCase
     public function messenger_composer_facade_resolves_to_composer()
     {
         $this->assertInstanceOf(MessengerComposer::class, \RTippin\Messenger\Facades\MessengerComposer::getInstance());
+        $this->assertNotSame($this->composer, \RTippin\Messenger\Facades\MessengerComposer::getInstance());
     }
 
     /** @test */
@@ -58,7 +68,7 @@ class MessengerComposerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_stores_message_with_existing_thread()
+    public function it_sends_message_with_existing_thread()
     {
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
@@ -68,7 +78,17 @@ class MessengerComposerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_stores_message_and_creates_new_thread()
+    public function it_sends_message_and_returns_message_action()
+    {
+        $thread = $this->createGroupThread($this->tippin);
+
+        $message = $this->composer->to($thread)->from($this->tippin)->message('Test');
+
+        $this->assertInstanceOf(StoreMessage::class, $message);
+    }
+
+    /** @test */
+    public function it_sends_message_and_creates_new_thread()
     {
         $this->composer->to($this->doe)->from($this->tippin)->message('Test');
 
@@ -104,7 +124,175 @@ class MessengerComposerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_stores_reaction()
+    public function it_sends_image_message_with_existing_thread()
+    {
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $this->composer->to($thread)->from($this->tippin)->image(UploadedFile::fake()->image('test.jpg'));
+
+        $this->assertDatabaseCount('messages', 1);
+    }
+
+    /** @test */
+    public function it_sends_image_message_and_returns_image_action()
+    {
+        $thread = $this->createGroupThread($this->tippin);
+
+        $image = $this->composer->to($thread)->from($this->tippin)->image(UploadedFile::fake()->image('test.jpg'));
+
+        $this->assertInstanceOf(StoreImageMessage::class, $image);
+    }
+
+    /** @test */
+    public function it_sends_image_message_and_creates_new_thread()
+    {
+        $this->composer->to($this->doe)->from($this->tippin)->image(UploadedFile::fake()->image('test.jpg'));
+
+        $this->assertDatabaseCount('threads', 1);
+        $this->assertDatabaseCount('participants', 2);
+        $this->assertDatabaseCount('messages', 1);
+    }
+
+    /** @test */
+    public function it_sends_image_message_with_events()
+    {
+        BaseMessengerAction::enableEvents();
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $this->expectsEvents([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+
+        $this->composer->to($thread)->from($this->tippin)->image(UploadedFile::fake()->image('test.jpg'));
+    }
+
+    /** @test */
+    public function it_sends_image_message_without_broadcast()
+    {
+        BaseMessengerAction::enableEvents();
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $this->doesntExpectEvents(NewMessageBroadcast::class);
+        $this->expectsEvents(NewMessageEvent::class);
+
+        $this->composer->to($thread)->from($this->tippin)->silent()->image(UploadedFile::fake()->image('test.jpg'));
+    }
+
+    /** @test */
+    public function it_sends_document_message_with_existing_thread()
+    {
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $this->composer->to($thread)->from($this->tippin)->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
+
+        $this->assertDatabaseCount('messages', 1);
+    }
+
+    /** @test */
+    public function it_sends_document_message_and_returns_document_action()
+    {
+        $thread = $this->createGroupThread($this->tippin);
+
+        $document = $this->composer->to($thread)->from($this->tippin)->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
+
+        $this->assertInstanceOf(StoreDocumentMessage::class, $document);
+    }
+
+    /** @test */
+    public function it_sends_document_message_and_creates_new_thread()
+    {
+        $this->composer->to($this->doe)->from($this->tippin)->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
+
+        $this->assertDatabaseCount('threads', 1);
+        $this->assertDatabaseCount('participants', 2);
+        $this->assertDatabaseCount('messages', 1);
+    }
+
+    /** @test */
+    public function it_sends_document_message_with_events()
+    {
+        BaseMessengerAction::enableEvents();
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $this->expectsEvents([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+
+        $this->composer->to($thread)->from($this->tippin)->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
+    }
+
+    /** @test */
+    public function it_sends_document_message_without_broadcast()
+    {
+        BaseMessengerAction::enableEvents();
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $this->doesntExpectEvents(NewMessageBroadcast::class);
+        $this->expectsEvents(NewMessageEvent::class);
+
+        $this->composer->to($thread)->from($this->tippin)->silent()->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
+    }
+
+    /** @test */
+    public function it_sends_audio_message_with_existing_thread()
+    {
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $this->composer->to($thread)->from($this->tippin)->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
+
+        $this->assertDatabaseCount('messages', 1);
+    }
+
+    /** @test */
+    public function it_sends_audio_message_and_returns_audio_action()
+    {
+        $thread = $this->createGroupThread($this->tippin);
+
+        $audio = $this->composer->to($thread)->from($this->tippin)->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
+
+        $this->assertInstanceOf(StoreAudioMessage::class, $audio);
+    }
+
+    /** @test */
+    public function it_sends_audio_message_and_creates_new_thread()
+    {
+        $this->composer->to($this->doe)->from($this->tippin)->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
+
+        $this->assertDatabaseCount('threads', 1);
+        $this->assertDatabaseCount('participants', 2);
+        $this->assertDatabaseCount('messages', 1);
+    }
+
+    /** @test */
+    public function it_sends_audio_message_with_events()
+    {
+        BaseMessengerAction::enableEvents();
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $this->expectsEvents([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+
+        $this->composer->to($thread)->from($this->tippin)->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
+    }
+
+    /** @test */
+    public function it_sends_audio_message_without_broadcast()
+    {
+        BaseMessengerAction::enableEvents();
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $this->doesntExpectEvents(NewMessageBroadcast::class);
+        $this->expectsEvents(NewMessageEvent::class);
+
+        $this->composer->to($thread)->from($this->tippin)->silent()->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
+    }
+
+    /** @test */
+    public function it_adds_reaction()
     {
         $thread = $this->createGroupThread($this->tippin);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
@@ -115,7 +303,18 @@ class MessengerComposerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_stores_reaction_with_events()
+    public function it_adds_reaction_and_returns_reaction_action()
+    {
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+
+        $reaction = $this->composer->to($thread)->from($this->tippin)->reaction($message, ':joy:');
+
+        $this->assertInstanceOf(AddReaction::class, $reaction);
+    }
+
+    /** @test */
+    public function it_adds_reaction_with_events()
     {
         BaseMessengerAction::enableEvents();
         $thread = $this->createGroupThread($this->tippin);
@@ -130,7 +329,7 @@ class MessengerComposerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_stores_reaction_without_broadcast()
+    public function it_adds_reaction_without_broadcast()
     {
         BaseMessengerAction::enableEvents();
         $thread = $this->createGroupThread($this->tippin);
@@ -140,5 +339,38 @@ class MessengerComposerTest extends FeatureTestCase
         $this->doesntExpectEvents(ReactionAddedBroadcast::class);
 
         $this->composer->to($thread)->from($this->tippin)->silent()->reaction($message, ':joy:');
+    }
+
+    /** @test */
+    public function it_sends_knock_with_existing_thread()
+    {
+        BaseMessengerAction::enableEvents();
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $this->expectsEvents([
+            KnockBroadcast::class,
+            KnockEvent::class,
+        ]);
+
+        $this->composer->to($thread)->from($this->tippin)->knock();
+    }
+
+    /** @test */
+    public function it_sends_knock_and_returns_knock_action()
+    {
+        $thread = $this->createGroupThread($this->tippin);
+
+        $knock = $this->composer->to($thread)->from($this->tippin)->knock();
+
+        $this->assertInstanceOf(SendKnock::class, $knock);
+    }
+
+    /** @test */
+    public function it_sends_knock_and_creates_new_thread()
+    {
+        $this->composer->to($this->doe)->from($this->tippin)->knock();
+
+        $this->assertDatabaseCount('threads', 1);
+        $this->assertDatabaseCount('participants', 2);
     }
 }
