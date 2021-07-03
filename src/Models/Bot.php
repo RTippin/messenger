@@ -52,9 +52,9 @@ class Bot extends Model implements MessengerProvider
      */
     public function __construct(array $attributes = [])
     {
-        $this->keyType = Bots::$useUuid ? 'string' : 'int';
+        $this->setKeyType(Bots::$useUuid ? 'string' : 'int');
 
-        $this->incrementing = ! Bots::$useUuid;
+        $this->setIncrementing(! Bots::$useUuid);
 
         parent::__construct($attributes);
     }
