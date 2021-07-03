@@ -10,6 +10,8 @@ use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Support\MessageTransformer;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\Fixtures\CompanyModel;
+use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class MessageTransformerTest extends FeatureTestCase
 {
@@ -263,7 +265,7 @@ class MessageTransformerTest extends FeatureTestCase
 
         $this->assertEquals($this->tippin->getKey(), $owner->getKey());
         $this->assertSame($this->tippin->getMorphClass(), $owner->getMorphClass());
-        $this->assertInstanceOf($this->getModelUser(), $owner);
+        $this->assertInstanceOf(UserModel::class, $owner);
     }
 
     /** @test */
@@ -279,7 +281,7 @@ class MessageTransformerTest extends FeatureTestCase
 
         $this->assertEquals($this->developers->getKey(), $owner->getKey());
         $this->assertSame($this->developers->getMorphClass(), $owner->getMorphClass());
-        $this->assertInstanceOf($this->getModelCompany(), $owner);
+        $this->assertInstanceOf(CompanyModel::class, $owner);
     }
 
     /** @test */
@@ -493,8 +495,8 @@ class MessageTransformerTest extends FeatureTestCase
             $this->developers,
             $this->createJaneSmith(),
             $this->createSomeCompany(),
-            $this->getModelUser()::factory()->create(),
-            $this->getModelUser()::factory()->create()
+            UserModel::factory()->create(),
+            UserModel::factory()->create()
         );
         $message = Message::factory()
             ->for($thread)
@@ -745,8 +747,8 @@ class MessageTransformerTest extends FeatureTestCase
         $participant2 = Participant::factory()->for($thread)->owner($this->developers)->create();
         $participant3 = Participant::factory()->for($thread)->owner($this->createJaneSmith())->create();
         $participant4 = Participant::factory()->for($thread)->owner($this->createSomeCompany())->create();
-        $participant5 = Participant::factory()->for($thread)->owner($this->getModelUser()::factory()->create())->create();
-        $participant6 = Participant::factory()->for($thread)->owner($this->getModelUser()::factory()->create())->create();
+        $participant5 = Participant::factory()->for($thread)->owner(UserModel::factory()->create())->create();
+        $participant6 = Participant::factory()->for($thread)->owner(UserModel::factory()->create())->create();
         $participants = collect([$participant1, $participant2, $participant3, $participant4, $participant5, $participant6]);
         $message = Message::factory()
             ->for($thread)

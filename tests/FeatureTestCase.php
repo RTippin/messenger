@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests;
 
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
@@ -11,21 +10,23 @@ use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Brokers\NullVideoBroker;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Tests\Fixtures\CompanyModel;
+use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class FeatureTestCase extends MessengerTestCase
 {
     /**
-     * @var MessengerProvider|Model|Authenticatable
+     * @var MessengerProvider|UserModel|Authenticatable
      */
     protected $tippin;
 
     /**
-     * @var MessengerProvider|Model|Authenticatable
+     * @var MessengerProvider|UserModel|Authenticatable
      */
     protected $doe;
 
     /**
-     * @var MessengerProvider|Model|Authenticatable
+     * @var MessengerProvider|CompanyModel|Authenticatable
      */
     protected $developers;
 
@@ -71,11 +72,11 @@ class FeatureTestCase extends MessengerTestCase
 
     private function storeBaseUsers(): void
     {
-        $this->tippin = $this->getModelUser()::factory()->create([
+        $this->tippin = UserModel::factory()->create([
             'name' => 'Richard Tippin',
             'email' => 'tippindev@gmail.com',
         ]);
-        $this->doe = $this->getModelUser()::factory()->create([
+        $this->doe = UserModel::factory()->create([
             'name' => 'John Doe',
             'email' => 'doe@example.net',
         ]);
@@ -83,7 +84,7 @@ class FeatureTestCase extends MessengerTestCase
 
     private function storeBaseCompanies(): void
     {
-        $this->developers = $this->getModelCompany()::factory()->create([
+        $this->developers = CompanyModel::factory()->create([
             'company_name' => 'Developers',
             'company_email' => 'developers@example.net',
         ]);

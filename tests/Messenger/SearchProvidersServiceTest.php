@@ -68,7 +68,7 @@ class SearchProvidersServiceTest extends FeatureTestCase
         $providers = $this->getBaseProvidersConfig();
         $providers['user']['provider_interactions']['can_search'] = false;
         Messenger::setMessengerProviders($providers);
-        Messenger::setProvider($this->userTippin());
+        Messenger::setProvider($this->tippin);
 
         $search = $this->search->search('Developers Doe')->get()->toArray();
 

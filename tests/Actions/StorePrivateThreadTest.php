@@ -68,7 +68,7 @@ class StorePrivateThreadTest extends FeatureTestCase
         app(StorePrivateThread::class)->execute([
             'message' => 'Hello World!',
             'recipient_alias' => 'company',
-            'recipient_id' => $this->companyDevelopers()->getKey(),
+            'recipient_id' => $this->developers->getKey(),
         ]);
     }
 

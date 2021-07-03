@@ -4,12 +4,9 @@ namespace RTippin\Messenger\Tests;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Orchestra\Testbench\TestCase;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\MessengerServiceProvider;
 use RTippin\Messenger\Tests\Fixtures\CompanyModel;
-use RTippin\Messenger\Tests\Fixtures\CompanyModelUuid;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
-use RTippin\Messenger\Tests\Fixtures\UserModelUuid;
 
 class MessengerTestCase extends TestCase
 {
@@ -55,8 +52,8 @@ class MessengerTestCase extends TestCase
 
         if ($this->useMorphMap) {
             Relation::morphMap([
-                'users' => $this->getModelUser(),
-                'companies' => $this->getModelCompany(),
+                'users' => UserModel::class,
+                'companies' => CompanyModel::class,
             ]);
         }
     }
@@ -65,7 +62,7 @@ class MessengerTestCase extends TestCase
     {
         return [
             'user' => [
-                'model' => $this->getModelUser(),
+                'model' => UserModel::class,
                 'searchable' => true,
                 'friendable' => true,
                 'devices' => true,
@@ -77,7 +74,7 @@ class MessengerTestCase extends TestCase
                 ],
             ],
             'company' => [
-                'model' => $this->getModelCompany(),
+                'model' => CompanyModel::class,
                 'searchable' => true,
                 'friendable' => true,
                 'devices' => true,
@@ -89,21 +86,5 @@ class MessengerTestCase extends TestCase
                 ],
             ],
         ];
-    }
-
-    /**
-     * @return MessengerProvider|UserModel|UserModelUuid|string
-     */
-    protected function getModelUser(): string
-    {
-        return $this->useUUID ? UserModelUuid::class : UserModel::class;
-    }
-
-    /**
-     * @return MessengerProvider|CompanyModel|CompanyModelUuid|string
-     */
-    protected function getModelCompany(): string
-    {
-        return $this->useUUID ? CompanyModelUuid::class : CompanyModel::class;
     }
 }

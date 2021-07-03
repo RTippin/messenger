@@ -6,7 +6,9 @@ use Illuminate\Http\Request;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Http\Middleware\SetMessengerProvider;
+use RTippin\Messenger\Tests\Fixtures\CompanyModel;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
+use RTippin\Messenger\Tests\Fixtures\UserModel;
 use RTippin\Messenger\Tests\MessengerTestCase;
 
 class SetMessengerProviderTest extends MessengerTestCase
@@ -48,8 +50,7 @@ class SetMessengerProviderTest extends MessengerTestCase
     public function valid_user_provider_was_set()
     {
         $request = new Request;
-        $user = $this->getModelUser();
-        $tippin = new $user([
+        $tippin = new UserModel([
             'first' => 'Richard',
             'last' => 'Tippin',
             'email' => 'tippin@example.net',
@@ -69,8 +70,7 @@ class SetMessengerProviderTest extends MessengerTestCase
     public function valid_company_provider_was_set()
     {
         $request = new Request;
-        $company = $this->getModelCompany();
-        $developers = new $company([
+        $developers = new CompanyModel([
             'company_name' => 'Developers',
             'company_email' => 'developers@example.net',
         ]);

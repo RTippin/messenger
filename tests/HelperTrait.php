@@ -10,42 +10,16 @@ use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\Fixtures\CompanyModel;
-use RTippin\Messenger\Tests\Fixtures\CompanyModelUuid;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
-use RTippin\Messenger\Tests\Fixtures\UserModelUuid;
 
 trait HelperTrait
 {
     /**
-     * @return MessengerProvider|UserModel|UserModelUuid
-     */
-    protected function userTippin()
-    {
-        return $this->getModelUser()::where('email', '=', 'tippindev@gmail.com')->first();
-    }
-
-    /**
-     * @return MessengerProvider|UserModel|UserModelUuid
-     */
-    protected function userDoe()
-    {
-        return $this->getModelUser()::where('email', '=', 'doe@example.net')->first();
-    }
-
-    /**
-     * @return MessengerProvider|CompanyModel|CompanyModelUuid
-     */
-    protected function companyDevelopers()
-    {
-        return $this->getModelCompany()::where('company_email', '=', 'developers@example.net')->first();
-    }
-
-    /**
-     * @return MessengerProvider|UserModel|UserModelUuid
+     * @return MessengerProvider|UserModel
      */
     protected function createJaneSmith()
     {
-        return $this->getModelUser()::create([
+        return UserModel::create([
             'name' => 'Jane Smith',
             'email' => 'smith@example.net',
             'password' => 'secret',
@@ -53,11 +27,11 @@ trait HelperTrait
     }
 
     /**
-     * @return MessengerProvider|CompanyModel|CompanyModelUuid
+     * @return MessengerProvider|CompanyModel
      */
     protected function createSomeCompany()
     {
-        return $this->getModelCompany()::create([
+        return CompanyModel::create([
             'company_name' => 'Some Company',
             'company_email' => 'company@example.net',
             'password' => 'secret',

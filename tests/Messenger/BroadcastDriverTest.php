@@ -14,7 +14,9 @@ use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\Fixtures\CompanyModel;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
+use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class BroadcastDriverTest extends FeatureTestCase
 {
@@ -143,12 +145,12 @@ class BroadcastDriverTest extends FeatureTestCase
             ->create();
         Participant::factory()
             ->for($group)
-            ->owner($this->getModelUser()::factory()->create())
+            ->owner(UserModel::factory()->create())
             ->count(200)
             ->create();
         Participant::factory()
             ->for($group)
-            ->owner($this->getModelCompany()::factory()->create())
+            ->owner(CompanyModel::factory()->create())
             ->count(100)
             ->create();
 

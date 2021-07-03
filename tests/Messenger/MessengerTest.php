@@ -16,6 +16,7 @@ use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Services\Janus\VideoRoomService;
+use RTippin\Messenger\Tests\Fixtures\CompanyModel;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
 use RTippin\Messenger\Tests\MessengerTestCase;
@@ -52,8 +53,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_checks_objects_and_class_strings_for_valid_provider()
     {
-        $user = $this->getModelUser();
-        $company = $this->getModelCompany();
+        $user = UserModel::class;
+        $company = CompanyModel::class;
         $providerUser = new $user;
         $providerOtherUser = new OtherModel;
         $providerCompany = new $company;
@@ -70,8 +71,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_returns_valid_provider_alias_using_objects_and_class_strings()
     {
-        $user = $this->getModelUser();
-        $company = $this->getModelCompany();
+        $user = UserModel::class;
+        $company = CompanyModel::class;
         $providerUser = new $user;
         $providerOtherUser = new OtherModel;
         $providerCompany = new $company;
@@ -88,8 +89,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_returns_valid_provider_class_using_alias()
     {
-        $this->assertSame($this->getModelUser(), $this->messenger->findAliasProvider('user'));
-        $this->assertSame($this->getModelCompany(), $this->messenger->findAliasProvider('company'));
+        $this->assertSame(UserModel::class, $this->messenger->findAliasProvider('user'));
+        $this->assertSame(CompanyModel::class, $this->messenger->findAliasProvider('company'));
         $this->assertNull($this->messenger->findAliasProvider('undefined'));
     }
 
@@ -97,8 +98,8 @@ class MessengerTest extends MessengerTestCase
     public function it_returns_valid_provider_class_using_morph_alias_if_morph_maps_set()
     {
         if ($this->useMorphMap) {
-            $this->assertSame($this->getModelUser(), $this->messenger->findAliasProvider('users'));
-            $this->assertSame($this->getModelCompany(), $this->messenger->findAliasProvider('companies'));
+            $this->assertSame(UserModel::class, $this->messenger->findAliasProvider('users'));
+            $this->assertSame(CompanyModel::class, $this->messenger->findAliasProvider('companies'));
         } else {
             $this->assertTrue(true);
         }
@@ -107,8 +108,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_allows_given_provider_objects_and_class_strings_to_be_searched()
     {
-        $user = $this->getModelUser();
-        $company = $this->getModelCompany();
+        $user = UserModel::class;
+        $company = CompanyModel::class;
         $providerUser = new $user;
         $providerCompany = new $company;
 
@@ -121,8 +122,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_denies_given_provider_objects_and_class_strings_to_be_searched()
     {
-        $user = $this->getModelUser();
-        $company = $this->getModelCompany();
+        $user = UserModel::class;
+        $company = CompanyModel::class;
         $providers = $this->getBaseProvidersConfig();
         $providers['user']['searchable'] = false;
         $providers['company']['searchable'] = false;
@@ -142,8 +143,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_allows_given_provider_objects_and_class_strings_to_be_friended()
     {
-        $user = $this->getModelUser();
-        $company = $this->getModelCompany();
+        $user = UserModel::class;
+        $company = CompanyModel::class;
         $providerUser = new $user;
         $providerCompany = new $company;
 
@@ -156,8 +157,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_denies_given_provider_objects_and_class_strings_to_be_friended()
     {
-        $user = $this->getModelUser();
-        $company = $this->getModelCompany();
+        $user = UserModel::class;
+        $company = CompanyModel::class;
         $providers = $this->getBaseProvidersConfig();
         $providers['user']['friendable'] = false;
         $providers['company']['friendable'] = false;
@@ -177,8 +178,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_returns_all_provider_classes()
     {
-        $user = $this->getModelUser();
-        $company = $this->getModelCompany();
+        $user = UserModel::class;
+        $company = CompanyModel::class;
         $expected = [
             (new $user)->getMorphClass(),
             (new $company)->getMorphClass(),
@@ -191,8 +192,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_returns_provider_classes_that_can_be_searched()
     {
-        $user = $this->getModelUser();
-        $company = $this->getModelCompany();
+        $user = UserModel::class;
+        $company = CompanyModel::class;
         $expected = [
             (new $user)->getMorphClass(),
             (new $company)->getMorphClass(),
@@ -204,8 +205,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_returns_provider_classes_that_can_be_friended()
     {
-        $user = $this->getModelUser();
-        $company = $this->getModelCompany();
+        $user = UserModel::class;
+        $company = CompanyModel::class;
         $expected = [
             (new $user)->getMorphClass(),
             (new $company)->getMorphClass(),
@@ -217,8 +218,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_returns_provider_classes_that_have_devices()
     {
-        $user = $this->getModelUser();
-        $company = $this->getModelCompany();
+        $user = UserModel::class;
+        $company = CompanyModel::class;
         $expected = [
             (new $user)->getMorphClass(),
             (new $company)->getMorphClass(),
@@ -313,7 +314,7 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_sets_valid_provider()
     {
-        $model = $this->getModelUser();
+        $model = UserModel::class;
         $provider = new $model([
             'id' => 1,
             'name' => 'Richard Tippin',
@@ -321,8 +322,8 @@ class MessengerTest extends MessengerTestCase
             'password' => 'secret',
         ]);
         $this->messenger->setProvider($provider);
-        $user = $this->getModelUser();
-        $company = $this->getModelCompany();
+        $user = UserModel::class;
+        $company = CompanyModel::class;
         $expected = [
             (new $user)->getMorphClass(),
             (new $company)->getMorphClass(),
@@ -332,7 +333,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertNotSame($provider, $this->messenger->getProvider(true));
         $this->assertSame('user', $this->messenger->getProviderAlias());
         $this->assertSame(1, $this->messenger->getProvider()->getKey());
-        $this->assertSame($this->getModelUser(), get_class($this->messenger->getProvider()));
+        $this->assertSame(UserModel::class, get_class($this->messenger->getProvider()));
         $this->assertTrue(app()->bound(MessengerProvider::class));
         $this->assertSame($provider, app(MessengerProvider::class));
         $this->assertTrue($this->messenger->providerHasFriends());
@@ -345,7 +346,7 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_unsets_provider()
     {
-        $model = $this->getModelUser();
+        $model = UserModel::class;
 
         $provider = new $model([
             'id' => 1,
@@ -372,8 +373,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_allows_set_provider_to_message_given_provider_first()
     {
-        $user = $this->getModelUser();
-        $company = $this->getModelCompany();
+        $user = UserModel::class;
+        $company = CompanyModel::class;
         $providerUser = new $user;
         $providerCompany = new $company;
         $this->messenger->setProvider($providerUser);
@@ -387,8 +388,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_denies_set_provider_to_message_given_provider_first()
     {
-        $user = $this->getModelUser();
-        $company = $this->getModelCompany();
+        $user = UserModel::class;
+        $company = CompanyModel::class;
         $providers = $this->getBaseProvidersConfig();
         $providers['user']['provider_interactions']['can_message'] = false;
         $this->messenger->setMessengerProviders($providers);
@@ -408,8 +409,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_allows_given_provider_to_be_searched_by_set_provider()
     {
-        $user = $this->getModelUser();
-        $company = $this->getModelCompany();
+        $user = UserModel::class;
+        $company = CompanyModel::class;
         $providerUser = new $user;
         $providerCompany = new $company;
         $this->messenger->setProvider($providerUser);
@@ -423,8 +424,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_denies_given_provider_to_be_searched_by_set_provider()
     {
-        $user = $this->getModelUser();
-        $company = $this->getModelCompany();
+        $user = UserModel::class;
+        $company = CompanyModel::class;
         $providers = $this->getBaseProvidersConfig();
         $providers['user']['provider_interactions']['can_search'] = false;
         $this->messenger->setMessengerProviders($providers);
@@ -442,8 +443,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_allows_set_provider_to_initiate_friend_request_with_given_provider()
     {
-        $user = $this->getModelUser();
-        $company = $this->getModelCompany();
+        $user = UserModel::class;
+        $company = CompanyModel::class;
         $providerUser = new $user;
         $providerCompany = new $company;
         $this->messenger->setProvider($providerUser);
@@ -457,8 +458,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_denies_set_provider_to_initiate_friend_request_with_given_provider()
     {
-        $user = $this->getModelUser();
-        $company = $this->getModelCompany();
+        $user = UserModel::class;
+        $company = CompanyModel::class;
         $providers = $this->getBaseProvidersConfig();
         $providers['user']['provider_interactions']['can_friend'] = false;
         $this->messenger->setMessengerProviders($providers);

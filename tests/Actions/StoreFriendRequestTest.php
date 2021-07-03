@@ -146,7 +146,7 @@ class StoreFriendRequestTest extends FeatureTestCase
         $this->expectExceptionMessage('Not authorized to add friend.');
 
         app(StoreFriendRequest::class)->execute([
-            'recipient_id' => $this->companyDevelopers()->getKey(),
+            'recipient_id' => $this->developers->getKey(),
             'recipient_alias' => 'company',
         ]);
     }

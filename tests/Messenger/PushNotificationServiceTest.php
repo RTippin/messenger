@@ -9,7 +9,9 @@ use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\PushNotificationService;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\Fixtures\CompanyModel;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
+use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class PushNotificationServiceTest extends FeatureTestCase
 {
@@ -99,14 +101,14 @@ class PushNotificationServiceTest extends FeatureTestCase
         Event::fake([
             PushNotificationEvent::class,
         ]);
-        $this->getModelUser()::factory()->count(100)->create();
-        $this->getModelCompany()::factory()->count(100)->create();
+        UserModel::factory()->count(100)->create();
+        CompanyModel::factory()->count(100)->create();
 
         app(PushNotificationService::class)->to(
-                $this->getModelUser()::get()
-                    ->push($this->getModelCompany()::get())
-                    ->values()
-                    ->flatten()
+            UserModel::get()
+                ->push(CompanyModel::get())
+                ->values()
+                ->flatten()
             )
             ->with(self::WITH)
             ->notify(FakeNotifyEvent::class);
