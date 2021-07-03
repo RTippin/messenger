@@ -32,6 +32,7 @@ use RTippin\Messenger\Listeners\CallSubscriber;
 use RTippin\Messenger\Listeners\SystemMessageSubscriber;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Services\EmojiService;
+use RTippin\Messenger\Support\MessengerComposer;
 
 class MessengerServiceProvider extends ServiceProvider
 {
@@ -49,17 +50,13 @@ class MessengerServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/messenger.php', 'messenger');
 
         $this->app->singleton(Messenger::class, Messenger::class);
-
         $this->app->alias(Messenger::class, 'messenger');
-
         $this->app->singleton(MessengerBots::class, MessengerBots::class);
-
         $this->app->alias(MessengerBots::class, 'messenger-bots');
-
+        $this->app->bind(MessengerComposer::class, MessengerComposer::class);
+        $this->app->alias(MessengerComposer::class, 'messenger-composer');
         $this->app->singleton(FriendDriver::class, FriendBroker::class);
-
         $this->app->singleton(EmojiInterface::class, EmojiService::class);
-
         $this->app->bind(BroadcastDriver::class, BroadcastBroker::class);
     }
 
