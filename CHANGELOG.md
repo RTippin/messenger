@@ -3,6 +3,14 @@
 
 ---
 
+### [v0.39 (07-03-2021)]
+
+#### Added
+- [MessengerComposer](https://github.com/RTippin/messenger/blob/9e4560a64977fdc563d23a714fed1f50b1dce1ec/src/Support/MessengerComposer.php) class and facade. Easily build to/from and message/image/document/audio/reaction/knock.
+- `composer()` method to the core [BotActionHandler](https://github.com/RTippin/messenger/blob/9e4560a64977fdc563d23a714fed1f50b1dce1ec/src/Actions/Bots/BotActionHandler.php#L139)
+
+---
+
 ### [v0.38 (07-01-2021)]
 
 #### Changed
