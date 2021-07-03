@@ -2,9 +2,11 @@
 
 namespace RTippin\Messenger\Contracts;
 
+use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\MessengerComposer;
 
 interface ActionHandler
 {
@@ -46,8 +48,16 @@ interface ActionHandler
     public function handle(): void;
 
     /**
-     * Set the BotAction. We also set the messenger provider to the
-     * bot the action belongs to.
+     * Set the thread we are composing to, and the bot as the sender,
+     * and return the composer ready for an action!
+     *
+     * @return MessengerComposer
+     * @throws InvalidProviderException
+     */
+    public function composer(): MessengerComposer;
+
+    /**
+     * Set the BotAction.
      *
      * @param BotAction $action
      * @return $this

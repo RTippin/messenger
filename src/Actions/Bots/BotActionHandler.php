@@ -4,9 +4,11 @@ namespace RTippin\Messenger\Actions\Bots;
 
 use RTippin\Messenger\Contracts\ActionHandler;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Facades\MessengerComposer as MessengerComposerFacade;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\MessengerComposer;
 
 /**
  * To authorize the end user add the action handler to a bot, you must define the
@@ -129,6 +131,14 @@ abstract class BotActionHandler implements ActionHandler
         $this->senderIp = $senderIp;
 
         return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function composer(): MessengerComposer
+    {
+        return MessengerComposerFacade::to($this->thread)->from($this->action->bot);
     }
 
     /**

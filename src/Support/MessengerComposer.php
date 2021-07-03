@@ -2,11 +2,15 @@
 
 namespace RTippin\Messenger\Support;
 
+use RTippin\Messenger\Actions\Messages\AddReaction;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Exceptions\MessengerComposerException;
+use RTippin\Messenger\Exceptions\ReactionException;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\PrivateThreadRepository;
@@ -112,6 +116,26 @@ class MessengerComposer
             'reply_to_id' => $replyingToId,
             'extra' => $extra,
         ]];
+
+        if ($this->silent) {
+            return $action->withoutBroadcast()->execute(...$payload);
+        }
+
+        return $action->execute(...$payload);
+    }
+
+    /**
+     * @param Message $message
+     * @param string $reaction
+     * @return AddReaction
+     * @throws MessengerComposerException
+     * @throws Throwable|FeatureDisabledException|ReactionException
+     */
+    public function reaction(Message $message, string $reaction): AddReaction
+    {
+        $action = app(AddReaction::class);
+
+        $payload = [$this->resolveToThread(), $message, $reaction];
 
         if ($this->silent) {
             return $action->withoutBroadcast()->execute(...$payload);

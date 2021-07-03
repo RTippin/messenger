@@ -3,8 +3,10 @@
 namespace RTippin\Messenger\Facades;
 
 use Illuminate\Support\Facades\Facade;
+use RTippin\Messenger\Actions\Messages\AddReaction;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Models\Message;
 
 /**
  * @method static \RTippin\Messenger\Support\MessengerComposer to($entity)
@@ -12,6 +14,7 @@ use RTippin\Messenger\Contracts\MessengerProvider;
  * @method static \RTippin\Messenger\Support\MessengerComposer silent()
  * @method static \RTippin\Messenger\Support\MessengerComposer getInstance()
  * @method static StoreMessage message(string $message, ?string $replyingToId = null, ?array $extra = null)
+ * @method static AddReaction reaction(Message $message, string $reaction)
  *
  * @mixin \RTippin\Messenger\Support\MessengerComposer
  * @see \RTippin\Messenger\Support\MessengerComposer
