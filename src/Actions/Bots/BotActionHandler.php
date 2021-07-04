@@ -3,8 +3,6 @@
 namespace RTippin\Messenger\Actions\Bots;
 
 use RTippin\Messenger\Contracts\ActionHandler;
-use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Facades\MessengerComposer as MessengerComposerFacade;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
@@ -102,8 +100,6 @@ abstract class BotActionHandler implements ActionHandler
     {
         $this->action = $action;
 
-        Messenger::setProvider($action->bot);
-
         return $this;
     }
 
@@ -138,7 +134,9 @@ abstract class BotActionHandler implements ActionHandler
      */
     public function composer(): MessengerComposer
     {
-        return MessengerComposerFacade::to($this->thread)->from($this->action->bot);
+        return app(MessengerComposer::class)
+            ->to($this->thread)
+            ->from($this->action->bot);
     }
 
     /**

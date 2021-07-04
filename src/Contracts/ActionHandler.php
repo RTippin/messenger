@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Contracts;
 
 use RTippin\Messenger\Exceptions\InvalidProviderException;
+use RTippin\Messenger\Exceptions\MessengerComposerException;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
@@ -52,7 +53,7 @@ interface ActionHandler
      * and return the composer ready for an action!
      *
      * @return MessengerComposer
-     * @throws InvalidProviderException
+     * @throws InvalidProviderException|MessengerComposerException
      */
     public function composer(): MessengerComposer;
 
