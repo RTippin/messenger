@@ -60,7 +60,7 @@ interface Action
 
     /**
      * Chain many actions together! Defaults to disabling DB
-     * transactions and added events per BotAction class.
+     * transactions and added events per Action class.
      *
      * @param string|Action $abstractAction
      * @return Action
