@@ -53,7 +53,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
         app(ProcessMessageTriggers::class)->execute($thread, $message, true);
 
         $this->assertDatabaseHas('messages', [
-            'body' => 'Testing Fun.'
+            'body' => 'Testing Fun.',
         ]);
     }
 
@@ -74,7 +74,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
         app(ProcessMessageTriggers::class)->execute($thread, $message, true);
 
         $this->assertDatabaseHas('messages', [
-            'body' => 'Testing Fun.'
+            'body' => 'Testing Fun.',
         ]);
     }
 
@@ -95,7 +95,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
         app(ProcessMessageTriggers::class)->execute($thread, $message, false);
 
         $this->assertDatabaseMissing('messages', [
-            'body' => 'Testing Fun.'
+            'body' => 'Testing Fun.',
         ]);
     }
 
@@ -116,7 +116,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
         app(ProcessMessageTriggers::class)->execute($thread, $message, true, '127.0.0.1');
 
         $this->assertDatabaseHas('messages', [
-            'body' => 'Testing Silly. 127.0.0.1'
+            'body' => 'Testing Silly. 127.0.0.1',
         ]);
     }
 
