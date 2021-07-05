@@ -7,7 +7,7 @@
 [![License][ico-license]][link-license]
 
 ---
-![Preview](docs/images/image1.png)
+![Preview](docs/images/image1.png?raw=true)
 ---
 
 ### Notice - Alpha Release
