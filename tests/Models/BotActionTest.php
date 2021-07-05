@@ -57,6 +57,7 @@ class BotActionTest extends FeatureTestCase
         $this->assertInstanceOf(Carbon::class, $action->updated_at);
         $this->assertFalse($action->admin_only);
         $this->assertTrue($action->enabled);
+        $this->assertSame(0, $action->cooldown);
     }
 
     /** @test */

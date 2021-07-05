@@ -79,6 +79,7 @@ class Bot extends Model implements MessengerProvider
     protected $casts = [
         'enabled' => 'boolean',
         'hide_actions' => 'boolean',
+        'cooldown' => 'integer',
     ];
 
     /**

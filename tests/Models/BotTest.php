@@ -65,6 +65,7 @@ class BotTest extends FeatureTestCase
         $this->assertInstanceOf(Carbon::class, $bot->updated_at);
         $this->assertTrue($bot->enabled);
         $this->assertFalse($bot->hide_actions);
+        $this->assertSame(0, $bot->cooldown);
     }
 
     /** @test */

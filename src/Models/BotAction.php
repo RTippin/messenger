@@ -74,6 +74,7 @@ class BotAction extends Model
     protected $casts = [
         'admin_only' => 'boolean',
         'enabled' => 'boolean',
+        'cooldown' => 'integer',
     ];
 
     /**

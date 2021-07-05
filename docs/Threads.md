@@ -809,17 +809,35 @@
 #### Response:
 ```json
 {
-  "name": "Test Group!",
+  "name": "Test Group",
   "avatar": {
-    "sm": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/2.png",
-    "md": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/2.png",
-    "lg": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/2.png"
+    "sm": "/messenger/assets/threads/93d58908-9a42-492c-a3b9-579276505aba/avatar/sm/img_a2620bd7-ee3d-47a1-93bc-bc382745fd62.jpg",
+    "md": "/messenger/assets/threads/93d58908-9a42-492c-a3b9-579276505aba/avatar/md/img_a2620bd7-ee3d-47a1-93bc-bc382745fd62.jpg",
+    "lg": "/messenger/assets/threads/93d58908-9a42-492c-a3b9-579276505aba/avatar/lg/img_a2620bd7-ee3d-47a1-93bc-bc382745fd62.jpg"
   },
   "add_participants": true,
+  "chat_bots": true,
   "invitations": true,
   "calling": true,
   "messaging": true,
-  "knocks": true
+  "knocks": true,
+  "system_features": {
+    "bots": true,
+    "calling": true,
+    "invitations": true,
+    "invitations_max": 3,
+    "knocks": true,
+    "audio_messages": true,
+    "document_messages": true,
+    "image_messages": true,
+    "message_edits": true,
+    "message_edits_view": true,
+    "message_reactions": true,
+    "message_reactions_max": 10,
+    "provider_avatars": true,
+    "thread_avatars": true,
+    "bot_avatars": true
+  }
 }
 ```
 ---
@@ -827,38 +845,52 @@
 #### Payload:
 ```json
 {
-  "subject": "Test Party!",
+  "subject": "Test Party",
   "add_participants": false,
   "invitations": true,
   "calling": true,
   "messaging": true,
-  "knocks": true
+  "knocks": true,
+  "chat_bots": true,
 }
 ```
 #### Response:
 ```json
 {
-  "name": "Test Party!",
+  "name": "Test Group",
   "avatar": {
-    "sm": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/2.png",
-    "md": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/2.png",
-    "lg": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/2.png"
+    "sm": "/messenger/assets/threads/93d58908-9a42-492c-a3b9-579276505aba/avatar/sm/img_a2620bd7-ee3d-47a1-93bc-bc382745fd62.jpg",
+    "md": "/messenger/assets/threads/93d58908-9a42-492c-a3b9-579276505aba/avatar/md/img_a2620bd7-ee3d-47a1-93bc-bc382745fd62.jpg",
+    "lg": "/messenger/assets/threads/93d58908-9a42-492c-a3b9-579276505aba/avatar/lg/img_a2620bd7-ee3d-47a1-93bc-bc382745fd62.jpg"
   },
-  "add_participants": false,
+  "add_participants": true,
+  "chat_bots": true,
   "invitations": true,
   "calling": true,
   "messaging": true,
-  "knocks": true
+  "knocks": true,
+  "system_features": {
+    "bots": true,
+    "calling": true,
+    "invitations": true,
+    "invitations_max": 3,
+    "knocks": true,
+    "audio_messages": true,
+    "document_messages": true,
+    "image_messages": true,
+    "message_edits": true,
+    "message_edits_view": true,
+    "message_reactions": true,
+    "message_reactions_max": 10,
+    "provider_avatars": true,
+    "thread_avatars": true,
+    "bot_avatars": true
+  }
 }
 ```
 ---
-### POST `/api/messenger/threads/{thread}/avatar` | *api.messenger.threads.avatar.update*
-#### Payload:
-```json
-{
-  "default": "3.png"
-}
-```
+### POST `/api/messenger/threads/{thread}/avatar` | *api.messenger.threads.avatar.store*
+#### Payload
 ```json
 {
   "image": "(binary)"
@@ -867,17 +899,71 @@
 #### Response:
 ```json
 {
-  "name": "Test Party!",
+  "name": "Test Group",
   "avatar": {
-    "sm": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/sm/3.png",
-    "md": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/md/3.png",
-    "lg": "/messenger/assets/threads/92313cf7-b356-4d74-944c-c799fcfc3b1e/avatar/lg/3.png"
+    "sm": "/messenger/assets/threads/93d58908-9a42-492c-a3b9-579276505aba/avatar/sm/img_a2620bd7-ee3d-47a1-93bc-bc382745fd62.jpg",
+    "md": "/messenger/assets/threads/93d58908-9a42-492c-a3b9-579276505aba/avatar/md/img_a2620bd7-ee3d-47a1-93bc-bc382745fd62.jpg",
+    "lg": "/messenger/assets/threads/93d58908-9a42-492c-a3b9-579276505aba/avatar/lg/img_a2620bd7-ee3d-47a1-93bc-bc382745fd62.jpg"
   },
-  "add_participants": false,
+  "add_participants": true,
+  "chat_bots": false,
   "invitations": true,
   "calling": true,
   "messaging": true,
-  "knocks": true
+  "knocks": true,
+  "system_features": {
+    "bots": true,
+    "calling": true,
+    "invitations": true,
+    "invitations_max": 3,
+    "knocks": true,
+    "audio_messages": true,
+    "document_messages": true,
+    "image_messages": true,
+    "message_edits": true,
+    "message_edits_view": true,
+    "message_reactions": true,
+    "message_reactions_max": 10,
+    "provider_avatars": true,
+    "thread_avatars": true,
+    "bot_avatars": true
+  }
+}
+```
+---
+### DELETE `/api/messenger/threads/{thread}/avatar` | *api.messenger.threads.avatar.destroy*
+#### Response:
+```json
+{
+  "name": "Test Group",
+  "avatar": {
+    "sm": "/messenger/assets/threads/93d58908-9a42-492c-a3b9-579276505aba/avatar/sm/default.png",
+    "md": "/messenger/assets/threads/93d58908-9a42-492c-a3b9-579276505aba/avatar/md/default.png",
+    "lg": "/messenger/assets/threads/93d58908-9a42-492c-a3b9-579276505aba/avatar/lg/default.png"
+  },
+  "add_participants": true,
+  "chat_bots": true,
+  "invitations": true,
+  "calling": true,
+  "messaging": true,
+  "knocks": true,
+  "system_features": {
+    "bots": true,
+    "calling": true,
+    "invitations": true,
+    "invitations_max": 3,
+    "knocks": true,
+    "audio_messages": true,
+    "document_messages": true,
+    "image_messages": true,
+    "message_edits": true,
+    "message_edits_view": true,
+    "message_reactions": true,
+    "message_reactions_max": 10,
+    "provider_avatars": true,
+    "thread_avatars": true,
+    "bot_avatars": true
+  }
 }
 ```
 ---
