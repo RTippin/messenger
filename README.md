@@ -7,9 +7,7 @@
 [![License][ico-license]][link-license]
 
 ---
-
-<img src="https://i.imgur.com/lnsRJfV.png" style="width:100%;"  alt="Demo"/>
-
+![Preview](docs/images/image1.png)
 ---
 
 ### Notice - Alpha Release
@@ -858,6 +856,7 @@ Echo.join('messenger.thread.1234-5678')
 - [Threads][link-threads]
 - [Participants][link-participants]
 - [Messages][link-messages]
+- [Bots][link-bots]
 - [Document Messages][link-documents]
 - [Image Messages][link-images]
 - [Audio Messages][link-audio]
@@ -904,6 +903,7 @@ If you discover any security related issues, please email author email instead o
 [link-audio]: docs/Audio.md
 [link-reactions]: docs/MessageReactions.md
 [link-messages]: docs/Messages.md
+[link-bots]: docs/Bots.md
 [link-messenger]: docs/Messenger.md
 [link-participants]: docs/Participants.md
 [link-threads]: docs/Threads.md
