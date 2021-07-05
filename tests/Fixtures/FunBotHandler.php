@@ -19,7 +19,7 @@ class FunBotHandler extends BotActionHandler
 
     public function handle(): void
     {
-        //
+        $this->composer()->message('Testing Fun.');
     }
 
     public function rules(): array

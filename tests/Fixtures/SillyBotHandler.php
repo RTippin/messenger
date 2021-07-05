@@ -18,7 +18,9 @@ class SillyBotHandler extends BotActionHandler
 
     public function handle(): void
     {
-        //
+        $this->composer()->message('Testing Silly. '.$this->senderIp);
+
+        $this->releaseCooldown();
     }
 
     public function authorize(): bool

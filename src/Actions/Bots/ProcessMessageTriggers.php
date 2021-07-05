@@ -5,6 +5,8 @@ namespace RTippin\Messenger\Actions\Bots;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
 use RTippin\Messenger\Actions\BaseMessengerAction;
+use RTippin\Messenger\Events\BotActionFailedEvent;
+use RTippin\Messenger\Events\BotActionHandledEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\MessengerBots;
@@ -72,7 +74,8 @@ class ProcessMessageTriggers extends BaseMessengerAction
     }
 
     /**
-     * Create a new thread bot!
+     * Process all matching actions that the message
+     * body matches through the action triggers.
      *
      * @param mixed ...$parameters
      * @param Thread[0]
@@ -119,7 +122,8 @@ class ProcessMessageTriggers extends BaseMessengerAction
     /**
      * Check if we should execute the actions handler. When executing,
      * set the proper data into the handler, and start the actions
-     * cooldown, if any.
+     * cooldown, if any. Fire events when the action is handled
+     * or failed.
      *
      * @param BotAction $action
      * @param string $trigger
@@ -134,14 +138,12 @@ class ProcessMessageTriggers extends BaseMessengerAction
                     ->initializeHandler($action->handler)
                     ->setAction($action)
                     ->setThread($this->getThread())
-                    ->setMessage(
-                        $this->getMessage(),
-                        $trigger,
-                        $this->senderIp
-                    )
+                    ->setMessage($this->getMessage(), $trigger, $this->senderIp)
                     ->handle();
+
+                $this->fireHandledEvent($action, $trigger);
             } catch (Throwable $e) {
-                report($e);
+                $this->fireFailedEvent($action, $e);
             }
 
             $this->botActionEnding($action);
@@ -225,5 +227,34 @@ class ProcessMessageTriggers extends BaseMessengerAction
         $this->botsTriggered
             ->unique('id')
             ->each(fn (Bot $bot) => $bot->startCooldown());
+    }
+
+    /**
+     * @param BotAction $action
+     * @param string $trigger
+     */
+    private function fireHandledEvent(BotAction $action, string $trigger): void
+    {
+        if ($this->shouldFireEvents()) {
+            $this->dispatcher->dispatch(new BotActionHandledEvent(
+                $action,
+                $this->getMessage(true),
+                $trigger
+            ));
+        }
+    }
+
+    /**
+     * @param BotAction $action
+     * @param Throwable $exception
+     */
+    private function fireFailedEvent(BotAction $action, Throwable $exception): void
+    {
+        if ($this->shouldFireEvents()) {
+            $this->dispatcher->dispatch(new BotActionFailedEvent(
+                $action,
+                $exception
+            ));
+        }
     }
 }

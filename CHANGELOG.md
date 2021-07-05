@@ -5,8 +5,13 @@
 
 ### [v0.40 (X.X.XXXX)]
 
+#### Added
+- `BotActionHandledEvent` and `BotActionFailedEvent`.
+
 #### Changed
 - Add index to column `bot_actions.handler`
+- Moved logic for executing action handlers to `ProcessMessageTrigger` action class.
+- When a bot handler fails / throws exception, the exception will not be reported. The action and exception will be dispatched in the new `BotActionFailedEvent` that can be listened to by the end user.
 
 ---
 
