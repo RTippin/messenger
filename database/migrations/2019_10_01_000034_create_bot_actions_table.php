@@ -22,7 +22,7 @@ class CreateBotActionsTable extends Migration
                 $table->unsignedBigInteger('bot_id');
             }
             Helpers::SchemaMorphType('owner', $table);
-            $table->string('handler');
+            $table->string('handler')->index();
             $table->string('triggers')->nullable()->index();
             $table->string('match')->default('exact');
             $table->integer('cooldown')->default(0);

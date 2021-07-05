@@ -37,7 +37,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static Builder|BotAction enabled()
  * @method static Builder|BotAction validHandler()
  * @method static Builder|BotAction handler(string $handler)
- * @method static Builder|BotAction hasEnabledBotFromThread(string $threadId)
+ * @method static Builder|BotAction validFromThread(string $threadId)
  */
 class BotAction extends Model
 {
@@ -135,12 +135,15 @@ class BotAction extends Model
      * @param string $threadId
      * @return Builder
      */
-    public function scopeHasEnabledBotFromThread(Builder $query, string $threadId): Builder
+    public function scopeValidFromThread(Builder $query, string $threadId): Builder
     {
-        return $query->whereHas('bot', function (Builder $query) use ($threadId) {
-            return $query->where('thread_id', '=', $threadId)
-                ->where('enabled', '=', true);
-        });
+        return $query->select('bot_actions.*')
+            ->join('bots', 'bot_actions.bot_id', '=', 'bots.id')
+            ->where('bots.thread_id', '=', $threadId)
+            ->where('bot_actions.enabled', '=', true)
+            ->where('bots.enabled', '=', true)
+            ->whereNull('bots.deleted_at')
+            ->whereIn('bot_actions.handler', MessengerBots::getHandlerClasses());
     }
 
     /**

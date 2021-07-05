@@ -7,8 +7,9 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
+use RTippin\Messenger\Actions\Bots\ProcessMessageTriggers;
 use RTippin\Messenger\Events\NewMessageEvent;
-use RTippin\Messenger\Services\BotService;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 
 class BotActionMessageHandler implements ShouldQueue
 {
@@ -33,14 +34,15 @@ class BotActionMessageHandler implements ShouldQueue
     /**
      * Execute the job.
      *
-     * @param BotService $service
+     * @param ProcessMessageTriggers $process
      * @return void
+     * @throws FeatureDisabledException
      */
-    public function handle(BotService $service): void
+    public function handle(ProcessMessageTriggers $process): void
     {
-        $service->handleMessage(
-            $this->event->message,
+        $process->execute(
             $this->event->thread,
+            $this->event->message,
             $this->event->isGroupAdmin,
             $this->event->senderIp
         );

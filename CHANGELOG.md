@@ -3,6 +3,13 @@
 
 ---
 
+### [v0.40 (X.X.XXXX)]
+
+#### Changed
+- Add index to column `bot_actions.handler`
+
+---
+
 ### [v0.39 (07-03-2021)]
 
 #### Added
