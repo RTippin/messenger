@@ -3,15 +3,19 @@
 
 ---
 
-### [v0.40 (X.X.XXXX)]
+### [v0.40 (07-05-2021)]
 
 #### Added
 - `BotActionHandledEvent` and `BotActionFailedEvent`.
+  - [View commit](https://github.com/RTippin/messenger/commit/d5ab76c1ad684367291badb3f6452ef751f70ec5).
+- `Bots` api documentation.
 
 #### Changed
 - Add index to column `bot_actions.handler`
-- Moved logic for executing action handlers to `ProcessMessageTrigger` action class.
+- Moved logic for executing action handlers to `ProcessMessageTrigger` action class, and using new query. 
+  - [View commit](https://github.com/RTippin/messenger/commit/39664d6aa7a80ca9e0731b1019856d6ac9caf9bd).
 - When a bot handler fails / throws exception, the exception will not be reported. The action and exception will be dispatched in the new `BotActionFailedEvent` that can be listened to by the end user.
+- Fixed bot and bot action cooldowns to cast as integer.
 
 ---
 
@@ -27,7 +31,7 @@
 
 #### Changed
 - Bug fix for bots when end user providers using INT keys and not UUIDs. Bot primary key now matches end users messenger config `provider_uuids`.
-  - [View commit](https://github.com/RTippin/messenger/commit/9c3ae1a469e61e6a028c5757dea05be08880c90c)
+  - [View commit](https://github.com/RTippin/messenger/commit/9c3ae1a469e61e6a028c5757dea05be08880c90c).
 - Improved query performance for scopes providers 
   - [View commit](https://github.com/RTippin/messenger/commit/f093d23e7e1e22c13ca4e45d2597a46e97203f80).
 
