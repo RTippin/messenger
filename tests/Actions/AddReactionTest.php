@@ -92,6 +92,36 @@ class AddReactionTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_throws_exception_if_reactions_already_exceed_max_unique()
+    {
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        MessageReaction::factory()
+            ->for($message)
+            ->owner($this->tippin)
+            ->state(new Sequence(
+                ['reaction' => ':one:'],
+                ['reaction' => ':two:'],
+                ['reaction' => ':three:'],
+                ['reaction' => ':four:'],
+                ['reaction' => ':five:'],
+                ['reaction' => ':six:'],
+                ['reaction' => ':seven:'],
+                ['reaction' => ':eight:'],
+                ['reaction' => ':nine:'],
+                ['reaction' => ':ten:'],
+                ['reaction' => ':eleven:'],
+            ))
+            ->count(11)
+            ->create();
+
+        $this->expectException(ReactionException::class);
+        $this->expectExceptionMessage('We appreciate the enthusiasm, but there are already too many reactions on this message.');
+
+        app(AddReaction::class)->execute($thread, $message, ':joy:');
+    }
+
+    /** @test */
     public function it_stores_reaction_and_marks_message_reacted()
     {
         $thread = $this->createGroupThread($this->tippin);
@@ -109,6 +139,61 @@ class AddReactionTest extends FeatureTestCase
             'id' => $message->id,
             'reacted' => true,
         ]);
+    }
+
+    /** @test */
+    public function it_stores_reaction_when_hitting_max_unique()
+    {
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        MessageReaction::factory()
+            ->for($message)
+            ->owner($this->tippin)
+            ->state(new Sequence(
+                ['reaction' => ':one:'],
+                ['reaction' => ':two:'],
+                ['reaction' => ':three:'],
+                ['reaction' => ':four:'],
+                ['reaction' => ':five:'],
+                ['reaction' => ':six:'],
+                ['reaction' => ':seven:'],
+                ['reaction' => ':eight:'],
+                ['reaction' => ':nine:'],
+            ))
+            ->count(9)
+            ->create();
+
+        app(AddReaction::class)->execute($thread, $message, ':joy:');
+
+        $this->assertDatabaseCount('message_reactions', 10);
+    }
+
+    /** @test */
+    public function it_stores_reaction_when_max_unique_but_another_provider_used_it()
+    {
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        MessageReaction::factory()
+            ->for($message)
+            ->owner($this->doe)
+            ->state(new Sequence(
+                ['reaction' => ':one:'],
+                ['reaction' => ':two:'],
+                ['reaction' => ':three:'],
+                ['reaction' => ':four:'],
+                ['reaction' => ':five:'],
+                ['reaction' => ':six:'],
+                ['reaction' => ':seven:'],
+                ['reaction' => ':eight:'],
+                ['reaction' => ':nine:'],
+                ['reaction' => ':joy:'],
+            ))
+            ->count(10)
+            ->create();
+
+        app(AddReaction::class)->execute($thread, $message, ':joy:');
+
+        $this->assertDatabaseCount('message_reactions', 11);
     }
 
     /** @test */

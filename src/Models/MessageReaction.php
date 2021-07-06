@@ -24,7 +24,8 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read \RTippin\Messenger\Models\Message $message
  * @property-read Model|MessengerProvider $owner
  * @mixin Model|\Eloquent
- * @method static Builder|MessageReaction reaction(string $reaction)
+ * @method static Builder|MessageReaction whereReaction(string $reaction)
+ * @method static Builder|MessageReaction notReaction(string $reaction)
  */
 class MessageReaction extends Model
 {
@@ -106,9 +107,21 @@ class MessageReaction extends Model
      * @param string $reaction
      * @return Builder
      */
-    public function scopeReaction(Builder $query, string $reaction): Builder
+    public function scopeWhereReaction(Builder $query, string $reaction): Builder
     {
         return $query->where('reaction', '=', $reaction);
+    }
+
+    /**
+     * Scope a query for matching reactions.
+     *
+     * @param Builder $query
+     * @param string $reaction
+     * @return Builder
+     */
+    public function scopeNotReaction(Builder $query, string $reaction): Builder
+    {
+        return $query->where('reaction', '!=', $reaction);
     }
 
     /**

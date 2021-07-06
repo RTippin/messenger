@@ -92,7 +92,7 @@ class AddReaction extends BaseMessengerAction
         $this->setThread($parameters[0])
             ->setMessage($parameters[1])
             ->prepareReaction($parameters[2])
-            ->canReact()
+            ->canAddReaction()
             ->handleTransactions()
             ->generateResource()
             ->fireBroadcast()
@@ -133,7 +133,7 @@ class AddReaction extends BaseMessengerAction
      * @return $this
      * @throws FeatureDisabledException|ReactionException
      */
-    private function canReact(): self
+    private function canAddReaction(): self
     {
         if (! $this->messenger->isMessageReactionsEnabled()) {
             throw new FeatureDisabledException('Message reactions are currently disabled.');
@@ -143,11 +143,11 @@ class AddReaction extends BaseMessengerAction
             throw new ReactionException('No valid reactions found.');
         }
 
-        if ($this->hasExistingReaction()) {
+        if ($this->hasAlreadyUsedReaction()) {
             throw new ReactionException('You have already used that reaction.');
         }
 
-        if (! $this->canAddNewReaction()) {
+        if (! $this->doesntGoOverMaxUniqueReactions()) {
             throw new ReactionException('We appreciate the enthusiasm, but there are already too many reactions on this message.');
         }
 
@@ -155,33 +155,32 @@ class AddReaction extends BaseMessengerAction
     }
 
     /**
+     * If the provider already used the emoji,
+     * we do not want to allow duplicates.
+     *
      * @return bool
      */
-    private function hasExistingReaction(): bool
+    private function hasAlreadyUsedReaction(): bool
     {
         return $this->getMessage()
                 ->reactions()
                 ->forProvider($this->messenger->getProvider())
-                ->reaction($this->react)
+                ->whereReaction($this->react)
                 ->exists();
     }
 
     /**
-     * See if someone else used the pending emoji. If yes, we are
-     * good to go. If no, we check if adding the emoji goes over
-     * max unique limit per message.
+     * Check if adding the emoji goes over max unique limit per message.
+     * Adding an emoji already present from another provider is allowed.
      *
      * @return bool
      */
-    private function canAddNewReaction(): bool
+    private function doesntGoOverMaxUniqueReactions(): bool
     {
         return $this->getMessage()
                 ->reactions()
-                ->reaction($this->react)
-                ->exists()
-            || $this->getMessage()
-                ->reactions()
                 ->distinct()
+                ->notReaction($this->react)
                 ->count('reaction') < $this->messenger->getMessageReactionsMax();
     }
 

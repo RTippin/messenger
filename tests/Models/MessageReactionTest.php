@@ -24,7 +24,8 @@ class MessageReactionTest extends FeatureTestCase
             'id' => $reaction->id,
         ]);
         $this->assertInstanceOf(MessageReaction::class, $reaction);
-        $this->assertSame(1, MessageReaction::reaction(':test:')->count());
+        $this->assertSame(1, MessageReaction::whereReaction(':test:')->count());
+        $this->assertSame(0, MessageReaction::notReaction(':test:')->count());
     }
 
     /** @test */
