@@ -56,11 +56,6 @@ abstract class BotActionHandler implements ActionHandler
     protected bool $shouldReleaseCooldown = false;
 
     /**
-     * @var MessengerComposer|null
-     */
-    protected ?MessengerComposer $composer = null;
-
-    /**
      * @inheritDoc
      */
     abstract public static function getSettings(): array;
@@ -128,13 +123,9 @@ abstract class BotActionHandler implements ActionHandler
      */
     public function composer(): MessengerComposer
     {
-        if (is_null($this->composer)) {
-            $this->composer = app(MessengerComposer::class)
-                ->to($this->thread)
-                ->from($this->bot);
-        }
-
-        return $this->composer;
+        return app(MessengerComposer::class)
+            ->to($this->thread)
+            ->from($this->bot);
     }
 
     /**
