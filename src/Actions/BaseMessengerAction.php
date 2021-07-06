@@ -15,12 +15,10 @@ use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Traits\ChecksReflection;
+use RTippin\Messenger\Support\Helpers;
 
 abstract class BaseMessengerAction implements Action
 {
-    use ChecksReflection;
-
     /**
      * @var bool
      */
@@ -154,7 +152,7 @@ abstract class BaseMessengerAction implements Action
      */
     public function chain(string $abstractAction): Action
     {
-        if ($this->checkIsSubclassOf($abstractAction, self::class)) {
+        if (Helpers::checkIsSubclassOf($abstractAction, self::class)) {
             return app($abstractAction)->continuesChain();
         }
 

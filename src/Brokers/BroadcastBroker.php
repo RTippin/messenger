@@ -7,7 +7,6 @@ use Illuminate\Contracts\Broadcasting\Factory;
 use Illuminate\Support\Collection;
 use RTippin\Messenger\Broadcasting\MessengerBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
-use RTippin\Messenger\Contracts\BroadcastEvent;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Call;
@@ -16,13 +15,11 @@ use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\ParticipantRepository;
 use RTippin\Messenger\Services\PushNotificationService;
-use RTippin\Messenger\Traits\ChecksReflection;
+use RTippin\Messenger\Support\Helpers;
 use Throwable;
 
 class BroadcastBroker implements BroadcastDriver
 {
-    use ChecksReflection;
-
     /**
      * @var Messenger
      */
@@ -173,7 +170,7 @@ class BroadcastBroker implements BroadcastDriver
     {
         if (! is_null($this->recipients)
             && $this->recipients->count()
-            && $this->checkImplementsInterface($abstract, BroadcastEvent::class)) {
+            && Helpers::checkIsSubclassOf($abstract, MessengerBroadcast::class)) {
             if ($this->usingPresence) {
                 $this->generatePresenceChannels()->each(fn (Collection $channels) => $this->executeBroadcast($abstract, $channels));
             } else {

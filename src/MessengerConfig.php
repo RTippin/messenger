@@ -10,8 +10,8 @@ use InvalidArgumentException;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Support\ProvidersVerification;
-use RTippin\Messenger\Traits\ChecksReflection;
 
 /**
  * @property-read Collection $providers
@@ -19,8 +19,6 @@ use RTippin\Messenger\Traits\ChecksReflection;
  */
 trait MessengerConfig
 {
-    use ChecksReflection;
-
     /**
      * @var Collection
      */
@@ -1242,7 +1240,7 @@ trait MessengerConfig
      */
     public function setBroadcastDriver(string $driver): self
     {
-        if (! $this->checkImplementsInterface($driver, BroadcastDriver::class)) {
+        if (! Helpers::checkImplementsInterface($driver, BroadcastDriver::class)) {
             throw new InvalidArgumentException("The given driver { $driver } must implement our interface ".BroadcastDriver::class);
         }
 
@@ -1258,7 +1256,7 @@ trait MessengerConfig
      */
     public function setVideoDriver(string $driver): self
     {
-        if (! $this->checkImplementsInterface($driver, VideoDriver::class)) {
+        if (! Helpers::checkImplementsInterface($driver, VideoDriver::class)) {
             throw new InvalidArgumentException("The given driver { $driver } must implement our interface ".VideoDriver::class);
         }
 

@@ -7,12 +7,9 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Searchable;
-use RTippin\Messenger\Traits\ChecksReflection;
 
 class ProvidersVerification
 {
-    use ChecksReflection;
-
     /**
      * On boot, we set the services allowed provider classes.
      * We pass them through some validations.
@@ -132,7 +129,7 @@ class ProvidersVerification
             && array_key_exists('can_message', $provider['provider_interactions'])
             && array_key_exists('can_search', $provider['provider_interactions'])
             && array_key_exists('can_friend', $provider['provider_interactions'])
-            && $this->checkImplementsInterface($provider['model'], MessengerProvider::class);
+            && Helpers::checkImplementsInterface($provider['model'], MessengerProvider::class);
     }
 
     /**
@@ -152,7 +149,7 @@ class ProvidersVerification
     private function passesSearchable(array $provider): bool
     {
         return $provider['searchable'] === true
-            && $this->checkImplementsInterface($provider['model'], Searchable::class);
+            && Helpers::checkImplementsInterface($provider['model'], Searchable::class);
     }
 
     /**
