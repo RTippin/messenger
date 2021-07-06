@@ -21,4 +21,10 @@ interface EmojiInterface
      * @return array
      */
     public function getValidEmojiShortcodes(string $string): array;
+
+    /**
+     * @param string $string
+     * @return string|null
+     */
+    public function getFirstValidEmojiShortcode(string $string): ?string;
 }

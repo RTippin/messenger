@@ -124,7 +124,7 @@ class AddReaction extends BaseMessengerAction
      */
     private function prepareReaction(string $reaction): self
     {
-        $this->react = $this->emoji->getValidEmojiShortcodes($reaction)[0] ?? null;
+        $this->react = $this->emoji->getFirstValidEmojiShortcode($reaction);
 
         return $this;
     }

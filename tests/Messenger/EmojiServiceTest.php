@@ -61,6 +61,17 @@ class EmojiServiceTest extends MessengerTestCase
 
     /**
      * @test
+     * @dataProvider hasSingleShortcodeResponse
+     * @param $string
+     * @param $expected
+     */
+    public function it_returns_first_valid_emojis_as_shortcode_or_null($string, $expected)
+    {
+        $this->assertSame($expected, $this->emoji->getFirstValidEmojiShortcode($string));
+    }
+
+    /**
+     * @test
      * @dataProvider stringInputs
      * @param $string
      * @param $expected
@@ -117,6 +128,19 @@ class EmojiServiceTest extends MessengerTestCase
             ['Spacing 💀 is 💀 preserved.💀 :notfound::undefined::poop:', [':skull:', ':skull:', ':skull:', ':poop:']],
             [':)', [':slight_smile:']],
             ['>.< lol :)', [':persevere:', ':slight_smile:']],
+        ];
+    }
+
+    public function hasSingleShortcodeResponse(): array
+    {
+        return [
+            ['We are 😀', ':grinning:'],
+            ['Poop. 💩💩💩💩', ':poop:'],
+            ['Spacing 💀 is 💀 preserved.💀 :notfound::undefined::poop:', ':skull:'],
+            [':)', ':slight_smile:'],
+            ['>.< lol :)', ':persevere:'],
+            [':unknown:', null],
+            ['< 3', null],
         ];
     }
 }

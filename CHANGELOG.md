@@ -3,6 +3,16 @@
 
 ---
 
+### UNRELEASED
+
+#### Added
+- `getFirstValidEmojiShortcode` method to the Emoji interface.
+
+#### Changed
+- Improve (reduced) queries for message reactions. 
+
+---
+
 ### [v0.40 (07-05-2021)]
 
 #### Added

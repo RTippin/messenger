@@ -56,6 +56,14 @@ class EmojiService implements EmojiInterface
     }
 
     /**
+     * @inheritDoc
+     */
+    public function getFirstValidEmojiShortcode(string $string): ?string
+    {
+        return $this->getValidEmojiShortcodes($string)[0] ?? null;
+    }
+
+    /**
      * @param string $shortcode
      * @return bool
      */
