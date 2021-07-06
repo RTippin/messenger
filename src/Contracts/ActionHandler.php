@@ -58,30 +58,20 @@ interface ActionHandler
     public function composer(): MessengerComposer;
 
     /**
-     * Set the BotAction.
-     *
-     * @param BotAction $action
-     * @return $this
-     */
-    public function setAction(BotAction $action);
-
-    /**
-     * Set the thread we are working with.
+     * Sets the relevant data used when processing a handler from a message trigger.
      *
      * @param Thread $thread
-     * @return $this
-     */
-    public function setThread(Thread $thread);
-
-    /**
-     * Set the message and trigger used for a message handler.
-     *
+     * @param BotAction $action
      * @param Message $message
      * @param string|null $matchingTrigger
      * @param string|null $senderIp
      * @return $this
      */
-    public function setMessage(Message $message, ?string $matchingTrigger, ?string $senderIp);
+    public function setDataForMessage(Thread $thread,
+                                      BotAction $action,
+                                      Message $message,
+                                      ?string $matchingTrigger,
+                                      ?string $senderIp);
 
     /**
      * Should the handler not perform an action, you may call this to instruct

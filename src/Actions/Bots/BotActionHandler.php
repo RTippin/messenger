@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Actions\Bots;
 
 use RTippin\Messenger\Contracts\ActionHandler;
+use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
@@ -19,6 +20,11 @@ use RTippin\Messenger\Support\MessengerComposer;
  */
 abstract class BotActionHandler implements ActionHandler
 {
+    /**
+     * @var Bot|null
+     */
+    protected ?Bot $bot = null;
+
     /**
      * @var BotAction|null
      */
@@ -48,6 +54,11 @@ abstract class BotActionHandler implements ActionHandler
      * @var bool
      */
     protected bool $shouldReleaseCooldown = false;
+
+    /**
+     * @var MessengerComposer|null
+     */
+    protected ?MessengerComposer $composer = null;
 
     /**
      * @inheritDoc
@@ -96,34 +107,17 @@ abstract class BotActionHandler implements ActionHandler
     /**
      * @inheritDoc
      */
-    public function setAction(BotAction $action): self
-    {
-        $this->action = $action;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setThread(Thread $thread): self
+    public function setDataForMessage(Thread $thread,
+                                      BotAction $action,
+                                      Message $message,
+                                      ?string $matchingTrigger,
+                                      ?string $senderIp): self
     {
         $this->thread = $thread;
-
-        return $this;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function setMessage(Message $message,
-                               ?string $matchingTrigger,
-                               ?string $senderIp): self
-    {
+        $this->action = $action;
+        $this->bot = $action->bot;
         $this->message = $message;
-
         $this->matchingTrigger = $matchingTrigger;
-
         $this->senderIp = $senderIp;
 
         return $this;
@@ -134,9 +128,13 @@ abstract class BotActionHandler implements ActionHandler
      */
     public function composer(): MessengerComposer
     {
-        return app(MessengerComposer::class)
-            ->to($this->thread)
-            ->from($this->action->bot);
+        if (is_null($this->composer)) {
+            $this->composer = app(MessengerComposer::class)
+                ->to($this->thread)
+                ->from($this->bot);
+        }
+
+        return $this->composer;
     }
 
     /**

@@ -136,9 +136,13 @@ class ProcessMessageTriggers extends BaseMessengerAction
             try {
                 $this->bots
                     ->initializeHandler($action->handler)
-                    ->setAction($action)
-                    ->setThread($this->getThread())
-                    ->setMessage($this->getMessage(), $trigger, $this->senderIp)
+                    ->setDataForMessage(
+                        $this->getThread(),
+                        $action,
+                        $this->getMessage(),
+                        $trigger,
+                        $this->senderIp
+                    )
                     ->handle();
 
                 $this->fireHandledEvent($action, $trigger);
