@@ -6,9 +6,9 @@ use Illuminate\Broadcasting\BroadcastManager;
 use Illuminate\Contracts\Broadcasting\Broadcaster;
 use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Foundation\Application;
-use RTippin\Messenger\Broadcasting\CallChannel;
-use RTippin\Messenger\Broadcasting\ProviderChannel;
-use RTippin\Messenger\Broadcasting\ThreadChannel;
+use RTippin\Messenger\Broadcasting\Channels\CallChannel;
+use RTippin\Messenger\Broadcasting\Channels\ProviderChannel;
+use RTippin\Messenger\Broadcasting\Channels\ThreadChannel;
 
 /**
  * @property-read Application $app

@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger\Broadcasting;
+namespace RTippin\Messenger\Broadcasting\Channels;
 
 use RTippin\Messenger\Messenger;
 

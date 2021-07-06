@@ -1,14 +1,15 @@
 <?php
 
-namespace RTippin\Messenger\Broadcasting;
+namespace RTippin\Messenger\Broadcasting\Channels;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
 
-class ThreadChannel
+class CallChannel
 {
     use AuthorizesRequests;
 
@@ -32,12 +33,16 @@ class ThreadChannel
      *
      * @param $user
      * @param Thread $thread
+     * @param Call $call
      * @return ProviderResource
      * @throws AuthorizationException
      */
-    public function join($user, Thread $thread): ProviderResource
+    public function join($user, Call $call, Thread $thread): ProviderResource
     {
-        $this->authorize('socket', $thread);
+        $this->authorize('socket', [
+            $call,
+            $thread,
+        ]);
 
         return new ProviderResource(
             $this->messenger->getProvider(),
