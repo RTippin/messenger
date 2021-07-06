@@ -169,10 +169,10 @@ class PresenceEvents
 
     /**
      * @param MessengerProvider $provider
-     * @param Message $message
+     * @param Message|null $message
      * @return array
      */
-    public static function makeReadEvent(MessengerProvider $provider, Message $message): array
+    public static function makeReadEvent(MessengerProvider $provider, ?Message $message = null): array
     {
         if (is_null(self::$readClosure)) {
             return [
@@ -180,10 +180,23 @@ class PresenceEvents
                 'provider_alias' => Messenger::findProviderAlias($provider),
                 'name' => $provider->getProviderName(),
                 'avatar' => $provider->getProviderAvatarRoute(),
-                'message_id' => $message->id,
+                'message_id' => optional($message)->id,
             ];
         }
 
         return (self::$readClosure)($provider, $message);
+    }
+
+    /**
+     * Reset to all defaults.
+     */
+    public static function reset(): void
+    {
+        self::$typingClosure = null;
+        self::$stopTypingClosure = null;
+        self::$readClosure = null;
+        self::$typingClass = Typing::class;
+        self::$stopTypingClass = StopTyping::class;
+        self::$readClass = Read::class;
     }
 }

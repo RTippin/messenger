@@ -6,7 +6,7 @@ use Illuminate\Contracts\Events\Dispatcher;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\ParticipantReadBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
-use RTippin\Messenger\Events\ParticipantsReadEvent;
+use RTippin\Messenger\Events\ParticipantReadEvent;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Support\Helpers;
@@ -113,7 +113,7 @@ class MarkParticipantRead extends BaseMessengerAction
     private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
-            $this->dispatcher->dispatch(new ParticipantsReadEvent(
+            $this->dispatcher->dispatch(new ParticipantReadEvent(
                 $this->getParticipant(true)
             ));
         }

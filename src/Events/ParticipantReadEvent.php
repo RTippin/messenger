@@ -5,7 +5,7 @@ namespace RTippin\Messenger\Events;
 use Illuminate\Queue\SerializesModels;
 use RTippin\Messenger\Models\Participant;
 
-class ParticipantsReadEvent
+class ParticipantReadEvent
 {
     use SerializesModels;
 

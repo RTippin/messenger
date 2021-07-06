@@ -16,6 +16,13 @@ use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PresenceEventsTest extends FeatureTestCase
 {
+    protected function tearDown(): void
+    {
+        PresenceEvents::reset();
+
+        parent::tearDown();
+    }
+
     /** @test */
     public function it_can_get_default_typing_class()
     {
@@ -175,6 +182,20 @@ class PresenceEventsTest extends FeatureTestCase
             'name' => 'Richard Tippin',
             'the_message' => $message->id,
         ], PresenceEvents::makeReadEvent($this->tippin, $message));
+    }
+
+    /** @test */
+    public function it_allows_null_message_in_read_data()
+    {
+        $expected = [
+            'provider_id' => $this->tippin->getKey(),
+            'provider_alias' => 'user',
+            'name' => 'Richard Tippin',
+            'avatar' => $this->tippin->getProviderAvatarRoute(),
+            'message_id' => null,
+        ];
+
+        $this->assertSame($expected, PresenceEvents::makeReadEvent($this->tippin));
     }
 }
 

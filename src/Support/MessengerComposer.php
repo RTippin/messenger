@@ -8,7 +8,9 @@ use RTippin\Messenger\Actions\Messages\StoreAudioMessage;
 use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
 use RTippin\Messenger\Actions\Messages\StoreImageMessage;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
+use RTippin\Messenger\Actions\Threads\MarkParticipantRead;
 use RTippin\Messenger\Actions\Threads\SendKnock;
+use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
@@ -30,6 +32,11 @@ class MessengerComposer
     private Messenger $messenger;
 
     /**
+     * @var BroadcastDriver
+     */
+    private BroadcastDriver $broadcaster;
+
+    /**
      * @var PrivateThreadRepository
      */
     private PrivateThreadRepository $locator;
@@ -46,10 +53,17 @@ class MessengerComposer
 
     /**
      * MessengerComposer constructor.
+     *
+     * @param Messenger $messenger
+     * @param BroadcastDriver $broadcaster
+     * @param PrivateThreadRepository $locator
      */
-    public function __construct(Messenger $messenger, PrivateThreadRepository $locator)
+    public function __construct(Messenger $messenger,
+                                BroadcastDriver $broadcaster,
+                                PrivateThreadRepository $locator)
     {
         $this->messenger = $messenger;
+        $this->broadcaster = $broadcaster;
         $this->locator = $locator;
     }
 
@@ -214,6 +228,8 @@ class MessengerComposer
     }
 
     /**
+     * Add a reaction to the supplied message.
+     *
      * @param Message $message
      * @param string $reaction
      * @return AddReaction
@@ -234,6 +250,8 @@ class MessengerComposer
     }
 
     /**
+     * Send a knock to the given thread.
+     *
      * @return SendKnock
      * @throws FeatureDisabledException|KnockException
      * @throws MessengerComposerException
@@ -241,6 +259,73 @@ class MessengerComposer
     public function knock(): SendKnock
     {
         return app(SendKnock::class)->execute($this->resolveToThread());
+    }
+
+    /**
+     * Mark the "FROM" provider as read.
+     *
+     * @return MarkParticipantRead
+     * @throws MessengerComposerException
+     */
+    public function read(): MarkParticipantRead
+    {
+        $action = app(MarkParticipantRead::class);
+
+        $payload = $this->resolveToThread()->currentParticipant();
+
+        if ($this->silent) {
+            return $action->withoutBroadcast()->execute($payload);
+        }
+
+        return $action->execute($payload);
+    }
+
+    /**
+     * Emit a typing presence client event.
+     *
+     * @return $this
+     * @throws MessengerComposerException
+     */
+    public function emitTyping(): self
+    {
+        $this->broadcaster
+            ->toPresence($this->resolveToThread())
+            ->with(PresenceEvents::makeTypingEvent($this->messenger->getProvider()))
+            ->broadcast(PresenceEvents::getTypingClass());
+
+        return $this;
+    }
+
+    /**
+     * Emit a stopped typing presence client event.
+     *
+     * @return $this
+     * @throws MessengerComposerException
+     */
+    public function emitStopTyping(): self
+    {
+        $this->broadcaster
+            ->toPresence($this->resolveToThread())
+            ->with(PresenceEvents::makeStopTypingEvent($this->messenger->getProvider()))
+            ->broadcast(PresenceEvents::getStopTypingClass());
+
+        return $this;
+    }
+
+    /**
+     * Emit a read/seen presence client event.
+     *
+     * @return $this
+     * @throws MessengerComposerException
+     */
+    public function emitRead(?Message $message = null): self
+    {
+        $this->broadcaster
+            ->toPresence($this->resolveToThread())
+            ->with(PresenceEvents::makeReadEvent($this->messenger->getProvider(), $message))
+            ->broadcast(PresenceEvents::getReadClass());
+
+        return $this;
     }
 
     /**

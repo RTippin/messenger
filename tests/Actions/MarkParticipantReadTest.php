@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\MarkParticipantRead;
 use RTippin\Messenger\Broadcasting\ParticipantReadBroadcast;
-use RTippin\Messenger\Events\ParticipantsReadEvent;
+use RTippin\Messenger\Events\ParticipantReadEvent;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -36,7 +36,7 @@ class MarkParticipantReadTest extends FeatureTestCase
         BaseMessengerAction::enableEvents();
         Event::fake([
             ParticipantReadBroadcast::class,
-            ParticipantsReadEvent::class,
+            ParticipantReadEvent::class,
         ]);
         $thread = Thread::factory()->create();
         $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
@@ -49,7 +49,7 @@ class MarkParticipantReadTest extends FeatureTestCase
 
             return true;
         });
-        Event::assertDispatched(function (ParticipantsReadEvent $event) use ($participant) {
+        Event::assertDispatched(function (ParticipantReadEvent $event) use ($participant) {
             return $participant->id === $event->participant->id;
         });
     }
@@ -63,7 +63,7 @@ class MarkParticipantReadTest extends FeatureTestCase
 
         $this->doesntExpectEvents([
             ParticipantReadBroadcast::class,
-            ParticipantsReadEvent::class,
+            ParticipantReadEvent::class,
         ]);
 
         app(MarkParticipantRead::class)->execute($participant, $thread);

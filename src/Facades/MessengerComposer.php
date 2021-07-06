@@ -9,6 +9,7 @@ use RTippin\Messenger\Actions\Messages\StoreAudioMessage;
 use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
 use RTippin\Messenger\Actions\Messages\StoreImageMessage;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
+use RTippin\Messenger\Actions\Threads\MarkParticipantRead;
 use RTippin\Messenger\Actions\Threads\SendKnock;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Message;
@@ -17,6 +18,9 @@ use RTippin\Messenger\Models\Message;
  * @method static \RTippin\Messenger\Support\MessengerComposer to($entity)
  * @method static \RTippin\Messenger\Support\MessengerComposer from(MessengerProvider $provider)
  * @method static \RTippin\Messenger\Support\MessengerComposer silent()
+ * @method static \RTippin\Messenger\Support\MessengerComposer emitTyping()
+ * @method static \RTippin\Messenger\Support\MessengerComposer emitStopTyping()
+ * @method static \RTippin\Messenger\Support\MessengerComposer emitRead(?Message $message = null)
  * @method static \RTippin\Messenger\Support\MessengerComposer getInstance()
  * @method static StoreMessage message(string $message, ?string $replyingToId = null, ?array $extra = null)
  * @method static StoreImageMessage image(UploadedFile $image, ?string $replyingToId = null, ?array $extra = null)
@@ -24,6 +28,7 @@ use RTippin\Messenger\Models\Message;
  * @method static StoreAudioMessage audio(UploadedFile $document, ?string $replyingToId = null, ?array $extra = null)
  * @method static AddReaction reaction(Message $message, string $reaction)
  * @method static SendKnock knock()
+ * @method static MarkParticipantRead read()
  *
  * @mixin \RTippin\Messenger\Support\MessengerComposer
  * @see \RTippin\Messenger\Support\MessengerComposer

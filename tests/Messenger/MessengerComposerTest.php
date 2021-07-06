@@ -3,18 +3,25 @@
 namespace RTippin\Messenger\Tests\Messenger;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Messages\AddReaction;
 use RTippin\Messenger\Actions\Messages\StoreAudioMessage;
 use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
 use RTippin\Messenger\Actions\Messages\StoreImageMessage;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
+use RTippin\Messenger\Actions\Threads\MarkParticipantRead;
 use RTippin\Messenger\Actions\Threads\SendKnock;
+use RTippin\Messenger\Broadcasting\ClientEvents\Read;
+use RTippin\Messenger\Broadcasting\ClientEvents\StopTyping;
+use RTippin\Messenger\Broadcasting\ClientEvents\Typing;
 use RTippin\Messenger\Broadcasting\KnockBroadcast;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
+use RTippin\Messenger\Broadcasting\ParticipantReadBroadcast;
 use RTippin\Messenger\Broadcasting\ReactionAddedBroadcast;
 use RTippin\Messenger\Events\KnockEvent;
 use RTippin\Messenger\Events\NewMessageEvent;
+use RTippin\Messenger\Events\ParticipantReadEvent;
 use RTippin\Messenger\Events\ReactionAddedEvent;
 use RTippin\Messenger\Exceptions\MessengerComposerException;
 use RTippin\Messenger\Models\Message;
@@ -372,5 +379,98 @@ class MessengerComposerTest extends FeatureTestCase
 
         $this->assertDatabaseCount('threads', 1);
         $this->assertDatabaseCount('participants', 2);
+    }
+
+    /** @test */
+    public function it_marks_read_with_existing_thread()
+    {
+        BaseMessengerAction::enableEvents();
+        $thread = $this->createGroupThread($this->tippin);
+
+        $this->expectsEvents([
+            ParticipantReadBroadcast::class,
+            ParticipantReadEvent::class,
+        ]);
+
+        $this->composer->to($thread)->from($this->tippin)->read();
+    }
+
+    /** @test */
+    public function it_marks_read_without_broadcast()
+    {
+        BaseMessengerAction::enableEvents();
+        $thread = $this->createGroupThread($this->tippin);
+
+        $this->expectsEvents(ParticipantReadEvent::class);
+        $this->doesntExpectEvents(ParticipantReadBroadcast::class);
+
+        $this->composer->to($thread)->from($this->tippin)->silent()->read();
+    }
+
+    /** @test */
+    public function it_marks_read_and_returns_read_action()
+    {
+        $thread = $this->createGroupThread($this->tippin);
+
+        $read = $this->composer->to($thread)->from($this->tippin)->read();
+
+        $this->assertInstanceOf(MarkParticipantRead::class, $read);
+    }
+
+    /** @test */
+    public function it_marks_read_and_creates_new_thread()
+    {
+        $this->composer->to($this->doe)->from($this->tippin)->read();
+
+        $this->assertDatabaseCount('threads', 1);
+        $this->assertDatabaseCount('participants', 2);
+    }
+
+    /** @test */
+    public function it_sends_typing_broadcast()
+    {
+        $thread = $this->createGroupThread($this->tippin);
+        Event::fake(Typing::class);
+
+        $this->composer->to($thread)->from($this->tippin)->emitTyping();
+
+        Event::assertDispatched(function (Typing $event) use ($thread) {
+            $this->assertContains('presence-messenger.thread.'.$thread->id, $event->broadcastOn());
+            $this->assertSame($this->tippin->getKey(), $event->broadcastWith()['provider_id']);
+
+            return true;
+        });
+    }
+
+    /** @test */
+    public function it_sends_stopped_typing_broadcast()
+    {
+        $thread = $this->createGroupThread($this->tippin);
+        Event::fake(StopTyping::class);
+
+        $this->composer->to($thread)->from($this->tippin)->emitStopTyping();
+
+        Event::assertDispatched(function (StopTyping $event) use ($thread) {
+            $this->assertContains('presence-messenger.thread.'.$thread->id, $event->broadcastOn());
+            $this->assertSame($this->tippin->getKey(), $event->broadcastWith()['provider_id']);
+
+            return true;
+        });
+    }
+
+    /** @test */
+    public function it_sends_read_broadcast()
+    {
+        $thread = $this->createGroupThread($this->tippin);
+        Event::fake(Read::class);
+
+        $this->composer->to($thread)->from($this->tippin)->emitRead();
+
+        Event::assertDispatched(function (Read $event) use ($thread) {
+            $this->assertContains('presence-messenger.thread.'.$thread->id, $event->broadcastOn());
+            $this->assertSame($this->tippin->getKey(), $event->broadcastWith()['provider_id']);
+
+            return true;
+        });
     }
 }
