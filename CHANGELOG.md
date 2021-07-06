@@ -3,11 +3,12 @@
 
 ---
 
-### UNRELEASED
+### [v0.41 (07-06-2021)]
 
 #### Added
 - `getFirstValidEmojiShortcode` method to the Emoji interface. ([cc28e63](https://github.com/RTippin/messenger/commit/cc28e63497bb51bd06202750d920609afc313f95))
 - `emitTyping`, `emitStopTyping`, `emitRead`, and `read` methods to `MessengerComposer`. ([36ccbcf](https://github.com/RTippin/messenger/commit/36ccbcff056a876083eda32a79488c7be3ebdec6))
+- [PresenceEvents](https://github.com/RTippin/messenger/blob/101bdeee48acdd647a19ac18bce8b5604af71e70/src/Support/PresenceEvents.php) class to handle getting/setting client presence events.
 
 #### Changed
 - Improve (reduced) queries for message reactions. ([189b1cf](https://github.com/RTippin/messenger/commit/189b1cfb560fd02f85f7b8e273daa702dcfe4644))
