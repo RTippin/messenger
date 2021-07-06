@@ -262,16 +262,17 @@ class MessengerComposer
     }
 
     /**
-     * Mark the "FROM" provider as read.
+     * Mark the "FROM" provider or given participant as read.
      *
+     * @param Participant|null $participant
      * @return MarkParticipantRead
      * @throws MessengerComposerException
      */
-    public function read(): MarkParticipantRead
+    public function read(?Participant $participant = null): MarkParticipantRead
     {
         $action = app(MarkParticipantRead::class);
 
-        $payload = $this->resolveToThread()->currentParticipant();
+        $payload = $participant ?? $this->resolveToThread()->currentParticipant();
 
         if ($this->silent) {
             return $action->withoutBroadcast()->execute($payload);

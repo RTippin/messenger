@@ -396,6 +396,20 @@ class MessengerComposerTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_marks_read_using_supplied_participant()
+    {
+        BaseMessengerAction::enableEvents();
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+
+        $this->expectsEvents([
+            ParticipantReadBroadcast::class,
+            ParticipantReadEvent::class,
+        ]);
+
+        $this->composer->read($thread->participants()->first());
+    }
+
+    /** @test */
     public function it_marks_read_without_broadcast()
     {
         BaseMessengerAction::enableEvents();
