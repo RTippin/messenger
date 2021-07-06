@@ -6,25 +6,29 @@
 ### UNRELEASED
 
 #### Added
-- `getFirstValidEmojiShortcode` method to the Emoji interface.
+- `getFirstValidEmojiShortcode` method to the Emoji interface. ([cc28e63](https://github.com/RTippin/messenger/commit/cc28e63497bb51bd06202750d920609afc313f95))
 
 #### Changed
-- Improve (reduced) queries for message reactions. 
+- Improve (reduced) queries for message reactions. ([189b1cf](https://github.com/RTippin/messenger/commit/189b1cfb560fd02f85f7b8e273daa702dcfe4644))
+- Methods for checking reflection moved from trait to helper class as static methods. ([c06f299](https://github.com/RTippin/messenger/commit/c06f2992fbacf52ca3d633f0f306ca921651cae0) 
+  & [1b5ee7d](https://github.com/RTippin/messenger/commit/1b5ee7d8179e4d232c7af5692f0b8da51d13f1d7))
+
+#### Removed
+- `ChecksReflection` trait.
 
 ---
 
 ### [v0.40 (07-05-2021)]
 
 #### Added
-- `BotActionHandledEvent` and `BotActionFailedEvent`.
-  - [View commit](https://github.com/RTippin/messenger/commit/d5ab76c1ad684367291badb3f6452ef751f70ec5).
+- `BotActionHandledEvent` and `BotActionFailedEvent`. ([d5ab76c](https://github.com/RTippin/messenger/commit/d5ab76c1ad684367291badb3f6452ef751f70ec5))
 - `Bots` api documentation.
 
 #### Changed
 - Add index to column `bot_actions.handler`
-- Moved logic for executing action handlers to `ProcessMessageTrigger` action class, and using new query. 
-  - [View commit](https://github.com/RTippin/messenger/commit/39664d6aa7a80ca9e0731b1019856d6ac9caf9bd).
-- When a bot handler fails / throws exception, the exception will not be reported. The action and exception will be dispatched in the new `BotActionFailedEvent` that can be listened to by the end user.
+- Moved logic for executing action handlers to `ProcessMessageTrigger` action class, and using new query. ([39664d6](https://github.com/RTippin/messenger/commit/39664d6aa7a80ca9e0731b1019856d6ac9caf9bd))
+- When a bot handler fails / throws exception, the exception will not be reported. The action and exception will be dispatched 
+  in the new `BotActionFailedEvent` that can be listened to by the end user.
 - Fixed bot and bot action cooldowns to cast as integer.
 
 ---
@@ -32,7 +36,8 @@
 ### [v0.39 (07-03-2021)]
 
 #### Added
-- [MessengerComposer](https://github.com/RTippin/messenger/blob/9e4560a64977fdc563d23a714fed1f50b1dce1ec/src/Support/MessengerComposer.php) class and facade. Easily build to/from and message/image/document/audio/reaction/knock.
+- [MessengerComposer](https://github.com/RTippin/messenger/blob/9e4560a64977fdc563d23a714fed1f50b1dce1ec/src/Support/MessengerComposer.php) class and facade. 
+  Easily build to/from and message/image/document/audio/reaction/knock.
 - `composer()` method to the core [BotActionHandler](https://github.com/RTippin/messenger/blob/9e4560a64977fdc563d23a714fed1f50b1dce1ec/src/Actions/Bots/BotActionHandler.php#L139)
 
 ---
@@ -40,10 +45,9 @@
 ### [v0.38 (07-01-2021)]
 
 #### Changed
-- Bug fix for bots when end user providers using INT keys and not UUIDs. Bot primary key now matches end users messenger config `provider_uuids`.
-  - [View commit](https://github.com/RTippin/messenger/commit/9c3ae1a469e61e6a028c5757dea05be08880c90c).
-- Improved query performance for scopes providers 
-  - [View commit](https://github.com/RTippin/messenger/commit/f093d23e7e1e22c13ca4e45d2597a46e97203f80).
+- Bug fix for bots when end user providers using INT keys and not UUIDs. Bot primary key now matches end 
+  users messenger config `provider_uuids`. ([9c3ae1a](https://github.com/RTippin/messenger/commit/9c3ae1a469e61e6a028c5757dea05be08880c90c))
+- Improved query performance for scopes providers. ([f093d23](https://github.com/RTippin/messenger/commit/f093d23e7e1e22c13ca4e45d2597a46e97203f80))
 
 #### Removed
 - `concatBuilder` from [ScopesProviders](https://github.com/RTippin/messenger/blob/664b991b05aa40bb0cdf24c8cea5a2171aef80c9/src/Traits/ScopesProvider.php#L111) trait.
