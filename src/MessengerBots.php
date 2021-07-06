@@ -31,11 +31,9 @@ final class MessengerBots
     ];
 
     /**
-     * This determines if we use UUID or BigInt on the bot model.
-     *
      * @var bool
      */
-    public static bool $useUuid = false;
+    private static bool $useUuid = false;
 
     /**
      * @var Collection
@@ -66,6 +64,23 @@ final class MessengerBots
         $this->activeHandler = null;
         $this->activeHandlerClass = null;
         $this->handlerOverrides = [];
+    }
+
+    /**
+     * This determines if we use UUID or BigInt on the bot model and migrations.
+     *
+     * @param bool|null $shouldUseUuids
+     * @return bool
+     */
+    public static function shouldUseUuids(?bool $shouldUseUuids = null): bool
+    {
+        if (is_null($shouldUseUuids)) {
+            return self::$useUuid;
+        }
+
+        self::$useUuid = $shouldUseUuids;
+
+        return self::$useUuid;
     }
 
     /**

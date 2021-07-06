@@ -52,9 +52,9 @@ class Bot extends Model implements MessengerProvider
      */
     public function __construct(array $attributes = [])
     {
-        $this->setKeyType(Bots::$useUuid ? 'string' : 'int');
+        $this->setKeyType(Bots::shouldUseUuids() ? 'string' : 'int');
 
-        $this->setIncrementing(! Bots::$useUuid);
+        $this->setIncrementing(! Bots::shouldUseUuids());
 
         parent::__construct($attributes);
     }
@@ -90,7 +90,7 @@ class Bot extends Model implements MessengerProvider
         parent::boot();
 
         static::creating(function (Model $model) {
-            if (Bots::$useUuid) {
+            if (Bots::shouldUseUuids()) {
                 $model->id = Str::orderedUuid()->toString();
             }
         });
