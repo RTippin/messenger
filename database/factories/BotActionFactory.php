@@ -95,7 +95,7 @@ class BotActionFactory extends Factory
      */
     public function payload($payload = null): Factory
     {
-        if(is_array($payload)){
+        if (is_array($payload)) {
             $payload = json_encode($payload);
         }
 
