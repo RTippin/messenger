@@ -21,6 +21,11 @@ use RTippin\Messenger\Support\MessengerComposer;
 abstract class BotActionHandler implements ActionHandler
 {
     /**
+     * @var bool
+     */
+    private static bool $isTesting = false;
+
+    /**
      * @var Bot|null
      */
     protected ?Bot $bot = null;
@@ -142,5 +147,17 @@ abstract class BotActionHandler implements ActionHandler
     public function shouldReleaseCooldown(): bool
     {
         return $this->shouldReleaseCooldown;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function isTesting(?bool $testing = null): bool
+    {
+        if (! is_null($testing)) {
+            self::$isTesting = $testing;
+        }
+
+        return self::$isTesting;
     }
 }

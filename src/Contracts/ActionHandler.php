@@ -119,4 +119,13 @@ interface ActionHandler
      * @return array|string|null
      */
     public function getPayload(?string $key = null);
+
+    /**
+     * Helper method to globally set testing for action handlers. Allows
+     * extended handlers to configure different paths when testing.
+     *
+     * @param bool|null $testing
+     * @return bool
+     */
+    public static function isTesting(?bool $testing = null): bool;
 }
