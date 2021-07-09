@@ -90,11 +90,15 @@ class BotActionFactory extends Factory
     /**
      * Set the actions payload.
      *
-     * @param string $payload
+     * @param string|array|null $payload
      * @return Factory
      */
-    public function payload(string $payload): Factory
+    public function payload($payload = null): Factory
     {
+        if(is_array($payload)){
+            $payload = json_encode($payload);
+        }
+
         return $this->state(function (array $attributes) use ($payload) {
             return [
                 'payload' => $payload,
