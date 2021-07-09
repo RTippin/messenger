@@ -415,7 +415,6 @@ class MessengerComposer
 
                 $this->to = $thread;
             });
-
         } catch (Throwable $e) {
             throw new MessengerComposerException('Storing new private failed with the message: '.$e->getMessage());
         }
