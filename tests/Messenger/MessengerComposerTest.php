@@ -2,7 +2,9 @@
 
 namespace RTippin\Messenger\Tests\Messenger;
 
+use Exception;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Messages\AddReaction;
@@ -72,6 +74,21 @@ class MessengerComposerTest extends FeatureTestCase
         $this->expectExceptionMessage('No "FROM" provider has been set.');
 
         $this->composer->to($this->doe)->message('Test');
+    }
+
+    /** @test */
+    public function it_throws_exception_when_storing_new_private_thread_fails()
+    {
+        DB::shouldReceive('transaction')->andThrow(new Exception('DB Error'));
+
+        $this->expectException(MessengerComposerException::class);
+        $this->expectExceptionMessage('Storing new private failed with the message: DB Error');
+
+        app(MessengerComposer::class)->to($this->doe)->from($this->tippin)->message('Test');
+
+        $this->assertDatabaseCount('threads', 0);
+        $this->assertDatabaseCount('participants', 0);
+        $this->assertDatabaseCount('messages', 0);
     }
 
     /** @test */
