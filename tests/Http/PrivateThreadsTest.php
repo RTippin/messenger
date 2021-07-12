@@ -3,9 +3,9 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class PrivateThreadsTest extends FeatureTestCase
+class PrivateThreadsTest extends HttpTestCase
 {
     /** @test */
     public function creating_private_thread_with_non_friend_is_pending()

@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class MessengerSettingsTest extends FeatureTestCase
+class MessengerSettingsTest extends HttpTestCase
 {
     /** @test */
     public function user_can_view_messenger_settings()

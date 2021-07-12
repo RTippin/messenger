@@ -4,9 +4,9 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class ArchivePrivateThreadTest extends FeatureTestCase
+class ArchivePrivateThreadTest extends HttpTestCase
 {
     private Thread $thread;
 

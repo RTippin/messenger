@@ -5,9 +5,9 @@ namespace RTippin\Messenger\Tests\Http;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class JoinWithInviteTest extends FeatureTestCase
+class JoinWithInviteTest extends HttpTestCase
 {
     /** @test */
     public function missing_invite_is_not_found()

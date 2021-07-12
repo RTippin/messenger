@@ -4,9 +4,9 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Models\PendingFriend;
 use RTippin\Messenger\Models\SentFriend;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class PendingFriendsTest extends FeatureTestCase
+class PendingFriendsTest extends HttpTestCase
 {
     /** @test */
     public function user_has_no_pending_friends()

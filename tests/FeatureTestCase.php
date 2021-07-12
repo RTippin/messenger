@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests;
 
 use Illuminate\Contracts\Auth\Authenticatable;
-use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\BaseMessengerAction;
@@ -49,7 +48,6 @@ class FeatureTestCase extends MessengerTestCase
         Storage::fake('public');
         Storage::fake('messenger');
         Messenger::setVideoDriver(NullVideoBroker::class);
-        $this->withoutMiddleware(ThrottleRequests::class);
     }
 
     /**

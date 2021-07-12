@@ -6,9 +6,9 @@ use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class AudioMessageTest extends FeatureTestCase
+class AudioMessageTest extends HttpTestCase
 {
     /** @test */
     public function user_can_send_audio_message()

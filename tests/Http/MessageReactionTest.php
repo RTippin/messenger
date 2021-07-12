@@ -8,9 +8,9 @@ use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class MessageReactionTest extends FeatureTestCase
+class MessageReactionTest extends HttpTestCase
 {
     /** @test */
     public function non_participant_is_forbidden_to_react()

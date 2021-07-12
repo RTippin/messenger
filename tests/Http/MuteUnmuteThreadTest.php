@@ -4,9 +4,9 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class MuteUnmuteThreadTest extends FeatureTestCase
+class MuteUnmuteThreadTest extends HttpTestCase
 {
     /** @test */
     public function non_participant_forbidden_to_mute_thread()

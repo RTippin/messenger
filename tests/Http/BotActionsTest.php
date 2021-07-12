@@ -8,11 +8,11 @@ use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\Fixtures\FunBotHandler;
 use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class BotActionsTest extends FeatureTestCase
+class BotActionsTest extends HttpTestCase
 {
     /** @test */
     public function admin_can_view_actions()

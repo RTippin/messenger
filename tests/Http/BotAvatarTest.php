@@ -7,9 +7,9 @@ use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class BotAvatarTest extends FeatureTestCase
+class BotAvatarTest extends HttpTestCase
 {
     /** @test */
     public function forbidden_to_upload_avatar_when_bots_disabled_in_config()

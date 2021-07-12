@@ -5,9 +5,9 @@ namespace RTippin\Messenger\Tests\Http;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class PrivateMessageTest extends FeatureTestCase
+class PrivateMessageTest extends HttpTestCase
 {
     /** @test */
     public function non_participant_is_forbidden()

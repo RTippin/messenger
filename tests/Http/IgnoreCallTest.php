@@ -3,9 +3,9 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Models\Call;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class IgnoreCallTest extends FeatureTestCase
+class IgnoreCallTest extends HttpTestCase
 {
     /** @test */
     public function ignoring_missing_call_not_found()

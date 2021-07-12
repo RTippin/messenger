@@ -3,19 +3,11 @@
 namespace RTippin\Messenger\Tests\Middleware;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Routing\Middleware\ThrottleRequests;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class RateLimitersTest extends FeatureTestCase
 {
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->withMiddleware(ThrottleRequests::class);
-    }
-
     /** @test */
     public function general_api_limits_request_1000_per_minute()
     {

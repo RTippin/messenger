@@ -4,9 +4,9 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Models\Message;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class ReplyToMessageTest extends FeatureTestCase
+class ReplyToMessageTest extends HttpTestCase
 {
     /** @test */
     public function user_can_view_message_with_reply()
