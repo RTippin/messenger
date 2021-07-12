@@ -263,11 +263,15 @@ class MessageTransformer
 
     /**
      * @param Message $message
-     * @param array $data
+     * @param array|null $data
      * @return GhostUser|MessengerProvider
      */
-    public static function locateContentOwner(Message $message, array $data)
+    public static function locateContentOwner(Message $message, ?array $data)
     {
+        if (is_null($data)) {
+            return Messenger::getGhostProvider();
+        }
+
         /** @var Participant $participant */
         $participant = $message->thread->participants
             ->where('owner_id', '=', $data['owner_id'])
@@ -290,11 +294,17 @@ class MessageTransformer
 
     /**
      * @param Message $message
-     * @param array $bodyJson
+     * @param array|null $bodyJson
      * @return string
      */
-    private static function transformVideoCall(Message $message, array $bodyJson): string
+    private static function transformVideoCall(Message $message, ?array $bodyJson): string
     {
+        $default = 'was in a video call';
+
+        if (is_null($bodyJson)) {
+            return $default;
+        }
+
         /** @var Call $call */
         $call = $message->thread->calls()
             ->videoCall()
@@ -335,46 +345,50 @@ class MessageTransformer
             return 'was in a video call with '.trim($names);
         }
 
-        return 'was in a video call';
+        return $default;
     }
 
     /**
      * @param Message $message
-     * @param array $bodyJson
+     * @param array|null $bodyJson
      * @return string
      */
-    private static function transformAdminAdded(Message $message, array $bodyJson): string
+    private static function transformAdminAdded(Message $message, ?array $bodyJson): string
     {
         return 'promoted '.self::locateContentOwner($message, $bodyJson)->getProviderName();
     }
 
     /**
      * @param Message $message
-     * @param array $bodyJson
+     * @param array|null $bodyJson
      * @return string
      */
-    private static function transformAdminRemoved(Message $message, array $bodyJson): string
+    private static function transformAdminRemoved(Message $message, ?array $bodyJson): string
     {
         return 'demoted '.self::locateContentOwner($message, $bodyJson)->getProviderName();
     }
 
     /**
      * @param Message $message
-     * @param array $bodyJson
+     * @param array|null $bodyJson
      * @return string
      */
-    private static function transformParticipantRemoved(Message $message, array $bodyJson): string
+    private static function transformParticipantRemoved(Message $message, ?array $bodyJson): string
     {
         return 'removed '.self::locateContentOwner($message, $bodyJson)->getProviderName();
     }
 
     /**
      * @param Message $message
-     * @param array $bodyJson
+     * @param array|null $bodyJson
      * @return string
      */
-    private static function transformParticipantsAdded(Message $message, array $bodyJson): string
+    private static function transformParticipantsAdded(Message $message, ?array $bodyJson): string
     {
+        if (is_null($bodyJson)) {
+            return 'added participants';
+        }
+
         $names = '';
 
         if (count($bodyJson) > 3) {

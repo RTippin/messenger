@@ -27,14 +27,37 @@ class PrivateMessageTest extends HttpTestCase
     {
         $this->logCurrentRequest('api.messenger.threads.messages.index');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
-        Message::factory()->for($thread)->owner($this->tippin)->count(2)->create();
+        Message::factory()->for($thread)->owner($this->tippin)->create();
+        Message::factory()->for($thread)->owner($this->tippin)->audio()->create();
+        Message::factory()->for($thread)->owner($this->tippin)->document()->create();
+        Message::factory()->for($thread)->owner($this->tippin)->image()->create();
+        Message::factory()->for($thread)->owner($this->tippin)->system()->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.index', [
             'thread' => $thread->id,
         ]))
             ->assertSuccessful()
-            ->assertJsonCount(2, 'data');
+            ->assertJsonCount(5, 'data');
+    }
+
+    /** @test */
+    public function user_can_view_paginated_messages()
+    {
+        $this->logCurrentRequest('api.messenger.threads.messages.page');
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        Message::factory()->for($thread)->owner($this->tippin)->count(2)->create();
+        Message::factory()->for($thread)->owner($this->tippin)->image()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        Message::factory()->for($thread)->owner($this->tippin)->count(2)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.messages.page', [
+            'thread' => $thread->id,
+            'message' => $message->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJsonCount(3, 'data');
     }
 
     /** @test */

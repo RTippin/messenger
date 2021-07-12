@@ -101,6 +101,22 @@ class MessageFactory extends Factory
     }
 
     /**
+     * Indicate message is a system message.
+     *
+     * @param int|null $type
+     * @return Factory
+     */
+    public function system(?int $type = null): Factory
+    {
+        return $this->state(function (array $attributes) use ($type) {
+            return [
+                'type' => $type ?? rand(90, 103),
+                'body' => 'This is a system message.',
+            ];
+        });
+    }
+
+    /**
      * Indicate message is edited.
      *
      * @return Factory

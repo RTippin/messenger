@@ -165,7 +165,7 @@ class EditMessageTest extends HttpTestCase
     public function forbidden_to_update_system_message()
     {
         $thread = $this->createGroupThread($this->tippin);
-        $message = Message::factory()->for($thread)->owner($this->tippin)->create(['type' => 99]);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->system()->create();
         $this->actingAs($this->tippin);
 
         $this->putJson(route('api.messenger.threads.messages.update', [

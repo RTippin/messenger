@@ -318,6 +318,16 @@ class MessageTransformerTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_returns_ghost_user_when_no_body_json()
+    {
+        $message = Message::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+
+        $owner = MessageTransformer::locateContentOwner($message, null);
+
+        $this->assertInstanceOf(GhostUser::class, $owner);
+    }
+
+    /** @test */
     public function it_transforms_and_sanitizes_html_body()
     {
         $thread = Thread::factory()->create();
@@ -358,6 +368,21 @@ class MessageTransformerTest extends FeatureTestCase
             ->create([
                 'type' => 90,
                 'body' => MessageTransformer::makeVideoCall($thread, $this->tippin, $call)[2],
+            ]);
+
+        $this->assertSame('was in a video call', MessageTransformer::transform($message));
+    }
+
+    /** @test */
+    public function it_transforms_video_call_without_body_json()
+    {
+        $thread = Thread::factory()->create();
+        $message = Message::factory()
+            ->for($thread)
+            ->owner($this->tippin)
+            ->create([
+                'type' => 90,
+                'body' => '',
             ]);
 
         $this->assertSame('was in a video call', MessageTransformer::transform($message));
@@ -601,6 +626,21 @@ class MessageTransformerTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_transforms_demoted_admin_without_body_json()
+    {
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()
+            ->for($thread)
+            ->owner($this->tippin)
+            ->create([
+                'type' => 95,
+                'body' => '',
+            ]);
+
+        $this->assertSame('demoted Ghost Profile', MessageTransformer::transform($message));
+    }
+
+    /** @test */
     public function it_transforms_promoted_admin()
     {
         $thread = Thread::factory()->group()->create();
@@ -614,6 +654,21 @@ class MessageTransformerTest extends FeatureTestCase
             ]);
 
         $this->assertSame('promoted John Doe', MessageTransformer::transform($message));
+    }
+
+    /** @test */
+    public function it_transforms_promoted_admin_without_body_json()
+    {
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()
+            ->for($thread)
+            ->owner($this->tippin)
+            ->create([
+                'type' => 96,
+                'body' => '',
+            ]);
+
+        $this->assertSame('promoted Ghost Profile', MessageTransformer::transform($message));
     }
 
     /** @test */
@@ -648,6 +703,21 @@ class MessageTransformerTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_transforms_participant_removed_without_body_json()
+    {
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()
+            ->for($thread)
+            ->owner($this->tippin)
+            ->create([
+                'type' => 98,
+                'body' => '',
+            ]);
+
+        $this->assertSame('removed Ghost Profile', MessageTransformer::transform($message));
+    }
+
+    /** @test */
     public function it_transforms_one_participant_added()
     {
         $thread = Thread::factory()->group()->create();
@@ -661,6 +731,21 @@ class MessageTransformerTest extends FeatureTestCase
             ]);
 
         $this->assertSame('added John Doe', MessageTransformer::transform($message));
+    }
+
+    /** @test */
+    public function it_transforms_participants_added_without_body_json()
+    {
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()
+            ->for($thread)
+            ->owner($this->tippin)
+            ->create([
+                'type' => 99,
+                'body' => '',
+            ]);
+
+        $this->assertSame('added participants', MessageTransformer::transform($message));
     }
 
     /** @test */

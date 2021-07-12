@@ -230,7 +230,7 @@ class MessageTest extends FeatureTestCase
     /** @test */
     public function system_message()
     {
-        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create(['type' => 93]);
+        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->system(93)->create();
 
         $this->assertTrue($message->isSystemMessage());
         $this->assertFalse($message->notSystemMessage());

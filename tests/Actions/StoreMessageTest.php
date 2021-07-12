@@ -109,10 +109,7 @@ class StoreMessageTest extends FeatureTestCase
     public function it_will_not_add_reply_if_system_message()
     {
         $thread = Thread::factory()->create();
-        $system = Message::factory()->for($thread)->owner($this->tippin)->create([
-            'body' => 'System Message',
-            'type' => 93,
-        ]);
+        $system = Message::factory()->for($thread)->owner($this->tippin)->system()->create();
 
         app(StoreMessage::class)->execute($thread, [
             'message' => 'Replying',
