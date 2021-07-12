@@ -23,14 +23,16 @@ class GroupThreadsTest extends HttpTestCase
     {
         $this->logCurrentRequest('api.messenger.groups.page');
         $this->createGroupThread($this->tippin);
-        $second = $this->createGroupThread($this->tippin);
+        $this->createGroupThread($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
+        $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.groups.page', [
-            'group' => $second->id,
+            'group' => $thread->id,
         ]))
             ->assertSuccessful()
-            ->assertJsonCount(1, 'data');
+            ->assertJsonCount(2, 'data');
     }
 
     /** @test */

@@ -4,10 +4,48 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\Participant;
+use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\HttpTestCase;
 
 class ImageMessageTest extends HttpTestCase
 {
+    /** @test */
+    public function user_can_view_image_messages()
+    {
+        $this->logCurrentRequest('api.messenger.threads.images.index');
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        Message::factory()->for($thread)->owner($this->tippin)->image()->count(2)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.images.index', [
+            'thread' => $thread->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJsonCount(2, 'data');
+    }
+
+    /** @test */
+    public function user_can_view_paginated_image_messages()
+    {
+        $this->logCurrentRequest('api.messenger.threads.images.page');
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        Message::factory()->for($thread)->owner($this->tippin)->image()->count(2)->create();
+        $image = Message::factory()->for($thread)->owner($this->tippin)->image()->create();
+        Message::factory()->for($thread)->owner($this->tippin)->image()->count(2)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.images.page', [
+            'thread' => $thread->id,
+            'image' => $image->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJsonCount(2, 'data');
+    }
+
     /** @test */
     public function user_can_send_image_message()
     {

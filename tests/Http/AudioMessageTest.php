@@ -4,12 +4,48 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\HttpTestCase;
 
 class AudioMessageTest extends HttpTestCase
 {
+    /** @test */
+    public function user_can_view_audio_messages()
+    {
+        $this->logCurrentRequest('api.messenger.threads.audio.index');
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        Message::factory()->for($thread)->owner($this->tippin)->audio()->count(2)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.audio.index', [
+            'thread' => $thread->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJsonCount(2, 'data');
+    }
+
+    /** @test */
+    public function user_can_view_paginated_audio_messages()
+    {
+        $this->logCurrentRequest('api.messenger.threads.audio.page');
+        $thread = Thread::factory()->group()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
+        Message::factory()->for($thread)->owner($this->tippin)->audio()->count(2)->create();
+        $audio = Message::factory()->for($thread)->owner($this->tippin)->audio()->create();
+        Message::factory()->for($thread)->owner($this->tippin)->audio()->count(2)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.audio.page', [
+            'thread' => $thread->id,
+            'audio' => $audio->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJsonCount(2, 'data');
+    }
+
     /** @test */
     public function user_can_send_audio_message()
     {

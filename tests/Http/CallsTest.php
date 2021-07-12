@@ -53,6 +53,25 @@ class CallsTest extends HttpTestCase
     }
 
     /** @test */
+    public function user_can_view_paginated_calls()
+    {
+        $this->logCurrentRequest('api.messenger.threads.calls.page');
+        $thread = $this->createGroupThread($this->tippin);
+        Call::factory()->for($thread)->owner($this->tippin)->ended()->count(2)->create();
+        $call = Call::factory()->for($thread)->owner($this->tippin)->ended()->create();
+        $this->travel(10)->seconds();
+        Call::factory()->for($thread)->owner($this->tippin)->ended()->count(2)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.calls.page', [
+            'thread' => $thread->id,
+            'call' => $call->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJsonCount(2, 'data');
+    }
+
+    /** @test */
     public function user_can_view_call()
     {
         $this->logCurrentRequest('api.messenger.threads.calls.show');

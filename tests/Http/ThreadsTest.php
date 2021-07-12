@@ -36,14 +36,16 @@ class ThreadsTest extends HttpTestCase
     {
         $this->logCurrentRequest('api.messenger.threads.page');
         $this->createPrivateThread($this->tippin, $this->doe);
-        $second = $this->createGroupThread($this->tippin);
+        $this->createGroupThread($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
+        $this->createPrivateThread($this->tippin, $this->developers);
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.page', [
-            'thread' => $second->id,
+            'thread' => $thread->id,
         ]))
             ->assertStatus(200)
-            ->assertJsonCount(1, 'data');
+            ->assertJsonCount(2, 'data');
     }
 
     /** @test */

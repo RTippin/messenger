@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
+use RTippin\Messenger\Tests\Fixtures\UserModel;
 use RTippin\Messenger\Tests\HttpTestCase;
 
 class PrivateThreadsTest extends HttpTestCase
@@ -24,14 +25,16 @@ class PrivateThreadsTest extends HttpTestCase
     {
         $this->logCurrentRequest('api.messenger.privates.page');
         $this->createPrivateThread($this->tippin, $this->doe);
-        $second = $this->createPrivateThread($this->tippin, $this->developers);
+        $this->createPrivateThread($this->tippin, UserModel::factory()->create());
+        $thread = $this->createPrivateThread($this->tippin, $this->developers);
+        $this->createPrivateThread($this->tippin, UserModel::factory()->create());
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.privates.page', [
-            'private' => $second->id,
+            'private' => $thread->id,
         ]))
             ->assertSuccessful()
-            ->assertJsonCount(1, 'data');
+            ->assertJsonCount(2, 'data');
     }
 
     /** @test */
