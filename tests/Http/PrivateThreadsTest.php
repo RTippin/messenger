@@ -34,6 +34,7 @@ class PrivateThreadsTest extends HttpTestCase
     /** @test */
     public function creating_private_thread_with_friend_is_not_pending()
     {
+        $this->logCurrentRequest('api.messenger.privates.store');
         $this->createFriends($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
@@ -51,6 +52,7 @@ class PrivateThreadsTest extends HttpTestCase
     /** @test */
     public function creating_new_private_thread_with_image()
     {
+        $this->logCurrentRequest('api.messenger.privates.store', '200_IMAGE');
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
@@ -64,6 +66,7 @@ class PrivateThreadsTest extends HttpTestCase
     /** @test */
     public function creating_new_private_thread_with_document()
     {
+        $this->logCurrentRequest('api.messenger.privates.store', '200_DOCUMENT');
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
@@ -77,6 +80,7 @@ class PrivateThreadsTest extends HttpTestCase
     /** @test */
     public function creating_new_private_thread_with_audio()
     {
+        $this->logCurrentRequest('api.messenger.privates.store', '200_AUDIO');
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
@@ -90,6 +94,7 @@ class PrivateThreadsTest extends HttpTestCase
     /** @test */
     public function creating_new_private_forbidden_when_one_exist()
     {
+        $this->logCurrentRequest('api.messenger.privates.store');
         $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 

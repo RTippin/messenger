@@ -11,6 +11,7 @@ class MessengerAvatarTest extends HttpTestCase
     /** @test */
     public function user_forbidden_to_upload_avatar_when_disabled()
     {
+        $this->logCurrentRequest('api.messenger.avatar.update');
         Messenger::setProviderAvatars(false);
         $this->actingAs($this->tippin);
 
@@ -23,6 +24,7 @@ class MessengerAvatarTest extends HttpTestCase
     /** @test */
     public function user_can_upload_avatar()
     {
+        $this->logCurrentRequest('api.messenger.avatar.update');
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.avatar.update'), [
@@ -58,6 +60,7 @@ class MessengerAvatarTest extends HttpTestCase
     /** @test */
     public function user_can_remove_avatar()
     {
+        $this->logCurrentRequest('api.messenger.avatar.destroy');
         $this->tippin->update([
             'picture' => 'avatar.jpg',
         ]);
@@ -74,6 +77,7 @@ class MessengerAvatarTest extends HttpTestCase
     /** @test */
     public function user_forbidden_to_remove_avatar_when_disabled()
     {
+        $this->logCurrentRequest('api.messenger.avatar.destroy');
         Messenger::setProviderAvatars(false);
         $this->actingAs($this->tippin);
 

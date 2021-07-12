@@ -21,11 +21,10 @@ class ThreadsTest extends HttpTestCase
     /** @test */
     public function user_belongs_to_two_threads()
     {
+        $this->logCurrentRequest('api.messenger.threads.index');
         $this->createPrivateThread($this->tippin, $this->doe);
         $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
-
-        $this->logCurrentRequest('api.messenger.threads.index');
 
         $this->getJson(route('api.messenger.threads.index'))
             ->assertStatus(200)
@@ -35,9 +34,8 @@ class ThreadsTest extends HttpTestCase
     /** @test */
     public function invalid_thread_id_not_found()
     {
-        $this->actingAs($this->tippin);
-
         $this->logCurrentRequest('api.messenger.threads.show');
+        $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => '123456-789',
@@ -48,10 +46,9 @@ class ThreadsTest extends HttpTestCase
     /** @test */
     public function user_forbidden_to_view_thread_they_do_not_belong_to()
     {
+        $this->logCurrentRequest('api.messenger.threads.show');
         $thread = Thread::factory()->group()->create();
         $this->actingAs($this->tippin);
-
-        $this->logCurrentRequest('api.messenger.threads.show');
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $thread->id,
@@ -62,10 +59,9 @@ class ThreadsTest extends HttpTestCase
     /** @test */
     public function user_can_view_individual_private_thread()
     {
+        $this->logCurrentRequest('api.messenger.threads.show', '200_PRIVATE');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
-
-        $this->logCurrentRequest('api.messenger.threads.show', '200_PRIVATE');
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $thread->id,
@@ -88,10 +84,9 @@ class ThreadsTest extends HttpTestCase
     /** @test */
     public function user_can_view_individual_group_thread()
     {
+        $this->logCurrentRequest('api.messenger.threads.show', '200_GROUP');
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
-
-        $this->logCurrentRequest('api.messenger.threads.show', '200_GROUP');
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $thread->id,
