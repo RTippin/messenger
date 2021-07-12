@@ -14,6 +14,7 @@ class StartCallTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_start_call()
     {
+        $this->logCurrentRequest('api.messenger.threads.calls.store');
         $thread = Thread::factory()->group()->create();
         $this->actingAs($this->tippin);
 
@@ -132,6 +133,7 @@ class StartCallTest extends HttpTestCase
     /** @test */
     public function user_can_start_call_in_private()
     {
+        $this->logCurrentRequest('api.messenger.threads.calls.store', 'PRIVATE');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
@@ -144,6 +146,7 @@ class StartCallTest extends HttpTestCase
     /** @test */
     public function admin_can_start_call_in_group()
     {
+        $this->logCurrentRequest('api.messenger.threads.calls.store', 'GROUP');
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 

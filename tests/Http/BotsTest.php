@@ -13,6 +13,7 @@ class BotsTest extends HttpTestCase
     /** @test */
     public function admin_can_view_bots()
     {
+        $this->logCurrentRequest('api.messenger.threads.bots.index');
         $thread = $this->createGroupThread($this->tippin);
         Bot::factory()->for($thread)->owner($this->tippin)->count(2)->create();
         $this->actingAs($this->tippin);
@@ -27,6 +28,7 @@ class BotsTest extends HttpTestCase
     /** @test */
     public function forbidden_to_view_bots_when_disabled_in_config()
     {
+        $this->logCurrentRequest('api.messenger.threads.bots.index');
         Messenger::setBots(false);
         $thread = $this->createGroupThread($this->tippin);
         Bot::factory()->for($thread)->owner($this->tippin)->create();
@@ -69,6 +71,7 @@ class BotsTest extends HttpTestCase
     /** @test */
     public function admin_can_add_bot()
     {
+        $this->logCurrentRequest('api.messenger.threads.bots.store');
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -114,6 +117,7 @@ class BotsTest extends HttpTestCase
     /** @test */
     public function forbidden_to_add_bot_when_disabled_in_config()
     {
+        $this->logCurrentRequest('api.messenger.threads.bots.store');
         Messenger::setBots(false);
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
@@ -167,6 +171,7 @@ class BotsTest extends HttpTestCase
     /** @test */
     public function admin_can_view_bot()
     {
+        $this->logCurrentRequest('api.messenger.threads.bots.show');
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create(['name' => 'Test Bot']);
         $this->actingAs($this->tippin);
@@ -186,6 +191,7 @@ class BotsTest extends HttpTestCase
     /** @test */
     public function forbidden_to_view_bot_when_disabled_in_config()
     {
+        $this->logCurrentRequest('api.messenger.threads.bots.show');
         Messenger::setBots(false);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
@@ -235,6 +241,7 @@ class BotsTest extends HttpTestCase
     /** @test */
     public function admin_can_remove_bot()
     {
+        $this->logCurrentRequest('api.messenger.threads.bots.destroy');
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -264,6 +271,7 @@ class BotsTest extends HttpTestCase
     /** @test */
     public function participant_without_permission_forbidden_to_remove_bot()
     {
+        $this->logCurrentRequest('api.messenger.threads.bots.destroy');
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);
@@ -278,6 +286,7 @@ class BotsTest extends HttpTestCase
     /** @test */
     public function admin_can_update_bot()
     {
+        $this->logCurrentRequest('api.messenger.threads.bots.update');
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -323,6 +332,7 @@ class BotsTest extends HttpTestCase
     /** @test */
     public function participant_without_permission_forbidden_to_update_bot()
     {
+        $this->logCurrentRequest('api.messenger.threads.bots.update');
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);

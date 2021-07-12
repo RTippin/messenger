@@ -38,6 +38,7 @@ class CallHeartbeatTest extends HttpTestCase
     /** @test */
     public function non_call_participant_forbidden_to_use_heartbeat()
     {
+        $this->logCurrentRequest('api.messenger.threads.calls.heartbeat');
         $thread = $this->createGroupThread($this->tippin);
         $call = Call::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -82,6 +83,7 @@ class CallHeartbeatTest extends HttpTestCase
     /** @test */
     public function call_participant_can_use_heartbeat()
     {
+        $this->logCurrentRequest('api.messenger.threads.calls.heartbeat');
         $thread = $this->createGroupThread($this->tippin);
         $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
         CallParticipant::factory()->for($call)->owner($this->tippin)->create();

@@ -13,6 +13,7 @@ class InvitesTest extends HttpTestCase
     /** @test */
     public function forbidden_to_view_invites_on_private_thread()
     {
+        $this->logCurrentRequest('api.messenger.threads.invites.index', 'PRIVATE');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
@@ -25,6 +26,7 @@ class InvitesTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_view_invites()
     {
+        $this->logCurrentRequest('api.messenger.threads.invites.index');
         $thread = Thread::factory()->group()->create();
         $this->actingAs($this->tippin);
 
@@ -65,6 +67,7 @@ class InvitesTest extends HttpTestCase
     /** @test */
     public function admin_can_view_invites()
     {
+        $this->logCurrentRequest('api.messenger.threads.invites.index');
         $thread = $this->createGroupThread($this->tippin);
         Invite::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -121,6 +124,7 @@ class InvitesTest extends HttpTestCase
     /** @test */
     public function participant_without_permission_forbidden_to_archive_invite()
     {
+        $this->logCurrentRequest('api.messenger.threads.invites.destroy');
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->create();
         $invite = Invite::factory()->for($thread)->owner($this->tippin)->create();
@@ -136,6 +140,7 @@ class InvitesTest extends HttpTestCase
     /** @test */
     public function admin_can_archive_invite()
     {
+        $this->logCurrentRequest('api.messenger.threads.invites.destroy');
         $thread = $this->createGroupThread($this->tippin);
         $invite = Invite::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -165,6 +170,7 @@ class InvitesTest extends HttpTestCase
     /** @test */
     public function admin_can_create_invite()
     {
+        $this->logCurrentRequest('api.messenger.threads.invites.store');
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -172,6 +178,7 @@ class InvitesTest extends HttpTestCase
             'thread' => $thread->id,
         ]), [
             'uses' => 25,
+            'expires' => null,
         ])
             ->assertSuccessful()
             ->assertJson([

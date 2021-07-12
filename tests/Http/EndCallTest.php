@@ -39,6 +39,7 @@ class EndCallTest extends HttpTestCase
     /** @test */
     public function non_call_participant_forbidden_to_end_call()
     {
+        $this->logCurrentRequest('api.messenger.threads.calls.end');
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $call = $this->createCall($thread, $this->tippin);
         $this->actingAs($this->doe);
@@ -98,6 +99,7 @@ class EndCallTest extends HttpTestCase
     /** @test */
     public function admin_can_end_call()
     {
+        $this->logCurrentRequest('api.messenger.threads.calls.end');
         $thread = $this->createGroupThread($this->tippin);
         $call = $this->createCall($thread, $this->tippin);
         $this->actingAs($this->tippin);

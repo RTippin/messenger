@@ -11,6 +11,7 @@ class ImageMessageTest extends HttpTestCase
     /** @test */
     public function user_can_send_image_message()
     {
+        $this->logCurrentRequest('api.messenger.threads.images.store');
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -32,6 +33,7 @@ class ImageMessageTest extends HttpTestCase
     /** @test */
     public function user_can_send_image_message_with_extra()
     {
+        $this->logCurrentRequest('api.messenger.threads.images.store', 'EXTRA');
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -86,6 +88,7 @@ class ImageMessageTest extends HttpTestCase
     /** @test */
     public function user_forbidden_to_send_image_message_when_disabled_from_config()
     {
+        $this->logCurrentRequest('api.messenger.threads.images.store');
         Messenger::setMessageImageUpload(false);
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);

@@ -14,6 +14,7 @@ class BotAvatarTest extends HttpTestCase
     /** @test */
     public function forbidden_to_upload_avatar_when_bots_disabled_in_config()
     {
+        $this->logCurrentRequest('api.messenger.threads.bots.avatar.store');
         Messenger::setBots(false);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
@@ -81,6 +82,7 @@ class BotAvatarTest extends HttpTestCase
     /** @test */
     public function admin_can_upload_avatar()
     {
+        $this->logCurrentRequest('api.messenger.threads.bots.avatar.store');
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -114,6 +116,7 @@ class BotAvatarTest extends HttpTestCase
     /** @test */
     public function admin_can_remove_avatar()
     {
+        $this->logCurrentRequest('api.messenger.threads.bots.avatar.destroy');
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -147,6 +150,7 @@ class BotAvatarTest extends HttpTestCase
     /** @test */
     public function participant_without_permission_forbidden_to_remove_avatar()
     {
+        $this->logCurrentRequest('api.messenger.threads.bots.avatar.destroy');
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);

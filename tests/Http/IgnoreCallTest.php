@@ -23,6 +23,7 @@ class IgnoreCallTest extends HttpTestCase
     /** @test */
     public function call_participant_forbidden_to_ignore_call()
     {
+        $this->logCurrentRequest('api.messenger.threads.calls.ignore');
         $thread = $this->createGroupThread($this->tippin);
         $call = $this->createCall($thread, $this->tippin);
         $this->actingAs($this->tippin);
@@ -51,6 +52,7 @@ class IgnoreCallTest extends HttpTestCase
     /** @test */
     public function non_call_participant_can_ignore_call()
     {
+        $this->logCurrentRequest('api.messenger.threads.calls.ignore');
         $thread = $this->createGroupThread($this->tippin);
         $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
         $this->actingAs($this->tippin);

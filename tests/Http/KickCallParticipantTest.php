@@ -64,6 +64,7 @@ class KickCallParticipantTest extends HttpTestCase
     /** @test */
     public function non_call_admin_participant_forbidden_to_kick_call_participant()
     {
+        $this->logCurrentRequest('api.messenger.threads.calls.participants.update');
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $call = $this->createCall($thread, $this->tippin);
         $participant = CallParticipant::factory()->for($call)->owner($this->doe)->create();
@@ -100,6 +101,7 @@ class KickCallParticipantTest extends HttpTestCase
     /** @test */
     public function admin_can_kick_call_participant()
     {
+        $this->logCurrentRequest('api.messenger.threads.calls.participants.update');
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $call = $this->createCall($thread, $this->tippin);
         $participant = CallParticipant::factory()->for($call)->owner($this->doe)->create();

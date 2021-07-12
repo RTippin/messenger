@@ -24,6 +24,7 @@ class JoinCallTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_join_call()
     {
+        $this->logCurrentRequest('api.messenger.threads.calls.join');
         $thread = $this->createGroupThread($this->tippin);
         $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
         $this->actingAs($this->doe);
@@ -67,6 +68,7 @@ class JoinCallTest extends HttpTestCase
     /** @test */
     public function participant_can_join_call()
     {
+        $this->logCurrentRequest('api.messenger.threads.calls.join');
         $thread = $this->createGroupThread($this->tippin);
         $call = Call::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);

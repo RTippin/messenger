@@ -103,6 +103,7 @@ class ThreadsTest extends HttpTestCase
     /** @test */
     public function unread_thread_is_unread()
     {
+        $this->logCurrentRequest('api.messenger.threads.is.unread');
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
