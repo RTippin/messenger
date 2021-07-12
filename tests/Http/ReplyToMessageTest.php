@@ -13,7 +13,7 @@ class ReplyToMessageTest extends HttpTestCase
     {
         $thread = $this->createGroupThread($this->tippin);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
-        $replying = Message::factory()->for($thread)->owner($this->tippin)->create(['reply_to_id' => $message->id]);
+        $replying = Message::factory()->for($thread)->owner($this->tippin)->reply($message->id)->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.show', [
@@ -34,7 +34,7 @@ class ReplyToMessageTest extends HttpTestCase
     public function reply_to_message_omitted_when_reply_not_found()
     {
         $thread = $this->createGroupThread($this->tippin);
-        $replying = Message::factory()->for($thread)->owner($this->tippin)->create(['reply_to_id' => '404']);
+        $replying = Message::factory()->for($thread)->owner($this->tippin)->reply('404')->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.show', [
@@ -52,6 +52,7 @@ class ReplyToMessageTest extends HttpTestCase
     /** @test */
     public function user_can_reply_to_message()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.store', 'REPLY');
         $thread = $this->createGroupThread($this->tippin);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);

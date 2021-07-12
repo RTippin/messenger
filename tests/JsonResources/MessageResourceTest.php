@@ -111,7 +111,7 @@ class MessageResourceTest extends FeatureTestCase
     {
         $private = Thread::factory()->create();
         $reply = Message::factory()->for($private)->owner($this->tippin)->create();
-        $message = Message::factory()->for($private)->owner($this->tippin)->create(['reply_to_id' => $reply->id]);
+        $message = Message::factory()->for($private)->owner($this->tippin)->reply($reply->id)->create();
 
         $resource = (new MessageResource($message, $private, true))->resolve();
 

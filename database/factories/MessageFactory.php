@@ -143,4 +143,19 @@ class MessageFactory extends Factory
             ];
         });
     }
+
+    /**
+     * Set the messages reply to ID.
+     *
+     * @param string $messageId
+     * @return Factory
+     */
+    public function reply(string $messageId): Factory
+    {
+        return $this->state(function (array $attributes) use ($messageId) {
+            return [
+                'reply_to_id' => $messageId,
+            ];
+        });
+    }
 }

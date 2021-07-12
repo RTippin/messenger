@@ -27,10 +27,10 @@ class PrivateMessageTest extends HttpTestCase
     {
         $this->logCurrentRequest('api.messenger.threads.messages.index');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
-        Message::factory()->for($thread)->owner($this->tippin)->create();
         Message::factory()->for($thread)->owner($this->tippin)->audio()->create();
         Message::factory()->for($thread)->owner($this->tippin)->document()->create();
-        Message::factory()->for($thread)->owner($this->tippin)->image()->create();
+        $reply = Message::factory()->for($thread)->owner($this->tippin)->image()->create();
+        Message::factory()->for($thread)->owner($this->tippin)->reply($reply->id)->create();
         Message::factory()->for($thread)->owner($this->tippin)->system()->create();
         $this->actingAs($this->tippin);
 
