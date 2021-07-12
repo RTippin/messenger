@@ -12,6 +12,7 @@ class UpdateParticipantPermissionsTest extends HttpTestCase
     /** @test */
     public function user_forbidden_to_update_private_participant_permissions()
     {
+        $this->logCurrentRequest('api.messenger.threads.participants.update');
         $thread = Thread::factory()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->create();
         $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
@@ -55,6 +56,7 @@ class UpdateParticipantPermissionsTest extends HttpTestCase
     /** @test */
     public function admin_can_update_permissions()
     {
+        $this->logCurrentRequest('api.messenger.threads.participants.update');
         $thread = $this->createGroupThread($this->tippin);
         $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);

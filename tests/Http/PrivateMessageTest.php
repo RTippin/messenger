@@ -12,6 +12,7 @@ class PrivateMessageTest extends HttpTestCase
     /** @test */
     public function non_participant_is_forbidden()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.index');
         $thread = Thread::factory()->create();
         $this->actingAs($this->tippin);
 
@@ -24,20 +25,22 @@ class PrivateMessageTest extends HttpTestCase
     /** @test */
     public function user_can_view_messages()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.index');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
-        Message::factory()->for($thread)->owner($this->tippin)->create();
+        Message::factory()->for($thread)->owner($this->tippin)->count(2)->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.messages.index', [
             'thread' => $thread->id,
         ]))
             ->assertSuccessful()
-            ->assertJsonCount(1, 'data');
+            ->assertJsonCount(2, 'data');
     }
 
     /** @test */
     public function user_can_view_message()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.show');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -53,8 +56,24 @@ class PrivateMessageTest extends HttpTestCase
     }
 
     /** @test */
+    public function non_participant_forbidden_to_view_message()
+    {
+        $this->logCurrentRequest('api.messenger.threads.messages.show');
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->developers);
+
+        $this->getJson(route('api.messenger.threads.messages.show', [
+            'thread' => $thread->id,
+            'message' => $message->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function user_forbidden_to_send_message_when_thread_locked()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.store');
         $thread = Thread::factory()->locked()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->create();
         Participant::factory()->for($thread)->owner($this->doe)->create();
@@ -72,6 +91,7 @@ class PrivateMessageTest extends HttpTestCase
     /** @test */
     public function user_can_send_message()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.store');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
@@ -143,6 +163,7 @@ class PrivateMessageTest extends HttpTestCase
     /** @test */
     public function message_owner_can_archive_message()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.destroy');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -157,6 +178,7 @@ class PrivateMessageTest extends HttpTestCase
     /** @test */
     public function non_owner_forbidden_to_archive_message()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.destroy');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);

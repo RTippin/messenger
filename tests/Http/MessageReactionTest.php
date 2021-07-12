@@ -15,6 +15,7 @@ class MessageReactionTest extends HttpTestCase
     /** @test */
     public function non_participant_is_forbidden_to_react()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.reactions.store');
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
@@ -23,7 +24,7 @@ class MessageReactionTest extends HttpTestCase
             'thread' => $thread->id,
             'message' => $message->id,
         ]), [
-            'reaction' => ':joy:',
+            'reaction' => ':100:',
         ])
             ->assertForbidden();
     }
@@ -31,6 +32,7 @@ class MessageReactionTest extends HttpTestCase
     /** @test */
     public function non_participant_is_forbidden_to_view_reacts()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.reactions.index');
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
@@ -45,6 +47,7 @@ class MessageReactionTest extends HttpTestCase
     /** @test */
     public function user_can_react_to_other_message()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.reactions.store');
         $thread = $this->createGroupThread($this->tippin);
         $message = Message::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
@@ -53,12 +56,12 @@ class MessageReactionTest extends HttpTestCase
             'thread' => $thread->id,
             'message' => $message->id,
         ]), [
-            'reaction' => ':joy:',
+            'reaction' => ':100:',
         ])
             ->assertSuccessful()
             ->assertJson([
                 'message_id' => $message->id,
-                'reaction' => ':joy:',
+                'reaction' => ':100:',
             ]);
     }
 
@@ -81,6 +84,7 @@ class MessageReactionTest extends HttpTestCase
     /** @test */
     public function participant_can_view_reacts()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.reactions.index');
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         MessageReaction::factory()
@@ -154,6 +158,7 @@ class MessageReactionTest extends HttpTestCase
     /** @test */
     public function forbidden_to_remove_own_reaction_when_disabled_in_config()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.reactions.destroy');
         Messenger::setMessageReactions(false);
         $thread = $this->createGroupThread($this->tippin);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
@@ -171,6 +176,7 @@ class MessageReactionTest extends HttpTestCase
     /** @test */
     public function user_can_remove_own_reaction()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.reactions.destroy');
         $thread = $this->createGroupThread($this->tippin);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $reaction = MessageReaction::factory()->for($message)->owner($this->tippin)->create();

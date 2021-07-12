@@ -14,6 +14,7 @@ class EditMessageTest extends HttpTestCase
     /** @test */
     public function non_participant_is_forbidden()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.history');
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);
@@ -58,6 +59,7 @@ class EditMessageTest extends HttpTestCase
     /** @test */
     public function user_can_view_message_edits()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.history');
         $thread = $this->createGroupThread($this->tippin);
         $message = Message::factory()->for($thread)->owner($this->tippin)->edited()->create();
         MessageEdit::factory()->for($message)->count(2)->create();
@@ -74,6 +76,7 @@ class EditMessageTest extends HttpTestCase
     /** @test */
     public function owner_can_edit_message()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.update');
         $thread = $this->createGroupThread($this->tippin);
         $message = Message::factory()->for($thread)->owner($this->tippin)->edited()->create();
         $this->actingAs($this->tippin);
@@ -95,6 +98,7 @@ class EditMessageTest extends HttpTestCase
     /** @test */
     public function non_owner_forbidden_to_update_message()
     {
+        $this->logCurrentRequest('api.messenger.threads.messages.update');
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);

@@ -12,6 +12,7 @@ class GroupThreadSettingsTest extends HttpTestCase
     /** @test */
     public function admin_can_view_group_settings()
     {
+        $this->logCurrentRequest('api.messenger.threads.settings');
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -37,6 +38,7 @@ class GroupThreadSettingsTest extends HttpTestCase
     /** @test */
     public function non_admin_forbidden_to_view_group_settings()
     {
+        $this->logCurrentRequest('api.messenger.threads.settings');
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->doe);
@@ -70,10 +72,11 @@ class GroupThreadSettingsTest extends HttpTestCase
     /** @test */
     public function admin_can_update_group_settings()
     {
+        $this->logCurrentRequest('api.messenger.threads.settings.update');
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
-        $this->putJson(route('api.messenger.threads.settings', [
+        $this->putJson(route('api.messenger.threads.settings.update', [
             'thread' => $thread->id,
         ]), [
             'subject' => 'New',
@@ -94,6 +97,27 @@ class GroupThreadSettingsTest extends HttpTestCase
                 'messaging' => false,
                 'knocks' => false,
             ]);
+    }
+
+    /** @test */
+    public function non_admin_forbidden_to_update_group_settings()
+    {
+        $this->logCurrentRequest('api.messenger.threads.settings.update');
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $this->actingAs($this->doe);
+
+        $this->putJson(route('api.messenger.threads.settings.update', [
+            'thread' => $thread->id,
+        ]), [
+            'subject' => 'New',
+            'add_participants' => false,
+            'invitations' => false,
+            'calling' => false,
+            'chat_bots' => false,
+            'messaging' => false,
+            'knocks' => false,
+        ])
+            ->assertForbidden();
     }
 
     /** @test */

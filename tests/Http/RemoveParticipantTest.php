@@ -26,6 +26,7 @@ class RemoveParticipantTest extends HttpTestCase
     /** @test */
     public function non_admin_forbidden_to_remove_participant()
     {
+        $this->logCurrentRequest('api.messenger.threads.participants.destroy');
         $thread = Thread::factory()->group()->create();
         $participant = Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         Participant::factory()->for($thread)->owner($this->doe)->create();
@@ -41,6 +42,7 @@ class RemoveParticipantTest extends HttpTestCase
     /** @test */
     public function admin_can_remove_participant()
     {
+        $this->logCurrentRequest('api.messenger.threads.participants.destroy');
         $thread = $this->createGroupThread($this->tippin);
         $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
