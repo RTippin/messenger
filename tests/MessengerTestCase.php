@@ -10,8 +10,6 @@ use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class MessengerTestCase extends TestCase
 {
-    use HelperTrait;
-
     /**
      * Set TRUE to run all feature test with
      * provider models/tables using UUIDS.
@@ -24,6 +22,10 @@ class MessengerTestCase extends TestCase
      */
     protected bool $useMorphMap = false;
 
+    /**
+     * @param \Illuminate\Foundation\Application $app
+     * @return string[]
+     */
     protected function getPackageProviders($app): array
     {
         return [
@@ -31,6 +33,9 @@ class MessengerTestCase extends TestCase
         ];
     }
 
+    /**
+     * @param \Illuminate\Foundation\Application $app
+     */
     protected function getEnvironmentSetUp($app): void
     {
         $config = $app->get('config');
@@ -58,6 +63,9 @@ class MessengerTestCase extends TestCase
         }
     }
 
+    /**
+     * @return array[]
+     */
     protected function getBaseProvidersConfig(): array
     {
         return [

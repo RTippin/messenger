@@ -4,9 +4,9 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\HttpTestCase;
 
-class ThreadsTest extends FeatureTestCase
+class ThreadsTest extends HttpTestCase
 {
     /** @test */
     public function user_has_no_threads()
@@ -25,6 +25,8 @@ class ThreadsTest extends FeatureTestCase
         $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
+        $this->logCurrentRequest('api.messenger.threads.index');
+
         $this->getJson(route('api.messenger.threads.index'))
             ->assertStatus(200)
             ->assertJsonCount(2, 'data');
@@ -34,6 +36,8 @@ class ThreadsTest extends FeatureTestCase
     public function invalid_thread_id_not_found()
     {
         $this->actingAs($this->tippin);
+
+        $this->logCurrentRequest('api.messenger.threads.show');
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => '123456-789',
@@ -47,6 +51,8 @@ class ThreadsTest extends FeatureTestCase
         $thread = Thread::factory()->group()->create();
         $this->actingAs($this->tippin);
 
+        $this->logCurrentRequest('api.messenger.threads.show');
+
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $thread->id,
         ]))
@@ -58,6 +64,8 @@ class ThreadsTest extends FeatureTestCase
     {
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
+
+        $this->logCurrentRequest('api.messenger.threads.show', '200_PRIVATE');
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $thread->id,
@@ -82,6 +90,8 @@ class ThreadsTest extends FeatureTestCase
     {
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
+
+        $this->logCurrentRequest('api.messenger.threads.show', '200_GROUP');
 
         $this->getJson(route('api.messenger.threads.show', [
             'thread' => $thread->id,

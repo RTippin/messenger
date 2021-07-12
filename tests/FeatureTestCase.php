@@ -15,6 +15,8 @@ use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class FeatureTestCase extends MessengerTestCase
 {
+    use HelperTrait;
+
     /**
      * @var MessengerProvider|UserModel|Authenticatable
      */
@@ -30,6 +32,9 @@ class FeatureTestCase extends MessengerTestCase
      */
     protected $developers;
 
+    /**
+     * Setup feature test requirements.
+     */
     protected function setUp(): void
     {
         parent::setUp();
@@ -47,6 +52,9 @@ class FeatureTestCase extends MessengerTestCase
         $this->withoutMiddleware(ThrottleRequests::class);
     }
 
+    /**
+     * Tear it down!
+     */
     protected function tearDown(): void
     {
         Cache::flush();
@@ -55,6 +63,9 @@ class FeatureTestCase extends MessengerTestCase
         parent::tearDown();
     }
 
+    /**
+     * @param \Illuminate\Foundation\Application $app
+     */
     protected function getEnvironmentSetUp($app): void
     {
         parent::getEnvironmentSetUp($app);
@@ -70,6 +81,9 @@ class FeatureTestCase extends MessengerTestCase
         ]);
     }
 
+    /**
+     * Store our two users.
+     */
     private function storeBaseUsers(): void
     {
         $this->tippin = UserModel::factory()->create([
@@ -82,6 +96,9 @@ class FeatureTestCase extends MessengerTestCase
         ]);
     }
 
+    /**
+     * Store our one company.
+     */
     private function storeBaseCompanies(): void
     {
         $this->developers = CompanyModel::factory()->create([
