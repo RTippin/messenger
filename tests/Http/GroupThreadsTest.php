@@ -19,6 +19,21 @@ class GroupThreadsTest extends HttpTestCase
     }
 
     /** @test */
+    public function user_can_view_paginated_groups()
+    {
+        $this->logCurrentRequest('api.messenger.groups.page');
+        $this->createGroupThread($this->tippin);
+        $second = $this->createGroupThread($this->tippin);
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.groups.page', [
+            'group' => $second->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJsonCount(1, 'data');
+    }
+
+    /** @test */
     public function store_group_without_extra_participants()
     {
         $this->logCurrentRequest('api.messenger.groups.store');

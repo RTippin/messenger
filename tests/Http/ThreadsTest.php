@@ -32,6 +32,21 @@ class ThreadsTest extends HttpTestCase
     }
 
     /** @test */
+    public function user_can_view_paginated_threads()
+    {
+        $this->logCurrentRequest('api.messenger.threads.page');
+        $this->createPrivateThread($this->tippin, $this->doe);
+        $second = $this->createGroupThread($this->tippin);
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.page', [
+            'thread' => $second->id,
+        ]))
+            ->assertStatus(200)
+            ->assertJsonCount(1, 'data');
+    }
+
+    /** @test */
     public function invalid_thread_id_not_found()
     {
         $this->logCurrentRequest('api.messenger.threads.show');

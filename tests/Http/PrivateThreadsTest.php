@@ -20,6 +20,21 @@ class PrivateThreadsTest extends HttpTestCase
     }
 
     /** @test */
+    public function user_can_view_paginated_private_threads()
+    {
+        $this->logCurrentRequest('api.messenger.privates.page');
+        $this->createPrivateThread($this->tippin, $this->doe);
+        $second = $this->createPrivateThread($this->tippin, $this->developers);
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.privates.page', [
+            'private' => $second->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJsonCount(1, 'data');
+    }
+
+    /** @test */
     public function creating_private_thread_with_non_friend_is_pending()
     {
         $this->actingAs($this->tippin);
