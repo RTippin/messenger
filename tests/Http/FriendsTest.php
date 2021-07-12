@@ -18,8 +18,21 @@ class FriendsTest extends HttpTestCase
     }
 
     /** @test */
+    public function user_has_friends()
+    {
+        $this->logCurrentRequest('api.messenger.friends.index');
+        $this->createFriends($this->tippin, $this->doe);
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.friends.index'))
+            ->assertStatus(200)
+            ->assertJsonCount(1);
+    }
+
+    /** @test */
     public function user_can_remove_friend()
     {
+        $this->logCurrentRequest('api.messenger.friends.destroy');
         $friend = Friend::factory()->providers($this->tippin, $this->doe)->create();
         Friend::factory()->providers($this->doe, $this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -33,6 +46,7 @@ class FriendsTest extends HttpTestCase
     /** @test */
     public function user_can_view_friend()
     {
+        $this->logCurrentRequest('api.messenger.friends.show');
         $friend = Friend::factory()->providers($this->tippin, $this->doe)->create();
         Friend::factory()->providers($this->doe, $this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -49,6 +63,7 @@ class FriendsTest extends HttpTestCase
     /** @test */
     public function user_cannot_remove_inverse_friend()
     {
+        $this->logCurrentRequest('api.messenger.friends.destroy');
         Friend::factory()->providers($this->tippin, $this->doe)->create();
         $inverse = Friend::factory()->providers($this->doe, $this->tippin)->create();
         $this->actingAs($this->tippin);

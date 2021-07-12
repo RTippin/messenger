@@ -18,8 +18,37 @@ class SentFriendsTest extends HttpTestCase
     }
 
     /** @test */
+    public function user_has_sent_friends()
+    {
+        $this->logCurrentRequest('api.messenger.friends.sent.index');
+        SentFriend::factory()->providers($this->tippin, $this->doe)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.friends.sent.index'))
+            ->assertStatus(200)
+            ->assertJsonCount(1);
+    }
+
+    /** @test */
+    public function user_can_view_sent_friend()
+    {
+        $this->logCurrentRequest('api.messenger.friends.sent.show');
+        $sent = SentFriend::factory()->providers($this->tippin, $this->doe)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.friends.sent.show', [
+            'sent' => $sent->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJson([
+                'id' => $sent->id,
+            ]);
+    }
+
+    /** @test */
     public function user_can_friend_another_user()
     {
+        $this->logCurrentRequest('api.messenger.friends.sent.store');
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.friends.sent.store'), [
@@ -52,6 +81,7 @@ class SentFriendsTest extends HttpTestCase
     /** @test */
     public function user_cannot_friend_user_while_having_pending_sent()
     {
+        $this->logCurrentRequest('api.messenger.friends.sent.store');
         SentFriend::factory()->providers($this->tippin, $this->doe)->create();
         $this->actingAs($this->tippin);
 
@@ -65,6 +95,7 @@ class SentFriendsTest extends HttpTestCase
     /** @test */
     public function user_can_cancel_sent_request()
     {
+        $this->logCurrentRequest('api.messenger.friends.sent.destroy');
         $sent = SentFriend::factory()->providers($this->tippin, $this->doe)->create();
         $this->actingAs($this->tippin);
 
