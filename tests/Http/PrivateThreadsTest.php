@@ -8,6 +8,18 @@ use RTippin\Messenger\Tests\HttpTestCase;
 class PrivateThreadsTest extends HttpTestCase
 {
     /** @test */
+    public function user_has_private_threads()
+    {
+        $this->logCurrentRequest('api.messenger.privates.index');
+        $this->createPrivateThread($this->tippin, $this->doe);
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.privates.index'))
+            ->assertSuccessful()
+            ->assertJsonCount(1, 'data');
+    }
+
+    /** @test */
     public function creating_private_thread_with_non_friend_is_pending()
     {
         $this->actingAs($this->tippin);
@@ -52,7 +64,7 @@ class PrivateThreadsTest extends HttpTestCase
     /** @test */
     public function creating_new_private_thread_with_image()
     {
-        $this->logCurrentRequest('api.messenger.privates.store', '200_IMAGE');
+        $this->logCurrentRequest('api.messenger.privates.store', 'IMAGE');
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
@@ -66,7 +78,7 @@ class PrivateThreadsTest extends HttpTestCase
     /** @test */
     public function creating_new_private_thread_with_document()
     {
-        $this->logCurrentRequest('api.messenger.privates.store', '200_DOCUMENT');
+        $this->logCurrentRequest('api.messenger.privates.store', 'DOCUMENT');
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
@@ -80,7 +92,7 @@ class PrivateThreadsTest extends HttpTestCase
     /** @test */
     public function creating_new_private_thread_with_audio()
     {
-        $this->logCurrentRequest('api.messenger.privates.store', '200_AUDIO');
+        $this->logCurrentRequest('api.messenger.privates.store', 'AUDIO');
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [

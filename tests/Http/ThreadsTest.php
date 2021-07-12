@@ -59,7 +59,7 @@ class ThreadsTest extends HttpTestCase
     /** @test */
     public function user_can_view_individual_private_thread()
     {
-        $this->logCurrentRequest('api.messenger.threads.show', '200_PRIVATE');
+        $this->logCurrentRequest('api.messenger.threads.show', 'PRIVATE');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
@@ -84,7 +84,7 @@ class ThreadsTest extends HttpTestCase
     /** @test */
     public function user_can_view_individual_group_thread()
     {
-        $this->logCurrentRequest('api.messenger.threads.show', '200_GROUP');
+        $this->logCurrentRequest('api.messenger.threads.show', 'GROUP');
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 

@@ -24,7 +24,7 @@ class HttpTestCase extends FeatureTestCase
     /**
      * @var string|null
      */
-    private ?string $currentRoute = null;
+    private ?string $currentRouteName = null;
 
     /**
      * @var string|null
@@ -59,7 +59,7 @@ class HttpTestCase extends FeatureTestCase
     protected function tearDown(): void
     {
         $this->shouldLogCurrentRequest = false;
-        $this->currentRoute = null;
+        $this->currentRouteName = null;
         $this->statusOverride = null;
 
         parent::tearDown();
@@ -68,14 +68,14 @@ class HttpTestCase extends FeatureTestCase
     /**
      * Call this method inside any http tests to instruct us to log the response.
      *
-     * @param string $route
+     * @param string $routeName
      * @param string|null $status
      */
-    public function logCurrentRequest(string $route, ?string $status = null): void
+    public function logCurrentRequest(string $routeName, ?string $status = null): void
     {
         if ($this->withApiLogging) {
             $this->shouldLogCurrentRequest = true;
-            $this->currentRoute = $route;
+            $this->currentRouteName = $routeName;
             $this->statusOverride = $status;
         }
     }
@@ -92,11 +92,16 @@ class HttpTestCase extends FeatureTestCase
         $response = parent::json($method, $uri, $data, $headers);
 
         if ($this->shouldLogCurrentRequest) {
+            $status = $this->statusOverride
+                ? $response->getStatusCode().'_'.$this->statusOverride
+                : $response->getStatusCode();
+
             $this->storeResponse(
-                $this->currentRoute,
+                $this->currentRouteName,
+                $uri,
                 $response->getContent(),
                 $method,
-                $this->statusOverride ?? $response->getStatusCode(),
+                $status,
                 $data
             );
         }
@@ -105,13 +110,15 @@ class HttpTestCase extends FeatureTestCase
     }
 
     /**
-     * @param string $route
+     * @param string $routeName
+     * @param string $uri
      * @param string $response
      * @param string $verb
      * @param string $status
      * @param array $payload
      */
-    protected function storeResponse(string $route,
+    private function storeResponse(string $routeName,
+                                     string $uri,
                                      string $response,
                                      string $verb,
                                      string $status,
@@ -119,12 +126,13 @@ class HttpTestCase extends FeatureTestCase
     {
         $file = __DIR__.'/../docs/generated/responses.json';
         $responses = json_decode(file_get_contents($file), true);
+        $responses[$routeName][$verb][$status]['uri'] = $uri;
 
         if (count($payload)) {
-            $responses[$route][$verb][$status]['payload'] = $this->sanitizePayload($payload);
+            $responses[$routeName][$verb][$status]['payload'] = $this->sanitizePayload($payload);
         }
 
-        $responses[$route][$verb][$status]['response'] = json_decode($response, true);
+        $responses[$routeName][$verb][$status]['response'] = json_decode($response, true);
         file_put_contents($file, json_encode($responses));
     }
 

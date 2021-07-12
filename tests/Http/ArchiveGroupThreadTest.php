@@ -12,6 +12,7 @@ class ArchiveGroupThreadTest extends HttpTestCase
     /** @test */
     public function admin_can_check_archive_group_thread()
     {
+        $this->logCurrentRequest('api.messenger.threads.archive.check', 'GROUP');
         $thread = Thread::factory()->group()->create(['subject' => 'Some Group']);
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
@@ -32,6 +33,7 @@ class ArchiveGroupThreadTest extends HttpTestCase
     /** @test */
     public function non_admin_forbidden_to_check_archive_group_thread()
     {
+        $this->logCurrentRequest('api.messenger.threads.archive.check', 'GROUP');
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->doe);
@@ -59,6 +61,7 @@ class ArchiveGroupThreadTest extends HttpTestCase
     /** @test */
     public function admin_can_archive_group_thread()
     {
+        $this->logCurrentRequest('api.messenger.threads.destroy', 'GROUP');
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
@@ -72,6 +75,7 @@ class ArchiveGroupThreadTest extends HttpTestCase
     /** @test */
     public function non_admin_forbidden_to_archive_group_thread()
     {
+        $this->logCurrentRequest('api.messenger.threads.destroy', 'GROUP');
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->doe);

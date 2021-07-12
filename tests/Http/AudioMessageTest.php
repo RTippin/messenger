@@ -13,6 +13,7 @@ class AudioMessageTest extends HttpTestCase
     /** @test */
     public function user_can_send_audio_message()
     {
+        $this->logCurrentRequest('api.messenger.threads.audio.store');
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
@@ -35,6 +36,7 @@ class AudioMessageTest extends HttpTestCase
     /** @test */
     public function user_can_send_audio_message_with_extra()
     {
+        $this->logCurrentRequest('api.messenger.threads.audio.store', 'EXTRA');
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
@@ -92,6 +94,7 @@ class AudioMessageTest extends HttpTestCase
     /** @test */
     public function user_forbidden_to_send_audio_message_when_disabled_from_config()
     {
+        $this->logCurrentRequest('api.messenger.threads.audio.store');
         Messenger::setMessageAudioUpload(false);
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();

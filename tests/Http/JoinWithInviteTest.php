@@ -12,6 +12,7 @@ class JoinWithInviteTest extends HttpTestCase
     /** @test */
     public function missing_invite_is_not_found()
     {
+        $this->logCurrentRequest('api.messenger.invites.join');
         $this->getJson(route('api.messenger.invites.join', [
             'invite' => 'MISS4321',
         ]))
@@ -60,6 +61,7 @@ class JoinWithInviteTest extends HttpTestCase
     /** @test */
     public function guest_can_view_valid_invite()
     {
+        $this->logCurrentRequest('api.messenger.invites.join', 'GUEST');
         $thread = Thread::factory()->group()->create(['subject' => 'Group']);
         $invite = Invite::factory()->for($thread)->owner($this->tippin)->testing()->create();
 
@@ -82,6 +84,7 @@ class JoinWithInviteTest extends HttpTestCase
     /** @test */
     public function non_participant_can_view_valid_invite()
     {
+        $this->logCurrentRequest('api.messenger.invites.join', 'AUTHED');
         $thread = Thread::factory()->group()->create(['subject' => 'Group']);
         $invite = Invite::factory()->for($thread)->owner($this->tippin)->testing()->create();
         $this->actingAs($this->tippin);
@@ -128,11 +131,12 @@ class JoinWithInviteTest extends HttpTestCase
     /** @test */
     public function non_participant_can_join_group_with_valid_invite()
     {
+        $this->logCurrentRequest('api.messenger.invites.join.store');
         $thread = Thread::factory()->group()->create(['subject' => 'Group']);
         Invite::factory()->for($thread)->owner($this->tippin)->testing()->create();
         $this->actingAs($this->tippin);
 
-        $this->postJson(route('api.messenger.invites.join', [
+        $this->postJson(route('api.messenger.invites.join.store', [
             'invite' => 'TEST1234',
         ]))
             ->assertSuccessful()
@@ -148,7 +152,7 @@ class JoinWithInviteTest extends HttpTestCase
         Invite::factory()->for($thread)->owner($this->tippin)->testing()->create();
         $this->actingAs($this->tippin);
 
-        $this->postJson(route('api.messenger.invites.join', [
+        $this->postJson(route('api.messenger.invites.join.store', [
             'invite' => 'TEST1234',
         ]))
             ->assertForbidden();
@@ -157,12 +161,13 @@ class JoinWithInviteTest extends HttpTestCase
     /** @test */
     public function forbidden_to_join_group_with_valid_invite_when_disabled_from_config()
     {
+        $this->logCurrentRequest('api.messenger.invites.join.store');
         Messenger::setThreadInvites(false);
         $thread = Thread::factory()->group()->create();
         Invite::factory()->for($thread)->owner($this->tippin)->testing()->create();
         $this->actingAs($this->tippin);
 
-        $this->postJson(route('api.messenger.invites.join', [
+        $this->postJson(route('api.messenger.invites.join.store', [
             'invite' => 'TEST1234',
         ]))
             ->assertForbidden();
@@ -175,7 +180,7 @@ class JoinWithInviteTest extends HttpTestCase
         Invite::factory()->for($thread)->owner($this->tippin)->testing()->create();
         $this->actingAs($this->tippin);
 
-        $this->postJson(route('api.messenger.invites.join', [
+        $this->postJson(route('api.messenger.invites.join.store', [
             'invite' => 'TEST1234',
         ]))
             ->assertForbidden();
@@ -189,7 +194,7 @@ class JoinWithInviteTest extends HttpTestCase
         $this->travel(2)->hours();
         $this->actingAs($this->tippin);
 
-        $this->postJson(route('api.messenger.invites.join', [
+        $this->postJson(route('api.messenger.invites.join.store', [
             'invite' => 'TEST1234',
         ]))
             ->assertForbidden();

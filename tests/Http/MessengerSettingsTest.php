@@ -9,6 +9,7 @@ class MessengerSettingsTest extends HttpTestCase
     /** @test */
     public function user_can_view_messenger_settings()
     {
+        $this->logCurrentRequest('api.messenger.settings');
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.settings'))
@@ -21,9 +22,10 @@ class MessengerSettingsTest extends HttpTestCase
     /** @test */
     public function user_can_update_messenger_settings()
     {
+        $this->logCurrentRequest('api.messenger.settings.update');
         $this->actingAs($this->tippin);
 
-        $this->putJson(route('api.messenger.settings'), [
+        $this->putJson(route('api.messenger.settings.update'), [
             'message_popups' => false,
             'message_sound' => false,
             'call_ringtone_sound' => false,
@@ -52,7 +54,7 @@ class MessengerSettingsTest extends HttpTestCase
     {
         $this->actingAs($this->tippin);
 
-        $this->putJson(route('api.messenger.settings'), [
+        $this->putJson(route('api.messenger.settings.update'), [
             'message_popups' => $boolInput,
             'message_sound' => $boolInput,
             'call_ringtone_sound' => $boolInput,

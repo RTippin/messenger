@@ -20,6 +20,7 @@ class ArchivePrivateThreadTest extends HttpTestCase
     /** @test */
     public function user_can_check_archive_private_thread()
     {
+        $this->logCurrentRequest('api.messenger.threads.archive.check', 'PRIVATE');
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.archive.check', [
@@ -38,6 +39,7 @@ class ArchivePrivateThreadTest extends HttpTestCase
     /** @test */
     public function user_forbidden_to_check_archive_private_thread_with_active_call()
     {
+        $this->logCurrentRequest('api.messenger.threads.archive.check', 'PRIVATE');
         Call::factory()->for($this->thread)->owner($this->tippin)->setup()->create();
         $this->actingAs($this->tippin);
 
@@ -50,6 +52,7 @@ class ArchivePrivateThreadTest extends HttpTestCase
     /** @test */
     public function user_one_can_archive_private_thread()
     {
+        $this->logCurrentRequest('api.messenger.threads.destroy', 'PRIVATE');
         $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.threads.destroy', [
@@ -72,6 +75,7 @@ class ArchivePrivateThreadTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_archive_private_thread()
     {
+        $this->logCurrentRequest('api.messenger.threads.destroy', 'PRIVATE');
         $this->actingAs($this->createJaneSmith());
 
         $this->deleteJson(route('api.messenger.threads.destroy', [

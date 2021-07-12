@@ -18,6 +18,7 @@ class StatusHeartbeatTest extends HttpTestCase
     /** @test */
     public function messenger_heartbeat_online()
     {
+        $this->logCurrentRequest('api.messenger.heartbeat');
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.heartbeat'), [
