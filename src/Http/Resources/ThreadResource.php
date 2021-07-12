@@ -5,11 +5,9 @@ namespace RTippin\Messenger\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Http\Collections\CallCollection;
 use RTippin\Messenger\Http\Collections\MessageCollection;
 use RTippin\Messenger\Http\Collections\ParticipantCollection;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Repositories\CallRepository;
 use RTippin\Messenger\Repositories\MessageRepository;
 
 class ThreadResource extends JsonResource
@@ -35,24 +33,18 @@ class ThreadResource extends JsonResource
     private bool $addMessages;
 
     /**
-     * @var false
-     */
-    private bool $addCalls;
-
-    /**
      * ThreadResource constructor.
      *
      * @param Thread $thread
      * @param bool $addSystemFeatures
      * @param bool $addParticipants
      * @param bool $addMessages
-     * @param bool $addCalls
+     * TODO - Remove deprecated {relations?} from loader route.
      */
     public function __construct(Thread $thread,
                                 bool $addSystemFeatures = false,
                                 bool $addParticipants = false,
-                                bool $addMessages = false,
-                                bool $addCalls = false)
+                                bool $addMessages = false)
     {
         parent::__construct($thread);
 
@@ -60,7 +52,6 @@ class ThreadResource extends JsonResource
         $this->addSystemFeatures = $addSystemFeatures;
         $this->addParticipants = $addParticipants;
         $this->addMessages = $addMessages;
-        $this->addCalls = $addCalls;
     }
 
     /**
@@ -114,9 +105,6 @@ class ThreadResource extends JsonResource
                 ),
                 'messages' => $this->when($this->addMessages,
                     fn () => $this->addMessages()
-                ),
-                'calls' => $this->when($this->addCalls,
-                    fn () => $this->addCalls()
                 ),
                 'latest_message' => $this->addRecentMessage(),
             ],
@@ -175,18 +163,6 @@ class ThreadResource extends JsonResource
     {
         return (new ParticipantCollection(
             $this->thread->participants,
-            $this->thread
-        ))->resolve();
-    }
-
-    /**
-     * @return array|null
-     */
-    private function addCalls(): ?array
-    {
-        return (new CallCollection(
-            app(CallRepository::class)
-                ->getThreadCallsIndex($this->thread),
             $this->thread
         ))->resolve();
     }

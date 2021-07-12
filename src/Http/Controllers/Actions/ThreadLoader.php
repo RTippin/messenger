@@ -13,7 +13,7 @@ class ThreadLoader
     use AuthorizesRequests;
 
     /**
-     * Default eager load relations on thread.
+     * Eager load relations on thread.
      */
     const LOAD = [
         'latestMessage.owner',
@@ -22,57 +22,28 @@ class ThreadLoader
     ];
 
     /**
-     * Display the specified thread. Load relations / actions if specified in route.
-     * Available flags : (mark-read|participants|messages).
+     * Display the specified thread with loaded relations for messages
+     * and participants. We will also mark the thread as read.
      *
+     * @param MarkParticipantRead $read
      * @param Thread $thread
-     * @param null|string $relations
      * @return ThreadResource
      * @throws AuthorizationException
      */
-    public function __invoke(Thread $thread, ?string $relations = null): ThreadResource
+    public function __invoke(MarkParticipantRead $read, Thread $thread): ThreadResource
     {
         $this->authorize('view', $thread);
 
-        if ($relations) {
-            return $this->withRelations($thread, $relations);
-        }
-
-        return new ThreadResource($thread->load(self::LOAD), true);
-    }
-
-    /**
-     * @param Thread $thread
-     * @param null|string $relations
-     * @return ThreadResource
-     */
-    private function withRelations(Thread $thread, ?string $relations): ThreadResource
-    {
-        $options = array_filter(
-            explode('|', $relations)
+        $read->execute(
+            $thread->currentParticipant(),
+            $thread
         );
-
-        if (in_array('mark-read', $options)) {
-            $this->markRead($thread);
-        }
 
         return new ThreadResource(
             $thread->load(self::LOAD),
             true,
-            in_array('participants', $options),
-            in_array('messages', $options),
-            in_array('calls', $options)
-        );
-    }
-
-    /**
-     * @param Thread $thread
-     */
-    private function markRead(Thread $thread): void
-    {
-        app(MarkParticipantRead::class)->execute(
-            $thread->currentParticipant(),
-            $thread
+            true,
+            true
         );
     }
 }

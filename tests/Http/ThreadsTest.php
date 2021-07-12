@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\HttpTestCase;
@@ -146,6 +147,40 @@ class ThreadsTest extends HttpTestCase
             ->assertSuccessful()
             ->assertJson([
                 'unread' => false,
+            ]);
+    }
+
+    /** @test */
+    public function non_participant_forbidden_to_view_thread_with_loader()
+    {
+        $this->logCurrentRequest('api.messenger.threads.loader');
+        $thread = $this->createGroupThread($this->tippin);
+        $this->actingAs($this->doe);
+
+        $this->getJson(route('api.messenger.threads.loader', [
+            'thread' => $thread->id,
+        ]))
+            ->assertForbidden();
+    }
+
+    /** @test */
+    public function user_view_thread_with_loader()
+    {
+        $this->logCurrentRequest('api.messenger.threads.loader');
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        Message::factory()->for($thread)->owner($this->tippin)->count(2)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.loader', [
+            'thread' => $thread->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJsonStructure([
+                'resources' => [
+                    'latest_message',
+                    'messages',
+                    'participants',
+                ],
             ]);
     }
 }
