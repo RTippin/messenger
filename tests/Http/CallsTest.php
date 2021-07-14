@@ -12,7 +12,7 @@ class CallsTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_view_calls()
     {
-        $this->logCurrentRequest('api.messenger.threads.calls.index');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->create();
         $this->actingAs($this->tippin);
 
@@ -25,7 +25,7 @@ class CallsTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_view_call()
     {
-        $this->logCurrentRequest('api.messenger.threads.calls.show');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->create();
         $call = Call::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);
@@ -40,7 +40,7 @@ class CallsTest extends HttpTestCase
     /** @test */
     public function user_can_view_calls()
     {
-        $this->logCurrentRequest('api.messenger.threads.calls.index');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         Call::factory()->for($thread)->owner($this->tippin)->ended()->create();
         $this->actingAs($this->tippin);
@@ -55,7 +55,7 @@ class CallsTest extends HttpTestCase
     /** @test */
     public function user_can_view_paginated_calls()
     {
-        $this->logCurrentRequest('api.messenger.threads.calls.page');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         Call::factory()->for($thread)->owner($this->tippin)->ended()->count(2)->create();
         $call = Call::factory()->for($thread)->owner($this->tippin)->ended()->create();
@@ -74,7 +74,7 @@ class CallsTest extends HttpTestCase
     /** @test */
     public function user_can_view_call()
     {
-        $this->logCurrentRequest('api.messenger.threads.calls.show');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $call = Call::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -92,7 +92,7 @@ class CallsTest extends HttpTestCase
     /** @test */
     public function user_can_view_call_participants()
     {
-        $this->logCurrentRequest('api.messenger.threads.calls.participants.index');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $call = $this->createCall($thread, $this->tippin);
         $this->actingAs($this->tippin);
@@ -108,7 +108,7 @@ class CallsTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_view_call_participants()
     {
-        $this->logCurrentRequest('api.messenger.threads.calls.participants.index');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->create();
         $call = Call::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);
@@ -123,7 +123,7 @@ class CallsTest extends HttpTestCase
     /** @test */
     public function user_can_view_call_participant()
     {
-        $this->logCurrentRequest('api.messenger.threads.calls.participants.show');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $call = Call::factory()->for($thread)->owner($this->tippin)->create();
         $participant = CallParticipant::factory()->for($call)->owner($this->tippin)->create();
@@ -143,7 +143,7 @@ class CallsTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_view_call_participant()
     {
-        $this->logCurrentRequest('api.messenger.threads.calls.participants.show');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $call = Call::factory()->for($thread)->owner($this->tippin)->create();
         $participant = CallParticipant::factory()->for($call)->owner($this->tippin)->create();

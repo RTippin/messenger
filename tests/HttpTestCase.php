@@ -13,7 +13,7 @@ class HttpTestCase extends FeatureTestCase
      * Set TRUE to run all http test with
      * logging responses to file enabled.
      */
-    protected bool $withApiLogging = false;
+    protected bool $withApiLogging = true;
 
     /**
      * Logs the current request/payload to the json file.
@@ -85,15 +85,16 @@ class HttpTestCase extends FeatureTestCase
         $response = parent::json($method, $uri, $data, $headers);
 
         if ($this->shouldLogCurrentRequest) {
-            $router = app(Router::class);
+            $currentRoute = app(Router::class)->getCurrentRoute();
             $status = $this->statusOverride
                 ? $response->getStatusCode().'_'.$this->statusOverride
                 : $response->getStatusCode();
 
             $this->storeResponse(
-                $router->getCurrentRoute()->getName(),
-                $router->getCurrentRoute()->uri(),
+                $currentRoute->getName(),
+                $currentRoute->uri(),
                 $response->getContent(),
+                implode('|', $currentRoute->methods()),
                 $method,
                 $status,
                 $data,
@@ -108,6 +109,7 @@ class HttpTestCase extends FeatureTestCase
      * @param string $routeName
      * @param string $uri
      * @param string $response
+     * @param string $methods
      * @param string $verb
      * @param string $status
      * @param array $payload
@@ -116,6 +118,7 @@ class HttpTestCase extends FeatureTestCase
     private function storeResponse(string $routeName,
                                    string $uri,
                                    string $response,
+                                   string $methods,
                                    string $verb,
                                    string $status,
                                    array $payload,
@@ -124,6 +127,7 @@ class HttpTestCase extends FeatureTestCase
         $file = __DIR__.'/../docs/generated/responses.json';
         $responses = json_decode(file_get_contents($file), true);
         $responses[$routeName]['uri'] = $uri;
+        $responses[$routeName]['methods'] = $methods;
 
         if ($originalStatus === 422) {
             if (count($payload)) {
@@ -154,6 +158,10 @@ class HttpTestCase extends FeatureTestCase
         foreach ($payload as $key => $item) {
             if ($item instanceof UploadedFile) {
                 $payload[$key] = '(binary) - '.$item->getClientMimeType().' - '.$this->formatBytes($item->getSize());
+            }
+
+            if (is_string($item) && mb_strlen($item) > 1000) {
+                $payload[$key] = '(string) '.mb_strlen($item).' characters.';
             }
         }
 

@@ -14,7 +14,7 @@ class DocumentMessageTest extends HttpTestCase
     /** @test */
     public function user_can_view_document_messages()
     {
-        $this->logCurrentRequest('api.messenger.threads.documents.index');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         Message::factory()->for($thread)->owner($this->tippin)->document()->count(2)->create();
@@ -30,7 +30,7 @@ class DocumentMessageTest extends HttpTestCase
     /** @test */
     public function user_can_view_paginated_document_messages()
     {
-        $this->logCurrentRequest('api.messenger.threads.documents.page');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         Message::factory()->for($thread)->owner($this->tippin)->document()->count(2)->create();
@@ -49,7 +49,7 @@ class DocumentMessageTest extends HttpTestCase
     /** @test */
     public function user_can_send_document_message()
     {
-        $this->logCurrentRequest('api.messenger.threads.documents.store');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
@@ -72,7 +72,7 @@ class DocumentMessageTest extends HttpTestCase
     /** @test */
     public function user_can_send_document_message_with_extra()
     {
-        $this->logCurrentRequest('api.messenger.threads.documents.store', 'EXTRA');
+        $this->logCurrentRequest('EXTRA');
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
@@ -130,7 +130,7 @@ class DocumentMessageTest extends HttpTestCase
     /** @test */
     public function user_forbidden_to_send_document_message_when_disabled_from_config()
     {
-        $this->logCurrentRequest('api.messenger.threads.documents.store');
+        $this->logCurrentRequest();
         Messenger::setMessageDocumentUpload(false);
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
@@ -172,6 +172,7 @@ class DocumentMessageTest extends HttpTestCase
      */
     public function send_document_message_fails_document_validation($documentValue)
     {
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);

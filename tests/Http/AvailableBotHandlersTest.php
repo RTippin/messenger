@@ -16,7 +16,7 @@ class AvailableBotHandlersTest extends HttpTestCase
     /** @test */
     public function admin_can_view_available_handlers()
     {
-        $this->logCurrentRequest('api.messenger.threads.bots.handlers');
+        $this->logCurrentRequest();
         MessengerBots::setHandlers([FunBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
@@ -72,7 +72,7 @@ class AvailableBotHandlersTest extends HttpTestCase
     /** @test */
     public function participant_without_permission_forbidden_to_view_available_handlers()
     {
-        $this->logCurrentRequest('api.messenger.threads.bots.handlers');
+        $this->logCurrentRequest();
         MessengerBots::setHandlers([FunBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();

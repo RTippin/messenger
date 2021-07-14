@@ -17,7 +17,7 @@ class BotActionsTest extends HttpTestCase
     /** @test */
     public function admin_can_view_actions()
     {
-        $this->logCurrentRequest('api.messenger.threads.bots.actions.index');
+        $this->logCurrentRequest();
         MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
@@ -35,7 +35,7 @@ class BotActionsTest extends HttpTestCase
     /** @test */
     public function forbidden_to_view_actions_when_disabled_in_config()
     {
-        $this->logCurrentRequest('api.messenger.threads.bots.actions.index');
+        $this->logCurrentRequest();
         Messenger::setBots(false);
         MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
@@ -135,7 +135,7 @@ class BotActionsTest extends HttpTestCase
     /** @test */
     public function admin_can_view_action()
     {
-        $this->logCurrentRequest('api.messenger.threads.bots.actions.show');
+        $this->logCurrentRequest();
         MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
@@ -156,7 +156,7 @@ class BotActionsTest extends HttpTestCase
     /** @test */
     public function forbidden_to_view_action_when_disabled_in_config()
     {
-        $this->logCurrentRequest('api.messenger.threads.bots.actions.show');
+        $this->logCurrentRequest();
         Messenger::setBots(false);
         MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
@@ -213,7 +213,7 @@ class BotActionsTest extends HttpTestCase
     /** @test */
     public function admin_can_store_action()
     {
-        $this->logCurrentRequest('api.messenger.threads.bots.actions.store');
+        $this->logCurrentRequest();
         MessengerBots::setHandlers([FunBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
@@ -305,7 +305,7 @@ class BotActionsTest extends HttpTestCase
     /** @test */
     public function forbidden_to_store_action_when_bots_disabled_from_config()
     {
-        $this->logCurrentRequest('api.messenger.threads.bots.actions.store');
+        $this->logCurrentRequest();
         MessengerBots::setHandlers([SillyBotHandler::class]);
         Messenger::setBots(false);
         $thread = $this->createGroupThread($this->tippin);
@@ -352,7 +352,7 @@ class BotActionsTest extends HttpTestCase
     /** @test */
     public function admin_can_remove_action()
     {
-        $this->logCurrentRequest('api.messenger.threads.bots.actions.destroy');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $action = BotAction::factory()->for($bot)->owner($this->tippin)->create();
@@ -386,7 +386,7 @@ class BotActionsTest extends HttpTestCase
     /** @test */
     public function participant_without_permission_forbidden_to_remove_action()
     {
-        $this->logCurrentRequest('api.messenger.threads.bots.actions.destroy');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $action = BotAction::factory()->for($bot)->owner($this->tippin)->create();
@@ -437,7 +437,7 @@ class BotActionsTest extends HttpTestCase
     /** @test */
     public function admin_can_update_action()
     {
-        $this->logCurrentRequest('api.messenger.threads.bots.actions.update');
+        $this->logCurrentRequest();
         MessengerBots::setHandlers([SillyBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
@@ -492,7 +492,7 @@ class BotActionsTest extends HttpTestCase
     /** @test */
     public function forbidden_to_update_action_when_disabled_in_config()
     {
-        $this->logCurrentRequest('api.messenger.threads.bots.actions.update');
+        $this->logCurrentRequest();
         MessengerBots::setHandlers([SillyBotHandler::class]);
         Messenger::setBots(false);
         $thread = $this->createGroupThread($this->tippin);

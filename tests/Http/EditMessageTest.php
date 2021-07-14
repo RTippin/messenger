@@ -2,6 +2,8 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageEdit;
@@ -11,10 +13,12 @@ use RTippin\Messenger\Tests\HttpTestCase;
 
 class EditMessageTest extends HttpTestCase
 {
+    use WithFaker;
+
     /** @test */
     public function non_participant_is_forbidden()
     {
-        $this->logCurrentRequest('api.messenger.threads.messages.history');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);
@@ -59,7 +63,7 @@ class EditMessageTest extends HttpTestCase
     /** @test */
     public function user_can_view_message_edits()
     {
-        $this->logCurrentRequest('api.messenger.threads.messages.history');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $message = Message::factory()->for($thread)->owner($this->tippin)->edited()->create();
         MessageEdit::factory()->for($message)->count(2)->create();
@@ -76,7 +80,7 @@ class EditMessageTest extends HttpTestCase
     /** @test */
     public function owner_can_edit_message()
     {
-        $this->logCurrentRequest('api.messenger.threads.messages.update');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $message = Message::factory()->for($thread)->owner($this->tippin)->edited()->create();
         $this->actingAs($this->tippin);
@@ -98,7 +102,7 @@ class EditMessageTest extends HttpTestCase
     /** @test */
     public function non_owner_forbidden_to_update_message()
     {
-        $this->logCurrentRequest('api.messenger.threads.messages.update');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);
@@ -192,5 +196,56 @@ class EditMessageTest extends HttpTestCase
             'message' => 'Edited Message',
         ])
             ->assertForbidden();
+    }
+
+    /** @test */
+    public function edit_message_cannot_be_more_than_5k_characters()
+    {
+        $this->logCurrentRequest();
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->edited()->create();
+        $this->actingAs($this->tippin);
+
+        $this->putJson(route('api.messenger.threads.messages.update', [
+            'thread' => $thread->id,
+            'message' => $message->id,
+        ]), [
+            'message' => $this->faker()->realText(6000),
+        ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('message');
+    }
+
+    /**
+     * @test
+     * @dataProvider editFailsValidation
+     * @param $value
+     */
+    public function edit_message_fails_validation($value)
+    {
+        $this->logCurrentRequest();
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->edited()->create();
+        $this->actingAs($this->tippin);
+
+        $this->putJson(route('api.messenger.threads.messages.update', [
+            'thread' => $thread->id,
+            'message' => $message->id,
+        ]), [
+            'message' => $value,
+        ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('message');
+    }
+
+    public function editFailsValidation(): array
+    {
+        return [
+            'Edit cannot be empty' => [''],
+            'Edit cannot be integer' => [5],
+            'Edit cannot be null' => [null],
+            'Edit cannot be an array' => [[1, 2]],
+            'Edit cannot be an image' => [UploadedFile::fake()->image('picture.png')],
+        ];
     }
 }
