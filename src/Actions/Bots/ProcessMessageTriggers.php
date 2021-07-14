@@ -141,6 +141,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
                         $action,
                         $this->getMessage(),
                         $trigger,
+                        $this->isGroupAdmin,
                         $this->senderIp
                     )
                     ->handle();

@@ -64,14 +64,16 @@ interface ActionHandler
      * @param BotAction $action
      * @param Message $message
      * @param string|null $matchingTrigger
+     * @param bool $isGroupAdmin
      * @param string|null $senderIp
      * @return $this
      */
     public function setDataForMessage(Thread $thread,
                                       BotAction $action,
                                       Message $message,
-                                      ?string $matchingTrigger,
-                                      ?string $senderIp);
+                                      ?string $matchingTrigger = null,
+                                      bool $isGroupAdmin = false,
+                                      ?string $senderIp = null);
 
     /**
      * Should the handler not perform an action, you may call this to instruct

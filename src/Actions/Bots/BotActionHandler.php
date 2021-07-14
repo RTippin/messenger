@@ -51,6 +51,11 @@ abstract class BotActionHandler implements ActionHandler
     protected ?string $matchingTrigger = null;
 
     /**
+     * @var bool
+     */
+    protected bool $isGroupAdmin = false;
+
+    /**
      * @var string|null
      */
     protected ?string $senderIp = null;
@@ -110,14 +115,16 @@ abstract class BotActionHandler implements ActionHandler
     public function setDataForMessage(Thread $thread,
                                       BotAction $action,
                                       Message $message,
-                                      ?string $matchingTrigger,
-                                      ?string $senderIp): self
+                                      ?string $matchingTrigger = null,
+                                      bool $isGroupAdmin = false,
+                                      ?string $senderIp = null): self
     {
         $this->thread = $thread;
         $this->action = $action;
         $this->bot = $action->bot;
         $this->message = $message;
         $this->matchingTrigger = $matchingTrigger;
+        $this->isGroupAdmin = $isGroupAdmin;
         $this->senderIp = $senderIp;
 
         return $this;
