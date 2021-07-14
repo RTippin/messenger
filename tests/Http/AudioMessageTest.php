@@ -14,7 +14,7 @@ class AudioMessageTest extends HttpTestCase
     /** @test */
     public function user_can_view_audio_messages()
     {
-        $this->logCurrentRequest('api.messenger.threads.audio.index');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         Message::factory()->for($thread)->owner($this->tippin)->audio()->count(2)->create();
@@ -30,7 +30,7 @@ class AudioMessageTest extends HttpTestCase
     /** @test */
     public function user_can_view_paginated_audio_messages()
     {
-        $this->logCurrentRequest('api.messenger.threads.audio.page');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         Message::factory()->for($thread)->owner($this->tippin)->audio()->count(2)->create();
@@ -49,7 +49,7 @@ class AudioMessageTest extends HttpTestCase
     /** @test */
     public function user_can_send_audio_message()
     {
-        $this->logCurrentRequest('api.messenger.threads.audio.store');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
@@ -72,7 +72,7 @@ class AudioMessageTest extends HttpTestCase
     /** @test */
     public function user_can_send_audio_message_with_extra()
     {
-        $this->logCurrentRequest('api.messenger.threads.audio.store', 'EXTRA');
+        $this->logCurrentRequest('EXTRA');
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);
@@ -130,7 +130,7 @@ class AudioMessageTest extends HttpTestCase
     /** @test */
     public function user_forbidden_to_send_audio_message_when_disabled_from_config()
     {
-        $this->logCurrentRequest('api.messenger.threads.audio.store');
+        $this->logCurrentRequest();
         Messenger::setMessageAudioUpload(false);
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
@@ -172,6 +172,7 @@ class AudioMessageTest extends HttpTestCase
      */
     public function send_audio_message_fails_audio_validation($audioValue)
     {
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->actingAs($this->tippin);

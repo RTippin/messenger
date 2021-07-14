@@ -96,7 +96,8 @@ class HttpTestCase extends FeatureTestCase
                 $response->getContent(),
                 $method,
                 $status,
-                $data
+                $data,
+                $response->getStatusCode()
             );
         }
 
@@ -110,23 +111,37 @@ class HttpTestCase extends FeatureTestCase
      * @param string $verb
      * @param string $status
      * @param array $payload
+     * @param int $originalStatus
      */
     private function storeResponse(string $routeName,
-                                     string $uri,
-                                     string $response,
-                                     string $verb,
-                                     string $status,
-                                     array $payload): void
+                                   string $uri,
+                                   string $response,
+                                   string $verb,
+                                   string $status,
+                                   array $payload,
+                                   int $originalStatus): void
     {
         $file = __DIR__.'/../docs/generated/responses.json';
         $responses = json_decode(file_get_contents($file), true);
         $responses[$routeName]['uri'] = $uri;
 
-        if (count($payload)) {
-            $responses[$routeName][$verb][$status]['payload'] = $this->sanitizePayload($payload);
+        if ($originalStatus === 422) {
+            if (count($payload)) {
+                $payload = $this->sanitizePayload($payload);
+            }
+
+            $responses[$routeName][$verb][$status][] = [
+                'payload' => $payload,
+                'response' => json_decode($response, true),
+            ];
+        } else {
+            if (count($payload)) {
+                $responses[$routeName][$verb][$status]['payload'] = $this->sanitizePayload($payload);
+            }
+
+            $responses[$routeName][$verb][$status]['response'] = json_decode($response, true);
         }
 
-        $responses[$routeName][$verb][$status]['response'] = json_decode($response, true);
         file_put_contents($file, json_encode($responses));
     }
 
@@ -138,10 +153,26 @@ class HttpTestCase extends FeatureTestCase
     {
         foreach ($payload as $key => $item) {
             if ($item instanceof UploadedFile) {
-                $payload[$key] = '(binary)';
+                $payload[$key] = '(binary) - '.$item->getClientMimeType().' - '.$this->formatBytes($item->getSize());
             }
         }
 
         return $payload;
+    }
+
+    /**
+     * @param int $size
+     * @return int|string
+     */
+    private static function formatBytes(int $size)
+    {
+        if ($size > 0) {
+            $base = log($size) / log(1024);
+            $suffixes = [' bytes', ' KB', ' MB', ' GB', ' TB'];
+
+            return round(pow(1024, $base - floor($base)), 2).$suffixes[floor($base)];
+        }
+
+        return $size;
     }
 }
