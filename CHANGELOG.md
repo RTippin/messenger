@@ -3,6 +3,16 @@
 
 ---
 
+### [UNRELEASED]
+
+#### Added
+- `message_size_limit` to our config. ([bb87b51](https://github.com/RTippin/messenger/commit/bb87b51e7395624d3c35afd16fbbce015e4a3a5d))
+
+#### Changed
+- Implemented `message_size_limit` to any message send or edit message request.
+
+---
+
 ### [v0.41 (07-06-2021)]
 
 #### Added
