@@ -11,7 +11,6 @@ class AddParticipantsTest extends HttpTestCase
     /** @test */
     public function forbidden_to_view_add_participants_on_private_thread()
     {
-        $this->logCurrentRequest('api.messenger.threads.add.participants', 'PRIVATE');
         $thread = Thread::factory()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -25,7 +24,7 @@ class AddParticipantsTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_view_add_participants()
     {
-        $this->logCurrentRequest('api.messenger.threads.add.participants');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $this->actingAs($this->developers);
 
@@ -90,7 +89,7 @@ class AddParticipantsTest extends HttpTestCase
     /** @test */
     public function admin_can_view_add_participants()
     {
-        $this->logCurrentRequest('api.messenger.threads.add.participants');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->createFriends($this->tippin, $this->doe);
@@ -111,7 +110,7 @@ class AddParticipantsTest extends HttpTestCase
     /** @test */
     public function admin_can_add_many_participants()
     {
-        $this->logCurrentRequest('api.messenger.threads.participants.store');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->createFriends($this->tippin, $this->doe);
@@ -139,7 +138,7 @@ class AddParticipantsTest extends HttpTestCase
     /** @test */
     public function admin_forbidden_to_add_many_participants_when_thread_locked()
     {
-        $this->logCurrentRequest('api.messenger.threads.participants.store');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->locked()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $this->createFriends($this->tippin, $this->doe);

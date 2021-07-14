@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Routing\Router;
 use Illuminate\Testing\TestResponse;
 
 class HttpTestCase extends FeatureTestCase
@@ -20,11 +21,6 @@ class HttpTestCase extends FeatureTestCase
      * @var bool
      */
     private bool $shouldLogCurrentRequest = false;
-
-    /**
-     * @var string|null
-     */
-    private ?string $currentRouteName = null;
 
     /**
      * @var string|null
@@ -59,7 +55,6 @@ class HttpTestCase extends FeatureTestCase
     protected function tearDown(): void
     {
         $this->shouldLogCurrentRequest = false;
-        $this->currentRouteName = null;
         $this->statusOverride = null;
 
         parent::tearDown();
@@ -68,14 +63,12 @@ class HttpTestCase extends FeatureTestCase
     /**
      * Call this method inside any http tests to instruct us to log the response.
      *
-     * @param string $routeName
      * @param string|null $status
      */
-    public function logCurrentRequest(string $routeName, ?string $status = null): void
+    public function logCurrentRequest(?string $status = null): void
     {
         if ($this->withApiLogging) {
             $this->shouldLogCurrentRequest = true;
-            $this->currentRouteName = $routeName;
             $this->statusOverride = $status;
         }
     }
@@ -92,13 +85,14 @@ class HttpTestCase extends FeatureTestCase
         $response = parent::json($method, $uri, $data, $headers);
 
         if ($this->shouldLogCurrentRequest) {
+            $router = app(Router::class);
             $status = $this->statusOverride
                 ? $response->getStatusCode().'_'.$this->statusOverride
                 : $response->getStatusCode();
 
             $this->storeResponse(
-                $this->currentRouteName,
-                $uri,
+                $router->getCurrentRoute()->getName(),
+                $router->getCurrentRoute()->uri(),
                 $response->getContent(),
                 $method,
                 $status,
@@ -126,7 +120,7 @@ class HttpTestCase extends FeatureTestCase
     {
         $file = __DIR__.'/../docs/generated/responses.json';
         $responses = json_decode(file_get_contents($file), true);
-        $responses[$routeName][$verb][$status]['uri'] = $uri;
+        $responses[$routeName]['uri'] = $uri;
 
         if (count($payload)) {
             $responses[$routeName][$verb][$status]['payload'] = $this->sanitizePayload($payload);
