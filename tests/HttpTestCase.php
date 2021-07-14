@@ -145,6 +145,8 @@ class HttpTestCase extends FeatureTestCase
         } else {
             if (count($payload)) {
                 $responses[$routeName][$verb][$status]['payload'] = $this->sanitizePayload($payload);
+            } elseif (in_array($verb, ['POST', 'PUT']) && ! count($payload)) {
+                $responses[$routeName][$verb][$status]['payload'] = ['No Payload'];
             }
 
             $responses[$routeName][$verb][$status]['response'] = json_decode($response, true);

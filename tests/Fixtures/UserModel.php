@@ -31,6 +31,11 @@ class UserModel extends User implements MessengerProvider, Searchable
 
     protected $guarded = [];
 
+    protected $hidden = [
+        'password',
+        'email',
+    ];
+
     public static function boot()
     {
         parent::boot();
