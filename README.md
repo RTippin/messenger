@@ -512,6 +512,18 @@ class AppServiceProvider extends ServiceProvider
 
 ---
 
+### Message Size Limit
+
+***Default:***
+
+```php
+'message_size_limit' => env('MESSENGER_MESSAGE_SIZE_LIMIT', 5000),
+```
+
+- Set the max character limit for sending messages (message body). This also applies when editing a message.
+
+---
+
 ### Editable Messages
 
 ***Default:***
