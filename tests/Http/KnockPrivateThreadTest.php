@@ -13,7 +13,6 @@ class KnockPrivateThreadTest extends HttpTestCase
     /** @test */
     public function user_can_knock_at_thread()
     {
-        $this->logCurrentRequest('api.messenger.threads.knock', 'PRIVATE');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
@@ -39,7 +38,7 @@ class KnockPrivateThreadTest extends HttpTestCase
     /** @test */
     public function user_forbidden_to_knock_at_thread_when_timeout_exist()
     {
-        $this->logCurrentRequest('api.messenger.threads.knock', 'PRIVATE');
+        $this->logCurrentRequest('PRIVATE');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         Cache::put("knock.knock.$thread->id.{$this->tippin->getKey()}", true);
         $this->actingAs($this->tippin);

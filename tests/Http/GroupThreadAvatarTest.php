@@ -13,7 +13,7 @@ class GroupThreadAvatarTest extends HttpTestCase
     /** @test */
     public function non_admin_forbidden_to_update_group_avatar()
     {
-        $this->logCurrentRequest('api.messenger.threads.avatar.store');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -29,7 +29,7 @@ class GroupThreadAvatarTest extends HttpTestCase
     /** @test */
     public function non_admin_forbidden_to_destroy_group_avatar()
     {
-        $this->logCurrentRequest('api.messenger.threads.avatar.destroy');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create(['image' => 'avatar.jpg']);
         Participant::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -58,7 +58,7 @@ class GroupThreadAvatarTest extends HttpTestCase
     /** @test */
     public function admin_can_store_group_avatar()
     {
-        $this->logCurrentRequest('api.messenger.threads.avatar.store');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -88,7 +88,7 @@ class GroupThreadAvatarTest extends HttpTestCase
     /** @test */
     public function admin_can_destroy_group_avatar()
     {
-        $this->logCurrentRequest('api.messenger.threads.avatar.destroy');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -166,6 +166,7 @@ class GroupThreadAvatarTest extends HttpTestCase
      */
     public function group_avatar_upload_fails_validations($avatarValue)
     {
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 

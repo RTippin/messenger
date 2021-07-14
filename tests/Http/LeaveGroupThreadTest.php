@@ -11,7 +11,7 @@ class LeaveGroupThreadTest extends HttpTestCase
     /** @test */
     public function non_admin_can_leave()
     {
-        $this->logCurrentRequest('api.messenger.threads.leave');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $this->actingAs($this->doe);
 
@@ -51,7 +51,7 @@ class LeaveGroupThreadTest extends HttpTestCase
     /** @test */
     public function admin_cannot_leave_if_only_admin_and_not_only_participant()
     {
-        $this->logCurrentRequest('api.messenger.threads.leave', 'ONLY_ADMIN');
+        $this->logCurrentRequest('ONLY_ADMIN');
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
@@ -89,7 +89,7 @@ class LeaveGroupThreadTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_leave()
     {
-        $this->logCurrentRequest('api.messenger.threads.leave');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->doe);
 

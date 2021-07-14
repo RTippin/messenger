@@ -133,7 +133,7 @@ class SearchTest extends HttpTestCase
     /** @test */
     public function multiple_providers_search_queries_separated_by_space_returns_multiple_results()
     {
-        $this->logCurrentRequest('api.messenger.search');
+        $this->logCurrentRequest();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.search', [

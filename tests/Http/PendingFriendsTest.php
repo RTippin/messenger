@@ -21,7 +21,7 @@ class PendingFriendsTest extends HttpTestCase
     /** @test */
     public function user_has_pending_friends()
     {
-        $this->logCurrentRequest('api.messenger.friends.pending.index');
+        $this->logCurrentRequest();
         PendingFriend::factory()->providers($this->doe, $this->tippin)->create();
         $this->actingAs($this->tippin);
 
@@ -33,7 +33,7 @@ class PendingFriendsTest extends HttpTestCase
     /** @test */
     public function user_can_view_pending_friend()
     {
-        $this->logCurrentRequest('api.messenger.friends.pending.show');
+        $this->logCurrentRequest();
         $pending = PendingFriend::factory()->providers($this->doe, $this->tippin)->create();
         $this->actingAs($this->tippin);
 
@@ -49,7 +49,7 @@ class PendingFriendsTest extends HttpTestCase
     /** @test */
     public function user_can_deny_pending_request()
     {
-        $this->logCurrentRequest('api.messenger.friends.pending.destroy');
+        $this->logCurrentRequest();
         $pending = PendingFriend::factory()->providers($this->tippin, $this->doe)->create();
         $this->actingAs($this->doe);
 
@@ -62,7 +62,7 @@ class PendingFriendsTest extends HttpTestCase
     /** @test */
     public function forbidden_to_deny_sent_request()
     {
-        $this->logCurrentRequest('api.messenger.friends.pending.destroy');
+        $this->logCurrentRequest();
         $sent = SentFriend::factory()->providers($this->tippin, $this->doe)->create();
         $this->actingAs($this->tippin);
 
@@ -75,7 +75,7 @@ class PendingFriendsTest extends HttpTestCase
     /** @test */
     public function user_can_accept_pending_request()
     {
-        $this->logCurrentRequest('api.messenger.friends.pending.update');
+        $this->logCurrentRequest();
         $pending = PendingFriend::factory()->providers($this->tippin, $this->doe)->create();
         $this->actingAs($this->doe);
 
@@ -88,7 +88,7 @@ class PendingFriendsTest extends HttpTestCase
     /** @test */
     public function forbidden_to_accept_sent_request()
     {
-        $this->logCurrentRequest('api.messenger.friends.pending.update');
+        $this->logCurrentRequest();
         $sent = SentFriend::factory()->providers($this->tippin, $this->doe)->create();
         $this->actingAs($this->tippin);
 

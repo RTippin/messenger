@@ -14,7 +14,7 @@ class ImageMessageTest extends HttpTestCase
     /** @test */
     public function user_can_view_image_messages()
     {
-        $this->logCurrentRequest('api.messenger.threads.images.index');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         Message::factory()->for($thread)->owner($this->tippin)->image()->count(2)->create();
@@ -30,7 +30,7 @@ class ImageMessageTest extends HttpTestCase
     /** @test */
     public function user_can_view_paginated_image_messages()
     {
-        $this->logCurrentRequest('api.messenger.threads.images.page');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         Message::factory()->for($thread)->owner($this->tippin)->image()->count(2)->create();
@@ -49,7 +49,7 @@ class ImageMessageTest extends HttpTestCase
     /** @test */
     public function user_can_send_image_message()
     {
-        $this->logCurrentRequest('api.messenger.threads.images.store');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -71,7 +71,7 @@ class ImageMessageTest extends HttpTestCase
     /** @test */
     public function user_can_send_image_message_with_extra()
     {
-        $this->logCurrentRequest('api.messenger.threads.images.store', 'EXTRA');
+        $this->logCurrentRequest('EXTRA');
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -126,7 +126,7 @@ class ImageMessageTest extends HttpTestCase
     /** @test */
     public function user_forbidden_to_send_image_message_when_disabled_from_config()
     {
-        $this->logCurrentRequest('api.messenger.threads.images.store');
+        $this->logCurrentRequest();
         Messenger::setMessageImageUpload(false);
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
@@ -166,6 +166,7 @@ class ImageMessageTest extends HttpTestCase
      */
     public function send_image_message_upload_fails_validation($imageValue)
     {
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 

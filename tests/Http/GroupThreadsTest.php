@@ -9,7 +9,7 @@ class GroupThreadsTest extends HttpTestCase
     /** @test */
     public function user_has_one_group()
     {
-        $this->logCurrentRequest('api.messenger.groups.index');
+        $this->logCurrentRequest();
         $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -21,7 +21,7 @@ class GroupThreadsTest extends HttpTestCase
     /** @test */
     public function user_can_view_paginated_groups()
     {
-        $this->logCurrentRequest('api.messenger.groups.page');
+        $this->logCurrentRequest();
         $this->createGroupThread($this->tippin);
         $this->createGroupThread($this->tippin);
         $thread = $this->createGroupThread($this->tippin);
@@ -38,7 +38,7 @@ class GroupThreadsTest extends HttpTestCase
     /** @test */
     public function store_group_without_extra_participants()
     {
-        $this->logCurrentRequest('api.messenger.groups.store');
+        $this->logCurrentRequest();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.groups.store'), [
@@ -95,7 +95,7 @@ class GroupThreadsTest extends HttpTestCase
     /** @test */
     public function store_group_with_multiple_providers()
     {
-        $this->logCurrentRequest('api.messenger.groups.store', 'WITH_PARTICIPANTS');
+        $this->logCurrentRequest('WITH_PARTICIPANTS');
         $this->createFriends($this->tippin, $this->doe);
         $this->createFriends($this->tippin, $this->developers);
         $this->actingAs($this->tippin);
@@ -125,6 +125,7 @@ class GroupThreadsTest extends HttpTestCase
      */
     public function store_new_group_checks_subject($subject)
     {
+        $this->logCurrentRequest();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.groups.store'), [
@@ -142,6 +143,7 @@ class GroupThreadsTest extends HttpTestCase
      */
     public function store_new_group_checks_providers($providers, $errors)
     {
+        $this->logCurrentRequest();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.groups.store'), [

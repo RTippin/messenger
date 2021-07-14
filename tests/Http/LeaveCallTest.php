@@ -24,7 +24,7 @@ class LeaveCallTest extends HttpTestCase
     /** @test */
     public function non_call_participant_forbidden_to_leave_call()
     {
-        $this->logCurrentRequest('api.messenger.threads.calls.leave');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $call = Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
         $this->actingAs($this->tippin);
@@ -69,7 +69,7 @@ class LeaveCallTest extends HttpTestCase
     /** @test */
     public function call_participant_can_leave_call()
     {
-        $this->logCurrentRequest('api.messenger.threads.calls.leave');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $call = $this->createCall($thread, $this->tippin);
         $this->actingAs($this->tippin);

@@ -23,7 +23,7 @@ class MarkThreadReadTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_mark_read()
     {
-        $this->logCurrentRequest('api.messenger.threads.mark.read');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->doe);
 
@@ -36,7 +36,7 @@ class MarkThreadReadTest extends HttpTestCase
     /** @test */
     public function unread_participant_can_mark_read()
     {
-        $this->logCurrentRequest('api.messenger.threads.mark.read');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 

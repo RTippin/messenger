@@ -12,7 +12,7 @@ class RemoveMessageEmbedsTest extends HttpTestCase
     /** @test */
     public function non_participant_is_forbidden()
     {
-        $this->logCurrentRequest('api.messenger.threads.messages.embeds.destroy');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
@@ -27,7 +27,7 @@ class RemoveMessageEmbedsTest extends HttpTestCase
     /** @test */
     public function message_owner_can_remove_embeds()
     {
-        $this->logCurrentRequest('api.messenger.threads.messages.embeds.destroy');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->doe)->create();
         $message = Message::factory()->for($thread)->owner($this->doe)->create();

@@ -22,7 +22,7 @@ class ThreadsTest extends HttpTestCase
     /** @test */
     public function user_belongs_to_two_threads()
     {
-        $this->logCurrentRequest('api.messenger.threads.index');
+        $this->logCurrentRequest();
         $this->createPrivateThread($this->tippin, $this->doe);
         $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
@@ -35,7 +35,7 @@ class ThreadsTest extends HttpTestCase
     /** @test */
     public function user_can_view_paginated_threads()
     {
-        $this->logCurrentRequest('api.messenger.threads.page');
+        $this->logCurrentRequest();
         $this->createPrivateThread($this->tippin, $this->doe);
         $this->createGroupThread($this->tippin);
         $thread = $this->createGroupThread($this->tippin);
@@ -52,7 +52,7 @@ class ThreadsTest extends HttpTestCase
     /** @test */
     public function invalid_thread_id_not_found()
     {
-        $this->logCurrentRequest('api.messenger.threads.show');
+        $this->logCurrentRequest();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.show', [
@@ -64,7 +64,7 @@ class ThreadsTest extends HttpTestCase
     /** @test */
     public function user_forbidden_to_view_thread_they_do_not_belong_to()
     {
-        $this->logCurrentRequest('api.messenger.threads.show');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $this->actingAs($this->tippin);
 
@@ -77,7 +77,7 @@ class ThreadsTest extends HttpTestCase
     /** @test */
     public function user_can_view_individual_private_thread()
     {
-        $this->logCurrentRequest('api.messenger.threads.show', 'PRIVATE');
+        $this->logCurrentRequest('PRIVATE');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
@@ -102,7 +102,7 @@ class ThreadsTest extends HttpTestCase
     /** @test */
     public function user_can_view_individual_group_thread()
     {
-        $this->logCurrentRequest('api.messenger.threads.show', 'GROUP');
+        $this->logCurrentRequest('GROUP');
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -121,7 +121,7 @@ class ThreadsTest extends HttpTestCase
     /** @test */
     public function unread_thread_is_unread()
     {
-        $this->logCurrentRequest('api.messenger.threads.is.unread');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -153,7 +153,7 @@ class ThreadsTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_view_thread_with_loader()
     {
-        $this->logCurrentRequest('api.messenger.threads.loader');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->doe);
 
@@ -166,7 +166,7 @@ class ThreadsTest extends HttpTestCase
     /** @test */
     public function user_view_thread_with_loader()
     {
-        $this->logCurrentRequest('api.messenger.threads.loader');
+        $this->logCurrentRequest();
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         Message::factory()->for($thread)->owner($this->tippin)->count(2)->create();
         $this->actingAs($this->tippin);

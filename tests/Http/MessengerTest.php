@@ -12,8 +12,6 @@ class MessengerTest extends HttpTestCase
     /** @test */
     public function guest_is_unauthorized()
     {
-        $this->logCurrentRequest('api.messenger.info');
-
         $this->getJson(route('api.messenger.info'))
             ->assertUnauthorized();
     }
@@ -21,7 +19,7 @@ class MessengerTest extends HttpTestCase
     /** @test */
     public function invalid_provider_is_forbidden()
     {
-        $this->logCurrentRequest('api.messenger.info');
+        $this->logCurrentRequest();
         $this->actingAs(new OtherModel);
 
         $this->getJson(route('api.messenger.info'))
@@ -31,7 +29,7 @@ class MessengerTest extends HttpTestCase
     /** @test */
     public function messenger_info_was_successful()
     {
-        $this->logCurrentRequest('api.messenger.info');
+        $this->logCurrentRequest();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.info'))
@@ -75,7 +73,7 @@ class MessengerTest extends HttpTestCase
     /** @test */
     public function user_has_unread_thread()
     {
-        $this->logCurrentRequest('api.messenger.unread.threads.count');
+        $this->logCurrentRequest();
         $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -99,7 +97,7 @@ class MessengerTest extends HttpTestCase
     /** @test */
     public function user_has_active_call()
     {
-        $this->logCurrentRequest('api.messenger.active.calls');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         Call::factory()->for($thread)->owner($this->tippin)->setup()->create();
         $this->actingAs($this->tippin);

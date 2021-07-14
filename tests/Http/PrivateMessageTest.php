@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use Illuminate\Foundation\Testing\WithFaker;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
@@ -9,10 +10,12 @@ use RTippin\Messenger\Tests\HttpTestCase;
 
 class PrivateMessageTest extends HttpTestCase
 {
+    use WithFaker;
+
     /** @test */
     public function non_participant_is_forbidden()
     {
-        $this->logCurrentRequest('api.messenger.threads.messages.index');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->create();
         $this->actingAs($this->tippin);
 
@@ -25,7 +28,7 @@ class PrivateMessageTest extends HttpTestCase
     /** @test */
     public function user_can_view_messages()
     {
-        $this->logCurrentRequest('api.messenger.threads.messages.index');
+        $this->logCurrentRequest();
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         Message::factory()->for($thread)->owner($this->tippin)->audio()->create();
         Message::factory()->for($thread)->owner($this->tippin)->document()->create();
@@ -44,7 +47,7 @@ class PrivateMessageTest extends HttpTestCase
     /** @test */
     public function user_can_view_paginated_messages()
     {
-        $this->logCurrentRequest('api.messenger.threads.messages.page');
+        $this->logCurrentRequest();
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         Message::factory()->for($thread)->owner($this->tippin)->count(2)->create();
         Message::factory()->for($thread)->owner($this->tippin)->image()->create();
@@ -63,7 +66,7 @@ class PrivateMessageTest extends HttpTestCase
     /** @test */
     public function user_can_view_message()
     {
-        $this->logCurrentRequest('api.messenger.threads.messages.show');
+        $this->logCurrentRequest();
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -81,7 +84,7 @@ class PrivateMessageTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_view_message()
     {
-        $this->logCurrentRequest('api.messenger.threads.messages.show');
+        $this->logCurrentRequest();
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->developers);
@@ -96,7 +99,7 @@ class PrivateMessageTest extends HttpTestCase
     /** @test */
     public function user_forbidden_to_send_message_when_thread_locked()
     {
-        $this->logCurrentRequest('api.messenger.threads.messages.store');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->locked()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->create();
         Participant::factory()->for($thread)->owner($this->doe)->create();
@@ -114,7 +117,7 @@ class PrivateMessageTest extends HttpTestCase
     /** @test */
     public function user_can_send_message()
     {
-        $this->logCurrentRequest('api.messenger.threads.messages.store');
+        $this->logCurrentRequest();
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
@@ -131,6 +134,35 @@ class PrivateMessageTest extends HttpTestCase
                 'type' => 0,
                 'type_verbose' => 'MESSAGE',
                 'body' => 'Hello!',
+            ]);
+    }
+
+    /** @test */
+    public function user_can_send_message_with_extra()
+    {
+        $this->logCurrentRequest('EXTRA');
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.messages.store', [
+            'thread' => $thread->id,
+        ]), [
+            'message' => 'Hello!',
+            'temporary_id' => '123-456-789',
+            'extra' => [
+                'test' => true,
+            ],
+        ])
+            ->assertSuccessful()
+            ->assertJson([
+                'thread_id' => $thread->id,
+                'temporary_id' => '123-456-789',
+                'type' => 0,
+                'type_verbose' => 'MESSAGE',
+                'body' => 'Hello!',
+                'extra' => [
+                    'test' => true,
+                ],
             ]);
     }
 
@@ -186,7 +218,7 @@ class PrivateMessageTest extends HttpTestCase
     /** @test */
     public function message_owner_can_archive_message()
     {
-        $this->logCurrentRequest('api.messenger.threads.messages.destroy');
+        $this->logCurrentRequest();
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -201,7 +233,7 @@ class PrivateMessageTest extends HttpTestCase
     /** @test */
     public function non_owner_forbidden_to_archive_message()
     {
-        $this->logCurrentRequest('api.messenger.threads.messages.destroy');
+        $this->logCurrentRequest();
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);
@@ -229,6 +261,23 @@ class PrivateMessageTest extends HttpTestCase
             ->assertForbidden();
     }
 
+    /** @test */
+    public function send_message_cannot_be_more_than_5k_characters()
+    {
+        $this->logCurrentRequest();
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.messages.store', [
+            'thread' => $thread->id,
+        ]), [
+            'message' => $this->faker()->realText(6000),
+            'temporary_id' => '123-456-789',
+        ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('message');
+    }
+
     /**
      * @test
      * @dataProvider messageFailsValidation
@@ -237,6 +286,7 @@ class PrivateMessageTest extends HttpTestCase
      */
     public function send_message_fails_validations($messageValue, $tempIdValue)
     {
+        $this->logCurrentRequest();
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
@@ -260,6 +310,7 @@ class PrivateMessageTest extends HttpTestCase
      */
     public function send_message_extra_fails_validation($extraValue)
     {
+        $this->logCurrentRequest();
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 

@@ -2,16 +2,19 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
 use RTippin\Messenger\Tests\HttpTestCase;
 
 class PrivateThreadsTest extends HttpTestCase
 {
+    use WithFaker;
+
     /** @test */
     public function user_has_private_threads()
     {
-        $this->logCurrentRequest('api.messenger.privates.index');
+        $this->logCurrentRequest();
         $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
@@ -23,7 +26,7 @@ class PrivateThreadsTest extends HttpTestCase
     /** @test */
     public function user_can_view_paginated_private_threads()
     {
-        $this->logCurrentRequest('api.messenger.privates.page');
+        $this->logCurrentRequest();
         $this->createPrivateThread($this->tippin, $this->doe);
         $this->createPrivateThread($this->tippin, UserModel::factory()->create());
         $thread = $this->createPrivateThread($this->tippin, $this->developers);
@@ -64,7 +67,7 @@ class PrivateThreadsTest extends HttpTestCase
     /** @test */
     public function creating_private_thread_with_friend_is_not_pending()
     {
-        $this->logCurrentRequest('api.messenger.privates.store');
+        $this->logCurrentRequest();
         $this->createFriends($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
@@ -82,7 +85,7 @@ class PrivateThreadsTest extends HttpTestCase
     /** @test */
     public function creating_new_private_thread_with_image()
     {
-        $this->logCurrentRequest('api.messenger.privates.store', 'IMAGE');
+        $this->logCurrentRequest('IMAGE');
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
@@ -96,7 +99,7 @@ class PrivateThreadsTest extends HttpTestCase
     /** @test */
     public function creating_new_private_thread_with_document()
     {
-        $this->logCurrentRequest('api.messenger.privates.store', 'DOCUMENT');
+        $this->logCurrentRequest('DOCUMENT');
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
@@ -110,7 +113,7 @@ class PrivateThreadsTest extends HttpTestCase
     /** @test */
     public function creating_new_private_thread_with_audio()
     {
-        $this->logCurrentRequest('api.messenger.privates.store', 'AUDIO');
+        $this->logCurrentRequest('AUDIO');
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
@@ -124,7 +127,7 @@ class PrivateThreadsTest extends HttpTestCase
     /** @test */
     public function creating_new_private_forbidden_when_one_exist()
     {
-        $this->logCurrentRequest('api.messenger.privates.store');
+        $this->logCurrentRequest();
         $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
@@ -136,6 +139,22 @@ class PrivateThreadsTest extends HttpTestCase
             ->assertForbidden();
     }
 
+    /** @test */
+    public function creating_private_thread_with_message_over_5k_size_fails_validation()
+    {
+        $this->logCurrentRequest();
+        $this->createFriends($this->tippin, $this->doe);
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.privates.store'), [
+            'message' => $this->faker()->realText(6000),
+            'recipient_alias' => 'user',
+            'recipient_id' => $this->doe->getKey(),
+        ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('message');
+    }
+
     /**
      * @test
      * @dataProvider messageValidation
@@ -143,6 +162,7 @@ class PrivateThreadsTest extends HttpTestCase
      */
     public function create_new_private_checks_message($messageValue)
     {
+        $this->logCurrentRequest();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
@@ -163,6 +183,7 @@ class PrivateThreadsTest extends HttpTestCase
      */
     public function create_new_private_checks_recipient_values($aliasValue, $idValue, $errors)
     {
+        $this->logCurrentRequest();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [

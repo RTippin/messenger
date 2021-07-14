@@ -11,7 +11,7 @@ class PrivateThreadApprovalTest extends HttpTestCase
     /** @test */
     public function recipient_can_approve_pending_thread()
     {
-        $this->logCurrentRequest('api.messenger.threads.approval');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->create();
         Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
@@ -44,7 +44,7 @@ class PrivateThreadApprovalTest extends HttpTestCase
     /** @test */
     public function sender_cannot_deny_pending_thread()
     {
-        $this->logCurrentRequest('api.messenger.threads.approval');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->create();
         Participant::factory()->for($thread)->owner($this->doe)->pending()->create();
@@ -105,7 +105,6 @@ class PrivateThreadApprovalTest extends HttpTestCase
     /** @test */
     public function user_cannot_approve_group_thread()
     {
-        $this->logCurrentRequest('api.messenger.threads.approval', 'GROUP');
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 

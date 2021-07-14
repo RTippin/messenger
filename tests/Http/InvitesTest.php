@@ -13,7 +13,6 @@ class InvitesTest extends HttpTestCase
     /** @test */
     public function forbidden_to_view_invites_on_private_thread()
     {
-        $this->logCurrentRequest('api.messenger.threads.invites.index', 'PRIVATE');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
@@ -26,7 +25,7 @@ class InvitesTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_view_invites()
     {
-        $this->logCurrentRequest('api.messenger.threads.invites.index');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $this->actingAs($this->tippin);
 
@@ -67,7 +66,7 @@ class InvitesTest extends HttpTestCase
     /** @test */
     public function admin_can_view_invites()
     {
-        $this->logCurrentRequest('api.messenger.threads.invites.index');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         Invite::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -124,7 +123,7 @@ class InvitesTest extends HttpTestCase
     /** @test */
     public function participant_without_permission_forbidden_to_archive_invite()
     {
-        $this->logCurrentRequest('api.messenger.threads.invites.destroy');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->create();
         $invite = Invite::factory()->for($thread)->owner($this->tippin)->create();
@@ -140,7 +139,7 @@ class InvitesTest extends HttpTestCase
     /** @test */
     public function admin_can_archive_invite()
     {
-        $this->logCurrentRequest('api.messenger.threads.invites.destroy');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $invite = Invite::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -170,7 +169,7 @@ class InvitesTest extends HttpTestCase
     /** @test */
     public function admin_can_create_invite()
     {
-        $this->logCurrentRequest('api.messenger.threads.invites.store');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -255,6 +254,7 @@ class InvitesTest extends HttpTestCase
      */
     public function create_invite_fails_uses_validation($usesValue)
     {
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -274,6 +274,7 @@ class InvitesTest extends HttpTestCase
      */
     public function create_invite_fails_expires_validation($expiresValue)
     {
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 

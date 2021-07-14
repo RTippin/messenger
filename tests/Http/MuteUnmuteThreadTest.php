@@ -11,7 +11,7 @@ class MuteUnmuteThreadTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_mute_thread()
     {
-        $this->logCurrentRequest('api.messenger.threads.mute');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $this->actingAs($this->tippin);
 
@@ -24,7 +24,7 @@ class MuteUnmuteThreadTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_unmute_thread()
     {
-        $this->logCurrentRequest('api.messenger.threads.unmute');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $this->actingAs($this->tippin);
 
@@ -37,7 +37,7 @@ class MuteUnmuteThreadTest extends HttpTestCase
     /** @test */
     public function participant_can_mute_thread()
     {
-        $this->logCurrentRequest('api.messenger.threads.mute');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -89,7 +89,7 @@ class MuteUnmuteThreadTest extends HttpTestCase
     /** @test */
     public function unmute_thread_successful_if_not_muted()
     {
-        $this->logCurrentRequest('api.messenger.threads.unmute');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 

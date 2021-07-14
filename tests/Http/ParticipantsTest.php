@@ -12,7 +12,7 @@ class ParticipantsTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_view_participants()
     {
-        $this->logCurrentRequest('api.messenger.threads.participants.index');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $this->actingAs($this->tippin);
 
@@ -38,7 +38,7 @@ class ParticipantsTest extends HttpTestCase
     /** @test */
     public function user_can_view_private_participants()
     {
-        $this->logCurrentRequest('api.messenger.threads.participants.index');
+        $this->logCurrentRequest();
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
@@ -52,7 +52,7 @@ class ParticipantsTest extends HttpTestCase
     /** @test */
     public function user_can_view_paginated_participants()
     {
-        $this->logCurrentRequest('api.messenger.threads.participants.page');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         $participant = Participant::factory()->for($thread)->owner(UserModel::factory()->create())->create();
@@ -70,7 +70,7 @@ class ParticipantsTest extends HttpTestCase
     /** @test */
     public function user_can_view_participant()
     {
-        $this->logCurrentRequest('api.messenger.threads.participants.show');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);

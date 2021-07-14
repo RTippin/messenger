@@ -9,7 +9,7 @@ class FindRecipientThreadTest extends HttpTestCase
     /** @test */
     public function private_thread_locator_returns_user_with_existing_thread_id()
     {
-        $this->logCurrentRequest('api.messenger.privates.locate', 'EXISTING');
+        $this->logCurrentRequest('EXISTING');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
@@ -42,7 +42,7 @@ class FindRecipientThreadTest extends HttpTestCase
     /** @test */
     public function private_thread_locator_returns_user_without_existing_thread_id()
     {
-        $this->logCurrentRequest('api.messenger.privates.locate', 'NON_EXISTING');
+        $this->logCurrentRequest('NON_EXISTING');
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.privates.locate', [

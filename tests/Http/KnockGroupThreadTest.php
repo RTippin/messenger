@@ -13,7 +13,7 @@ class KnockGroupThreadTest extends HttpTestCase
     /** @test */
     public function admin_can_knock_at_thread()
     {
-        $this->logCurrentRequest('api.messenger.threads.knock', 'GROUP');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -39,7 +39,7 @@ class KnockGroupThreadTest extends HttpTestCase
     /** @test */
     public function forbidden_to_knock_at_thread_when_timeout_exist()
     {
-        $this->logCurrentRequest('api.messenger.threads.knock', 'GROUP');
+        $this->logCurrentRequest('GROUP');
         $thread = $this->createGroupThread($this->tippin);
         Cache::put('knock.knock.'.$thread->id, true);
         $this->actingAs($this->tippin);

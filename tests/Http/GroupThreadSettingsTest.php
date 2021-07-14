@@ -12,7 +12,7 @@ class GroupThreadSettingsTest extends HttpTestCase
     /** @test */
     public function admin_can_view_group_settings()
     {
-        $this->logCurrentRequest('api.messenger.threads.settings');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -38,7 +38,7 @@ class GroupThreadSettingsTest extends HttpTestCase
     /** @test */
     public function non_admin_forbidden_to_view_group_settings()
     {
-        $this->logCurrentRequest('api.messenger.threads.settings');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->doe);
@@ -72,7 +72,7 @@ class GroupThreadSettingsTest extends HttpTestCase
     /** @test */
     public function admin_can_update_group_settings()
     {
-        $this->logCurrentRequest('api.messenger.threads.settings.update');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -102,7 +102,7 @@ class GroupThreadSettingsTest extends HttpTestCase
     /** @test */
     public function non_admin_forbidden_to_update_group_settings()
     {
-        $this->logCurrentRequest('api.messenger.threads.settings.update');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $this->actingAs($this->doe);
 
@@ -180,6 +180,7 @@ class GroupThreadSettingsTest extends HttpTestCase
      */
     public function group_settings_checks_booleans($fieldValue)
     {
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -213,6 +214,7 @@ class GroupThreadSettingsTest extends HttpTestCase
      */
     public function group_settings_checks_subject($subject)
     {
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 

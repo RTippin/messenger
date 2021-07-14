@@ -41,7 +41,7 @@ class PromoteDemoteParticipantTest extends HttpTestCase
     /** @test */
     public function non_admin_forbidden_to_demote_admin()
     {
-        $this->logCurrentRequest('api.messenger.threads.participants.demote');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $participant = Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         Participant::factory()->for($thread)->owner($this->doe)->create();
@@ -57,7 +57,7 @@ class PromoteDemoteParticipantTest extends HttpTestCase
     /** @test */
     public function non_admin_forbidden_to_promote_admin()
     {
-        $this->logCurrentRequest('api.messenger.threads.participants.promote');
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
         Participant::factory()->for($thread)->owner($this->doe)->create();
@@ -101,7 +101,7 @@ class PromoteDemoteParticipantTest extends HttpTestCase
     /** @test */
     public function admin_can_promote_participant_to_admin()
     {
-        $this->logCurrentRequest('api.messenger.threads.participants.promote');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->tippin);
@@ -135,7 +135,7 @@ class PromoteDemoteParticipantTest extends HttpTestCase
     /** @test */
     public function admin_can_demote_admin()
     {
-        $this->logCurrentRequest('api.messenger.threads.participants.demote');
+        $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
         $participant = Participant::factory()->for($thread)->owner($this->doe)->admin()->create();
         $this->actingAs($this->tippin);

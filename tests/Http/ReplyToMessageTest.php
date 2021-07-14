@@ -52,7 +52,7 @@ class ReplyToMessageTest extends HttpTestCase
     /** @test */
     public function user_can_reply_to_message()
     {
-        $this->logCurrentRequest('api.messenger.threads.messages.store', 'REPLY');
+        $this->logCurrentRequest('REPLY');
         $thread = $this->createGroupThread($this->tippin);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
