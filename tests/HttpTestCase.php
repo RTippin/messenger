@@ -13,7 +13,7 @@ class HttpTestCase extends FeatureTestCase
      * Set TRUE to run all http test with
      * logging responses to file enabled.
      */
-    protected bool $withApiLogging = false;
+    protected bool $withApiLogging = true;
 
     /**
      * Logs the current request/payload to the json file.
@@ -98,7 +98,8 @@ class HttpTestCase extends FeatureTestCase
                 $method,
                 $status,
                 $data,
-                $response->getStatusCode()
+                $response->getStatusCode(),
+                $uri
             );
         }
 
@@ -114,6 +115,7 @@ class HttpTestCase extends FeatureTestCase
      * @param string $status
      * @param array $payload
      * @param int $originalStatus
+     * @param string $fullQuery
      */
     private function storeResponse(string $routeName,
                                    string $uri,
@@ -122,11 +124,13 @@ class HttpTestCase extends FeatureTestCase
                                    string $verb,
                                    string $status,
                                    array $payload,
-                                   int $originalStatus): void
+                                   int $originalStatus,
+                                   string $fullQuery): void
     {
         $file = __DIR__.'/../docs/generated/responses.json';
         $responses = json_decode(file_get_contents($file), true);
         $responses[$routeName]['uri'] = $uri;
+        $responses[$routeName]['query'] = $fullQuery;
         $responses[$routeName]['methods'] = $methods;
 
         if ($originalStatus === 422) {
