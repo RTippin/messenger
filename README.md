@@ -865,6 +865,8 @@ Echo.join('messenger.thread.1234-5678')
 
 ## API endpoints / examples
 
+### Try our interactive [API Explorer][link-api-explorer]
+
 - [Threads][link-threads]
 - [Participants][link-participants]
 - [Messages][link-messages]
@@ -941,3 +943,4 @@ If you discover any security related issues, please email author email instead o
 [link-system-message-subscriber]: src/Listeners/SystemMessageSubscriber.php
 [link-bot-subscriber]: src/Listeners/BotSubscriber.php
 [link-messenger-bots]: https://github.com/RTippin/messenger-bots
+[link-api-explorer]: https://tippindev.com/api-explorer
