@@ -13,7 +13,7 @@ class HttpTestCase extends FeatureTestCase
      * Set TRUE to run all http test with
      * logging responses to file enabled.
      */
-    protected bool $withApiLogging = true;
+    protected bool $withApiLogging = false;
 
     /**
      * Logs the current request/payload to the json file.

@@ -75,6 +75,11 @@ trait MessengerConfig
     private string $defaultBotAvatar;
 
     /**
+     * @var int
+     */
+    private int $messageSizeLimit;
+
+    /**
      * @var bool
      */
     private bool $knockKnock;
@@ -390,6 +395,25 @@ trait MessengerConfig
             'thread_avatars' => $this->isThreadAvatarEnabled(),
             'bot_avatars' => $this->isBotAvatarEnabled(),
         ];
+    }
+
+    /**
+     * @return int
+     */
+    public function getMessageSizeLimit(): int
+    {
+        return $this->messageSizeLimit;
+    }
+
+    /**
+     * @param int $messageSizeLimit
+     * @return $this
+     */
+    public function setMessageSizeLimit(int $messageSizeLimit): self
+    {
+        $this->messageSizeLimit = $messageSizeLimit;
+
+        return $this;
     }
 
     /**
@@ -1466,6 +1490,7 @@ trait MessengerConfig
         $this->channelRoutes = config('messenger.routing.channels.enabled');
         $this->avatarStorage = config('messenger.storage.avatars');
         $this->threadStorage = config('messenger.storage.threads');
+        $this->messageSizeLimit = config('messenger.message_size_limit');
         $this->defaultNotFoundImage = config('messenger.files.default_not_found_image');
         $this->defaultGhostAvatar = config('messenger.files.default_ghost_avatar');
         $this->defaultThreadAvatar = config('messenger.files.default_thread_avatar');

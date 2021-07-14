@@ -22,6 +22,8 @@ use RTippin\Messenger\Models\Participant;
  * @method static array getAllFriendableProviders()
  * @method static array getAllMessengerProviders()
  * @method static array getAllProvidersWithDevices()
+ * @method static int getMessageSizeLimit()
+ * @method static \RTippin\Messenger\Messenger setMessageSizeLimit(int $messageSizeLimit)
  * @method static bool isKnockKnockEnabled()
  * @method static \RTippin\Messenger\Messenger setKnockKnock(bool $knockKnock)
  * @method static int getKnockTimeout()

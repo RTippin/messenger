@@ -516,6 +516,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertTrue($this->messenger->isBotsEnabled());
         $this->assertTrue($this->messenger->isSystemMessagesEnabled());
         $this->assertSame(5, $this->messenger->getKnockTimeout());
+        $this->assertSame(5000, $this->messenger->getMessageSizeLimit());
         $this->assertTrue($this->messenger->isKnockKnockEnabled());
         $this->assertSame(25, $this->messenger->getSearchPageCount());
         $this->assertSame(25, $this->messenger->getThreadsPageCount());
@@ -650,6 +651,7 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->setMessageImageSizeLimit(5);
         $this->messenger->setMessageAudioSizeLimit(5);
         $this->messenger->setAvatarSizeLimit(5);
+        $this->messenger->setMessageSizeLimit(5);
         $this->messenger->setMessageDocumentMimeTypes('mov,mp3');
         $this->messenger->setMessageImageMimeTypes('jpeg,png');
         $this->messenger->setMessageAudioMimeTypes('mp3');
@@ -695,6 +697,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame(5, $this->messenger->getMessagesIndexCount());
         $this->assertSame(5, $this->messenger->getCallsIndexCount());
         $this->assertSame(5, $this->messenger->getCallsPageCount());
+        $this->assertSame(5, $this->messenger->getMessageSizeLimit());
         $this->assertFalse($this->messenger->isOnlineStatusEnabled());
         $this->assertFalse($this->messenger->isThreadInvitesEnabled());
         $this->assertSame(5, $this->messenger->getThreadMaxInvitesCount());

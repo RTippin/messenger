@@ -73,7 +73,9 @@ abstract class BaseMessageRequest extends FormRequest
      */
     private function generateMessageRule(): void
     {
-        $this->generatedRuleset['message'] = ['required', 'string'];
+        $limit = Messenger::getMessageSizeLimit();
+
+        $this->generatedRuleset['message'] = ['required', 'string', "max:$limit"];
     }
 
     /**

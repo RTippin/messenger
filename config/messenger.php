@@ -164,6 +164,14 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Max allowed characters for Message body / Edit Message body.
+    |--------------------------------------------------------------------------
+    |
+    */
+    'message_size_limit' => env('MESSENGER_MESSAGE_SIZE_LIMIT', 5000),
+
+    /*
+    |--------------------------------------------------------------------------
     | File toggles to enable / disable features and default image paths.
     | Size limits are the max upload size in kilobytes.
     |--------------------------------------------------------------------------

@@ -14,30 +14,31 @@ class PrivateThreadRequest extends BaseMessageRequest
      */
     public function rules(): array
     {
+        $messageLimit = Messenger::getMessageSizeLimit();
         $rules = [
             'recipient_id' => ['required', new IntegerOrString],
             'recipient_alias' => ['required', 'string'],
-            'message' => ['required_without_all:document,image,audio', 'string'],
+            'message' => ['required_without_all:document,image,audio', 'string', "max:$messageLimit"],
             'extra' => ['nullable', 'array'],
         ];
 
         if (Messenger::isMessageDocumentUploadEnabled()) {
-            $limit = Messenger::getMessageDocumentSizeLimit();
-            $mimes = Messenger::getMessageDocumentMimeTypes();
+            $docLimit = Messenger::getMessageDocumentSizeLimit();
+            $docMimes = Messenger::getMessageDocumentMimeTypes();
 
-            $rules['document'] = ['required_without_all:message,image,audio', "max:$limit", 'file', "mimes:$mimes"];
+            $rules['document'] = ['required_without_all:message,image,audio', "max:$docLimit", 'file', "mimes:$docMimes"];
         }
         if (Messenger::isMessageImageUploadEnabled()) {
-            $limit = Messenger::getMessageImageSizeLimit();
-            $mimes = Messenger::getMessageImageMimeTypes();
+            $imageLimit = Messenger::getMessageImageSizeLimit();
+            $imageMimes = Messenger::getMessageImageMimeTypes();
 
-            $rules['image'] = ['required_without_all:document,message,audio', "max:$limit", 'file', "mimes:$mimes"];
+            $rules['image'] = ['required_without_all:document,message,audio', "max:$imageLimit", 'file', "mimes:$imageMimes"];
         }
         if (Messenger::isMessageAudioUploadEnabled()) {
-            $limit = Messenger::getMessageAudioSizeLimit();
-            $mimes = Messenger::getMessageAudioMimeTypes();
+            $audioLimit = Messenger::getMessageAudioSizeLimit();
+            $audioMimes = Messenger::getMessageAudioMimeTypes();
 
-            $rules['audio'] = ['required_without_all:message,image,document', "max:$limit", 'file', "mimes:$mimes"];
+            $rules['audio'] = ['required_without_all:message,image,document', "max:$audioLimit", 'file', "mimes:$audioMimes"];
         }
 
         return $rules;
