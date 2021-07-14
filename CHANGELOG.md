@@ -7,9 +7,11 @@
 
 #### Added
 - `message_size_limit` to our config. ([bb87b51](https://github.com/RTippin/messenger/commit/bb87b51e7395624d3c35afd16fbbce015e4a3a5d))
+- `isGroupAdmin` property to the `BotActionHandler`. ([1f6f51b](https://github.com/RTippin/messenger/commit/1f6f51b3a2b669302bbc19d78629ed7804812bdb))
 
 #### Changed
 - Implemented `message_size_limit` to any message send or edit message request.
+- Forward `isGroupAdmin` from event -> process triggers to `BotActionHandler`. Interface updated.
 
 ---
 
