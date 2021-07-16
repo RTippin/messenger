@@ -107,7 +107,6 @@ class ProviderResource extends JsonResource
 
     /**
      * @return array
-     * @noinspection SpellCheckingInspection
      */
     private function addOptions(): array
     {
@@ -149,7 +148,6 @@ class ProviderResource extends JsonResource
 
     /**
      * @return bool
-     * @noinspection SpellCheckingInspection
      */
     private function isFriendable(): bool
     {
@@ -160,7 +158,6 @@ class ProviderResource extends JsonResource
     /**
      * @param bool $isFriendable
      * @return bool
-     * @noinspection SpellCheckingInspection
      */
     private function canFriend(bool $isFriendable): bool
     {

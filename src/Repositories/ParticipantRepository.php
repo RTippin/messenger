@@ -32,7 +32,6 @@ class ParticipantRepository
      * @param Thread $thread
      * @param bool $withoutProvider
      * @return Collection
-     * @noinspection SpellCheckingInspection
      */
     public function getThreadBroadcastableParticipants(Thread $thread, bool $withoutProvider = false): Collection
     {
