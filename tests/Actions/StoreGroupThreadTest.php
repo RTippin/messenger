@@ -98,17 +98,17 @@ class StoreGroupThreadTest extends FeatureTestCase
     public function it_fires_events_without_extra_participants()
     {
         BaseMessengerAction::enableEvents();
-
-        $this->expectsEvents([
+        Event::fake([
             NewThreadEvent::class,
-        ]);
-        $this->doesntExpectEvents([
             NewThreadBroadcast::class,
         ]);
 
         app(StoreGroupThread::class)->execute([
             'subject' => 'Test Group',
         ]);
+
+        Event::assertDispatched(NewThreadEvent::class);
+        Event::assertNotDispatched(NewThreadBroadcast::class);
     }
 
     /** @test */

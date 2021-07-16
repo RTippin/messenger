@@ -86,13 +86,12 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
     public function it_doesnt_fire_events_if_participant_not_changed()
     {
         BaseMessengerAction::enableEvents();
-        $thread = Thread::factory()->group()->create();
-        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
-
-        $this->doesntExpectEvents([
+        Event::fake([
             ParticipantPermissionsBroadcast::class,
             ParticipantPermissionsEvent::class,
         ]);
+        $thread = Thread::factory()->group()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->doe)->create();
 
         app(UpdateParticipantPermissions::class)->execute($thread, $participant, [
             'send_messages' => true,
@@ -102,5 +101,8 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
             'start_calls' => false,
             'send_knocks' => false,
         ]);
+
+        Event::assertNotDispatched(ParticipantPermissionsBroadcast::class);
+        Event::assertNotDispatched(ParticipantPermissionsEvent::class);
     }
 }

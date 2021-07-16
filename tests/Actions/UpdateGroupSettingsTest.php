@@ -113,12 +113,11 @@ class UpdateGroupSettingsTest extends FeatureTestCase
     public function it_doesnt_fire_events_if_not_updated()
     {
         BaseMessengerAction::enableEvents();
-        $thread = Thread::factory()->group()->create(['subject' => 'Test']);
-
-        $this->doesntExpectEvents([
+        Event::fake([
             ThreadSettingsBroadcast::class,
             ThreadSettingsEvent::class,
         ]);
+        $thread = Thread::factory()->group()->create(['subject' => 'Test']);
 
         app(UpdateGroupSettings::class)->execute($thread, [
             'subject' => 'Test',
@@ -129,6 +128,9 @@ class UpdateGroupSettingsTest extends FeatureTestCase
             'messaging' => true,
             'knocks' => true,
         ]);
+
+        Event::assertNotDispatched(ThreadSettingsBroadcast::class);
+        Event::assertNotDispatched(ThreadSettingsEvent::class);
     }
 
     /** @test */

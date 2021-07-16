@@ -190,8 +190,7 @@ class StorePrivateThreadTest extends FeatureTestCase
     public function it_doesnt_fire_message_events()
     {
         BaseMessengerAction::enableEvents();
-
-        $this->doesntExpectEvents([
+        Event::fake([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
@@ -201,6 +200,9 @@ class StorePrivateThreadTest extends FeatureTestCase
             'recipient_alias' => 'user',
             'recipient_id' => $this->doe->getKey(),
         ]);
+
+        Event::assertNotDispatched(NewMessageBroadcast::class);
+        Event::assertNotDispatched(NewMessageEvent::class);
     }
 
     /** @test */

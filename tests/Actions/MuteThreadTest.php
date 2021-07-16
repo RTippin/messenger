@@ -55,11 +55,14 @@ class MuteThreadTest extends FeatureTestCase
     public function it_doesnt_fire_events_if_already_muted()
     {
         BaseMessengerAction::enableEvents();
+        Event::fake([
+            ParticipantMutedEvent::class,
+        ]);
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->muted()->create();
 
-        $this->doesntExpectEvents(ParticipantMutedEvent::class);
-
         app(MuteThread::class)->execute($thread);
+
+        Event::assertNotDispatched(ParticipantMutedEvent::class);
     }
 }

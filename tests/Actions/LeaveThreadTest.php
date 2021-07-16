@@ -87,14 +87,16 @@ class LeaveThreadTest extends FeatureTestCase
     public function it_doesnt_fire_events_if_last_participant()
     {
         BaseMessengerAction::enableEvents();
-        $thread = $this->createGroupThread($this->tippin);
-
-        $this->doesntExpectEvents([
+        Event::fake([
             ThreadLeftBroadcast::class,
             ThreadLeftEvent::class,
         ]);
+        $thread = $this->createGroupThread($this->tippin);
 
         app(LeaveThread::class)->execute($thread);
+
+        Event::assertNotDispatched(ThreadLeftBroadcast::class);
+        Event::assertNotDispatched(ThreadLeftEvent::class);
     }
 
     /** @test */

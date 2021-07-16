@@ -125,26 +125,32 @@ class MessengerComposerTest extends FeatureTestCase
     public function it_sends_message_with_events()
     {
         BaseMessengerAction::enableEvents();
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
-
-        $this->expectsEvents([
+        Event::fake([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
         $this->composer->to($thread)->from($this->tippin)->message('Test');
+
+        Event::assertDispatched(NewMessageBroadcast::class);
+        Event::assertDispatched(NewMessageEvent::class);
     }
 
     /** @test */
     public function it_sends_message_without_broadcast()
     {
         BaseMessengerAction::enableEvents();
+        Event::fake([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
-        $this->doesntExpectEvents(NewMessageBroadcast::class);
-        $this->expectsEvents(NewMessageEvent::class);
-
         $this->composer->to($thread)->from($this->tippin)->silent()->message('Test');
+
+        Event::assertNotDispatched(NewMessageBroadcast::class);
+        Event::assertDispatched(NewMessageEvent::class);
     }
 
     /** @test */
@@ -181,26 +187,32 @@ class MessengerComposerTest extends FeatureTestCase
     public function it_sends_image_message_with_events()
     {
         BaseMessengerAction::enableEvents();
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
-
-        $this->expectsEvents([
+        Event::fake([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
         $this->composer->to($thread)->from($this->tippin)->image(UploadedFile::fake()->image('test.jpg'));
+
+        Event::assertDispatched(NewMessageBroadcast::class);
+        Event::assertDispatched(NewMessageEvent::class);
     }
 
     /** @test */
     public function it_sends_image_message_without_broadcast()
     {
         BaseMessengerAction::enableEvents();
+        Event::fake([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
-        $this->doesntExpectEvents(NewMessageBroadcast::class);
-        $this->expectsEvents(NewMessageEvent::class);
-
         $this->composer->to($thread)->from($this->tippin)->silent()->image(UploadedFile::fake()->image('test.jpg'));
+
+        Event::assertNotDispatched(NewMessageBroadcast::class);
+        Event::assertDispatched(NewMessageEvent::class);
     }
 
     /** @test */
@@ -237,26 +249,32 @@ class MessengerComposerTest extends FeatureTestCase
     public function it_sends_document_message_with_events()
     {
         BaseMessengerAction::enableEvents();
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
-
-        $this->expectsEvents([
+        Event::fake([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
         $this->composer->to($thread)->from($this->tippin)->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
+
+        Event::assertDispatched(NewMessageBroadcast::class);
+        Event::assertDispatched(NewMessageEvent::class);
     }
 
     /** @test */
     public function it_sends_document_message_without_broadcast()
     {
         BaseMessengerAction::enableEvents();
+        Event::fake([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
-        $this->doesntExpectEvents(NewMessageBroadcast::class);
-        $this->expectsEvents(NewMessageEvent::class);
-
         $this->composer->to($thread)->from($this->tippin)->silent()->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
+
+        Event::assertNotDispatched(NewMessageBroadcast::class);
+        Event::assertDispatched(NewMessageEvent::class);
     }
 
     /** @test */
@@ -293,26 +311,32 @@ class MessengerComposerTest extends FeatureTestCase
     public function it_sends_audio_message_with_events()
     {
         BaseMessengerAction::enableEvents();
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
-
-        $this->expectsEvents([
+        Event::fake([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
         $this->composer->to($thread)->from($this->tippin)->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
+
+        Event::assertDispatched(NewMessageBroadcast::class);
+        Event::assertDispatched(NewMessageEvent::class);
     }
 
     /** @test */
     public function it_sends_audio_message_without_broadcast()
     {
         BaseMessengerAction::enableEvents();
+        Event::fake([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
-        $this->doesntExpectEvents(NewMessageBroadcast::class);
-        $this->expectsEvents(NewMessageEvent::class);
-
         $this->composer->to($thread)->from($this->tippin)->silent()->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
+
+        Event::assertNotDispatched(NewMessageBroadcast::class);
+        Event::assertDispatched(NewMessageEvent::class);
     }
 
     /** @test */
@@ -341,42 +365,50 @@ class MessengerComposerTest extends FeatureTestCase
     public function it_adds_reaction_with_events()
     {
         BaseMessengerAction::enableEvents();
-        $thread = $this->createGroupThread($this->tippin);
-        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
-
-        $this->expectsEvents([
+        Event::fake([
             ReactionAddedBroadcast::class,
             ReactionAddedEvent::class,
         ]);
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
 
         $this->composer->to($thread)->from($this->tippin)->reaction($message, ':joy:');
+
+        Event::assertDispatched(ReactionAddedBroadcast::class);
+        Event::assertDispatched(ReactionAddedEvent::class);
     }
 
     /** @test */
     public function it_adds_reaction_without_broadcast()
     {
         BaseMessengerAction::enableEvents();
+        Event::fake([
+            ReactionAddedBroadcast::class,
+            ReactionAddedEvent::class,
+        ]);
         $thread = $this->createGroupThread($this->tippin);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
 
-        $this->expectsEvents(ReactionAddedEvent::class);
-        $this->doesntExpectEvents(ReactionAddedBroadcast::class);
-
         $this->composer->to($thread)->from($this->tippin)->silent()->reaction($message, ':joy:');
+
+        Event::assertNotDispatched(ReactionAddedBroadcast::class);
+        Event::assertDispatched(ReactionAddedEvent::class);
     }
 
     /** @test */
     public function it_sends_knock_with_existing_thread()
     {
         BaseMessengerAction::enableEvents();
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
-
-        $this->expectsEvents([
+        Event::fake([
             KnockBroadcast::class,
             KnockEvent::class,
         ]);
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
         $this->composer->to($thread)->from($this->tippin)->knock();
+
+        Event::assertDispatched(KnockBroadcast::class);
+        Event::assertDispatched(KnockEvent::class);
     }
 
     /** @test */
@@ -402,40 +434,48 @@ class MessengerComposerTest extends FeatureTestCase
     public function it_marks_read_with_existing_thread()
     {
         BaseMessengerAction::enableEvents();
-        $thread = $this->createGroupThread($this->tippin);
-
-        $this->expectsEvents([
+        Event::fake([
             ParticipantReadBroadcast::class,
             ParticipantReadEvent::class,
         ]);
+        $thread = $this->createGroupThread($this->tippin);
 
         $this->composer->to($thread)->from($this->tippin)->read();
+
+        Event::assertDispatched(ParticipantReadBroadcast::class);
+        Event::assertDispatched(ParticipantReadEvent::class);
     }
 
     /** @test */
     public function it_marks_read_using_supplied_participant()
     {
         BaseMessengerAction::enableEvents();
-        $thread = $this->createGroupThread($this->tippin, $this->doe);
-
-        $this->expectsEvents([
+        Event::fake([
             ParticipantReadBroadcast::class,
             ParticipantReadEvent::class,
         ]);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
 
         $this->composer->read($thread->participants()->first());
+
+        Event::assertDispatched(ParticipantReadBroadcast::class);
+        Event::assertDispatched(ParticipantReadEvent::class);
     }
 
     /** @test */
     public function it_marks_read_without_broadcast()
     {
         BaseMessengerAction::enableEvents();
+        Event::fake([
+            ParticipantReadBroadcast::class,
+            ParticipantReadEvent::class,
+        ]);
         $thread = $this->createGroupThread($this->tippin);
 
-        $this->expectsEvents(ParticipantReadEvent::class);
-        $this->doesntExpectEvents(ParticipantReadBroadcast::class);
-
         $this->composer->to($thread)->from($this->tippin)->silent()->read();
+
+        Event::assertNotDispatched(ParticipantReadBroadcast::class);
+        Event::assertDispatched(ParticipantReadEvent::class);
     }
 
     /** @test */

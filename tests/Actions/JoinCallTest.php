@@ -55,17 +55,19 @@ class JoinCallTest extends FeatureTestCase
     public function it_fires_no_events_or_stores_cache_key_if_already_joined()
     {
         BaseMessengerAction::enableEvents();
-        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
-        $participant = CallParticipant::factory()->for($call)->owner($this->tippin)->create();
-
-        $this->doesntExpectEvents([
+        Event::fake([
             CallJoinedBroadcast::class,
             CallJoinedEvent::class,
         ]);
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
+        $participant = CallParticipant::factory()->for($call)->owner($this->tippin)->create();
 
         app(JoinCall::class)->execute($call);
 
         $this->assertFalse(Cache::has("call:$call->id:$participant->id"));
+
+        Event::assertNotDispatched(CallJoinedBroadcast::class);
+        Event::assertNotDispatched(CallJoinedEvent::class);
     }
 
     /** @test */

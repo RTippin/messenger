@@ -57,16 +57,17 @@ class StoreManyParticipantsTest extends FeatureTestCase
     public function it_fires_no_events_if_no_valid_providers()
     {
         BaseMessengerAction::enableEvents();
-        $thread = $this->createGroupThread($this->tippin);
-
-        $this->doesntExpectEvents([
+        Event::fake([
             NewThreadBroadcast::class,
             ParticipantsAddedEvent::class,
         ]);
+        $thread = $this->createGroupThread($this->tippin);
 
         app(StoreManyParticipants::class)->execute($thread, []);
 
         $this->assertDatabaseCount('participants', 1);
+        Event::assertNotDispatched(NewThreadBroadcast::class);
+        Event::assertNotDispatched(ParticipantsAddedEvent::class);
     }
 
     /** @test */

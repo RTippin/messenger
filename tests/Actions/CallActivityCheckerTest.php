@@ -80,20 +80,24 @@ class CallActivityCheckerTest extends FeatureTestCase
     public function it_fires_no_events_if_checks_pass()
     {
         BaseMessengerAction::enableEvents();
+        Event::fake([
+            CallLeftBroadcast::class,
+            CallLeftEvent::class,
+            CallEndedBroadcast::class,
+            CallEndedEvent::class,
+        ]);
         $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
         $participant1 = CallParticipant::factory()->for($call)->owner($this->tippin)->create();
         $participant2 = CallParticipant::factory()->for($call)->owner($this->doe)->create();
         Cache::put("call:$call->id:$participant1->id", true);
         Cache::put("call:$call->id:$participant2->id", true);
 
-        $this->doesntExpectEvents([
-            CallLeftBroadcast::class,
-            CallLeftEvent::class,
-            CallEndedBroadcast::class,
-            CallEndedEvent::class,
-        ]);
-
         app(CallActivityChecker::class)->execute(Call::active()->get());
+
+        Event::assertNotDispatched(CallLeftBroadcast::class);
+        Event::assertNotDispatched(CallLeftEvent::class);
+        Event::assertNotDispatched(CallEndedBroadcast::class);
+        Event::assertNotDispatched(CallEndedEvent::class);
     }
 
     /** @test */

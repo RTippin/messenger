@@ -47,17 +47,18 @@ class StoreSystemMessageTest extends FeatureTestCase
     public function it_does_nothing_if_disabled()
     {
         BaseMessengerAction::enableEvents();
-        Messenger::setSystemMessages(false);
-        $thread = Thread::factory()->group()->create();
-
-        $this->doesntExpectEvents([
+        Event::fake([
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
+        Messenger::setSystemMessages(false);
+        $thread = Thread::factory()->group()->create();
 
         app(StoreSystemMessage::class)->execute($thread, $this->tippin, 'system', 'GROUP_CREATED');
 
         $this->assertDatabaseCount('messages', 0);
+        Event::assertNotDispatched(NewMessageBroadcast::class);
+        Event::assertNotDispatched(NewMessageEvent::class);
     }
 
     /** @test */

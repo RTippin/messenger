@@ -58,15 +58,17 @@ class MarkParticipantReadTest extends FeatureTestCase
     public function it_fires_no_events_if_participant_already_up_to_date()
     {
         BaseMessengerAction::enableEvents();
-        $thread = Thread::factory()->create();
-        $participant = Participant::factory()->for($thread)->owner($this->tippin)->read()->create();
-
-        $this->doesntExpectEvents([
+        Event::fake([
             ParticipantReadBroadcast::class,
             ParticipantReadEvent::class,
         ]);
+        $thread = Thread::factory()->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->read()->create();
 
         app(MarkParticipantRead::class)->execute($participant, $thread);
+
+        Event::assertNotDispatched(ParticipantReadBroadcast::class);
+        Event::assertNotDispatched(ParticipantReadEvent::class);
     }
 
     /** @test */

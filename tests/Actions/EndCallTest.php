@@ -48,29 +48,33 @@ class EndCallTest extends FeatureTestCase
     public function it_does_nothing_if_call_already_ended()
     {
         BaseMessengerAction::enableEvents();
-        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->ended()->create();
-
-        $this->doesntExpectEvents([
+        Event::fake([
             CallEndedBroadcast::class,
             CallEndedEvent::class,
         ]);
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->ended()->create();
 
         app(EndCall::class)->execute($call);
+
+        Event::assertNotDispatched(CallEndedBroadcast::class);
+        Event::assertNotDispatched(CallEndedEvent::class);
     }
 
     /** @test */
     public function it_does_nothing_if_ending_cache_key_exist()
     {
         BaseMessengerAction::enableEvents();
-        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->ended()->create();
-        Cache::put("call:$call->id:ending", true);
-
-        $this->doesntExpectEvents([
+        Event::fake([
             CallEndedBroadcast::class,
             CallEndedEvent::class,
         ]);
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->ended()->create();
+        Cache::put("call:$call->id:ending", true);
 
         app(EndCall::class)->execute($call);
+
+        Event::assertNotDispatched(CallEndedBroadcast::class);
+        Event::assertNotDispatched(CallEndedEvent::class);
     }
 
     /** @test */

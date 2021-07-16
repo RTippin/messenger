@@ -70,17 +70,18 @@ class EditMessageTest extends FeatureTestCase
     public function it_doesnt_fire_events_if_message_does_not_change()
     {
         BaseMessengerAction::enableEvents();
-        $thread = Thread::factory()->create();
-        $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => 'Unchanged']);
-
-        $this->doesntExpectEvents([
+        Event::fake([
             MessageEditedBroadcast::class,
             MessageEditedEvent::class,
         ]);
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => 'Unchanged']);
 
         app(EditMessage::class)->execute($thread, $message, 'Unchanged');
 
         $this->assertDatabaseCount('message_edits', 0);
+        Event::assertNotDispatched(MessageEditedBroadcast::class);
+        Event::assertNotDispatched(MessageEditedEvent::class);
     }
 
     /** @test */
