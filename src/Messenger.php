@@ -3,6 +3,12 @@
 namespace RTippin\Messenger;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Str;
+use InvalidArgumentException;
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Support\ProvidersVerification;
 
 /**
@@ -14,6 +20,11 @@ final class Messenger
     use MessengerProviders,
         MessengerConfig,
         MessengerOnline;
+
+    /**
+     * @var Collection
+     */
+    private Collection $_providers;
 
     /**
      * @var ProvidersVerification
@@ -30,6 +41,22 @@ final class Messenger
     {
         $this->providersVerification = $providersVerification;
         $this->boot();
+    }
+
+    /**
+     * TODO.
+     *
+     * @param array $providers
+     */
+    public function registerProviders(array $providers)
+    {
+        foreach ($providers as $provider) {
+            if (! Helpers::checkImplementsInterface($provider, MessengerProvider::class)) {
+                throw new InvalidArgumentException("The given provider { $provider } must implement our contract ".MessengerProvider::class);
+            }
+
+            $this->_providers[$provider] = $this->makeProviderSettings($provider);
+        }
     }
 
     /**
@@ -96,7 +123,6 @@ final class Messenger
      *
      * @param mixed $provider
      * @return bool
-     * @noinspection SpellCheckingInspection
      */
     public function isProviderFriendable($provider = null): bool
     {
@@ -132,7 +158,6 @@ final class Messenger
 
     /**
      * @return array
-     * @noinspection SpellCheckingInspection
      */
     public function getAllFriendableProviders(): array
     {
@@ -198,6 +223,8 @@ final class Messenger
         $this->setMessengerConfig();
 
         $this->setMessengerProviders();
+
+        $this->_providers = new Collection;
     }
 
     /**
@@ -210,5 +237,43 @@ final class Messenger
         && $provider instanceof Model
             ? $provider->getMorphClass()
             : $provider;
+    }
+
+    /**
+     * @param MessengerProvider|string $provider
+     * @return array
+     */
+    private function makeProviderSettings(string $provider): array
+    {
+        $settings = $provider::getProviderSettings();
+
+        return [
+            'alias' => $settings['alias'] ?? Str::snake(class_basename($provider)),
+            'morph_class' => $this->determineProviderMorphClass($provider),
+            'searchable' => method_exists($provider, 'getProviderSearchableBuilder') && $settings['searchable'] ?? true,
+            'friendable' => $settings['friendable'] ?? true,
+            'devices' => $settings['devices'] ?? true,
+            'default_avatar' => $settings['default_avatar'] ?? $this->getDefaultNotFoundImage(),
+            'limit_can_message' => $settings['limit_can_message'] ?? [],
+            'limit_can_search' => $settings['limit_can_search'] ?? [],
+            'limit_can_friend' => $settings['limit_can_friend'] ?? [],
+        ];
+    }
+
+    /**
+     * Get the classname/alias for polymorphic relations.
+     *
+     * @param string $provider
+     * @return string
+     */
+    private function determineProviderMorphClass(string $provider): string
+    {
+        $morphMap = Relation::morphMap();
+
+        if (! empty($morphMap) && in_array($provider, $morphMap)) {
+            return array_search($provider, $morphMap, true);
+        }
+
+        return $provider;
     }
 }

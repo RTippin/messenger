@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Traits;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use RTippin\Messenger\Facades\Messenger;
@@ -10,7 +11,7 @@ use RTippin\Messenger\Support\Helpers;
 
 /**
  * @mixin Model
- * @noinspection SpellCheckingInspection
+ * @method static getProviderSearchableBuilder(Builder $query, string $search, array $searchItems)
  */
 trait Messageable
 {
@@ -29,6 +30,25 @@ trait Messageable
      * @var null|string
      */
     public ?string $onlineStatusCache = null;
+
+    /**
+     * Get the provider settings and alias override, if set.
+     *
+     * @return array
+     */
+    public static function getProviderSettings(): array
+    {
+        return [
+            'alias' => null,
+            'searchable' => true,
+            'friendable' => true,
+            'devices' => true,
+            'default_avatar' => public_path('vendor/messenger/images/users.png'),
+            'limit_can_message' => [],
+            'limit_can_search' => [],
+            'limit_can_friend' => [],
+        ];
+    }
 
     /**
      * If your provider has a route/slug for a profile page,

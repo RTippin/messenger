@@ -7,9 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 trait Search
 {
     /**
-     * Add this public static method on your providers to allow them to be searched
-     * through a whereHasMorph from messengers table. We inject the builder, single
-     * full search query string, and an array of the string exploded.
+     * Typical use case for searching users through the name or email columns.
      *
      * @param Builder $query
      * @param string $search

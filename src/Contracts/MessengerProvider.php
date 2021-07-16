@@ -12,6 +12,13 @@ use Illuminate\Database\Eloquent\Model;
 interface MessengerProvider
 {
     /**
+     * Get the provider settings and alias override, if set.
+     *
+     * @return array
+     */
+    public static function getProviderSettings(): array;
+
+    /**
      * Format and return your provider name here.
      * ex: $this->first . ' ' . $this->last.
      *
