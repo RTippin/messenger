@@ -3,11 +3,12 @@
 
 ### [UNRELEASED]
 
-### Commits ([329c2d0](https://github.com/RTippin/messenger/commit/329c2d0f3e2f2c72f621594479565ef344c53005))
+### Commits ([329c2d0](https://github.com/RTippin/messenger/commit/329c2d0f3e2f2c72f621594479565ef344c53005), [0b647d0](https://github.com/RTippin/messenger/commit/0b647d0fecaaac0ed808b3cf3a417a161b4b043c))
 
 #### Added
 - `getProviderSettings` public static method to the `MessengerProvider` contract.
 - `getProviderSettings` default added to the `Messageable` trait.
+- `MessengerServiceProvider` stub we now publish to the end users project. We also insert the provider to the `app.php` providers array.
 
 #### Changed
 - Messenger `getAllMessengerProviders` renamed to `getAllProviders`.
@@ -15,6 +16,7 @@
 - MessengerBots `setHandlers` renamed to `registerHandlers`. `setHandlers` kept but deprecated.
 - Messenger `getConfig` no longer returns providers.
 - Provider interactions reversed. Now you set the classes you do not want the provider to interact with.
+- `messenger:publish` command renamed to `messenger:install`.
 
 ### Removed
 - `providers` array from config.
