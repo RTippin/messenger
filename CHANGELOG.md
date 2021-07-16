@@ -1,7 +1,7 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
-### [UNRELEASED]
+### [v0.43 (07-16-2021)]
 
 ### Commits ([329c2d0](https://github.com/RTippin/messenger/commit/329c2d0f3e2f2c72f621594479565ef344c53005), [0b647d0](https://github.com/RTippin/messenger/commit/0b647d0fecaaac0ed808b3cf3a417a161b4b043c))
 

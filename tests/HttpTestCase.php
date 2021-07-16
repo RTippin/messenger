@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests;
 
+use Illuminate\Foundation\Application;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Routing\Router;
@@ -28,7 +29,7 @@ class HttpTestCase extends FeatureTestCase
     private ?string $statusOverride = null;
 
     /**
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      */
     protected function getEnvironmentSetUp($app): void
     {
