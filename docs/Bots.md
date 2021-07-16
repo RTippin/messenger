@@ -1,3 +1,5 @@
+## Please visit our [API-Explorer](https://tippindev.com/api-explorer) for the most up to date data.
+
 ### POST `/api/messenger/threads/{thread}/bots` | *api.messenger.threads.bots.store*
 #### Payload:
 ```json

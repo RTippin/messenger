@@ -1,3 +1,5 @@
+## Please visit our [API-Explorer](https://tippindev.com/api-explorer) for the most up to date data.
+
 ### GET `/api/messenger/threads/{thread}/messages/{message}/reactions` | *api.messenger.threads.messages.reactions.index*
 #### Response:
 ```json
