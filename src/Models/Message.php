@@ -53,10 +53,10 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class Message extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
-    use Uuids;
-    use ScopesProvider;
+    use HasFactory,
+        SoftDeletes,
+        Uuids,
+        ScopesProvider;
 
     /**
      * Message types that are not system messages.

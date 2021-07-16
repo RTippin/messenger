@@ -40,10 +40,10 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class Invite extends Model
 {
-    use HasFactory;
-    use Uuids;
-    use SoftDeletes;
-    use ScopesProvider;
+    use HasFactory,
+        Uuids,
+        SoftDeletes,
+        ScopesProvider;
 
     /**
      * @var string

@@ -54,10 +54,10 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class Thread extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
-    use Uuids;
-    use ScopesProvider;
+    use HasFactory,
+        SoftDeletes,
+        Uuids,
+        ScopesProvider;
 
     /**
      * The database table used by the model.

@@ -40,9 +40,9 @@ use RTippin\Messenger\Traits\ScopesProvider;
  */
 class Bot extends Model implements MessengerProvider
 {
-    use HasFactory;
-    use SoftDeletes;
-    use ScopesProvider;
+    use HasFactory,
+        SoftDeletes,
+        ScopesProvider;
 
     /**
      * Create a new Eloquent model instance.

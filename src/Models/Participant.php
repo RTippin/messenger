@@ -51,10 +51,10 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class Participant extends Model
 {
-    use HasFactory;
-    use SoftDeletes;
-    use Uuids;
-    use ScopesProvider;
+    use HasFactory,
+        SoftDeletes,
+        Uuids,
+        ScopesProvider;
 
     /**
      * The database table used by the model.

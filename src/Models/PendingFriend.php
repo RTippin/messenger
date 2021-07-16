@@ -26,9 +26,9 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class PendingFriend extends Model
 {
-    use HasFactory;
-    use Uuids;
-    use ScopesProvider;
+    use HasFactory,
+        Uuids,
+        ScopesProvider;
 
     /**
      * @var string

@@ -29,9 +29,9 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class MessageReaction extends Model
 {
-    use HasFactory;
-    use Uuids;
-    use ScopesProvider;
+    use HasFactory,
+        Uuids,
+        ScopesProvider;
 
     /**
      * The database table used by the model.
