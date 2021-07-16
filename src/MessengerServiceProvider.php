@@ -12,10 +12,10 @@ use RTippin\Messenger\Brokers\FriendBroker;
 use RTippin\Messenger\Commands\CallsActivityCheckCommand;
 use RTippin\Messenger\Commands\CallsDownCommand;
 use RTippin\Messenger\Commands\CallsUpCommand;
+use RTippin\Messenger\Commands\InstallCommand;
 use RTippin\Messenger\Commands\InvitesCheckCommand;
 use RTippin\Messenger\Commands\ProvidersCacheCommand;
 use RTippin\Messenger\Commands\ProvidersClearCommand;
-use RTippin\Messenger\Commands\PublishCommand;
 use RTippin\Messenger\Commands\PurgeAudioCommand;
 use RTippin\Messenger\Commands\PurgeBotsCommand;
 use RTippin\Messenger\Commands\PurgeDocumentsCommand;
@@ -50,14 +50,14 @@ class MessengerServiceProvider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/messenger.php', 'messenger');
 
         $this->app->singleton(Messenger::class, Messenger::class);
-        $this->app->alias(Messenger::class, 'messenger');
         $this->app->singleton(MessengerBots::class, MessengerBots::class);
-        $this->app->alias(MessengerBots::class, 'messenger-bots');
-        $this->app->bind(MessengerComposer::class, MessengerComposer::class);
-        $this->app->alias(MessengerComposer::class, 'messenger-composer');
         $this->app->singleton(FriendDriver::class, FriendBroker::class);
         $this->app->singleton(EmojiInterface::class, EmojiService::class);
+        $this->app->bind(MessengerComposer::class, MessengerComposer::class);
         $this->app->bind(BroadcastDriver::class, BroadcastBroker::class);
+        $this->app->alias(Messenger::class, 'messenger');
+        $this->app->alias(MessengerBots::class, 'messenger-bots');
+        $this->app->alias(MessengerComposer::class, 'messenger-composer');
     }
 
     /**
@@ -101,10 +101,10 @@ class MessengerServiceProvider extends ServiceProvider
             CallsActivityCheckCommand::class,
             CallsDownCommand::class,
             CallsUpCommand::class,
+            InstallCommand::class,
             InvitesCheckCommand::class,
             ProvidersCacheCommand::class,
             ProvidersClearCommand::class,
-            PublishCommand::class,
             PurgeAudioCommand::class,
             PurgeBotsCommand::class,
             PurgeDocumentsCommand::class,
@@ -118,6 +118,10 @@ class MessengerServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/../config/messenger.php' => config_path('messenger.php'),
         ], 'messenger.config');
+
+        $this->publishes([
+            __DIR__.'/../stubs/MessengerServiceProvider.stub' => app_path('Providers/MessengerServiceProvider.php'),
+        ], 'messenger.provider');
 
         $this->publishes([
             __DIR__.'/../config/janus.php' => config_path('janus.php'),

@@ -93,13 +93,10 @@
 $ composer require rtippin/messenger
 ```
 
-### Publish Config
+### Install Command
+***This will publish our config and service provider files. The provider will also be registered in your `app.php` config file.***
 ```bash
-$ php artisan messenger:publish
-```
-- If using janus video driver, you may publish the janus config:
-```bash
-$ php artisan vendor:publish --tag=messenger.janus.config
+$ php artisan messenger:install
 ```
 
 ### Migrate
@@ -112,17 +109,52 @@ $ php artisan vendor:publish --tag=messenger.janus.config
 $ php artisan migrate
 ```
 
-# Configuration
+- If using janus video driver, you may publish the janus config:
+```bash
+$ php artisan vendor:publish --tag=messenger.janus.config
+```
 
-## Register Providers
-- TODO.
+---
 
-**Example:**
+# Register Providers
+
+- Head over to your new `App\Providers\MessengerServiceProvider`
+- Set all provider models you want to use in this messenger. The default `App\Models\User` is already preset, you just need to un-comment it.
+
+**Default:**
 
 ```php
-//
+<?php
+
+namespace App\Providers;
+
+use App\Models\User;
+use Illuminate\Support\ServiceProvider;
+use RTippin\Messenger\Facades\Messenger;
+
+class MessengerServiceProvider extends ServiceProvider
+{
+    /**
+     * Bootstrap services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        Messenger::registerProviders([
+            User::class,
+        ]);
+    }
+}
 ```
+
+---
+
+### Implement our MessengerProvider contract for each provider registered
+
 - Each provider you define will need to implement our [`MessengerProvider`][link-messenger-contract] contract. We include a [`Messageable`][link-messageable] trait you can use on your providers that will usually suffice for your needs.
+- You will typically want to override our `public static function getProviderSettings(): array` method per provider you register.
+- The `alias` will be auto-generated if null or not set. We will use the lower-snake case of the model name.
 
 ***Example:***
 
@@ -138,6 +170,20 @@ use RTippin\Messenger\Traits\Messageable;
 class User extends Authenticatable implements MessengerProvider
 {
     use Messageable;
+    
+    public static function getProviderSettings(): array
+    {
+        return [
+            'alias' => null, // If set, will overwrite auto-generating alias
+            'searchable' => true,
+            'friendable' => true,
+            'devices' => true,
+            'default_avatar' => public_path('vendor/messenger/images/users.png'),
+            'cant_message_first' => [],
+            'cant_search' => [],
+            'cant_friend' => [],
+        ];
+    }
 }
 ```
 
@@ -147,6 +193,8 @@ class User extends Authenticatable implements MessengerProvider
 
 - You must implement the `getProviderSearchableBuilder` on providers you want to be searchable. We also include a [`Search`][link-search] trait that works out of the box with the default laravel User model.
   - You must also ensure `searchable` in the providers `getProviderSettings` method is true (default).
+- If you have different columns used to search for your provider, you can skip using the default `Search` trait, and define the public static method yourself.
+  - We inject the query builder, along with the original full string search term, and an array of the search term exploded via spaces and commas.
 
 ***Example:***
 
@@ -155,6 +203,7 @@ class User extends Authenticatable implements MessengerProvider
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Traits\Messageable;
@@ -162,32 +211,96 @@ use RTippin\Messenger\Traits\Search;
 
 class User extends Authenticatable implements MessengerProvider
 {
-    use Messageable;
-    use Search;
-}
-```
-
-- If you have different columns used to search for your provider, you can skip using the default `Search` trait, and define the public static method yourself.
-  - We inject the query builder, along with the original full string search term, and an array of the search term exploded via spaces and commas.
-
-***Example:***
-
-```php
-public static function getProviderSearchableBuilder(Builder $query,
-                                                    string $search,
-                                                    array $searchItems)
-{
-    $query->where(function (Builder $query) use ($searchItems) {
-        foreach ($searchItems as $item) {
-            $query->orWhere('company_name', 'LIKE', "%{$item}%");
-        }
-    })->orWhere('company_email', '=', $search);
+    use Messageable, 
+        Search; // Use this default trait or set your own like below
+        
+  public static function getProviderSearchableBuilder(Builder $query,
+                                                      string $search,
+                                                      array $searchItems)
+  {
+      $query->where(function (Builder $query) use ($searchItems) {
+          foreach ($searchItems as $item) {
+              $query->orWhere('first_name', 'LIKE', "%{$item}%")
+              ->orWhere('last_name', 'LIKE', "%{$item}%");
+          }
+      })->orWhere('email', '=', $search);
+  }
 }
 ```
 
 ---
 
-#### Providers name
+### Friendable
+
+- Allows your provider to be friended / have friends. We currently include a friends system and migrations (this will be extracted out of this package in a future release).
+- Set `friendable` in the providers `getProviderSettings` method to true (default).
+
+---
+
+### Devices
+
+- Devices are a helpful way for you to attach a listener onto our [PushNotificationEvent][link-push-event]. When any broadcast over a private channel occurs, we forward a stripped down list of all recipients/providers and their types/IDs, along with the original data broadcasted over websockets, and the event name.
+  - To use this default event, you must be using our `default` broadcast driver, and have `push_notifications` enabled. How you use the data from our event to send push notifications (FCM etc) is up to you!
+
+---
+
+### Provider Interactions `cant_message_first` `cant_search` `cant_friend`
+
+- Provider interactions give fine grain control over how your provider can interact with other providers, should you have multiple.
+- For each interaction, list the provider classes you want to deny that action from the parent provider.
+
+
+- `cant_message_first` revokes permissions to initiate a private conversation with the given providers. This does not stop or alter private threads already created, nor does it impact group threads. Initiating a private thread is defined as "messaging first".
+
+***Example: A user may not be able to start a conversation with a company, but a company may be allowed to start the conversation with the user. Once a private thread is created, it is business as usual!***
+
+```php
+//User
+return [
+    'cant_message_first' => [Company::class],
+];
+
+//Company
+return [
+    'cant_message_first' => [], //no restrictions
+];
+```
+
+- `cant_search` Filters search results, omitting the listed providers.
+
+***Example: A user may not be allowed to search for companies, but a company can search for users.***
+
+```php
+//User
+return [
+    'cant_search' => [Company::class],
+];
+
+//Company
+return [
+    'cant_search' => [], //no restrictions
+];
+```
+
+- `cant_friend` Revokes permission to initiate a friend request with the listed providers. This permission only impacts when one provider sends another a friend request. Cancelling / Accepting / Denying a friend request, or your list of actual friends, is not impacted by this permission.
+
+***Example: A user may not be allowed to send a friend request to a company, but a company can send a friend request to a user.***
+
+```php
+//User
+return [
+    'cant_friend' => [Company::class],
+];
+
+//Company
+return [
+    'cant_friend' => [], //no restrictions
+];
+```
+
+---
+
+### Providers name
 
 - To grab your providers name, our default returns the 'name' column from your model, stripping tags and making words uppercase. You may overwrite the way the name on your model is returned using the below method.
 
@@ -202,7 +315,7 @@ public function getProviderName(): string
 
 ---
 
-#### Providers avatar column
+### Providers avatar column
 
 - When provider avatar upload/removal is enabled, we use the default `string/nullable` : `picture` column on that provider models table.
   - You may overwrite the column name on your model using the below method, should your column be named differently.
@@ -218,7 +331,7 @@ public function getProviderAvatarColumn(): string
 
 ---
 
-#### Providers last active column
+### Providers last active column
 
 - When online status is enabled, we use the default `timestamp` : `updated_at` column on that provider models table. This is used to show when a provider was last active, and is the column we will update when you use the messenger status heartbeat.
   - You may overwrite the column name on your model using the below method, should your column be named differently.
@@ -234,53 +347,7 @@ public function getProviderAvatarColumn(): string
 
 ---
 
-### Devices
-
-- Devices are a helpful way for you to attach a listener onto our [PushNotificationEvent][link-push-event]. When any broadcast over a private channel occurs, we forward a stripped down list of all recipients/providers and their types/IDs, along with the original data broadcasted over websockets, and the event name.
-  - To use this default event, you must be using our `default` broadcast driver, and have `push_notifications` enabled. How you use the data from our event to send push notifications (FCM etc) is up to you!
-  
-***EXAMPLE:***
-
-`Knock at group thread : PushNotificationEvent::class dispatched`
-
-```php
-PushNotificationEvent::class => $recipients //Collection
-
-[
-  [
-    'owner_type' => 'App\Models\User',
-    'owner_id' => 1,
-  ],
-  [
-    'owner_type' => 'App\Models\Company',
-    'owner_id' => 22,
-  ]
-]
-```
-
-```php
-PushNotificationEvent::class => $broadcastAs //String
-
-'knock.knock'
-```
-
-```php
-PushNotificationEvent::class => $data //Array
-
-[
-    'thread' => [
-        'id' => '92a46441-930e-4492-b9ab-d40df4f0b9c1',
-        'type' => 2,
-        'type_verbose' => 'GROUP',
-        'group' => true,
-        'name' => 'Test Group',
-        //etc
-    ],
-    'sender' => [],
-]
-```
-
----
+# Configuration
 
 ### Storage
 
@@ -377,13 +444,12 @@ PushNotificationEvent::class => $data //Array
 ],
 ```
 
-- Video calling is disabled by default. If enabled, you must set the driver within your own AppServiceProvider.
+- Video calling is disabled by default. If enabled, you must set the driver within our published `MessengerServiceProvider` (or any service providers boot method).
   - Our included 3rd party video driver ([JanusBroker][link-janus-broker]) uses an open source media server, [Janus Media Server][link-janus-server]. We only utilize their [VideoRoom Plugin][link-janus-video], using create and destroy room methods.
-  - More video drivers will be included in the future, such as one for Twillio.
   - You can create your own video driver as well, implementing our contract [VideoDriver][link-video-driver]
 - We provide an event subscriber ([CallSubscriber][link-call-subscriber]) to listen and react to calling events. You may choose to enable it, whether it puts jobs on the queue or not, and which queue channel its jobs are dispatched on.
 
-***Set the video driver in your AppServiceProvider boot method:***
+***Set the video driver:***
 
 ```php
 <?php
@@ -394,10 +460,10 @@ use Illuminate\Support\ServiceProvider;
 use RTippin\Messenger\Brokers\JanusBroker;
 use RTippin\Messenger\Facades\Messenger;
 
-class AppServiceProvider extends ServiceProvider
+class MessengerServiceProvider extends ServiceProvider
 {
     /**
-     * Bootstrap any application services.
+     * Bootstrap services.
      *
      * @return void
      */
@@ -545,38 +611,6 @@ class AppServiceProvider extends ServiceProvider
 
 ---
 
-### Collections
-
-***Default:***
-
-```php
-'collections' => [
-    'search' => [
-        'page_count' => 25,
-    ],
-    'threads' => [
-        'index_count' => 100,
-        'page_count' => 25,
-    ],
-    'participants' => [
-        'index_count' => 500,
-        'page_count' => 50,
-    ],
-    'messages' => [
-        'index_count' => 50,
-        'page_count' => 50,
-    ],
-    'calls' => [
-        'index_count' => 25,
-        'page_count' => 25,
-    ],
-],
-```
-
-- We use JSON resources and collections to return content over our API. You can set how big you want the collections to be here.
-
----
-
 ### Files
 
 ***Default:***
@@ -622,9 +656,8 @@ class AppServiceProvider extends ServiceProvider
 
 # Commands
 
-- `php artisan messenger:publish` | `--force`
-    * Publish our config files.
-    * `--force` flag will overwrite existing files.
+- `php artisan messenger:install`
+    * Installs the base messenger files. Publishes our config and service provider. This will also register the provider in your `app.php` in the providers array.
 - `php artisan messenger:calls:check-activity` | `--now`
     * Check active calls for active participants, end calls with none.
     * `--now` flag to run immediately without dispatching jobs to queue.
@@ -669,24 +702,26 @@ class AppServiceProvider extends ServiceProvider
 
 # Broadcasting
 
-- Our default broadcast driver ([BroadcastBroker][link-broadcast-broker]) is responsible for extracting private/presence channel names and dispatching the broadcast event that any action in our system calls for.
+- Our default broadcast driver ([BroadcastBroker][link-broadcast-broker]) will already be set by default.
+- This driver is responsible for extracting private/presence channel names and dispatching the broadcast event that any action in our system calls for.
   - If push notifications are enabled, this broker will also forward its data to our [PushNotificationService][link-push-notify]. The service will then fire a [PushNotificationEvent][link-push-event] that you can attach a listener to handle your own FCM / other service.
-- If using your own broadcast driver, your class must implement our [BroadcastDriver][link-broadcast-driver] contract. You may then declare your driver within your AppServiceProvider.
+- If using your own broadcast driver, your class must implement our [BroadcastDriver][link-broadcast-driver] contract. You may then declare your driver within your MessengerServiceProvider (or any service providers boot method).
 
-***Set the broadcast driver in your AppServiceProvider boot method:***
+***To overwrite our broadcast driver, set your custom driver in your MessengerServiceProvider boot method:***
+
 ```php
 <?php
 
 namespace App\Providers;
 
+use App\Brokers\CustomBroadcastBroker;
 use Illuminate\Support\ServiceProvider;
-use RTippin\Messenger\Brokers\NullBroadcastBroker;
 use RTippin\Messenger\Facades\Messenger;
 
-class AppServiceProvider extends ServiceProvider
+class MessengerServiceProvider extends ServiceProvider
 {
     /**
-     * Bootstrap any application services.
+     * Bootstrap services.
      *
      * @return void
      */
@@ -802,6 +837,38 @@ Echo.join('messenger.thread.1234-5678')
 
 ---
 
+### Collections
+
+***Default:***
+
+```php
+'collections' => [
+    'search' => [
+        'page_count' => 25,
+    ],
+    'threads' => [
+        'index_count' => 100,
+        'page_count' => 25,
+    ],
+    'participants' => [
+        'index_count' => 500,
+        'page_count' => 50,
+    ],
+    'messages' => [
+        'index_count' => 50,
+        'page_count' => 50,
+    ],
+    'calls' => [
+        'index_count' => 25,
+        'page_count' => 25,
+    ],
+],
+```
+
+- We use JSON resources and collections to return content over our API. You can set how big you want the collections to be here.
+
+---
+
 ## API endpoints / examples
 
 ### Try our interactive [API Explorer][link-api-explorer]
@@ -846,7 +913,6 @@ If you discover any security related issues, please email author email instead o
 [link-author]: https://github.com/rtippin
 [link-config]: config/messenger.php
 [link-messageable]: src/Traits/Messageable.php
-[link-searchable]: src/Contracts/Searchable.php
 [link-search]: src/Traits/Search.php
 [link-messenger-contract]: src/Contracts/MessengerProvider.php
 [link-calls]: docs/Calls.md
