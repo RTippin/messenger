@@ -1,6 +1,28 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [UNRELEASED]
+
+### Commits ([329c2d0](https://github.com/RTippin/messenger/commit/329c2d0f3e2f2c72f621594479565ef344c53005))
+
+#### Added
+- `getProviderSettings` public static method to the `MessengerProvider` contract.
+- `getProviderSettings` default added to the `Messageable` trait.
+
+#### Changed
+- Messenger `getAllMessengerProviders` renamed to `getAllProviders`.
+- Messenger `setMessengerProviders` renamed to `registerProviders`.
+- MessengerBots `setHandlers` renamed to `registerHandlers`. `setHandlers` kept but deprecated.
+- Messenger `getConfig` no longer returns providers.
+- Provider interactions reversed. Now you set the classes you do not want the provider to interact with.
+
+### Removed
+- `providers` array from config.
+- `getFriendableForCurrentProvider` from Messenger.
+- `ProvidersCacheCommand` and `ProvidersClearCommand` deprecated. Providers caching removed from MessengerConfig.
+- `Searchable` contract deprecated.
+- `ProvidersVerification.php` class.
+
 ---
 
 ### [v0.42 (07-14-2021)]

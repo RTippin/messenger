@@ -114,38 +114,13 @@ $ php artisan migrate
 
 # Configuration
 
-### Providers
-- Add every provider model you wish to use within the providers array in our config.
+## Register Providers
+- TODO.
 
 **Example:**
 
 ```php
-'providers' => [
-    'user' => [
-        'model' => App\Models\User::class,
-        'searchable' => true,
-        'friendable' => true,
-        'devices' => false,
-        'default_avatar' => public_path('vendor/messenger/images/users.png'),
-        'provider_interactions' => [
-            'can_message' => true,
-            'can_search' => true,
-            'can_friend' => true,
-        ],
-    ],
-    'company' => [
-        'model' => App\Models\Company::class,
-        'searchable' => true,
-        'friendable' => true,
-        'devices' => false,
-        'default_avatar' => public_path('vendor/messenger/images/company.png'),
-        'provider_interactions' => [
-            'can_message' => true,
-            'can_search' => true,
-            'can_friend' => true,
-        ],
-    ],
-],
+//
 ```
 - Each provider you define will need to implement our [`MessengerProvider`][link-messenger-contract] contract. We include a [`Messageable`][link-messageable] trait you can use on your providers that will usually suffice for your needs.
 
@@ -163,6 +138,50 @@ use RTippin\Messenger\Traits\Messageable;
 class User extends Authenticatable implements MessengerProvider
 {
     use Messageable;
+}
+```
+
+---
+
+### Searchable
+
+- You must implement the `getProviderSearchableBuilder` on providers you want to be searchable. We also include a [`Search`][link-search] trait that works out of the box with the default laravel User model.
+  - You must also ensure `searchable` in the providers `getProviderSettings` method is true (default).
+
+***Example:***
+
+```php
+<?php
+
+namespace App\Models;
+
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Traits\Messageable;
+use RTippin\Messenger\Traits\Search;
+
+class User extends Authenticatable implements MessengerProvider
+{
+    use Messageable;
+    use Search;
+}
+```
+
+- If you have different columns used to search for your provider, you can skip using the default `Search` trait, and define the public static method yourself.
+  - We inject the query builder, along with the original full string search term, and an array of the search term exploded via spaces and commas.
+
+***Example:***
+
+```php
+public static function getProviderSearchableBuilder(Builder $query,
+                                                    string $search,
+                                                    array $searchItems)
+{
+    $query->where(function (Builder $query) use ($searchItems) {
+        foreach ($searchItems as $item) {
+            $query->orWhere('company_name', 'LIKE', "%{$item}%");
+        }
+    })->orWhere('company_email', '=', $search);
 }
 ```
 
@@ -201,7 +220,7 @@ public function getProviderAvatarColumn(): string
 
 #### Providers last active column
 
-- When online status is enabled, we use the default `timestamp` : `updated_at` column on that provider models table. This is used to show when a provider was last active, and is the column we will update when you use the messenger status heartbeat. 
+- When online status is enabled, we use the default `timestamp` : `updated_at` column on that provider models table. This is used to show when a provider was last active, and is the column we will update when you use the messenger status heartbeat.
   - You may overwrite the column name on your model using the below method, should your column be named differently.
 
 ***Example:***
@@ -211,50 +230,6 @@ public function getProviderAvatarColumn(): string
     {
         return 'last_active';
     }
-```
-
----
-
-### Searchable
-
-- If you want a provider to be searchable, you must implement our [`Searchable`][link-searchable] contract on those providers. We also include a [`Search`][link-search] trait that works out of the box with the default laravel User model.
-  
-***Example:***
-
-```php
-<?php
-
-namespace App\Models;
-
-use Illuminate\Foundation\Auth\User as Authenticatable;
-use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Contracts\Searchable;
-use RTippin\Messenger\Traits\Messageable;
-use RTippin\Messenger\Traits\Search;
-
-class User extends Authenticatable implements MessengerProvider, Searchable
-{
-    use Messageable;
-    use Search;
-}
-```
-
-- If you have different columns used to search for your provider, you can skip using the default `Search` trait, and define the public static method yourself.
-  - We inject the query builder, along with the original full string search term, and an array of the search term exploded via spaces and commas.
-
-***Example:***
-
-```php
-public static function getProviderSearchableBuilder(Builder $query,
-                                                    string $search,
-                                                    array $searchItems): Builder
-{
-    return $query->where(function (Builder $query) use ($searchItems) {
-        foreach ($searchItems as $item) {
-            $query->orWhere('company_name', 'LIKE', "%{$item}%");
-        }
-    })->orWhere('company_email', '=', $search);
-}
 ```
 
 ---
@@ -303,42 +278,6 @@ PushNotificationEvent::class => $data //Array
     ],
     'sender' => [],
 ]
-```
-
----
-
-### Provider Interactions
-
-- Provider interactions give fine grain control over how your provider can interact with other providers, should you have multiple.
-  - A provider must first have `friendable` and `searchable` enabled for those interaction permissions to take effect. If a user can search anyone, but your company provider has `searchable` disabled, no companies would be searched.
-  - A provider will always have full interactions between itself, meaning a user will always be able to friend another user, if the user provider is friendable. Setting `can_friend` to false will simply deny a user to initiate a friend request with any other providers you have defined.
-- Accepted values are `true`, `false`, `null`, `alias`, `alias1|alias2`
-  - FALSE or NULL will indicate that the provider cannot perform those interactions to any other provider you defined.
-  - TRUE indicates the provider can perform those interactions to any other provider you defined.
-  - ALIAS, or multiple aliases separated by the PIPE `|` indicate specific providers the selected provider can interact with.
-- Meanings:
-  - `can_message` is permissions to initiate a private conversation with another provider. This does not stop or alter private threads already created, nor does it impact group threads. Initiating a private thread is defined as a provider starting a new private thread with another provider. A user may not be able to start a conversation with a company, but a company may be allowed to start the conversation with the user. Once a private thread is created, it is business as usual!
-  - `can_search` is what other providers your provider will be allowed to search for. A user may not be allowed to search for companies, so any companies would not be included in their API response, however a company performing a search may be allowed to have users in their results.
-  - `can_friend` is permission to initiate a friend request with another provider. Similar to `can_message`, this permission only occurs when one provider sends another a friend request. Cancelling / Accepting / Denying a friend request, or your list of actual friends is not impacted by this permission.
-
-***Example:***
-
-```php
-'provider_interactions' => [
-    'can_message' => true,
-    'can_search' => true,
-    'can_friend' => true,
-],
-'provider_interactions' => [
-    'can_message' => 'company|admin',
-    'can_search' => 'company',
-    'can_friend' => false,
-],
-'provider_interactions' => [
-    'can_message' => null,
-    'can_search' => 'company|admin|employee',
-    'can_friend' => 'company',
-],
 ```
 
 ---
