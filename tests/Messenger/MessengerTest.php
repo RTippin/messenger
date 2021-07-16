@@ -13,6 +13,7 @@ use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Facades\Messenger as MessengerFacade;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Services\Janus\VideoRoomService;
@@ -58,6 +59,122 @@ class MessengerTest extends MessengerTestCase
         $this->expectExceptionMessage("The given provider { $invalid } must implement our contract ".MessengerProvider::class);
 
         $this->messenger->registerProviders([$invalid]);
+    }
+
+    /** @test */
+    public function it_sets_providers_including_bot()
+    {
+        // Providers already set from our master test case.
+        $this->assertCount(3, $this->messenger->getRawProviders());
+        $this->assertArrayHasKey(UserModel::class, $this->messenger->getRawProviders());
+        $this->assertArrayHasKey(CompanyModel::class, $this->messenger->getRawProviders());
+        $this->assertArrayHasKey(Bot::class, $this->messenger->getRawProviders());
+    }
+
+    /** @test */
+    public function it_overwrites_providers_and_resets_bot()
+    {
+        $this->messenger->registerProviders([UserModel::class], true);
+
+        $this->assertCount(2, $this->messenger->getRawProviders());
+        $this->assertArrayHasKey(UserModel::class, $this->messenger->getRawProviders());
+        $this->assertArrayHasKey(Bot::class, $this->messenger->getRawProviders());
+    }
+
+    /** @test */
+    public function it_overwrites_provider_aliases()
+    {
+        UserModel::$alias = 'test_user';
+        CompanyModel::$alias = 'test_company';
+        $this->messenger->registerProviders([UserModel::class, CompanyModel::class]);
+        $providers = $this->messenger->getRawProviders();
+
+        $this->assertSame('test_user', $providers[UserModel::class]['alias']);
+        $this->assertSame('test_company', $providers[CompanyModel::class]['alias']);
+    }
+
+    /** @test */
+    public function it_sets_provider_morph_map_class()
+    {
+        $providers = $this->messenger->getRawProviders();
+
+        $this->assertSame((new UserModel)->getMorphClass(), $providers[UserModel::class]['morph_class']);
+        $this->assertSame((new CompanyModel)->getMorphClass(), $providers[CompanyModel::class]['morph_class']);
+    }
+
+    /** @test */
+    public function it_sets_providers_searchable()
+    {
+        CompanyModel::$searchable = false;
+        $this->messenger->registerProviders([UserModel::class, CompanyModel::class]);
+        $providers = $this->messenger->getRawProviders();
+
+        $this->assertTrue($providers[UserModel::class]['searchable']);
+        $this->assertFalse($providers[CompanyModel::class]['searchable']);
+    }
+
+    /** @test */
+    public function it_sets_providers_friendable()
+    {
+        CompanyModel::$friendable = false;
+        $this->messenger->registerProviders([UserModel::class, CompanyModel::class]);
+        $providers = $this->messenger->getRawProviders();
+
+        $this->assertTrue($providers[UserModel::class]['friendable']);
+        $this->assertFalse($providers[CompanyModel::class]['friendable']);
+    }
+
+    /** @test */
+    public function it_sets_providers_devices()
+    {
+        CompanyModel::$devices = false;
+        $this->messenger->registerProviders([UserModel::class, CompanyModel::class]);
+        $providers = $this->messenger->getRawProviders();
+
+        $this->assertTrue($providers[UserModel::class]['devices']);
+        $this->assertFalse($providers[CompanyModel::class]['devices']);
+    }
+
+    /** @test */
+    public function it_sets_providers_default_avatars()
+    {
+        $providers = $this->messenger->getRawProviders();
+
+        $this->assertSame('/path/to/user.png', $providers[UserModel::class]['default_avatar']);
+        $this->assertSame('/path/to/company.png', $providers[CompanyModel::class]['default_avatar']);
+    }
+
+    /** @test */
+    public function it_sets_providers_cant_message_first()
+    {
+        CompanyModel::$cantMessage = [UserModel::class];
+        $this->messenger->registerProviders([UserModel::class, CompanyModel::class]);
+        $providers = $this->messenger->getRawProviders();
+
+        $this->assertSame([], $providers[UserModel::class]['cant_message_first']);
+        $this->assertSame([UserModel::class], $providers[CompanyModel::class]['cant_message_first']);
+    }
+
+    /** @test */
+    public function it_sets_providers_cant_search()
+    {
+        CompanyModel::$cantSearch = [UserModel::class];
+        $this->messenger->registerProviders([UserModel::class, CompanyModel::class]);
+        $providers = $this->messenger->getRawProviders();
+
+        $this->assertSame([], $providers[UserModel::class]['cant_search']);
+        $this->assertSame([UserModel::class], $providers[CompanyModel::class]['cant_search']);
+    }
+
+    /** @test */
+    public function it_sets_providers_cant_friend()
+    {
+        CompanyModel::$cantFriend = [UserModel::class];
+        $this->messenger->registerProviders([UserModel::class, CompanyModel::class]);
+        $providers = $this->messenger->getRawProviders();
+
+        $this->assertSame([], $providers[UserModel::class]['cant_friend']);
+        $this->assertSame([UserModel::class], $providers[CompanyModel::class]['cant_friend']);
     }
 
     /** @test */
@@ -313,6 +430,7 @@ class MessengerTest extends MessengerTestCase
     {
         $this->assertSame('/path/to/user.png', $this->messenger->getProviderDefaultAvatarPath('user'));
         $this->assertSame('/path/to/company.png', $this->messenger->getProviderDefaultAvatarPath('company'));
+        $this->assertNotNull($this->messenger->getProviderDefaultAvatarPath('bot'));
         $this->assertNull($this->messenger->getProviderDefaultAvatarPath('undefined'));
     }
 

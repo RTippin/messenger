@@ -69,6 +69,7 @@ class CompanyModel extends User implements MessengerProvider
 
     public static function reset(): void
     {
+        self::$alias = 'company';
         self::$searchable = true;
         self::$friendable = true;
         self::$devices = true;

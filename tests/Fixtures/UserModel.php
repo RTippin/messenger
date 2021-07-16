@@ -70,6 +70,7 @@ class UserModel extends User implements MessengerProvider
 
     public static function reset(): void
     {
+        self::$alias = 'user';
         self::$searchable = true;
         self::$friendable = true;
         self::$devices = true;

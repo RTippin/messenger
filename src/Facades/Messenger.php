@@ -21,6 +21,7 @@ use RTippin\Messenger\Models\Participant;
  * @method static array getAllSearchableProviders()
  * @method static array getAllFriendableProviders()
  * @method static array getAllProviders(bool $returnFullClass = false)
+ * @method static array getRawProviders()
  * @method static array getAllProvidersWithDevices()
  * @method static int getMessageSizeLimit()
  * @method static \RTippin\Messenger\Messenger setMessageSizeLimit(int $messageSizeLimit)

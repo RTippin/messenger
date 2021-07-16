@@ -121,6 +121,16 @@ final class Messenger
     }
 
     /**
+     * Return the raw array of our registered providers.
+     *
+     * @return array
+     */
+    public function getRawProviders(): array
+    {
+        return $this->providers->toArray();
+    }
+
+    /**
      * Determine if the provider is searchable.
      *
      * @param MessengerProvider|string|null $provider
