@@ -8,8 +8,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Support\Helpers;
-use RTippin\Messenger\Support\ProvidersVerification;
 
 /**
  * Laravel Messenger System.
@@ -24,45 +24,44 @@ final class Messenger
     /**
      * @var Collection
      */
-    private Collection $_providers;
-
-    /**
-     * @var ProvidersVerification
-     */
-    private ProvidersVerification $providersVerification;
+    private Collection $providers;
 
     /**
      * Messenger constructor.
-     * Load config values to use at runtime.
-     *
-     * @param ProvidersVerification $providersVerification
      */
-    public function __construct(ProvidersVerification $providersVerification)
+    public function __construct()
     {
-        $this->providersVerification = $providersVerification;
-        $this->boot();
+        $this->providers = new Collection;
+        $this->setMessengerConfig();
+        $this->setBotProvider();
     }
 
     /**
-     * TODO.
+     * Set all providers we want to use in this messenger system.
      *
      * @param array $providers
+     * @param bool $overwrite
      */
-    public function registerProviders(array $providers)
+    public function registerProviders(array $providers, bool $overwrite = false): void
     {
+        if ($overwrite) {
+            $this->providers = new Collection;
+            $this->setBotProvider();
+        }
+
         foreach ($providers as $provider) {
             if (! Helpers::checkImplementsInterface($provider, MessengerProvider::class)) {
                 throw new InvalidArgumentException("The given provider { $provider } must implement our contract ".MessengerProvider::class);
             }
 
-            $this->_providers[$provider] = $this->makeProviderSettings($provider);
+            $this->providers[$provider] = $this->makeProviderSettings($provider);
         }
     }
 
     /**
      * Check if provider is valid by seeing if alias exist.
      *
-     * @param mixed $provider
+     * @param MessengerProvider|string|null $provider
      * @return bool
      */
     public function isValidMessengerProvider($provider = null): bool
@@ -73,47 +72,66 @@ final class Messenger
     /**
      * Get the defined alias of the provider class defined in config.
      *
-     * @param mixed $provider
+     * @param MessengerProvider|string|null $provider
      * @return string|null
      */
     public function findProviderAlias($provider = null): ?string
     {
-        return $this->providers->search(function ($item) use ($provider) {
-            return $item['morph_class'] === $this->getClassNameString($provider)
-                || $item['model'] === $this->getClassNameString($provider);
+        $baseClass = $this->getClassNameString($provider);
+
+        $search = $this->providers->search(function ($item, $class) use ($baseClass) {
+            return $baseClass === $class || $item['morph_class'] === $baseClass;
         }) ?: null;
+
+        return $search ? $this->providers->get($search)['alias'] : null;
     }
 
     /**
-     * Get the provider class of the alias defined in the config.
+     * Get the provider class for the given alias.
      *
      * @param string $alias
      * @return string|null
      */
     public function findAliasProvider(string $alias): ?string
     {
-        if ($this->providers->has($alias)) {
-            return $this->providers->get($alias)['model'];
+        return $this->providers->search(function ($item) use ($alias) {
+            return $item['alias'] === $alias || $item['morph_class'] === $alias;
+        }) ?: null;
+    }
+
+    /**
+     * Get all provider classes using morph alias overrides. If return full
+     * class is true, we return full class namespaces ignoring morph maps.
+     *
+     * @param bool $returnFullClass
+     * @return array
+     */
+    public function getAllProviders(bool $returnFullClass = false): array
+    {
+        $providers = $this->providers->reject(fn ($provider) => $provider['alias'] === 'bot');
+
+        if ($returnFullClass) {
+            return $providers->keys()->toArray();
         }
 
-        if (! is_null($morphAlias = $this->findProviderAlias($alias))) {
-            return $this->providers->get($morphAlias)['model'];
-        }
-
-        return null;
+        return $providers
+            ->map(fn ($provider) => $provider['morph_class'])
+            ->flatten()
+            ->toArray();
     }
 
     /**
      * Determine if the provider is searchable.
      *
-     * @param mixed $provider
+     * @param MessengerProvider|string|null $provider
      * @return bool
      */
     public function isProviderSearchable($provider = null): bool
     {
-        return (bool) $this->providers->search(function ($item) use ($provider) {
-            return ($item['morph_class'] === $this->getClassNameString($provider)
-                    || $item['model'] === $this->getClassNameString($provider))
+        $baseClass = $this->getClassNameString($provider);
+
+        return (bool) $this->providers->search(function ($item, $class) use ($baseClass) {
+            return ($baseClass === $class || $item['morph_class'] === $baseClass)
                 && $item['searchable'] === true;
         });
     }
@@ -121,14 +139,15 @@ final class Messenger
     /**
      * Determine if the provider is friendable.
      *
-     * @param mixed $provider
+     * @param MessengerProvider|string|null $provider
      * @return bool
      */
     public function isProviderFriendable($provider = null): bool
     {
-        return (bool) $this->providers->search(function ($item) use ($provider) {
-            return ($item['morph_class'] === $this->getClassNameString($provider)
-                    || $item['model'] === $this->getClassNameString($provider))
+        $baseClass = $this->getClassNameString($provider);
+
+        return (bool) $this->providers->search(function ($item, $class) use ($baseClass) {
+            return ($baseClass === $class || $item['morph_class'] === $baseClass)
                 && $item['friendable'] === true;
         });
     }
@@ -139,53 +158,71 @@ final class Messenger
      */
     public function getProviderDefaultAvatarPath(string $alias): ?string
     {
-        return $this->providers->has($alias)
-            ? $this->providers->get($alias)['default_avatar']
-            : null;
+        $search = $this->providers->search(function ($item) use ($alias) {
+            return $item['alias'] === $alias;
+        }) ?: null;
+
+        return $search ? $this->providers->get($search)['default_avatar'] : null;
     }
 
     /**
+     * Get all searchable provider classes using morph alias overrides. If return
+     * full class is true, we return full class namespaces ignoring morph maps.
+     *
+     * @param bool $returnFullClass
      * @return array
      */
-    public function getAllSearchableProviders(): array
+    public function getAllSearchableProviders(bool $returnFullClass = false): array
     {
-        return $this->providers
-            ->filter(fn ($provider) => $provider['searchable'] === true)
+        $providers = $this->providers->filter(fn ($provider) => $provider['searchable'] === true);
+
+        if ($returnFullClass) {
+            return $providers->keys()->toArray();
+        }
+
+        return $providers
             ->map(fn ($provider) => $provider['morph_class'])
             ->flatten()
             ->toArray();
     }
 
     /**
+     * Get all friendable provider classes using morph alias overrides. If return
+     * full class is true, we return full class namespaces ignoring morph maps.
+     *
+     * @param bool $returnFullClass
      * @return array
      */
-    public function getAllFriendableProviders(): array
+    public function getAllFriendableProviders(bool $returnFullClass = false): array
     {
-        return $this->providers
-            ->filter(fn ($provider) => $provider['friendable'] === true)
+        $providers = $this->providers->filter(fn ($provider) => $provider['friendable'] === true);
+
+        if ($returnFullClass) {
+            return $providers->keys()->toArray();
+        }
+
+        return $providers
             ->map(fn ($provider) => $provider['morph_class'])
             ->flatten()
             ->toArray();
     }
 
     /**
+     * Get all provider classes with devices using morph alias overrides. If return
+     * full class is true, we return full class namespaces ignoring morph maps.
+     *
+     * @param bool $returnFullClass
      * @return array
      */
-    public function getAllMessengerProviders(): array
+    public function getAllProvidersWithDevices(bool $returnFullClass = false): array
     {
-        return $this->providers
-            ->map(fn ($provider) => $provider['morph_class'])
-            ->flatten()
-            ->toArray();
-    }
+        $providers = $this->providers->filter(fn ($provider) => $provider['devices'] === true);
 
-    /**
-     * @return array
-     */
-    public function getAllProvidersWithDevices(): array
-    {
-        return $this->providers
-            ->filter(fn ($provider) => $provider['devices'] === true)
+        if ($returnFullClass) {
+            return $providers->keys()->toArray();
+        }
+
+        return $providers
             ->map(fn ($provider) => $provider['morph_class'])
             ->flatten()
             ->toArray();
@@ -197,34 +234,6 @@ final class Messenger
     public function getInstance(): self
     {
         return $this;
-    }
-
-    /**
-     * Reset all values back to default.
-     */
-    public function reset(): void
-    {
-        $this->ghost = null;
-
-        $this->ghostBot = null;
-
-        $this->ghostParticipant = null;
-
-        $this->unsetProvider()->boot();
-    }
-
-    /**
-     * Boot up our configs.
-     */
-    private function boot(): void
-    {
-        $this->isProvidersCached = $this->isProvidersCached();
-
-        $this->setMessengerConfig();
-
-        $this->setMessengerProviders();
-
-        $this->_providers = new Collection;
     }
 
     /**
@@ -240,6 +249,24 @@ final class Messenger
     }
 
     /**
+     * Add our Bot model to the providers.
+     */
+    private function setBotProvider(): void
+    {
+        $this->providers[Bot::class] = [
+            'alias' => 'bot',
+            'morph_class' => 'bots',
+            'searchable' => false,
+            'friendable' => false,
+            'devices' => false,
+            'default_avatar' => $this->getDefaultBotAvatar(),
+            'cant_message_first' => [],
+            'cant_search' => [],
+            'cant_friend' => [],
+        ];
+    }
+
+    /**
      * @param MessengerProvider|string $provider
      * @return array
      */
@@ -250,13 +277,13 @@ final class Messenger
         return [
             'alias' => $settings['alias'] ?? Str::snake(class_basename($provider)),
             'morph_class' => $this->determineProviderMorphClass($provider),
-            'searchable' => method_exists($provider, 'getProviderSearchableBuilder') && $settings['searchable'] ?? true,
+            'searchable' => (method_exists($provider, 'getProviderSearchableBuilder') && ($settings['searchable'] ?? true)),
             'friendable' => $settings['friendable'] ?? true,
             'devices' => $settings['devices'] ?? true,
             'default_avatar' => $settings['default_avatar'] ?? $this->getDefaultNotFoundImage(),
-            'limit_can_message' => $settings['limit_can_message'] ?? [],
-            'limit_can_search' => $settings['limit_can_search'] ?? [],
-            'limit_can_friend' => $settings['limit_can_friend'] ?? [],
+            'cant_message_first' => $settings['cant_message_first'] ?? [],
+            'cant_search' => $settings['cant_search'] ?? [],
+            'cant_friend' => $settings['cant_friend'] ?? [],
         ];
     }
 

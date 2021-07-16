@@ -40,7 +40,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
     /** @test */
     public function it_executes_handle()
     {
-        MessengerBots::setHandlers([FunBotHandler::class]);
+        MessengerBots::registerHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => '!test']);
         BotAction::factory()
@@ -60,7 +60,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
     /** @test */
     public function it_executes_handle_if_admin()
     {
-        MessengerBots::setHandlers([FunBotHandler::class]);
+        MessengerBots::registerHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => '!test']);
         BotAction::factory()
@@ -81,7 +81,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
     /** @test */
     public function it_doesnt_execute_handle_if_not_admin()
     {
-        MessengerBots::setHandlers([FunBotHandler::class]);
+        MessengerBots::registerHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => '!test']);
         BotAction::factory()
@@ -102,7 +102,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
     /** @test */
     public function it_forwards_sender_ip_to_handler()
     {
-        MessengerBots::setHandlers([SillyBotHandler::class]);
+        MessengerBots::registerHandlers([SillyBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => '!test']);
         BotAction::factory()
@@ -123,7 +123,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
     /** @test */
     public function it_sets_action_and_bot_cooldowns()
     {
-        MessengerBots::setHandlers([FunBotHandler::class]);
+        MessengerBots::registerHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => '!test']);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create(['cooldown' => 30]);
@@ -143,7 +143,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
     /** @test */
     public function it_can_release_action_cooldown()
     {
-        MessengerBots::setHandlers([SillyBotHandler::class]);
+        MessengerBots::registerHandlers([SillyBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => '!test']);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create(['cooldown' => 30]);
@@ -163,7 +163,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
     /** @test */
     public function it_executes_multiple_handles()
     {
-        MessengerBots::setHandlers([
+        MessengerBots::registerHandlers([
             FunBotHandler::class,
             SillyBotHandler::class,
         ]);
@@ -189,7 +189,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
     /** @test */
     public function it_does_nothing_if_bot_on_cooldown()
     {
-        MessengerBots::setHandlers([FunBotHandler::class]);
+        MessengerBots::registerHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => '!test']);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
@@ -209,7 +209,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
     /** @test */
     public function it_does_nothing_if_action_on_cooldown()
     {
-        MessengerBots::setHandlers([FunBotHandler::class]);
+        MessengerBots::registerHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => '!test']);
         $action = BotAction::factory()
@@ -245,7 +245,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
     public function it_fires_handled_event()
     {
         BaseMessengerAction::enableEvents();
-        MessengerBots::setHandlers([FunBotHandler::class]);
+        MessengerBots::registerHandlers([FunBotHandler::class]);
         Event::fake([
             BotActionHandledEvent::class,
             BotActionFailedEvent::class,
@@ -275,7 +275,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
     public function it_fires_multiple_event()
     {
         BaseMessengerAction::enableEvents();
-        MessengerBots::setHandlers([
+        MessengerBots::registerHandlers([
             FunBotHandler::class,
             SillyBotHandler::class,
             BrokenBotHandler::class,
@@ -309,7 +309,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
     public function it_fires_failed_event_if_handler_throws_exception()
     {
         BaseMessengerAction::enableEvents();
-        MessengerBots::setHandlers([BrokenBotHandler::class]);
+        MessengerBots::registerHandlers([BrokenBotHandler::class]);
         Event::fake([
             BotActionHandledEvent::class,
             BotActionFailedEvent::class,

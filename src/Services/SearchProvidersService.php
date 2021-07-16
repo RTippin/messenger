@@ -6,9 +6,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection as DBCollection;
 use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Collection;
-use RTippin\Messenger\Contracts\Searchable;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Messenger as MessengerModel;
+use RTippin\Messenger\Traits\Search;
 
 class SearchProvidersService
 {
@@ -56,19 +56,6 @@ class SearchProvidersService
     public function enableSearchAllProviders(): self
     {
         $this->onlySearchableForProvider = false;
-
-        return $this;
-    }
-
-    /**
-     * Disable searching all providers, only allowed
-     * interactions for current provider (default).
-     *
-     * @return $this
-     */
-    public function disableSearchAllProviders(): self
-    {
-        $this->onlySearchableForProvider = true;
 
         return $this;
     }
@@ -197,7 +184,7 @@ class SearchProvidersService
         } else {
             $this->messengerQuery = MessengerModel::whereHasMorph('owner', $searchable,
                 function (Builder $query, $provider) {
-                    /** @var Searchable $provider */
+                    /** @var Search $provider */
                     $provider::getProviderSearchableBuilder(
                         $query,
                         $this->searchQuery,

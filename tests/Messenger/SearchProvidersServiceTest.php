@@ -6,6 +6,8 @@ use Illuminate\Pagination\LengthAwarePaginator;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Services\SearchProvidersService;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\Fixtures\CompanyModel;
+use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class SearchProvidersServiceTest extends FeatureTestCase
 {
@@ -65,9 +67,8 @@ class SearchProvidersServiceTest extends FeatureTestCase
     /** @test */
     public function it_ignores_providers_the_current_provider_is_not_allowed_to_search()
     {
-        $providers = $this->getBaseProvidersConfig();
-        $providers['user']['provider_interactions']['can_search'] = false;
-        Messenger::setMessengerProviders($providers);
+        UserModel::$cantSearch = [CompanyModel::class];
+        Messenger::registerProviders([UserModel::class, CompanyModel::class]);
         Messenger::setProvider($this->tippin);
 
         $search = $this->search->search('Developers Doe')->get()->toArray();

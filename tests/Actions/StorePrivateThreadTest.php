@@ -16,6 +16,8 @@ use RTippin\Messenger\Exceptions\ProviderNotFoundException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\Fixtures\CompanyModel;
+use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class StorePrivateThreadTest extends FeatureTestCase
 {
@@ -57,9 +59,8 @@ class StorePrivateThreadTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_provider_interactions_denies_messaging_first()
     {
-        $providers = $this->getBaseProvidersConfig();
-        $providers['user']['provider_interactions']['can_message'] = false;
-        Messenger::setMessengerProviders($providers);
+        UserModel::$cantMessage = [CompanyModel::class];
+        Messenger::registerProviders([UserModel::class, CompanyModel::class]);
         Messenger::setProvider($this->tippin);
 
         $this->expectException(NewThreadException::class);

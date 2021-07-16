@@ -2,33 +2,15 @@
 
 namespace RTippin\Messenger;
 
-use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\File;
 use InvalidArgumentException;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
-use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Support\Helpers;
-use RTippin\Messenger\Support\ProvidersVerification;
 
-/**
- * @property-read Collection $providers
- * @property-read ProvidersVerification $providersVerification
- */
 trait MessengerConfig
 {
-    /**
-     * @var Collection
-     */
-    private Collection $providers;
-
-    /**
-     * @var bool
-     */
-    private bool $isProvidersCached = false;
-
     /**
      * @var string
      */
@@ -307,7 +289,6 @@ trait MessengerConfig
         'providerCanFriend',
         'providerCanMessageFirst',
         'providerHasDevices',
-        'providersVerification',
         'defaultNotFoundImage',
         'defaultGhostAvatar',
         'defaultThreadAvatar',
@@ -316,17 +297,6 @@ trait MessengerConfig
         'threadStorage',
         'subscribers',
     ];
-
-    /**
-     * Is the messenger config cached?
-     *
-     * @return bool
-     */
-    public function isProvidersCached(): bool
-    {
-        return $this->isProvidersCached
-            ?: File::exists(app()->bootstrapPath('cache/messenger.php'));
-    }
 
     /**
      * Set the configuration properties dynamically.
@@ -350,25 +320,12 @@ trait MessengerConfig
      * Format the config for a response to the frontend.
      *
      * @return array
-     * @noinspection SpellCheckingInspection
      */
     public function getConfig(): array
     {
         return (new Collection(get_object_vars($this)))->reject(function ($value, $key) {
             return in_array($key, self::$guarded);
-        })
-            ->merge([
-                'providers' => $this->providers->map(function ($provider) {
-                    return [
-                        'default_avatar' => basename($provider['default_avatar']),
-                        'searchable' => $provider['searchable'],
-                        'friendable' => $provider['friendable'],
-                        'devices' => $provider['devices'],
-                        'provider_interactions' => $provider['provider_interactions'],
-                    ];
-                }),
-            ])
-            ->toArray();
+        })->toArray();
     }
 
     /**
@@ -1398,87 +1355,6 @@ trait MessengerConfig
         $this->subscribers['system_messages'][$option] = $value;
 
         return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getMessengerProviders(): array
-    {
-        return $this->providers->toArray();
-    }
-
-    /**
-     * Set providers if provided, from cache if exist, otherwise set from config.
-     *
-     * @param array $providers
-     */
-    public function setMessengerProviders(array $providers = []): void
-    {
-        if (count($providers)) {
-            $this->providers = $this->mergeBotProvider(
-                $this->providersVerification->formatValidProviders($providers)
-            );
-        } elseif ($this->isProvidersCached) {
-            $providersFile = $this->loadCachedProvidersFile();
-            if ($providersFile) {
-                $this->providers = new Collection($providersFile);
-            } else {
-                $this->setProvidersFromConfig();
-            }
-        } else {
-            $this->setProvidersFromConfig();
-        }
-    }
-
-    /**
-     * @param Collection $providers
-     * @return Collection
-     */
-    public function mergeBotProvider(Collection $providers): Collection
-    {
-        $providers['bot'] = [
-            'model' => Bot::class,
-            'morph_class' => 'bots',
-            'searchable' => false,
-            'friendable' => false,
-            'devices' => false,
-            'default_avatar' => null,
-            'provider_interactions' => [
-                'can_message' => [],
-                'can_search' => [],
-                'can_friend' => [],
-            ],
-        ];
-
-        return $providers;
-    }
-
-    /**
-     * Set providers from config.
-     */
-    private function setProvidersFromConfig(): void
-    {
-        $this->providers = $this->mergeBotProvider(
-            $this->providersVerification->formatValidProviders(
-                config('messenger.providers')
-            )
-        );
-    }
-
-    /**
-     * @return mixed|null
-     * @noinspection PhpIncludeInspection
-     */
-    private function loadCachedProvidersFile()
-    {
-        try {
-            return require app()->bootstrapPath('cache/messenger.php');
-        } catch (Exception $e) {
-            report($e);
-
-            return null;
-        }
     }
 
     /**

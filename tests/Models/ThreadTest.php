@@ -12,6 +12,7 @@ use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class ThreadTest extends FeatureTestCase
 {
@@ -205,7 +206,7 @@ class ThreadTest extends FeatureTestCase
     /** @test */
     public function recipient_returns_ghost_participant_if_invalid_recipient()
     {
-        Messenger::setMessengerProviders(['user' => $this->getBaseProvidersConfig()['user']]);
+        Messenger::registerProviders([UserModel::class], true);
         Messenger::setProvider($this->tippin);
         $private = $this->createPrivateThread($this->tippin, $this->developers);
 

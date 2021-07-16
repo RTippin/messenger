@@ -58,7 +58,7 @@ final class MessengerBots
      */
     public function __construct()
     {
-        $this->handlers = new Collection([]);
+        $this->handlers = new Collection;
         $this->activeHandler = null;
         $this->activeHandlerClass = null;
         $this->handlerOverrides = [];
@@ -79,6 +79,38 @@ final class MessengerBots
         self::$useUuid = $shouldUseUuids;
 
         return self::$useUuid;
+    }
+
+    /**
+     * Set the handlers we want to register. These can then be attached to
+     * a bots action, and executed when a match is found.
+     *
+     * @param array $handlers
+     * @param bool $overwrite
+     */
+    public function registerHandlers(array $handlers, bool $overwrite = false): void
+    {
+        if ($overwrite) {
+            $this->handlers = new Collection;
+        }
+
+        foreach ($handlers as $handler) {
+            if (! Helpers::checkIsSubclassOf($handler, BotActionHandler::class)) {
+                throw new InvalidArgumentException("The given handler { $handler } must extend our base handler ".BotActionHandler::class);
+            }
+
+            $this->handlers[$handler] = $this->makeHandlerSettings($handler);
+        }
+    }
+
+    /**
+     * @param array $handlers
+     * @param bool $overwrite
+     * @deprecated Will be removed in a future release.
+     */
+    public function setHandlers(array $handlers, bool $overwrite = false): void
+    {
+        $this->registerHandlers($handlers, $overwrite);
     }
 
     /**
@@ -188,31 +220,6 @@ final class MessengerBots
     public function isValidHandler(?string $handlerOrAlias = null): bool
     {
         return (bool) $this->findHandler($handlerOrAlias ?? '');
-    }
-
-    /**
-     * Set the handlers we want to register. These can then be attached to
-     * a bots action, and executed when a match is found.
-     *
-     * @param array $handlers
-     * @param bool $overwrite
-     * @return $this
-     */
-    public function setHandlers(array $handlers, bool $overwrite = false): self
-    {
-        if ($overwrite) {
-            $this->handlers = new Collection([]);
-        }
-
-        foreach ($handlers as $handler) {
-            if (! Helpers::checkIsSubclassOf($handler, BotActionHandler::class)) {
-                throw new InvalidArgumentException("The given handler { $handler } must extend our base handler ".BotActionHandler::class);
-            }
-
-            $this->handlers[$handler] = $this->makeHandlerSettings($handler);
-        }
-
-        return $this;
     }
 
     /**

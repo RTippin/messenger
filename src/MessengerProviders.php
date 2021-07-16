@@ -3,6 +3,7 @@
 namespace RTippin\Messenger;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Collection;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Models\GhostUser;
@@ -85,17 +86,17 @@ trait MessengerProviders
     public function setProvider($provider = null): self
     {
         if (! $this->isValidMessengerProvider($provider)) {
-            $this->unsetProvider()->throwProviderError();
+            $this->throwProviderError();
         }
 
-        $this->alias = $this->findProviderAlias($provider);
-        $interactions = $this->providers->get($this->alias)['provider_interactions'];
         $this->provider = $provider;
-        $this->providerHasFriends = $this->isProviderFriendable($provider);
-        $this->providerHasDevices = $this->providers->get($this->alias)['devices'];
-        $this->providerCanMessageFirst = $interactions['can_message'];
-        $this->providerCanFriend = $interactions['can_friend'];
-        $this->providerCanSearch = $interactions['can_search'];
+        $providerSettings = $this->providers->get(get_class($provider));
+        $this->alias = $providerSettings['alias'];
+        $this->providerHasFriends = $providerSettings['friendable'];
+        $this->providerHasDevices = $providerSettings['devices'];
+        $this->providerCanMessageFirst = $this->getCanMessageFirstClasses($providerSettings['cant_message_first']);
+        $this->providerCanFriend = $this->getCanFriendClasses($providerSettings['cant_friend']);
+        $this->providerCanSearch = $this->getCanSearchClasses($providerSettings['cant_search']);
         $this->providerIsSet = true;
 
         app()->instance(MessengerProvider::class, $provider);
@@ -123,7 +124,9 @@ trait MessengerProviders
             }
 
             return $this->providerMessengerModel;
-        } elseif (! is_null($provider)
+        }
+
+        if (! is_null($provider)
             && $this->isValidMessengerProvider($provider)) {
             return MessengerModel::firstOrCreate([
                 'owner_id' => $provider->getKey(),
@@ -203,41 +206,41 @@ trait MessengerProviders
     /**
      * Can the current Messenger Provider message given provider first?
      *
-     * @param null $provider
+     * @param MessengerProvider|Model|null $provider
      * @return bool
      */
     public function canMessageProviderFirst($provider = null): bool
     {
-        $alias = $this->findProviderAlias($provider);
-
-        return ! is_null($alias) && in_array($alias, $this->providerCanMessageFirst);
+        return $provider
+            && is_object($provider)
+            && in_array(get_class($provider), $this->providerCanMessageFirst);
     }
 
     /**
      * Can the current Messenger Provider initiate a
      * friend request with given provider?
      *
-     * @param null $provider
+     * @param MessengerProvider|Model|null $provider
      * @return bool
      */
     public function canFriendProvider($provider = null): bool
     {
-        $alias = $this->findProviderAlias($provider);
-
-        return $alias && in_array($alias, $this->providerCanFriend);
+        return $provider
+            && is_object($provider)
+            && in_array(get_class($provider), $this->providerCanFriend);
     }
 
     /**
      * Can the current Messenger Provider search the given provider?
      *
-     * @param null $provider
+     * @param MessengerProvider|Model|null $provider
      * @return bool
      */
     public function canSearchProvider($provider = null): bool
     {
-        $alias = $this->findProviderAlias($provider);
-
-        return $alias && in_array($alias, $this->providerCanSearch);
+        return $provider
+            && is_object($provider)
+            && in_array(get_class($provider), $this->providerCanSearch);
     }
 
     /**
@@ -247,11 +250,11 @@ trait MessengerProviders
      */
     public function getGhostProvider(): GhostUser
     {
-        if ($this->ghost) {
-            return $this->ghost;
+        if (is_null($this->ghost)) {
+            $this->setGhostProvider();
         }
 
-        return $this->setGhostProvider();
+        return $this->ghost;
     }
 
     /**
@@ -261,11 +264,11 @@ trait MessengerProviders
      */
     public function getGhostBot(): GhostUser
     {
-        if ($this->ghostBot) {
-            return $this->ghostBot;
+        if (is_null($this->ghostBot)) {
+            $this->setGhostBot();
         }
 
-        return $this->setGhostBot();
+        return $this->ghostBot;
     }
 
     /**
@@ -292,6 +295,7 @@ trait MessengerProviders
             'send_messages' => false,
             'add_participants' => false,
             'manage_invites' => false,
+            'manage_bots' => false,
         ]);
 
         return $this->ghostParticipant;
@@ -313,8 +317,8 @@ trait MessengerProviders
      */
     public function getSearchableForCurrentProvider(): array
     {
-        return $this->providers->filter(function ($provider, $alias) {
-            return $provider['searchable'] === true && in_array($alias, $this->providerCanSearch);
+        return $this->providers->filter(function ($settings, $class) {
+            return $settings['searchable'] === true && in_array($class, $this->providerCanSearch);
         })
             ->map(fn ($provider) => $provider['morph_class'])
             ->flatten()
@@ -322,19 +326,60 @@ trait MessengerProviders
     }
 
     /**
-     * Get all base classes of valid providers the current
-     * Messenger Provider can initiate a friend request with.
-     *
+     * @param array $limits
      * @return array
-     * @noinspection SpellCheckingInspection
      */
-    public function getFriendableForCurrentProvider(): array
+    private function getCanMessageFirstClasses(array $limits): array
     {
-        return $this->providers->filter(function ($provider, $alias) {
-            return $provider['friendable'] === true && in_array($alias, $this->providerCanFriend);
-        })
-            ->map(fn ($provider) => $provider['morph_class'])
-            ->flatten()
+        $validProviders = $this->getAllProviders(true);
+
+        if (count($limits) > 0) {
+            return $this->filterCanList($validProviders, $limits);
+        }
+
+        return $validProviders;
+    }
+
+    /**
+     * @param array $limits
+     * @return array
+     */
+    private function getCanFriendClasses(array $limits): array
+    {
+        $validProviders = $this->getAllFriendableProviders(true);
+
+        if (count($limits) > 0) {
+            return $this->filterCanList($validProviders, $limits);
+        }
+
+        return $validProviders;
+    }
+
+    /**
+     * @param array $limits
+     * @return array
+     */
+    private function getCanSearchClasses(array $limits): array
+    {
+        $validProviders = $this->getAllSearchableProviders(true);
+
+        if (count($limits) > 0) {
+            return $this->filterCanList($validProviders, $limits);
+        }
+
+        return $validProviders;
+    }
+
+    /**
+     * @param array $providers
+     * @param array $limits
+     * @return array
+     */
+    private function filterCanList(array $providers, array $limits): array
+    {
+        return (new Collection($providers))
+            ->reject(fn ($provider) => in_array($provider, $limits))
+            ->values()
             ->toArray();
     }
 
@@ -347,18 +392,18 @@ trait MessengerProviders
     }
 
     /**
-     * @return GhostUser
+     * Set the ghost user.
      */
-    private function setGhostProvider(): GhostUser
+    private function setGhostProvider(): void
     {
-        return $this->ghost = new GhostUser;
+        $this->ghost = new GhostUser;
     }
 
     /**
-     * @return GhostUser
+     * Set the ghost bot.
      */
-    private function setGhostBot(): GhostUser
+    private function setGhostBot(): void
     {
-        return $this->ghostBot = (new GhostUser)->ghostBot();
+        $this->ghostBot = (new GhostUser)->ghostBot();
     }
 }

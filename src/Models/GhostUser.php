@@ -43,6 +43,16 @@ class GhostUser extends Eloquent
     }
 
     /**
+     * Get the provider settings and alias override, if set.
+     *
+     * @return array
+     */
+    public static function getProviderSettings(): array
+    {
+        return [];
+    }
+
+    /**
      * @return string
      */
     public function getProviderName(): string

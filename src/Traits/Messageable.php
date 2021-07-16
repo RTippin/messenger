@@ -44,9 +44,9 @@ trait Messageable
             'friendable' => true,
             'devices' => true,
             'default_avatar' => public_path('vendor/messenger/images/users.png'),
-            'limit_can_message' => [],
-            'limit_can_search' => [],
-            'limit_can_friend' => [],
+            'cant_message_first' => [],
+            'cant_search' => [],
+            'cant_friend' => [],
         ];
     }
 

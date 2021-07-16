@@ -11,6 +11,7 @@ use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class ParticipantTest extends FeatureTestCase
 {
@@ -93,7 +94,7 @@ class ParticipantTest extends FeatureTestCase
     /** @test */
     public function valid_providers_scope_ignores_company()
     {
-        Messenger::setMessengerProviders(['user' => $this->getBaseProvidersConfig()['user']]);
+        Messenger::registerProviders([UserModel::class], true);
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->create();
         Participant::factory()->for($thread)->owner($this->developers)->create();

@@ -132,6 +132,16 @@ class Bot extends Model implements MessengerProvider
     }
 
     /**
+     * Get the provider settings and alias override, if set.
+     *
+     * @return array
+     */
+    public static function getProviderSettings(): array
+    {
+        return [];
+    }
+
+    /**
      * @return string|null
      */
     public function getProviderProfileRoute(): ?string

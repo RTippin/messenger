@@ -199,7 +199,7 @@ class Participant extends Model
     {
         return $query->whereIn(
             'owner_type',
-            Messenger::getAllMessengerProviders()
+            Messenger::getAllProviders()
         );
     }
 

@@ -13,6 +13,8 @@ use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\PendingFriend;
 use RTippin\Messenger\Models\SentFriend;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\Fixtures\CompanyModel;
+use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class StoreFriendRequestTest extends FeatureTestCase
 {
@@ -137,9 +139,8 @@ class StoreFriendRequestTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_disabled_in_provider_interactions()
     {
-        $providers = $this->getBaseProvidersConfig();
-        $providers['user']['provider_interactions']['can_friend'] = false;
-        Messenger::setMessengerProviders($providers);
+        UserModel::$cantFriend = [CompanyModel::class];
+        Messenger::registerProviders([UserModel::class, CompanyModel::class]);
         Messenger::setProvider($this->tippin);
 
         $this->expectException(FriendException::class);

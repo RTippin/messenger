@@ -9,13 +9,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Str;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Contracts\Searchable;
 use RTippin\Messenger\Traits\Messageable;
 
-class CompanyModel extends User implements MessengerProvider, Searchable
+class CompanyModel extends User implements MessengerProvider
 {
     use Messageable;
     use HasFactory;
+
+    public static string $alias = 'company';
+    public static bool $searchable = true;
+    public static bool $friendable = true;
+    public static bool $devices = true;
+    public static array $cantMessage = [];
+    public static array $cantSearch = [];
+    public static array $cantFriend = [];
 
     public function __construct(array $attributes = [])
     {
@@ -44,6 +51,30 @@ class CompanyModel extends User implements MessengerProvider, Searchable
                 $model->id = Str::orderedUuid()->toString();
             }
         });
+    }
+
+    public static function getProviderSettings(): array
+    {
+        return [
+            'alias' => self::$alias,
+            'searchable' => self::$searchable,
+            'friendable' => self::$friendable,
+            'devices' => self::$devices,
+            'default_avatar' => '/path/to/company.png',
+            'cant_message_first' => self::$cantMessage,
+            'cant_search' => self::$cantSearch,
+            'cant_friend' => self::$cantFriend,
+        ];
+    }
+
+    public static function reset(): void
+    {
+        self::$searchable = true;
+        self::$friendable = true;
+        self::$devices = true;
+        self::$cantMessage = [];
+        self::$cantSearch = [];
+        self::$cantFriend = [];
     }
 
     public function getProviderName(): string

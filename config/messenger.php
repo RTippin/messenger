@@ -3,64 +3,6 @@
 return [
     /*
     |--------------------------------------------------------------------------
-    | Messenger Providers Configuration
-    |--------------------------------------------------------------------------
-    |
-    | Define every model you wish to use within this messenger system.
-    | The name provided will be the alias used for that class,
-    | including upload folder names, channel names, etc.
-    |
-    | *PLEASE NOTE: Once you choose an alias, you should not change it
-    | unless you plan to move the uploads/directory names around yourself!
-    |
-    | *Each provider you list must implement our MessengerProvider contract.
-    | We also provide a Messagable trait you can use on your model that has
-    | the basic methods this messenger needs (name / avatar / etc).
-    | -RTippin\Messenger\Traits\Messageable
-    | -RTippin\Messenger\Contracts\MessengerProvider
-    |
-    | *To enable a provider to be searchable, you must implement our contract
-    | listed below, and implement the static method for the query builder. We
-    | include a trait you can use or reference to jump right in!
-    | -RTippin\Messenger\Traits\Search
-    | -RTippin\Messenger\Contracts\Searchable
-    |
-    | *Provider interactions give fine grain control over how your provider can interact with other providers, should you have
-    | multiple. A provider always has full permission for interactions between itself, e.g : User to User. To allow full
-    | interactions between other providers, simply mark each value as TRUE. For no other interactions, mark NULL or FALSE.
-    | To specify which and how each provider can interact with one another, declare each providers alias string, multiple
-    | separated by the PIPE, e.g : 'company', 'company|teacher|user', etc.
-    |
-    | 'company' => [                                  //alias given to your provider
-    |     'model' => App\Models\Company::class,       //Path to the provider's model
-    |     'searchable' => true,                       //Provider implements/is searchable - true|false
-    |     'friendable' => true,                       //Provider is friendable - true|false
-    |     'devices' => true,                          //Provider has tokens for push notifications - true|false
-    |     'default_avatar' => public_path('pic.png')  //Default avatar path used when provider has no upload avatar
-    |     'provider_interactions' => [                //What your provider can do with other providers
-    |         'can_message' => 'user',                //Able to start new threads with other listed providers - true|false|null|string
-    |         'can_search' => 'user|teacher',         //Able to search other listed providers - true|false|null|string
-    |         'can_friend' => false,                  //Able to send friend request to  other listed providers - true|false|null|string
-    |     ]
-    | ],
-    */
-    'providers' => [
-        'user' => [
-            'model' => App\Models\User::class,
-            'searchable' => true,
-            'friendable' => true,
-            'devices' => false,
-            'default_avatar' => public_path('vendor/messenger/images/users.png'),
-            'provider_interactions' => [
-                'can_message' => true,
-                'can_search' => true,
-                'can_friend' => true,
-            ],
-        ],
-    ],
-
-    /*
-    |--------------------------------------------------------------------------
     | Provider UUIDs
     |--------------------------------------------------------------------------
     |

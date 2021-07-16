@@ -51,16 +51,24 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
+    public function it_throws_exception_if_provider_doesnt_implement_our_interface()
+    {
+        $invalid = OtherModel::class;
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("The given provider { $invalid } must implement our contract ".MessengerProvider::class);
+
+        $this->messenger->registerProviders([$invalid]);
+    }
+
+    /** @test */
     public function it_checks_objects_and_class_strings_for_valid_provider()
     {
-        $user = UserModel::class;
-        $company = CompanyModel::class;
-        $providerUser = new $user;
+        $providerUser = new UserModel;
         $providerOtherUser = new OtherModel;
-        $providerCompany = new $company;
+        $providerCompany = new CompanyModel;
 
-        $this->assertTrue($this->messenger->isValidMessengerProvider($user));
-        $this->assertTrue($this->messenger->isValidMessengerProvider($company));
+        $this->assertTrue($this->messenger->isValidMessengerProvider(UserModel::class));
+        $this->assertTrue($this->messenger->isValidMessengerProvider(CompanyModel::class));
         $this->assertTrue($this->messenger->isValidMessengerProvider($providerUser));
         $this->assertTrue($this->messenger->isValidMessengerProvider($providerCompany));
         $this->assertFalse($this->messenger->isValidMessengerProvider($providerOtherUser));
@@ -71,14 +79,12 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_returns_valid_provider_alias_using_objects_and_class_strings()
     {
-        $user = UserModel::class;
-        $company = CompanyModel::class;
-        $providerUser = new $user;
+        $providerUser = new UserModel;
         $providerOtherUser = new OtherModel;
-        $providerCompany = new $company;
+        $providerCompany = new CompanyModel;
 
-        $this->assertSame('user', $this->messenger->findProviderAlias($user));
-        $this->assertSame('company', $this->messenger->findProviderAlias($company));
+        $this->assertSame('user', $this->messenger->findProviderAlias(UserModel::class));
+        $this->assertSame('company', $this->messenger->findProviderAlias(CompanyModel::class));
         $this->assertSame('user', $this->messenger->findProviderAlias($providerUser));
         $this->assertSame('company', $this->messenger->findProviderAlias($providerCompany));
         $this->assertNull($this->messenger->findProviderAlias($providerOtherUser));
@@ -95,6 +101,17 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
+    public function it_returns_valid_provider_alias_using_morph_alias_if_morph_maps_set()
+    {
+        if ($this->useMorphMap) {
+            $this->assertSame('user', $this->messenger->findProviderAlias('users'));
+            $this->assertSame('company', $this->messenger->findProviderAlias('companies'));
+        } else {
+            $this->assertTrue(true);
+        }
+    }
+
+    /** @test */
     public function it_returns_valid_provider_class_using_morph_alias_if_morph_maps_set()
     {
         if ($this->useMorphMap) {
@@ -108,13 +125,11 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_allows_given_provider_objects_and_class_strings_to_be_searched()
     {
-        $user = UserModel::class;
-        $company = CompanyModel::class;
-        $providerUser = new $user;
-        $providerCompany = new $company;
+        $providerUser = new UserModel;
+        $providerCompany = new CompanyModel;
 
-        $this->assertTrue($this->messenger->isProviderSearchable($user));
-        $this->assertTrue($this->messenger->isProviderSearchable($company));
+        $this->assertTrue($this->messenger->isProviderSearchable(UserModel::class));
+        $this->assertTrue($this->messenger->isProviderSearchable(CompanyModel::class));
         $this->assertTrue($this->messenger->isProviderSearchable($providerUser));
         $this->assertTrue($this->messenger->isProviderSearchable($providerCompany));
     }
@@ -122,18 +137,15 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_denies_given_provider_objects_and_class_strings_to_be_searched()
     {
-        $user = UserModel::class;
-        $company = CompanyModel::class;
-        $providers = $this->getBaseProvidersConfig();
-        $providers['user']['searchable'] = false;
-        $providers['company']['searchable'] = false;
-        $this->messenger->setMessengerProviders($providers);
-        $providerUser = new $user;
+        UserModel::$searchable = false;
+        CompanyModel::$searchable = false;
+        $this->messenger->registerProviders([UserModel::class, CompanyModel::class]);
+        $providerUser = new UserModel;
         $providerOtherUser = new OtherModel;
-        $providerCompany = new $company;
+        $providerCompany = new CompanyModel;
 
-        $this->assertFalse($this->messenger->isProviderSearchable($user));
-        $this->assertFalse($this->messenger->isProviderSearchable($company));
+        $this->assertFalse($this->messenger->isProviderSearchable(UserModel::class));
+        $this->assertFalse($this->messenger->isProviderSearchable(CompanyModel::class));
         $this->assertFalse($this->messenger->isProviderSearchable($providerUser));
         $this->assertFalse($this->messenger->isProviderSearchable($providerCompany));
         $this->assertFalse($this->messenger->isProviderSearchable($providerOtherUser));
@@ -143,13 +155,11 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_allows_given_provider_objects_and_class_strings_to_be_friended()
     {
-        $user = UserModel::class;
-        $company = CompanyModel::class;
-        $providerUser = new $user;
-        $providerCompany = new $company;
+        $providerUser = new UserModel;
+        $providerCompany = new CompanyModel;
 
-        $this->assertTrue($this->messenger->isProviderFriendable($user));
-        $this->assertTrue($this->messenger->isProviderFriendable($company));
+        $this->assertTrue($this->messenger->isProviderFriendable(UserModel::class));
+        $this->assertTrue($this->messenger->isProviderFriendable(CompanyModel::class));
         $this->assertTrue($this->messenger->isProviderFriendable($providerUser));
         $this->assertTrue($this->messenger->isProviderFriendable($providerCompany));
     }
@@ -157,18 +167,15 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_denies_given_provider_objects_and_class_strings_to_be_friended()
     {
-        $user = UserModel::class;
-        $company = CompanyModel::class;
-        $providers = $this->getBaseProvidersConfig();
-        $providers['user']['friendable'] = false;
-        $providers['company']['friendable'] = false;
-        $this->messenger->setMessengerProviders($providers);
-        $providerUser = new $user;
+        UserModel::$friendable = false;
+        CompanyModel::$friendable = false;
+        $this->messenger->registerProviders([UserModel::class, CompanyModel::class]);
+        $providerUser = new UserModel;
         $providerOtherUser = new OtherModel;
-        $providerCompany = new $company;
+        $providerCompany = new CompanyModel;
 
-        $this->assertFalse($this->messenger->isProviderFriendable($user));
-        $this->assertFalse($this->messenger->isProviderFriendable($company));
+        $this->assertFalse($this->messenger->isProviderFriendable(UserModel::class));
+        $this->assertFalse($this->messenger->isProviderFriendable(CompanyModel::class));
         $this->assertFalse($this->messenger->isProviderFriendable($providerUser));
         $this->assertFalse($this->messenger->isProviderFriendable($providerCompany));
         $this->assertFalse($this->messenger->isProviderFriendable($providerOtherUser));
@@ -176,34 +183,97 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function it_returns_all_provider_classes()
+    public function it_returns_all_providers_except_bot_using_morph_map_class()
     {
-        $user = UserModel::class;
-        $company = CompanyModel::class;
         $expected = [
-            (new $user)->getMorphClass(),
-            (new $company)->getMorphClass(),
-            'bots',
+            (new UserModel)->getMorphClass(),
+            (new CompanyModel)->getMorphClass(),
         ];
 
-        $this->assertSame($expected, $this->messenger->getAllMessengerProviders());
+        $this->assertSame($expected, $this->messenger->getAllProviders());
     }
 
     /** @test */
-    public function it_returns_provider_classes_that_can_be_searched()
+    public function it_returns_all_providers_except_bot_using_full_class_name()
     {
-        $user = UserModel::class;
-        $company = CompanyModel::class;
         $expected = [
-            (new $user)->getMorphClass(),
-            (new $company)->getMorphClass(),
+            UserModel::class,
+            CompanyModel::class,
+        ];
+
+        $this->assertSame($expected, $this->messenger->getAllProviders(true));
+    }
+
+    /** @test */
+    public function it_returns_provider_classes_that_can_be_searched_using_morph_map()
+    {
+        $expected = [
+            (new UserModel)->getMorphClass(),
+            (new CompanyModel)->getMorphClass(),
         ];
 
         $this->assertSame($expected, $this->messenger->getAllSearchableProviders());
     }
 
     /** @test */
-    public function it_returns_provider_classes_that_can_be_friended()
+    public function it_returns_provider_classes_that_can_be_searched_using_full_class_name()
+    {
+        $expected = [
+            UserModel::class,
+            CompanyModel::class,
+        ];
+
+        $this->assertSame($expected, $this->messenger->getAllSearchableProviders(true));
+    }
+
+    /** @test */
+    public function it_doesnt_return_provider_classes_that_cant_be_searched()
+    {
+        CompanyModel::$searchable = false;
+        $this->messenger->registerProviders([UserModel::class, CompanyModel::class]);
+        $expected = [
+            (new UserModel)->getMorphClass(),
+        ];
+
+        $this->assertSame($expected, $this->messenger->getAllSearchableProviders());
+    }
+
+    /** @test */
+    public function it_returns_provider_classes_that_can_be_friended_using_morph_map()
+    {
+        $expected = [
+            (new UserModel)->getMorphClass(),
+            (new CompanyModel)->getMorphClass(),
+        ];
+
+        $this->assertSame($expected, $this->messenger->getAllFriendableProviders());
+    }
+
+    /** @test */
+    public function it_returns_provider_classes_that_can_be_friended_using_full_class_name()
+    {
+        $expected = [
+            UserModel::class,
+            CompanyModel::class,
+        ];
+
+        $this->assertSame($expected, $this->messenger->getAllFriendableProviders(true));
+    }
+
+    /** @test */
+    public function it_doesnt_return_provider_classes_that_cant_be_friended()
+    {
+        CompanyModel::$friendable = false;
+        $this->messenger->registerProviders([UserModel::class, CompanyModel::class]);
+        $expected = [
+            (new UserModel)->getMorphClass(),
+        ];
+
+        $this->assertSame($expected, $this->messenger->getAllFriendableProviders());
+    }
+
+    /** @test */
+    public function it_returns_provider_classes_that_have_devices_using_morph_map()
     {
         $user = UserModel::class;
         $company = CompanyModel::class;
@@ -212,17 +282,27 @@ class MessengerTest extends MessengerTestCase
             (new $company)->getMorphClass(),
         ];
 
-        $this->assertSame($expected, $this->messenger->getAllFriendableProviders());
+        $this->assertSame($expected, $this->messenger->getAllProvidersWithDevices());
     }
 
     /** @test */
-    public function it_returns_provider_classes_that_have_devices()
+    public function it_returns_provider_classes_that_have_devices_using_full_class_name()
     {
-        $user = UserModel::class;
-        $company = CompanyModel::class;
         $expected = [
-            (new $user)->getMorphClass(),
-            (new $company)->getMorphClass(),
+            UserModel::class,
+            CompanyModel::class,
+        ];
+
+        $this->assertSame($expected, $this->messenger->getAllProvidersWithDevices(true));
+    }
+
+    /** @test */
+    public function it_doesnt_return_provider_classes_that_dont_have_devices()
+    {
+        CompanyModel::$devices = false;
+        $this->messenger->registerProviders([UserModel::class, CompanyModel::class]);
+        $expected = [
+            (new UserModel)->getMorphClass(),
         ];
 
         $this->assertSame($expected, $this->messenger->getAllProvidersWithDevices());
@@ -253,10 +333,6 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame($ghost, $this->messenger->getGhostProvider());
         $this->assertSame($ghost, messenger()->getGhostProvider());
         $this->assertSame($ghost, MessengerFacade::getGhostProvider());
-
-        $this->messenger->reset();
-
-        $this->assertNotSame($ghost, $this->messenger->getGhostProvider());
     }
 
     /** @test */
@@ -276,10 +352,6 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame($ghost, $this->messenger->getGhostBot());
         $this->assertSame($ghost, messenger()->getGhostBot());
         $this->assertSame($ghost, MessengerFacade::getGhostBot());
-
-        $this->messenger->reset();
-
-        $this->assertNotSame($ghost, $this->messenger->getGhostBot());
     }
 
     /** @test */
@@ -314,19 +386,16 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_sets_valid_provider()
     {
-        $model = UserModel::class;
-        $provider = new $model([
+        $provider = new UserModel([
             'id' => 1,
             'name' => 'Richard Tippin',
             'email' => 'tippindev@gmail.com',
             'password' => 'secret',
         ]);
         $this->messenger->setProvider($provider);
-        $user = UserModel::class;
-        $company = CompanyModel::class;
         $expected = [
-            (new $user)->getMorphClass(),
-            (new $company)->getMorphClass(),
+            (new UserModel)->getMorphClass(),
+            (new CompanyModel)->getMorphClass(),
         ];
 
         $this->assertSame($provider, $this->messenger->getProvider());
@@ -339,16 +408,32 @@ class MessengerTest extends MessengerTestCase
         $this->assertTrue($this->messenger->providerHasFriends());
         $this->assertTrue($this->messenger->providerHasDevices());
         $this->assertTrue($this->messenger->isProviderSet());
-        $this->assertSame($expected, $this->messenger->getFriendableForCurrentProvider());
+        $this->assertSame($expected, $this->messenger->getSearchableForCurrentProvider());
+    }
+
+    /** @test */
+    public function it_filters_searchable_for_current_provider()
+    {
+        UserModel::$cantSearch = [CompanyModel::class];
+        $this->messenger->registerProviders([UserModel::class, CompanyModel::class]);
+        $provider = new UserModel([
+            'id' => 1,
+            'name' => 'Richard Tippin',
+            'email' => 'tippindev@gmail.com',
+            'password' => 'secret',
+        ]);
+        $this->messenger->setProvider($provider);
+        $expected = [
+            (new UserModel)->getMorphClass(),
+        ];
+
         $this->assertSame($expected, $this->messenger->getSearchableForCurrentProvider());
     }
 
     /** @test */
     public function it_unsets_provider()
     {
-        $model = UserModel::class;
-
-        $provider = new $model([
+        $provider = new UserModel([
             'id' => 1,
             'name' => 'Richard Tippin',
             'email' => 'tippindev@gmail.com',
@@ -366,41 +451,34 @@ class MessengerTest extends MessengerTestCase
         $this->assertFalse($this->messenger->providerHasFriends());
         $this->assertFalse($this->messenger->providerHasDevices());
         $this->assertFalse($this->messenger->isProviderSet());
-        $this->assertSame([], $this->messenger->getFriendableForCurrentProvider());
         $this->assertSame([], $this->messenger->getSearchableForCurrentProvider());
     }
 
     /** @test */
     public function it_allows_set_provider_to_message_given_provider_first()
     {
-        $user = UserModel::class;
-        $company = CompanyModel::class;
-        $providerUser = new $user;
-        $providerCompany = new $company;
+        $providerUser = new UserModel;
+        $providerCompany = new CompanyModel;
         $this->messenger->setProvider($providerUser);
 
         $this->assertTrue($this->messenger->canMessageProviderFirst($providerUser));
-        $this->assertTrue($this->messenger->canMessageProviderFirst($company));
-        $this->assertTrue($this->messenger->canMessageProviderFirst($user));
         $this->assertTrue($this->messenger->canMessageProviderFirst($providerCompany));
     }
 
     /** @test */
     public function it_denies_set_provider_to_message_given_provider_first()
     {
-        $user = UserModel::class;
-        $company = CompanyModel::class;
-        $providers = $this->getBaseProvidersConfig();
-        $providers['user']['provider_interactions']['can_message'] = false;
-        $this->messenger->setMessengerProviders($providers);
-        $providerUser = new $user;
+        UserModel::$cantMessage = [CompanyModel::class];
+        $this->messenger->registerProviders([UserModel::class, CompanyModel::class]);
+        $providerUser = new UserModel;
         $providerOtherUser = new OtherModel;
-        $providerCompany = new $company;
+        $providerCompany = new CompanyModel;
         $this->messenger->setProvider($providerUser);
 
-        $this->assertFalse($this->messenger->canMessageProviderFirst(OtherModel::class));
         $this->assertTrue($this->messenger->canMessageProviderFirst($providerUser));
-        $this->assertFalse($this->messenger->canMessageProviderFirst($company));
+        $this->assertFalse($this->messenger->canMessageProviderFirst(OtherModel::class));
+        $this->assertFalse($this->messenger->canMessageProviderFirst(UserModel::class));
+        $this->assertFalse($this->messenger->canMessageProviderFirst(CompanyModel::class));
         $this->assertFalse($this->messenger->canMessageProviderFirst($providerOtherUser));
         $this->assertFalse($this->messenger->canMessageProviderFirst($providerCompany));
         $this->assertFalse($this->messenger->canMessageProviderFirst());
@@ -409,68 +487,66 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_allows_given_provider_to_be_searched_by_set_provider()
     {
-        $user = UserModel::class;
-        $company = CompanyModel::class;
-        $providerUser = new $user;
-        $providerCompany = new $company;
+        $providerUser = new UserModel;
+        $providerCompany = new CompanyModel;
         $this->messenger->setProvider($providerUser);
 
         $this->assertTrue($this->messenger->canSearchProvider($providerUser));
-        $this->assertTrue($this->messenger->canSearchProvider($company));
-        $this->assertTrue($this->messenger->canSearchProvider($user));
         $this->assertTrue($this->messenger->canSearchProvider($providerCompany));
+        $this->assertFalse($this->messenger->canSearchProvider(CompanyModel::class));
+        $this->assertFalse($this->messenger->canSearchProvider(UserModel::class));
     }
 
     /** @test */
     public function it_denies_given_provider_to_be_searched_by_set_provider()
     {
-        $user = UserModel::class;
-        $company = CompanyModel::class;
-        $providers = $this->getBaseProvidersConfig();
-        $providers['user']['provider_interactions']['can_search'] = false;
-        $this->messenger->setMessengerProviders($providers);
+        UserModel::$cantSearch = [CompanyModel::class];
+        $this->messenger->registerProviders([UserModel::class, CompanyModel::class]);
+        $providerUser = new UserModel;
         $providerOtherUser = new OtherModel;
-        $providerCompany = new $company;
-        $this->messenger->setProvider(new $user);
+        $providerCompany = new CompanyModel;
+        $this->messenger->setProvider($providerUser);
 
+        $this->assertTrue($this->messenger->canSearchProvider($providerUser));
         $this->assertFalse($this->messenger->canSearchProvider(OtherModel::class));
         $this->assertFalse($this->messenger->canSearchProvider($providerOtherUser));
         $this->assertFalse($this->messenger->canSearchProvider($providerCompany));
-        $this->assertFalse($this->messenger->canSearchProvider($company));
+        $this->assertFalse($this->messenger->canSearchProvider(UserModel::class));
+        $this->assertFalse($this->messenger->canSearchProvider(CompanyModel::class));
         $this->assertFalse($this->messenger->canSearchProvider());
     }
 
     /** @test */
     public function it_allows_set_provider_to_initiate_friend_request_with_given_provider()
     {
-        $user = UserModel::class;
-        $company = CompanyModel::class;
-        $providerUser = new $user;
-        $providerCompany = new $company;
+        $providerUser = new UserModel;
+        $providerCompany = new CompanyModel;
+        $providerOtherUser = new OtherModel;
         $this->messenger->setProvider($providerUser);
 
         $this->assertTrue($this->messenger->canFriendProvider($providerUser));
-        $this->assertTrue($this->messenger->canFriendProvider($company));
-        $this->assertTrue($this->messenger->canFriendProvider($user));
         $this->assertTrue($this->messenger->canFriendProvider($providerCompany));
+        $this->assertFalse($this->messenger->canFriendProvider(CompanyModel::class));
+        $this->assertFalse($this->messenger->canFriendProvider(UserModel::class));
+        $this->assertFalse($this->messenger->canFriendProvider($providerOtherUser));
     }
 
     /** @test */
     public function it_denies_set_provider_to_initiate_friend_request_with_given_provider()
     {
-        $user = UserModel::class;
-        $company = CompanyModel::class;
-        $providers = $this->getBaseProvidersConfig();
-        $providers['user']['provider_interactions']['can_friend'] = false;
-        $this->messenger->setMessengerProviders($providers);
+        UserModel::$cantFriend = [CompanyModel::class];
+        $this->messenger->registerProviders([UserModel::class, CompanyModel::class]);
+        $providerUser = new UserModel;
         $providerOtherUser = new OtherModel;
-        $providerCompany = new $company;
-        $this->messenger->setProvider(new $user);
+        $providerCompany = new CompanyModel;
+        $this->messenger->setProvider($providerUser);
 
+        $this->assertTrue($this->messenger->canFriendProvider($providerUser));
         $this->assertFalse($this->messenger->canFriendProvider(OtherModel::class));
         $this->assertFalse($this->messenger->canFriendProvider($providerOtherUser));
         $this->assertFalse($this->messenger->canFriendProvider($providerCompany));
-        $this->assertFalse($this->messenger->canFriendProvider($company));
+        $this->assertFalse($this->messenger->canFriendProvider(CompanyModel::class));
+        $this->assertFalse($this->messenger->canFriendProvider(UserModel::class));
         $this->assertFalse($this->messenger->canFriendProvider());
     }
 
@@ -536,7 +612,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertTrue($this->messenger->isThreadAvatarEnabled());
         $this->assertTrue($this->messenger->isBotAvatarEnabled());
         $this->assertTrue($this->messenger->isProviderAvatarEnabled());
-        $this->assertCount(3, $this->messenger->getMessengerProviders());
+        $this->assertCount(2, $this->messenger->getAllProviders());
         $this->assertSame(1000, $this->messenger->getApiRateLimit());
         $this->assertSame(45, $this->messenger->getSearchRateLimit());
         $this->assertSame(60, $this->messenger->getMessageRateLimit());
@@ -665,20 +741,6 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->setBotSubscriber('channel', 'test');
         $this->messenger->setCallSubscriber('channel', 'test');
         $this->messenger->setSystemMessageSubscriber('channel', 'test');
-        $this->messenger->setMessengerProviders([
-            'user' => [
-                'model' => UserModel::class,
-                'searchable' => false,
-                'friendable' => false,
-                'devices' => false,
-                'default_avatar' => '/path/to/user.png',
-                'provider_interactions' => [
-                    'can_message' => false,
-                    'can_search' => false,
-                    'can_friend' => false,
-                ],
-            ],
-        ]);
 
         // Now check values changed.
         $this->assertTrue($this->messenger->isPushNotificationsEnabled());
@@ -711,7 +773,6 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame(5, $this->messenger->getSearchRateLimit());
         $this->assertSame(5, $this->messenger->getMessageRateLimit());
         $this->assertSame(5, $this->messenger->getAttachmentRateLimit());
-        $this->assertCount(2, $this->messenger->getMessengerProviders());
         $this->assertFalse($this->messenger->isMessageEditsEnabled());
         $this->assertFalse($this->messenger->isMessageEditsViewEnabled());
         $this->assertFalse($this->messenger->isMessageEditsEnabled());

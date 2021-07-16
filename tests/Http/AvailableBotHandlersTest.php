@@ -17,7 +17,7 @@ class AvailableBotHandlersTest extends HttpTestCase
     public function admin_can_view_available_handlers()
     {
         $this->logCurrentRequest();
-        MessengerBots::setHandlers([FunBotHandler::class]);
+        MessengerBots::registerHandlers([FunBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -37,7 +37,7 @@ class AvailableBotHandlersTest extends HttpTestCase
     /** @test */
     public function handlers_failing_authorization_are_omitted()
     {
-        MessengerBots::setHandlers([
+        MessengerBots::registerHandlers([
             FunBotHandler::class,
             SillyBotHandler::class,
         ]);
@@ -56,7 +56,7 @@ class AvailableBotHandlersTest extends HttpTestCase
     /** @test */
     public function participant_with_permission_can_view_available_handlers()
     {
-        MessengerBots::setHandlers([FunBotHandler::class]);
+        MessengerBots::registerHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->doe)->create(['manage_bots' => true]);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
@@ -73,7 +73,7 @@ class AvailableBotHandlersTest extends HttpTestCase
     public function participant_without_permission_forbidden_to_view_available_handlers()
     {
         $this->logCurrentRequest();
-        MessengerBots::setHandlers([FunBotHandler::class]);
+        MessengerBots::registerHandlers([FunBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->doe);
@@ -89,7 +89,7 @@ class AvailableBotHandlersTest extends HttpTestCase
     public function forbidden_to_view_available_handlers_when_disabled_in_config()
     {
         Messenger::setBots(false);
-        MessengerBots::setHandlers([FunBotHandler::class]);
+        MessengerBots::registerHandlers([FunBotHandler::class]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -104,7 +104,7 @@ class AvailableBotHandlersTest extends HttpTestCase
     /** @test */
     public function forbidden_to_view_available_handlers_when_disabled_in_thread_settings()
     {
-        MessengerBots::setHandlers([FunBotHandler::class]);
+        MessengerBots::registerHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create(['chat_bots' => false]);
         Participant::factory()->for($thread)->admin()->owner($this->tippin)->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();

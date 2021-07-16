@@ -72,7 +72,7 @@ class MessengerBotsTest extends MessengerTestCase
             SillyBotHandler::class,
         ];
 
-        $this->bots->setHandlers($handlers);
+        $this->bots->registerHandlers($handlers);
 
         $this->assertSame($handlers, $this->bots->getHandlerClasses());
     }
@@ -89,7 +89,7 @@ class MessengerBotsTest extends MessengerTestCase
             'silly_bot',
         ];
 
-        $this->bots->setHandlers($handlers);
+        $this->bots->registerHandlers($handlers);
 
         $this->assertSame($aliases, $this->bots->getAliases());
     }
@@ -152,7 +152,7 @@ class MessengerBotsTest extends MessengerTestCase
             ],
         ];
 
-        $this->bots->setHandlers($handlers);
+        $this->bots->registerHandlers($handlers);
 
         $this->assertSame($settings, $this->bots->getHandlerSettings());
     }
@@ -174,7 +174,7 @@ class MessengerBotsTest extends MessengerTestCase
             'match' => null,
         ];
 
-        $this->bots->setHandlers($handlers);
+        $this->bots->registerHandlers($handlers);
 
         $this->assertSame($settings, $this->bots->getHandlerSettings('silly_bot'));
         $this->assertSame($settings, $this->bots->getHandlerSettings(SillyBotHandler::class));
@@ -184,7 +184,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_can_get_authorized_handler_settings()
     {
-        $this->bots->setHandlers([
+        $this->bots->registerHandlers([
             FunBotHandler::class,
             SillyBotHandler::class,
         ]);
@@ -204,7 +204,7 @@ class MessengerBotsTest extends MessengerTestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The given handler { RTippin\Messenger\Tests\Messenger\InvalidBotHandler } must extend our base handler RTippin\Messenger\Actions\Bots\BotActionHandler');
 
-        $this->bots->setHandlers($actions);
+        $this->bots->registerHandlers($actions);
     }
 
     /** @test */
@@ -215,9 +215,9 @@ class MessengerBotsTest extends MessengerTestCase
             SillyBotHandler::class,
         ];
 
-        $this->bots->setHandlers([FunBotHandler::class]);
-        $this->bots->setHandlers([SillyBotHandler::class]);
-        $this->bots->setHandlers([FunBotHandler::class]);
+        $this->bots->registerHandlers([FunBotHandler::class]);
+        $this->bots->registerHandlers([SillyBotHandler::class]);
+        $this->bots->registerHandlers([FunBotHandler::class]);
 
         $this->assertSame($actions, $this->bots->getHandlerClasses());
     }
@@ -225,14 +225,14 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_can_reset_handlers()
     {
-        $this->bots->setHandlers([
+        $this->bots->registerHandlers([
             FunBotHandler::class,
             SillyBotHandler::class,
         ]);
 
         $this->assertCount(2, $this->bots->getHandlerClasses());
 
-        $this->bots->setHandlers([], true);
+        $this->bots->registerHandlers([], true);
 
         $this->assertCount(0, $this->bots->getHandlerClasses());
     }
@@ -240,14 +240,14 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_can_overwrite_existing_handlers()
     {
-        $this->bots->setHandlers([
+        $this->bots->registerHandlers([
             FunBotHandler::class,
             SillyBotHandler::class,
         ]);
 
         $this->assertCount(2, $this->bots->getHandlerClasses());
 
-        $this->bots->setHandlers([SillyBotHandler::class], true);
+        $this->bots->registerHandlers([SillyBotHandler::class], true);
 
         $this->assertCount(1, $this->bots->getHandlerClasses());
     }
@@ -260,7 +260,7 @@ class MessengerBotsTest extends MessengerTestCase
             SillyBotHandler::class,
         ];
 
-        $this->bots->setHandlers($handlers);
+        $this->bots->registerHandlers($handlers);
 
         $this->assertTrue($this->bots->isValidHandler(FunBotHandler::class));
         $this->assertTrue($this->bots->isValidHandler(SillyBotHandler::class));
@@ -278,7 +278,7 @@ class MessengerBotsTest extends MessengerTestCase
             SillyBotHandler::class,
         ];
 
-        $this->bots->setHandlers($handlers);
+        $this->bots->registerHandlers($handlers);
 
         $this->assertTrue($this->bots->isValidHandler('fun_bot'));
         $this->assertTrue($this->bots->isValidHandler('silly_bot'));
@@ -289,7 +289,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_can_initialize_bot_using_class()
     {
-        $this->bots->setHandlers([FunBotHandler::class]);
+        $this->bots->registerHandlers([FunBotHandler::class]);
 
         $this->assertInstanceOf(FunBotHandler::class, $this->bots->initializeHandler(FunBotHandler::class));
     }
@@ -297,7 +297,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_can_initialize_bot_using_alias()
     {
-        $this->bots->setHandlers([FunBotHandler::class]);
+        $this->bots->registerHandlers([FunBotHandler::class]);
 
         $this->assertInstanceOf(FunBotHandler::class, $this->bots->initializeHandler('fun_bot'));
     }
@@ -305,7 +305,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_returns_same_instance_if_initializing_already_active_handler()
     {
-        $this->bots->setHandlers([FunBotHandler::class]);
+        $this->bots->registerHandlers([FunBotHandler::class]);
         $original = $this->bots->initializeHandler(FunBotHandler::class);
 
         $this->assertSame($original, $this->bots->initializeHandler(FunBotHandler::class));
@@ -314,7 +314,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_returns_new_instance_if_initializing_different_handler_when_another_set()
     {
-        $this->bots->setHandlers([
+        $this->bots->registerHandlers([
             FunBotHandler::class,
             SillyBotHandler::class,
         ]);
@@ -329,7 +329,7 @@ class MessengerBotsTest extends MessengerTestCase
         $this->expectException(BotException::class);
         $this->expectExceptionMessage('Invalid bot handler.');
 
-        $this->bots->setHandlers([FunBotHandler::class]);
+        $this->bots->registerHandlers([FunBotHandler::class]);
         $this->bots->initializeHandler(SillyBotHandler::class);
     }
 
@@ -339,14 +339,14 @@ class MessengerBotsTest extends MessengerTestCase
         $this->expectException(BotException::class);
         $this->expectExceptionMessage('Invalid bot handler.');
 
-        $this->bots->setHandlers([FunBotHandler::class]);
+        $this->bots->registerHandlers([FunBotHandler::class]);
         $this->bots->initializeHandler();
     }
 
     /** @test */
     public function it_can_access_initialized_bot()
     {
-        $this->bots->setHandlers([FunBotHandler::class]);
+        $this->bots->registerHandlers([FunBotHandler::class]);
         $this->bots->initializeHandler(FunBotHandler::class);
 
         $this->assertInstanceOf(FunBotHandler::class, $this->bots->getActiveHandler());
@@ -356,7 +356,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_returns_null_when_no_bot_initialized()
     {
-        $this->bots->setHandlers([FunBotHandler::class]);
+        $this->bots->registerHandlers([FunBotHandler::class]);
 
         $this->assertNull($this->bots->getActiveHandler());
         $this->assertFalse($this->bots->isActiveHandlerSet());
@@ -365,7 +365,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_fails_validating_handler_via_alias()
     {
-        $this->bots->setHandlers([FunBotHandler::class]);
+        $this->bots->registerHandlers([FunBotHandler::class]);
 
         try {
             $this->bots->resolveHandlerData(['handler' => 'silly_bot']);
@@ -377,7 +377,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_fails_initializing_given_invalid_handler()
     {
-        $this->bots->setHandlers([FunBotHandler::class]);
+        $this->bots->registerHandlers([FunBotHandler::class]);
 
         $this->expectException(BotException::class);
         $this->expectExceptionMessage('Invalid bot handler.');
@@ -388,7 +388,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_initializes_handler_after_validating_valid_alias()
     {
-        $this->bots->setHandlers([FunBotHandler::class]);
+        $this->bots->registerHandlers([FunBotHandler::class]);
 
         try {
             $this->bots->resolveHandlerData([
@@ -403,7 +403,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_returns_final_resolved_data_using_alias_in_data()
     {
-        $this->bots->setHandlers([SillyBotHandler::class]);
+        $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
             'handler' => SillyBotHandler::class,
             'unique' => true,
@@ -431,7 +431,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_returns_final_resolved_data_using_handler_class()
     {
-        $this->bots->setHandlers([SillyBotHandler::class]);
+        $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
             'handler' => SillyBotHandler::class,
             'unique' => true,
@@ -458,7 +458,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_returns_final_resolved_data_using_handler_alias()
     {
-        $this->bots->setHandlers([SillyBotHandler::class]);
+        $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
             'handler' => SillyBotHandler::class,
             'unique' => true,
@@ -485,7 +485,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_ignores_properties_the_handler_overwrites()
     {
-        $this->bots->setHandlers([FunBotHandler::class]);
+        $this->bots->registerHandlers([FunBotHandler::class]);
         $expects = [
             'handler' => FunBotHandler::class,
             'unique' => false,
@@ -515,7 +515,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function overwritten_properties_can_be_omitted()
     {
-        $this->bots->setHandlers([FunBotHandler::class]);
+        $this->bots->registerHandlers([FunBotHandler::class]);
         $expects = [
             'handler' => FunBotHandler::class,
             'unique' => false,
@@ -542,7 +542,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_formats_payload_using_handler_custom_rules_only()
     {
-        $this->bots->setHandlers([FunBotHandler::class]);
+        $this->bots->registerHandlers([FunBotHandler::class]);
         $expects = '{"test":{"test":"fun","more":"yes","ok":"dokie"},"special":true}';
         $results = $this->bots->resolveHandlerData([
             'handler' => 'fun_bot',
@@ -571,7 +571,7 @@ class MessengerBotsTest extends MessengerTestCase
      */
     public function it_fails_validating_base_ruleset($match, $cooldown, $admin, $enabled, $triggers)
     {
-        $this->bots->setHandlers([SillyBotHandler::class]);
+        $this->bots->registerHandlers([SillyBotHandler::class]);
 
         try {
             $this->bots->resolveHandlerData([
@@ -599,7 +599,7 @@ class MessengerBotsTest extends MessengerTestCase
      */
     public function it_fails_validating_triggers($triggers, $errorKeys)
     {
-        $this->bots->setHandlers([SillyBotHandler::class]);
+        $this->bots->registerHandlers([SillyBotHandler::class]);
 
         try {
             $this->bots->resolveHandlerData([
@@ -624,7 +624,7 @@ class MessengerBotsTest extends MessengerTestCase
      */
     public function it_passes_validating_matches($matches)
     {
-        $this->bots->setHandlers([SillyBotHandler::class]);
+        $this->bots->registerHandlers([SillyBotHandler::class]);
         $this->bots->resolveHandlerData([
             'handler' => 'silly_bot',
             'match' => $matches,
@@ -644,7 +644,7 @@ class MessengerBotsTest extends MessengerTestCase
      */
     public function it_passes_validating_cooldown($cooldown)
     {
-        $this->bots->setHandlers([SillyBotHandler::class]);
+        $this->bots->registerHandlers([SillyBotHandler::class]);
         $this->bots->resolveHandlerData([
             'handler' => 'silly_bot',
             'match' => 'exact',
@@ -665,7 +665,7 @@ class MessengerBotsTest extends MessengerTestCase
      */
     public function it_fails_validating_handler_rules($extra, $errorKeys)
     {
-        $this->bots->setHandlers([FunBotHandler::class]);
+        $this->bots->registerHandlers([FunBotHandler::class]);
 
         try {
             $this->bots->resolveHandlerData([
@@ -690,7 +690,7 @@ class MessengerBotsTest extends MessengerTestCase
      */
     public function it_formats_triggers($triggers, $result)
     {
-        $this->bots->setHandlers([SillyBotHandler::class]);
+        $this->bots->registerHandlers([SillyBotHandler::class]);
         $results = $this->bots->resolveHandlerData([
             'handler' => 'silly_bot',
             'match' => 'exact',

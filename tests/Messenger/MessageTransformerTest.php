@@ -287,9 +287,7 @@ class MessageTransformerTest extends FeatureTestCase
     /** @test */
     public function it_returns_ghost_user_when_invalid_provider()
     {
-        Messenger::setMessengerProviders([
-            'user' => $this->getBaseProvidersConfig()['user'],
-        ]);
+        Messenger::registerProviders([UserModel::class], true);
         $thread = Thread::factory()->group()->create();
         $participant = Participant::factory()->for($thread)->owner($this->developers)->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();

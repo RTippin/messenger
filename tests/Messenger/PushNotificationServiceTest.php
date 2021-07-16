@@ -124,10 +124,8 @@ class PushNotificationServiceTest extends FeatureTestCase
         Event::fake([
             PushNotificationEvent::class,
         ]);
-
-        $providers = $this->getBaseProvidersConfig();
-        $providers['company']['devices'] = false;
-        Messenger::setMessengerProviders($providers);
+        CompanyModel::$devices = false;
+        Messenger::registerProviders([UserModel::class, CompanyModel::class]);
 
         app(PushNotificationService::class)
             ->to(collect([

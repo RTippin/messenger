@@ -3,7 +3,9 @@
 namespace RTippin\Messenger\Tests;
 
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Foundation\Application;
 use Orchestra\Testbench\TestCase;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\MessengerServiceProvider;
 use RTippin\Messenger\Tests\Fixtures\CompanyModel;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
@@ -23,7 +25,7 @@ class MessengerTestCase extends TestCase
     protected bool $useMorphMap = false;
 
     /**
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      * @return string[]
      */
     protected function getPackageProviders($app): array
@@ -34,7 +36,7 @@ class MessengerTestCase extends TestCase
     }
 
     /**
-     * @param \Illuminate\Foundation\Application $app
+     * @param Application $app
      */
     protected function getEnvironmentSetUp($app): void
     {
@@ -53,7 +55,6 @@ class MessengerTestCase extends TestCase
         $config->set('messenger.bots.enabled', true);
         $config->set('messenger.storage.avatars.disk', 'public');
         $config->set('messenger.storage.threads.disk', 'messenger');
-        $config->set('messenger.providers', $this->getBaseProvidersConfig());
 
         if ($this->useMorphMap) {
             Relation::morphMap([
@@ -64,35 +65,26 @@ class MessengerTestCase extends TestCase
     }
 
     /**
-     * @return array[]
+     * Register our providers.
      */
-    protected function getBaseProvidersConfig(): array
+    protected function setUp(): void
     {
-        return [
-            'user' => [
-                'model' => UserModel::class,
-                'searchable' => true,
-                'friendable' => true,
-                'devices' => true,
-                'default_avatar' => '/path/to/user.png',
-                'provider_interactions' => [
-                    'can_message' => true,
-                    'can_search' => true,
-                    'can_friend' => true,
-                ],
-            ],
-            'company' => [
-                'model' => CompanyModel::class,
-                'searchable' => true,
-                'friendable' => true,
-                'devices' => true,
-                'default_avatar' => '/path/to/company.png',
-                'provider_interactions' => [
-                    'can_message' => true,
-                    'can_search' => true,
-                    'can_friend' => true,
-                ],
-            ],
-        ];
+        parent::setUp();
+
+        Messenger::registerProviders([
+            UserModel::class,
+            CompanyModel::class,
+        ]);
+    }
+
+    /**
+     * Reset the static properties we dynamically set on the models.
+     */
+    protected function tearDown(): void
+    {
+        UserModel::reset();
+        CompanyModel::reset();
+
+        parent::tearDown();
     }
 }

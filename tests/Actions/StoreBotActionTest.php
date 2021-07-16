@@ -42,7 +42,7 @@ class StoreBotActionTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_handler_unique_and_already_exists_on_bot()
     {
-        MessengerBots::setHandlers([FunBotHandler::class]);
+        MessengerBots::registerHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create(['subject' => 'Test']);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create(['name' => 'Mr. Bot']);
         BotAction::factory()->for($bot)->owner($this->tippin)->handler(FunBotHandler::class)->create();
@@ -67,7 +67,7 @@ class StoreBotActionTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_handler_fails_authorization()
     {
-        MessengerBots::setHandlers([SillyBotHandler::class]);
+        MessengerBots::registerHandlers([SillyBotHandler::class]);
         $thread = Thread::factory()->group()->create(['subject' => 'Test']);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
 
@@ -91,7 +91,7 @@ class StoreBotActionTest extends FeatureTestCase
     /** @test */
     public function it_stores_bot_action()
     {
-        MessengerBots::setHandlers([FunBotHandler::class]);
+        MessengerBots::registerHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
 
@@ -125,7 +125,7 @@ class StoreBotActionTest extends FeatureTestCase
     /** @test */
     public function it_stores_reused_handler_when_not_unique()
     {
-        MessengerBots::setHandlers([FunBotHandler::class]);
+        MessengerBots::registerHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         BotAction::factory()->for($bot)->owner($this->tippin)->handler(FunBotHandler::class)->create();
@@ -149,7 +149,7 @@ class StoreBotActionTest extends FeatureTestCase
     /** @test */
     public function it_fires_events()
     {
-        MessengerBots::setHandlers([FunBotHandler::class]);
+        MessengerBots::registerHandlers([FunBotHandler::class]);
         BaseMessengerAction::enableEvents();
         $thread = Thread::factory()->group()->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
