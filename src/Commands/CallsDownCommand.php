@@ -36,8 +36,6 @@ class CallsDownCommand extends Command
     {
         if (! $messenger->isCallingEnabled()) {
             $this->info('Call system currently disabled.');
-        } elseif ($messenger->isCallingTemporarilyDisabled()) {
-            $this->info('Call system is already shutdown.');
         } else {
             $messenger->disableCallsTemporarily($this->option('duration'));
 

@@ -287,6 +287,7 @@ trait MessengerConfig
         'providerCanSearch',
         'providerCanFriend',
         'providerCanMessageFirst',
+        'callingTemporarilyDisabled',
         'providerHasDevices',
         'defaultNotFoundImage',
         'defaultGhostAvatar',

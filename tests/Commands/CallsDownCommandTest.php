@@ -45,12 +45,11 @@ class CallsDownCommandTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_does_nothing_if_calling_already_down()
+    public function it_sets_down_again_if_already_down()
     {
-        Messenger::disableCallsTemporarily(1);
-
         $this->artisan('messenger:calls:down')
-            ->expectsOutput('Call system is already shutdown.')
+            ->expectsOutput('No active calls to end found.')
+            ->expectsOutput('Call system is now down for 30 minutes.')
             ->assertExitCode(0);
 
         $this->assertTrue(Cache::has('messenger:calls:down'));
