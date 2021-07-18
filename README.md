@@ -18,8 +18,8 @@
 ### Prerequisites
 - PHP >= 7.4 | 8.0
 - Laravel >= 8.42
-- laravel broadcast driver configured.
-- `SubstituteBindings::class` route model binding enabled in your API / WEB middleware.
+- laravel broadcast driver configured, and your own websocket implementation.
+- `SubstituteBindings::class` route model binding enabled in your API / WEB middleware groups.
 
 ### Features
 - Realtime messaging between multiple models, such as a User, Admin, and Teacher model.
@@ -28,60 +28,42 @@
 - Private and group threads.
 - Permissions per participant within a group thread.
 - Send image, document or audio messages.
-- Message reactions, replies and edits.
-- Group thread chat-bots.
-- Friends system.
-- Search system.
-- Online status.
-- Provider avatars, group thread avatars.
-- Calling / Group Calling.
+- Message reactions, replies, edits, and deletion.
+- Group thread chat-bots. [Bot addon][link-messenger-bots]
+- Friends, Search, and Online status systems.
+- Provider, group thread, and bot avatars.
+- Underlying calling system you can extend.
 - Group thread invitation links (like discord).
 - All actions are protected behind policies.
 - Scheduled commands for automation cleanup and checks.
 - Queued jobs fired from our event subscribers.
-- Many features can be toggled within our config, or at runtime using our `Messenger` facade.
+- Most features can be toggled at runtime using our `Messenger` facade.
 - Optional extra payload when sending messages to allow custom json to be stored with the message.
 
-### Upcoming
-- Route params for API results / better pagination.
-- Resizing and saving images when uploaded instead of on the fly.
-- Video message type.
-- React / Vue frontend.
-- Configurable friend driver.
-- Language file support.
+### Upcoming for v1
+- Thread messages search.
+- Extracting Friends system.
+- Extracting janus from this core.
 
 ### Notes
-- If our event subscribers are enabled, the default queue channel your worker must monitor is `messenger`. You may define custom queue channels yourself within our config.
-- The default bot subscriber will push jobs onto the `messenger-bots` queue channel.
-- Our included commands that queue a job also use the `messenger` queue channel.
-- If you enable calling, we support an included [Janus Media Server][link-janus-server] driver, however you will still need to install the media server yourself.
 - Read through our [`messenger.php`][link-config] config file before migrating!
+- Calling is disabled by default. You are responsible for implementing your own media server or connecting to a 3rd party service.
 
 ---
 
 # Addons / Demo
 
-### Messenger Bots
+### [Messenger Bots][link-messenger-bots]
 - Bot functionality is built into the core of this `MESSENGER` package, but you are responsible for registering your own bot handlers.
-- For a variety of ready-to-go bot action handlers, as well as documentation for bot configurations, please visit:
-  - [Messenger Bots][link-messenger-bots]
 
-### Messenger Faker Commands
-- An addon package useful in dev environments to mock/seed realtime events and messages can be found here:
-  - [Messenger Faker][link-messenger-faker]
+### [Messenger Faker][link-messenger-faker]
+- An addon package useful in dev environments to mock/seed realtime events and messages.
 
-### Messenger Web UI
+### [Messenger Web UI][link-messenger-ui]
 - Addon package containing ready-made web routes and publishable views / assets, including default images.
-  - [Messenger Web UI][link-messenger-ui]
 
-### Messenger Demo
-- You may view our demo laravel 8 source with this package installed, including a live demo: 
-  - [Demo Source][link-demo-source]
-  - [Live Demo][link-live-demo]
-- Demo User model for how we integrate them with our contracts:
-  - [User Model][link-demo-user]
-- Demo console kernel utilizes our commands to track active calls, purge archived files, etc
-  - [Console Kernel][link-demo-kernel]
+### [Demo][link-demo-source]
+- You may view our demo laravel 8 source with this package installed, including a [Live Demo][link-live-demo].
 
 ---
 
@@ -929,8 +911,6 @@ If you discover any security related issues, please email author email instead o
 [link-invites]: docs/Invites.md
 [link-demo-source]: https://github.com/RTippin/messenger-demo
 [link-live-demo]: https://tippindev.com
-[link-demo-user]: https://github.com/RTippin/messenger-demo/blob/master/app/Models/User.php
-[link-demo-kernel]: https://github.com/RTippin/messenger-demo/blob/master/app/Console/Kernel.php
 [link-janus-server]: https://janus.conf.meetecho.com/docs/
 [link-janus-video]: https://janus.conf.meetecho.com/docs/videoroom.html
 [link-set-provider-middleware]: src/Http/Middleware/SetMessengerProvider.php
