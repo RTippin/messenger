@@ -109,11 +109,6 @@ $ php artisan messenger:install
 $ php artisan migrate
 ```
 
-- If using janus video driver, you may publish the janus config:
-```bash
-$ php artisan vendor:publish --tag=messenger.janus.config
-```
-
 ---
 
 # Register Providers
@@ -152,9 +147,9 @@ class MessengerServiceProvider extends ServiceProvider
 
 ### Implement our MessengerProvider contract for each provider registered
 
-- Each provider you define will need to implement our [`MessengerProvider`][link-messenger-contract] contract. We include a [`Messageable`][link-messageable] trait you can use on your providers that will usually suffice for your needs.
-- You will typically want to override our `public static function getProviderSettings(): array` method per provider you register.
-- The `alias` will be auto-generated if null or not set. We will use the lower-snake case of the model name.
+- Each provider you define will need to implement our [`MessengerProvider`][link-messenger-contract] contract. We include a [`Messageable`][link-messageable] trait you can use on your providers that will usually suffice for your needs. This trait has all the methods needed to satisfy the contract.
+- You will typically want to override our `getProviderSettings()` method per provider you register.
+- The `alias` will be auto-generated if null or not set. When auto-generating, we will use the lower-snake case of the model's name.
 
 ***Example:***
 
@@ -250,7 +245,7 @@ class User extends Authenticatable implements MessengerProvider
 - For each interaction, list the provider classes you want to deny that action from the parent provider.
 
 
-- `cant_message_first` revokes permissions to initiate a private conversation with the given providers. This does not stop or alter private threads already created, nor does it impact group threads. Initiating a private thread is defined as "messaging first".
+`cant_message_first` revokes permissions to initiate a private conversation with the given providers. This does not stop or alter private threads already created, nor does it impact group threads. Initiating a private thread is defined as "messaging first".
 
 ***Example: A user may not be able to start a conversation with a company, but a company may be allowed to start the conversation with the user. Once a private thread is created, it is business as usual!***
 
@@ -266,7 +261,7 @@ return [
 ];
 ```
 
-- `cant_search` Filters search results, omitting the listed providers.
+`cant_search` Filters search results, omitting the listed providers.
 
 ***Example: A user may not be allowed to search for companies, but a company can search for users.***
 
@@ -282,7 +277,7 @@ return [
 ];
 ```
 
-- `cant_friend` Revokes permission to initiate a friend request with the listed providers. This permission only impacts when one provider sends another a friend request. Cancelling / Accepting / Denying a friend request, or your list of actual friends, is not impacted by this permission.
+`cant_friend` Revokes permission to initiate a friend request with the listed providers. This permission only impacts when one provider sends another a friend request. Cancelling / Accepting / Denying a friend request, or your list of actual friends, is not impacted by this permission.
 
 ***Example: A user may not be allowed to send a friend request to a company, but a company can send a friend request to a user.***
 
@@ -448,6 +443,11 @@ public function getProviderAvatarColumn(): string
   - Our included 3rd party video driver ([JanusBroker][link-janus-broker]) uses an open source media server, [Janus Media Server][link-janus-server]. We only utilize their [VideoRoom Plugin][link-janus-video], using create and destroy room methods.
   - You can create your own video driver as well, implementing our contract [VideoDriver][link-video-driver]
 - We provide an event subscriber ([CallSubscriber][link-call-subscriber]) to listen and react to calling events. You may choose to enable it, whether it puts jobs on the queue or not, and which queue channel its jobs are dispatched on.
+
+- If using the janus video driver, you may publish the janus config:
+```bash
+$ php artisan vendor:publish --tag=messenger.janus.config
+```
 
 ***Set the video driver:***
 
