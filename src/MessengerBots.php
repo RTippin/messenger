@@ -104,16 +104,6 @@ final class MessengerBots
     }
 
     /**
-     * @param array $handlers
-     * @param bool $overwrite
-     * @deprecated Will be removed in a future release.
-     */
-    public function setHandlers(array $handlers, bool $overwrite = false): void
-    {
-        $this->registerHandlers($handlers, $overwrite);
-    }
-
-    /**
      * Get all bot handler classes.
      *
      * @return array

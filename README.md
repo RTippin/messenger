@@ -652,10 +652,6 @@ class MessengerServiceProvider extends ServiceProvider
 - `php artisan messenger:invites:check-valid` | `--now`
     * Check active invites for any past expiration or max use cases and invalidate them.
     * `--now` flag to run immediately without dispatching jobs to queue.
-- `php artisan messenger:providers:cache`
-    * Cache the computed provider configs for messenger.
-- `php artisan messenger:providers:clear`
-    * Clear the cached provider config file.
 - `php artisan messenger:purge:documents` | `--now` | `--days=30`
     * We will purge all soft deleted document messages that were archived past the set days (30 default). We run it through our action to remove the document file from storage and message from the database.
     * `--days=X` flag to set how many days in the past to start at.
