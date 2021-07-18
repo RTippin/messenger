@@ -10,7 +10,6 @@ use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use RTippin\Messenger\Actions\Bots\BotActionHandler;
 use RTippin\Messenger\Exceptions\BotException;
-use RTippin\Messenger\Support\Helpers;
 
 final class MessengerBots
 {
@@ -95,7 +94,7 @@ final class MessengerBots
         }
 
         foreach ($handlers as $handler) {
-            if (! Helpers::checkIsSubclassOf($handler, BotActionHandler::class)) {
+            if (! is_subclass_of($handler, BotActionHandler::class)) {
                 throw new InvalidArgumentException("The given handler { $handler } must extend our base handler ".BotActionHandler::class);
             }
 

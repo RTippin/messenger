@@ -58,7 +58,7 @@ class PresenceEvents
      */
     public static function setTypingClass(string $abstractTyping): void
     {
-        if (! Helpers::checkIsSubclassOf($abstractTyping, MessengerBroadcast::class)) {
+        if (! is_subclass_of($abstractTyping, MessengerBroadcast::class)) {
             throw new InvalidArgumentException("$abstractTyping must extend our base ".MessengerBroadcast::class);
         }
 
@@ -87,7 +87,7 @@ class PresenceEvents
      */
     public static function setStopTypingClass(string $abstractStopTyping): void
     {
-        if (! Helpers::checkIsSubclassOf($abstractStopTyping, MessengerBroadcast::class)) {
+        if (! is_subclass_of($abstractStopTyping, MessengerBroadcast::class)) {
             throw new InvalidArgumentException("$abstractStopTyping must extend our base ".MessengerBroadcast::class);
         }
 
@@ -116,7 +116,7 @@ class PresenceEvents
      */
     public static function setReadClass(string $abstractRead): void
     {
-        if (! Helpers::checkIsSubclassOf($abstractRead, MessengerBroadcast::class)) {
+        if (! is_subclass_of($abstractRead, MessengerBroadcast::class)) {
             throw new InvalidArgumentException("$abstractRead must extend our base ".MessengerBroadcast::class);
         }
 

@@ -15,7 +15,6 @@ use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Support\Helpers;
 
 abstract class BaseMessengerAction implements Action
 {
@@ -152,11 +151,11 @@ abstract class BaseMessengerAction implements Action
      */
     public function chain(string $abstractAction): Action
     {
-        if (Helpers::checkIsSubclassOf($abstractAction, self::class)) {
-            return app($abstractAction)->continuesChain();
+        if (! is_subclass_of($abstractAction, self::class)) {
+            throw new LogicException('Invalid chained action.');
         }
 
-        throw new LogicException('Invalid chained action.');
+        return app($abstractAction)->continuesChain();
     }
 
     /**

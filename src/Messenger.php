@@ -9,7 +9,6 @@ use Illuminate\Support\Str;
 use InvalidArgumentException;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Bot;
-use RTippin\Messenger\Support\Helpers;
 
 /**
  * Laravel Messenger System.
@@ -50,7 +49,7 @@ final class Messenger
         }
 
         foreach ($providers as $provider) {
-            if (! Helpers::checkImplementsInterface($provider, MessengerProvider::class)) {
+            if (! is_subclass_of($provider, MessengerProvider::class)) {
                 throw new InvalidArgumentException("The given provider { $provider } must implement our contract ".MessengerProvider::class);
             }
 

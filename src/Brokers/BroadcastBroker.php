@@ -15,7 +15,6 @@ use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\ParticipantRepository;
 use RTippin\Messenger\Services\PushNotificationService;
-use RTippin\Messenger\Support\Helpers;
 use Throwable;
 
 class BroadcastBroker implements BroadcastDriver
@@ -170,7 +169,7 @@ class BroadcastBroker implements BroadcastDriver
     {
         if (! is_null($this->recipients)
             && $this->recipients->count()
-            && Helpers::checkIsSubclassOf($abstract, MessengerBroadcast::class)) {
+            && is_subclass_of($abstract, MessengerBroadcast::class)) {
             if ($this->usingPresence) {
                 $this->generatePresenceChannels()->each(fn (Collection $channels) => $this->executeBroadcast($abstract, $channels));
             } else {

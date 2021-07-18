@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Cache;
 use InvalidArgumentException;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
-use RTippin\Messenger\Support\Helpers;
 
 trait MessengerConfig
 {
@@ -1221,7 +1220,7 @@ trait MessengerConfig
      */
     public function setBroadcastDriver(string $driver): self
     {
-        if (! Helpers::checkImplementsInterface($driver, BroadcastDriver::class)) {
+        if (! is_subclass_of($driver, BroadcastDriver::class)) {
             throw new InvalidArgumentException("The given driver { $driver } must implement our interface ".BroadcastDriver::class);
         }
 
@@ -1237,7 +1236,7 @@ trait MessengerConfig
      */
     public function setVideoDriver(string $driver): self
     {
-        if (! Helpers::checkImplementsInterface($driver, VideoDriver::class)) {
+        if (! is_subclass_of($driver, VideoDriver::class)) {
             throw new InvalidArgumentException("The given driver { $driver } must implement our interface ".VideoDriver::class);
         }
 

@@ -5,8 +5,6 @@ namespace RTippin\Messenger\Support;
 use Exception;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Carbon;
-use ReflectionClass;
-use ReflectionException;
 
 class Helpers
 {
@@ -62,37 +60,5 @@ class Helpers
         } else {
             $table->numericMorphs($column);
         }
-    }
-
-    /**
-     * @param string $abstract
-     * @param string $contract
-     * @return bool
-     */
-    public static function checkImplementsInterface(string $abstract, string $contract): bool
-    {
-        try {
-            return (new ReflectionClass($abstract))->implementsInterface($contract);
-        } catch (ReflectionException $e) {
-            //skip
-        }
-
-        return false;
-    }
-
-    /**
-     * @param string $abstract
-     * @param string $parent
-     * @return bool
-     */
-    public static function checkIsSubclassOf(string $abstract, string $parent): bool
-    {
-        try {
-            return (new ReflectionClass($abstract))->isSubclassOf($parent);
-        } catch (ReflectionException $e) {
-            //skip
-        }
-
-        return false;
     }
 }
