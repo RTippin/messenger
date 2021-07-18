@@ -1,6 +1,20 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v0.44 (07-18-2021)]
+
+#### Changed
+- Using core php method `is_subclass_of` instead of my custom reflection checks. ([303e12d](https://github.com/RTippin/messenger/commit/303e12d4576635e704598e82ce9cf5a83b1a110e))
+- Calls down command now re-sets the down cache lock when triggered while calls already down. ([44b768a](https://github.com/RTippin/messenger/commit/44b768ad94ab64e7490fc5f5ed2c7903963df287))
+
+#### Removed
+- `ProvidersCacheCommand` and `ProvidersClearCommand`
+- `Searchable` contract.
+- `checkImplementsInterface` and `checkIsSubclassOf` from `Helpers` class.
+- Commit ([a4866a0](https://github.com/RTippin/messenger/commit/a4866a0115afb4f9ef83dc3530efbc6dd09d1ded))
+
+---
+
 ### [v0.43 (07-16-2021)]
 
 ### Commits ([329c2d0](https://github.com/RTippin/messenger/commit/329c2d0f3e2f2c72f621594479565ef344c53005), [0b647d0](https://github.com/RTippin/messenger/commit/0b647d0fecaaac0ed808b3cf3a417a161b4b043c))
