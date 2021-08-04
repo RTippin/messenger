@@ -71,7 +71,7 @@ class EndCall extends BaseMessengerAction
         if (! $this->hasNoEndingLockout()) {
             $this->setEndingLockout();
 
-            if ($this->getCall()->fresh()->isActive()) {
+            if ($this->getCall()->isActive()) {
                 $this->handleTransactions()
                     ->fireBroadcast()
                     ->fireEvents();
