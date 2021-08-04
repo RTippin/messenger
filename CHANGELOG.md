@@ -1,6 +1,15 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v0.45 (08-04-2021)]
+
+#### Changed
+- `messages.body` and `message_edits.body` columns to allow nullable. ([2ebe8ac](https://github.com/RTippin/messenger/commit/2ebe8ac4774f1f72d124fede7085e0fdff5de536))
+  - `EmojiInterface`, `BotMatchingService`, `MessageTransformer`, and `MessengerComposer` now allow null for message body.
+- Event subscribers will now always be registered, but conditionally check whether to handle events triggered. (avoids being disabled from config and not enabling dynamically when they were not registered in our service provider). ([692256b](https://github.com/RTippin/messenger/commit/692256ba875db7c92426d945c39093f869f63d6e))
+
+---
+
 ### [v0.44 (07-18-2021)]
 
 #### Changed
