@@ -64,7 +64,7 @@ class SystemMessageSubscriber
      */
     public function callEndedMessage(CallEndedEvent $event): void
     {
-        if (Messenger::getSystemMessageSubscriber('enabled')) {
+        if ($this->isEnabled()) {
             Messenger::getSystemMessageSubscriber('queued')
                 ? CallEndedMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
                 : CallEndedMessage::dispatchSync($event);
@@ -76,7 +76,7 @@ class SystemMessageSubscriber
      */
     public function demotedAdminMessage(DemotedAdminEvent $event): void
     {
-        if (Messenger::getSystemMessageSubscriber('enabled')) {
+        if ($this->isEnabled()) {
             Messenger::getSystemMessageSubscriber('queued')
                 ? DemotedAdminMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
                 : DemotedAdminMessage::dispatchSync($event);
@@ -88,7 +88,7 @@ class SystemMessageSubscriber
      */
     public function joinedWithInviteMessage(InviteUsedEvent $event): void
     {
-        if (Messenger::getSystemMessageSubscriber('enabled')) {
+        if ($this->isEnabled()) {
             Messenger::getSystemMessageSubscriber('queued')
                 ? JoinedWithInviteMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
                 : JoinedWithInviteMessage::dispatchSync($event);
@@ -100,7 +100,7 @@ class SystemMessageSubscriber
      */
     public function participantsAddedMessage(ParticipantsAddedEvent $event): void
     {
-        if (Messenger::getSystemMessageSubscriber('enabled')) {
+        if ($this->isEnabled()) {
             Messenger::getSystemMessageSubscriber('queued')
                 ? ParticipantsAddedMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
                 : ParticipantsAddedMessage::dispatchSync($event);
@@ -112,7 +112,7 @@ class SystemMessageSubscriber
      */
     public function promotedAdminMessage(PromotedAdminEvent $event): void
     {
-        if (Messenger::getSystemMessageSubscriber('enabled')) {
+        if ($this->isEnabled()) {
             Messenger::getSystemMessageSubscriber('queued')
                 ? PromotedAdminMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
                 : PromotedAdminMessage::dispatchSync($event);
@@ -124,7 +124,7 @@ class SystemMessageSubscriber
      */
     public function removedFromThreadMessage(RemovedFromThreadEvent $event): void
     {
-        if (Messenger::getSystemMessageSubscriber('enabled')) {
+        if ($this->isEnabled()) {
             Messenger::getSystemMessageSubscriber('queued')
                 ? RemovedFromThreadMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
                 : RemovedFromThreadMessage::dispatchSync($event);
@@ -136,7 +136,7 @@ class SystemMessageSubscriber
      */
     public function threadArchivedMessage(ThreadArchivedEvent $event): void
     {
-        if (Messenger::getSystemMessageSubscriber('enabled')) {
+        if ($this->isEnabled()) {
             Messenger::getSystemMessageSubscriber('queued')
                 ? ThreadArchivedMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
                 : ThreadArchivedMessage::dispatchSync($event);
@@ -148,7 +148,7 @@ class SystemMessageSubscriber
      */
     public function threadAvatarMessage(ThreadAvatarEvent $event): void
     {
-        if (Messenger::getSystemMessageSubscriber('enabled')) {
+        if ($this->isEnabled()) {
             Messenger::getSystemMessageSubscriber('queued')
                 ? ThreadAvatarMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
                 : ThreadAvatarMessage::dispatchSync($event);
@@ -160,7 +160,7 @@ class SystemMessageSubscriber
      */
     public function threadLeftMessage(ThreadLeftEvent $event): void
     {
-        if (Messenger::getSystemMessageSubscriber('enabled')) {
+        if ($this->isEnabled()) {
             Messenger::getSystemMessageSubscriber('queued')
                 ? ThreadLeftMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
                 : ThreadLeftMessage::dispatchSync($event);
@@ -172,7 +172,7 @@ class SystemMessageSubscriber
      */
     public function threadNameMessage(ThreadSettingsEvent $event): void
     {
-        if (Messenger::getSystemMessageSubscriber('enabled') && $event->nameChanged) {
+        if ($this->isEnabled() && $event->nameChanged) {
             Messenger::getSystemMessageSubscriber('queued')
                 ? ThreadNameMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
                 : ThreadNameMessage::dispatchSync($event);
@@ -184,7 +184,7 @@ class SystemMessageSubscriber
      */
     public function botAddedMessage(NewBotEvent $event): void
     {
-        if (Messenger::getSystemMessageSubscriber('enabled')) {
+        if ($this->isEnabled()) {
             Messenger::getSystemMessageSubscriber('queued')
                 ? BotAddedMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
                 : BotAddedMessage::dispatchSync($event);
@@ -196,8 +196,7 @@ class SystemMessageSubscriber
      */
     public function botNameMessage(BotUpdatedEvent $event): void
     {
-        if (Messenger::getSystemMessageSubscriber('enabled')
-            && $event->originalName !== $event->bot->name) {
+        if ($this->isEnabled() && $event->originalName !== $event->bot->name) {
             Messenger::getSystemMessageSubscriber('queued')
                 ? BotNameMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
                 : BotNameMessage::dispatchSync($event);
@@ -209,7 +208,7 @@ class SystemMessageSubscriber
      */
     public function botAvatarMessage(BotAvatarEvent $event): void
     {
-        if (Messenger::getSystemMessageSubscriber('enabled')) {
+        if ($this->isEnabled()) {
             Messenger::getSystemMessageSubscriber('queued')
                 ? BotAvatarMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
                 : BotAvatarMessage::dispatchSync($event);
@@ -221,10 +220,18 @@ class SystemMessageSubscriber
      */
     public function botRemovedMessage(BotArchivedEvent $event): void
     {
-        if (Messenger::getSystemMessageSubscriber('enabled')) {
+        if ($this->isEnabled()) {
             Messenger::getSystemMessageSubscriber('queued')
                 ? BotRemovedMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
                 : BotRemovedMessage::dispatchSync($event);
         }
+    }
+
+    /**
+     * @return bool
+     */
+    private function isEnabled(): bool
+    {
+        return Messenger::getSystemMessageSubscriber('enabled');
     }
 }
