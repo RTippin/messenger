@@ -16,7 +16,7 @@ class CreateMessageEditsTable extends Migration
         Schema::create('message_edits', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('message_id');
-            $table->text('body');
+            $table->text('body')->nullable();
             $table->timestamp('edited_at', 6);
             $table->foreign('message_id')
                 ->references('id')

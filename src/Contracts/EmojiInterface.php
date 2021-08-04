@@ -5,26 +5,26 @@ namespace RTippin\Messenger\Contracts;
 interface EmojiInterface
 {
     /**
-     * @param string $message
+     * @param string|null $message
      * @return string
      */
-    public function toShort(string $message): string;
+    public function toShort(?string $message): string;
 
     /**
-     * @param string $string
+     * @param string|null $string
      * @return bool
      */
-    public function verifyHasEmoji(string $string): bool;
+    public function verifyHasEmoji(?string $string): bool;
 
     /**
-     * @param string $string
+     * @param string|null $string
      * @return array
      */
-    public function getValidEmojiShortcodes(string $string): array;
+    public function getValidEmojiShortcodes(?string $string): array;
 
     /**
-     * @param string $string
+     * @param string|null $string
      * @return string|null
      */
-    public function getFirstValidEmojiShortcode(string $string): ?string;
+    public function getFirstValidEmojiShortcode(?string $string): ?string;
 }

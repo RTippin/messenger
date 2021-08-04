@@ -130,13 +130,14 @@ class MessengerComposer
     /**
      * Send a message. Optional reply to message ID and extra data allowed.
      *
-     * @param string $message
+     * @param string|null $message
      * @param string|null $replyingToId
      * @param array|null $extra
      * @return StoreMessage
-     * @throws MessengerComposerException|Throwable
+     * @throws MessengerComposerException
+     * @throws Throwable
      */
-    public function message(string $message,
+    public function message(?string $message,
                             ?string $replyingToId = null,
                             ?array $extra = null): StoreMessage
     {

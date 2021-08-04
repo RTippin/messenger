@@ -9,10 +9,10 @@ class BotMatchingService
     /**
      * @param string $method
      * @param string $trigger
-     * @param string $message
+     * @param string|null $message
      * @return bool
      */
-    public function matches(string $method, string $trigger, string $message): bool
+    public function matches(string $method, string $trigger, ?string $message): bool
     {
         switch ($method) {
             case 'contains': return $this->matchContains($trigger, $message);
@@ -31,11 +31,11 @@ class BotMatchingService
      * The trigger must match the message exactly.
      *
      * @param string $trigger
-     * @param string $message
+     * @param string|null $message
      * @param bool $caseless
      * @return bool
      */
-    private function matchExact(string $trigger, string $message, bool $caseless = false): bool
+    private function matchExact(string $trigger, ?string $message, bool $caseless = false): bool
     {
         $trigger = $caseless ? Str::lower($trigger) : $trigger;
         $message = $this->prepareMessage($message, $caseless);
@@ -48,11 +48,11 @@ class BotMatchingService
      * Cannot be part of or inside another word.
      *
      * @param string $trigger
-     * @param string $message
+     * @param string|null $message
      * @param bool $caseless
      * @return bool
      */
-    private function matchContains(string $trigger, string $message, bool $caseless = false): bool
+    private function matchContains(string $trigger, ?string $message, bool $caseless = false): bool
     {
         $trigger = $caseless ? Str::lower($trigger) : $trigger;
         $message = $this->prepareMessage($message, $caseless);
@@ -65,11 +65,11 @@ class BotMatchingService
      * including inside another word.
      *
      * @param string $trigger
-     * @param string $message
+     * @param string|null $message
      * @param bool $caseless
      * @return bool
      */
-    private function matchContainsAny(string $trigger, string $message, bool $caseless = false): bool
+    private function matchContainsAny(string $trigger, ?string $message, bool $caseless = false): bool
     {
         $trigger = $caseless ? Str::lower($trigger) : $trigger;
         $message = $this->prepareMessage($message, $caseless);
@@ -82,11 +82,11 @@ class BotMatchingService
      * Cannot be part of or inside another word.
      *
      * @param string $trigger
-     * @param string $message
+     * @param string|null $message
      * @param bool $caseless
      * @return bool
      */
-    private function matchStartsWith(string $trigger, string $message, bool $caseless = false): bool
+    private function matchStartsWith(string $trigger, ?string $message, bool $caseless = false): bool
     {
         $trigger = $caseless ? Str::lower($trigger) : $trigger;
         $message = $this->prepareMessage($message, $caseless);
@@ -96,11 +96,11 @@ class BotMatchingService
     }
 
     /**
-     * @param string $string
+     * @param string|null $string
      * @param bool $lower
      * @return string
      */
-    private function prepareMessage(string $string, bool $lower): string
+    private function prepareMessage(?string $string, bool $lower): string
     {
         return trim($lower ? Str::lower($string) : $string);
     }

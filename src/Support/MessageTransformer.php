@@ -44,19 +44,19 @@ class MessageTransformer
     }
 
     /**
-     * @param string $body
+     * @param string|null $body
      * @return string
      */
-    public static function sanitizedBody(string $body): string
+    public static function sanitizedBody(?string $body): string
     {
         return htmlspecialchars($body);
     }
 
     /**
-     * @param string $body
+     * @param string|null $body
      * @return array|null
      */
-    public static function decodeBodyJson(string $body): ?array
+    public static function decodeBodyJson(?string $body): ?array
     {
         return json_decode($body, true);
     }

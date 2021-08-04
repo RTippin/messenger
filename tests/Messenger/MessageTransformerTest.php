@@ -903,4 +903,18 @@ class MessageTransformerTest extends FeatureTestCase
 
         $this->assertSame('removed Test Bot BOT', MessageTransformer::transform($message));
     }
+
+    /** @test */
+    public function it_transforms_null_message()
+    {
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()
+            ->for($thread)
+            ->owner($this->tippin)
+            ->create([
+                'body' => null,
+            ]);
+
+        $this->assertSame('', MessageTransformer::transform($message));
+    }
 }

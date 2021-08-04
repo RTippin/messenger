@@ -19,7 +19,7 @@ class CreateMessagesTable extends Migration
             $table->uuid('thread_id');
             Helpers::SchemaMorphType('owner', $table);
             $table->integer('type')->index();
-            $table->text('body');
+            $table->text('body')->nullable();
             $table->uuid('reply_to_id')->nullable()->index();
             $table->boolean('edited')->default(false);
             $table->boolean('reacted')->default(false);

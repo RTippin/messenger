@@ -216,6 +216,7 @@ class BotMatchingServiceTest extends FeatureTestCase
             'Starts with another character' => ['.!Exact'],
             'Ends with another character' => ['!Exact .'],
             'Missing bang' => ['Exact'],
+            'Is null' => [null],
         ];
     }
 
@@ -249,6 +250,7 @@ class BotMatchingServiceTest extends FeatureTestCase
             'Contains another letter' => ['!Startss'],
             'Starts with another character' => ['.!Starts '],
             'Contained at the end' => ['This !Starts'],
+            'Is null' => [null],
         ];
     }
 
@@ -284,6 +286,7 @@ class BotMatchingServiceTest extends FeatureTestCase
             'Ends with another letter' => ['!Containss something'],
             'Leads with another letter' => ['It w!Contains'],
             'Between words' => ['We T!ContainsT words'],
+            'Is null' => [null],
         ];
     }
 
@@ -311,6 +314,7 @@ class BotMatchingServiceTest extends FeatureTestCase
             'Missing letter' => ['!Contain'],
             'Leads with another letter while missing letter' => ['It w!Contain'],
             'Between words while missing letter' => ['We T!ContainT words'],
+            'Is null' => [null],
         ];
     }
 }

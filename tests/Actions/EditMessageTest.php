@@ -53,6 +53,24 @@ class EditMessageTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_can_store_previous_null_message_body()
+    {
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => null]);
+
+        app(EditMessage::class)->execute($thread, $message, 'Edited');
+
+        $this->assertDatabaseHas('messages', [
+            'id' => $message->id,
+            'body' => 'Edited',
+        ]);
+        $this->assertDatabaseHas('message_edits', [
+            'message_id' => $message->id,
+            'body' => null,
+        ]);
+    }
+
+    /** @test */
     public function it_converts_emoji_to_shortcode()
     {
         $thread = Thread::factory()->create();

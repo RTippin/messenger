@@ -26,7 +26,7 @@ class EmojiService implements EmojiInterface
     /**
      * @inheritDoc
      */
-    public function toShort(string $message): string
+    public function toShort(?string $message): string
     {
         return $this->joyPixelClient->toShort(
             $this->joyPixelClient->asciiToShortname($message)
@@ -36,7 +36,7 @@ class EmojiService implements EmojiInterface
     /**
      * @inheritDoc
      */
-    public function verifyHasEmoji(string $string): bool
+    public function verifyHasEmoji(?string $string): bool
     {
         return count($this->getValidEmojiShortcodes($string)) > 0;
     }
@@ -44,7 +44,7 @@ class EmojiService implements EmojiInterface
     /**
      * @inheritDoc
      */
-    public function getValidEmojiShortcodes(string $string): array
+    public function getValidEmojiShortcodes(?string $string): array
     {
         // Get all phrases between each instance of two colons (:emoji:)
         preg_match_all('/:([^:]+):/', $this->toShort($string), $matches);
@@ -58,16 +58,16 @@ class EmojiService implements EmojiInterface
     /**
      * @inheritDoc
      */
-    public function getFirstValidEmojiShortcode(string $string): ?string
+    public function getFirstValidEmojiShortcode(?string $string): ?string
     {
         return $this->getValidEmojiShortcodes($string)[0] ?? null;
     }
 
     /**
-     * @param string $shortcode
+     * @param string|null $shortcode
      * @return bool
      */
-    private function checkShortcodeExist(string $shortcode): bool
+    private function checkShortcodeExist(?string $shortcode): bool
     {
         return array_key_exists($shortcode, $this->joyPixelClient->getRuleset()->getShortcodeReplace());
     }

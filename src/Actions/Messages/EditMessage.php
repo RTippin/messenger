@@ -44,9 +44,9 @@ class EditMessage extends BaseMessengerAction
     private EmojiInterface $emoji;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private string $originalBody;
+    private ?string $originalBody;
 
     /**
      * EditMessage constructor.

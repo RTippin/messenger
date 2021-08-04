@@ -58,6 +58,26 @@ class ProcessMessageTriggersTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_does_nothing_if_no_match_found()
+    {
+        MessengerBots::registerHandlers([FunBotHandler::class]);
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => '!test']);
+        BotAction::factory()
+            ->for(Bot::factory()->for($thread)->owner($this->tippin)->create())
+            ->owner($this->tippin)
+            ->handler(FunBotHandler::class)
+            ->triggers('!nope')
+            ->create();
+
+        app(ProcessMessageTriggers::class)->execute($thread, $message, true);
+
+        $this->assertDatabaseMissing('messages', [
+            'body' => 'Testing Fun.',
+        ]);
+    }
+
+    /** @test */
     public function it_executes_handle_if_admin()
     {
         MessengerBots::registerHandlers([FunBotHandler::class]);

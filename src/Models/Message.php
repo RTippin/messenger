@@ -26,7 +26,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string $owner_type
  * @property string|int $owner_id
  * @property int $type
- * @property string $body
+ * @property string|null $body
  * @property string $reply_to_id
  * @property bool $edited
  * @property bool $reacted
@@ -459,9 +459,7 @@ class Message extends Model
      */
     public function setTemporaryId(?string $id = null): self
     {
-        $this->temporaryId = (is_null($id) || empty($id))
-            ? null
-            : $id;
+        $this->temporaryId = empty($id) ? null : $id;
 
         return $this;
     }

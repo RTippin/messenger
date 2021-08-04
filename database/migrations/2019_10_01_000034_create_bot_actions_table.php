@@ -24,7 +24,7 @@ class CreateBotActionsTable extends Migration
             Helpers::SchemaMorphType('owner', $table);
             $table->string('handler')->index();
             $table->string('triggers')->nullable()->index();
-            $table->string('match')->default('exact');
+            $table->string('match');
             $table->integer('cooldown')->default(0);
             $table->boolean('enabled')->default(true);
             $table->boolean('admin_only')->default(false);

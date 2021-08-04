@@ -55,7 +55,7 @@ class MessengerComposerTest extends FeatureTestCase
         $this->expectException(MessengerComposerException::class);
         $this->expectExceptionMessage('Invalid "TO" entity. Thread or messenger provider must be used.');
 
-        $this->composer->to(new OtherModel());
+        $this->composer->to(new OtherModel);
     }
 
     /** @test */
@@ -99,6 +99,29 @@ class MessengerComposerTest extends FeatureTestCase
         $this->composer->to($thread)->from($this->tippin)->message('Test');
 
         $this->assertDatabaseCount('messages', 1);
+    }
+
+    /** @test */
+    public function it_sends_message_with_null_body()
+    {
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $this->composer->to($thread)->from($this->tippin)->message(null);
+
+        $this->assertDatabaseCount('messages', 1);
+    }
+
+    /** @test */
+    public function it_sends_message_with_extra()
+    {
+        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+
+        $this->composer->to($thread)->from($this->tippin)->message('Test', null, ['extra' => true]);
+
+        $this->assertDatabaseHas('messages', [
+            'body' => 'Test',
+            'extra' => '{"extra":true}',
+        ]);
     }
 
     /** @test */

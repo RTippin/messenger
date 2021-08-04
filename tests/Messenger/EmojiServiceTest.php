@@ -115,6 +115,7 @@ class EmojiServiceTest extends MessengerTestCase
         return [
             ['Test string. No emoji to see here.'],
             [''],
+            [null],
             ["This may be a long sentence. We're quite excited! 123 %$^"],
             [':fake: :4040404: :notfound:'],
         ];

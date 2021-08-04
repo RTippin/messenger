@@ -12,7 +12,7 @@ use RTippin\Messenger\Traits\Uuids;
 /**
  * @property string $id
  * @property string $message_id
- * @property string $body
+ * @property string|null $body
  * @property \Illuminate\Support\Carbon|null $edited_at
  * @property-read \RTippin\Messenger\Models\Message $message
  * @mixin Model|\Eloquent
