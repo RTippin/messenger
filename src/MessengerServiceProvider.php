@@ -154,7 +154,7 @@ class MessengerServiceProvider extends ServiceProvider
     {
         $merged = array_merge([MessengerApi::class], is_array($middleware) ? $middleware : [$middleware]);
 
-        array_push($merged, 'throttle:messenger-api');
+        $merged[] = 'throttle:messenger-api';
 
         return $merged;
     }
