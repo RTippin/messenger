@@ -1,6 +1,20 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v0.46 (08-09-2021)]
+
+#### Removed
+- `JanusServer` and `VideoRoomService`.
+- `janus` config file.
+- `JanusBroker` video driver.
+- Commit ([4ced3a9](https://github.com/RTippin/messenger/commit/4ced3a98fbff9d16933cf76d9bc0d08465f93802))
+
+#### Notes
+- If you were already using our provided janus, you must now create and register your own [JanusBroker](https://github.com/RTippin/messenger/blob/f4adbd94ab5dc33f8dc7257b7dc077cb2b2ea179/src/Brokers/JanusBroker.php)
+- Install our new [janus-client](https://github.com/RTippin/janus-client) package and update your broker accordingly to use the packages create/destroy for `VideoRoom`.
+
+---
+
 ### [v0.45 (08-04-2021)]
 
 #### Changed

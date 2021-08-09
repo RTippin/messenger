@@ -43,7 +43,6 @@
 ### Upcoming for v1
 - Thread messages search.
 - Extracting Friends system.
-- Extracting janus from this core.
 
 ### Notes
 - Read through our [`messenger.php`][link-config] config file before migrating!
