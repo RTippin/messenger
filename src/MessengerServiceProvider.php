@@ -120,10 +120,6 @@ class MessengerServiceProvider extends ServiceProvider
         ], 'messenger.provider');
 
         $this->publishes([
-            __DIR__.'/../config/janus.php' => config_path('janus.php'),
-        ], 'messenger.janus.config');
-
-        $this->publishes([
             __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'messenger.migrations');
     }

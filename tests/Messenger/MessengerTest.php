@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Messenger;
 
 use InvalidArgumentException;
 use RTippin\Messenger\Brokers\BroadcastBroker;
-use RTippin\Messenger\Brokers\JanusBroker;
 use RTippin\Messenger\Brokers\NullBroadcastBroker;
 use RTippin\Messenger\Brokers\NullVideoBroker;
 use RTippin\Messenger\Contracts\BroadcastDriver;
@@ -16,7 +15,6 @@ use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Participant;
-use RTippin\Messenger\Services\Janus\VideoRoomService;
 use RTippin\Messenger\Tests\Fixtures\CompanyModel;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
@@ -780,12 +778,11 @@ class MessengerTest extends MessengerTestCase
         $this->assertInstanceOf(NullBroadcastBroker::class, app(BroadcastDriver::class));
         $this->assertInstanceOf(NullVideoBroker::class, app(VideoDriver::class));
 
-        $this->mock(VideoRoomService::class);
         $this->messenger->setBroadcastDriver(BroadcastBroker::class);
-        $this->messenger->setVideoDriver(JanusBroker::class);
+        $this->messenger->setVideoDriver(NullVideoBroker::class);
 
         $this->assertInstanceOf(BroadcastBroker::class, app(BroadcastDriver::class));
-        $this->assertInstanceOf(JanusBroker::class, app(VideoDriver::class));
+        $this->assertInstanceOf(NullVideoBroker::class, app(VideoDriver::class));
     }
 
     /** @test */

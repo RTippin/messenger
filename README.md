@@ -422,14 +422,8 @@ public function getProviderAvatarColumn(): string
 ```
 
 - Video calling is disabled by default. If enabled, you must set the driver within our published `MessengerServiceProvider` (or any service providers boot method).
-  - Our included 3rd party video driver ([JanusBroker][link-janus-broker]) uses an open source media server, [Janus Media Server][link-janus-server]. We only utilize their [VideoRoom Plugin][link-janus-video], using create and destroy room methods.
-  - You can create your own video driver as well, implementing our contract [VideoDriver][link-video-driver]
+  - You must create your own video driver implementing our contract [VideoDriver][link-video-driver]
 - We provide an event subscriber ([CallSubscriber][link-call-subscriber]) to listen and react to calling events. You may choose to enable it, whether it puts jobs on the queue or not, and which queue channel its jobs are dispatched on.
-
-- If using the janus video driver, you may publish the janus config:
-```bash
-$ php artisan vendor:publish --tag=messenger.janus.config
-```
 
 ***Set the video driver:***
 
@@ -438,8 +432,8 @@ $ php artisan vendor:publish --tag=messenger.janus.config
 
 namespace App\Providers;
 
+use App\Brokers\JanusBroker;
 use Illuminate\Support\ServiceProvider;
-use RTippin\Messenger\Brokers\JanusBroker;
 use RTippin\Messenger\Facades\Messenger;
 
 class MessengerServiceProvider extends ServiceProvider
@@ -919,7 +913,6 @@ If you discover any security related issues, please email author email instead o
 [link-messenger-ui]: https://github.com/RTippin/messenger-ui
 [link-morph-maps]: https://laravel.com/docs/8.x/eloquent-relationships#custom-polymorphic-types
 [link-video-driver]: src/Contracts/VideoDriver.php
-[link-janus-broker]: src/Brokers/JanusBroker.php
 [link-call-subscriber]: src/Listeners/CallSubscriber.php
 [link-system-message-subscriber]: src/Listeners/SystemMessageSubscriber.php
 [link-bot-subscriber]: src/Listeners/BotSubscriber.php
