@@ -5,11 +5,17 @@ namespace RTippin\Messenger\Tests;
 use Illuminate\Foundation\Application;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Middleware\ThrottleRequests;
+use Illuminate\Routing\Route;
 use Illuminate\Routing\Router;
 use Illuminate\Testing\TestResponse;
 
 class HttpTestCase extends FeatureTestCase
 {
+    /**
+     * Location of our responses file for storing test case responses.
+     */
+    const ResponseFile = __DIR__.'/../docs/generated/responses.json';
+
     /**
      * Set TRUE to run all http test with
      * logging responses to file enabled.
@@ -86,21 +92,12 @@ class HttpTestCase extends FeatureTestCase
         $response = parent::json($method, $uri, $data, $headers);
 
         if ($this->shouldLogCurrentRequest) {
-            $currentRoute = app(Router::class)->getCurrentRoute();
-            $status = $this->statusOverride
-                ? $response->getStatusCode().'_'.$this->statusOverride
-                : $response->getStatusCode();
-
-            $this->storeResponse(
-                $currentRoute->getName(),
-                $currentRoute->uri(),
-                $response->getContent(),
-                implode('|', $currentRoute->methods()),
+            $this->storeTestResponse(
+                app(Router::class)->getCurrentRoute(),
+                $response,
                 $method,
-                $status,
-                $data,
-                $response->getStatusCode(),
-                $uri
+                $uri,
+                $data
             );
         }
 
@@ -108,52 +105,76 @@ class HttpTestCase extends FeatureTestCase
     }
 
     /**
-     * @param string $routeName
-     * @param string $uri
-     * @param string $response
-     * @param string $methods
-     * @param string $verb
-     * @param string $status
+     * @param Route $route
+     * @param TestResponse $response
+     * @param string $method
+     * @param string $query
      * @param array $payload
-     * @param int $originalStatus
-     * @param string $fullQuery
      */
-    private function storeResponse(string $routeName,
-                                   string $uri,
-                                   string $response,
-                                   string $methods,
-                                   string $verb,
-                                   string $status,
-                                   array $payload,
-                                   int $originalStatus,
-                                   string $fullQuery): void
+    private function storeTestResponse(Route $route,
+                                       TestResponse $response,
+                                       string $method,
+                                       string $query,
+                                       array $payload): void
     {
-        $file = __DIR__.'/../docs/generated/responses.json';
-        $responses = json_decode(file_get_contents($file), true);
-        $responses[$routeName]['uri'] = $uri;
-        $responses[$routeName]['query'] = $fullQuery;
-        $responses[$routeName]['methods'] = $methods;
+        $responses = $this->getResponsesFile();
+        $status = $this->generateResponseStatus($response);
 
-        if ($originalStatus === 422) {
-            if (count($payload)) {
-                $payload = $this->sanitizePayload($payload);
-            }
+        $responses[$route->getName()]['uri'] = $route->uri();
+        $responses[$route->getName()]['query'] = $query;
+        $responses[$route->getName()]['methods'] = implode('|', $route->methods());
 
-            $responses[$routeName][$verb][$status][] = [
-                'payload' => $payload,
-                'response' => json_decode($response, true),
+        if ($response->getStatusCode() === 422) {
+            $responses[$route->getName()][$method][$status][] = [
+                'payload' => count($payload) ? $this->sanitizePayload($payload) : $payload,
+                'response' => json_decode($response->getContent(), true),
             ];
-        } else {
-            if (count($payload)) {
-                $responses[$routeName][$verb][$status]['payload'] = $this->sanitizePayload($payload);
-            } elseif (in_array($verb, ['POST', 'PUT']) && ! count($payload)) {
-                $responses[$routeName][$verb][$status]['payload'] = ['No Payload'];
-            }
 
-            $responses[$routeName][$verb][$status]['response'] = json_decode($response, true);
+            $this->storeResponsesFile($responses);
+
+            return;
         }
 
-        file_put_contents($file, json_encode($responses));
+        if (count($payload)) {
+            $responses[$route->getName()][$method][$status]['payload'] = $this->sanitizePayload($payload);
+        } elseif (in_array($method, ['POST', 'PUT'])) {
+            $responses[$route->getName()][$method][$status]['payload'] = ['No Payload'];
+        }
+
+        $responses[$route->getName()][$method][$status]['response'] = json_decode($response->getContent(), true);
+
+        $this->storeResponsesFile($responses);
+    }
+
+    /**
+     * @return array
+     */
+    private function getResponsesFile(): array
+    {
+        if (! file_exists(self::ResponseFile)) {
+            return [];
+        }
+
+        return json_decode(file_get_contents(self::ResponseFile), true) ?: [];
+    }
+
+    /**
+     * @param array $responses
+     */
+    private function storeResponsesFile(array $responses): void
+    {
+        file_put_contents(self::ResponseFile, json_encode($responses));
+    }
+
+    /**
+     * @param TestResponse $response
+     * @return string
+     */
+    private function generateResponseStatus(TestResponse $response): string
+    {
+        return $this->statusOverride
+            ? $response->getStatusCode().'_'.$this->statusOverride
+            : $response->getStatusCode();
     }
 
     /**
@@ -167,7 +188,7 @@ class HttpTestCase extends FeatureTestCase
                 $payload[$key] = '(binary) - '.$item->getClientMimeType().' - '.$this->formatBytes($item->getSize());
             }
 
-            if (is_string($item) && mb_strlen($item) > 1000) {
+            if (is_string($item) && mb_strlen($item) > 50) {
                 $payload[$key] = '(string) '.mb_strlen($item).' characters.';
             }
         }
