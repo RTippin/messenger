@@ -281,7 +281,7 @@ class InvitesTest extends HttpTestCase
         $this->postJson(route('api.messenger.threads.invites.store', [
             'thread' => $thread->id,
         ]), [
-            'expires' => $expiresValue,
+            'expires' => is_callable($expiresValue) ? $expiresValue() : $expiresValue,
             'uses' => 0,
         ])
             ->assertStatus(422)
@@ -301,7 +301,7 @@ class InvitesTest extends HttpTestCase
         $this->postJson(route('api.messenger.threads.invites.store', [
             'thread' => $thread->id,
         ]), [
-            'expires' => $expiresValue,
+            'expires' => $expiresValue(),
             'uses' => 0,
         ])
             ->assertSuccessful();
@@ -325,18 +325,18 @@ class InvitesTest extends HttpTestCase
             'Expires cannot be array' => [[0, 1]],
             'Expires cannot be false' => [false],
             'Expires cannot be integer' => [5],
-            'Expires cannot be now' => [now()],
-            'Expires cannot be before 5 minutes from now' => [now()->addMinutes(4)],
+            'Expires cannot be now' => [fn () => now()],
+            'Expires cannot be before 5 minutes from now' => [fn () => now()->addMinutes(4)],
         ];
     }
 
     public function inviteValidationPassesExpires(): array
     {
         return [
-            'Expires can be 10 minutes from now' => [now()->addMinutes(10)],
-            'Expires can be formatted year/month/day' => [now()->addWeek()->format('Y-m-d')],
-            'Expires can be formatted day/month/year' => [now()->addWeek()->format('d-m-Y')],
-            'Expires can be a year from now' => [now()->addYear()],
+            'Expires can be 10 minutes from now' => [fn () => now()->addMinutes(10)],
+            'Expires can be formatted year/month/day' => [fn () => now()->addWeek()->format('Y-m-d')],
+            'Expires can be formatted day/month/year' => [fn () => now()->addWeek()->format('d-m-Y')],
+            'Expires can be a year from now' => [fn () => now()->addYear()],
         ];
     }
 }
