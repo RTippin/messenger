@@ -2,7 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Str;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
@@ -10,8 +10,6 @@ use RTippin\Messenger\Tests\HttpTestCase;
 
 class PrivateMessageTest extends HttpTestCase
 {
-    use WithFaker;
-
     /** @test */
     public function non_participant_is_forbidden()
     {
@@ -271,7 +269,7 @@ class PrivateMessageTest extends HttpTestCase
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $thread->id,
         ]), [
-            'message' => $this->faker()->realTextBetween(6000, 10000),
+            'message' => Str::random(5001),
             'temporary_id' => '123-456-789',
         ])
             ->assertStatus(422)

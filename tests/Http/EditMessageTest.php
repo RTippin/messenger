@@ -2,8 +2,8 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageEdit;
@@ -13,8 +13,6 @@ use RTippin\Messenger\Tests\HttpTestCase;
 
 class EditMessageTest extends HttpTestCase
 {
-    use WithFaker;
-
     /** @test */
     public function non_participant_is_forbidden()
     {
@@ -210,7 +208,7 @@ class EditMessageTest extends HttpTestCase
             'thread' => $thread->id,
             'message' => $message->id,
         ]), [
-            'message' => $this->faker()->realTextBetween(6000, 10000),
+            'message' => Str::random(5001),
         ])
             ->assertStatus(422)
             ->assertJsonValidationErrors('message');

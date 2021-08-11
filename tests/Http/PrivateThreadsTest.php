@@ -2,15 +2,13 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
 use RTippin\Messenger\Tests\HttpTestCase;
 
 class PrivateThreadsTest extends HttpTestCase
 {
-    use WithFaker;
-
     /** @test */
     public function user_has_private_threads()
     {
@@ -147,7 +145,7 @@ class PrivateThreadsTest extends HttpTestCase
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
-            'message' => $this->faker()->realTextBetween(6000, 10000),
+            'message' => Str::random(5001),
             'recipient_alias' => 'user',
             'recipient_id' => $this->doe->getKey(),
         ])
