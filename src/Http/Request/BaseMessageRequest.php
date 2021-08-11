@@ -83,7 +83,7 @@ abstract class BaseMessageRequest extends FormRequest
      */
     private function generateTemporaryIdRule(): void
     {
-        $this->generatedRuleset['temporary_id'] = ['required', 'string'];
+        $this->generatedRuleset['temporary_id'] = ['required', 'string', 'max:255'];
     }
 
     /**

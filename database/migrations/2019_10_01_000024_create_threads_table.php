@@ -16,7 +16,7 @@ class CreateThreadsTable extends Migration
         Schema::create('threads', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->integer('type')->default(1);
-            $table->string('subject')->nullable();
+            $table->string('subject', 255)->nullable();
             $table->string('image')->nullable();
             $table->boolean('add_participants')->default(false);
             $table->boolean('invitations')->default(false);

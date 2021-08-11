@@ -22,7 +22,7 @@ class CreateBotsTable extends Migration
             }
             $table->uuid('thread_id');
             Helpers::SchemaMorphType('owner', $table);
-            $table->string('name');
+            $table->string('name', 255);
             $table->string('avatar')->nullable();
             $table->boolean('enabled')->default(true);
             $table->boolean('hide_actions')->default(false);

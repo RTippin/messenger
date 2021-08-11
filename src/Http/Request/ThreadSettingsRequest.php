@@ -16,7 +16,7 @@ class ThreadSettingsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'subject' => ['required', 'string', 'min:3'],
+            'subject' => ['required', 'string', 'min:2', 'max:255'],
             'add_participants' => ['required', 'boolean'],
             'messaging' => ['required', 'boolean'],
         ];

@@ -2,7 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Str;
+use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
@@ -259,21 +259,24 @@ class PrivateMessageTest extends HttpTestCase
             ->assertForbidden();
     }
 
-    /** @test */
-    public function send_message_cannot_be_more_than_5k_characters()
+    /**
+     * @test
+     * @dataProvider messagePassesValidation
+     * @param $messageValue
+     * @param $tempIdValue
+     */
+    public function send_message_passes_validations($messageValue, $tempIdValue)
     {
-        $this->logCurrentRequest();
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $thread->id,
         ]), [
-            'message' => Str::random(5001),
-            'temporary_id' => '123-456-789',
+            'message' => $messageValue,
+            'temporary_id' => $tempIdValue,
         ])
-            ->assertStatus(422)
-            ->assertJsonValidationErrors('message');
+            ->assertSuccessful();
     }
 
     /**
@@ -349,6 +352,16 @@ class PrivateMessageTest extends HttpTestCase
             ]);
     }
 
+    public function messagePassesValidation(): array
+    {
+        return [
+            'Fields can be one character' => ['x', 'x'],
+            'Fields can be emoji' => ['😀', '😀'],
+            'Fields can be string numbers' => ['1234', '1234'],
+            'Fields can be max allowed 5000|255' => [str_repeat('X', 5000), str_repeat('X', 255)],
+        ];
+    }
+
     public function messageFailsValidation(): array
     {
         return [
@@ -357,6 +370,8 @@ class PrivateMessageTest extends HttpTestCase
             'Fields cannot be boolean' => [true, true],
             'Fields cannot be null' => [null, null],
             'Fields cannot be an array' => [[1, 2], [1, 2]],
+            'Fields cannot be a file' => [UploadedFile::fake()->image('picture.png'), UploadedFile::fake()->image('picture.png')],
+            'Fields cannot be greater than max allowed 5000|255' => [str_repeat('X', 5001), str_repeat('X', 256)],
         ];
     }
 

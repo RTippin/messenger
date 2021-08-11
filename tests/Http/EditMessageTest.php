@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Str;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageEdit;
@@ -208,10 +207,30 @@ class EditMessageTest extends HttpTestCase
             'thread' => $thread->id,
             'message' => $message->id,
         ]), [
-            'message' => Str::random(5001),
+            'message' => str_repeat('X', 5001),
         ])
             ->assertStatus(422)
             ->assertJsonValidationErrors('message');
+    }
+
+    /**
+     * @test
+     * @dataProvider editPassesValidation
+     * @param $value
+     */
+    public function edit_message_passes_validation($value)
+    {
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->edited()->create();
+        $this->actingAs($this->tippin);
+
+        $this->putJson(route('api.messenger.threads.messages.update', [
+            'thread' => $thread->id,
+            'message' => $message->id,
+        ]), [
+            'message' => $value,
+        ])
+            ->assertSuccessful();
     }
 
     /**
@@ -236,6 +255,16 @@ class EditMessageTest extends HttpTestCase
             ->assertJsonValidationErrors('message');
     }
 
+    public function editPassesValidation(): array
+    {
+        return [
+            'Edit can be one character' => ['x'],
+            'Edit can be emoji' => ['😀', '😀'],
+            'Edit can be string numbers' => ['1234'],
+            'Edit can be max allowed 5000' => [str_repeat('X', 5000)],
+        ];
+    }
+
     public function editFailsValidation(): array
     {
         return [
@@ -243,7 +272,8 @@ class EditMessageTest extends HttpTestCase
             'Edit cannot be integer' => [5],
             'Edit cannot be null' => [null],
             'Edit cannot be an array' => [[1, 2]],
-            'Edit cannot be an image' => [UploadedFile::fake()->image('picture.png')],
+            'Edit cannot be a file' => [UploadedFile::fake()->image('picture.png')],
+            'Edit cannot be greater than max allowed 5000' => [str_repeat('X', 5001)],
         ];
     }
 }

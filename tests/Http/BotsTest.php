@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Participant;
@@ -500,6 +501,8 @@ class BotsTest extends HttpTestCase
             'All values required' => [null, null, null, null, ['name', 'enabled', 'hide_actions', 'cooldown']],
             'Name and cooldown cannot be boolean' => [true, false, false, false, ['name', 'cooldown']],
             'Name must be at least two characters' => ['T', false, false, 0, ['name']],
+            'Name cannot be over 5000 characters' => [str_repeat('X', 5001), false, false, 0, ['name']],
+            'Name cannot be a file' => [UploadedFile::fake()->image('picture.png'), false, false, 0, ['name']],
             'Cooldown cannot be negative' => ['Test', false, false, -1, ['cooldown']],
             'Cooldown cannot be over 900' => ['Test', false, false, 901, ['cooldown']],
         ];
@@ -508,9 +511,10 @@ class BotsTest extends HttpTestCase
     public function botPassesValidation(): array
     {
         return [
-            ['Te', false, false, 0],
-            ['Test', true, true, 900],
-            ['Test More', true, true, 1],
+            'Bot name min 2 characters, false booleans, min 0 cooldown' => ['Te', false, false, 0],
+            'Bot name max 255 characters' => [str_repeat('X', 255), false, false, 0],
+            'True booleans, max 900 cooldown' => ['Test', true, true, 900],
+            'Cooldown of 1' => ['Test More', true, true, 1],
         ];
     }
 }

@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Tests\HttpTestCase;
 
 class GroupThreadsTest extends HttpTestCase
@@ -120,10 +121,10 @@ class GroupThreadsTest extends HttpTestCase
 
     /**
      * @test
-     * @dataProvider subjectValidation
+     * @dataProvider subjectFailsValidation
      * @param $subject
      */
-    public function store_new_group_checks_subject($subject)
+    public function store_new_group_fails_validating_subject($subject)
     {
         $this->logCurrentRequest();
         $this->actingAs($this->tippin);
@@ -137,11 +138,11 @@ class GroupThreadsTest extends HttpTestCase
 
     /**
      * @test
-     * @dataProvider providersValidation
+     * @dataProvider providersFailValidation
      * @param $providers
      * @param $errors
      */
-    public function store_new_group_checks_providers($providers, $errors)
+    public function store_new_group_fails_validating_providers($providers, $errors)
     {
         $this->logCurrentRequest();
         $this->actingAs($this->tippin);
@@ -155,19 +156,20 @@ class GroupThreadsTest extends HttpTestCase
             ->assertJsonValidationErrors($errors);
     }
 
-    public function subjectValidation(): array
+    public function subjectFailsValidation(): array
     {
         return [
-            'Value cannot be an INT' => [2],
-            'Value cannot be single character' => ['1'],
-            'Value must be larger than 2 characters' => ['12'],
-            'Value cannot be an array' => [[1, 2]],
-            'Value cannot be null' => [null],
-            'Value cannot be empty' => [''],
+            'Subject cannot be an INT' => [2],
+            'Subject cannot be single character' => ['x'],
+            'Subject cannot be greater than 255 characters' => [str_repeat('X', 256)],
+            'Subject cannot be an array' => [[1, 2]],
+            'Subject cannot be null' => [null],
+            'Subject cannot be empty' => [''],
+            'Subject cannot be a file' => [UploadedFile::fake()->image('picture.png')],
         ];
     }
 
-    public function providersValidation(): array
+    public function providersFailValidation(): array
     {
         return [
             'Alias and ID cannot be null' => [

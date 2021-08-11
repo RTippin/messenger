@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Str;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
 use RTippin\Messenger\Tests\HttpTestCase;
 
@@ -137,28 +136,12 @@ class PrivateThreadsTest extends HttpTestCase
             ->assertForbidden();
     }
 
-    /** @test */
-    public function creating_private_thread_with_message_over_5k_size_fails_validation()
-    {
-        $this->logCurrentRequest();
-        $this->createFriends($this->tippin, $this->doe);
-        $this->actingAs($this->tippin);
-
-        $this->postJson(route('api.messenger.privates.store'), [
-            'message' => Str::random(5001),
-            'recipient_alias' => 'user',
-            'recipient_id' => $this->doe->getKey(),
-        ])
-            ->assertStatus(422)
-            ->assertJsonValidationErrors('message');
-    }
-
     /**
      * @test
-     * @dataProvider messageValidation
+     * @dataProvider messageFailsValidation
      * @param $messageValue
      */
-    public function create_new_private_checks_message($messageValue)
+    public function create_new_private_fails_validating_message($messageValue)
     {
         $this->logCurrentRequest();
         $this->actingAs($this->tippin);
@@ -174,12 +157,12 @@ class PrivateThreadsTest extends HttpTestCase
 
     /**
      * @test
-     * @dataProvider recipientValidation
+     * @dataProvider recipientFailsValidation
      * @param $aliasValue
      * @param $idValue
      * @param $errors
      */
-    public function create_new_private_checks_recipient_values($aliasValue, $idValue, $errors)
+    public function create_new_private_fails_validating_recipient_values($aliasValue, $idValue, $errors)
     {
         $this->logCurrentRequest();
         $this->actingAs($this->tippin);
@@ -193,7 +176,7 @@ class PrivateThreadsTest extends HttpTestCase
             ->assertJsonValidationErrors($errors);
     }
 
-    public function messageValidation(): array
+    public function messageFailsValidation(): array
     {
         return [
             'Message cannot be empty' => [''],
@@ -201,10 +184,11 @@ class PrivateThreadsTest extends HttpTestCase
             'Message cannot be boolean' => [true],
             'Message cannot be null' => [null],
             'Message cannot be an array' => [[1, 2]],
+            'Message cannot be greater than 5000 characters' => [str_repeat('X', 5001)],
         ];
     }
 
-    public function recipientValidation(): array
+    public function recipientFailsValidation(): array
     {
         return [
             'Alias and ID cannot be empty' => ['', '', ['recipient_alias', 'recipient_id']],

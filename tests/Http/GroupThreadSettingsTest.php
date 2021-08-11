@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
+use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
@@ -175,10 +176,10 @@ class GroupThreadSettingsTest extends HttpTestCase
 
     /**
      * @test
-     * @dataProvider settingsValidation
+     * @dataProvider settingsFailsValidation
      * @param $fieldValue
      */
-    public function group_settings_checks_booleans($fieldValue)
+    public function group_settings_fails_validating_booleans($fieldValue)
     {
         $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
@@ -209,10 +210,10 @@ class GroupThreadSettingsTest extends HttpTestCase
 
     /**
      * @test
-     * @dataProvider subjectValidation
+     * @dataProvider subjectFailsValidation
      * @param $subject
      */
-    public function group_settings_checks_subject($subject)
+    public function group_settings_fails_validating_subject($subject)
     {
         $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin);
@@ -233,25 +234,28 @@ class GroupThreadSettingsTest extends HttpTestCase
             ->assertJsonValidationErrors('subject');
     }
 
-    public function settingsValidation(): array
+    public function settingsFailsValidation(): array
     {
         return [
             'Value cannot be an INT' => [2],
             'Value cannot be a string' => ['string'],
+            'Value cannot be a empty' => [''],
             'Value cannot be an array' => [[1, 2]],
             'Value cannot be null' => [null],
+            'Value cannot be a file' => [UploadedFile::fake()->image('picture.png')],
         ];
     }
 
-    public function subjectValidation(): array
+    public function subjectFailsValidation(): array
     {
         return [
-            'Value cannot be an INT' => [2],
-            'Value cannot be single character' => ['1'],
-            'Value must be larger than 2 characters' => ['12'],
-            'Value cannot be an array' => [[1, 2]],
-            'Value cannot be null' => [null],
-            'Value cannot be empty' => [''],
+            'Subject cannot be an INT' => [2],
+            'Subject cannot be single character' => ['x'],
+            'Subject cannot be greater than 255 characters' => [str_repeat('X', 256)],
+            'Subject cannot be an array' => [[1, 2]],
+            'Subject cannot be null' => [null],
+            'Subject cannot be empty' => [''],
+            'Subject cannot be a file' => [UploadedFile::fake()->image('picture.png')],
         ];
     }
 }

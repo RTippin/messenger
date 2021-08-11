@@ -14,7 +14,7 @@ class BotRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name' => ['required', 'min:2'],
+            'name' => ['required', 'min:2', 'max:255'],
             'enabled' => ['required', 'boolean'],
             'hide_actions' => ['required', 'boolean'],
             'cooldown' => ['required', 'integer', 'between:0,900'],
