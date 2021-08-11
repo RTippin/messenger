@@ -41,8 +41,7 @@
 - Optional extra payload when sending messages to allow custom json to be stored with the message.
 
 ### Upcoming for v1
-- Thread messages search.
-- Extracting Friends system.
+- Temporary Ephemeral conversations.
 
 ### Notes
 - Read through our [`messenger.php`][link-config] config file before migrating!
