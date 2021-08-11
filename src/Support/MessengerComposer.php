@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Support;
 
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\UploadedFile;
+use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Messages\AddReaction;
 use RTippin\Messenger\Actions\Messages\StoreAudioMessage;
 use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
@@ -149,9 +150,7 @@ class MessengerComposer
             'extra' => $extra,
         ]];
 
-        if ($this->silent) {
-            return $action->withoutBroadcast()->execute(...$payload);
-        }
+        $this->silenceActionWhenSilent($action);
 
         return $action->execute(...$payload);
     }
@@ -177,9 +176,7 @@ class MessengerComposer
             'extra' => $extra,
         ]];
 
-        if ($this->silent) {
-            return $action->withoutBroadcast()->execute(...$payload);
-        }
+        $this->silenceActionWhenSilent($action);
 
         return $action->execute(...$payload);
     }
@@ -205,9 +202,7 @@ class MessengerComposer
             'extra' => $extra,
         ]];
 
-        if ($this->silent) {
-            return $action->withoutBroadcast()->execute(...$payload);
-        }
+        $this->silenceActionWhenSilent($action);
 
         return $action->execute(...$payload);
     }
@@ -233,9 +228,7 @@ class MessengerComposer
             'extra' => $extra,
         ]];
 
-        if ($this->silent) {
-            return $action->withoutBroadcast()->execute(...$payload);
-        }
+        $this->silenceActionWhenSilent($action);
 
         return $action->execute(...$payload);
     }
@@ -255,9 +248,7 @@ class MessengerComposer
 
         $payload = [$this->resolveToThread(), $message, $reaction];
 
-        if ($this->silent) {
-            return $action->withoutBroadcast()->execute(...$payload);
-        }
+        $this->silenceActionWhenSilent($action);
 
         return $action->execute(...$payload);
     }
@@ -285,11 +276,9 @@ class MessengerComposer
     {
         $action = app(MarkParticipantRead::class);
 
-        $payload = $participant ?? $this->resolveToThread()->currentParticipant();
+        $payload = $participant ?: $this->resolveToThread()->currentParticipant();
 
-        if ($this->silent) {
-            return $action->withoutBroadcast()->execute($payload);
-        }
+        $this->silenceActionWhenSilent($action);
 
         return $action->execute($payload);
     }
@@ -421,5 +410,18 @@ class MessengerComposer
         }
 
         return $this->to;
+    }
+
+    /**
+     * If silent was called, we will disable
+     * broadcast from the action supplied.
+     *
+     * @param BaseMessengerAction $action
+     */
+    private function silenceActionWhenSilent(BaseMessengerAction $action): void
+    {
+        if ($this->silent) {
+            $action->withoutBroadcast();
+        }
     }
 }

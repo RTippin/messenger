@@ -58,7 +58,7 @@ class SendKnock extends BaseMessengerAction
     public function execute(...$parameters): self
     {
         $this->setThread($parameters[0])
-            ->checkCanKnockAtThread()
+            ->bailIfCannotKnockAtThread()
             ->generateResource()
             ->storeCacheTimeout()
             ->fireBroadcast()
@@ -71,7 +71,7 @@ class SendKnock extends BaseMessengerAction
      * @return $this
      * @throws FeatureDisabledException|KnockException
      */
-    private function checkCanKnockAtThread(): self
+    private function bailIfCannotKnockAtThread(): self
     {
         if (! $this->messenger->isKnockKnockEnabled()) {
             throw new FeatureDisabledException('Knocking is currently disabled.');

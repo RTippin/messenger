@@ -21,7 +21,7 @@ class StoreGroupAvatar extends GroupAvatarAction
      */
     public function execute(...$parameters): self
     {
-        $this->isThreadAvatarsEnabled();
+        $this->bailWhenFeatureDisabled();
 
         $this->setThread($parameters[0])
             ->attemptTransactionOrRollbackFile($this->uploadAvatar($parameters[1]['image']))

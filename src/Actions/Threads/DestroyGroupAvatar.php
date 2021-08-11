@@ -17,7 +17,7 @@ class DestroyGroupAvatar extends GroupAvatarAction
      */
     public function execute(...$parameters): self
     {
-        $this->isThreadAvatarsEnabled();
+        $this->bailWhenFeatureDisabled();
 
         $this->setThread($parameters[0])
             ->removeOldIfExist()

@@ -49,7 +49,7 @@ class StoreInvite extends InviteAction
      */
     public function execute(...$parameters): self
     {
-        $this->isInvitationsEnabled();
+        $this->bailWhenFeatureDisabled();
 
         $this->setThread($parameters[0])
             ->storeInvite($parameters[1])

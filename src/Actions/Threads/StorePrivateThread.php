@@ -109,12 +109,14 @@ class StorePrivateThread extends NewThreadAction
     {
         $inputs = $parameters[0];
 
-        $this->locateRecipientAndThread(
+        $this->setRecipientAndExistingThread(
             $inputs['recipient_alias'],
             $inputs['recipient_id']
-        )
-            ->canCreateThread()
-            ->setMessageActions($inputs)
+        );
+
+        $this->bailIfCannotCreateThread();
+
+        $this->setMessageActions($inputs)
             ->determineIfPending()
             ->handleTransactions($inputs)
             ->generateResource()
@@ -247,17 +249,14 @@ class StorePrivateThread extends NewThreadAction
     /**
      * @param string $alias
      * @param string $id
-     * @return $this
      */
-    private function locateRecipientAndThread(string $alias, string $id): self
+    private function setRecipientAndExistingThread(string $alias, string $id): void
     {
         $this->locator->setAlias($alias)->setId($id)->locate();
 
         $this->recipient = $this->locator->getRecipient();
 
         $this->existingThread = $this->locator->getThread();
-
-        return $this;
     }
 
     /**
@@ -287,10 +286,9 @@ class StorePrivateThread extends NewThreadAction
     }
 
     /**
-     * @return $this
      * @throws NewThreadException|ProviderNotFoundException
      */
-    private function canCreateThread(): self
+    private function bailIfCannotCreateThread(): void
     {
         if (is_null($this->recipient)) {
             $this->locator->throwNotFoundError();
@@ -303,7 +301,5 @@ class StorePrivateThread extends NewThreadAction
         if (! $this->messenger->canMessageProviderFirst($this->recipient)) {
             throw new NewThreadException("Not authorized to start conversations with {$this->recipient->getProviderName()}.");
         }
-
-        return $this;
     }
 }

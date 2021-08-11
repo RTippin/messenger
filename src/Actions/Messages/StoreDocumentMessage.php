@@ -65,7 +65,7 @@ class StoreDocumentMessage extends NewMessageAction
      */
     public function execute(...$parameters): self
     {
-        $this->isDocumentUploadEnabled();
+        $this->bailWhenFeatureDisabled();
 
         $this->setThread($parameters[0]);
 
@@ -110,7 +110,7 @@ class StoreDocumentMessage extends NewMessageAction
     /**
      * @throws FeatureDisabledException
      */
-    private function isDocumentUploadEnabled(): void
+    private function bailWhenFeatureDisabled(): void
     {
         if (! $this->messenger->isMessageDocumentUploadEnabled()) {
             throw new FeatureDisabledException('Document messages are currently disabled.');

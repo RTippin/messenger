@@ -26,7 +26,7 @@ abstract class InviteAction extends BaseMessengerAction
     /**
      * @throws FeatureDisabledException
      */
-    protected function isInvitationsEnabled(): void
+    protected function bailWhenFeatureDisabled(): void
     {
         if (! $this->messenger->isThreadInvitesEnabled()) {
             throw new FeatureDisabledException('Group invites are currently disabled.');

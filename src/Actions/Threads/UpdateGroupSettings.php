@@ -64,7 +64,7 @@ class UpdateGroupSettings extends BaseMessengerAction
     public function execute(...$parameters): self
     {
         $this->setThread($parameters[0])
-            ->checkIfGroupNameChanged($parameters[1]['subject'])
+            ->determineIfGroupNameChanged($parameters[1]['subject'])
             ->updateThread($parameters[1])
             ->generateResource()
             ->fireBroadcast()
@@ -94,7 +94,7 @@ class UpdateGroupSettings extends BaseMessengerAction
      * @param string $name
      * @return $this
      */
-    private function checkIfGroupNameChanged(string $name): self
+    private function determineIfGroupNameChanged(string $name): self
     {
         $this->nameChanged = $this->getThread()->subject !== $name;
 

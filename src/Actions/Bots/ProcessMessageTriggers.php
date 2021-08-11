@@ -87,11 +87,11 @@ class ProcessMessageTriggers extends BaseMessengerAction
      */
     public function execute(...$parameters): self
     {
-        $this->isBotsEnabled();
+        $this->bailWhenFeatureDisabled();
 
         $this->isGroupAdmin = $parameters[2];
         $this->senderIp = $parameters[3] ?? null;
-        $this->botsTriggered = new Collection([]);
+        $this->botsTriggered = new Collection;
 
         $this->setThread($parameters[0])
             ->setMessage($parameters[1]);
@@ -113,7 +113,11 @@ class ProcessMessageTriggers extends BaseMessengerAction
     private function matchActionTriggers(BotAction $action): void
     {
         foreach ($action->getTriggers() as $trigger) {
-            if ($this->matcher->matches($action->match, $trigger, $this->getMessage()->body)) {
+            if ($this->matcher->matches(
+                $action->match,
+                $trigger,
+                $this->getMessage()->body
+            )) {
                 $this->handleAction($action, $trigger);
             }
         }
@@ -158,7 +162,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
     /**
      * @throws FeatureDisabledException
      */
-    private function isBotsEnabled(): void
+    private function bailWhenFeatureDisabled(): void
     {
         if (! $this->messenger->isBotsEnabled()) {
             throw new FeatureDisabledException('Bots are currently disabled.');

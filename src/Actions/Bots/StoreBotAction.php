@@ -58,7 +58,7 @@ class StoreBotAction extends BaseMessengerAction
     {
         $this->setThread($parameters[0])->setBot($parameters[1]);
 
-        $this->checkCanAddBotAction($parameters[2]);
+        $this->bailIfCanAddBotActionFails($parameters[2]);
 
         $this->storeBotAction($parameters[2])
             ->generateResource()
@@ -70,7 +70,7 @@ class StoreBotAction extends BaseMessengerAction
     /**
      * @throws FeatureDisabledException|BotException
      */
-    private function checkCanAddBotAction(array $params): void
+    private function bailIfCanAddBotActionFails(array $params): void
     {
         if (! $this->messenger->isBotsEnabled()) {
             throw new FeatureDisabledException('Bots are currently disabled.');

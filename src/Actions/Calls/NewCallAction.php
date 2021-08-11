@@ -103,10 +103,9 @@ abstract class NewCallAction extends BaseMessengerAction
     }
 
     /**
-     * @return $this
      * @throws FeatureDisabledException|NewCallException
      */
-    protected function canInitiateCall(): self
+    protected function bailIfInitiateCallChecksFail(): void
     {
         if (! $this->messenger->isCallingEnabled()
             || $this->messenger->isCallingTemporarilyDisabled()) {
@@ -120,8 +119,6 @@ abstract class NewCallAction extends BaseMessengerAction
         if (Cache::get("call:{$this->getThread()->id}:starting")) {
             throw new NewCallException("{$this->getThread()->name()} has a call awaiting creation.");
         }
-
-        return $this;
     }
 
     /**

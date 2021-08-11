@@ -20,7 +20,7 @@ class StoreBotAvatar extends BotAvatarAction
      */
     public function execute(...$parameters): self
     {
-        $this->isBotAvatarEnabled();
+        $this->bailWhenFeatureDisabled();
 
         $this->setBot($parameters[0])
             ->attemptTransactionOrRollbackFile($this->upload($parameters[1]['image']))

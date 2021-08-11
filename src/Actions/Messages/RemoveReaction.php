@@ -79,7 +79,7 @@ class RemoveReaction extends BaseMessengerAction
      */
     public function execute(...$parameters): self
     {
-        $this->isReactionsEnabled();
+        $this->bailWhenFeatureDisabled();
 
         $this->setThread($parameters[0])->setMessage($parameters[1]);
         $this->reaction = $parameters[2];
@@ -96,7 +96,7 @@ class RemoveReaction extends BaseMessengerAction
      * @return void
      * @throws FeatureDisabledException
      */
-    private function isReactionsEnabled(): void
+    private function bailWhenFeatureDisabled(): void
     {
         if (! $this->messenger->isMessageReactionsEnabled()) {
             throw new FeatureDisabledException('Message reactions are currently disabled.');
@@ -184,7 +184,7 @@ class RemoveReaction extends BaseMessengerAction
     }
 
     /**
-     * Remove reaction. Mark message as not reacted to when none left.
+     * Remove reaction. Mark the message as not reacted to when none left.
      *
      * @throws Exception
      */

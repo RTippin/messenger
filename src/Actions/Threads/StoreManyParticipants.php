@@ -128,9 +128,11 @@ class StoreManyParticipants extends ThreadParticipantAction
         if ($this->getData()->count()) {
             if ($this->shouldExecuteChains()) {
                 $this->fireBroadcast()->fireEvents();
-            } else {
-                $this->fireEvents();
+
+                return;
             }
+
+            $this->fireEvents();
         }
     }
 
@@ -155,7 +157,7 @@ class StoreManyParticipants extends ThreadParticipantAction
                 : $this->rejectExistingParticipants($providers);
         }
 
-        return new Collection();
+        return new Collection;
     }
 
     /**

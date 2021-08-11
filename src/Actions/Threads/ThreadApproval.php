@@ -61,9 +61,11 @@ class ThreadApproval extends ThreadParticipantAction
     {
         $this->approved = $parameters[1];
 
-        $this->setThread($parameters[0])
-            ->checkThreadNeedsApproval()
-            ->handleTransactions()
+        $this->setThread($parameters[0]);
+
+        $this->bailIfThreadDoesntNeedApproval();
+
+        $this->handleTransactions()
             ->fireBroadcast()
             ->fireEvents();
 
@@ -130,10 +132,9 @@ class ThreadApproval extends ThreadParticipantAction
     }
 
     /**
-     * @return $this
      * @throws ThreadApprovalException
      */
-    private function checkThreadNeedsApproval(): self
+    private function bailIfThreadDoesntNeedApproval(): void
     {
         if ($this->getThread()->isGroup()) {
             throw new ThreadApprovalException('Group threads do not have approvals.');
@@ -146,7 +147,5 @@ class ThreadApproval extends ThreadParticipantAction
         if (! $this->getThread()->isAwaitingMyApproval()) {
             throw new ThreadApprovalException;
         }
-
-        return $this;
     }
 }

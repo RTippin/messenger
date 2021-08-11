@@ -82,7 +82,7 @@ class EditMessage extends BaseMessengerAction
      */
     public function execute(...$parameters): self
     {
-        $this->isEditMessagesEnabled();
+        $this->bailWhenFeatureDisabled();
 
         $this->setThread($parameters[0])
             ->setMessage($parameters[1])
@@ -99,7 +99,7 @@ class EditMessage extends BaseMessengerAction
     /**
      * @throws FeatureDisabledException
      */
-    private function isEditMessagesEnabled(): void
+    private function bailWhenFeatureDisabled(): void
     {
         if (! $this->messenger->isMessageEditsEnabled()) {
             throw new FeatureDisabledException('Edit messages are currently disabled.');

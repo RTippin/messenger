@@ -55,9 +55,11 @@ class StoreCall extends NewCallAction
      */
     public function execute(...$parameters): self
     {
-        $this->setThread($parameters[0])
-            ->canInitiateCall()
-            ->setCallLockout()
+        $this->setThread($parameters[0]);
+
+        $this->bailIfInitiateCallChecksFail();
+
+        $this->setCallLockout()
             ->handleTransactions($parameters[1] ?? false)
             ->generateResource()
             ->fireBroadcast()

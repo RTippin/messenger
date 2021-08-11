@@ -58,7 +58,7 @@ abstract class GroupAvatarAction extends BaseMessengerAction
      * @return void
      * @throws FeatureDisabledException
      */
-    protected function isThreadAvatarsEnabled(): void
+    protected function bailWhenFeatureDisabled(): void
     {
         if (! $this->messenger->isThreadAvatarEnabled()) {
             throw new FeatureDisabledException('Group avatars are currently disabled.');

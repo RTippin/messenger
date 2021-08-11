@@ -87,12 +87,14 @@ class StoreFriendRequest extends BaseMessengerAction
      */
     public function execute(...$parameters): self
     {
-        $this->locateRecipientProvider(
+        $this->locateAndSetRecipientProvider(
             $parameters[0]['recipient_alias'],
             $parameters[0]['recipient_id']
-        )
-            ->recipientIsValid()
-            ->storeSentFriendRequest()
+        );
+
+        $this->bailIfRecipientIsNotValid();
+
+        $this->storeSentFriendRequest()
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();
@@ -103,21 +105,17 @@ class StoreFriendRequest extends BaseMessengerAction
     /**
      * @param string $alias
      * @param string $id
-     * @return $this
      */
-    private function locateRecipientProvider(string $alias, string $id): self
+    private function locateAndSetRecipientProvider(string $alias, string $id): void
     {
         $this->recipient = $this->providersRepository->getProviderUsingAliasAndId($alias, $id);
-
-        return $this;
     }
 
     /**
-     * @return $this
      * @throws FriendException|ProviderNotFoundException
      * @noinspection PhpParamsInspection
      */
-    private function recipientIsValid(): self
+    private function bailIfRecipientIsNotValid(): void
     {
         if (is_null($this->recipient)) {
             throw new ProviderNotFoundException;
@@ -134,8 +132,6 @@ class StoreFriendRequest extends BaseMessengerAction
         if ($this->friends->friendStatus($this->recipient) !== 0) {
             throw new FriendException("You are already friends, or have a pending request with {$this->recipient->getProviderName()}.");
         }
-
-        return $this;
     }
 
     /**

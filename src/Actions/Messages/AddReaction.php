@@ -91,9 +91,11 @@ class AddReaction extends BaseMessengerAction
     {
         $this->setThread($parameters[0])
             ->setMessage($parameters[1])
-            ->prepareReaction($parameters[2])
-            ->canAddReaction()
-            ->handleTransactions()
+            ->prepareReaction($parameters[2]);
+
+        $this->bailIfAddReactionChecksFail();
+
+        $this->handleTransactions()
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();
@@ -120,20 +122,16 @@ class AddReaction extends BaseMessengerAction
      * Set our reaction to the first valid emoji, or null if none found.
      *
      * @param string $reaction
-     * @return $this
      */
-    private function prepareReaction(string $reaction): self
+    private function prepareReaction(string $reaction): void
     {
         $this->react = $this->emoji->getFirstValidEmojiShortcode($reaction);
-
-        return $this;
     }
 
     /**
-     * @return $this
      * @throws FeatureDisabledException|ReactionException
      */
-    private function canAddReaction(): self
+    private function bailIfAddReactionChecksFail(): void
     {
         if (! $this->messenger->isMessageReactionsEnabled()) {
             throw new FeatureDisabledException('Message reactions are currently disabled.');
@@ -150,8 +148,6 @@ class AddReaction extends BaseMessengerAction
         if (! $this->doesntGoOverMaxUniqueReactions()) {
             throw new ReactionException('We appreciate the enthusiasm, but there are already too many reactions on this message.');
         }
-
-        return $this;
     }
 
     /**

@@ -233,9 +233,11 @@ abstract class NewMessageAction extends BaseMessengerAction
                 ->nonSystem()
                 ->with('owner')
                 ->find($replyToId);
-        } else {
-            $this->replyingTo = null;
+
+            return;
         }
+
+        $this->replyingTo = null;
     }
 
     /**

@@ -42,7 +42,7 @@ class RemoveBotAction extends BaseMessengerAction
      */
     public function execute(...$parameters): self
     {
-        $this->isBotsEnabled();
+        $this->bailWhenFeatureDisabled();
 
         $this->setBotAction($parameters[0])
             ->destroyBotAction()
@@ -54,7 +54,7 @@ class RemoveBotAction extends BaseMessengerAction
     /**
      * @throws FeatureDisabledException
      */
-    private function isBotsEnabled(): void
+    private function bailWhenFeatureDisabled(): void
     {
         if (! $this->messenger->isBotsEnabled()) {
             throw new FeatureDisabledException('Bots are currently disabled.');

@@ -32,9 +32,11 @@ class StoreMessengerAvatar extends MessengerAvatarAction
      */
     public function execute(...$parameters): self
     {
-        $this->isAvatarUploadEnabled();
+        $this->bailWhenFeatureDisabled();
 
-        $this->attemptTransactionOrRollbackFile($this->upload($parameters[0]['image']));
+        $this->attemptTransactionOrRollbackFile(
+            $this->upload($parameters[0]['image'])
+        );
 
         return $this;
     }
@@ -63,7 +65,7 @@ class StoreMessengerAvatar extends MessengerAvatarAction
     /**
      * @throws FeatureDisabledException
      */
-    private function isAvatarUploadEnabled(): void
+    private function bailWhenFeatureDisabled(): void
     {
         if (! $this->messenger->isProviderAvatarEnabled()) {
             throw new FeatureDisabledException('Avatar upload is currently disabled.');
