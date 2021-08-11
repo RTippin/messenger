@@ -147,7 +147,7 @@ class PrivateThreadsTest extends HttpTestCase
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.privates.store'), [
-            'message' => $this->faker()->realText(6000),
+            'message' => $this->faker()->realTextBetween(6000, 10000),
             'recipient_alias' => 'user',
             'recipient_id' => $this->doe->getKey(),
         ])

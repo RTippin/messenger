@@ -271,7 +271,7 @@ class PrivateMessageTest extends HttpTestCase
         $this->postJson(route('api.messenger.threads.messages.store', [
             'thread' => $thread->id,
         ]), [
-            'message' => $this->faker()->realText(6000),
+            'message' => $this->faker()->realTextBetween(6000, 10000),
             'temporary_id' => '123-456-789',
         ])
             ->assertStatus(422)

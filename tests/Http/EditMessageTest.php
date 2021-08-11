@@ -210,7 +210,7 @@ class EditMessageTest extends HttpTestCase
             'thread' => $thread->id,
             'message' => $message->id,
         ]), [
-            'message' => $this->faker()->realText(6000),
+            'message' => $this->faker()->realTextBetween(6000, 10000),
         ])
             ->assertStatus(422)
             ->assertJsonValidationErrors('message');
