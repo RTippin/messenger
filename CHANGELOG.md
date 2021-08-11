@@ -1,6 +1,16 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v0.47 (08-11-2021)]
+
+#### Changed
+- `threads.subject` and `bots.name` columns locked to max length of `255`.
+- `Thread` `subject` validation now allows min length of 2 and max length of `255`.
+- `Message` `temporary_id` post value set to max length of `255`.
+- Commit ([0b96afd](https://github.com/RTippin/messenger/commit/0b96afddb8561b4ce8ac01d1cb73918b995e531e))
+
+---
+
 ### [v0.46 (08-09-2021)]
 
 #### Removed
