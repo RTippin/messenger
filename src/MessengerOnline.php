@@ -10,7 +10,7 @@ trait MessengerOnline
     /**
      * Put the given or loaded model into cache as online.
      *
-     * @param null|MessengerProvider $provider
+     * @param null|string|MessengerProvider $provider
      * @return $this
      */
     public function setProviderToOnline($provider = null): self
@@ -49,7 +49,7 @@ trait MessengerOnline
     /**
      * Remove the given or loaded model from online cache.
      *
-     * @param null|MessengerProvider $provider
+     * @param null|string|MessengerProvider $provider
      * @return $this
      */
     public function setProviderToOffline($provider = null): self
@@ -68,7 +68,7 @@ trait MessengerOnline
     /**
      * Put the given or loaded model into cache as away.
      *
-     * @param null|MessengerProvider $provider
+     * @param null|string|MessengerProvider $provider
      * @return $this
      */
     public function setProviderToAway($provider = null): self
@@ -99,7 +99,7 @@ trait MessengerOnline
     /**
      * Check if cache has online key for given or loaded model.
      *
-     * @param null|MessengerProvider $provider
+     * @param null|string|MessengerProvider $provider
      * @return bool
      */
     public function isProviderOnline($provider = null): bool
@@ -119,7 +119,7 @@ trait MessengerOnline
     /**
      * Check if cache has away key for given or loaded model.
      *
-     * @param null|MessengerProvider $provider
+     * @param null|string|MessengerProvider $provider
      * @return bool
      */
     public function isProviderAway($provider = null): bool
@@ -140,7 +140,7 @@ trait MessengerOnline
      * Get the status number representing online status of given or loaded model
      * 0 = offline, 1 = online, 2 = away.
      *
-     * @param null|MessengerProvider $provider
+     * @param null|string|MessengerProvider $provider
      * @return int
      */
     public function getProviderOnlineStatus($provider = null): int

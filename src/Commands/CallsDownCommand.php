@@ -36,22 +36,24 @@ class CallsDownCommand extends Command
     {
         if (! $messenger->isCallingEnabled()) {
             $this->info('Call system currently disabled.');
-        } else {
-            $messenger->disableCallsTemporarily($this->option('duration'));
 
-            $count = Call::active()->count();
-
-            $message = $this->option('now') ? 'completed' : 'dispatched';
-            if ($count > 0) {
-                Call::active()->chunk(100, fn (Collection $calls) => $this->dispatchJob($calls));
-
-                $this->info("$count active calls found. End calls $message!");
-            } else {
-                $this->info('No active calls to end found.');
-            }
-
-            $this->info("Call system is now down for {$this->option('duration')} minutes.");
+            return;
         }
+
+        $messenger->disableCallsTemporarily($this->option('duration'));
+
+        $count = Call::active()->count();
+        $message = $this->option('now') ? 'completed' : 'dispatched';
+
+        if ($count > 0) {
+            Call::active()->chunk(100, fn (Collection $calls) => $this->dispatchJob($calls));
+
+            $this->info("$count active calls found. End calls $message!");
+        } else {
+            $this->info('No active calls to end found.');
+        }
+
+        $this->info("Call system is now down for {$this->option('duration')} minutes.");
     }
 
     /**

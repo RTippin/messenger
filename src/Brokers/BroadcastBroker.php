@@ -172,11 +172,13 @@ class BroadcastBroker implements BroadcastDriver
             && is_subclass_of($abstract, MessengerBroadcast::class)) {
             if ($this->usingPresence) {
                 $this->generatePresenceChannels()->each(fn (Collection $channels) => $this->executeBroadcast($abstract, $channels));
-            } else {
-                $this->generatePrivateChannels()->each(fn (Collection $channels) => $this->executeBroadcast($abstract, $channels));
 
-                $this->executePushNotify($abstract);
+                return;
             }
+
+            $this->generatePrivateChannels()->each(fn (Collection $channels) => $this->executeBroadcast($abstract, $channels));
+
+            $this->executePushNotify($abstract);
         }
     }
 

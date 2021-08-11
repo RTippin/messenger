@@ -31,12 +31,19 @@ class CallsUpCommand extends Command
     {
         if (! $messenger->isCallingEnabled()) {
             $this->info('Call system currently disabled.');
-        } elseif (! $messenger->isCallingTemporarilyDisabled()) {
-            $this->info('Call system is already online.');
-        } else {
-            $messenger->removeTemporaryCallShutdown();
 
-            $this->info('Call system is now online.');
+            return;
         }
+
+        if (! $messenger->isCallingTemporarilyDisabled()) {
+            $this->info('Call system is already online.');
+
+            return;
+        }
+
+        $messenger->removeTemporaryCallShutdown();
+
+        $this->info('Call system is now online.');
+
     }
 }

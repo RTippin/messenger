@@ -251,8 +251,7 @@ final class Messenger
      */
     private function getClassNameString($provider = null): ?string
     {
-        return is_object($provider)
-        && $provider instanceof Model
+        return $provider instanceof Model
             ? $provider->getMorphClass()
             : $provider;
     }

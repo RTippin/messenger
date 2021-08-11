@@ -35,20 +35,24 @@ class CallsActivityCheckCommand extends Command
     {
         if (! $messenger->isCallingEnabled()) {
             $this->info('Call system currently disabled.');
-        } else {
-            $count = Call::active()->where('created_at', '<', now()->subMinute())->count();
 
-            $message = $this->option('now') ? 'completed' : 'dispatched';
-            if ($count > 0) {
-                Call::active()
-                    ->where('created_at', '<', now()->subMinute())
-                    ->chunk(100, fn (Collection $calls) => $this->dispatchJob($calls));
-
-                $this->info("$count active calls found. Call activity checks $message!");
-            } else {
-                $this->info('No matching active calls found.');
-            }
+            return;
         }
+
+        $count = Call::active()->where('created_at', '<', now()->subMinute())->count();
+        $message = $this->option('now') ? 'completed' : 'dispatched';
+
+        if ($count > 0) {
+            Call::active()
+                ->where('created_at', '<', now()->subMinute())
+                ->chunk(100, fn (Collection $calls) => $this->dispatchJob($calls));
+
+            $this->info("$count active calls found. Call activity checks $message!");
+
+            return;
+        }
+
+        $this->info('No matching active calls found.');
     }
 
     /**

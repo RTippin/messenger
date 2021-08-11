@@ -37,18 +37,22 @@ class InvitesCheckCommand extends Command
         // is not 0 (no limit) and the uses is equal or greater than its max_use
         if (! $messenger->isThreadInvitesEnabled()) {
             $this->info('Thread invites are currently disabled.');
-        } else {
-            $count = Invite::invalid()->count();
 
-            $message = $this->option('now') ? 'completed!' : 'dispatched!';
-            if ($count > 0) {
-                Invite::invalid()->with('thread')->chunk(100, fn (Collection $invites) => $this->dispatchJob($invites));
-
-                $this->info("$count invalid invites found. Archive invites $message");
-            } else {
-                $this->info('No invalid invites found.');
-            }
+            return;
         }
+
+        $count = Invite::invalid()->count();
+        $message = $this->option('now') ? 'completed!' : 'dispatched!';
+
+        if ($count > 0) {
+            Invite::invalid()->with('thread')->chunk(100, fn (Collection $invites) => $this->dispatchJob($invites));
+
+            $this->info("$count invalid invites found. Archive invites $message");
+
+            return;
+        }
+
+        $this->info('No invalid invites found.');
     }
 
     /**

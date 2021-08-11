@@ -44,8 +44,10 @@ class PurgeMessagesCommand extends Command
                 ->forceDelete();
 
             $this->info("$count messages archived {$this->option('days')} days or greater have been purged!");
-        } else {
-            $this->info("No messages archived {$this->option('days')} days or greater found.");
+
+            return;
         }
+
+        $this->info("No messages archived {$this->option('days')} days or greater found.");
     }
 }

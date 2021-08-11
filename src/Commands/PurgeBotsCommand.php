@@ -47,9 +47,11 @@ class PurgeBotsCommand extends Command
             $message = $this->option('now') ? 'completed!' : 'dispatched!';
 
             $this->info("$count bots archived {$this->option('days')} days or greater found. Purging $message");
-        } else {
-            $this->info("No bots archived {$this->option('days')} days or greater found.");
+
+            return;
         }
+
+        $this->info("No bots archived {$this->option('days')} days or greater found.");
     }
 
     /**

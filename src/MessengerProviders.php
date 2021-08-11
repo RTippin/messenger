@@ -76,7 +76,7 @@ trait MessengerProviders
      * Here we set a compatible provider model, which can be reused throughout our application!
      * It is recommended to set this in a middleware, after you have acquired your authenticated
      * user/provider. Most actions and methods require a provider being set before being used.
-     * You may even choose to set many different providers in a row during a single cycle,
+     * You may even choose to set multiple different providers in a row during a single cycle,
      * such as in a custom job or action.
      *
      * @param MessengerProvider|mixed|null $provider
