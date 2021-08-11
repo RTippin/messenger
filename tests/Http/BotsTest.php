@@ -501,7 +501,7 @@ class BotsTest extends HttpTestCase
             'All values required' => [null, null, null, null, ['name', 'enabled', 'hide_actions', 'cooldown']],
             'Name and cooldown cannot be boolean' => [true, false, false, false, ['name', 'cooldown']],
             'Name must be at least two characters' => ['T', false, false, 0, ['name']],
-            'Name cannot be over 5000 characters' => [str_repeat('X', 5001), false, false, 0, ['name']],
+            'Name cannot be over 255 characters' => [str_repeat('X', 256), false, false, 0, ['name']],
             'Name cannot be a file' => [UploadedFile::fake()->image('picture.png'), false, false, 0, ['name']],
             'Cooldown cannot be negative' => ['Test', false, false, -1, ['cooldown']],
             'Cooldown cannot be over 900' => ['Test', false, false, 901, ['cooldown']],
