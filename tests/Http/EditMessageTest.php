@@ -195,24 +195,6 @@ class EditMessageTest extends HttpTestCase
             ->assertForbidden();
     }
 
-    /** @test */
-    public function edit_message_cannot_be_more_than_5k_characters()
-    {
-        $this->logCurrentRequest();
-        $thread = $this->createGroupThread($this->tippin);
-        $message = Message::factory()->for($thread)->owner($this->tippin)->edited()->create();
-        $this->actingAs($this->tippin);
-
-        $this->putJson(route('api.messenger.threads.messages.update', [
-            'thread' => $thread->id,
-            'message' => $message->id,
-        ]), [
-            'message' => str_repeat('X', 5001),
-        ])
-            ->assertStatus(422)
-            ->assertJsonValidationErrors('message');
-    }
-
     /**
      * @test
      * @dataProvider editPassesValidation
