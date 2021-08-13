@@ -144,15 +144,13 @@ class MessengerComposer
     {
         $action = app(StoreMessage::class);
 
-        $payload = [$this->resolveToThread(), [
+        $this->silenceActionWhenSilent($action);
+
+        return $action->execute($this->resolveToThread(), [
             'message' => $message,
             'reply_to_id' => $replyingToId,
             'extra' => $extra,
-        ]];
-
-        $this->silenceActionWhenSilent($action);
-
-        return $action->execute(...$payload);
+        ]);
     }
 
     /**
@@ -170,15 +168,13 @@ class MessengerComposer
     {
         $action = app(StoreImageMessage::class);
 
-        $payload = [$this->resolveToThread(), [
+        $this->silenceActionWhenSilent($action);
+
+        return $action->execute($this->resolveToThread(), [
             'image' => $image,
             'reply_to_id' => $replyingToId,
             'extra' => $extra,
-        ]];
-
-        $this->silenceActionWhenSilent($action);
-
-        return $action->execute(...$payload);
+        ]);
     }
 
     /**
@@ -196,15 +192,13 @@ class MessengerComposer
     {
         $action = app(StoreDocumentMessage::class);
 
-        $payload = [$this->resolveToThread(), [
+        $this->silenceActionWhenSilent($action);
+
+        return $action->execute($this->resolveToThread(), [
             'document' => $document,
             'reply_to_id' => $replyingToId,
             'extra' => $extra,
-        ]];
-
-        $this->silenceActionWhenSilent($action);
-
-        return $action->execute(...$payload);
+        ]);
     }
 
     /**
@@ -222,15 +216,13 @@ class MessengerComposer
     {
         $action = app(StoreAudioMessage::class);
 
-        $payload = [$this->resolveToThread(), [
+        $this->silenceActionWhenSilent($action);
+
+        return $action->execute($this->resolveToThread(), [
             'audio' => $audio,
             'reply_to_id' => $replyingToId,
             'extra' => $extra,
-        ]];
-
-        $this->silenceActionWhenSilent($action);
-
-        return $action->execute(...$payload);
+        ]);
     }
 
     /**
@@ -246,11 +238,13 @@ class MessengerComposer
     {
         $action = app(AddReaction::class);
 
-        $payload = [$this->resolveToThread(), $message, $reaction];
-
         $this->silenceActionWhenSilent($action);
 
-        return $action->execute(...$payload);
+        return $action->execute(
+            $this->resolveToThread(),
+            $message,
+            $reaction
+        );
     }
 
     /**
@@ -276,11 +270,11 @@ class MessengerComposer
     {
         $action = app(MarkParticipantRead::class);
 
-        $payload = $participant ?: $this->resolveToThread()->currentParticipant();
-
         $this->silenceActionWhenSilent($action);
 
-        return $action->execute($payload);
+        return $action->execute(
+            $participant ?: $this->resolveToThread()->currentParticipant()
+        );
     }
 
     /**
@@ -350,7 +344,7 @@ class MessengerComposer
      */
     private function resolveToThread(): Thread
     {
-        $this->checkIsReadyToCompose();
+        $this->bailIfNotReadyToCompose();
 
         if ($this->to instanceof Thread) {
             return $this->to;
@@ -370,7 +364,7 @@ class MessengerComposer
      *
      * @throws MessengerComposerException
      */
-    private function checkIsReadyToCompose(): void
+    private function bailIfNotReadyToCompose(): void
     {
         if (is_null($this->to)) {
             throw new MessengerComposerException('No "TO" entity has been set.');
