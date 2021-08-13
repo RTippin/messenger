@@ -75,9 +75,7 @@ final class MessengerBots
             return self::$useUuid;
         }
 
-        self::$useUuid = $shouldUseUuids;
-
-        return self::$useUuid;
+        return self::$useUuid = $shouldUseUuids;
     }
 
     /**

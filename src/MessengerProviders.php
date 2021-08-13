@@ -284,7 +284,7 @@ trait MessengerProviders
             return $this->ghostParticipant;
         }
 
-        $this->ghostParticipant = new Participant([
+        $this->ghostParticipant = (new Participant([
             'thread_id' => $threadId,
             'admin' => false,
             'muted' => true,
@@ -296,7 +296,7 @@ trait MessengerProviders
             'add_participants' => false,
             'manage_invites' => false,
             'manage_bots' => false,
-        ]);
+        ]))->setRelation('owner', $this->getGhostProvider());
 
         return $this->ghostParticipant;
     }
