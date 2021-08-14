@@ -1,6 +1,12 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v1.0.0 (08-13-2021)]
+
+#### Version 1 released.
+
+---
+
 ### [v0.47 (08-11-2021)]
 
 #### Changed

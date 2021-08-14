@@ -10,9 +10,6 @@
 ![Preview](docs/images/image1.png?raw=true)
 ---
 
-### Notice - Alpha Release
-- Until the official v1 release, many breaking changes may be made to this package. I will document most changes in the [CHANGELOG](CHANGELOG.md).
-
 ---
 
 ### Prerequisites
@@ -40,10 +37,15 @@
 - Most features can be toggled at runtime using our `Messenger` facade.
 - Optional extra payload when sending messages to allow custom json to be stored with the message.
 
-### Upcoming for v1
+### Upcoming for v2
 - Temporary Ephemeral conversations.
+- Improved API pagination / filters.
+- Possible extraction of friends system.
+- Better image manipulation / saving of multiple sizes.
+- Encryption of messages (E2E is the long term goal).
 
 ### Notes
+- New docs are being worked on.
 - Read through our [`messenger.php`][link-config] config file before migrating!
 - Calling is disabled by default. You are responsible for implementing your own media server or connecting to a 3rd party service.
 
