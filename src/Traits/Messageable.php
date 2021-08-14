@@ -125,9 +125,7 @@ trait Messageable
             return $this->isOnlineCache;
         }
 
-        $this->isOnlineCache = Messenger::getProviderOnlineStatus($this);
-
-        return $this->isOnlineCache;
+        return $this->isOnlineCache = Messenger::getProviderOnlineStatus($this);
     }
 
     /**

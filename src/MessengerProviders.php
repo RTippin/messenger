@@ -4,6 +4,7 @@ namespace RTippin\Messenger;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Models\GhostUser;
@@ -326,6 +327,111 @@ trait MessengerProviders
     }
 
     /**
+     * Put the given or loaded model into cache as online.
+     *
+     * @param null|string|MessengerProvider $provider
+     */
+    public function setProviderToOnline($provider = null): void
+    {
+        $provider = $provider ?: $this->getProvider();
+
+        if ($this->isOnlineStatusEnabled()
+            && $this->isValidMessengerProvider($provider)
+            && $this->getOnlineStatusSetting($provider) !== 0) {
+            $this->getOnlineStatusSetting($provider) === 2
+                ? $this->setToAway($provider)
+                : $this->setToOnline($provider);
+        }
+    }
+
+    /**
+     * Remove the given or loaded model from online cache.
+     *
+     * @param null|string|MessengerProvider $provider
+     */
+    public function setProviderToOffline($provider = null): void
+    {
+        $provider = $provider ?: $this->getProvider();
+
+        if ($this->isOnlineStatusEnabled()
+            && $this->isValidMessengerProvider($provider)) {
+            $this->setToOffline($provider);
+        }
+    }
+
+    /**
+     * Put the given or loaded model into cache as away.
+     *
+     * @param null|string|MessengerProvider $provider
+     */
+    public function setProviderToAway($provider = null): void
+    {
+        $provider = $provider ?: $this->getProvider();
+
+        if ($this->isOnlineStatusEnabled()
+            && $this->isValidMessengerProvider($provider)
+            && $this->getOnlineStatusSetting($provider) !== 0) {
+            $this->setToAway($provider);
+        }
+    }
+
+    /**
+     * Check if cache has online key for given or loaded model.
+     *
+     * @param null|string|MessengerProvider $provider
+     * @return bool
+     */
+    public function isProviderOnline($provider = null): bool
+    {
+        $provider = $provider ?: $this->getProvider();
+
+        if ($this->isOnlineStatusEnabled()
+            && $this->isValidMessengerProvider($provider)) {
+            return Cache::get("{$this->findProviderAlias($provider)}:online:{$provider->getKey()}") === 'online';
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if cache has away key for given or loaded model.
+     *
+     * @param null|string|MessengerProvider $provider
+     * @return bool
+     */
+    public function isProviderAway($provider = null): bool
+    {
+        $provider = $provider ?: $this->getProvider();
+
+        if ($this->isOnlineStatusEnabled()
+            && $this->isValidMessengerProvider($provider)) {
+            return Cache::get("{$this->findProviderAlias($provider)}:online:{$provider->getKey()}") === 'away';
+        }
+
+        return false;
+    }
+
+    /**
+     * Get the status number representing online status of given or loaded model
+     * 0 = offline, 1 = online, 2 = away.
+     *
+     * @param null|string|MessengerProvider $provider
+     * @return int
+     */
+    public function getProviderOnlineStatus($provider = null): int
+    {
+        $provider = $provider ?: $this->getProvider();
+
+        if ($this->isOnlineStatusEnabled()
+            && $this->isValidMessengerProvider($provider)
+            && $cache = Cache::get("{$this->findProviderAlias($provider)}:online:{$provider->getKey()}")) {
+            return $cache === 'online' ? 1 : 2;
+        }
+
+        return 0;
+    }
+
+    /**
      * @param array $limits
      * @return array
      */
@@ -405,5 +511,46 @@ trait MessengerProviders
     private function setGhostBot(): void
     {
         $this->ghostBot = (new GhostUser)->ghostBot();
+    }
+
+    /**
+     * @param MessengerProvider $provider
+     * @return int
+     */
+    private function getOnlineStatusSetting(MessengerProvider $provider): int
+    {
+        return $this->getProviderMessenger($provider)->online_status;
+    }
+
+    /**
+     * @param MessengerProvider $provider
+     */
+    private function setToOnline(MessengerProvider $provider): void
+    {
+        Cache::put(
+            "{$this->findProviderAlias($provider)}:online:{$provider->getKey()}",
+            'online',
+            now()->addMinutes($this->getOnlineCacheLifetime())
+        );
+    }
+
+    /**
+     * @param MessengerProvider $provider
+     */
+    private function setToAway(MessengerProvider $provider): void
+    {
+        Cache::put(
+            "{$this->findProviderAlias($provider)}:online:{$provider->getKey()}",
+            'away',
+            now()->addMinutes($this->getOnlineCacheLifetime())
+        );
+    }
+
+    /**
+     * @param MessengerProvider $provider
+     */
+    private function setToOffline(MessengerProvider $provider): void
+    {
+        Cache::forget("{$this->findProviderAlias($provider)}:online:{$provider->getKey()}");
     }
 }

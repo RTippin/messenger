@@ -17,8 +17,7 @@ use RTippin\Messenger\Models\Bot;
 final class Messenger
 {
     use MessengerProviders,
-        MessengerConfig,
-        MessengerOnline;
+        MessengerConfig;
 
     /**
      * @var Collection

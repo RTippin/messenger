@@ -12,13 +12,12 @@ trait Search
      * @param Builder $query
      * @param string $search
      * @param array $searchItems
-     * @return Builder
      */
     public static function getProviderSearchableBuilder(Builder $query,
                                                         string $search,
-                                                        array $searchItems): Builder
+                                                        array $searchItems): void
     {
-        return $query->where(function (Builder $query) use ($searchItems) {
+        $query->where(function (Builder $query) use ($searchItems) {
             foreach ($searchItems as $item) {
                 $query->orWhere('name', 'LIKE', "%$item%");
             }
