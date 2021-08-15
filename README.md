@@ -51,22 +51,6 @@
 
 ---
 
-# Addons / Demo
-
-#### [Messenger Bots][link-messenger-bots]
-- Bot functionality is built into the core of this `MESSENGER` package, but you are responsible for registering your own bot handlers.
-
-#### [Messenger Faker][link-messenger-faker]
-- An addon package useful in dev environments to mock/seed realtime events and messages.
-
-#### [Messenger Web UI][link-messenger-ui]
-- Addon package containing ready-made web routes and publishable views / assets, including default images.
-
-#### [Demo][link-demo-source]
-- You may view our demo laravel 8 source with this package installed, including a [Live Demo][link-live-demo].
-
----
-
 # Installation
 
 ### Composer
@@ -86,6 +70,15 @@ $ composer require rtippin/messenger
 - ### [Commands][link-commands]
 - ### [Broadcasting][link-broadcasting]
 - ### [API Explorer][link-api-explorer]
+
+---
+
+## Addons / Demo
+
+- [Messenger Bots][link-messenger-bots] - Bot functionality is built into the core of this `MESSENGER` package, but you are responsible for registering your own bot handlers.
+- [Messenger Faker][link-messenger-faker] - An addon package useful in dev environments to mock/seed realtime events and messages.
+- [Messenger Web UI][link-messenger-ui] - Addon package containing ready-made web routes and publishable views / assets, including default images.
+- [Demo App][link-demo-source] - You may view our demo laravel 8 source with this package installed, including a [Live Demo][link-live-demo].
 
 ---
 
