@@ -65,7 +65,7 @@ $ composer require rtippin/messenger
 
 # Documentation
 
-- ### [Install][link-installation]
+- ### [Install / Registering Providers][link-installation]
 - ### [Configuration][link-configuration]
 - ### [Commands][link-commands]
 - ### [Broadcasting][link-broadcasting]
