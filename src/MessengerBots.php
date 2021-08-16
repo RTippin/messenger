@@ -111,6 +111,19 @@ final class MessengerBots
     }
 
     /**
+     * Get all bot handler classes marked as unique.
+     *
+     * @return array
+     */
+    public function getUniqueHandlerClasses(): array
+    {
+        return $this->handlers
+            ->filter(fn ($settings) => $settings['unique'] === true)
+            ->keys()
+            ->toArray();
+    }
+
+    /**
      * Get all or an individual bot handlers settings.
      *
      * @param string|null $handlerOrAlias

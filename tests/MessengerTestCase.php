@@ -8,6 +8,7 @@ use Orchestra\Testbench\TestCase;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\MessengerServiceProvider;
 use RTippin\Messenger\Tests\Fixtures\CompanyModel;
+use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class MessengerTestCase extends TestCase
@@ -78,12 +79,13 @@ class MessengerTestCase extends TestCase
     }
 
     /**
-     * Reset the static properties we dynamically set on the models.
+     * Reset the static properties we dynamically set on the classes.
      */
     protected function tearDown(): void
     {
         UserModel::reset();
         CompanyModel::reset();
+        SillyBotHandler::reset();
 
         parent::tearDown();
     }

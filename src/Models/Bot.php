@@ -35,6 +35,8 @@ use RTippin\Messenger\Traits\ScopesProvider;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \RTippin\Messenger\Models\Thread $thread
  * @property-read \RTippin\Messenger\Models\BotAction[]|Collection $actions
+ * @property-read \RTippin\Messenger\Models\BotAction[]|Collection $validActions
+ * @property-read \RTippin\Messenger\Models\BotAction[]|Collection $validUniqueActions
  * @mixin Model|\Eloquent
  * @property-read Model|MessengerProvider $owner
  */
@@ -129,6 +131,15 @@ class Bot extends Model implements MessengerProvider
     {
         return $this->hasMany(BotAction::class)
             ->whereIn('handler', MessengerBots::getHandlerClasses());
+    }
+
+    /**
+     * @return HasMany|BotAction|Collection
+     */
+    public function validUniqueActions(): HasMany
+    {
+        return $this->hasMany(BotAction::class)
+            ->whereIn('handler', MessengerBots::getUniqueHandlerClasses());
     }
 
     /**

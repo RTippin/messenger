@@ -78,6 +78,17 @@ class MessengerBotsTest extends MessengerTestCase
     }
 
     /** @test */
+    public function it_can_get_unique_bot_handlers()
+    {
+        $this->bots->registerHandlers([
+            FunBotHandler::class,
+            SillyBotHandler::class,
+        ]);
+
+        $this->assertSame([SillyBotHandler::class], $this->bots->getUniqueHandlerClasses());
+    }
+
+    /** @test */
     public function it_can_get_bot_aliases_sorting_by_alias()
     {
         $handlers = [

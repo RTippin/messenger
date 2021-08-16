@@ -41,6 +41,8 @@ class BotTest extends FeatureTestCase
         $this->assertInstanceOf(Thread::class, $bot->thread);
         $this->assertInstanceOf(MessengerProvider::class, $bot->owner);
         $this->assertInstanceOf(Collection::class, $bot->actions);
+        $this->assertInstanceOf(Collection::class, $bot->validActions);
+        $this->assertInstanceOf(Collection::class, $bot->validUniqueActions);
         $this->assertSame(BotAction::first()->id, $bot->actions->first()->id);
     }
 

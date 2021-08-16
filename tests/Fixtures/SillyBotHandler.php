@@ -6,6 +6,8 @@ use RTippin\Messenger\Actions\Bots\BotActionHandler;
 
 class SillyBotHandler extends BotActionHandler
 {
+    public static bool $authorized = false;
+
     public static function getSettings(): array
     {
         return [
@@ -25,6 +27,11 @@ class SillyBotHandler extends BotActionHandler
 
     public function authorize(): bool
     {
-        return false;
+        return self::$authorized;
+    }
+
+    public static function reset(): void
+    {
+        self::$authorized = false;
     }
 }

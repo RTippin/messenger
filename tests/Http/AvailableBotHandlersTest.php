@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Http;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\Fixtures\FunBotHandler;
@@ -17,7 +18,11 @@ class AvailableBotHandlersTest extends HttpTestCase
     public function admin_can_view_available_handlers()
     {
         $this->logCurrentRequest();
-        MessengerBots::registerHandlers([FunBotHandler::class]);
+        SillyBotHandler::$authorized = true;
+        MessengerBots::registerHandlers([
+            FunBotHandler::class,
+            SillyBotHandler::class,
+        ]);
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
@@ -27,6 +32,36 @@ class AvailableBotHandlersTest extends HttpTestCase
             'bot' => $bot->id,
         ]))
             ->assertSuccessful()
+            ->assertJson([
+                [
+                    'alias' => 'fun_bot',
+                ],
+                [
+                    'alias' => 'silly_bot',
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function unique_handlers_that_are_already_attached_to_bot_are_omitted()
+    {
+        SillyBotHandler::$authorized = true;
+        MessengerBots::registerHandlers([
+            FunBotHandler::class,
+            SillyBotHandler::class,
+        ]);
+        $thread = $this->createGroupThread($this->tippin);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        BotAction::factory()->for($bot)->owner($this->tippin)->handler(FunBotHandler::class)->create();
+        BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.bots.handlers', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJsonCount(1)
             ->assertJson([
                 [
                     'alias' => 'fun_bot',
@@ -50,7 +85,12 @@ class AvailableBotHandlersTest extends HttpTestCase
             'bot' => $bot->id,
         ]))
             ->assertSuccessful()
-            ->assertJsonCount(1);
+            ->assertJsonCount(1)
+            ->assertJson([
+                [
+                    'alias' => 'fun_bot',
+                ],
+            ]);
     }
 
     /** @test */
