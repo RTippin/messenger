@@ -2,12 +2,13 @@
 
 ---
 
-- Our default broadcast driver ([BroadcastBroker][link-broadcast-broker]) will already be set by default.
+- Our broadcast driver implementation ([BroadcastBroker][link-broadcast-broker]) will already be set by default.
 - This driver is responsible for extracting private/presence channel names and dispatching the broadcast event that any action in our system calls for.
     - If push notifications are enabled, this broker will also forward its data to our [PushNotificationService][link-push-notify]. The service will then fire a [PushNotificationEvent][link-push-event] that you can attach a listener to handle your own FCM / other service.
 - If using your own broadcast driver, your class must implement our [BroadcastDriver][link-broadcast-driver] contract. You may then declare your driver within your MessengerServiceProvider (or any service providers boot method).
+- ALL events we broadcast implement laravel's `ShouldBroadcastNow` interface, being broadcast immediately and not queued.
 
-***To overwrite our broadcast driver, set your custom driver in your MessengerServiceProvider boot method:***
+***To overwrite our broadcast driver, set your custom driver in your `MessengerServiceProvider` boot method:***
 
 ```php
 <?php
@@ -38,7 +39,9 @@ class MessengerServiceProvider extends ServiceProvider
 'push_notifications' => env('MESSENGER_PUSH_NOTIFICATIONS_ENABLED', false),
 ```
 
-***Default Channel Routes:***
+---
+
+## Channel Routes
 
 ```php
 $broadcaster->channel('messenger.call.{call}.thread.{thread}', CallChannel::class); // Presence
@@ -46,8 +49,11 @@ $broadcaster->channel('messenger.thread.{thread}', ThreadChannel::class); // Pre
 $broadcaster->channel('messenger.{alias}.{id}', ProviderChannel::class); // Private
 ```
 
-***Private Channel Broadcast:***
+---
 
+## Private Channel
+
+***Events and their `broadcastAs` name***
 ```php
 CallEndedBroadcast::class => 'call.ended',
 CallIgnoredBroadcast::class => 'call.ignored',
@@ -105,11 +111,14 @@ Echo.private('messenger.user.1')
 ```
 
 - Most data your client side will receive will be done through the user/providers private channel. Broadcast such as messages, calls, friend request, knocks, and more will be transmitted over the `ProviderChannel`. To subscribe to this channel, follow the below example using the `alias` of the provider you set in your providers config:
-    - `private-messenger.user.1` | User model with ID of 1
-    - `private-messenger.company.1234-5678` | Company model with ID of 1234-5678
+    - `private-messenger.user.1` | User model with ID of `1`
+    - `private-messenger.company.1234-5678` | Company model with ID of `1234-5678`
 
-***Presence Channel Broadcast:***
+---
 
+## Thread Presence Channel
+
+***Events and their `broadcastAs` name***
 ```php
 EmbedsRemovedBroadcast::class => 'embeds.removed',
 MessageEditedBroadcast::class => 'message.edited',
@@ -133,8 +142,20 @@ Echo.join('messenger.thread.1234-5678')
 ```
 
 - While inside a thread, you will want to subscribe to the `ThreadChannel` presence channel. This is where realtime, client to client events are broadcast. Typing, seen message, online status are all client to client and this is a great channel to utilize for this. The backend will broadcast a select few events over presence, such as when the groups settings are updated, or group avatar changed, or a user edited their message. This lets anyone currently in the thread know to update their UI! See example below for channel format to subscribe on:
-    - `presence-messenger.thread.1234-5678` | Thread presence channel for Thread model with ID of 1234-5678
+    - `presence-messenger.thread.1234-5678` | Thread presence channel for Thread model with ID of `1234-5678`
 
+---
+
+## Call Presence Channel
+
+- There are currently no broadcast from the backend to a call's presence channel. This channel exists for you to have a short-lived channel to connect to while in a call.
+  - `presence-messenger.call.4321.thread.1234-5678` | Call presence channel for Call model with ID of `1234` and Thread model with ID of `1234-5678`
+
+```js
+//Presence
+Echo.join('messenger.call.4321.thread.1234-5678')
+  .listen('.my.event', handleMyEvent)
+```
 
 [link-broadcast-broker]: ../src/Brokers/BroadcastBroker.php
 [link-broadcast-driver]: ../src/Contracts/BroadcastDriver.php

@@ -22,7 +22,7 @@ class MessengerApi
         JsonResource::withoutWrapping();
 
         // We want to force the headers to JSON for our API as some
-        // controllers return arrays and we expect laravels
+        // controllers return arrays and we expect laravel's
         // response factory to transform to json
         if (! $request->headers->has('Accept')) {
             $request->headers->set('Accept', 'application/json');

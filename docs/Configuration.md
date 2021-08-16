@@ -272,7 +272,7 @@
 - Enable/disable the upload message attachments.
 - Enable/disable the upload and removal of avatars for providers, threads, and bots.
 - Set upload max size limits, in kilobytes.
-- Set allowed mime types on uploaded files, using the extension separated by a comma (following laravels validation rule `mime:pdf,docx`).
+- Set allowed mime types on uploaded files, using the extension separated by a comma (following laravel's validation rule `mime:pdf,docx`).
 - Set a different default image to serve for a group thread, and the image used when another image is not found.
 
 ### Collections

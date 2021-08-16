@@ -71,7 +71,7 @@ class Kernel extends ConsoleKernel
 **Create your handler class and extend our [BotActionHandler][link-action-handler] abstract class.**
 
 - At the very minimum, your class must define a public `handle()` method and a public static `getSettings()` method.
-- Should you need to inject dependencies, you may add your own constructor and type hint any dependencies. Your handler class will be instantiated using laravels container.
+- Should you need to inject dependencies, you may add your own constructor and type hint any dependencies. Your handler class will be instantiated using laravel's container.
 
 **Example**
 ```php
@@ -180,7 +180,7 @@ class TestBot extends BotActionHandler
 #### Custom payloads
 - To allow your handler to store user generated data for later use, you must define the validation rules we will use when the end user is attaching your handler to a bot.
 - All fields you define in your rules will be serialized and stored as json on the `BotAction` model your handler gets attached to.
-- The rules and optional error message overrides use laravels validator under the hood, just how a form request class implements them.
+- The rules and optional error message overrides use laravel's validator under the hood, just how a form request class implements them.
 
 ---
 

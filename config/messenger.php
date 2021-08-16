@@ -24,7 +24,7 @@ return [
     |
     | *The avatar is where we will store a providers uploaded image. By default,
     | this will store into the storage_path('app/public/images/{alias}/{id}'),
-    | given laravels default 'public' disk followed by 'images' directory
+    | given laravel's default 'public' disk followed by 'images' directory
     |
     | *The threads option is where a thread avatar, image messages, and document
     | messages will be stored. You should not use the public directory as we
