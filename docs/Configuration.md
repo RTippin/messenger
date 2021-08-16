@@ -136,9 +136,7 @@
 ],
 ```
 
-- Bots are disabled by default. When enabled, bots may be created within group threads. A bot may contain many actions with triggers that will respond to a message.
-- We provide an event subscriber ([BotSubscriber][link-bot-subscriber]) to listen and react to events that may trigger a bot response. You may choose to enable it, whether it puts jobs on the queue or not, and which queue channel its jobs are dispatched on.
-    - For more information on setting up bot handlers, please visit [Messenger Bots][link-messenger-bots]
+- Bots are disabled by default. Please refer to our [Chat Bots Documentation][link-bots-docs] for more detailed setup steps.
 
 ---
 
@@ -307,9 +305,7 @@
 
 - We use JSON resources and collections to return content over our API. You can set how big you want the collections to be here.
 
-
 [link-set-provider-middleware]: ../src/Http/Middleware/SetMessengerProvider.php
 [link-system-message-subscriber]: ../src/Listeners/SystemMessageSubscriber.php
-[link-bot-subscriber]: ../src/Listeners/BotSubscriber.php
 [link-calling-docs]: Calling.md
-[link-messenger-bots]: https://github.com/RTippin/messenger-bots
+[link-bots-docs]: ChatBots.md

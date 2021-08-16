@@ -69,6 +69,7 @@ $ composer require rtippin/messenger
 - ### [Configuration][link-configuration]
 - ### [Commands][link-commands]
 - ### [Broadcasting][link-broadcasting]
+- ### [Chat Bots][link-chat-bots]
 - ### [Calling][link-calling]
 - ### [API Explorer][link-api-explorer]
 
@@ -121,3 +122,4 @@ If you discover any security related issues, please email author email instead o
 [link-commands]: docs/Commands.md
 [link-broadcasting]: docs/Broadcasting.md
 [link-calling]: docs/Calling.md
+[link-chat-bots]: docs/ChatBots.md

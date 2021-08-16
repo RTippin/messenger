@@ -55,6 +55,7 @@ class Kernel extends ConsoleKernel
 
 ### Flow
 
+- You will bind your own video implementation to our interface (more on that below).
 - A call will be created for a given thread, adding the call model into the database, and firing our `CallStartedEvent`.
   - Once a call has been created, it usually still requires setup with a 3rd party video service.
 - Our [CallSubscriber][link-call-subscriber] will listen for the `CallStartedEvent`, and dispatch the `SetupCall` job.
