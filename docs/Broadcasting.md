@@ -5,35 +5,9 @@
 - Our broadcast driver implementation ([BroadcastBroker][link-broadcast-broker]) will already be set by default.
 - This driver is responsible for extracting private/presence channel names and dispatching the broadcast event that any action in our system calls for.
     - If push notifications are enabled, this broker will also forward its data to our [PushNotificationService][link-push-notify]. The service will then fire a [PushNotificationEvent][link-push-event] that you can attach a listener to handle your own FCM / other service.
-- If using your own broadcast driver, your class must implement our [BroadcastDriver][link-broadcast-driver] contract. You may then declare your driver within your MessengerServiceProvider (or any service providers boot method).
 - ALL events we broadcast implement laravel's `ShouldBroadcastNow` interface, being broadcast immediately and not queued.
 
-***To overwrite our broadcast driver, set your custom driver in your `MessengerServiceProvider` boot method:***
-
-```php
-<?php
-
-namespace App\Providers;
-
-use App\Brokers\CustomBroadcastBroker;
-use Illuminate\Support\ServiceProvider;
-use RTippin\Messenger\Facades\Messenger;
-
-class MessengerServiceProvider extends ServiceProvider
-{
-    /**
-     * Bootstrap services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        Messenger::setBroadcastDriver(CustomBroadcastBroker::class);
-    }
-}
-```
-
-***Default push notifications:***
+***Default push notifications config:***
 
 ```php
 'push_notifications' => env('MESSENGER_PUSH_NOTIFICATIONS_ENABLED', false),
@@ -157,7 +131,101 @@ Echo.join('messenger.call.4321.thread.1234-5678')
   .listen('.my.event', handleMyEvent)
 ```
 
+---
+
+## Interacting with the broadcaster
+- It is very simple to reuse our included broadcast events, or to create your own, while being able to broadcast them yourself!
+- The `BroadcastDriver` will be bound in the container, so you can call to it anytime using our helper, or dependency injection.
+
+```php
+//Using the container / dependency injection.
+$broadcaster = app(\RTippin\Messenger\Contracts\BroadcastDriver::class);
+
+//Using our helper.
+$broadcaster = broadcaster();
+```
+
+#### Example broadcasting `NewMessageBroadcast` with custom data to a users private messenger channel
+```php
+broadcaster()
+  ->to($receiver)
+  ->with([
+      'body' => 'some data',
+      'payload' => 'Any array data you want to send',
+  ])
+  ->broadcast(\RTippin\Messenger\Broadcasting\NewMessageBroadcast::class);
+```
+```js
+Echo.private('messenger.user.1').listen('.new.message', incomingMessage)
+```
+
+### Creating and broadcasting custom events
+- Your custom broadcast event will need to extend our abstract [MessengerBroadcast][link-messenger-broadcast] class.
+- All you need to declare is the `broadcastAs` method. Everything else is set for you on demand!
+
+#### Example custom broadcast event
+```php
+<?php
+
+namespace App\Broadcasting;
+
+class CustomBroadcast extends MessengerBroadcast
+{
+    /**
+     * The event's broadcast name.
+     *
+     * @return string
+     */
+    public function broadcastAs(): string
+    {
+        return 'custom.broadcast';
+    }
+}
+```
+```php
+broadcaster()
+  ->to($receiver)
+  ->with([
+      'message' => 'This is easy!',
+  ])
+  ->broadcast(\App\Broadcasting\CustomBroadcast::class);
+```
+```js
+Echo.private('messenger.user.1').listen('.custom.broadcast', handleCustom)
+```
+
+---
+
+## Setting up your custom BroadcastDriver
+
+- If you want to create your own custom broadcast driver implementation, your class must implement our [BroadcastDriver][link-broadcast-driver] interface.
+- Once created, register your custom driver in your `MessengerServiceProvider` boot method
+
+```php
+<?php
+
+namespace App\Providers;
+
+use App\Brokers\CustomBroadcastBroker;
+use Illuminate\Support\ServiceProvider;
+use RTippin\Messenger\Facades\Messenger;
+
+class MessengerServiceProvider extends ServiceProvider
+{
+    /**
+     * Bootstrap services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        Messenger::setBroadcastDriver(CustomBroadcastBroker::class);
+    }
+}
+```
+
 [link-broadcast-broker]: ../src/Brokers/BroadcastBroker.php
 [link-broadcast-driver]: ../src/Contracts/BroadcastDriver.php
 [link-push-notify]: ../src/Services/PushNotificationService.php
 [link-push-event]: ../src/Events/PushNotificationEvent.php
+[link-messenger-broadcast]: ../src/Broadcasting/MessengerBroadcast.php
