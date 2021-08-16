@@ -1,6 +1,19 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v1.0.1 (08-16-2021)]
+
+#### Added
+- `messengerComposer()` helper. ([13b4d9d](https://github.com/RTippin/messenger/commit/13b4d9d092e4a38db2538b50f0cc55ae15ac2404))
+- `getUniqueHandlerClasses` to `MessengerBots`.
+- `validUniqueActions` relationship on the `Bot` model.
+- Expanded docs.
+
+#### Changed
+- When viewing `add-handlers` for a bot, we now filter out handlers marked as unique that are already attached to the bot. ([d643df3](https://github.com/RTippin/messenger/commit/d643df33404d9c2a4e1b709e4088655cc56a18d2))
+
+---
+
 ### [v1.0.0 (08-13-2021)]
 
 #### Version 1 released.
