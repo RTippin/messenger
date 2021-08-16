@@ -55,6 +55,12 @@ app(\RTippin\Messenger\Support\MessengerComposer::class)->to($receiver)
     ->from($sender)
     ->emitTyping()
     ->message('Hello!');
+
+//Using the helper.
+messengerComposer()->to($receiver)
+    ->from($sender)
+    ->emitTyping()
+    ->message('Hello!');
 ```
 
 [link-messenger]: ../src/Messenger.php

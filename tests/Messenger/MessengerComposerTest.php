@@ -43,10 +43,17 @@ class MessengerComposerTest extends FeatureTestCase
     }
 
     /** @test */
-    public function messenger_composer_facade_resolves_to_composer()
+    public function messenger_composer_facade_resolves_new_instance_of_composer()
     {
         $this->assertInstanceOf(MessengerComposer::class, \RTippin\Messenger\Facades\MessengerComposer::getInstance());
         $this->assertNotSame($this->composer, \RTippin\Messenger\Facades\MessengerComposer::getInstance());
+    }
+
+    /** @test */
+    public function messenger_composer_helper_resolves_new_instance_of_composer()
+    {
+        $this->assertInstanceOf(MessengerComposer::class, messengerComposer()->getInstance());
+        $this->assertNotSame($this->composer, messengerComposer()->getInstance());
     }
 
     /** @test */

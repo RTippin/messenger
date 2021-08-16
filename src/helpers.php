@@ -3,12 +3,13 @@
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\MessengerBots;
+use RTippin\Messenger\Support\MessengerComposer;
 
 if (! function_exists('messenger')) {
     /**
-     * @return Messenger
+     * Return the Messenger singleton instance.
      *
-     * Return the active instance of the messenger system
+     * @return Messenger
      */
     function messenger(): Messenger
     {
@@ -18,9 +19,9 @@ if (! function_exists('messenger')) {
 
 if (! function_exists('broadcaster')) {
     /**
-     * @return BroadcastDriver
+     * Return a new instance of the bound broadcast driver.
      *
-     * Return the active instance of the messenger system
+     * @return BroadcastDriver
      */
     function broadcaster(): BroadcastDriver
     {
@@ -30,12 +31,24 @@ if (! function_exists('broadcaster')) {
 
 if (! function_exists('bots')) {
     /**
-     * @return MessengerBots
+     * Return the MessengerBots singleton instance.
      *
-     * Return the active instance of the messenger system
+     * @return MessengerBots
      */
     function bots(): MessengerBots
     {
         return app(MessengerBots::class);
+    }
+}
+
+if (! function_exists('messengerComposer')) {
+    /**
+     * Return a new MessengerComposer instance.
+     *
+     * @return MessengerComposer
+     */
+    function messengerComposer(): MessengerComposer
+    {
+        return app(MessengerComposer::class);
     }
 }
