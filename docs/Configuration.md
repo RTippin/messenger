@@ -97,34 +97,7 @@
 ],
 ```
 
-- Video calling is disabled by default. If enabled, you must set the driver within our published `MessengerServiceProvider` (or any service providers boot method).
-    - You must create your own video driver implementing our contract [VideoDriver][link-video-driver]
-- We provide an event subscriber ([CallSubscriber][link-call-subscriber]) to listen and react to calling events. You may choose to enable it, whether it puts jobs on the queue or not, and which queue channel its jobs are dispatched on.
-
-***Set the video driver:***
-
-```php
-<?php
-
-namespace App\Providers;
-
-use App\Brokers\JanusBroker;
-use Illuminate\Support\ServiceProvider;
-use RTippin\Messenger\Facades\Messenger;
-
-class MessengerServiceProvider extends ServiceProvider
-{
-    /**
-     * Bootstrap services.
-     *
-     * @return void
-     */
-    public function boot()
-    {
-        Messenger::setVideoDriver(JanusBroker::class);
-    }
-}
-```
+- Video calling is disabled by default. Please refer to our [Calling Documentation][link-calling-docs] for more detailed setup steps.
 
 ---
 
@@ -336,8 +309,7 @@ class MessengerServiceProvider extends ServiceProvider
 
 
 [link-set-provider-middleware]: ../src/Http/Middleware/SetMessengerProvider.php
-[link-video-driver]: ../src/Contracts/VideoDriver.php
-[link-call-subscriber]: ../src/Listeners/CallSubscriber.php
 [link-system-message-subscriber]: ../src/Listeners/SystemMessageSubscriber.php
 [link-bot-subscriber]: ../src/Listeners/BotSubscriber.php
+[link-calling-docs]: Calling.md
 [link-messenger-bots]: https://github.com/RTippin/messenger-bots
