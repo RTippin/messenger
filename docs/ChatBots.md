@@ -187,7 +187,7 @@ class TestBot extends BotActionHandler
 ### `rules()`
 - Return the validation rules used when adding the action to a bot. Any rules you define will have their keys/values stored in the actions payload. Return an empty array if you have no extra data to validate or store.
  
-###`errorMessages()`
+### `errorMessages()`
 - If you define extra validation rules, you may also define the validator error messages here.
 
 ### `serializePayload(?array $payload)`
