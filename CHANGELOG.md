@@ -1,6 +1,16 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v1.0.2 (08-17-2021)]
+
+#### Removed
+- Removed deprecated `ViewPortalController` as it now resides in our UI addon package.  ([182a37a](https://github.com/RTippin/messenger/commit/182a37a5a02f3ffb1eb80cf810e6428798cedb4b))
+
+#### Added
+- Improved docs. ([9f6ab30](https://github.com/RTippin/messenger/commit/9f6ab30514e2853fc3e23d25f45f6c000234d9ff))
+
+---
+
 ### [v1.0.1 (08-16-2021)]
 
 #### Added
