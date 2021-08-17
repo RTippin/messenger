@@ -54,10 +54,9 @@ ThreadArchivedBroadcast::class => 'thread.archived',
 ThreadLeftBroadcast::class => 'thread.left',
 ```
 
-***JS Echo Example:***
+***JS Echo private channel example:***
 
 ```js
-//Private
 Echo.private('messenger.user.1')
   .listen('.new.message', incomingMessage)
   .listen('.thread.archived', threadLeft)
@@ -102,7 +101,7 @@ ThreadAvatarBroadcast::class => 'thread.avatar',
 ThreadSettingsBroadcast::class => 'thread.settings',
 ```
 
-***JS Echo Example:***
+***JS Echo presence channel example:***
 
 ```js
 //Presence
@@ -125,10 +124,10 @@ Echo.join('messenger.thread.1234-5678')
 - There are currently no broadcast from the backend to a call's presence channel. This channel exists for you to have a short-lived channel to connect to while in a call.
   - `presence-messenger.call.4321.thread.1234-5678` | Call presence channel for Call model with ID of `1234` and Thread model with ID of `1234-5678`
 
+***JS Echo presence channel example:***
+
 ```js
-//Presence
-Echo.join('messenger.call.4321.thread.1234-5678')
-  .listen('.my.event', handleMyEvent)
+Echo.join('messenger.call.4321.thread.1234-5678').listen('.my.event', handleMyEvent)
 ```
 
 ---

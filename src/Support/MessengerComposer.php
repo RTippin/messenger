@@ -80,7 +80,7 @@ class MessengerComposer
     /**
      * Set the thread or provider we want to compose to. If a provider
      * is supplied, we will attempt to locate a private thread between
-     * the "TO"" and "FROM" providers. If no private thread is found,
+     * the "TO" and "FROM" providers. If no private thread is found,
      * one will be created. Please note that when a private thread
      * is created through this composer, friend status between the
      * two providers is ignored, and the thread will not be

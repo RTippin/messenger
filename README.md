@@ -7,7 +7,7 @@
 [![License][ico-license]][link-license]
 
 ---
-![Preview](docs/images/image1.png?raw=true)
+![Preview](https://raw.githubusercontent.com/RTippin/messenger/1.x/docs/images/image1.png?raw=true)
 ---
 
 ---
@@ -45,7 +45,6 @@
 - Encryption of messages (E2E is the long term goal).
 
 ### Notes
-- New docs are being worked on.
 - Read through our [`messenger.php`][link-config] config file before migrating!
 - Calling is disabled by default. You are responsible for implementing your own media server or connecting to a 3rd party service.
 
@@ -71,6 +70,7 @@ $ composer require rtippin/messenger
 - ### [Broadcasting][link-broadcasting]
 - ### [Chat Bots][link-chat-bots]
 - ### [Calling][link-calling]
+- ### [Messenger Composer][link-messenger-composer]
 - ### [Helpers / Facades][link-helpers]
 - ### [API Explorer][link-api-explorer]
 
@@ -87,13 +87,7 @@ $ composer require rtippin/messenger
 
 ## Credits - [Richard Tippin][link-author]
 
-## License - MIT
-
-### Please see the [license file](LICENSE.md) for more information.
-
-## Change log
-
-Please see the [changelog](CHANGELOG.md) for more information on what has changed recently.
+## [LICENSE][link-license] | [CHANGELOG][link-changelog]
 
 ## Security
 
@@ -125,3 +119,6 @@ If you discover any security related issues, please email author email instead o
 [link-calling]: docs/Calling.md
 [link-chat-bots]: docs/ChatBots.md
 [link-helpers]: docs/Helpers.md
+[link-messenger-composer]: docs/Composer.md
+[link-changelog]: https://github.com/RTippin/messenger/blob/1.x/CHANGELOG.md
+[link-license]: https://github.com/RTippin/messenger/blob/1.x/LICENSE.md
