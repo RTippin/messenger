@@ -255,8 +255,8 @@ public function getProviderAvatarColumn(): string
     }
 ```
 
-[link-config]: ../config/messenger.php
-[link-messageable]: ../src/Traits/Messageable.php
-[link-search]: ../src/Traits/Search.php
-[link-messenger-contract]: ../src/Contracts/MessengerProvider.php
-[link-push-event]: ../src/Events/PushNotificationEvent.php
+[link-config]: https://github.com/RTippin/messenger/blob/1.x/config/messenger.php
+[link-messageable]: https://github.com/RTippin/messenger/blob/1.x/src/Traits/Messageable.php
+[link-search]: https://github.com/RTippin/messenger/blob/1.x/src/Traits/Search.php
+[link-messenger-contract]: https://github.com/RTippin/messenger/blob/1.x/src/Contracts/MessengerProvider.php
+[link-push-event]: https://github.com/RTippin/messenger/blob/1.x/src/Events/PushNotificationEvent.php

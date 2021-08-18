@@ -506,5 +506,5 @@ Echo.join('messenger.thread.1234-5678')
 }
 ```
 
-[link-messenger-broadcast]: ../src/Broadcasting/MessengerBroadcast.php
-[link-presence-events]: ../src/Support/PresenceEvents.php
+[link-messenger-broadcast]: https://github.com/RTippin/messenger/blob/1.x/src/Broadcasting/MessengerBroadcast.php
+[link-presence-events]: https://github.com/RTippin/messenger/blob/1.x/src/Support/PresenceEvents.php

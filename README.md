@@ -87,7 +87,7 @@ $ composer require rtippin/messenger
 
 ## Credits - [Richard Tippin][link-author]
 
-## [LICENSE][link-license] | [CHANGELOG][link-changelog]
+### [LICENSE][link-license] | [CHANGELOG][link-changelog]
 
 ## Security
 
@@ -104,7 +104,7 @@ If you discover any security related issues, please email author email instead o
 [link-license]: https://packagist.org/packages/rtippin/messenger
 [link-styleci]: https://styleci.io/repos/309521487
 [link-author]: https://github.com/rtippin
-[link-config]: config/messenger.php
+[link-config]: https://github.com/RTippin/messenger/blob/1.x/config/messenger.php
 [link-api-explorer]: https://tippindev.com/api-explorer
 [link-morph-maps]: https://laravel.com/docs/8.x/eloquent-relationships#custom-polymorphic-types
 [link-messenger-bots]: https://github.com/RTippin/messenger-bots

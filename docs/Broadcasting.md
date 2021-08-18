@@ -137,8 +137,10 @@ Echo.join('messenger.call.4321.thread.1234-5678').listen('.my.event', handleMyEv
 - The `BroadcastDriver` will be bound in the container, so you can call to it anytime using our helper, or dependency injection.
 
 ```php
+use RTippin\Messenger\Contracts\BroadcastDriver;
+
 //Using the container / dependency injection.
-$broadcaster = app(\RTippin\Messenger\Contracts\BroadcastDriver::class);
+$broadcaster = app(BroadcastDriver::class);
 
 //Using our helper.
 $broadcaster = broadcaster();
@@ -146,13 +148,15 @@ $broadcaster = broadcaster();
 
 #### Example broadcasting `NewMessageBroadcast` with custom data to a users private messenger channel
 ```php
+use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
+
 broadcaster()
   ->to($receiver)
   ->with([
       'body' => 'some data',
       'payload' => 'Any array data you want to send',
   ])
-  ->broadcast(\RTippin\Messenger\Broadcasting\NewMessageBroadcast::class);
+  ->broadcast(NewMessageBroadcast::class);
 ```
 ```js
 Echo.private('messenger.user.1').listen('.new.message', incomingMessage)
@@ -182,12 +186,14 @@ class CustomBroadcast extends MessengerBroadcast
 }
 ```
 ```php
+use App\Broadcasting\CustomBroadcast;
+
 broadcaster()
   ->to($receiver)
   ->with([
       'message' => 'This is easy!',
   ])
-  ->broadcast(\App\Broadcasting\CustomBroadcast::class);
+  ->broadcast(CustomBroadcast::class);
 ```
 ```js
 Echo.private('messenger.user.1').listen('.custom.broadcast', handleCustom)
@@ -223,8 +229,8 @@ class MessengerServiceProvider extends ServiceProvider
 }
 ```
 
-[link-broadcast-broker]: ../src/Brokers/BroadcastBroker.php
-[link-broadcast-driver]: ../src/Contracts/BroadcastDriver.php
-[link-push-notify]: ../src/Services/PushNotificationService.php
-[link-push-event]: ../src/Events/PushNotificationEvent.php
-[link-messenger-broadcast]: ../src/Broadcasting/MessengerBroadcast.php
+[link-broadcast-broker]: https://github.com/RTippin/messenger/blob/1.x/src/Brokers/BroadcastBroker.php
+[link-broadcast-driver]: https://github.com/RTippin/messenger/blob/1.x/src/Contracts/BroadcastDriver.php
+[link-push-notify]: https://github.com/RTippin/messenger/blob/1.x/src/Services/PushNotificationService.php
+[link-push-event]: https://github.com/RTippin/messenger/blob/1.x/src/Events/PushNotificationEvent.php
+[link-messenger-broadcast]: https://github.com/RTippin/messenger/blob/1.x/src/Broadcasting/MessengerBroadcast.php

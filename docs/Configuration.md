@@ -305,7 +305,7 @@
 
 - We use JSON resources and collections to return content over our API. You can set how big you want the collections to be here.
 
-[link-set-provider-middleware]: ../src/Http/Middleware/SetMessengerProvider.php
-[link-system-message-subscriber]: ../src/Listeners/SystemMessageSubscriber.php
+[link-set-provider-middleware]: https://github.com/RTippin/messenger/blob/1.x/src/Http/Middleware/SetMessengerProvider.php
+[link-system-message-subscriber]: https://github.com/RTippin/messenger/blob/1.x/src/Listeners/SystemMessageSubscriber.php
 [link-calling-docs]: Calling.md
 [link-bots-docs]: ChatBots.md

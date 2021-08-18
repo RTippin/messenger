@@ -301,7 +301,7 @@ class JanusBroker implements VideoDriver
 }
 ```
 
-**Once your video driver is implemented, you must register it with `Messenger`**
+**Once your video driver is implemented, you must register it in your `MessengerServiceProvider`**
 
 ```php
 <?php
@@ -326,6 +326,6 @@ class MessengerServiceProvider extends ServiceProvider
 }
 ```
 
-[link-video-driver]: ../src/Contracts/VideoDriver.php
-[link-call-subscriber]: ../src/Listeners/CallSubscriber.php
+[link-video-driver]: https://github.com/RTippin/messenger/blob/1.x/src/Contracts/VideoDriver.php
+[link-call-subscriber]: https://github.com/RTippin/messenger/blob/1.x/src/Listeners/CallSubscriber.php
 [link-janus-client]: https://github.com/RTippin/janus-client

@@ -63,6 +63,6 @@ messengerComposer()->to($receiver)
     ->message('Hello!');
 ```
 
-[link-messenger]: ../src/Messenger.php
-[link-bots]: ../src/MessengerBots.php
-[link-composer]: ../src/Support/MessengerComposer.php
+[link-messenger]: https://github.com/RTippin/messenger/blob/1.x/src/Messenger.php
+[link-bots]: https://github.com/RTippin/messenger/blob/1.x/src/MessengerBots.php
+[link-composer]: https://github.com/RTippin/messenger/blob/1.x/src/Support/MessengerComposer.php

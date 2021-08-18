@@ -130,13 +130,13 @@ class TestBot extends BotActionHandler
 
 #### Available match methods
 - `contains` - The trigger can be anywhere within a message. Cannot be part of or inside another word.
-- `contains:caseless` - Same as "contains", but is case insensitive.
+- `contains:caseless` - Same as "contains", but is case-insensitive.
 - `contains:any` - The trigger can be anywhere within a message, including inside another word.
-- `contains:any:caseless` - Same as "contains any", but is case insensitive.
+- `contains:any:caseless` - Same as "contains any", but is case-insensitive.
 - `exact` - The trigger must match the message exactly.
-- `exact:caseless` - Same as "exact", but is case insensitive.
+- `exact:caseless` - Same as "exact", but is case-insensitive.
 - `starts:with` - The trigger must be the lead phrase within the message. Cannot be part of or inside another word.
-- `starts:with:caseless` - Same as "starts with", but is case insensitive.
+- `starts:with:caseless` - Same as "starts with", but is case-insensitive.
 
 ---
 
@@ -329,11 +329,10 @@ class TestBot extends BotActionHandler
 
 namespace App\Providers;
 
-use Illuminate\Support\ServiceProvider;
-use RTippin\Messenger\Facades\MessengerBots;
 use App\Bots\ReplyBot;
 use App\Bots\TestBot;
-
+use Illuminate\Support\ServiceProvider;
+use RTippin\Messenger\Facades\MessengerBots;
 
 class MessengerServiceProvider extends ServiceProvider
 {
@@ -353,7 +352,7 @@ class MessengerServiceProvider extends ServiceProvider
 ```
 
 [link-messenger-bots]: https://github.com/RTippin/messenger-bots
-[link-bot-subscriber]: ../src/Listeners/BotSubscriber.php
-[link-action-handler]: ../src/Actions/Bots/BotActionHandler.php
-[link-action-interface]: ../src/Contracts/ActionHandler.php
-[link-messenger-composer]: ../src/Support/MessengerComposer.php
+[link-bot-subscriber]: https://github.com/RTippin/messenger/blob/1.x/src/Listeners/BotSubscriber.php
+[link-action-handler]: https://github.com/RTippin/messenger/blob/1.x/src/Actions/Bots/BotActionHandler.php
+[link-action-interface]: https://github.com/RTippin/messenger/blob/1.x/src/Contracts/ActionHandler.php
+[link-messenger-composer]: https://github.com/RTippin/messenger/blob/1.x/src/Support/MessengerComposer.php
