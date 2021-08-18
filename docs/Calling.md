@@ -15,7 +15,7 @@
 ],
 ```
 
-- Video calling is disabled by default. If enabled, you must set the driver within our published `MessengerServiceProvider` (or any service providers boot method).
+- Video calling is disabled by default. If enabled, you must set the driver implementation within our published `MessengerServiceProvider` (or any service providers boot method).
 - You must create your own video driver implementing our contract [VideoDriver][link-video-driver]
 - We provide an event subscriber ([CallSubscriber][link-call-subscriber]) to listen and react to calling events. You may choose to enable it, whether it puts jobs on the queue or not, and which queue channel its jobs are dispatched on.
 
@@ -25,7 +25,7 @@
 
 ### Automation
 
-**Based on the configs set above, you will want your queue worker listening for the `messenger` queue to handle call related jobs.**
+**Based on the configs set above, you will want your queue worker listening on the `messenger` queue to handle call related jobs.**
 ```bash
 php artisan queue:work --queue=messenger
 ```

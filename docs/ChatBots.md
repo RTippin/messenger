@@ -15,7 +15,7 @@
 ],
 ```
 
-- Bots are disabled by default. When enabled, bots may be created within group threads. A bot may contain many actions with many triggers that will respond to a message.
+- Bots are disabled by default. When enabled, bots may be created within group threads that explicitly enable the bots feature. A bot may contain many actions, and each action may contain many triggers. Upon a trigger matching a message, the action's handler class will process and respond to the message.
 - We provide an event subscriber ([BotSubscriber][link-bot-subscriber]) to listen and react to events that may trigger a bot response. You may choose to enable it, whether it puts jobs on the queue or not, and which queue channel its jobs are dispatched on.
 - To use our pre-made bot handlers, please install our [Messenger Bots][link-messenger-bots] package.
 
@@ -25,7 +25,7 @@
 
 ### Automation
 
-**Based on the configs set above, you will want your queue worker listening for the `messenger-bots` queue to handle bot related jobs.**
+**Based on the configs set above, you will want your queue worker listening on the `messenger-bots` queue to handle bot related jobs.**
 ```bash
 php artisan queue:work --queue=messenger-bots
 ```
@@ -70,7 +70,7 @@ class Kernel extends ConsoleKernel
 
 **Create your handler class and extend our [BotActionHandler][link-action-handler] abstract class.**
 
-- At the very minimum, your class must define a public `handle()` method and a public static `getSettings()` method.
+- At the very minimum, your bots class must define a public `handle()` method and a public static `getSettings()` method.
 - Should you need to inject dependencies, you may add your own constructor and type hint any dependencies. Your handler class will be instantiated using laravel's container.
 
 **Example**
@@ -122,9 +122,9 @@ class TestBot extends BotActionHandler
 - `alias` Used to locate and attach your handler to a bot.
 - `description` The description of your bot handler, typically what it does.
 - `name` The name of your bot handler.
-- `unique` (optional) When set and true, the handler may only be used once per bot.
-- `triggers` (optional) Overrides allowing the end user to set the triggers. Only the given trigger(s) will be used. Separate multiple via the pipe (|) or use an array.
-- `match` (optional) Overrides allowing end user to select matching method.
+- `unique (optional)` When set and true, the handler may only be used once per bot.
+- `triggers (optional)` Overrides allowing the end user to set the triggers. Only the given trigger(s) will be used. Separate multiple via the pipe (|) or use an array.
+- `match (optional)` Overrides allowing end user to select matching method.
 
 ---
 
@@ -143,6 +143,7 @@ class TestBot extends BotActionHandler
 ### `handle()`
 - The handle method will be executed when a matching actions trigger is associated with your bot handler.
 - When your handle method is called, you will have access to many properties already set by the messenger core.
+    - Your class will be instantiated using the container, so any dependencies you type-hint in your constructor will be made available when `handle` is called.
     - `$this->action` provides the current `BotAction` model that was matched to your handler.
     - `$this->thread` provides the group `Thread` model we are using.
     - `$this->message` provides the `Message` model we are using. You can also access the message sender via the owner relation `$this->message->owner`.
@@ -160,7 +161,7 @@ class TestBot extends BotActionHandler
 - This is helpful when your handler did not perform an action (perhaps an API call that was denied), and you can ensure any cooldowns defined on that bot action are removed.
 
 ### `composer()`
-- Returns a [MessengerComposer][link-messenger-composer] instance with the `TO` preset with the messages thread, and `FROM` preset as the bot the action belongs to.
+- Returns a [MessengerComposer][link-messenger-composer] instance with the `TO` preset with the thread our triggering message belong to, and `FROM` preset as the BOT the action triggered belongs to.
     - Please note that each time you call `$this->composer()`, you will be given a new instance.
 - This has the most common use cases for what a bot may do (message, send an image/audio/document message, add message reaction, knock)
     - `silent()` Silences any realtime broadcast.
@@ -185,13 +186,14 @@ class TestBot extends BotActionHandler
 ---
 
 ### `rules()`
-- Return the validation rules used when adding the action to a bot. Any rules you define will have their keys/values stored in the actions payload. Return an empty array if you have no extra data to validate or store.
+- Return the validation rules used when adding the action to a bot. Any rules you define will have their keys/values stored in the action's payload. Return an empty array if you have no extra data to validate or store.
  
 ### `errorMessages()`
 - If you define extra validation rules, you may also define the validator error messages here.
 
 ### `serializePayload(?array $payload)`
-- This method will be called when storing your handler data to the database. By default, this method `json_encode()` your rule keys and their data.
+- This method will be called when the end user adds their custom payload while attaching the action to a bot.
+- We will store the validated data posted based on your `rules` defined. By default, this method will `json_encode()` your data.
 - You may overwrite this method if you plan to do further sanitization/manipulation of data before it is stored.
 
 ---
@@ -273,7 +275,7 @@ class ReplyBot extends BotActionHandler
 ---
 
 ### Authorization
-- To authorize the end user add the action handler to a bot, you must define the 'authorize()' method and return true or false. 
+- To authorize the end user add your handler to a bot, you must define the 'authorize()' method and return true or false. 
   - If the end user is unauthorized, the handler will be hidden from appearing in the available handlers list while adding actions to a bot. This does NOT authorize being triggered once added to a bot action.
 ```php
 <?php
@@ -323,7 +325,7 @@ class TestBot extends BotActionHandler
 ---
 
 ## Register your Handlers
-- Once you are ready to make your handler available for use, head to your `MessengerServiceProvider` and add your handler classes to the `MessengerBots::registerHandlers()` method.
+- Once you are ready to make your handler available for use, head to your `MessengerServiceProvider` and add your handler classes using the `MessengerBots::registerHandlers([])` method.
 ```php
 <?php
 

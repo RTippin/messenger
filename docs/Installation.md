@@ -29,7 +29,7 @@ $ php artisan migrate
 # Register Providers
 
 - Head over to your new `App\Providers\MessengerServiceProvider`
-- Set all provider models you want to use in this messenger. The default `App\Models\User` is already preset, you just need to un-comment it.
+- Set all provider models you want to register into messenger. The default `App\Models\User` is already preset, you just need to un-comment it.
 
 **Default:**
 

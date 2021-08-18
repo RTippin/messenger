@@ -15,12 +15,12 @@
 ### Prerequisites
 - PHP >= 7.4 | 8.0
 - Laravel >= 8.42
-- laravel broadcast driver configured, and your own websocket implementation.
 - `SubstituteBindings::class` route model binding enabled in your API / WEB middleware groups.
+- Configure your laravel apps broadcast driver, and set up your own websocket implementation, should you choose to listen in on our realtime broadcast.
 
 ### Features
-- Realtime messaging between multiple models, such as a User, Admin, and Teacher model.
-- RESTful API, allowing you to make your own UI or connect to a mobile app.
+- Realtime messaging between multiple models, such as a User, Admin, and a Teacher model.
+- RESTful API, allowing you to create your own UI or connect to your mobile app.
 - Support for morph maps on your provider models. See: [Morph Maps][link-morph-maps]
 - Private and group threads.
 - Permissions per participant within a group thread.
@@ -28,13 +28,15 @@
 - Message reactions, replies, edits, and deletion.
 - Group thread chat-bots. [Bot addon][link-messenger-bots]
 - Friends, Search, and Online status systems.
-- Provider, group thread, and bot avatars.
+- Provider avatars, group thread avatars, and bot avatars.
 - Underlying calling system you can extend.
 - Group thread invitation links (like discord).
 - All actions are protected behind policies.
-- Scheduled commands for automation cleanup and checks.
+- Scheduled commands for automated cleanup and checks.
 - Queued jobs fired from our event subscribers.
 - Most features can be toggled at runtime using our `Messenger` facade.
+- `MessengerComposer` facade allows you to have easy access to our core actions anywhere within your own app, such as sending messages, images, reactions, and more.
+- You can implement or extend your own `BroadcastDriver`, `VideoDriver`, and `FriendDriver`, simply by binding your classes into the container.
 - Optional extra payload when sending messages to allow custom json to be stored with the message.
 
 ### Upcoming for v2
@@ -58,7 +60,7 @@
 $ composer require rtippin/messenger
 ```
 
-### To complete our setup, please refer to the installation docs listed below:
+### To complete our setup, please refer to the installation documentation listed below:
 
 ---
 
@@ -78,10 +80,10 @@ $ composer require rtippin/messenger
 
 ## Addons / Demo
 
-- [Messenger Bots][link-messenger-bots] - Bot functionality is built into the core of this `MESSENGER` package, but you are responsible for registering your own bot handlers.
-- [Messenger Faker][link-messenger-faker] - An addon package useful in dev environments to mock/seed realtime events and messages.
-- [Messenger Web UI][link-messenger-ui] - Addon package containing ready-made web routes and publishable views / assets, including default images.
-- [Demo App][link-demo-source] - You may view our demo laravel 8 source with this package installed, including a [Live Demo][link-live-demo].
+- [Messenger Bots][link-messenger-bots] - Pre-made bots you can register within our core.
+- [Messenger Faker][link-messenger-faker] - Adds commands useful in development environments to mock/seed realtime events and messages.
+- [Messenger Web UI][link-messenger-ui] - Ready-made web routes and publishable views / assets, including default images.
+- [Demo App][link-demo-source] - Our demo laravel app with this core package installed, including a [Live Demo][link-live-demo].
 
 ---
 
@@ -91,7 +93,7 @@ $ composer require rtippin/messenger
 
 ## Security
 
-If you discover any security related issues, please email author email instead of using the issue tracker.
+If you discover any security related issues, please email author instead of using the issue tracker.
 
 [ico-version]: https://img.shields.io/packagist/v/rtippin/messenger.svg?style=plastic&cacheSeconds=3600
 [ico-downloads]: https://img.shields.io/packagist/dt/rtippin/messenger.svg?style=plastic&cacheSeconds=3600

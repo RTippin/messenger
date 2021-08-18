@@ -198,7 +198,7 @@
 ```
 
 - Group invites allow users inside a group thread to create an invitation code / link. Anyone not already a participant of the group will be able to join automatically by using that link.
-    - You may disable this feature, or even constrain how many active invites a group thread may have at any one point in time.
+    - You may disable this feature, or even constrain how many active invites a group thread may have at any point in time.
 
 ---
 

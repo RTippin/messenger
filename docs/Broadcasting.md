@@ -2,10 +2,10 @@
 
 ---
 
-- Our broadcast driver implementation ([BroadcastBroker][link-broadcast-broker]) will already be set by default.
+- Our broadcast driver implementation ([BroadcastBroker][link-broadcast-broker]) will already be bound into the container by default.
 - This driver is responsible for extracting private/presence channel names and dispatching the broadcast event that any action in our system calls for.
     - If push notifications are enabled, this broker will also forward its data to our [PushNotificationService][link-push-notify]. The service will then fire a [PushNotificationEvent][link-push-event] that you can attach a listener to handle your own FCM / other service.
-- ALL events we broadcast implement laravel's `ShouldBroadcastNow` interface, being broadcast immediately and not queued.
+- ALL events we broadcast implement laravel's `ShouldBroadcastNow` interface, and will not be queued, but broadcast immediately.
 
 ***Default push notifications config:***
 
@@ -54,7 +54,7 @@ ThreadArchivedBroadcast::class => 'thread.archived',
 ThreadLeftBroadcast::class => 'thread.left',
 ```
 
-***JS Echo private channel example:***
+***Laravel Echo private channel example:***
 
 ```js
 Echo.private('messenger.user.1')
@@ -83,7 +83,7 @@ Echo.private('messenger.user.1')
   .listen('.reaction.removed', reactionRemoved)
 ```
 
-- Most data your client side will receive will be done through the user/providers private channel. Broadcast such as messages, calls, friend request, knocks, and more will be transmitted over the `ProviderChannel`. To subscribe to this channel, follow the below example using the `alias` of the provider you set in your providers config:
+- Most data your client side will receive will be done through the user/providers private channel. Broadcast such as messages, calls, friend request, knocks, and more will be transmitted over the `ProviderChannel`. To subscribe to this channel, follow the below example using the `alias` of the provider you set in your providers settings:
     - `private-messenger.user.1` | User model with ID of `1`
     - `private-messenger.company.1234-5678` | Company model with ID of `1234-5678`
 
@@ -101,7 +101,7 @@ ThreadAvatarBroadcast::class => 'thread.avatar',
 ThreadSettingsBroadcast::class => 'thread.settings',
 ```
 
-***JS Echo presence channel example:***
+***Laravel Echo presence channel example:***
 
 ```js
 //Presence
@@ -114,7 +114,7 @@ Echo.join('messenger.thread.1234-5678')
   .listen('.embeds.removed', embedsRemoved)
 ```
 
-- While inside a thread, you will want to subscribe to the `ThreadChannel` presence channel. This is where realtime, client to client events are broadcast. Typing, seen message, online status are all client to client and this is a great channel to utilize for this. The backend will broadcast a select few events over presence, such as when the groups settings are updated, or group avatar changed, or a user edited their message. This lets anyone currently in the thread know to update their UI! See example below for channel format to subscribe on:
+- While inside a thread, you will want to subscribe to the `ThreadChannel` presence channel. This is where realtime client to client events are broadcast. Typing, seen message, online status are all client to client and this is a great channel to utilize for this. The backend will broadcast a select few events over presence, such as when the groups settings are updated, or group avatar changed, or a user edited their message. This lets anyone currently in the thread know to update their UI! See example below for channel format to subscribe on:
     - `presence-messenger.thread.1234-5678` | Thread presence channel for Thread model with ID of `1234-5678`
 
 ---
@@ -124,7 +124,7 @@ Echo.join('messenger.thread.1234-5678')
 - There are currently no broadcast from the backend to a call's presence channel. This channel exists for you to have a short-lived channel to connect to while in a call.
   - `presence-messenger.call.4321.thread.1234-5678` | Call presence channel for Call model with ID of `1234` and Thread model with ID of `1234-5678`
 
-***JS Echo presence channel example:***
+***Laravel Echo presence channel example:***
 
 ```js
 Echo.join('messenger.call.4321.thread.1234-5678').listen('.my.event', handleMyEvent)
@@ -150,13 +150,10 @@ $broadcaster = broadcaster();
 ```php
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
 
-broadcaster()
-  ->to($receiver)
-  ->with([
-      'body' => 'some data',
-      'payload' => 'Any array data you want to send',
-  ])
-  ->broadcast(NewMessageBroadcast::class);
+broadcaster()->to($receiver)->with([
+    'body' => 'some data',
+    'payload' => 'Any array data you want to send',
+])->broadcast(NewMessageBroadcast::class);
 ```
 ```js
 Echo.private('messenger.user.1').listen('.new.message', incomingMessage)
@@ -188,12 +185,9 @@ class CustomBroadcast extends MessengerBroadcast
 ```php
 use App\Broadcasting\CustomBroadcast;
 
-broadcaster()
-  ->to($receiver)
-  ->with([
-      'message' => 'This is easy!',
-  ])
-  ->broadcast(CustomBroadcast::class);
+broadcaster()->to($receiver)->with([
+    'message' => 'This is easy!',
+])->broadcast(CustomBroadcast::class);
 ```
 ```js
 Echo.private('messenger.user.1').listen('.custom.broadcast', handleCustom)
@@ -203,8 +197,8 @@ Echo.private('messenger.user.1').listen('.custom.broadcast', handleCustom)
 
 ## Setting up your custom BroadcastDriver
 
-- If you want to create your own custom broadcast driver implementation, your class must implement our [BroadcastDriver][link-broadcast-driver] interface.
-- Once created, register your custom driver in your `MessengerServiceProvider` boot method
+- If you want to create your own broadcast driver implementation, your class must implement our [BroadcastDriver][link-broadcast-driver] interface.
+- Once created, register your custom driver implementation in your `MessengerServiceProvider` boot method
 
 ```php
 <?php
