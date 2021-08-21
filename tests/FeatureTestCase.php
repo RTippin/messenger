@@ -6,9 +6,7 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\BaseMessengerAction;
-use RTippin\Messenger\Brokers\NullVideoBroker;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\Fixtures\CompanyModel;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
 
@@ -47,7 +45,6 @@ class FeatureTestCase extends MessengerTestCase
         BaseMessengerAction::disableEvents();
         Storage::fake('public');
         Storage::fake('messenger');
-        Messenger::setVideoDriver(NullVideoBroker::class);
     }
 
     /**

@@ -1225,7 +1225,7 @@ trait MessengerConfig
             throw new InvalidArgumentException("The given driver { $driver } must implement our interface ".BroadcastDriver::class);
         }
 
-        app()->singleton(BroadcastDriver::class, $driver);
+        app()->bind(BroadcastDriver::class, $driver);
 
         return $this;
     }
@@ -1241,7 +1241,7 @@ trait MessengerConfig
             throw new InvalidArgumentException("The given driver { $driver } must implement our interface ".VideoDriver::class);
         }
 
-        app()->singleton(VideoDriver::class, $driver);
+        app()->bind(VideoDriver::class, $driver);
 
         return $this;
     }

@@ -13,8 +13,10 @@ use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Facades\Messenger as MessengerFacade;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Participant;
+use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\Fixtures\CompanyModel;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
@@ -801,10 +803,10 @@ class MessengerTest extends MessengerTestCase
     public function it_can_set_drivers()
     {
         $this->messenger->setBroadcastDriver(NullBroadcastBroker::class);
-        $this->messenger->setVideoDriver(NullVideoBroker::class);
+        $this->messenger->setVideoDriver(TestVideoBroker::class);
 
         $this->assertInstanceOf(NullBroadcastBroker::class, app(BroadcastDriver::class));
-        $this->assertInstanceOf(NullVideoBroker::class, app(VideoDriver::class));
+        $this->assertInstanceOf(TestVideoBroker::class, app(VideoDriver::class));
 
         $this->messenger->setBroadcastDriver(BroadcastBroker::class);
         $this->messenger->setVideoDriver(NullVideoBroker::class);
@@ -938,5 +940,38 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame('test', $this->messenger->getBotSubscriber('channel'));
         $this->assertSame('test', $this->messenger->getCallSubscriber('channel'));
         $this->assertSame('test', $this->messenger->getSystemMessageSubscriber('channel'));
+    }
+}
+
+class TestVideoBroker implements VideoDriver
+{
+    public function create(Thread $thread, Call $call): bool
+    {
+        return true;
+    }
+
+    public function destroy(Call $call): bool
+    {
+        return true;
+    }
+
+    public function getRoomId(): ?string
+    {
+        return null;
+    }
+
+    public function getRoomPin(): ?string
+    {
+        return null;
+    }
+
+    public function getRoomSecret(): ?string
+    {
+        return null;
+    }
+
+    public function getExtraPayload(): ?string
+    {
+        return null;
     }
 }
