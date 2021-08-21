@@ -3,8 +3,9 @@
 namespace RTippin\Messenger\Jobs\Middleware;
 
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Facades\MessengerBots;
 
-class FlushMessenger
+class FlushMessengerServices
 {
     /**
      * Process the queued job.
@@ -16,6 +17,7 @@ class FlushMessenger
     public function handle($job, callable $next)
     {
         Messenger::flush();
+        MessengerBots::flush();
 
         return $next($job);
     }

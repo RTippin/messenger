@@ -7,7 +7,7 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use RTippin\Messenger\Jobs\Middleware\FlushMessenger;
+use RTippin\Messenger\Jobs\Middleware\FlushMessengerServices;
 
 abstract class BaseMessengerJob implements ShouldQueue
 {
@@ -23,6 +23,6 @@ abstract class BaseMessengerJob implements ShouldQueue
      */
     public function middleware(): array
     {
-        return [new FlushMessenger];
+        return [new FlushMessengerServices];
     }
 }

@@ -374,6 +374,19 @@ class MessengerBotsTest extends MessengerTestCase
     }
 
     /** @test */
+    public function it_can_flush_active_handler()
+    {
+        $this->bots->registerHandlers([FunBotHandler::class]);
+        $this->bots->initializeHandler(FunBotHandler::class);
+
+        $this->assertTrue($this->bots->isActiveHandlerSet());
+
+        $this->bots->flush();
+
+        $this->assertFalse($this->bots->isActiveHandlerSet());
+    }
+
+    /** @test */
     public function it_fails_validating_handler_via_alias()
     {
         $this->bots->registerHandlers([FunBotHandler::class]);

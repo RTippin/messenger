@@ -17,6 +17,7 @@ use RTippin\Messenger\Models\BotAction;
  * @method static bool isValidHandler(?string $handlerOrAlias)
  * @method static void registerHandlers(array $handlers, bool $overwrite = false)
  * @method static \RTippin\Messenger\MessengerBots getInstance()
+ * @method static void flush()
  * @method static \RTippin\Messenger\Actions\Bots\BotActionHandler initializeHandler(string $handlerOrAlias)
  * @method static bool isActiveHandlerSet()
  * @method static \RTippin\Messenger\Actions\Bots\BotActionHandler|null getActiveHandler()

@@ -40,17 +40,17 @@ final class MessengerBots
     /**
      * @var BotActionHandler|null
      */
-    private ?BotActionHandler $activeHandler;
+    private ?BotActionHandler $activeHandler = null;
 
     /**
      * @var string|null
      */
-    private ?string $activeHandlerClass;
+    private ?string $activeHandlerClass = null;
 
     /**
      * @var array
      */
-    private array $handlerOverrides;
+    private array $handlerOverrides = [];
 
     /**
      * MessengerBots constructor.
@@ -58,9 +58,6 @@ final class MessengerBots
     public function __construct()
     {
         $this->handlers = new Collection;
-        $this->activeHandler = null;
-        $this->activeHandlerClass = null;
-        $this->handlerOverrides = [];
     }
 
     /**
@@ -274,6 +271,16 @@ final class MessengerBots
     public function getInstance(): self
     {
         return $this;
+    }
+
+    /**
+     * Flush any active handler and overrides set.
+     */
+    public function flush(): void
+    {
+        $this->activeHandler = null;
+        $this->activeHandlerClass = null;
+        $this->handlerOverrides = [];
     }
 
     /**
