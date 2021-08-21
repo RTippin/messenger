@@ -117,6 +117,7 @@ use RTippin\Messenger\Models\Participant;
  * @method static void registerProviders(array $providers, bool $overwrite = false)
  * @method static array getMessengerProviders()
  * @method static \RTippin\Messenger\Messenger getInstance()
+ * @method static void flush()
  * @method static int getApiRateLimit()
  * @method static \RTippin\Messenger\Messenger setApiRateLimit(int $apiRateLimit)
  * @method static int getSearchRateLimit()

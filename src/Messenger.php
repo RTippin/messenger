@@ -245,6 +245,14 @@ final class Messenger
     }
 
     /**
+     * Flush any active provider set, and reset our configs to default values.
+     */
+    public function flush(): void
+    {
+        $this->unsetProvider()->setMessengerConfig();
+    }
+
+    /**
      * @param $provider
      * @return Model|string|null
      */

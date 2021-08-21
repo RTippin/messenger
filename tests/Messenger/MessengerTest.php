@@ -571,6 +571,34 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
+    public function it_flushes_messenger()
+    {
+        $provider = new UserModel([
+            'id' => 1,
+            'name' => 'Richard Tippin',
+            'email' => 'tippindev@gmail.com',
+            'password' => 'secret',
+        ]);
+
+        $this->messenger->setProvider($provider)
+            ->setCalling(false)
+            ->setBots(false)
+            ->setSystemMessages(false);
+
+        $this->assertTrue($this->messenger->isProviderSet());
+        $this->assertFalse($this->messenger->isCallingEnabled());
+        $this->assertFalse($this->messenger->isBotsEnabled());
+        $this->assertFalse($this->messenger->isSystemMessagesEnabled());
+
+        $this->messenger->flush();
+
+        $this->assertFalse($this->messenger->isProviderSet());
+        $this->assertTrue($this->messenger->isCallingEnabled());
+        $this->assertTrue($this->messenger->isBotsEnabled());
+        $this->assertTrue($this->messenger->isSystemMessagesEnabled());
+    }
+
+    /** @test */
     public function it_allows_set_provider_to_message_given_provider_first()
     {
         $providerUser = new UserModel;
