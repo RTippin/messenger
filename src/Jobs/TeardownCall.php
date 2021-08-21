@@ -2,22 +2,12 @@
 
 namespace RTippin\Messenger\Jobs;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use RTippin\Messenger\Actions\Calls\CallBrokerTeardown;
 use RTippin\Messenger\Events\CallEndedEvent;
 use RTippin\Messenger\Exceptions\CallBrokerException;
 
-class TeardownCall implements ShouldQueue
+class TeardownCall extends BaseMessengerJob
 {
-    use Dispatchable,
-        InteractsWithQueue,
-        Queueable,
-        SerializesModels;
-
     /**
      * @var CallEndedEvent
      */

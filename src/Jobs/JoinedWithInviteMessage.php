@@ -2,23 +2,13 @@
 
 namespace RTippin\Messenger\Jobs;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
 use RTippin\Messenger\Events\InviteUsedEvent;
 use RTippin\Messenger\Support\MessageTransformer;
 use Throwable;
 
-class JoinedWithInviteMessage implements ShouldQueue
+class JoinedWithInviteMessage extends BaseMessengerJob
 {
-    use Dispatchable,
-        InteractsWithQueue,
-        Queueable,
-        SerializesModels;
-
     /**
      * @var InviteUsedEvent
      */

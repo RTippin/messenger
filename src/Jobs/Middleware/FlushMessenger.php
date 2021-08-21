@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Jobs\Middleware;
 
 use RTippin\Messenger\Facades\Messenger;
 
-class ResetMessenger
+class FlushMessenger
 {
     /**
      * Process the queued job.

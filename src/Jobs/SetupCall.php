@@ -2,22 +2,12 @@
 
 namespace RTippin\Messenger\Jobs;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use RTippin\Messenger\Actions\Calls\CallBrokerSetup;
 use RTippin\Messenger\Events\CallStartedEvent;
 use RTippin\Messenger\Exceptions\CallBrokerException;
 
-class SetupCall implements ShouldQueue
+class SetupCall extends BaseMessengerJob
 {
-    use Dispatchable,
-        InteractsWithQueue,
-        Queueable,
-        SerializesModels;
-
     /**
      * @var CallStartedEvent
      */

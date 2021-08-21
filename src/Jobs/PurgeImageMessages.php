@@ -2,21 +2,11 @@
 
 namespace RTippin\Messenger\Jobs;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use RTippin\Messenger\Actions\Messages\PurgeImageMessages as PurgeImageMessagesAction;
 
-class PurgeImageMessages implements ShouldQueue
+class PurgeImageMessages extends BaseMessengerJob
 {
-    use Dispatchable,
-        InteractsWithQueue,
-        Queueable,
-        SerializesModels;
-
     /**
      * @var Collection
      */

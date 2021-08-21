@@ -2,22 +2,12 @@
 
 namespace RTippin\Messenger\Jobs;
 
-use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Bus\Dispatchable;
-use Illuminate\Queue\InteractsWithQueue;
-use Illuminate\Queue\SerializesModels;
 use RTippin\Messenger\Actions\Bots\ProcessMessageTriggers;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 
-class BotActionMessageHandler implements ShouldQueue
+class BotActionMessageHandler extends BaseMessengerJob
 {
-    use Dispatchable,
-        InteractsWithQueue,
-        Queueable,
-        SerializesModels;
-
     /**
      * @var NewMessageEvent
      */
