@@ -2,7 +2,7 @@
 
 ---
 
-### This is a support class that allows you to easily send many of our core actions, such as messages, reactions, images, and more.
+### This support class allows you to easily send many of our core actions, such as messages, reactions, images, and more.
 
 ```php
 use RTippin\Messenger\Facades\MessengerComposer;
@@ -16,8 +16,8 @@ MessengerComposer::to($receiver)
 ---
 
 ### General Flow
-- Set the thread or messenger provider we want to compose an action `TO`.
-- Set the `FROM` messenger provider who is composing the action.
+- Set the `Thread` or `MessengerProvider` we want to compose an action `TO`.
+- Set the `FROM` `MessengerProvider` who is composing the action.
 - Decide if you want to silence the action or let it emit realtime broadcast.
 - Call the action, such as `message()` to complete the cycle. 
   - The actions instance will be returned should you need to access it.
@@ -290,7 +290,6 @@ public function testing(Request $request, Thread $thread, Message $message): voi
 ## Client Presence Events
 
 - Our backend has the ability to broadcast client events (`typing`|`stopped typing`|`read`) that your client side can listen for, just as if the client sent the whispers themselves.
-- We have the base classes and data structure included, but you are able to override our defaults and set your own returned data and the broadcast class itself.
 
 ---
 

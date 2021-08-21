@@ -48,6 +48,7 @@
 
 ### Notes
 - Read through our [`messenger.php`][link-config] config file before migrating!
+- This is a pure backend driven package providing an API to interact with, thus no web UI or websocket implementation will be setup for you.
 - Calling is disabled by default. You are responsible for implementing your own media server or connecting to a 3rd party service.
 
 ---

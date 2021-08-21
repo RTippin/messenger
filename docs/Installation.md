@@ -63,7 +63,7 @@ class MessengerServiceProvider extends ServiceProvider
 ### Implement our MessengerProvider contract for each provider registered
 
 - Each provider you define will need to implement our [`MessengerProvider`][link-messenger-contract] contract. We include a [`Messageable`][link-messageable] trait you can use on your providers that will usually suffice for your needs. This trait has all the methods needed to satisfy the contract.
-- You will typically want to override our `getProviderSettings()` method per provider you register.
+- You should override our `getProviderSettings()` method on each provider model you register.
 - The `alias` will be auto-generated if null or not set. When auto-generating, we will use the lower-snake case of the model's name.
 
 ***Example:***
@@ -79,12 +79,12 @@ use RTippin\Messenger\Traits\Messageable;
 
 class User extends Authenticatable implements MessengerProvider
 {
-    use Messageable;
+    use Messageable; //Default trait to satisfy MessengerProvider interface
     
     public static function getProviderSettings(): array
     {
         return [
-            'alias' => null, // If set, will overwrite auto-generating alias
+            'alias' => null, // Auto-generated unless defined
             'searchable' => true,
             'friendable' => true,
             'devices' => true,

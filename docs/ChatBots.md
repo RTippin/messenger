@@ -161,7 +161,7 @@ class TestBot extends BotActionHandler
 - This is helpful when your handler did not perform an action (perhaps an API call that was denied), and you can ensure any cooldowns defined on that bot action are removed.
 
 ### `composer()`
-- Returns a [MessengerComposer][link-messenger-composer] instance with the `TO` preset with the thread our triggering message belong to, and `FROM` preset as the BOT the action triggered belongs to.
+- Returns a [MessengerComposer][link-messenger-composer] instance with the `TO` preset with the `Thread` our triggering `Message` belongs to, and `FROM` preset as the `Bot` the `BotAction` triggered belongs to.
     - Please note that each time you call `$this->composer()`, you will be given a new instance.
 - This has the most common use cases for what a bot may do (message, send an image/audio/document message, add message reaction, knock)
     - `silent()` Silences any realtime broadcast.
@@ -198,17 +198,43 @@ class TestBot extends BotActionHandler
 
 ---
 
-**Example handler that sends a message and adds a reaction when triggered.**
+**Example handler using preset triggers and match method, that sends a welcome message and adds a reaction when triggered.**
 ```php
+<?php
+
+namespace App\Bots;
+
+use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use Throwable;
+
+class HelloBot extends BotActionHandler
+{
+    /**
+     * The bots settings.
+     *
+     * @return array
+     */
+    public static function getSettings(): array
+    {
+        return [
+            'alias' => 'hello',
+            'description' => 'Say hello when someone says hi!',
+            'name' => 'Hello Response',
+            'triggers' => ['hello', 'hi', 'hey'],
+            'match' => 'contains:caseless',
+        ];
+    }
+
     /**
      * @throws Throwable
      */
     public function handle(): void
     {
-        $this->composer()->emitTyping()->message('I can send messages and react!');
+        $this->composer()->emitTyping()->message("Why hello there {$this->message->owner->getProviderName()}!");
 
-        $this->composer()->reaction($this->message, '💯');
+        $this->composer()->reaction($this->message, '👋');
     }
+}
 ```
 
 **Example reply bot, allowing end user to store up to 5 replies to the handler.**
@@ -331,6 +357,7 @@ class TestBot extends BotActionHandler
 
 namespace App\Providers;
 
+use App\Bots\HelloBot;
 use App\Bots\ReplyBot;
 use App\Bots\TestBot;
 use Illuminate\Support\ServiceProvider;
@@ -346,6 +373,7 @@ class MessengerServiceProvider extends ServiceProvider
     public function boot()
     {
         MessengerBots::registerHandlers([
+            HelloBot::class,
             ReplyBot::class,
             TestBot::class,
         ]);
