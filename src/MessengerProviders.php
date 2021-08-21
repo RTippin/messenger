@@ -153,6 +153,7 @@ trait MessengerProviders
         $this->providerCanFriend = [];
         $this->providerCanSearch = [];
         $this->providerIsSet = false;
+        $this->providerMessengerModel = null;
 
         app()->forgetInstance(MessengerProvider::class);
 
