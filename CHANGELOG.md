@@ -1,6 +1,22 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v1.1.0 (XX-XX-2021)]
+
+#### Added
+- `flush()` method on `Messenger` and `MessengerBots`.
+- `BaseMessengerJob` all job classes now extend.
+- `FlushMessengerServices` job middleware which flushes messenger and bot services. This prevents a queue worker's process from having one job alter our singleton's state, impacting a following job that calls to our singleton.
+
+#### Changed
+- `setVideoDriver` and `setBroadcastDriver` fixed to use `bind` and not `singleton`.
+- Our `NullVideoBroker` will be set as our default `VideoDriver`.
+- `ProcessMessageTriggers` properly flushes the active handler on our bots service between each match.
+
+#### View [Changes](https://github.com/RTippin/messenger/compare/2344f1c7fac6799f0c5717cb6802804ec0baf8b2...aed3d5346c4073860aaf07c132fd75616dfd5863)
+
+---
+
 ### [v1.0.2 (08-17-2021)]
 
 #### Removed

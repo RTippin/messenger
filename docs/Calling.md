@@ -16,7 +16,8 @@
 ```
 
 - Video calling is disabled by default. If enabled, you must set the driver implementation within our published `MessengerServiceProvider` (or any service providers boot method).
-- You must create your own [VideoDriver][link-video-driver] implementation.
+  - Our [NullVideoBroker][link-video-broker] will be set as the default [VideoDriver][link-video-driver].
+- You must create your own [VideoDriver][link-video-driver] implementation if you wish to interact with your chosen 3rd party service.
 - We provide an event subscriber ([CallSubscriber][link-call-subscriber]) to listen and react to calling events. You may choose to enable it, whether it puts jobs on the queue or not, and which queue channel its jobs are dispatched on.
 
 ---
@@ -258,5 +259,6 @@ class MessengerServiceProvider extends ServiceProvider
 ```
 
 [link-video-driver]: https://github.com/RTippin/messenger/blob/1.x/src/Contracts/VideoDriver.php
+[link-video-broker]: https://github.com/RTippin/messenger/blob/1.x/src/Brokers/NullVideoBroker.php
 [link-call-subscriber]: https://github.com/RTippin/messenger/blob/1.x/src/Listeners/CallSubscriber.php
 [link-janus-client]: https://github.com/RTippin/janus-client
