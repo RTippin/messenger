@@ -93,8 +93,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
         $this->senderIp = $parameters[3] ?? null;
         $this->botsTriggered = new Collection;
 
-        $this->setThread($parameters[0])
-            ->setMessage($parameters[1]);
+        $this->setThread($parameters[0])->setMessage($parameters[1]);
 
         foreach ($this->getBotActions() as $action) {
             $this->matchActionTriggers($action);
@@ -124,8 +123,8 @@ class ProcessMessageTriggers extends BaseMessengerAction
     }
 
     /**
-     * Check if we should execute the actions handler. When executing,
-     * set the proper data into the handler, and start the actions
+     * Check if we should execute the action's handler. When executing,
+     * set the proper data into the handler, and start the action's
      * cooldown, if any. Fire events when the action is handled
      * or failed.
      *
@@ -178,7 +177,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
     }
 
     /**
-     * Check the actions handler is valid and that the action has no
+     * Check the action's handler is valid and that the action has no
      * active cooldowns. If the action has the admin_only flag,
      * the group admin flag must also be true.
      *
@@ -203,28 +202,33 @@ class ProcessMessageTriggers extends BaseMessengerAction
     }
 
     /**
+     * Flush the Bots service, removing any prior initialized handler.
      * Set the bot being triggered, and start the action cooldown.
      *
      * @param BotAction $action
      */
     private function botActionStarting(BotAction $action): void
     {
+        $this->bots->flush();
         $this->botsTriggered->push($action->bot);
-
         $action->startCooldown();
     }
 
     /**
-     * After the action completes, check if the handler
-     * wants to release the cooldown.
+     * After the action completes, check if the handler wants to release
+     * the cooldown. Then flush the Bots service, removing any the
+     * initialized handler.
      *
      * @param BotAction $action
      */
     private function botActionEnding(BotAction $action): void
     {
-        if ($this->bots->getActiveHandler()->shouldReleaseCooldown()) {
+        if ($this->bots->isActiveHandlerSet()
+            && $this->bots->getActiveHandler()->shouldReleaseCooldown()) {
             $action->releaseCooldown();
         }
+
+        $this->bots->flush();
     }
 
     /**

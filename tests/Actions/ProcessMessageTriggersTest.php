@@ -58,6 +58,33 @@ class ProcessMessageTriggersTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_flushes_active_handler_before_and_after_executing()
+    {
+        MessengerBots::registerHandlers([
+            FunBotHandler::class,
+            SillyBotHandler::class,
+        ]);
+        MessengerBots::initializeHandler(SillyBotHandler::class);
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => '!test']);
+        BotAction::factory()
+            ->for(Bot::factory()->for($thread)->owner($this->tippin)->create())
+            ->owner($this->tippin)
+            ->handler(FunBotHandler::class)
+            ->triggers('!test')
+            ->create();
+
+        $this->assertTrue(MessengerBots::isActiveHandlerSet());
+
+        app(ProcessMessageTriggers::class)->execute($thread, $message, true);
+
+        $this->assertDatabaseHas('messages', [
+            'body' => 'Testing Fun.',
+        ]);
+        $this->assertFalse(MessengerBots::isActiveHandlerSet());
+    }
+
+    /** @test */
     public function it_does_nothing_if_no_match_found()
     {
         MessengerBots::registerHandlers([FunBotHandler::class]);
