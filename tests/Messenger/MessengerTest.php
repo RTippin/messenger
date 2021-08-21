@@ -218,23 +218,23 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_returns_valid_provider_alias_using_morph_alias_if_morph_maps_set()
     {
-        if ($this->useMorphMap) {
-            $this->assertSame('user', $this->messenger->findProviderAlias('users'));
-            $this->assertSame('company', $this->messenger->findProviderAlias('companies'));
-        } else {
-            $this->assertTrue(true);
+        if (! $this->useMorphMap) {
+            $this->markTestSkipped('Morph maps are not in use.');
         }
+
+        $this->assertSame('user', $this->messenger->findProviderAlias('users'));
+        $this->assertSame('company', $this->messenger->findProviderAlias('companies'));
     }
 
     /** @test */
     public function it_returns_valid_provider_class_using_morph_alias_if_morph_maps_set()
     {
-        if ($this->useMorphMap) {
-            $this->assertSame(UserModel::class, $this->messenger->findAliasProvider('users'));
-            $this->assertSame(CompanyModel::class, $this->messenger->findAliasProvider('companies'));
-        } else {
-            $this->assertTrue(true);
+        if (! $this->useMorphMap) {
+            $this->markTestSkipped('Morph maps are not in use.');
         }
+
+        $this->assertSame(UserModel::class, $this->messenger->findAliasProvider('users'));
+        $this->assertSame(CompanyModel::class, $this->messenger->findAliasProvider('companies'));
     }
 
     /** @test */
