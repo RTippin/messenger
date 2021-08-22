@@ -33,7 +33,7 @@ class ThreadArchivedMessage extends BaseMessengerJob
      */
     public function handle(StoreSystemMessage $message): void
     {
-        $message->execute(...$this->systemMessage());
+        $message->withoutBroadcast()->execute(...$this->systemMessage());
     }
 
     /**
