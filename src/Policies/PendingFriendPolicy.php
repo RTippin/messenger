@@ -36,7 +36,7 @@ class PendingFriendPolicy
     {
         return $this->messenger->providerHasFriends()
             ? $this->allow()
-            : $this->deny('Not authorized to view pending friend request');
+            : $this->deny('Not authorized to view pending friend request.');
     }
 
     /**
@@ -52,7 +52,7 @@ class PendingFriendPolicy
             && (string) $this->messenger->getProvider()->getKey() === (string) $pending->recipient_id
             && $this->messenger->getProvider()->getMorphClass() === $pending->recipient_type)
             ? $this->allow()
-            : $this->deny('Not authorized to view pending friend request');
+            : $this->deny('Not authorized to view pending friend request.');
     }
 
     /**
@@ -68,7 +68,7 @@ class PendingFriendPolicy
             && (string) $this->messenger->getProvider()->getKey() === (string) $pending->recipient_id
             && $this->messenger->getProvider()->getMorphClass() === $pending->recipient_type)
             ? $this->allow()
-            : $this->deny('Not authorized to accept pending friend request');
+            : $this->deny('Not authorized to accept pending friend request.');
     }
 
     /**
@@ -84,6 +84,6 @@ class PendingFriendPolicy
             && (string) $this->messenger->getProvider()->getKey() === (string) $pending->recipient_id
             && $this->messenger->getProvider()->getMorphClass() === $pending->recipient_type)
             ? $this->allow()
-            : $this->deny('Not authorized to deny pending friend request');
+            : $this->deny('Not authorized to deny pending friend request.');
     }
 }

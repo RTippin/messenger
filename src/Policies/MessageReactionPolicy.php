@@ -39,7 +39,7 @@ class MessageReactionPolicy
     {
         return $thread->hasCurrentProvider()
             ? $this->allow()
-            : $this->deny('Not authorized to view messages.');
+            : $this->deny('Not authorized to view message reactions.');
     }
 
     /**

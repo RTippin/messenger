@@ -88,7 +88,7 @@ class CallPolicy
         && $call->isActive()
         && ! $call->wasKicked()
             ? $this->allow()
-            : $this->deny('Not authorized to join this session.');
+            : $this->deny('Not authorized to join that call.');
     }
 
     /**
@@ -106,7 +106,7 @@ class CallPolicy
         && $call->isInCall()
         && ! $call->wasKicked()
             ? $this->allow()
-            : $this->deny('Not authorized to leave that session.');
+            : $this->deny('Not authorized to leave that call.');
     }
 
     /**
@@ -126,7 +126,7 @@ class CallPolicy
         && ($call->isCallAdmin($thread)
             || $thread->isPrivate())
             ? $this->allow()
-            : $this->deny('Not authorized to end that session.');
+            : $this->deny('Not authorized to end that call.');
     }
 
     /**
@@ -143,7 +143,7 @@ class CallPolicy
         && $call->isActive()
         && ! $call->hasJoinedCall()
             ? $this->allow()
-            : $this->deny('Not authorized to ignore that session.');
+            : $this->deny('Not authorized to ignore that call.');
     }
 
     /**
@@ -161,6 +161,6 @@ class CallPolicy
         && $call->isInCall()
         && ! $call->wasKicked()
             ? $this->allow()
-            : $this->deny('Not authorized to be in that session.');
+            : $this->deny('Not authorized to be in that call.');
     }
 }

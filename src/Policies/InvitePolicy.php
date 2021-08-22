@@ -51,13 +51,13 @@ class InvitePolicy
     public function create($user, Thread $thread): Response
     {
         if (! $thread->canInviteParticipants()) {
-            return $this->deny('Not authorized to create thread invite.');
+            return $this->deny('Not authorized to create thread invites.');
         }
 
         return ($this->messenger->getThreadMaxInvitesCount() === 0
             || $this->messenger->getThreadMaxInvitesCount() > $thread->invites()->valid()->count())
             ? $this->allow()
-            : $this->deny('Not authorized to create thread invite. You have the max allowed active invites.');
+            : $this->deny('Not authorized to create thread invites. You have the max allowed active invites.');
     }
 
     /**

@@ -36,7 +36,7 @@ class SentFriendPolicy
     {
         return $this->messenger->providerHasFriends()
             ? $this->allow()
-            : $this->deny('Not authorized to view sent friend request');
+            : $this->deny('Not authorized to view sent friend request.');
     }
 
     /**
@@ -52,7 +52,7 @@ class SentFriendPolicy
             && (string) $this->messenger->getProvider()->getKey() === (string) $sent->sender_id
             && $this->messenger->getProvider()->getMorphClass() === $sent->sender_type)
             ? $this->allow()
-            : $this->deny('Not authorized to view sent friend request');
+            : $this->deny('Not authorized to view sent friend request.');
     }
 
     /**
@@ -65,7 +65,7 @@ class SentFriendPolicy
     {
         return $this->messenger->providerHasFriends()
             ? $this->allow()
-            : $this->deny('Not authorized add friends');
+            : $this->deny('Not authorized add friends.');
     }
 
     /**
@@ -81,6 +81,6 @@ class SentFriendPolicy
             && (string) $this->messenger->getProvider()->getKey() === (string) $sent->sender_id
             && $this->messenger->getProvider()->getMorphClass() === $sent->sender_type)
             ? $this->allow()
-            : $this->deny('Not authorized to view remove friend request');
+            : $this->deny('Not authorized to view remove friend request.');
     }
 }

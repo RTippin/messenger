@@ -50,7 +50,7 @@ class FriendPolicy
             && (string) $this->messenger->getProvider()->getKey() === (string) $friend->owner_id
             && $this->messenger->getProvider()->getMorphClass() === $friend->owner_type)
             ? $this->allow()
-            : $this->deny('Not authorized to view friend');
+            : $this->deny('Not authorized to view friend.');
     }
 
     /**
@@ -66,6 +66,6 @@ class FriendPolicy
             && (string) $this->messenger->getProvider()->getKey() === (string) $friend->owner_id
             && $this->messenger->getProvider()->getMorphClass() === $friend->owner_type)
             ? $this->allow()
-            : $this->deny('Not authorized to remove friend');
+            : $this->deny('Not authorized to remove friend.');
     }
 }

@@ -31,7 +31,7 @@ class ThreadPolicy
     {
         return $thread->hasCurrentProvider()
             ? $this->allow()
-            : $this->deny('Not authorized to view that thread.');
+            : $this->deny('Not authorized to view thread.');
     }
 
     /**
@@ -47,11 +47,11 @@ class ThreadPolicy
         && ! $thread->isLocked()
         && ! $thread->isAwaitingMyApproval()
             ? $this->allow()
-            : $this->deny('Not authorized join that thread.');
+            : $this->deny('Not authorized join thread.');
     }
 
     /**
-     * Determine whether the provider can accept a pending thread request.
+     * Determine whether the provider can accept or deny a pending thread request.
      *
      * @param $user
      * @param Thread $thread
@@ -62,7 +62,7 @@ class ThreadPolicy
         return $thread->hasCurrentProvider()
         && $thread->isAwaitingMyApproval()
             ? $this->allow()
-            : $this->deny('Not authorized to accept or deny a request.');
+            : $this->deny('Not authorized to accept or deny the thread request.');
     }
 
     /**
@@ -77,7 +77,7 @@ class ThreadPolicy
         return $thread->isGroup()
         && $thread->hasCurrentProvider()
             ? $this->allow()
-            : $this->deny('Not authorized to view that thread.');
+            : $this->deny('Not authorized to view thread.');
     }
 
     /**
@@ -119,7 +119,7 @@ class ThreadPolicy
     {
         return $thread->isPrivate() && $thread->hasCurrentProvider()
             ? $this->allow()
-            : $this->deny('Not authorized to view that thread.');
+            : $this->deny('Not authorized to view thread.');
     }
 
     /**
@@ -145,7 +145,7 @@ class ThreadPolicy
         && ! $thread->isLocked()
         && $thread->isAdmin()
             ? $this->allow()
-            : $this->deny('Not authorized to manage thread settings.');
+            : $this->deny('Not authorized to manage settings.');
     }
 
     /**
@@ -161,7 +161,7 @@ class ThreadPolicy
         && ! $thread->isLocked()
         && $thread->isAdmin()
             ? $this->allow()
-            : $this->deny('Not authorized to update that thread.');
+            : $this->deny('Not authorized to update thread.');
     }
 
     /**

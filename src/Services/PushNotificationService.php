@@ -136,7 +136,7 @@ class PushNotificationService
     {
         return $this->recipients
             ->map(fn ($recipient) => $this->extractProvider($recipient))
-            ->reject(fn ($recipient) => ! count($recipient))
+            ->filter()
             ->reject(fn ($recipient) => ! in_array($recipient['owner_type'], $this->messenger->getAllProvidersWithDevices()))
             ->uniqueStrict(fn ($recipient) => $recipient['owner_type'].$recipient['owner_id'])
             ->values();
@@ -144,9 +144,9 @@ class PushNotificationService
 
     /**
      * @param mixed $recipient
-     * @return array
+     * @return array|null
      */
-    private function extractProvider($recipient): array
+    private function extractProvider($recipient): ?array
     {
         $abstract = is_object($recipient)
             ? get_class($recipient)
@@ -175,7 +175,7 @@ class PushNotificationService
             ];
         }
 
-        return [];
+        return null;
     }
 
     /**

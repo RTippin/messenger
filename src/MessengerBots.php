@@ -287,7 +287,7 @@ final class MessengerBots
      * Resolve a bot handler using the data parameters. Validate against our base
      * ruleset and any custom rules or overrides on the handler class itself.
      * Return the final data array we will use to store the BotAction model.
-     * The handler validator can be overwritten if an actions handler class
+     * The handler validator can be overwritten if an action's handler class
      * or alias is supplied. We will then attempt to initialize it directly.
      *
      * @param array $data

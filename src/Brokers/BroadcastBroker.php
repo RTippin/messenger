@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Brokers;
 
-use Illuminate\Broadcasting\BroadcastException;
 use Illuminate\Contracts\Broadcasting\Factory;
 use Illuminate\Support\Collection;
 use RTippin\Messenger\Broadcasting\MessengerBroadcast;
@@ -189,7 +188,7 @@ class BroadcastBroker implements BroadcastDriver
     {
         return $this->recipients
             ->map(fn ($recipient) => $this->generatePrivateChannel($recipient))
-            ->reject(fn ($recipient) => is_null($recipient))
+            ->filter()
             ->chunk(100);
     }
 
@@ -235,7 +234,7 @@ class BroadcastBroker implements BroadcastDriver
     {
         return $this->recipients
             ->map(fn ($recipient) => $this->generatePresenceChannel($recipient))
-            ->reject(fn ($recipient) => is_null($recipient))
+            ->filter()
             ->chunk(100);
     }
 
@@ -274,7 +273,7 @@ class BroadcastBroker implements BroadcastDriver
                     ->setResource($this->with)
                     ->setChannels($channels->values()->toArray())
             );
-        } catch (BroadcastException | Throwable $e) {
+        } catch (Throwable $e) {
             // Should a broadcast fail, we do not want to
             // halt further code execution. Continue on!
         }

@@ -126,7 +126,7 @@ class MessagePolicy
     {
         return $this->messenger->isMessageImageUploadEnabled() && $thread->canMessage()
             ? $this->allow()
-            : $this->deny('Not authorized to upload image.');
+            : $this->deny('Not authorized to upload an image.');
     }
 
     /**
