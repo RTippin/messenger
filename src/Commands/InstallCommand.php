@@ -12,7 +12,9 @@ class InstallCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'messenger:install';
+    protected $signature = 'messenger:install 
+                                      {--uuids : Use UUIDs for your providers} 
+                                      {--force : Overwrite existing files}';
 
     /**
      * The console command description.
@@ -28,20 +30,43 @@ class InstallCommand extends Command
      */
     public function handle(): void
     {
-        $this->info('Publishing Messenger Configuration...');
+        if (! $this->confirm('Really install Messenger?')) {
+            return;
+        }
 
-        $this->callSilent('vendor:publish', [
+        $this->newLine();
+        $this->info('Publishing Messenger Configuration...');
+        $this->newLine();
+
+        $this->call('vendor:publish', [
             '--tag' => 'messenger.config',
+            '--force' => $this->option('force'),
         ]);
 
+        $this->newLine();
         $this->info('Publishing Messenger Service Provider...');
+        $this->newLine();
 
-        $this->callSilent('vendor:publish', [
+        $this->call('vendor:publish', [
             '--tag' => 'messenger.provider',
+            '--force' => $this->option('force'),
         ]);
 
         $this->registerMessengerServiceProvider();
 
+        if ($this->option('uuids')) {
+            $this->newLine();
+            $this->info('Enabling UUIDs...');
+            $this->newLine();
+
+            $this->configureUuids();
+        }
+
+        if ($this->confirm('Would you like to migrate now?')) {
+            $this->call('migrate');
+        }
+
+        $this->newLine();
         $this->info('Messenger scaffolding successfully installed!');
     }
 
@@ -77,5 +102,22 @@ class InstallCommand extends Command
             "namespace {$namespace}\Providers;",
             file_get_contents(app_path('Providers/MessengerServiceProvider.php'))
         ));
+    }
+
+    /**
+     * Configure our Provider UUIDs to TRUE.
+     */
+    private function configureUuids(): void
+    {
+        config(['messenger.provider_uuids' => true]);
+
+        file_put_contents(
+            config_path('messenger.php'),
+            str_replace(
+                '\'provider_uuids\' => false',
+                '\'provider_uuids\' => true',
+                file_get_contents(config_path('messenger.php'))
+            )
+        );
     }
 }

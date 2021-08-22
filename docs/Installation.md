@@ -9,17 +9,20 @@ $ composer require rtippin/messenger
 ```
 
 ### Install Command
-***This will publish our config and service provider files. The service provider will also be registered in your `app.php` config file.***
+- Installs the base messenger files, publishing our [`messenger.php`][link-config] config and service provider.
+- This will also register our published service provider in your `app.php` config file under the providers array.
+- You will be asked to confirm running this command, as well as an option to migrate our tables before completion.
 ```bash
 $ php artisan messenger:install
 ```
 
-### Before Migrating
-***Check out the published [`messenger.php`][link-config] config file in your config directory. You must first specify if you plan to use UUIDs on your provider models before running the migrations. (False by default)***
-```php
-'provider_uuids' => false,
+- If your provider models use UUIDs instead of auto-incrementing integers as their primary keys, use the `--uuids` flag when installing.
+```bash
+$ php artisan messenger:install --uuids
 ```
+
 ### Migrate
+- If you opted to not migrate while using the `messenger:install` command above, be sure you run it yourself before using our system.
 ```bash
 $ php artisan migrate
 ```

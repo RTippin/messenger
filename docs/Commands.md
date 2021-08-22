@@ -2,8 +2,11 @@
 
 ---
 
-### `php artisan messenger:install`
-- Installs the base messenger files. Publishes our config and service provider. This will also register the provider in your `app.php` in the providers array.
+### `php artisan messenger:install` | `--uuids` | `--force`
+- Installs the base messenger files, publishing our config and service provider. This will also register our published service provider in your `app.php` config file under the providers array.
+  - You will be asked to confirm running this command, as well as an option to migrate our tables before completion.
+- `--uuids` flag when your provider models use UUIDs instead of auto-incrementing integers as their primary keys.
+- `--force` flag to overwrite any existing published files.
 
 ---
 
