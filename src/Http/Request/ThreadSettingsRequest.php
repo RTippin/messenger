@@ -30,28 +30,24 @@ class ThreadSettingsRequest extends FormRequest
      */
     public function withValidator(Validator $validator): void
     {
-        $validator->sometimes(
-            'knocks',
-            ['required', 'boolean'],
-            fn () => Messenger::isKnockKnockEnabled()
-        );
+        $validator->sometimes('knocks', [
+            'required',
+            'boolean',
+        ], fn () => Messenger::isKnockKnockEnabled());
 
-        $validator->sometimes(
-            'calling',
-            ['required', 'boolean'],
-            fn () => Messenger::isCallingEnabled()
-        );
+        $validator->sometimes('calling', [
+            'required',
+            'boolean',
+        ], fn () => Messenger::isCallingEnabled());
 
-        $validator->sometimes(
-            'invitations',
-            ['required', 'boolean'],
-            fn () => Messenger::isThreadInvitesEnabled()
-        );
+        $validator->sometimes('invitations', [
+            'required',
+            'boolean',
+        ], fn () => Messenger::isThreadInvitesEnabled());
 
-        $validator->sometimes(
-            'chat_bots',
-            ['required', 'boolean'],
-            fn () => Messenger::isBotsEnabled()
-        );
+        $validator->sometimes('chat_bots', [
+            'required',
+            'boolean',
+        ], fn () => Messenger::isBotsEnabled());
     }
 }

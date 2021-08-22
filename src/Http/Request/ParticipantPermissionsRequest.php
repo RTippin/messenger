@@ -29,28 +29,24 @@ class ParticipantPermissionsRequest extends FormRequest
      */
     public function withValidator(Validator $validator): void
     {
-        $validator->sometimes(
-            'start_calls',
-            ['required', 'boolean'],
-            fn () => Messenger::isCallingEnabled()
-        );
+        $validator->sometimes('start_calls', [
+            'required',
+            'boolean',
+        ], fn () => Messenger::isCallingEnabled());
 
-        $validator->sometimes(
-            'send_knocks',
-            ['required', 'boolean'],
-            fn () => Messenger::isKnockKnockEnabled()
-        );
+        $validator->sometimes('send_knocks', [
+            'required',
+            'boolean',
+        ], fn () => Messenger::isKnockKnockEnabled());
 
-        $validator->sometimes(
-            'manage_invites',
-            ['required', 'boolean'],
-            fn () => Messenger::isThreadInvitesEnabled()
-        );
+        $validator->sometimes('manage_invites', [
+            'required',
+            'boolean',
+        ], fn () => Messenger::isThreadInvitesEnabled());
 
-        $validator->sometimes(
-            'manage_bots',
-            ['required', 'boolean'],
-            fn () => Messenger::isBotsEnabled()
-        );
+        $validator->sometimes('manage_bots', [
+            'required',
+            'boolean',
+        ], fn () => Messenger::isBotsEnabled());
     }
 }
