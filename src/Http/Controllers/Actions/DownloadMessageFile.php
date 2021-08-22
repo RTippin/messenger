@@ -49,7 +49,7 @@ class DownloadMessageFile
                              Message $message,
                              string $file): StreamedResponse
     {
-        $this->checkFileExist($message, $file);
+        $this->bailIfFileDoesntExist($message, $file);
 
         return $this->filesystemManager
             ->disk($message->getStorageDisk())
@@ -61,7 +61,7 @@ class DownloadMessageFile
      * @param string $fileNameChallenge
      * @return void
      */
-    private function checkFileExist(Message $message, string $fileNameChallenge): void
+    private function bailIfFileDoesntExist(Message $message, string $fileNameChallenge): void
     {
         if (! $message->isDocument()
             || $fileNameChallenge !== $message->body

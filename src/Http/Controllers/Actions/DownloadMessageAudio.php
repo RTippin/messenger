@@ -39,7 +39,7 @@ class DownloadMessageAudio
     }
 
     /**
-     * Stream message audio.
+     * Stream or download message audio.
      *
      * @param Request $request
      * @param Thread $thread
@@ -53,7 +53,7 @@ class DownloadMessageAudio
                              Message $message,
                              string $audio)
     {
-        $this->checkAudioExist($message, $audio);
+        $this->bailIfAudioDoesntExist($message, $audio);
 
         return $request->has('stream')
             ? $this->streamResponse($message)
@@ -94,7 +94,7 @@ class DownloadMessageAudio
      * @return void
      * @throws FileNotFoundException
      */
-    private function checkAudioExist(Message $message, string $audioNameChallenge): void
+    private function bailIfAudioDoesntExist(Message $message, string $audioNameChallenge): void
     {
         if (! $message->isAudio()
             || $audioNameChallenge !== $message->body

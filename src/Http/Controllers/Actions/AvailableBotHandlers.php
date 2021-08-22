@@ -40,7 +40,7 @@ class AvailableBotHandlers
     public function __invoke(Thread $thread, Bot $bot): array
     {
         $this->authorize('create', [
-            Bot::class,
+            BotAction::class,
             $thread,
         ]);
 
@@ -53,14 +53,13 @@ class AvailableBotHandlers
      */
     private function generateAvailableHandlers(Bot $bot): array
     {
-        $handlers = new Collection($this->bots->getAuthorizedHandlers());
-
         $unique = $bot->validUniqueActions()
             ->get()
             ->transform(fn (BotAction $action) => $action->getHandlerSettings()['alias'] ?? '')
             ->toArray();
 
-        return $handlers->reject(fn ($handler) => in_array($handler['alias'], $unique))
+        return (new Collection($this->bots->getAuthorizedHandlers()))
+            ->reject(fn ($handler) => in_array($handler['alias'], $unique))
             ->values()
             ->toArray();
     }
