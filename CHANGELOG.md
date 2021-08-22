@@ -1,6 +1,16 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+### [v1.1.1 (08-22-2021)](https://github.com/RTippin/messenger/compare/v1.1.0...v1.1.1)
+
+#### Changed
+- Fixed `ThreadArchivedMessage` to not broadcast the system message, as participants would have already received the archived broadcast.
+- Updated policy allow/deny responses.
+- `messenger:install` command will now ask for confirmation, and has the ability to overwrite our published config file, setting `provider_uuids` to true, using the `--uuids` flag. It will also ask if you want to migrate after publishing.
+- General code improvements.
+
+---
+
 ### [v1.1.0 (08-21-2021)](https://github.com/RTippin/messenger/compare/v1.0.2...v1.1.0)
 
 #### Added
