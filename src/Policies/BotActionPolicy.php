@@ -58,7 +58,7 @@ class BotActionPolicy
     {
         return $thread->canManageBots()
             ? $this->allow()
-            : $this->deny('Not authorized add a bot actions.');
+            : $this->deny('Not authorized add bot actions.');
     }
 
     /**
@@ -72,7 +72,7 @@ class BotActionPolicy
     {
         return $thread->canManageBots()
             ? $this->allow()
-            : $this->deny('Not authorized to update the bot action.');
+            : $this->deny('Not authorized to update bot action.');
     }
 
     /**

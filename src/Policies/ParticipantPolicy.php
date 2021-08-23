@@ -36,7 +36,7 @@ class ParticipantPolicy
     {
         return $thread->hasCurrentProvider()
             ? $this->allow()
-            : $this->deny('Not authorized to view this participant.');
+            : $this->deny('Not authorized to view participant.');
     }
 
     /**

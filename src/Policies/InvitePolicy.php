@@ -38,7 +38,7 @@ class InvitePolicy
     {
         return $thread->canInviteParticipants()
             ? $this->allow()
-            : $this->deny('Not authorized to view thread invite.');
+            : $this->deny('Not authorized to view thread invites.');
     }
 
     /**
@@ -71,7 +71,7 @@ class InvitePolicy
     {
         return $thread->canInviteParticipants()
             ? $this->allow()
-            : $this->deny('Not authorized to destroy this invite.');
+            : $this->deny('Not authorized to destroy thread invite.');
     }
 
     /**
@@ -86,6 +86,6 @@ class InvitePolicy
         return $code->isValid()
         && $code->thread->canJoinWithInvite()
             ? $this->allow()
-            : $this->deny('Not authorized to join with this invite.');
+            : $this->deny('Not authorized to join with that invite.');
     }
 }

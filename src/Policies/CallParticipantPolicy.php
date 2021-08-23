@@ -22,7 +22,7 @@ class CallParticipantPolicy
     {
         return $thread->hasCurrentProvider()
             ? $this->allow()
-            : $this->deny('Not authorized to view participants.');
+            : $this->deny('Not authorized to view call participants.');
     }
 
     /**
@@ -36,7 +36,7 @@ class CallParticipantPolicy
     {
         return $thread->hasCurrentProvider()
             ? $this->allow()
-            : $this->deny('Not authorized to view participant.');
+            : $this->deny('Not authorized to view call participant.');
     }
 
     /**
@@ -56,6 +56,6 @@ class CallParticipantPolicy
         && $call->isInCall()
         && ! $call->wasKicked()
             ? $this->allow()
-            : $this->deny('Not authorized to kick / un-kick that participant.');
+            : $this->deny('Not authorized to kick / un-kick that call participant.');
     }
 }

@@ -70,7 +70,7 @@ class MessagePolicy
         && $this->messenger->isMessageEditsViewEnabled()
         && $message->isEdited()
             ? $this->allow()
-            : $this->deny('Not authorized to view edits for that message.');
+            : $this->deny('Not authorized to view message edits.');
     }
 
     /**
@@ -98,7 +98,7 @@ class MessagePolicy
     {
         return $this->messenger->isMessageDocumentUploadEnabled() && $thread->canMessage()
             ? $this->allow()
-            : $this->deny('Not authorized to upload a document.');
+            : $this->deny('Not authorized to upload document messages.');
     }
 
     /**
@@ -112,7 +112,7 @@ class MessagePolicy
     {
         return $this->messenger->isMessageAudioUploadEnabled() && $thread->canMessage()
             ? $this->allow()
-            : $this->deny('Not authorized to upload audio.');
+            : $this->deny('Not authorized to upload audio messages.');
     }
 
     /**
@@ -126,7 +126,7 @@ class MessagePolicy
     {
         return $this->messenger->isMessageImageUploadEnabled() && $thread->canMessage()
             ? $this->allow()
-            : $this->deny('Not authorized to upload an image.');
+            : $this->deny('Not authorized to upload image messages.');
     }
 
     /**
@@ -144,7 +144,7 @@ class MessagePolicy
         && (string) $this->messenger->getProvider()->getKey() === (string) $message->owner_id
         && $this->messenger->getProvider()->getMorphClass() === $message->owner_type
             ? $this->allow()
-            : $this->deny('Not authorized to update message.');
+            : $this->deny('Not authorized to edit message.');
     }
 
     /**
@@ -163,7 +163,7 @@ class MessagePolicy
                 && $this->messenger->getProvider()->getMorphClass() === $message->owner_type)
             || $thread->isAdmin())
             ? $this->allow()
-            : $this->deny('Not authorized to remove embeds from message.');
+            : $this->deny('Not authorized to remove message embeds.');
     }
 
     /**

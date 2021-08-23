@@ -62,7 +62,7 @@ class ThreadPolicy
         return $thread->hasCurrentProvider()
         && $thread->isAwaitingMyApproval()
             ? $this->allow()
-            : $this->deny('Not authorized to accept or deny the thread request.');
+            : $this->deny('Not authorized to accept or deny the thread approval request.');
     }
 
     /**
