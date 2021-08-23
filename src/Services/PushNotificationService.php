@@ -2,9 +2,7 @@
 
 namespace RTippin\Messenger\Services;
 
-use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Collection;
 use RTippin\Messenger\Contracts\BroadcastEvent;
 use RTippin\Messenger\Contracts\MessengerProvider;
@@ -12,6 +10,7 @@ use RTippin\Messenger\Events\PushNotificationEvent;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Participant;
+use Throwable;
 
 class PushNotificationService
 {
@@ -19,6 +18,11 @@ class PushNotificationService
      * @var Messenger
      */
     private Messenger $messenger;
+
+    /**
+     * @var Dispatcher
+     */
+    private Dispatcher $dispatcher;
 
     /**
      * @var array
@@ -31,28 +35,14 @@ class PushNotificationService
     private ?Collection $recipients = null;
 
     /**
-     * @var Application
-     */
-    private Application $app;
-
-    /**
-     * @var Dispatcher
-     */
-    private Dispatcher $dispatcher;
-
-    /**
      * PushNotificationService constructor.
      *
      * @param Messenger $messenger
      * @param Dispatcher $dispatcher
-     * @param Application $app
      */
-    public function __construct(Messenger $messenger,
-                                Dispatcher $dispatcher,
-                                Application $app)
+    public function __construct(Messenger $messenger, Dispatcher $dispatcher)
     {
         $this->messenger = $messenger;
-        $this->app = $app;
         $this->dispatcher = $dispatcher;
     }
 
@@ -104,6 +94,8 @@ class PushNotificationService
                 $this->dispatchNotification($broadcastAs, $filteredRecipients);
             }
         }
+
+        $this->reset();
     }
 
     /**
@@ -115,12 +107,10 @@ class PushNotificationService
     private function getBroadcastAs(string $abstract): ?string
     {
         try {
-            return $this->app
-                ->make($abstract)
-                ->broadcastAs();
-        } catch (BindingResolutionException $e) {
-            report($e);
-            //continue on
+            return app($abstract)->broadcastAs();
+        } catch (Throwable $e) {
+            // Should constructing a notification fail, we do not
+            // want to halt further code execution. Continue on!
         }
 
         return null;
@@ -189,5 +179,14 @@ class PushNotificationService
             $this->with,
             $recipients
         ));
+    }
+
+    /**
+     * Reset our state.
+     */
+    private function reset(): void
+    {
+        $this->recipients = null;
+        $this->with = [];
     }
 }

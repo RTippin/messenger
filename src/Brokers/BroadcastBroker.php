@@ -24,21 +24,6 @@ class BroadcastBroker implements BroadcastDriver
     protected Messenger $messenger;
 
     /**
-     * @var Thread|null
-     */
-    protected ?Thread $thread = null;
-
-    /**
-     * @var array
-     */
-    protected array $with = [];
-
-    /**
-     * @var Collection|null
-     */
-    protected ?Collection $recipients = null;
-
-    /**
      * @var ParticipantRepository
      */
     protected ParticipantRepository $participantRepository;
@@ -52,6 +37,21 @@ class BroadcastBroker implements BroadcastDriver
      * @var bool
      */
     protected bool $usingPresence = false;
+
+    /**
+     * @var Thread|null
+     */
+    protected ?Thread $thread = null;
+
+    /**
+     * @var array
+     */
+    protected array $with = [];
+
+    /**
+     * @var Collection|null
+     */
+    protected ?Collection $recipients = null;
 
     /**
      * @var PushNotificationService
@@ -83,7 +83,6 @@ class BroadcastBroker implements BroadcastDriver
     public function toAllInThread(Thread $thread): self
     {
         $this->thread = $thread;
-        $this->usingPresence = false;
         $this->recipients = $this->participantRepository->getThreadBroadcastableParticipants($this->thread);
 
         return $this;
@@ -95,7 +94,6 @@ class BroadcastBroker implements BroadcastDriver
     public function toOthersInThread(Thread $thread): self
     {
         $this->thread = $thread;
-        $this->usingPresence = false;
         $this->recipients = $this->participantRepository->getThreadBroadcastableParticipants($this->thread, true);
 
         return $this;
@@ -106,8 +104,6 @@ class BroadcastBroker implements BroadcastDriver
      */
     public function toSelected(Collection $recipients): self
     {
-        $this->usingPresence = false;
-
         if ($recipients->count()) {
             $this->recipients = $recipients;
         }
@@ -120,7 +116,6 @@ class BroadcastBroker implements BroadcastDriver
      */
     public function to($recipient): self
     {
-        $this->usingPresence = false;
         $this->recipients = new Collection([$recipient]);
 
         return $this;
@@ -171,14 +166,14 @@ class BroadcastBroker implements BroadcastDriver
             && is_subclass_of($abstract, MessengerBroadcast::class)) {
             if ($this->usingPresence) {
                 $this->generatePresenceChannels()->each(fn (Collection $channels) => $this->executeBroadcast($abstract, $channels));
+            } else {
+                $this->generatePrivateChannels()->each(fn (Collection $channels) => $this->executeBroadcast($abstract, $channels));
 
-                return;
+                $this->executePushNotify($abstract);
             }
-
-            $this->generatePrivateChannels()->each(fn (Collection $channels) => $this->executeBroadcast($abstract, $channels));
-
-            $this->executePushNotify($abstract);
         }
+
+        $this->reset();
     }
 
     /**
@@ -290,5 +285,16 @@ class BroadcastBroker implements BroadcastDriver
                 ->with($this->with)
                 ->notify($abstractBroadcast);
         }
+    }
+
+    /**
+     * Reset our state.
+     */
+    protected function reset(): void
+    {
+        $this->usingPresence = false;
+        $this->thread = null;
+        $this->with = [];
+        $this->recipients = null;
     }
 }
