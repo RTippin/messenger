@@ -145,7 +145,10 @@ class EditMessageTest extends FeatureTestCase
 
         Event::assertDispatched(MessageEditedBroadcast::class);
         Event::assertDispatched(function (MessageEditedEvent $event) use ($message) {
-            return is_null($event->originalBody);
+            $this->assertSame($message->id, $event->message->id);
+            $this->assertNull($event->originalBody);
+
+            return true;
         });
     }
 }

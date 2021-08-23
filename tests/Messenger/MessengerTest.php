@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Messenger;
 
 use InvalidArgumentException;
 use RTippin\Messenger\Brokers\BroadcastBroker;
-use RTippin\Messenger\Brokers\FriendBroker;
 use RTippin\Messenger\Brokers\NullBroadcastBroker;
 use RTippin\Messenger\Brokers\NullVideoBroker;
 use RTippin\Messenger\Contracts\BroadcastDriver;
