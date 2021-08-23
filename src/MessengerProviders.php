@@ -24,6 +24,11 @@ trait MessengerProviders
     private ?MessengerProvider $provider = null;
 
     /**
+     * @var null|MessengerProvider
+     */
+    private ?MessengerProvider $scopedProvider = null;
+
+    /**
      * @var MessengerModel|null
      */
     private ?MessengerModel $providerMessengerModel = null;
@@ -69,11 +74,6 @@ trait MessengerProviders
     private ?Participant $ghostParticipant = null;
 
     /**
-     * @var bool
-     */
-    private bool $providerIsSet = false;
-
-    /**
      * Here we set a compatible provider model, which can be reused throughout our application!
      * It is recommended to set this in a middleware, after you have acquired your authenticated
      * user/provider. Most actions and methods require a provider being set before being used.
@@ -81,16 +81,22 @@ trait MessengerProviders
      * such as in a custom job or action.
      *
      * @param MessengerProvider|mixed|null $provider
+     * @param bool $scoped
      * @return $this
      * @throws InvalidProviderException
      */
-    public function setProvider($provider = null): self
+    public function setProvider($provider = null, bool $scoped = false): self
     {
         if (! $this->isValidMessengerProvider($provider)) {
             $this->throwProviderError();
         }
 
-        $this->provider = $provider;
+        if ($scoped) {
+            $this->scopedProvider = $provider;
+        } else {
+            $this->provider = $provider;
+        }
+
         $providerSettings = $this->providers->get(get_class($provider));
         $this->alias = $providerSettings['alias'];
         $this->providerHasFriends = $providerSettings['friendable'];
@@ -98,9 +104,22 @@ trait MessengerProviders
         $this->providerCanMessageFirst = $this->getCanMessageFirstClasses($providerSettings['cant_message_first']);
         $this->providerCanFriend = $this->getCanFriendClasses($providerSettings['cant_friend']);
         $this->providerCanSearch = $this->getCanSearchClasses($providerSettings['cant_search']);
-        $this->providerIsSet = true;
-
+        $this->flushFriendDriverInstance();
         app()->instance(MessengerProvider::class, $provider);
+
+        return $this;
+    }
+
+    /**
+     * Overwrites our active provider while preserving any prior provider set.
+     *
+     * @param MessengerProvider|mixed|null $provider
+     * @return $this
+     * @throws InvalidProviderException
+     */
+    public function setScopedProvider($provider = null): self
+    {
+        $this->setProvider($provider, true);
 
         return $this;
     }
@@ -141,27 +160,54 @@ trait MessengerProviders
     /**
      * Unset the active provider.
      *
+     * @param bool $scoped
+     * @param bool $flush
      * @return $this
+     * @throws InvalidProviderException
      */
-    public function unsetProvider(): self
+    public function unsetProvider(bool $scoped = false, bool $flush = false): self
     {
         $this->alias = null;
-        $this->provider = null;
         $this->providerHasFriends = false;
         $this->providerHasDevices = false;
         $this->providerCanMessageFirst = [];
         $this->providerCanFriend = [];
         $this->providerCanSearch = [];
-        $this->providerIsSet = false;
         $this->providerMessengerModel = null;
-
+        $this->flushFriendDriverInstance();
         app()->forgetInstance(MessengerProvider::class);
+
+        if ($flush) {
+            $this->scopedProvider = null;
+            $this->provider = null;
+        } elseif ($scoped) {
+            $this->scopedProvider = null;
+            // If we had a prior provider set, we want to re-set them.
+            if ($this->isProviderSet()) {
+                $this->setProvider($this->provider);
+            }
+        } else {
+            $this->provider = null;
+        }
 
         return $this;
     }
 
     /**
-     * Get the current Messenger Provider.
+     * Unset the active scoped provider. Re-set the previous provider, if one was set.
+     *
+     * @return $this
+     * @throws InvalidProviderException
+     */
+    public function unsetScopedProvider(): self
+    {
+        $this->unsetProvider(true);
+
+        return $this;
+    }
+
+    /**
+     * Get the current or scoped Messenger Provider.
      *
      * @param bool $withoutRelations
      * @return MessengerProvider|Model|null
@@ -169,10 +215,14 @@ trait MessengerProviders
     public function getProvider(bool $withoutRelations = false): ?MessengerProvider
     {
         if ($withoutRelations && $this->isProviderSet()) {
-            return $this->provider->withoutRelations();
+            return $this->isScopedProviderSet()
+                ? $this->scopedProvider->withoutRelations()
+                : $this->provider->withoutRelations();
         }
 
-        return $this->provider;
+        return $this->isScopedProviderSet()
+            ? $this->scopedProvider
+            : $this->provider;
     }
 
     /**
@@ -308,7 +358,15 @@ trait MessengerProviders
      */
     public function isProviderSet(): bool
     {
-        return $this->providerIsSet;
+        return ! is_null($this->provider) || ! is_null($this->scopedProvider);
+    }
+
+    /**
+     * @return bool
+     */
+    public function isScopedProviderSet(): bool
+    {
+        return ! is_null($this->scopedProvider);
     }
 
     /**

@@ -4,9 +4,11 @@ namespace RTippin\Messenger\Tests\Messenger;
 
 use InvalidArgumentException;
 use RTippin\Messenger\Brokers\BroadcastBroker;
+use RTippin\Messenger\Brokers\FriendBroker;
 use RTippin\Messenger\Brokers\NullBroadcastBroker;
 use RTippin\Messenger\Brokers\NullVideoBroker;
 use RTippin\Messenger\Contracts\BroadcastDriver;
+use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\VideoDriver;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
@@ -502,8 +504,9 @@ class MessengerTest extends MessengerTestCase
     }
 
     /** @test */
-    public function it_sets_valid_provider()
+    public function it_sets_provider()
     {
+        $friends = app(FriendDriver::class);
         $provider = new UserModel([
             'id' => 1,
             'name' => 'Richard Tippin',
@@ -518,6 +521,7 @@ class MessengerTest extends MessengerTestCase
 
         $this->assertSame($provider, $this->messenger->getProvider());
         $this->assertNotSame($provider, $this->messenger->getProvider(true));
+        $this->assertNotSame($friends, app(FriendDriver::class));
         $this->assertSame('user', $this->messenger->getProviderAlias());
         $this->assertSame(1, $this->messenger->getProvider()->getKey());
         $this->assertSame(UserModel::class, get_class($this->messenger->getProvider()));
@@ -527,6 +531,58 @@ class MessengerTest extends MessengerTestCase
         $this->assertTrue($this->messenger->providerHasDevices());
         $this->assertTrue($this->messenger->isProviderSet());
         $this->assertSame($expected, $this->messenger->getSearchableForCurrentProvider());
+    }
+
+    /** @test */
+    public function it_sets_scoped_provider()
+    {
+        $friends = app(FriendDriver::class);
+        $scoped = new UserModel([
+            'id' => 1,
+            'name' => 'Richard Tippin',
+            'email' => 'tippindev@gmail.com',
+            'password' => 'secret',
+        ]);
+        $this->messenger->setScopedProvider($scoped);
+        $expected = [
+            (new UserModel)->getMorphClass(),
+            (new CompanyModel)->getMorphClass(),
+        ];
+
+        $this->assertSame($scoped, $this->messenger->getProvider());
+        $this->assertNotSame($scoped, $this->messenger->getProvider(true));
+        $this->assertNotSame($friends, app(FriendDriver::class));
+        $this->assertSame('user', $this->messenger->getProviderAlias());
+        $this->assertSame(1, $this->messenger->getProvider()->getKey());
+        $this->assertSame(UserModel::class, get_class($this->messenger->getProvider()));
+        $this->assertTrue(app()->bound(MessengerProvider::class));
+        $this->assertSame($scoped, app(MessengerProvider::class));
+        $this->assertTrue($this->messenger->providerHasFriends());
+        $this->assertTrue($this->messenger->providerHasDevices());
+        $this->assertTrue($this->messenger->isProviderSet());
+        $this->assertTrue($this->messenger->isScopedProviderSet());
+        $this->assertSame($expected, $this->messenger->getSearchableForCurrentProvider());
+    }
+
+    /** @test */
+    public function it_returns_scoped_provider_instead_of_first_provider_when_set()
+    {
+        $provider = new UserModel([
+            'id' => 1,
+            'name' => 'Richard Tippin',
+            'email' => 'tippindev@gmail.com',
+            'password' => 'secret',
+        ]);
+        $scoped = new UserModel([
+            'id' => 2,
+            'name' => 'John Doe',
+            'email' => 'doe@example.org',
+            'password' => 'secret',
+        ]);
+        $this->messenger->setProvider($provider)->setScopedProvider($scoped);
+
+        $this->assertSame($scoped, $this->messenger->getProvider());
+        $this->assertNotSame($provider, $this->messenger->getProvider());
     }
 
     /** @test */
@@ -559,17 +615,78 @@ class MessengerTest extends MessengerTestCase
         ]);
 
         $this->messenger->setProvider($provider);
+        $friends = app(FriendDriver::class);
 
         $this->assertSame($provider, $this->messenger->getProvider());
+        $this->assertSame($friends, app(FriendDriver::class));
 
         $this->messenger->unsetProvider();
 
         $this->assertNull($this->messenger->getProviderAlias());
         $this->assertFalse(app()->bound(MessengerProvider::class));
+        $this->assertNotSame($friends, app(FriendDriver::class));
         $this->assertFalse($this->messenger->providerHasFriends());
         $this->assertFalse($this->messenger->providerHasDevices());
         $this->assertFalse($this->messenger->isProviderSet());
         $this->assertSame([], $this->messenger->getSearchableForCurrentProvider());
+    }
+
+    /** @test */
+    public function it_unsets_scoped_provider()
+    {
+        $provider = new UserModel([
+            'id' => 1,
+            'name' => 'Richard Tippin',
+            'email' => 'tippindev@gmail.com',
+            'password' => 'secret',
+        ]);
+
+        $this->messenger->setScopedProvider($provider);
+        $friends = app(FriendDriver::class);
+
+        $this->assertSame($friends, app(FriendDriver::class));
+        $this->assertSame($provider, $this->messenger->getProvider());
+
+        $this->messenger->unsetScopedProvider();
+
+        $this->assertNotSame($friends, app(FriendDriver::class));
+        $this->assertNull($this->messenger->getProviderAlias());
+        $this->assertFalse(app()->bound(MessengerProvider::class));
+        $this->assertFalse($this->messenger->providerHasFriends());
+        $this->assertFalse($this->messenger->providerHasDevices());
+        $this->assertFalse($this->messenger->isProviderSet());
+        $this->assertFalse($this->messenger->isScopedProviderSet());
+        $this->assertSame([], $this->messenger->getSearchableForCurrentProvider());
+    }
+
+    /** @test */
+    public function it_unsets_scoped_provider_and_sets_previous_provider()
+    {
+        $provider = new UserModel([
+            'id' => 1,
+            'name' => 'Richard Tippin',
+            'email' => 'tippindev@gmail.com',
+            'password' => 'secret',
+        ]);
+        $scoped = new UserModel([
+            'id' => 2,
+            'name' => 'John Doe',
+            'email' => 'doe@example.org',
+            'password' => 'secret',
+        ]);
+        $this->messenger->setProvider($provider)->setScopedProvider($scoped);
+        $friends = app(FriendDriver::class);
+
+        $this->assertSame($friends, app(FriendDriver::class));
+        $this->assertSame($scoped, $this->messenger->getProvider());
+        $this->assertNotSame($provider, $this->messenger->getProvider());
+
+        $this->messenger->unsetScopedProvider();
+
+        $this->assertTrue($this->messenger->isProviderSet());
+        $this->assertFalse($this->messenger->isScopedProviderSet());
+        $this->assertSame($provider, $this->messenger->getProvider());
+        $this->assertNotSame($friends, app(FriendDriver::class));
     }
 
     /** @test */
@@ -581,13 +698,22 @@ class MessengerTest extends MessengerTestCase
             'email' => 'tippindev@gmail.com',
             'password' => 'secret',
         ]);
-
+        $scoped = new UserModel([
+            'id' => 2,
+            'name' => 'John Doe',
+            'email' => 'doe@example.org',
+            'password' => 'secret',
+        ]);
         $this->messenger->setProvider($provider)
+            ->setScopedProvider($scoped)
             ->setCalling(false)
             ->setBots(false)
             ->setSystemMessages(false);
+        $friends = app(FriendDriver::class);
 
+        $this->assertSame($friends, app(FriendDriver::class));
         $this->assertTrue($this->messenger->isProviderSet());
+        $this->assertTrue($this->messenger->isScopedProviderSet());
         $this->assertFalse($this->messenger->isCallingEnabled());
         $this->assertFalse($this->messenger->isBotsEnabled());
         $this->assertFalse($this->messenger->isSystemMessagesEnabled());
@@ -595,9 +721,11 @@ class MessengerTest extends MessengerTestCase
         $this->messenger->flush();
 
         $this->assertFalse($this->messenger->isProviderSet());
+        $this->assertFalse($this->messenger->isScopedProviderSet());
         $this->assertTrue($this->messenger->isCallingEnabled());
         $this->assertTrue($this->messenger->isBotsEnabled());
         $this->assertTrue($this->messenger->isSystemMessagesEnabled());
+        $this->assertNotSame($friends, app(FriendDriver::class));
     }
 
     /** @test */

@@ -8,7 +8,11 @@ use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Participant;
 
 /**
- * @method static \RTippin\Messenger\Messenger setProvider($provider = null)
+ * @method static \RTippin\Messenger\Messenger setProvider($provider = null, bool $scoped = false)
+ * @method static \RTippin\Messenger\Messenger setScopedProvider($provider = null)
+ * @method static \RTippin\Messenger\Messenger unsetProvider(bool $scoped = false, bool $flush = false)
+ * @method static \RTippin\Messenger\Messenger unsetScopedProvider()
+ * @method static MessengerProvider|null getProvider(bool $withoutRelations = false)
  * @method static bool isValidMessengerProvider($provider = null)
  * @method static string|null findProviderAlias($provider = null)
  * @method static MessengerProvider|string|null findAliasProvider(string $alias)
@@ -93,8 +97,6 @@ use RTippin\Messenger\Models\Participant;
  * @method static bool isProviderAway($provider = null)
  * @method static int getProviderOnlineStatus($provider = null)
  * @method static \RTippin\Messenger\Models\Messenger|null getProviderMessenger($provider = null)
- * @method static \RTippin\Messenger\Messenger unsetProvider()
- * @method static MessengerProvider|null getProvider(bool $withoutRelations = false)
  * @method static string|null getProviderAlias()
  * @method static bool providerHasFriends()
  * @method static bool providerHasDevices()

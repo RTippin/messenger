@@ -275,6 +275,7 @@ trait MessengerConfig
      */
     private static array $guarded = [
         'provider',
+        'scopedProvider',
         'id',
         'alias',
         'ghost',
@@ -282,7 +283,6 @@ trait MessengerConfig
         'providerMessengerModel',
         'providerHasFriends',
         'ghostParticipant',
-        'providerIsSet',
         'providers',
         'providerCanSearch',
         'providerCanFriend',

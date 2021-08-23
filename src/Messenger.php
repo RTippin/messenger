@@ -7,7 +7,9 @@ use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
+use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Models\Bot;
 
 /**
@@ -245,11 +247,16 @@ final class Messenger
     }
 
     /**
-     * Flush any active provider set, and reset our configs to default values.
+     * Flush any active and scoped provider set, reset our configs to defaults,
+     * and flush the FriendDriver instance from the container.
+     *
+     * @throws InvalidProviderException
      */
     public function flush(): void
     {
-        $this->unsetProvider()->setMessengerConfig();
+        $this->unsetProvider(false, true);
+        $this->setMessengerConfig();
+        $this->flushFriendDriverInstance();
     }
 
     /**
@@ -317,5 +324,13 @@ final class Messenger
         }
 
         return $provider;
+    }
+
+    /**
+     * Flush any active instance of our FriendDriver from the container.
+     */
+    private function flushFriendDriverInstance(): void
+    {
+        app()->instance(FriendDriver::class, null);
     }
 }
