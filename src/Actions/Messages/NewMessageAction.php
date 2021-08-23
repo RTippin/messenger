@@ -40,9 +40,9 @@ abstract class NewMessageAction extends BaseMessengerAction
     private int $messageType;
 
     /**
-     * @var string
+     * @var string|null
      */
-    private string $messageBody;
+    private ?string $messageBody;
 
     /**
      * @var string|null
@@ -97,10 +97,10 @@ abstract class NewMessageAction extends BaseMessengerAction
     }
 
     /**
-     * @param string $body
+     * @param string|null $body
      * @return $this
      */
-    protected function setMessageBody(string $body): self
+    protected function setMessageBody(?string $body): self
     {
         $this->messageBody = $body;
 

@@ -111,7 +111,7 @@ class MessengerComposer
      */
     public function from(MessengerProvider $provider): self
     {
-        $this->messenger->setProvider($provider);
+        $this->messenger->setScopedProvider($provider);
 
         return $this;
     }
@@ -135,8 +135,7 @@ class MessengerComposer
      * @param string|null $replyingToId
      * @param array|null $extra
      * @return StoreMessage
-     * @throws MessengerComposerException
-     * @throws Throwable
+     * @throws MessengerComposerException|Throwable
      */
     public function message(?string $message,
                             ?string $replyingToId = null,
@@ -146,11 +145,15 @@ class MessengerComposer
 
         $this->silenceActionWhenSilent($action);
 
-        return $action->execute($this->resolveToThread(), [
+        $action->execute($this->resolveThread(), [
             'message' => $message,
             'reply_to_id' => $replyingToId,
             'extra' => $extra,
         ]);
+
+        $this->flush();
+
+        return $action;
     }
 
     /**
@@ -170,11 +173,15 @@ class MessengerComposer
 
         $this->silenceActionWhenSilent($action);
 
-        return $action->execute($this->resolveToThread(), [
+        $action->execute($this->resolveThread(), [
             'image' => $image,
             'reply_to_id' => $replyingToId,
             'extra' => $extra,
         ]);
+
+        $this->flush();
+
+        return $action;
     }
 
     /**
@@ -194,11 +201,15 @@ class MessengerComposer
 
         $this->silenceActionWhenSilent($action);
 
-        return $action->execute($this->resolveToThread(), [
+        $action->execute($this->resolveThread(), [
             'document' => $document,
             'reply_to_id' => $replyingToId,
             'extra' => $extra,
         ]);
+
+        $this->flush();
+
+        return $action;
     }
 
     /**
@@ -218,11 +229,15 @@ class MessengerComposer
 
         $this->silenceActionWhenSilent($action);
 
-        return $action->execute($this->resolveToThread(), [
+        $action->execute($this->resolveThread(), [
             'audio' => $audio,
             'reply_to_id' => $replyingToId,
             'extra' => $extra,
         ]);
+
+        $this->flush();
+
+        return $action;
     }
 
     /**
@@ -240,11 +255,15 @@ class MessengerComposer
 
         $this->silenceActionWhenSilent($action);
 
-        return $action->execute(
-            $this->resolveToThread(),
+        $action->execute(
+            $this->resolveThread(),
             $message,
             $reaction
         );
+
+        $this->flush();
+
+        return $action;
     }
 
     /**
@@ -252,11 +271,17 @@ class MessengerComposer
      *
      * @return SendKnock
      * @throws FeatureDisabledException|KnockException
-     * @throws MessengerComposerException
+     * @throws MessengerComposerException|Throwable
      */
     public function knock(): SendKnock
     {
-        return app(SendKnock::class)->execute($this->resolveToThread());
+        $action = app(SendKnock::class);
+
+        $action->execute($this->resolveThread());
+
+        $this->flush();
+
+        return $action;
     }
 
     /**
@@ -264,7 +289,7 @@ class MessengerComposer
      *
      * @param Participant|null $participant
      * @return MarkParticipantRead
-     * @throws MessengerComposerException
+     * @throws MessengerComposerException|Throwable
      */
     public function read(?Participant $participant = null): MarkParticipantRead
     {
@@ -272,9 +297,13 @@ class MessengerComposer
 
         $this->silenceActionWhenSilent($action);
 
-        return $action->execute(
-            $participant ?: $this->resolveToThread()->currentParticipant()
+        $action->execute(
+            $participant ?: $this->resolveThread()->currentParticipant()
         );
+
+        $this->flush();
+
+        return $action;
     }
 
     /**
@@ -286,7 +315,7 @@ class MessengerComposer
     public function emitTyping(): self
     {
         $this->broadcaster
-            ->toPresence($this->resolveToThread())
+            ->toPresence($this->resolveThread())
             ->with(PresenceEvents::makeTypingEvent($this->messenger->getProvider()))
             ->broadcast(PresenceEvents::getTypingClass());
 
@@ -302,7 +331,7 @@ class MessengerComposer
     public function emitStopTyping(): self
     {
         $this->broadcaster
-            ->toPresence($this->resolveToThread())
+            ->toPresence($this->resolveThread())
             ->with(PresenceEvents::makeStopTypingEvent($this->messenger->getProvider()))
             ->broadcast(PresenceEvents::getStopTypingClass());
 
@@ -318,7 +347,7 @@ class MessengerComposer
     public function emitRead(?Message $message = null): self
     {
         $this->broadcaster
-            ->toPresence($this->resolveToThread())
+            ->toPresence($this->resolveThread())
             ->with(PresenceEvents::makeReadEvent($this->messenger->getProvider(), $message))
             ->broadcast(PresenceEvents::getReadClass());
 
@@ -342,7 +371,7 @@ class MessengerComposer
      * @return Thread
      * @throws MessengerComposerException
      */
-    private function resolveToThread(): Thread
+    private function resolveThread(): Thread
     {
         $this->bailIfNotReadyToCompose();
 
@@ -352,11 +381,9 @@ class MessengerComposer
 
         $thread = $this->locator->getProviderPrivateThreadWithRecipient($this->to);
 
-        if (is_null($thread)) {
-            return $this->to = $this->makePrivateThread();
-        }
-
-        return $this->to = $thread;
+        return $this->to = is_null($thread)
+            ? $this->makePrivateThread()
+            : $thread;
     }
 
     /**
@@ -417,5 +444,17 @@ class MessengerComposer
         if ($this->silent) {
             $action->withoutBroadcast();
         }
+    }
+
+    /**
+     * Reset our state and unset the scoped provider.
+     *
+     * @throws InvalidProviderException
+     */
+    private function flush(): void
+    {
+        $this->silent = false;
+        $this->to = null;
+        $this->messenger->unsetScopedProvider();
     }
 }

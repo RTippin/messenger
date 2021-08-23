@@ -63,7 +63,7 @@ class StoreMessage extends NewMessageAction
     {
         $this->setThread($parameters[0])
             ->setMessageType('MESSAGE')
-            ->setMessageBody($this->emoji->toShort($parameters[1]['message']))
+            ->setMessageBody($this->emoji->toShort($parameters[1]['message']) ?: null)
             ->setMessageOptionalParameters($parameters[1])
             ->setMessageOwner($this->messenger->getProvider())
             ->setSenderIp($parameters[2] ?? null)

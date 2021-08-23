@@ -15,17 +15,17 @@ class MessageEditedEvent
     public Message $message;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public string $originalBody;
+    public ?string $originalBody;
 
     /**
      * Create a new event instance.
      *
      * @param Message $message
-     * @param string $originalBody
+     * @param string|null $originalBody
      */
-    public function __construct(Message $message, string $originalBody)
+    public function __construct(Message $message, ?string $originalBody)
     {
         $this->message = $message;
         $this->originalBody = $originalBody;

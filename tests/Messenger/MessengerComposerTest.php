@@ -26,7 +26,10 @@ use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Events\ParticipantReadEvent;
 use RTippin\Messenger\Events\ReactionAddedEvent;
 use RTippin\Messenger\Exceptions\MessengerComposerException;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\Participant;
+use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Support\MessengerComposer;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
@@ -99,44 +102,86 @@ class MessengerComposerTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_uses_set_provider_without_from()
+    {
+        Messenger::setProvider($this->tippin);
+
+        $this->composer->to($this->doe)->message('Test');
+
+        $this->assertFalse(Messenger::isScopedProviderSet());
+        $this->assertSame($this->tippin, Messenger::getProvider());
+        $this->assertDatabaseHas('messages', [
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => $this->tippin->getMorphClass(),
+            'body' => 'Test',
+        ]);
+    }
+
+    /** @test */
+    public function it_uses_from_to_set_scoped_provider()
+    {
+        $this->composer->from($this->doe);
+
+        $this->assertTrue(Messenger::isScopedProviderSet());
+        $this->assertSame($this->doe, Messenger::getProvider());
+    }
+
+    /** @test */
     public function it_sends_message_with_existing_thread()
     {
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $thread = Thread::create();
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->message('Test');
 
-        $this->composer->to($thread)->from($this->tippin)->message('Test');
-
-        $this->assertDatabaseCount('messages', 1);
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $thread->id,
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => $this->tippin->getMorphClass(),
+            'body' => 'Test',
+            'type' => 0,
+        ]);
     }
 
     /** @test */
     public function it_sends_message_with_null_body()
     {
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $thread = Thread::create();
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->message(null);
 
-        $this->composer->to($thread)->from($this->tippin)->message(null);
-
-        $this->assertDatabaseCount('messages', 1);
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $thread->id,
+            'body' => null,
+        ]);
     }
 
     /** @test */
     public function it_sends_message_with_extra()
     {
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
-
-        $this->composer->to($thread)->from($this->tippin)->message('Test', null, ['extra' => true]);
+        $thread = Thread::create();
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->message('Test', null, ['extra' => true]);
 
         $this->assertDatabaseHas('messages', [
             'body' => 'Test',
             'extra' => '{"extra":true}',
+            'thread_id' => $thread->id,
         ]);
     }
 
     /** @test */
     public function it_sends_message_and_returns_message_action()
     {
-        $thread = $this->createGroupThread($this->tippin);
-
-        $message = $this->composer->to($thread)->from($this->tippin)->message('Test');
+        $message = $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->message('Test');
 
         $this->assertInstanceOf(StoreMessage::class, $message);
     }
@@ -144,11 +189,49 @@ class MessengerComposerTest extends FeatureTestCase
     /** @test */
     public function it_sends_message_and_creates_new_thread()
     {
-        $this->composer->to($this->doe)->from($this->tippin)->message('Test');
+        $this->composer
+            ->to($this->doe)
+            ->from($this->tippin)
+            ->message('Test');
 
         $this->assertDatabaseCount('threads', 1);
         $this->assertDatabaseCount('participants', 2);
         $this->assertDatabaseCount('messages', 1);
+    }
+
+    /** @test */
+    public function it_sends_message_and_flushes_state()
+    {
+        //Set our thread and user. Sending the message should flush our states.
+        $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->message('Test');
+
+        $this->assertNull(Messenger::getProvider());
+        $this->assertFalse(Messenger::isProviderSet());
+
+        $this->expectException(MessengerComposerException::class);
+        $this->expectExceptionMessage('No "TO" entity has been set.');
+        //TO and FROM have been reset, thus we expect an exception calling to
+        //the method on the same instance without setting a new TO and FROM.
+        $this->composer->message('Test');
+    }
+
+    /** @test */
+    public function it_sends_message_and_flushes_state_reverting_prior_provider()
+    {
+        //Set our main provider to doe.
+        Messenger::setProvider($this->doe);
+        //Our scoped provider tippin will be set for the message action.
+        //When complete, doe should be reverted to the active provider.
+        $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->message('Test');
+
+        $this->assertSame($this->doe, Messenger::getProvider());
+        $this->assertFalse(Messenger::isScopedProviderSet());
     }
 
     /** @test */
@@ -159,9 +242,12 @@ class MessengerComposerTest extends FeatureTestCase
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->composer->to($thread)->from($this->tippin)->message('Test');
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->message('Test');
 
         Event::assertDispatched(NewMessageBroadcast::class);
         Event::assertDispatched(NewMessageEvent::class);
@@ -175,9 +261,13 @@ class MessengerComposerTest extends FeatureTestCase
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->composer->to($thread)->from($this->tippin)->silent()->message('Test');
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->silent()
+            ->message('Test');
 
         Event::assertNotDispatched(NewMessageBroadcast::class);
         Event::assertDispatched(NewMessageEvent::class);
@@ -186,19 +276,28 @@ class MessengerComposerTest extends FeatureTestCase
     /** @test */
     public function it_sends_image_message_with_existing_thread()
     {
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $thread = Thread::create();
 
-        $this->composer->to($thread)->from($this->tippin)->image(UploadedFile::fake()->image('test.jpg'));
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->image(UploadedFile::fake()->image('test.jpg'));
 
-        $this->assertDatabaseCount('messages', 1);
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $thread->id,
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => $this->tippin->getMorphClass(),
+            'type' => 1,
+        ]);
     }
 
     /** @test */
     public function it_sends_image_message_and_returns_image_action()
     {
-        $thread = $this->createGroupThread($this->tippin);
-
-        $image = $this->composer->to($thread)->from($this->tippin)->image(UploadedFile::fake()->image('test.jpg'));
+        $image = $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->image(UploadedFile::fake()->image('test.jpg'));
 
         $this->assertInstanceOf(StoreImageMessage::class, $image);
     }
@@ -206,11 +305,49 @@ class MessengerComposerTest extends FeatureTestCase
     /** @test */
     public function it_sends_image_message_and_creates_new_thread()
     {
-        $this->composer->to($this->doe)->from($this->tippin)->image(UploadedFile::fake()->image('test.jpg'));
+        $this->composer
+            ->to($this->doe)
+            ->from($this->tippin)
+            ->image(UploadedFile::fake()->image('test.jpg'));
 
         $this->assertDatabaseCount('threads', 1);
         $this->assertDatabaseCount('participants', 2);
         $this->assertDatabaseCount('messages', 1);
+    }
+
+    /** @test */
+    public function it_sends_image_message_and_flushes_state()
+    {
+        //Set our thread and user. Sending the image should flush our states.
+        $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->image(UploadedFile::fake()->image('test.jpg'));
+
+        $this->assertNull(Messenger::getProvider());
+        $this->assertFalse(Messenger::isProviderSet());
+
+        $this->expectException(MessengerComposerException::class);
+        $this->expectExceptionMessage('No "TO" entity has been set.');
+        //TO and FROM have been reset, thus we expect an exception calling to
+        //the method on the same instance without setting a new TO and FROM.
+        $this->composer->image(UploadedFile::fake()->image('test.jpg'));
+    }
+
+    /** @test */
+    public function it_sends_image_message_and_flushes_state_reverting_prior_provider()
+    {
+        //Set our main provider to doe.
+        Messenger::setProvider($this->doe);
+        //Our scoped provider tippin will be set for the image action.
+        //When complete, doe should be reverted to the active provider.
+        $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->image(UploadedFile::fake()->image('test.jpg'));
+
+        $this->assertSame($this->doe, Messenger::getProvider());
+        $this->assertFalse(Messenger::isScopedProviderSet());
     }
 
     /** @test */
@@ -221,9 +358,12 @@ class MessengerComposerTest extends FeatureTestCase
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->composer->to($thread)->from($this->tippin)->image(UploadedFile::fake()->image('test.jpg'));
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->image(UploadedFile::fake()->image('test.jpg'));
 
         Event::assertDispatched(NewMessageBroadcast::class);
         Event::assertDispatched(NewMessageEvent::class);
@@ -237,9 +377,13 @@ class MessengerComposerTest extends FeatureTestCase
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->composer->to($thread)->from($this->tippin)->silent()->image(UploadedFile::fake()->image('test.jpg'));
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->silent()
+            ->image(UploadedFile::fake()->image('test.jpg'));
 
         Event::assertNotDispatched(NewMessageBroadcast::class);
         Event::assertDispatched(NewMessageEvent::class);
@@ -248,19 +392,27 @@ class MessengerComposerTest extends FeatureTestCase
     /** @test */
     public function it_sends_document_message_with_existing_thread()
     {
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $thread = Thread::create();
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
 
-        $this->composer->to($thread)->from($this->tippin)->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
-
-        $this->assertDatabaseCount('messages', 1);
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $thread->id,
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => $this->tippin->getMorphClass(),
+            'type' => 2,
+        ]);
     }
 
     /** @test */
     public function it_sends_document_message_and_returns_document_action()
     {
-        $thread = $this->createGroupThread($this->tippin);
-
-        $document = $this->composer->to($thread)->from($this->tippin)->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
+        $document = $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
 
         $this->assertInstanceOf(StoreDocumentMessage::class, $document);
     }
@@ -268,11 +420,49 @@ class MessengerComposerTest extends FeatureTestCase
     /** @test */
     public function it_sends_document_message_and_creates_new_thread()
     {
-        $this->composer->to($this->doe)->from($this->tippin)->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
+        $this->composer
+            ->to($this->doe)
+            ->from($this->tippin)
+            ->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
 
         $this->assertDatabaseCount('threads', 1);
         $this->assertDatabaseCount('participants', 2);
         $this->assertDatabaseCount('messages', 1);
+    }
+
+    /** @test */
+    public function it_sends_document_message_and_flushes_state()
+    {
+        //Set our thread and user. Sending the document should flush our states.
+        $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
+
+        $this->assertNull(Messenger::getProvider());
+        $this->assertFalse(Messenger::isProviderSet());
+
+        $this->expectException(MessengerComposerException::class);
+        $this->expectExceptionMessage('No "TO" entity has been set.');
+        //TO and FROM have been reset, thus we expect an exception calling to
+        //the method on the same instance without setting a new TO and FROM.
+        $this->composer->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
+    }
+
+    /** @test */
+    public function it_sends_document_message_and_flushes_state_reverting_prior_provider()
+    {
+        //Set our main provider to doe.
+        Messenger::setProvider($this->doe);
+        //Our scoped provider tippin will be set for the document action.
+        //When complete, doe should be reverted to the active provider.
+        $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
+
+        $this->assertSame($this->doe, Messenger::getProvider());
+        $this->assertFalse(Messenger::isScopedProviderSet());
     }
 
     /** @test */
@@ -283,9 +473,12 @@ class MessengerComposerTest extends FeatureTestCase
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->composer->to($thread)->from($this->tippin)->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
 
         Event::assertDispatched(NewMessageBroadcast::class);
         Event::assertDispatched(NewMessageEvent::class);
@@ -299,9 +492,13 @@ class MessengerComposerTest extends FeatureTestCase
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->composer->to($thread)->from($this->tippin)->silent()->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->silent()
+            ->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
 
         Event::assertNotDispatched(NewMessageBroadcast::class);
         Event::assertDispatched(NewMessageEvent::class);
@@ -310,19 +507,27 @@ class MessengerComposerTest extends FeatureTestCase
     /** @test */
     public function it_sends_audio_message_with_existing_thread()
     {
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $thread = Thread::create();
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
 
-        $this->composer->to($thread)->from($this->tippin)->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
-
-        $this->assertDatabaseCount('messages', 1);
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $thread->id,
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => $this->tippin->getMorphClass(),
+            'type' => 3,
+        ]);
     }
 
     /** @test */
     public function it_sends_audio_message_and_returns_audio_action()
     {
-        $thread = $this->createGroupThread($this->tippin);
-
-        $audio = $this->composer->to($thread)->from($this->tippin)->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
+        $audio = $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
 
         $this->assertInstanceOf(StoreAudioMessage::class, $audio);
     }
@@ -330,11 +535,49 @@ class MessengerComposerTest extends FeatureTestCase
     /** @test */
     public function it_sends_audio_message_and_creates_new_thread()
     {
-        $this->composer->to($this->doe)->from($this->tippin)->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
+        $this->composer
+            ->to($this->doe)
+            ->from($this->tippin)
+            ->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
 
         $this->assertDatabaseCount('threads', 1);
         $this->assertDatabaseCount('participants', 2);
         $this->assertDatabaseCount('messages', 1);
+    }
+
+    /** @test */
+    public function it_sends_audio_message_and_flushes_state()
+    {
+        //Set our thread and user. Sending the audio should flush our states.
+        $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
+
+        $this->assertNull(Messenger::getProvider());
+        $this->assertFalse(Messenger::isProviderSet());
+
+        $this->expectException(MessengerComposerException::class);
+        $this->expectExceptionMessage('No "TO" entity has been set.');
+        //TO and FROM have been reset, thus we expect an exception calling to
+        //the method on the same instance without setting a new TO and FROM.
+        $this->composer->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
+    }
+
+    /** @test */
+    public function it_sends_audio_message_and_flushes_state_reverting_prior_provider()
+    {
+        //Set our main provider to doe.
+        Messenger::setProvider($this->doe);
+        //Our scoped provider tippin will be set for the audio action.
+        //When complete, doe should be reverted to the active provider.
+        $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
+
+        $this->assertSame($this->doe, Messenger::getProvider());
+        $this->assertFalse(Messenger::isScopedProviderSet());
     }
 
     /** @test */
@@ -345,9 +588,12 @@ class MessengerComposerTest extends FeatureTestCase
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->composer->to($thread)->from($this->tippin)->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
 
         Event::assertDispatched(NewMessageBroadcast::class);
         Event::assertDispatched(NewMessageEvent::class);
@@ -361,9 +607,13 @@ class MessengerComposerTest extends FeatureTestCase
             NewMessageBroadcast::class,
             NewMessageEvent::class,
         ]);
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $thread = $this->createGroupThread($this->tippin);
 
-        $this->composer->to($thread)->from($this->tippin)->silent()->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->silent()
+            ->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
 
         Event::assertNotDispatched(NewMessageBroadcast::class);
         Event::assertDispatched(NewMessageEvent::class);
@@ -372,23 +622,73 @@ class MessengerComposerTest extends FeatureTestCase
     /** @test */
     public function it_adds_reaction()
     {
-        $thread = $this->createGroupThread($this->tippin);
+        $thread = Thread::create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
 
-        $this->composer->to($thread)->from($this->tippin)->reaction($message, ':joy:');
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->reaction($message, ':joy:');
 
-        $this->assertDatabaseCount('message_reactions', 1);
+        $this->assertDatabaseHas('message_reactions', [
+            'message_id' => $message->id,
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => $this->tippin->getMorphClass(),
+            'reaction' => ':joy:',
+        ]);
     }
 
     /** @test */
     public function it_adds_reaction_and_returns_reaction_action()
     {
-        $thread = $this->createGroupThread($this->tippin);
+        $thread = Thread::create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
 
-        $reaction = $this->composer->to($thread)->from($this->tippin)->reaction($message, ':joy:');
+        $reaction = $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->reaction($message, ':joy:');
 
         $this->assertInstanceOf(AddReaction::class, $reaction);
+    }
+
+    /** @test */
+    public function it_adds_reaction_and_flushes_state()
+    {
+        $thread = Thread::create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        //Set our thread and user. Sending the reaction should flush our states.
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->reaction($message, ':joy:');
+
+        $this->assertNull(Messenger::getProvider());
+        $this->assertFalse(Messenger::isProviderSet());
+
+        $this->expectException(MessengerComposerException::class);
+        $this->expectExceptionMessage('No "TO" entity has been set.');
+        //TO and FROM have been reset, thus we expect an exception calling to
+        //the method on the same instance without setting a new TO and FROM.
+        $this->composer->reaction($message, ':joy:');
+    }
+
+    /** @test */
+    public function it_adds_reaction_and_flushes_state_reverting_prior_provider()
+    {
+        $thread = Thread::create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        //Set our main provider to doe.
+        Messenger::setProvider($this->doe);
+        //Our scoped provider tippin will be set for the reaction action.
+        //When complete, doe should be reverted to the active provider.
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->reaction($message, ':joy:');
+
+        $this->assertSame($this->doe, Messenger::getProvider());
+        $this->assertFalse(Messenger::isScopedProviderSet());
     }
 
     /** @test */
@@ -402,7 +702,10 @@ class MessengerComposerTest extends FeatureTestCase
         $thread = $this->createGroupThread($this->tippin);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
 
-        $this->composer->to($thread)->from($this->tippin)->reaction($message, ':joy:');
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->reaction($message, ':joy:');
 
         Event::assertDispatched(ReactionAddedBroadcast::class);
         Event::assertDispatched(ReactionAddedEvent::class);
@@ -419,7 +722,11 @@ class MessengerComposerTest extends FeatureTestCase
         $thread = $this->createGroupThread($this->tippin);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
 
-        $this->composer->to($thread)->from($this->tippin)->silent()->reaction($message, ':joy:');
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->silent()
+            ->reaction($message, ':joy:');
 
         Event::assertNotDispatched(ReactionAddedBroadcast::class);
         Event::assertDispatched(ReactionAddedEvent::class);
@@ -433,9 +740,12 @@ class MessengerComposerTest extends FeatureTestCase
             KnockBroadcast::class,
             KnockEvent::class,
         ]);
-        $thread = $this->createPrivateThread($this->tippin, $this->doe);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
 
-        $this->composer->to($thread)->from($this->tippin)->knock();
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->knock();
 
         Event::assertDispatched(KnockBroadcast::class);
         Event::assertDispatched(KnockEvent::class);
@@ -444,9 +754,10 @@ class MessengerComposerTest extends FeatureTestCase
     /** @test */
     public function it_sends_knock_and_returns_knock_action()
     {
-        $thread = $this->createGroupThread($this->tippin);
-
-        $knock = $this->composer->to($thread)->from($this->tippin)->knock();
+        $knock = $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->knock();
 
         $this->assertInstanceOf(SendKnock::class, $knock);
     }
@@ -454,10 +765,48 @@ class MessengerComposerTest extends FeatureTestCase
     /** @test */
     public function it_sends_knock_and_creates_new_thread()
     {
-        $this->composer->to($this->doe)->from($this->tippin)->knock();
+        $this->composer
+            ->to($this->doe)
+            ->from($this->tippin)
+            ->knock();
 
         $this->assertDatabaseCount('threads', 1);
         $this->assertDatabaseCount('participants', 2);
+    }
+
+    /** @test */
+    public function it_sends_knock_and_flushes_state()
+    {
+        //Set our thread and user. Sending the knock should flush our states.
+        $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->knock();
+
+        $this->assertNull(Messenger::getProvider());
+        $this->assertFalse(Messenger::isProviderSet());
+
+        $this->expectException(MessengerComposerException::class);
+        $this->expectExceptionMessage('No "TO" entity has been set.');
+        //TO and FROM have been reset, thus we expect an exception calling to
+        //the method on the same instance without setting a new TO and FROM.
+        $this->composer->knock();
+    }
+
+    /** @test */
+    public function it_sends_knock_and_flushes_state_reverting_prior_provider()
+    {
+        //Set our main provider to doe.
+        Messenger::setProvider($this->doe);
+        //Our scoped provider tippin will be set for the knock action.
+        //When complete, doe should be reverted to the active provider.
+        $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->knock();
+
+        $this->assertSame($this->doe, Messenger::getProvider());
+        $this->assertFalse(Messenger::isScopedProviderSet());
     }
 
     /** @test */
@@ -470,7 +819,10 @@ class MessengerComposerTest extends FeatureTestCase
         ]);
         $thread = $this->createGroupThread($this->tippin);
 
-        $this->composer->to($thread)->from($this->tippin)->read();
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->read();
 
         Event::assertDispatched(ParticipantReadBroadcast::class);
         Event::assertDispatched(ParticipantReadEvent::class);
@@ -484,9 +836,9 @@ class MessengerComposerTest extends FeatureTestCase
             ParticipantReadBroadcast::class,
             ParticipantReadEvent::class,
         ]);
-        $thread = $this->createGroupThread($this->tippin, $this->doe);
+        $participant = Participant::factory()->for(Thread::create())->owner($this->tippin)->create();
 
-        $this->composer->read($thread->participants()->first());
+        $this->composer->read($participant);
 
         Event::assertDispatched(ParticipantReadBroadcast::class);
         Event::assertDispatched(ParticipantReadEvent::class);
@@ -502,7 +854,11 @@ class MessengerComposerTest extends FeatureTestCase
         ]);
         $thread = $this->createGroupThread($this->tippin);
 
-        $this->composer->to($thread)->from($this->tippin)->silent()->read();
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->silent()
+            ->read();
 
         Event::assertNotDispatched(ParticipantReadBroadcast::class);
         Event::assertDispatched(ParticipantReadEvent::class);
@@ -511,9 +867,10 @@ class MessengerComposerTest extends FeatureTestCase
     /** @test */
     public function it_marks_read_and_returns_read_action()
     {
-        $thread = $this->createGroupThread($this->tippin);
-
-        $read = $this->composer->to($thread)->from($this->tippin)->read();
+        $read = $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->read();
 
         $this->assertInstanceOf(MarkParticipantRead::class, $read);
     }
@@ -521,19 +878,60 @@ class MessengerComposerTest extends FeatureTestCase
     /** @test */
     public function it_marks_read_and_creates_new_thread()
     {
-        $this->composer->to($this->doe)->from($this->tippin)->read();
+        $this->composer
+            ->to($this->doe)
+            ->from($this->tippin)
+            ->read();
 
         $this->assertDatabaseCount('threads', 1);
         $this->assertDatabaseCount('participants', 2);
     }
 
     /** @test */
+    public function it_marks_read_and_flushes_state()
+    {
+        //Set our thread and user. Sending the read should flush our states.
+        $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->read();
+
+        $this->assertNull(Messenger::getProvider());
+        $this->assertFalse(Messenger::isProviderSet());
+
+        $this->expectException(MessengerComposerException::class);
+        $this->expectExceptionMessage('No "TO" entity has been set.');
+        //TO and FROM have been reset, thus we expect an exception calling to
+        //the method on the same instance without setting a new TO and FROM.
+        $this->composer->read();
+    }
+
+    /** @test */
+    public function it_marks_read_and_flushes_state_reverting_prior_provider()
+    {
+        //Set our main provider to doe.
+        Messenger::setProvider($this->doe);
+        //Our scoped provider tippin will be set for the read action.
+        //When complete, doe should be reverted to the active provider.
+        $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->read();
+
+        $this->assertSame($this->doe, Messenger::getProvider());
+        $this->assertFalse(Messenger::isScopedProviderSet());
+    }
+
+    /** @test */
     public function it_sends_typing_broadcast()
     {
-        $thread = $this->createGroupThread($this->tippin);
+        $thread = Thread::create();
         Event::fake(Typing::class);
 
-        $this->composer->to($thread)->from($this->tippin)->emitTyping();
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->emitTyping();
 
         Event::assertDispatched(function (Typing $event) use ($thread) {
             $this->assertContains('presence-messenger.thread.'.$thread->id, $event->broadcastOn());
@@ -546,10 +944,13 @@ class MessengerComposerTest extends FeatureTestCase
     /** @test */
     public function it_sends_stopped_typing_broadcast()
     {
-        $thread = $this->createGroupThread($this->tippin);
+        $thread = Thread::create();
         Event::fake(StopTyping::class);
 
-        $this->composer->to($thread)->from($this->tippin)->emitStopTyping();
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->emitStopTyping();
 
         Event::assertDispatched(function (StopTyping $event) use ($thread) {
             $this->assertContains('presence-messenger.thread.'.$thread->id, $event->broadcastOn());
@@ -562,10 +963,13 @@ class MessengerComposerTest extends FeatureTestCase
     /** @test */
     public function it_sends_read_broadcast()
     {
-        $thread = $this->createGroupThread($this->tippin);
+        $thread = Thread::create();
         Event::fake(Read::class);
 
-        $this->composer->to($thread)->from($this->tippin)->emitRead();
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->emitRead();
 
         Event::assertDispatched(function (Read $event) use ($thread) {
             $this->assertContains('presence-messenger.thread.'.$thread->id, $event->broadcastOn());

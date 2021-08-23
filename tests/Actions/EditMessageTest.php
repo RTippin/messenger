@@ -129,4 +129,23 @@ class EditMessageTest extends FeatureTestCase
             return true;
         });
     }
+
+    /** @test */
+    public function it_fires_events_if_message_changed_and_previously_null()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            MessageEditedBroadcast::class,
+            MessageEditedEvent::class,
+        ]);
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => null]);
+
+        app(EditMessage::class)->execute($thread, $message, 'Edited');
+
+        Event::assertDispatched(MessageEditedBroadcast::class);
+        Event::assertDispatched(function (MessageEditedEvent $event) use ($message) {
+            return is_null($event->originalBody);
+        });
+    }
 }

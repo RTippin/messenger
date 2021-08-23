@@ -38,6 +38,7 @@ class StoreMessageTest extends FeatureTestCase
             'owner_type' => $this->tippin->getMorphClass(),
             'type' => 0,
             'body' => 'Hello World',
+            'extra' => null,
         ]);
     }
 
@@ -83,6 +84,23 @@ class StoreMessageTest extends FeatureTestCase
             'type' => 0,
             'body' => 'Extra',
             'extra' => '{"test":true}',
+        ]);
+    }
+
+    /** @test */
+    public function it_can_store_null_message_body()
+    {
+        $thread = Thread::factory()->create();
+
+        app(StoreMessage::class)->execute($thread, [
+            'message' => null,
+        ]);
+
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $thread->id,
+            'type' => 0,
+            'body' => null,
+            'extra' => null,
         ]);
     }
 
