@@ -18,6 +18,7 @@ use RTippin\Messenger\Database\Factories\MessageFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Support\Helpers;
+use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
@@ -52,6 +53,7 @@ use RTippin\Messenger\Traits\Uuids;
 class Message extends Model implements Ownerable
 {
     use HasFactory,
+        HasOwner,
         ScopesProvider,
         SoftDeletes,
         Uuids;

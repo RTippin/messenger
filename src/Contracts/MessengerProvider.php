@@ -5,8 +5,6 @@ namespace RTippin\Messenger\Contracts;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * App\Contracts\MessengerProvider.
- *
  * @mixin Model|\Eloquent
  */
 interface MessengerProvider
@@ -27,7 +25,7 @@ interface MessengerProvider
     public function getProviderName(): string;
 
     /**
-     * The column name your providers avatar is stored in the database as.
+     * The column name your provider's avatar is stored in the database as.
      *
      * @return string
      */

@@ -5,13 +5,13 @@ namespace RTippin\Messenger\Brokers;
 use Illuminate\Contracts\Broadcasting\Factory;
 use Illuminate\Support\Collection;
 use RTippin\Messenger\Broadcasting\Channels\MessengerPresenceChannel;
+use RTippin\Messenger\Broadcasting\Channels\MessengerPrivateChannel;
 use RTippin\Messenger\Broadcasting\MessengerBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\HasPresenceChannel;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Messenger;
-use RTippin\Messenger\Models\CallParticipant;
-use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\ParticipantRepository;
 use RTippin\Messenger\Services\PushNotificationService;
@@ -174,7 +174,7 @@ class BroadcastBroker implements BroadcastDriver
             }
         }
 
-        $this->reset();
+        $this->flush();
     }
 
     /**
@@ -189,35 +189,14 @@ class BroadcastBroker implements BroadcastDriver
     }
 
     /**
-     * Generate each private thread channel name. Accepts
-     * thread and call participants, or messenger provider.
-     *
-     * outputs private-messenger.{alias}.{id}
-     *
-     * @param mixed $recipient
+     * @param Ownerable|MessengerProvider|mixed $recipient
      * @return string|null
      */
     protected function generatePrivateChannel($recipient): ?string
     {
-        $abstract = is_object($recipient)
-            ? get_class($recipient)
-            : '';
-
-        $participants = [
-            Participant::class,
-            CallParticipant::class,
-        ];
-
-        if (in_array($abstract, $participants)
-            && $this->messenger->isValidMessengerProvider($recipient->owner_type)) {
-            /** @var Participant|CallParticipant $recipient */
-            return "private-messenger.{$this->messenger->findProviderAlias($recipient->owner_type)}.$recipient->owner_id";
-        }
-
-        if (! in_array($abstract, $participants)
-            && $this->messenger->isValidMessengerProvider($recipient)) {
-            /** @var MessengerProvider $recipient */
-            return "private-messenger.{$this->messenger->findProviderAlias($recipient)}.{$recipient->getKey()}";
+        if ($recipient instanceof Ownerable
+            || $recipient instanceof MessengerProvider) {
+            return new MessengerPrivateChannel($recipient);
         }
 
         return null;
@@ -281,7 +260,7 @@ class BroadcastBroker implements BroadcastDriver
     /**
      * Reset our state.
      */
-    protected function reset(): void
+    protected function flush(): void
     {
         $this->usingPresence = false;
         $this->thread = null;

@@ -3,9 +3,6 @@
 namespace RTippin\Messenger\Contracts;
 
 use Illuminate\Support\Collection;
-use RTippin\Messenger\Models\Call;
-use RTippin\Messenger\Models\CallParticipant;
-use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 
 /**
@@ -34,8 +31,8 @@ interface BroadcastDriver
 
     /**
      * Set recipients to the provided collection. Collection may
-     * contain a mix of messenger providers, thread participants,
-     * or call participants.
+     * contain a mix of messenger providers or any of our
+     * internal models that implement Ownerable.
      *
      * @param Collection $recipients
      * @return $this
@@ -45,7 +42,7 @@ interface BroadcastDriver
     /**
      * Set recipient to a single instance of the types listed below.
      *
-     * @param MessengerProvider|Participant|CallParticipant $recipient
+     * @param MessengerProvider|Ownerable|mixed $recipient
      * @return $this
      */
     public function to($recipient): self;
@@ -53,7 +50,7 @@ interface BroadcastDriver
     /**
      * Set single presence channel to broadcast on. Accepts Call or Thread.
      *
-     * @param Call|Thread $entity
+     * @param HasPresenceChannel|mixed $entity
      * @return $this
      */
     public function toPresence($entity): self;

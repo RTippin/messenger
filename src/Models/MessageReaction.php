@@ -12,6 +12,7 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\MessageReactionFactory;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
@@ -31,6 +32,7 @@ use RTippin\Messenger\Traits\Uuids;
 class MessageReaction extends Model implements Ownerable
 {
     use HasFactory,
+        HasOwner,
         Uuids,
         ScopesProvider;
 

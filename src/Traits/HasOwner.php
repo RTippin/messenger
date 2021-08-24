@@ -16,12 +16,24 @@ use RTippin\Messenger\Facades\Messenger;
 trait HasOwner
 {
     /**
-     * @return MorphTo|MessengerProvider
+     * @inheritDoc
      */
     public function owner(): MorphTo
     {
         return $this->morphTo()->withDefault(function () {
             return Messenger::getGhostProvider();
         });
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getOwnerPrivateChannel(): string
+    {
+        if (Messenger::isValidMessengerProvider($this->owner_type)) {
+            return Messenger::findProviderAlias($this->owner_type).'.'.$this->owner_id;
+        }
+
+        return '';
     }
 }
