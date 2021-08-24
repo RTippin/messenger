@@ -409,7 +409,7 @@ class BroadcastDriverTest extends FeatureTestCase
             'Messenger Model' => [
                 fn ($tippin) => \RTippin\Messenger\Models\Messenger::factory()
                     ->owner($tippin)
-                    ->create()
+                    ->create(),
             ],
             'Participant Model' => [
                 fn ($tippin) => Participant::factory()
