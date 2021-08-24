@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use RTippin\Messenger\Contracts\HasPresenceChannel;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\ThreadFactory;
 use RTippin\Messenger\Facades\Messenger;
@@ -52,7 +53,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @mixin Model|\Eloquent
  * @property bool $invitations
  */
-class Thread extends Model
+class Thread extends Model implements HasPresenceChannel
 {
     use HasFactory,
         ScopesProvider,
@@ -242,6 +243,14 @@ class Thread extends Model
             ->where('participants.owner_id', '=', $provider->getKey())
             ->where('participants.owner_type', '=', $provider->getMorphClass())
             ->whereNull('participants.deleted_at');
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPresenceChannel(): string
+    {
+        return 'thread.'.$this->id;
     }
 
     /**

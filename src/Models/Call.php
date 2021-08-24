@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use RTippin\Messenger\Contracts\HasPresenceChannel;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\CallFactory;
@@ -39,7 +40,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property bool $setup_complete
  * @property bool $teardown_complete
  */
-class Call extends Model implements Ownerable
+class Call extends Model implements HasPresenceChannel, Ownerable
 {
     use HasFactory,
         HasOwner,
@@ -103,6 +104,14 @@ class Call extends Model implements Ownerable
             CallParticipant::class,
             'call_id'
         );
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getPresenceChannel(): string
+    {
+        return "call.$this->id.thread.$this->thread_id";
     }
 
     /**

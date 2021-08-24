@@ -4,11 +4,12 @@ namespace RTippin\Messenger\Brokers;
 
 use Illuminate\Contracts\Broadcasting\Factory;
 use Illuminate\Support\Collection;
+use RTippin\Messenger\Broadcasting\Channels\MessengerPresenceChannel;
 use RTippin\Messenger\Broadcasting\MessengerBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
+use RTippin\Messenger\Contracts\HasPresenceChannel;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Messenger;
-use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
@@ -234,23 +235,13 @@ class BroadcastBroker implements BroadcastDriver
     }
 
     /**
-     * @param $entity
+     * @param HasPresenceChannel|mixed $entity
      * @return string|null
      */
     protected function generatePresenceChannel($entity): ?string
     {
-        $abstract = is_object($entity)
-            ? get_class($entity)
-            : null;
-
-        if ($abstract === Thread::class) {
-            /** @var Thread $entity */
-            return "presence-messenger.thread.$entity->id";
-        }
-
-        if ($abstract === Call::class) {
-            /** @var Call $entity */
-            return "presence-messenger.call.$entity->id.thread.$entity->thread_id";
+        if ($entity instanceof HasPresenceChannel) {
+            return new MessengerPresenceChannel($entity);
         }
 
         return null;

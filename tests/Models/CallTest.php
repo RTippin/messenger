@@ -64,6 +64,15 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_has_presence_channel()
+    {
+        $thread = Thread::factory()->create();
+        $call = Call::factory()->for($thread)->owner($this->tippin)->create();
+
+        $this->assertSame("call.$call->id.thread.$thread->id", $call->getPresenceChannel());
+    }
+
+    /** @test */
     public function owner_returns_ghost_if_not_found()
     {
         $call = Call::factory()->for(Thread::factory()->create())->create([

@@ -107,6 +107,14 @@ class ThreadTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_has_presence_channel()
+    {
+        $thread = Thread::factory()->create();
+
+        $this->assertSame('thread.'.$thread->id, $thread->getPresenceChannel());
+    }
+
+    /** @test */
     public function it_has_types()
     {
         $private = Thread::factory()->create();
