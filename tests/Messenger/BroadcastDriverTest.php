@@ -357,7 +357,7 @@ class BroadcastDriverTest extends FeatureTestCase
                 fn ($tippin) => Bot::factory()
                     ->for(Thread::factory()->create())
                     ->owner($tippin)
-                    ->create()
+                    ->create(),
             ],
             'BotAction Model' => [
                 fn ($tippin) => BotAction::factory()
@@ -365,13 +365,13 @@ class BroadcastDriverTest extends FeatureTestCase
                         Bot::factory()->for(
                             Thread::factory()->group()->create()
                         )->owner($tippin)->create()
-                    )->owner($tippin)->create()
+                    )->owner($tippin)->create(),
             ],
             'Call Model' => [
                 fn ($tippin) => Call::factory()
                     ->for(Thread::factory()->create())
                     ->owner($tippin)
-                    ->create()
+                    ->create(),
             ],
             'CallParticipant Model' => [
                 fn ($tippin) => CallParticipant::factory()
@@ -379,24 +379,24 @@ class BroadcastDriverTest extends FeatureTestCase
                         Call::factory()->for(
                             Thread::factory()->create()
                         )->owner($tippin)->create()
-                    )->owner($tippin)->create()
+                    )->owner($tippin)->create(),
             ],
             'Friend Model' => [
                 fn ($tippin) => Friend::factory()
                     ->providers($tippin, $tippin)
-                    ->create()
+                    ->create(),
             ],
             'Invite Model' => [
                 fn ($tippin) => Invite::factory()
                     ->for(Thread::factory()->group()->create())
                     ->owner($tippin)
-                    ->create()
+                    ->create(),
             ],
             'Message Model' => [
                 fn ($tippin) => Message::factory()
                     ->for(Thread::factory()->create())
                     ->owner($tippin)
-                    ->create()
+                    ->create(),
             ],
             'MessageReaction Model' => [
                 fn ($tippin) => MessageReaction::factory()
@@ -404,7 +404,7 @@ class BroadcastDriverTest extends FeatureTestCase
                         Message::factory()->for(
                             Thread::factory()->create()
                         )->owner($tippin)->create()
-                    )->owner($tippin)->create()
+                    )->owner($tippin)->create(),
             ],
             'Messenger Model' => [
                 fn ($tippin) => \RTippin\Messenger\Models\Messenger::factory()
@@ -416,7 +416,7 @@ class BroadcastDriverTest extends FeatureTestCase
                     ->for(Thread::factory()->create())
                     ->owner($tippin)
                     ->admin()
-                    ->create()
+                    ->create(),
             ],
         ];
     }
