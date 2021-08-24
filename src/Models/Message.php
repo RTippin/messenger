@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\MessageFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Definitions;
@@ -23,8 +24,6 @@ use RTippin\Messenger\Traits\Uuids;
 /**
  * @property string $id
  * @property string $thread_id
- * @property string $owner_type
- * @property string|int $owner_id
  * @property int $type
  * @property string|null $body
  * @property string $reply_to_id
@@ -36,7 +35,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \RTippin\Messenger\Models\Thread $thread
- * @property-read Model|MessengerProvider $owner
  * @property-read \RTippin\Messenger\Models\MessageEdit $edits
  * @property-read \RTippin\Messenger\Models\MessageReaction $reactions
  * @property-read \RTippin\Messenger\Models\Message $replyTo
@@ -51,12 +49,12 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static Builder|Message system()
  * @method static Builder|Message nonSystem()
  */
-class Message extends Model
+class Message extends Model implements Ownerable
 {
     use HasFactory,
+        ScopesProvider,
         SoftDeletes,
-        Uuids,
-        ScopesProvider;
+        Uuids;
 
     /**
      * Message types that are not system messages.

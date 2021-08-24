@@ -8,23 +8,22 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\BotFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\MessengerBots as Bots;
 use RTippin\Messenger\Support\Helpers;
+use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\ScopesProvider;
 
 /**
  * @property string|int $id
  * @property string $thread_id
- * @property string|int $owner_id
- * @property string $owner_type
  * @property string $name
  * @property string $avatar
  * @property bool $enabled
@@ -38,13 +37,13 @@ use RTippin\Messenger\Traits\ScopesProvider;
  * @property-read \RTippin\Messenger\Models\BotAction[]|Collection $validActions
  * @property-read \RTippin\Messenger\Models\BotAction[]|Collection $validUniqueActions
  * @mixin Model|\Eloquent
- * @property-read Model|MessengerProvider $owner
  */
-class Bot extends Model implements MessengerProvider
+class Bot extends Model implements MessengerProvider, Ownerable
 {
     use HasFactory,
-        SoftDeletes,
-        ScopesProvider;
+        HasOwner,
+        ScopesProvider,
+        SoftDeletes;
 
     /**
      * Create a new Eloquent model instance.
@@ -95,16 +94,6 @@ class Bot extends Model implements MessengerProvider
             if (Bots::shouldUseUuids()) {
                 $model->id = Str::orderedUuid()->toString();
             }
-        });
-    }
-
-    /**
-     * @return MorphTo|MessengerProvider
-     */
-    public function owner(): MorphTo
-    {
-        return $this->morphTo()->withDefault(function () {
-            return Messenger::getGhostProvider();
         });
     }
 

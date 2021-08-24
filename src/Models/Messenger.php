@@ -7,14 +7,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\MessengerFactory;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
  * @property string $id
- * @property string $owner_type
- * @property string|int $owner_id
  * @property bool $message_popups
  * @property bool $message_sound
  * @property bool $call_ringtone_sound
@@ -25,14 +24,13 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string|null $timezone
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read Model $owner
  * @mixin Model|\Eloquent
  */
-class Messenger extends Model
+class Messenger extends Model implements Ownerable
 {
     use HasFactory,
-        Uuids,
-        ScopesProvider;
+        ScopesProvider,
+        Uuids;
 
     /**
      * The database table used by the model.

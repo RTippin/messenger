@@ -7,28 +7,28 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\FriendFactory;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
  * @property string $id
- * @property string|int $owner_id
- * @property string $owner_type
  * @property string|int $party_id
  * @property string $party_type
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @mixin Model|\Eloquent
- * @property-read MessengerProvider $owner
  * @property-read MessengerProvider $party
  */
-class Friend extends Model
+class Friend extends Model implements Ownerable
 {
     use HasFactory,
-        Uuids,
-        ScopesProvider;
+        HasOwner,
+        ScopesProvider,
+        Uuids;
 
     /**
      * @var string
@@ -49,16 +49,6 @@ class Friend extends Model
      * @var array
      */
     protected $guarded = [];
-
-    /**
-     * @return MorphTo|MessengerProvider
-     */
-    public function owner(): MorphTo
-    {
-        return $this->morphTo()->withDefault(function () {
-            return Messenger::getGhostProvider();
-        });
-    }
 
     /**
      * @return MorphTo|MessengerProvider

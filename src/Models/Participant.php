@@ -9,20 +9,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\ParticipantFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Helpers;
+use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
  * @property string $id
  * @property string $thread_id
- * @property string $owner_type
- * @property string|int $owner_id
  * @property bool $admin
  * @property bool $muted
  * @property bool $pending
@@ -38,7 +36,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \Illuminate\Database\Eloquent\Collection|\RTippin\Messenger\Models\Message[] $messages
  * @property-read int|null $messages_count
- * @property-read Model|MessengerProvider $owner
  * @property-read \RTippin\Messenger\Models\Thread $thread
  * @method static \Illuminate\Database\Query\Builder|Participant onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|Participant withTrashed()
@@ -49,12 +46,13 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static Builder|Participant notMuted()
  * @method static Builder|Participant notPending()
  */
-class Participant extends Model
+class Participant extends Model implements Ownerable
 {
     use HasFactory,
+        HasOwner,
+        ScopesProvider,
         SoftDeletes,
-        Uuids,
-        ScopesProvider;
+        Uuids;
 
     /**
      * The database table used by the model.
@@ -129,16 +127,6 @@ class Participant extends Model
         )
             ->forProviderWithModel($this)
             ->latest();
-    }
-
-    /**
-     * @return MorphTo|MessengerProvider
-     */
-    public function owner(): MorphTo
-    {
-        return $this->morphTo()->withDefault(function () {
-            return Messenger::getGhostProvider();
-        });
     }
 
     /**

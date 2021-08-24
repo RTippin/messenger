@@ -9,19 +9,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\CallFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Definitions;
+use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
  * @property string $id
  * @property string $thread_id
- * @property string|int $owner_id
- * @property string $owner_type
  * @property int $type
  * @property int|null $room_id
  * @property string|null $room_pin
@@ -33,7 +32,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read int|null $participants_count
  * @property-read \RTippin\Messenger\Models\Thread $thread
  * @mixin Model|\Eloquent
- * @property-read Model|MessengerProvider $owner
  * @method static Builder|Call videoCall()
  * @method static Builder|Call active()
  * @method static Builder|Call hasProvider(MessengerProvider $provider)
@@ -41,11 +39,12 @@ use RTippin\Messenger\Traits\Uuids;
  * @property bool $setup_complete
  * @property bool $teardown_complete
  */
-class Call extends Model
+class Call extends Model implements Ownerable
 {
     use HasFactory,
-        Uuids,
-        ScopesProvider;
+        HasOwner,
+        ScopesProvider,
+        Uuids;
 
     /**
      * The database table used by the model.
@@ -86,16 +85,6 @@ class Call extends Model
      * @var null|CallParticipant
      */
     private ?CallParticipant $currentParticipantCache = null;
-
-    /**
-     * @return MorphTo|MessengerProvider
-     */
-    public function owner(): MorphTo
-    {
-        return $this->morphTo()->withDefault(function () {
-            return Messenger::getGhostProvider();
-        });
-    }
 
     /**
      * @return BelongsTo|Thread

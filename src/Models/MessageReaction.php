@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\MessageReactionFactory;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Traits\ScopesProvider;
@@ -27,7 +28,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static Builder|MessageReaction whereReaction(string $reaction)
  * @method static Builder|MessageReaction notReaction(string $reaction)
  */
-class MessageReaction extends Model
+class MessageReaction extends Model implements Ownerable
 {
     use HasFactory,
         Uuids,

@@ -7,21 +7,18 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Actions\Bots\BotActionHandler;
 use RTippin\Messenger\Contracts\ActionHandler;
-use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\BotActionFactory;
-use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Facades\MessengerBots;
+use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
  * @property string $id
  * @property string $bot_id
- * @property string|int $owner_id
- * @property string $owner_type
  * @property string|ActionHandler|BotActionHandler $handler
  * @property string $triggers
  * @property string|null $payload
@@ -33,15 +30,15 @@ use RTippin\Messenger\Traits\Uuids;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @mixin Model|\Eloquent
  * @property-read Model|Bot $bot
- * @property-read Model|MessengerProvider $owner
  * @method static Builder|BotAction enabled()
  * @method static Builder|BotAction validHandler()
  * @method static Builder|BotAction handler(string $handler)
  * @method static Builder|BotAction validFromThread(string $threadId)
  */
-class BotAction extends Model
+class BotAction extends Model implements Ownerable
 {
     use HasFactory,
+        HasOwner,
         Uuids;
 
     /**
@@ -83,16 +80,6 @@ class BotAction extends Model
     public function bot(): BelongsTo
     {
         return $this->belongsTo(Bot::class);
-    }
-
-    /**
-     * @return MorphTo|MessengerProvider
-     */
-    public function owner(): MorphTo
-    {
-        return $this->morphTo()->withDefault(function () {
-            return Messenger::getGhostProvider();
-        });
     }
 
     /**

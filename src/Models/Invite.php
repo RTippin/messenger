@@ -7,20 +7,17 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\InviteFactory;
-use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Helpers;
+use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
  * @property string $id
  * @property string $thread_id
- * @property string $owner_type
- * @property string|int $owner_id
  * @property string $code
  * @property int $max_use
  * @property int $uses
@@ -28,7 +25,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read Model|MessengerProvider $owner
  * @property-read \RTippin\Messenger\Models\Thread $thread
  * @method static \Illuminate\Database\Query\Builder|\RTippin\Messenger\Models\Invite onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|\RTippin\Messenger\Models\Invite withTrashed()
@@ -38,12 +34,13 @@ use RTippin\Messenger\Traits\Uuids;
  * @method increment($column, $amount = 1, array $extra = [])
  * @mixin Model|\Eloquent
  */
-class Invite extends Model
+class Invite extends Model implements Ownerable
 {
     use HasFactory,
-        Uuids,
+        HasOwner,
+        ScopesProvider,
         SoftDeletes,
-        ScopesProvider;
+        Uuids;
 
     /**
      * @var string
@@ -75,16 +72,6 @@ class Invite extends Model
         'max_use' => 'integer',
         'uses' => 'integer',
     ];
-
-    /**
-     * @return MorphTo|MessengerProvider
-     */
-    public function owner(): MorphTo
-    {
-        return $this->morphTo()->withDefault(function () {
-            return Messenger::getGhostProvider();
-        });
-    }
 
     /**
      * @return BelongsTo|Thread
