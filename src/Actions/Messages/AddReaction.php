@@ -237,9 +237,12 @@ class AddReaction extends BaseMessengerAction
         }
 
         // Only broadcast if participant still in thread.
-        if ($this->getThread()->participants()->forProviderWithModel($this->getMessage())->exists()) {
+        if ($this->getThread()
+            ->participants()
+            ->forProviderWithModel($this->getMessage())
+            ->exists()) {
             $this->broadcaster
-                ->to($this->getMessage()->owner)
+                ->to($this->getMessage())
                 ->with($this->generateBroadcastResource())
                 ->broadcast(ReactionAddedBroadcast::class);
         }
