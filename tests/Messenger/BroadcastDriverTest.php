@@ -125,7 +125,7 @@ class BroadcastDriverTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_chunks_channels_at_100_sending_multiple_broadcast()
+    public function it_chunks_private_channels_at_100_sending_multiple_broadcast()
     {
         $group = Thread::factory()->group()->create();
         Event::fake([
@@ -136,16 +136,18 @@ class BroadcastDriverTest extends FeatureTestCase
             ->owner($this->tippin)
             ->admin()
             ->create();
-        Participant::factory()
-            ->for($group)
-            ->owner(UserModel::factory()->create())
-            ->count(200)
-            ->create();
-        Participant::factory()
-            ->for($group)
-            ->owner(CompanyModel::factory()->create())
-            ->count(100)
-            ->create();
+
+        //Generate 300 unique participants.
+        for ($x = 1; $x <= 150; $x++) {
+            Participant::factory()
+                ->for($group)
+                ->owner(UserModel::factory()->create())
+                ->create();
+            Participant::factory()
+                ->for($group)
+                ->owner(CompanyModel::factory()->create())
+                ->create();
+        }
 
         app(BroadcastDriver::class)
             ->toAllInThread($group)
@@ -153,6 +155,24 @@ class BroadcastDriverTest extends FeatureTestCase
             ->broadcast(FakeBroadcastEvent::class);
 
         // Group has 301 total participants. 100 per === 4 total chunks.
+        Event::assertDispatchedTimes(FakeBroadcastEvent::class, 4);
+    }
+
+    /** @test */
+    public function it_chunks_presence_channels_at_100_sending_multiple_broadcast()
+    {
+        Event::fake([
+            FakeBroadcastEvent::class,
+        ]);
+        //Generate 301 threads.
+        Thread::factory()->count(301)->create();
+
+        app(BroadcastDriver::class)
+            ->toManyPresence(Thread::all())
+            ->with(self::WITH)
+            ->broadcast(FakeBroadcastEvent::class);
+
+        // 301 threads. 100 per === 4 total chunks.
         Event::assertDispatchedTimes(FakeBroadcastEvent::class, 4);
     }
 
@@ -308,6 +328,62 @@ class BroadcastDriverTest extends FeatureTestCase
             $this->assertContains('presence-messenger.thread.'.$thread->id, $event->broadcastOn());
             $this->assertCount(2, $event->broadcastOn());
             $this->assertSame(1234, $event->broadcastWith()['data']);
+
+            return true;
+        });
+    }
+
+    /** @test */
+    public function it_broadcast_after_removing_duplicate_private_channels()
+    {
+        Event::fake([
+            FakeBroadcastEvent::class,
+        ]);
+
+        app(BroadcastDriver::class)
+            ->toSelected(collect([
+                $this->tippin,
+                $this->developers,
+                $this->tippin,
+                $this->developers,
+                $this->doe,
+            ]))
+            ->with(self::WITH)
+            ->broadcast(FakeBroadcastEvent::class);
+
+        Event::assertDispatched(function (FakeBroadcastEvent $event) {
+            $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.company.'.$this->developers->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertCount(3, $event->broadcastOn());
+
+            return true;
+        });
+    }
+
+    /** @test */
+    public function it_broadcast_after_removing_duplicate_presence_channels()
+    {
+        $thread = Thread::factory()->create();
+        $call = Call::factory()->for($thread)->owner($this->tippin)->create();
+        Event::fake([
+            FakeBroadcastEvent::class,
+        ]);
+
+        app(BroadcastDriver::class)
+            ->toManyPresence(collect([
+                $call,
+                $thread,
+                $call,
+                $thread,
+            ]))
+            ->with(self::WITH)
+            ->broadcast(FakeBroadcastEvent::class);
+
+        Event::assertDispatched(function (FakeBroadcastEvent $event) use ($call, $thread) {
+            $this->assertContains("presence-messenger.call.{$call->id}.thread.{$thread->id}", $event->broadcastOn());
+            $this->assertContains('presence-messenger.thread.'.$thread->id, $event->broadcastOn());
+            $this->assertCount(2, $event->broadcastOn());
 
             return true;
         });

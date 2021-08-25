@@ -185,6 +185,7 @@ class BroadcastBroker implements BroadcastDriver
         return $this->recipients
             ->map(fn ($recipient) => $this->generatePrivateChannel($recipient))
             ->filter()
+            ->uniqueStrict()
             ->chunk(100);
     }
 
@@ -210,6 +211,7 @@ class BroadcastBroker implements BroadcastDriver
         return $this->recipients
             ->map(fn ($recipient) => $this->generatePresenceChannel($recipient))
             ->filter()
+            ->uniqueStrict()
             ->chunk(100);
     }
 
