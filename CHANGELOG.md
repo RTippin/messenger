@@ -1,6 +1,26 @@
 # Changelog
 - All notable changes to `Messenger` will be documented in this file.
 
+---
+
+### [v1.2.0 (08-25-2021)](https://github.com/RTippin/messenger/compare/v1.1.1...v1.2.0)
+
+#### Added
+- New `scoped` implementation for setting/unsetting the `MessengerProvider`. Methods `setScopedProvider()` and `unsetScopedProvider()`.
+  - A scoped provider will keep any prior provider set in memory, such as an authenticated user, while returning the scoped provider to any subsequent calls to `getProvider()`.
+  - When unsetting a scoped provider, it will set the prior provider back to the active provider, if one was set.
+  - This is mostly used internally, and on our `MessengerComposer` class, to avoid conflicts on queues as our `Messenger` service is a singleton.
+- Interfaces `Ownerable`, `HasPresenceChannel` for use with internal models and broadcasting.
+
+#### Changed
+- Our broadcaster and push notification service will now reset their states after execution.
+- When broadcasting, we now enforce unique channels, filtering any duplicates before firing any broadcast.
+- Updated policy allow/deny responses.
+- Unsetting the `MessengerProvider` will now flush any active `FriendDriver` from the container.
+- Various bug fixes and request lifecycle improvements.
+
+---
+
 ### [v1.1.1 (08-22-2021)](https://github.com/RTippin/messenger/compare/v1.1.0...v1.1.1)
 
 #### Changed
