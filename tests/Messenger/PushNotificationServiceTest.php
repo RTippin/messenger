@@ -191,7 +191,7 @@ class PushNotificationServiceTest extends FeatureTestCase
 
         app(PushNotificationService::class)
             ->to(collect([
-                $model($this->tippin)
+                $model($this->tippin),
             ]))
             ->with(self::WITH)
             ->notify(FakeNotifyEvent::class);
