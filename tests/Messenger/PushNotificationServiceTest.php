@@ -152,48 +152,6 @@ class PushNotificationServiceTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_fires_events_using_thread_participants()
-    {
-        Event::fake([
-            PushNotificationEvent::class,
-        ]);
-
-        app(PushNotificationService::class)
-            ->to($this->group->participants()->get())
-            ->with(self::WITH)
-            ->notify(FakeNotifyEvent::class);
-
-        Event::assertDispatched(function (PushNotificationEvent $event) {
-            $this->assertCount(3, $event->recipients);
-            $this->assertSame('fake.notify', $event->broadcastAs);
-            $this->assertSame(1234, $event->data['data']);
-
-            return true;
-        });
-    }
-
-    /** @test */
-    public function it_fires_events_using_call_participants()
-    {
-        Event::fake([
-            PushNotificationEvent::class,
-        ]);
-
-        app(PushNotificationService::class)
-            ->to($this->createCall($this->group, $this->tippin, $this->doe)->participants()->get())
-            ->with(self::WITH)
-            ->notify(FakeNotifyEvent::class);
-
-        Event::assertDispatched(function (PushNotificationEvent $event) {
-            $this->assertCount(2, $event->recipients);
-            $this->assertSame('fake.notify', $event->broadcastAs);
-            $this->assertSame(1234, $event->data['data']);
-
-            return true;
-        });
-    }
-
-    /** @test */
     public function it_rejects_duplicate_matching_providers()
     {
         Event::fake([
@@ -215,6 +173,39 @@ class PushNotificationServiceTest extends FeatureTestCase
             $this->assertCount(2, $event->recipients);
             $this->assertSame('fake.notify', $event->broadcastAs);
             $this->assertSame(1234, $event->data['data']);
+
+            return true;
+        });
+    }
+
+    /**
+     * @test
+     * @dataProvider modelsWithOwner
+     * @param $model
+     */
+    public function it_notifies_ownerable_models_owner($model)
+    {
+        Event::fake([
+            PushNotificationEvent::class,
+        ]);
+
+        app(PushNotificationService::class)
+            ->to(collect([
+                $model($this->tippin)
+            ]))
+            ->with(self::WITH)
+            ->notify(FakeNotifyEvent::class);
+
+        Event::assertDispatched(function (PushNotificationEvent $event) {
+            $this->assertSame('fake.notify', $event->broadcastAs);
+            $this->assertSame(1234, $event->data['data']);
+            $this->assertCount(1, $event->recipients);
+            $this->assertSame([
+                [
+                    'owner_type' => $this->tippin->getMorphClass(),
+                    'owner_id' => $this->tippin->getKey(),
+                ],
+            ], $event->recipients->toArray());
 
             return true;
         });

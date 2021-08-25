@@ -6,10 +6,9 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
 use RTippin\Messenger\Contracts\BroadcastEvent;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Events\PushNotificationEvent;
 use RTippin\Messenger\Messenger;
-use RTippin\Messenger\Models\CallParticipant;
-use RTippin\Messenger\Models\Participant;
 use Throwable;
 
 class PushNotificationService
@@ -48,8 +47,8 @@ class PushNotificationService
 
     /**
      * Set recipients to the provided collection. Collection may
-     * contain a mix of messenger providers, thread participants,
-     * or call participants.
+     * contain a mix of messenger providers and any of our
+     * internal models that implement Ownerable.
      *
      * @param Collection $recipients
      * @return $this
@@ -95,7 +94,7 @@ class PushNotificationService
             }
         }
 
-        $this->reset();
+        $this->flush();
     }
 
     /**
@@ -133,32 +132,20 @@ class PushNotificationService
     }
 
     /**
-     * @param mixed $recipient
+     * @param MessengerProvider|Ownerable|mixed $recipient
      * @return array|null
      */
     private function extractProvider($recipient): ?array
     {
-        $abstract = is_object($recipient)
-            ? get_class($recipient)
-            : '';
-
-        $participants = [
-            Participant::class,
-            CallParticipant::class,
-        ];
-
-        if (in_array($abstract, $participants)
+        if ($recipient instanceof Ownerable
             && $this->messenger->isValidMessengerProvider($recipient->owner_type)) {
-            /** @var Participant|CallParticipant $recipient */
             return [
                 'owner_type' => $recipient->owner_type,
                 'owner_id' => $recipient->owner_id,
             ];
         }
 
-        if (! in_array($abstract, $participants)
-            && $this->messenger->isValidMessengerProvider($recipient)) {
-            /** @var MessengerProvider $recipient */
+        if ($recipient instanceof MessengerProvider) {
             return [
                 'owner_type' => $recipient->getMorphClass(),
                 'owner_id' => $recipient->getKey(),
@@ -184,7 +171,7 @@ class PushNotificationService
     /**
      * Reset our state.
      */
-    private function reset(): void
+    private function flush(): void
     {
         $this->recipients = null;
         $this->with = [];
