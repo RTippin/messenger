@@ -8,10 +8,13 @@ use RTippin\Messenger\Actions\Friends\DenyFriendRequest;
 use RTippin\Messenger\Broadcasting\FriendDeniedBroadcast;
 use RTippin\Messenger\Events\FriendDeniedEvent;
 use RTippin\Messenger\Models\PendingFriend;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class DenyFriendRequestTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     /** @test */
     public function it_removes_pending_friend()
     {
@@ -42,9 +45,9 @@ class DenyFriendRequestTest extends FeatureTestCase
 
             return true;
         });
-
         Event::assertDispatched(function (FriendDeniedEvent $event) use ($pending) {
             return $pending->id === $event->friend->id;
         });
+        $this->logBroadcast(FriendDeniedBroadcast::class);
     }
 }

@@ -12,10 +12,13 @@ use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class RemoveReactionTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -119,6 +122,7 @@ class RemoveReactionTest extends FeatureTestCase
         Event::assertDispatched(function (ReactionRemovedEvent $event) use ($reaction) {
             return $reaction->id === $event->reaction['id'];
         });
+        $this->logBroadcast(ReactionRemovedBroadcast::class);
     }
 
     /** @test */

@@ -17,10 +17,13 @@ use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\SetupCall;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreCallTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -136,6 +139,7 @@ class StoreCallTest extends FeatureTestCase
         Event::assertDispatched(function (CallStartedEvent $event) use ($thread) {
             return $thread->id === $event->call->thread_id;
         });
+        $this->logBroadcast(CallStartedBroadcast::class);
     }
 
     /** @test */

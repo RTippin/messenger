@@ -15,10 +15,13 @@ use RTippin\Messenger\Jobs\EndCallIfEmpty;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class LeaveCallTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     /** @test */
     public function it_updates_participant()
     {
@@ -70,6 +73,7 @@ class LeaveCallTest extends FeatureTestCase
         Event::assertDispatched(function (CallLeftEvent $event) use ($participant) {
             return $participant->id === $event->participant->id;
         });
+        $this->logBroadcast(CallLeftBroadcast::class);
     }
 
     /** @test */

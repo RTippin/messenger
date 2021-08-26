@@ -9,10 +9,13 @@ use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
 use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreGroupThreadTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -145,5 +148,6 @@ class StoreGroupThreadTest extends FeatureTestCase
         });
         Event::assertDispatched(NewThreadBroadcast::class);
         Event::assertDispatched(ParticipantsAddedEvent::class);
+        $this->logBroadcast(NewThreadBroadcast::class, 'New group thread.');
     }
 }

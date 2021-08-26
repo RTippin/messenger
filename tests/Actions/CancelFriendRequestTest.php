@@ -8,10 +8,13 @@ use RTippin\Messenger\Actions\Friends\CancelFriendRequest;
 use RTippin\Messenger\Broadcasting\FriendCancelledBroadcast;
 use RTippin\Messenger\Events\FriendCancelledEvent;
 use RTippin\Messenger\Models\SentFriend;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class CancelFriendRequestTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     /** @test */
     public function it_removes_sent_friend()
     {
@@ -45,5 +48,6 @@ class CancelFriendRequestTest extends FeatureTestCase
         Event::assertDispatched(function (FriendCancelledEvent $event) use ($sent) {
             return $sent->id === $event->friend->id;
         });
+        $this->logBroadcast(FriendCancelledBroadcast::class);
     }
 }

@@ -10,10 +10,13 @@ use RTippin\Messenger\Events\MessageArchivedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class ArchiveMessageTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -57,5 +60,6 @@ class ArchiveMessageTest extends FeatureTestCase
         Event::assertDispatched(function (MessageArchivedEvent $event) use ($message) {
             return $message->id === $event->message->id;
         });
+        $this->logBroadcast(MessageArchivedBroadcast::class);
     }
 }

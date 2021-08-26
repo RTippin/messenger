@@ -12,10 +12,13 @@ use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\PromotedAdminMessage;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class PromoteAdminTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -68,6 +71,7 @@ class PromoteAdminTest extends FeatureTestCase
 
             return true;
         });
+        $this->logBroadcast(PromotedAdminBroadcast::class);
     }
 
     /** @test */

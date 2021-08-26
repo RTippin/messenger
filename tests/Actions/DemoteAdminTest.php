@@ -11,10 +11,13 @@ use RTippin\Messenger\Events\DemotedAdminEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\DemotedAdminMessage;
 use RTippin\Messenger\Models\Participant;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class DemoteAdminTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -67,6 +70,7 @@ class DemoteAdminTest extends FeatureTestCase
 
             return true;
         });
+        $this->logBroadcast(DemotedAdminBroadcast::class);
     }
 
     /** @test */

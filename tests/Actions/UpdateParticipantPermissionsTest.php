@@ -10,10 +10,13 @@ use RTippin\Messenger\Events\ParticipantPermissionsEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class UpdateParticipantPermissionsTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -80,6 +83,7 @@ class UpdateParticipantPermissionsTest extends FeatureTestCase
 
             return true;
         });
+        $this->logBroadcast(ParticipantPermissionsBroadcast::class);
     }
 
     /** @test */

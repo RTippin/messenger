@@ -12,10 +12,13 @@ use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class JoinCallTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -110,5 +113,6 @@ class JoinCallTest extends FeatureTestCase
         Event::assertDispatched(function (CallJoinedEvent $event) use ($participant) {
             return $participant->id === $event->participant->id;
         });
+        $this->logBroadcast(CallJoinedBroadcast::class);
     }
 }

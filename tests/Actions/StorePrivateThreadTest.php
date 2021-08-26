@@ -15,12 +15,15 @@ use RTippin\Messenger\Exceptions\NewThreadException;
 use RTippin\Messenger\Exceptions\ProviderNotFoundException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\Fixtures\CompanyModel;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class StorePrivateThreadTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -162,6 +165,7 @@ class StorePrivateThreadTest extends FeatureTestCase
 
             return true;
         });
+        $this->logBroadcast(NewThreadBroadcast::class, 'New pending private thread.');
     }
 
     /** @test */
@@ -184,6 +188,7 @@ class StorePrivateThreadTest extends FeatureTestCase
             return $event->broadcastWith()['thread']['pending'] === false;
         });
         Event::assertDispatched(NewThreadEvent::class);
+        $this->logBroadcast(NewThreadBroadcast::class, 'New private thread.');
     }
 
     /** @test */

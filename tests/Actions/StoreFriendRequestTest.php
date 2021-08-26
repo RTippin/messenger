@@ -12,12 +12,15 @@ use RTippin\Messenger\Exceptions\ProviderNotFoundException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\PendingFriend;
 use RTippin\Messenger\Models\SentFriend;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\Fixtures\CompanyModel;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class StoreFriendRequestTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -68,6 +71,7 @@ class StoreFriendRequestTest extends FeatureTestCase
 
             return true;
         });
+        $this->logBroadcast(FriendRequestBroadcast::class);
     }
 
     /** @test */

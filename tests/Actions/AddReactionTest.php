@@ -13,10 +13,13 @@ use RTippin\Messenger\Exceptions\ReactionException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class AddReactionTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -239,6 +242,10 @@ class AddReactionTest extends FeatureTestCase
         Event::assertDispatched(function (ReactionAddedEvent $event) use ($message) {
             return $message->id === $event->reaction->message_id;
         });
+        $this->logBroadcast(
+            ReactionAddedBroadcast::class,
+            'Always goes over the thread presence channel. Also uses private channel when the reactor is not the message owner.'
+        );
     }
 
     /** @test */

@@ -12,10 +12,13 @@ use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class EditMessageTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     /** @test */
     public function it_throws_exception_if_disabled()
     {
@@ -128,6 +131,7 @@ class EditMessageTest extends FeatureTestCase
 
             return true;
         });
+        $this->logBroadcast(MessageEditedBroadcast::class);
     }
 
     /** @test */

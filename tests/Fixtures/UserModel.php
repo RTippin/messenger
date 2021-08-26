@@ -41,6 +41,8 @@ class UserModel extends User implements MessengerProvider
     protected $hidden = [
         'password',
         'email',
+        'email_verified_at',
+        'remember_token',
     ];
 
     public static function boot()

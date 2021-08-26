@@ -16,10 +16,13 @@ use RTippin\Messenger\Jobs\TeardownCall;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class EndCallTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     /** @test */
     public function it_updates_call_and_active_participants()
     {
@@ -101,6 +104,7 @@ class EndCallTest extends FeatureTestCase
         Event::assertDispatched(function (CallEndedEvent $event) use ($call) {
             return $call->id === $event->call->id;
         });
+        $this->logBroadcast(CallEndedBroadcast::class);
     }
 
     /** @test */

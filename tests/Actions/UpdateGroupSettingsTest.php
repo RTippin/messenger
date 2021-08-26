@@ -11,10 +11,13 @@ use RTippin\Messenger\Events\ThreadSettingsEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\ThreadNameMessage;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class UpdateGroupSettingsTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -76,6 +79,7 @@ class UpdateGroupSettingsTest extends FeatureTestCase
 
             return true;
         });
+        $this->logBroadcast(ThreadSettingsBroadcast::class);
     }
 
     /** @test */

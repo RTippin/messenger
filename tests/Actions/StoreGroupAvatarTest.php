@@ -17,10 +17,13 @@ use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\ThreadAvatarMessage;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\FileService;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreGroupAvatarTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -115,6 +118,7 @@ class StoreGroupAvatarTest extends FeatureTestCase
 
             return true;
         });
+        $this->logBroadcast(ThreadAvatarBroadcast::class, 'Uploading new avatar.');
     }
 
     /** @test */

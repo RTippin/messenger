@@ -12,10 +12,13 @@ use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreMessageTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -227,6 +230,7 @@ class StoreMessageTest extends FeatureTestCase
 
             return $thread->id === $event->message->thread_id;
         });
+        $this->logBroadcast(NewMessageBroadcast::class);
     }
 
     /** @test */

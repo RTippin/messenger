@@ -14,10 +14,13 @@ use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\ThreadAvatarMessage;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class DestroyGroupAvatarTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     /** @test */
     public function it_throws_exception_if_disabled()
     {
@@ -80,6 +83,7 @@ class DestroyGroupAvatarTest extends FeatureTestCase
 
             return true;
         });
+        $this->logBroadcast(ThreadAvatarBroadcast::class, 'Removing avatar.');
     }
 
     /** @test */

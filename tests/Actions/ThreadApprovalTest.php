@@ -11,10 +11,13 @@ use RTippin\Messenger\Exceptions\ThreadApprovalException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class ThreadApprovalTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     /** @test */
     public function it_approves_and_updates_participant()
     {
@@ -112,6 +115,7 @@ class ThreadApprovalTest extends FeatureTestCase
 
             return true;
         });
+        $this->logBroadcast(ThreadApprovalBroadcast::class, 'Thread approved.');
     }
 
     /** @test */
@@ -133,5 +137,6 @@ class ThreadApprovalTest extends FeatureTestCase
             return $event->broadcastWith()['thread']['approved'] === false;
         });
         Event::assertDispatched(ThreadApprovalEvent::class);
+        $this->logBroadcast(ThreadApprovalBroadcast::class, 'Thread denied.');
     }
 }

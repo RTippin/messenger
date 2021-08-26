@@ -13,10 +13,13 @@ use RTippin\Messenger\Events\CallIgnoredEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class IgnoreCallTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -111,5 +114,6 @@ class IgnoreCallTest extends FeatureTestCase
         });
         Event::assertDispatched(CallEndedBroadcast::class);
         Event::assertDispatched(CallEndedEvent::class);
+        $this->logBroadcast(CallIgnoredBroadcast::class);
     }
 }

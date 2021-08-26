@@ -8,10 +8,13 @@ use RTippin\Messenger\Actions\Friends\AcceptFriendRequest;
 use RTippin\Messenger\Broadcasting\FriendApprovedBroadcast;
 use RTippin\Messenger\Events\FriendApprovedEvent;
 use RTippin\Messenger\Models\PendingFriend;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class AcceptFriendRequestTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     /** @test */
     public function it_stores_friends()
     {
@@ -69,5 +72,6 @@ class AcceptFriendRequestTest extends FeatureTestCase
 
             return true;
         });
+        $this->logBroadcast(FriendApprovedBroadcast::class);
     }
 }

@@ -39,7 +39,7 @@ class CompanyModel extends User implements MessengerProvider
 
     protected $hidden = [
         'password',
-        'email',
+        'company_email',
     ];
 
     public static function boot()

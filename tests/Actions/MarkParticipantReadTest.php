@@ -10,10 +10,13 @@ use RTippin\Messenger\Broadcasting\ParticipantReadBroadcast;
 use RTippin\Messenger\Events\ParticipantReadEvent;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class MarkParticipantReadTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     /** @test */
     public function it_updates_participant()
     {
@@ -52,6 +55,7 @@ class MarkParticipantReadTest extends FeatureTestCase
         Event::assertDispatched(function (ParticipantReadEvent $event) use ($participant) {
             return $participant->id === $event->participant->id;
         });
+        $this->logBroadcast(ParticipantReadBroadcast::class);
     }
 
     /** @test */

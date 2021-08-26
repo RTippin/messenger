@@ -12,10 +12,13 @@ use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\KnockException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class SendKnockTest extends FeatureTestCase
 {
+    use BroadcastLogger;
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -125,5 +128,6 @@ class SendKnockTest extends FeatureTestCase
 
             return true;
         });
+        $this->logBroadcast(KnockBroadcast::class);
     }
 }
