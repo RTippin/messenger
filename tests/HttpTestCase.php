@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests;
 
-use Illuminate\Foundation\Application;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Routing\Route;
@@ -17,12 +16,6 @@ class HttpTestCase extends FeatureTestCase
     const ResponseFile = __DIR__.'/../docs/generated/responses.json';
 
     /**
-     * Set TRUE to run all http test with
-     * logging responses to file enabled.
-     */
-    protected bool $withApiLogging = false;
-
-    /**
      * Logs the current request/payload to the json file.
      *
      * @var bool
@@ -33,18 +26,6 @@ class HttpTestCase extends FeatureTestCase
      * @var string|null
      */
     private ?string $statusOverride = null;
-
-    /**
-     * @param Application $app
-     */
-    protected function getEnvironmentSetUp($app): void
-    {
-        parent::getEnvironmentSetUp($app);
-
-        if (env('LOG_API') === true) {
-            $this->withApiLogging = true;
-        }
-    }
 
     /**
      * No need for throttle middleware.
@@ -74,7 +55,7 @@ class HttpTestCase extends FeatureTestCase
      */
     public function logCurrentRequest(?string $status = null): void
     {
-        if ($this->withApiLogging) {
+        if ($this->withLogging) {
             $this->shouldLogCurrentRequest = true;
             $this->statusOverride = $status;
         }
