@@ -26,10 +26,16 @@ class MessengerTestCase extends TestCase
     protected bool $useMorphMap = false;
 
     /**
-     * Set TRUE to log both HTTP responses and broadcasting
-     * payloads to our generates json files.
+     * Set TRUE to log both HTTP responses
+     * to our generates json file.
      */
-    protected bool $withLogging = false;
+    protected bool $withHttpLogging = false;
+
+    /**
+     * Set TRUE to log broadcasting payloads
+     * to our generates json files.
+     */
+    protected bool $withBroadcastLogging = false;
 
     /**
      * @param Application $app
@@ -57,8 +63,12 @@ class MessengerTestCase extends TestCase
             $this->useMorphMap = true;
         }
 
-        if (env('WITH_LOGGING') === true) {
-            $this->withLogging = true;
+        if (env('HTTP_LOGGING') === true) {
+            $this->withHttpLogging = true;
+        }
+
+        if (env('BROADCAST_LOGGING') === true) {
+            $this->withBroadcastLogging = true;
         }
 
         $config->set('messenger.provider_uuids', $this->useUUID);

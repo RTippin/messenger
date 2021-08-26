@@ -55,7 +55,7 @@ class HttpTestCase extends FeatureTestCase
      */
     public function logCurrentRequest(?string $status = null): void
     {
-        if ($this->withLogging) {
+        if ($this->withHttpLogging) {
             $this->shouldLogCurrentRequest = true;
             $this->statusOverride = $status;
         }

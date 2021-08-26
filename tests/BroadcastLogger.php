@@ -20,7 +20,7 @@ trait BroadcastLogger
      */
     public function logBroadcast($event, ?string $context = null): void
     {
-        if (! $this->withLogging) {
+        if (! $this->withBroadcastLogging) {
             return;
         }
 
