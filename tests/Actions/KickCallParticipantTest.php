@@ -57,7 +57,7 @@ class KickCallParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_fires_events()
+    public function it_fires_kicked_events()
     {
         BaseMessengerAction::enableEvents();
         Event::fake([
@@ -83,6 +83,36 @@ class KickCallParticipantTest extends FeatureTestCase
 
             return true;
         });
-        $this->logBroadcast(KickedFromCallBroadcast::class);
+        $this->logBroadcast(KickedFromCallBroadcast::class, 'Participant was kicked.');
+    }
+
+    /** @test */
+    public function it_fires_un_kicked_events()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            KickedFromCallBroadcast::class,
+            KickedFromCallEvent::class,
+        ]);
+        $call = Call::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->setup()->create();
+        $participant = CallParticipant::factory()->for($call)->owner($this->doe)->kicked()->create();
+
+        app(KickCallParticipant::class)->execute($call, $participant, false);
+
+        Event::assertDispatched(function (KickedFromCallBroadcast $event) use ($call) {
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertSame($call->id, $event->broadcastWith()['call_id']);
+            $this->assertFalse($event->broadcastWith()['kicked']);
+
+            return true;
+        });
+        Event::assertDispatched(function (KickedFromCallEvent $event) use ($call, $participant) {
+            $this->assertSame($call->id, $event->call->id);
+            $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
+            $this->assertSame($participant->id, $event->participant->id);
+
+            return true;
+        });
+        $this->logBroadcast(KickedFromCallBroadcast::class, 'Participant was un-kicked.');
     }
 }

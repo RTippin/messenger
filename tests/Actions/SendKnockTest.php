@@ -104,7 +104,7 @@ class SendKnockTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_fires_events()
+    public function it_fires_events_to_private_thread()
     {
         BaseMessengerAction::enableEvents();
         Event::fake([
@@ -119,6 +119,7 @@ class SendKnockTest extends FeatureTestCase
             $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
             $this->assertNotContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
             $this->assertSame($thread->id, $event->broadcastWith()['thread']['id']);
+            $this->assertFalse($event->broadcastWith()['thread']['group']);
 
             return true;
         });
@@ -128,6 +129,35 @@ class SendKnockTest extends FeatureTestCase
 
             return true;
         });
-        $this->logBroadcast(KnockBroadcast::class);
+        $this->logBroadcast(KnockBroadcast::class, 'Knock at private thread.');
+    }
+
+    /** @test */
+    public function it_fires_events_to_group_thread()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            KnockBroadcast::class,
+            KnockEvent::class,
+        ]);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+
+        app(SendKnock::class)->execute($thread);
+
+        Event::assertDispatched(function (KnockBroadcast $event) use ($thread) {
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertNotContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertSame($thread->id, $event->broadcastWith()['thread']['id']);
+            $this->assertTrue($event->broadcastWith()['thread']['group']);
+
+            return true;
+        });
+        Event::assertDispatched(function (KnockEvent $event) use ($thread) {
+            $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
+            $this->assertSame($thread->id, $event->thread->id);
+
+            return true;
+        });
+        $this->logBroadcast(KnockBroadcast::class, 'Knock at group thread.');
     }
 }

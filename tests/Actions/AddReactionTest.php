@@ -223,6 +223,7 @@ class AddReactionTest extends FeatureTestCase
         Event::assertDispatched(function (ReactionAddedEvent $event) use ($message) {
             return $message->id === $event->reaction->message_id;
         });
+        $this->logBroadcast(ReactionAddedBroadcast::class, 'Only uses presence channel when the reactor is not the message owner.');
     }
 
     /** @test */
@@ -242,10 +243,7 @@ class AddReactionTest extends FeatureTestCase
         Event::assertDispatched(function (ReactionAddedEvent $event) use ($message) {
             return $message->id === $event->reaction->message_id;
         });
-        $this->logBroadcast(
-            ReactionAddedBroadcast::class,
-            'Always goes over the thread presence channel. Also uses private channel when the reactor is not the message owner.'
-        );
+        $this->logBroadcast(ReactionAddedBroadcast::class, 'Uses both presence and the reacted message owners private channel, when the reactor is not the message owner.');
     }
 
     /** @test */

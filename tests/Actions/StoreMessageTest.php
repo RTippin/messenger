@@ -230,7 +230,7 @@ class StoreMessageTest extends FeatureTestCase
 
             return $thread->id === $event->message->thread_id;
         });
-        $this->logBroadcast(NewMessageBroadcast::class);
+        $this->logBroadcast(NewMessageBroadcast::class, 'Text message.');
     }
 
     /** @test */

@@ -102,6 +102,7 @@ class RemoveReactionTest extends FeatureTestCase
         Event::assertDispatched(function (ReactionRemovedEvent $event) use ($reaction) {
             return $reaction->id === $event->reaction['id'];
         });
+        $this->logBroadcast(ReactionRemovedBroadcast::class, 'Only uses presence channel when the message owner is the removed reactions owner.');
     }
 
     /** @test */
@@ -122,7 +123,7 @@ class RemoveReactionTest extends FeatureTestCase
         Event::assertDispatched(function (ReactionRemovedEvent $event) use ($reaction) {
             return $reaction->id === $event->reaction['id'];
         });
-        $this->logBroadcast(ReactionRemovedBroadcast::class);
+        $this->logBroadcast(ReactionRemovedBroadcast::class, 'Uses both presence and the message owners private channel, when the removed reactions owner is not the message owner.');
     }
 
     /** @test */

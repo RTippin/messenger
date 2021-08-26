@@ -114,7 +114,7 @@ class StoreCallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_fires_events()
+    public function it_fires_events_to_private_thread()
     {
         BaseMessengerAction::enableEvents();
         Event::fake([
@@ -139,7 +139,36 @@ class StoreCallTest extends FeatureTestCase
         Event::assertDispatched(function (CallStartedEvent $event) use ($thread) {
             return $thread->id === $event->call->thread_id;
         });
-        $this->logBroadcast(CallStartedBroadcast::class);
+        $this->logBroadcast(CallStartedBroadcast::class, 'Private thread.');
+    }
+
+    /** @test */
+    public function it_fires_events_to_group_thread()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            CallStartedBroadcast::class,
+            CallStartedEvent::class,
+            CallJoinedBroadcast::class,
+            CallJoinedEvent::class,
+        ]);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+
+        app(StoreCall::class)->execute($thread);
+
+        Event::assertNotDispatched(CallJoinedBroadcast::class);
+        Event::assertNotDispatched(CallJoinedEvent::class);
+        Event::assertDispatched(function (CallStartedBroadcast $event) use ($thread) {
+            $this->assertNotContains('private-messenger.user.'.$this->tippin->getKey(), $event->broadcastOn());
+            $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
+            $this->assertSame($thread->id, $event->broadcastWith()['call']['thread_id']);
+
+            return true;
+        });
+        Event::assertDispatched(function (CallStartedEvent $event) use ($thread) {
+            return $thread->id === $event->call->thread_id;
+        });
+        $this->logBroadcast(CallStartedBroadcast::class, 'Group thread.');
     }
 
     /** @test */
