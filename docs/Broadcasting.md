@@ -7,6 +7,8 @@
     - If push notifications are enabled, this broker will also forward its data to our [PushNotificationService][link-push-notify]. The service will then fire a [PushNotificationEvent][link-push-event] that you can attach a listener to handle your own FCM / other service.
 - ALL events we broadcast implement laravel's `ShouldBroadcastNow` interface, and will not be queued, but broadcast immediately.
 
+---
+
 ***Default push notifications config:***
 
 ```php
@@ -22,6 +24,8 @@ $broadcaster->channel('messenger.call.{call}.thread.{thread}', CallChannel::clas
 $broadcaster->channel('messenger.thread.{thread}', ThreadChannel::class); // Presence
 $broadcaster->channel('messenger.{alias}.{id}', ProviderChannel::class); // Private
 ```
+
+### View our [API Explorer][link-api-explorer] for a list of each broadcast and example payloads.
 
 ---
 
@@ -228,3 +232,4 @@ class MessengerServiceProvider extends ServiceProvider
 [link-push-notify]: https://github.com/RTippin/messenger/blob/1.x/src/Services/PushNotificationService.php
 [link-push-event]: https://github.com/RTippin/messenger/blob/1.x/src/Events/PushNotificationEvent.php
 [link-messenger-broadcast]: https://github.com/RTippin/messenger/blob/1.x/src/Broadcasting/MessengerBroadcast.php
+[link-api-explorer]: https://tippindev.com/api-explorer
