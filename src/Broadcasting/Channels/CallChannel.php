@@ -29,7 +29,7 @@ class CallChannel
     }
 
     /**
-     * Authenticate the user's access to the channel.
+     * Authenticate the provider's access to the channel.
      *
      * @param $user
      * @param Thread $thread

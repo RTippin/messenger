@@ -22,10 +22,11 @@ class StoreBotAvatar extends BotAvatarAction
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->setBot($parameters[0])
-            ->attemptTransactionOrRollbackFile($this->upload($parameters[1]['image']))
-            ->generateResource()
-            ->fireEvents();
+        $this->setBot($parameters[0]);
+
+        $this->attemptTransactionOrRollbackFile($this->upload($parameters[1]['image']));
+
+        $this->generateResource()->fireEvents();
 
         return $this;
     }
@@ -36,13 +37,12 @@ class StoreBotAvatar extends BotAvatarAction
      * from storage and rethrow the exception.
      *
      * @param string $fileName
-     * @return $this
      * @throws Exception
      */
-    private function attemptTransactionOrRollbackFile(string $fileName): self
+    private function attemptTransactionOrRollbackFile(string $fileName): void
     {
         try {
-            return $this->removeOldIfExist()->updateBotAvatar($fileName);
+            $this->removeOldIfExist()->updateBotAvatar($fileName);
         } catch (Throwable $e) {
             $this->fileService
                 ->setDisk($this->getBot()->getStorageDisk())

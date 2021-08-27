@@ -133,29 +133,31 @@ class ProcessMessageTriggers extends BaseMessengerAction
      */
     private function handleAction(BotAction $action, string $trigger): void
     {
-        if ($this->shouldExecute($action)) {
-            $this->botActionStarting($action);
-
-            try {
-                $this->bots
-                    ->initializeHandler($action->handler)
-                    ->setDataForMessage(
-                        $this->getThread(),
-                        $action,
-                        $this->getMessage(),
-                        $trigger,
-                        $this->isGroupAdmin,
-                        $this->senderIp
-                    )
-                    ->handle();
-
-                $this->fireHandledEvent($action, $trigger);
-            } catch (Throwable $e) {
-                $this->fireFailedEvent($action, $e);
-            }
-
-            $this->botActionEnding($action);
+        if (! $this->shouldExecute($action)) {
+            return;
         }
+
+        $this->botActionStarting($action);
+
+        try {
+            $this->bots
+                ->initializeHandler($action->handler)
+                ->setDataForMessage(
+                    $this->getThread(),
+                    $action,
+                    $this->getMessage(),
+                    $trigger,
+                    $this->isGroupAdmin,
+                    $this->senderIp
+                )
+                ->handle();
+
+            $this->fireHandledEvent($action, $trigger);
+        } catch (Throwable $e) {
+            $this->fireFailedEvent($action, $e);
+        }
+
+        $this->botActionEnding($action);
     }
 
     /**
