@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use InvalidArgumentException;
 use RTippin\Messenger\Contracts\BroadcastDriver;
+use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
 
 trait MessengerConfig
@@ -1242,6 +1243,22 @@ trait MessengerConfig
         }
 
         app()->bind(VideoDriver::class, $driver);
+
+        return $this;
+    }
+
+    /**
+     * @param string $driver
+     * @return $this
+     * @throws InvalidArgumentException
+     */
+    public function setFriendDriver(string $driver): self
+    {
+        if (! is_subclass_of($driver, FriendDriver::class)) {
+            throw new InvalidArgumentException("The given driver { $driver } must implement our interface ".FriendDriver::class);
+        }
+
+        app()->singleton(FriendDriver::class, $driver);
 
         return $this;
     }

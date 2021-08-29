@@ -46,33 +46,6 @@ class FriendBroker implements FriendDriver
     /**
      * @inheritDoc
      */
-    public function getProviderFriendsBuilder(): Builder
-    {
-        return Friend::forProvider($this->messenger->getProvider())
-            ->whereIn('party_type', $this->messenger->getAllFriendableProviders());
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getProviderPendingFriendsBuilder(): Builder
-    {
-        return PendingFriend::forProvider($this->messenger->getProvider(), 'recipient')
-            ->whereIn('sender_type', $this->messenger->getAllFriendableProviders());
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function getProviderSentFriendsBuilder(): Builder
-    {
-        return SentFriend::forProvider($this->messenger->getProvider(), 'sender')
-            ->whereIn('recipient_type', $this->messenger->getAllFriendableProviders());
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function getProviderFriends(bool $withRelations = false)
     {
         if (! $this->messenger->providerHasFriends()) {
@@ -201,6 +174,33 @@ class FriendBroker implements FriendDriver
                     ->first();
             })
             ->load('party');
+    }
+
+    /**
+     * @return Friend|Builder
+     */
+    private function getProviderFriendsBuilder(): Builder
+    {
+        return Friend::forProvider($this->messenger->getProvider())
+            ->whereIn('party_type', $this->messenger->getAllFriendableProviders());
+    }
+
+    /**
+     * @return PendingFriend|Builder
+     */
+    private function getProviderPendingFriendsBuilder(): Builder
+    {
+        return PendingFriend::forProvider($this->messenger->getProvider(), 'recipient')
+            ->whereIn('sender_type', $this->messenger->getAllFriendableProviders());
+    }
+
+    /**
+     * @return SentFriend|Builder
+     */
+    private function getProviderSentFriendsBuilder(): Builder
+    {
+        return SentFriend::forProvider($this->messenger->getProvider(), 'sender')
+            ->whereIn('recipient_type', $this->messenger->getAllFriendableProviders());
     }
 
     /**

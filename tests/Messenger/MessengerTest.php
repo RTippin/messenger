@@ -4,7 +4,9 @@ namespace RTippin\Messenger\Tests\Messenger;
 
 use InvalidArgumentException;
 use RTippin\Messenger\Brokers\BroadcastBroker;
+use RTippin\Messenger\Brokers\FriendBroker;
 use RTippin\Messenger\Brokers\NullBroadcastBroker;
+use RTippin\Messenger\Brokers\NullFriendBroker;
 use RTippin\Messenger\Brokers\NullVideoBroker;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\FriendDriver;
@@ -934,12 +936,15 @@ class MessengerTest extends MessengerTestCase
 
         $this->assertInstanceOf(NullBroadcastBroker::class, app(BroadcastDriver::class));
         $this->assertInstanceOf(TestVideoBroker::class, app(VideoDriver::class));
+        $this->assertInstanceOf(FriendBroker::class, app(FriendDriver::class));
 
         $this->messenger->setBroadcastDriver(BroadcastBroker::class);
         $this->messenger->setVideoDriver(NullVideoBroker::class);
+        $this->messenger->setFriendDriver(NullFriendBroker::class);
 
         $this->assertInstanceOf(BroadcastBroker::class, app(BroadcastDriver::class));
         $this->assertInstanceOf(NullVideoBroker::class, app(VideoDriver::class));
+        $this->assertInstanceOf(NullFriendBroker::class, app(FriendDriver::class));
     }
 
     /** @test */
@@ -956,6 +961,14 @@ class MessengerTest extends MessengerTestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The given driver { RTippin\Messenger\Brokers\NullBroadcastBroker } must implement our interface RTippin\Messenger\Contracts\VideoDriver');
         $this->messenger->setVideoDriver(NullBroadcastBroker::class);
+    }
+
+    /** @test */
+    public function it_throws_exception_if_invalid_friend_driver()
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The given driver { RTippin\Messenger\Brokers\NullBroadcastBroker } must implement our interface RTippin\Messenger\Contracts\FriendDriver');
+        $this->messenger->setFriendDriver(NullBroadcastBroker::class);
     }
 
     /** @test */

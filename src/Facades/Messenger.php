@@ -131,6 +131,7 @@ use RTippin\Messenger\Models\Participant;
  * @method static \RTippin\Messenger\Messenger setAttachmentRateLimit(int $attachmentRateLimit)
  * @method static \RTippin\Messenger\Messenger setBroadcastDriver(string $driver)
  * @method static \RTippin\Messenger\Messenger setVideoDriver(string $driver)
+ * @method static \RTippin\Messenger\Messenger setFriendDriver(string $driver)
  * @method static int getMessageImageSizeLimit()
  * @method static \RTippin\Messenger\Messenger setMessageImageSizeLimit(int $messageImageSizeLimit)
  * @method static int getMessageDocumentSizeLimit()

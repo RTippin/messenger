@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Contracts;
 
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Models\PendingFriend;
@@ -11,21 +10,6 @@ use RTippin\Messenger\Models\Thread;
 
 interface FriendDriver
 {
-    /**
-     * @return Friend|Builder
-     */
-    public function getProviderFriendsBuilder(): Builder;
-
-    /**
-     * @return PendingFriend|Builder
-     */
-    public function getProviderPendingFriendsBuilder(): Builder;
-
-    /**
-     * @return SentFriend|Builder
-     */
-    public function getProviderSentFriendsBuilder(): Builder;
-
     /**
      * @param bool $withRelations
      * @return Friend|Collection
