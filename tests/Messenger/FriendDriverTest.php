@@ -24,4 +24,3 @@ class FriendDriverTest extends FeatureTestCase
         $this->assertInstanceOf(NullFriendBroker::class, app(FriendDriver::class));
     }
 }
-
