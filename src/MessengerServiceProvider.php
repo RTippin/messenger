@@ -10,6 +10,7 @@ use Illuminate\Support\ServiceProvider;
 use RTippin\Messenger\Brokers\BroadcastBroker;
 use RTippin\Messenger\Brokers\FriendBroker;
 use RTippin\Messenger\Brokers\NullVideoBroker;
+use RTippin\Messenger\Commands\AttachMessengersCommand;
 use RTippin\Messenger\Commands\CallsActivityCheckCommand;
 use RTippin\Messenger\Commands\CallsDownCommand;
 use RTippin\Messenger\Commands\CallsUpCommand;
@@ -99,6 +100,7 @@ class MessengerServiceProvider extends ServiceProvider
     private function bootForConsole(): void
     {
         $this->commands([
+            AttachMessengersCommand::class,
             CallsActivityCheckCommand::class,
             CallsDownCommand::class,
             CallsUpCommand::class,
