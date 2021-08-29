@@ -25,11 +25,11 @@ class ProviderChannel
      * Authenticate the provider's access to the channel.
      *
      * @param $user
-     * @param String|null $alias
+     * @param string|null $alias
      * @param string|null $id
      * @return bool
      */
-    public function join($user, ?String $alias = null, ?string $id = null): bool
+    public function join($user, ?string $alias = null, ?string $id = null): bool
     {
         return ! is_null($alias)
             && ! is_null($id)
