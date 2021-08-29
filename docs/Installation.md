@@ -25,14 +25,25 @@ $ php artisan messenger:install --uuids
 - If you opted to not migrate while using the `messenger:install` command above, be sure you run it yourself before using our system.
 ```bash
 $ php artisan migrate
-```
+````
+
+### Follow the instructions below for setting up your providers
 
 ---
 
-# Register Providers
+## Messenger Providers
+
+- Providers are the model's from your application that you want to incorporate into `Messenger`, giving each model their own "inbox" and allowing participation in our messages/threads.
+- For most applications, you will only register your `User` model. However, if you had a `User` and a `Teacher` model, and users with permission can view your teacher's portal, you can register both models with `Messenger`, allowing teachers to have their own inbox, and being able to message users as a teacher.
+- By default, our `Bot` model is a registered internally as a provider, allowing it to participate in group threads.
+- Your provider models will also use our internal [Messenger.php][link-messenger-model] model, which acts as a settings model, as well as allowing reverse search. More on this below, after registering providers.
+
+---
+
+### Registering Providers
 
 - Head over to your new `App\Providers\MessengerServiceProvider`
-- Set all provider models you want to register into messenger. The default `App\Models\User` is already preset, you just need to un-comment it.
+- Using our `Messenger` facade, set all provider models you want to register into `Messenger`. The default `App\Models\User` is already preset, you just need to un-comment it.
 
 **Default:**
 
@@ -61,9 +72,7 @@ class MessengerServiceProvider extends ServiceProvider
 }
 ```
 
----
-
-### Implement our MessengerProvider contract for each provider registered
+### Implement our `MessengerProvider` contract for each provider registered
 
 - Each provider you define will need to implement our [`MessengerProvider`][link-messenger-contract] contract. We include a [`Messageable`][link-messageable] trait you can use on your providers that will usually suffice for your needs. This trait has all the methods needed to satisfy the contract.
 - You should override our `getProviderSettings()` method on each provider model you register.
@@ -105,9 +114,9 @@ class User extends Authenticatable implements MessengerProvider
 ### Searchable
 
 - You must implement the `getProviderSearchableBuilder` on providers you want to be searchable. We also include a [`Search`][link-search] trait that works out of the box with the default laravel User model.
-    - You must also ensure `searchable` in the providers `getProviderSettings` method is true (default).
+  - You must also ensure `searchable` in the providers `getProviderSettings` method is true (default).
 - If you have different columns used to search for your provider, you can skip using the default `Search` trait, and define the public static method yourself.
-    - We inject the query builder, along with the original full string search term, and an array of the search term exploded via spaces and commas.
+  - We inject the query builder, along with the original full string search term, and an array of the search term exploded via spaces and commas.
 
 ***Example:***
 
@@ -153,7 +162,7 @@ class User extends Authenticatable implements MessengerProvider
 ### Devices
 
 - Devices are a helpful way for you to attach a listener onto our [PushNotificationEvent][link-push-event]. When any broadcast over a private channel occurs, we forward a stripped down list of all recipients/providers and their types/IDs, along with the original data broadcasted over websockets, and the event name.
-    - To use this default event, you must be using our `default` broadcast driver, and have `push_notifications` enabled. How you use the data from our event to send push notifications (FCM etc) is up to you!
+  - To use this default event, you must be using our `default` broadcast driver, and have `push_notifications` enabled. How you use the data from our event to send push notifications (FCM etc) is up to you!
 
 ---
 
@@ -231,7 +240,7 @@ public function getProviderName(): string
 ### Providers avatar column
 
 - When provider avatar upload/removal is enabled, we use the default `string/nullable` : `picture` column on that provider models table.
-    - You may overwrite the column name on your model using the below method, should your column be named differently.
+  - You may overwrite the column name on your model using the below method, should your column be named differently.
 
 ***Example:***
 
@@ -247,7 +256,7 @@ public function getProviderAvatarColumn(): string
 ### Providers last active column
 
 - When online status is enabled, we use the default `timestamp` : `updated_at` column on that provider models table. This is used to show when a provider was last active, and is the column we will update when you use the messenger status heartbeat.
-    - You may overwrite the column name on your model using the below method, should your column be named differently.
+  - You may overwrite the column name on your model using the below method, should your column be named differently.
 
 ***Example:***
 
@@ -258,8 +267,88 @@ public function getProviderAvatarColumn(): string
     }
 ```
 
+---
+
+## Messenger Model
+- Our [Messenger.php][link-messenger-model] model allows your providers to have individual "settings", such as online status and notification sound toggles.
+- We also use a `whereHasMorph` query through our `messengers` table, letting your providers search for others through our API.
+- By default, the `Messenger` model will be created if it does not exist a provider using our API. However, you should attach this model yourself anytime one of your providers is created.
+- If you are installing `Messenger` into an application with existing providers/users, you can use our command `COMMAND` to attach the [Messenger.php][link-messenger-model] model to all existing records for each of the providers you registered above.
+
+### Attaching the model
+- When one of your registered providers is created, such as a new `User`, you should attach our [Messenger.php][link-messenger-model] model using one of the methods below:
+
+---
+
+#### Using the getter on our facade, we perform a `firstOrCreate` for the messenger model
+***Example using a User model***
+```php
+use App\Models\User;
+use RTippin\Messenger\Facades\Messenger;
+
+$user = User::create([
+    'email' => 'new@example.org'
+]);
+
+Messenger::getProviderMessenger($user);
+```
+
+---
+
+#### Using our factory to generate the model directly
+***Example using a User model***
+```php
+use App\Models\User;
+use RTippin\Messenger\Models\Messenger;
+
+$user = User::create([
+    'email' => 'new@example.org'
+]);
+
+Messenger::factory()->owner($user)->create();
+```
+
+---
+
+#### For your model factories, you can implement the `configure` `afterCreating` method to attach the messenger model
+***Example using a User model factory***
+```php
+<?php
+
+namespace Database\Factories;
+
+use App\Models\User;
+use Illuminate\Database\Eloquent\Factories\Factory;
+use RTippin\Messenger\Models\Messenger;
+
+class UserFactory extends Factory
+{
+    protected $model = User::class;
+
+    public function definition(): array
+    {
+        return [
+            'name' => $this->faker->name,
+            'email' => $this->faker->unique()->safeEmail,
+            'demo' => true,
+            'admin' => false,
+            'password' => 'password',
+        ];
+    }
+
+    public function configure(): self
+    {
+        return $this->afterCreating(function (User $user) {
+            Messenger::factory()->owner($user)->create();
+        });
+    }
+}
+
+```
+
 [link-config]: https://github.com/RTippin/messenger/blob/1.x/config/messenger.php
 [link-messageable]: https://github.com/RTippin/messenger/blob/1.x/src/Traits/Messageable.php
 [link-search]: https://github.com/RTippin/messenger/blob/1.x/src/Traits/Search.php
 [link-messenger-contract]: https://github.com/RTippin/messenger/blob/1.x/src/Contracts/MessengerProvider.php
 [link-push-event]: https://github.com/RTippin/messenger/blob/1.x/src/Events/PushNotificationEvent.php
+[link-messenger-model]: https://github.com/RTippin/messenger/blob/1.x/src/Models/Messenger.php
