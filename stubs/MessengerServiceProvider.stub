@@ -46,34 +46,34 @@ class MessengerServiceProvider extends ServiceProvider
         // Register all provider models you wish to use in this messenger system.
         // Ensure they implement our MessengerProvider contract first.
         Messenger::registerProviders([
-//            User::class,
+            // User::class,
         ]);
 
         // Set the video driver of your choosing.
-//        Messenger::setVideoDriver(MyVideoBroker::class);
+        // Messenger::setVideoDriver(MyVideoBroker::class);
 
         // Register the bot handlers you wish to use. You can install our addon
         // messenger-bots for these ready-made handlers.
-//        MessengerBots::registerHandlers([
-//            ChuckNorrisBot::class,
-//            CoinTossBot::class,
-//            CommandsBot::class,
-//            DadJokeBot::class,
-//            InsultBot::class,
-//            JokeBot::class,
-//            KanyeBot::class,
-//            KnockBot::class,
-//            LocationBot::class,
-//            QuotableBot::class,
-//            RandomImageBot::class,
-//            ReactionBot::class,
-//            ReplyBot::class,
-//            RockPaperScissorsBot::class,
-//            RollBot::class,
-//            WeatherBot::class,
-//            WikiBot::class,
-//            YoMommaBot::class,
-//            YoutubeBot::class,
-//        ]);
+        MessengerBots::registerHandlers([
+            // ChuckNorrisBot::class,
+            // CoinTossBot::class,
+            // CommandsBot::class,
+            // DadJokeBot::class,
+            // InsultBot::class,
+            // JokeBot::class,
+            // KanyeBot::class,
+            // KnockBot::class,
+            // LocationBot::class,
+            // QuotableBot::class,
+            // RandomImageBot::class,
+            // ReactionBot::class,
+            // ReplyBot::class,
+            // RockPaperScissorsBot::class,
+            // RollBot::class,
+            // WeatherBot::class,
+            // WikiBot::class,
+            // YoMommaBot::class,
+            // YoutubeBot::class,
+        ]);
     }
 }
