@@ -272,13 +272,23 @@ public function getProviderAvatarColumn(): string
 ## Messenger Model
 - Our [Messenger.php][link-messenger-model] model allows your providers to have individual "settings", such as online status and notification sound toggles.
 - We also use a `whereHasMorph` query through our `messengers` table, letting your providers search for others through our API.
-- By default, the `Messenger` model will be created if it does not exist a provider using our API. However, you should attach this model yourself anytime one of your providers is created.
-- If you are installing `Messenger` into an application with existing providers/users, you can use our command `COMMAND` to attach the [Messenger.php][link-messenger-model] model to all existing records for each of the providers you registered above.
-
-### Attaching the model
-- When one of your registered providers is created, such as a new `User`, you should attach our [Messenger.php][link-messenger-model] model using one of the methods below:
+- By default, the `Messenger` model will be created if it does not exist for a provider using our API. However, you should attach this model yourself anytime one of your providers is created.
 
 ---
+
+### Attaching the model to your existing records
+- If you are installing `Messenger` into an application with existing providers/users, you can use our command below to attach the [Messenger.php][link-messenger-model] model to all existing records for each of the providers you registered above.
+
+```bash
+php artisan messenger:attach:messengers
+```
+
+#### See our [Command's][link-commands-docs] documentation for more information.
+
+---
+
+### Attaching the model on creation
+- When one of your registered providers is created, such as a new `User`, you should attach our [Messenger.php][link-messenger-model] model using one of the methods below:
 
 #### Using the getter on our facade, we perform a `firstOrCreate` for the messenger model
 ***Example using a User model***
@@ -293,8 +303,6 @@ $user = User::create([
 Messenger::getProviderMessenger($user);
 ```
 
----
-
 #### Using our factory to generate the model directly
 ***Example using a User model***
 ```php
@@ -307,8 +315,6 @@ $user = User::create([
 
 Messenger::factory()->owner($user)->create();
 ```
-
----
 
 #### For your model factories, you can implement the `configure` `afterCreating` method to attach the messenger model
 ***Example using a User model factory***
@@ -352,3 +358,4 @@ class UserFactory extends Factory
 [link-messenger-contract]: https://github.com/RTippin/messenger/blob/1.x/src/Contracts/MessengerProvider.php
 [link-push-event]: https://github.com/RTippin/messenger/blob/1.x/src/Events/PushNotificationEvent.php
 [link-messenger-model]: https://github.com/RTippin/messenger/blob/1.x/src/Models/Messenger.php
+[link-commands-docs]: Commands.md

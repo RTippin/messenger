@@ -10,6 +10,15 @@
 
 ---
 
+### `php artisan messenger:attach:messengers` | `--provider=` | `--force`
+- Attaches our [Messenger][link-messenger-model] model to your existing registered provider records.
+  - By default, this will chunk queries for each of your providers at 100, looping through and checking if a `Messenger` model record exists for each provider, and creating one if it does not.
+  - You will be asked to confirm running this command.
+- `--provider=` flag you can set the singular provider you want to attach messengers for. Eg: `--provider="App\Models\User"`
+- `--force` flag to attach messengers without checking if one exist for each provider.
+
+---
+
 ### `php artisan messenger:calls:check-activity` | `--now`
 - Check active calls for active participants, end calls with none.
 - `--now` flag to run immediately without dispatching jobs to queue.
@@ -105,3 +114,5 @@ class Kernel extends ConsoleKernel
     }
 }
 ```
+
+[link-messenger-model]: https://github.com/RTippin/messenger/blob/1.x/src/Models/Messenger.php

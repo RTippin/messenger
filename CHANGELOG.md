@@ -3,6 +3,15 @@
 
 ---
 
+### [v1.3.0 (08-29-2021)](https://github.com/RTippin/messenger/compare/v1.2.0...v1.3.0)
+
+#### Added
+- `NullFriendBroker` stand-in class for `FriendDriver`.
+- `setFriendDriver` method on our core `Messenger` service.
+- `AttachMessengersCommand` to attach our messenger models with existing records.
+
+---
+
 ### [v1.2.0 (08-25-2021)](https://github.com/RTippin/messenger/compare/v1.1.1...v1.2.0)
 
 #### Added
