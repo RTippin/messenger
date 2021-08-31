@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Http\Collections;
 
-use Exception;
 use Illuminate\Http\Request;
 use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use RTippin\Messenger\Http\Resources\MessageResource;
@@ -62,8 +61,6 @@ class DocumentMessageCollection extends MessengerCollection
     {
         try {
             return (new MessageResource($resource, $this->thread, true))->resolve();
-        } catch (Exception $e) {
-            report($e);
         } catch (Throwable $t) {
             report($t);
         }

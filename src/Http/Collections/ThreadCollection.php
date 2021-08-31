@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Http\Collections;
 
-use Exception;
 use Illuminate\Http\Request;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
@@ -60,8 +59,6 @@ class ThreadCollection extends MessengerCollection
     {
         try {
             return (new ThreadResource($resource))->resolve();
-        } catch (Exception $e) {
-            report($e);
         } catch (Throwable $t) {
             report($t);
         }

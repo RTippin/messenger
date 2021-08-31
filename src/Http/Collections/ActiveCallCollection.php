@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Http\Collections;
 
-use Exception;
 use Illuminate\Http\Request;
 use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use RTippin\Messenger\Http\Resources\CallResource;
@@ -40,8 +39,6 @@ class ActiveCallCollection extends MessengerCollection
         try {
             /** @var Thread $resource */
             return (new CallResource($resource->activeCall, $resource))->resolve();
-        } catch (Exception $e) {
-            report($e);
         } catch (Throwable $t) {
             report($t);
         }

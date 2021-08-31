@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Http\Collections;
 
-use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 use Illuminate\Support\Collection;
@@ -60,8 +59,6 @@ class MessageReactionCollection extends ResourceCollection
     {
         try {
             return (new MessageReactionResource($reaction))->resolve();
-        } catch (Exception $e) {
-            report($e);
         } catch (Throwable $t) {
             report($t);
         }

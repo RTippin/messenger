@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Http\Collections;
 
-use Exception;
 use Illuminate\Http\Request;
 use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use RTippin\Messenger\Http\Resources\ParticipantResource;
@@ -62,8 +61,6 @@ class ParticipantCollection extends MessengerCollection
     {
         try {
             return (new ParticipantResource($resource, $this->thread))->resolve();
-        } catch (Exception $e) {
-            report($e);
         } catch (Throwable $t) {
             report($t);
         }
