@@ -396,8 +396,8 @@ trait MessengerProviders
 
         if ($this->isOnlineStatusEnabled()
             && $this->isValidMessengerProvider($provider)
-            && $this->getOnlineStatusSetting($provider) !== 0) {
-            $this->getOnlineStatusSetting($provider) === 2
+            && $this->getOnlineStatusSetting($provider) !== MessengerProvider::OFFLINE) {
+            $this->getOnlineStatusSetting($provider) === MessengerProvider::AWAY
                 ? $this->setToAway($provider)
                 : $this->setToOnline($provider);
         }
@@ -429,7 +429,7 @@ trait MessengerProviders
 
         if ($this->isOnlineStatusEnabled()
             && $this->isValidMessengerProvider($provider)
-            && $this->getOnlineStatusSetting($provider) !== 0) {
+            && $this->getOnlineStatusSetting($provider) !== MessengerProvider::OFFLINE) {
             $this->setToAway($provider);
         }
     }
@@ -484,7 +484,9 @@ trait MessengerProviders
         if ($this->isOnlineStatusEnabled()
             && $this->isValidMessengerProvider($provider)
             && $cache = Cache::get("{$this->findProviderAlias($provider)}:online:{$provider->getKey()}")) {
-            return $cache === 'online' ? 1 : 2;
+            return $cache === 'online'
+                ? MessengerProvider::ONLINE
+                : MessengerProvider::AWAY;
         }
 
         return 0;

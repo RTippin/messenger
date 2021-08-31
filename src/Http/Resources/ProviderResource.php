@@ -10,7 +10,6 @@ use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\GhostUser;
-use RTippin\Messenger\Support\Definitions;
 
 class ProviderResource extends JsonResource
 {
@@ -121,17 +120,17 @@ class ProviderResource extends JsonResource
             'searchable' => $isSearchable,
             'can_search' => $this->canSearch($isSearchable),
             'online_status' => $this->provider->getProviderOnlineStatus(),
-            'online_status_verbose' => Definitions::OnlineStatus[$this->provider->getProviderOnlineStatus()],
+            'online_status_verbose' => MessengerProvider::ONLINE_STATUS[$this->provider->getProviderOnlineStatus()],
             'friend_status' => $friendStatus,
-            'friend_status_verbose' => Definitions::FriendStatus[$friendStatus],
+            'friend_status_verbose' => FriendDriver::STATUS[$friendStatus],
             'last_active' => $this->getLastActive($friendStatus),
-            $this->mergeWhen($friendStatus === 1, fn () => [
+            $this->mergeWhen($friendStatus === FriendDriver::FRIEND, fn () => [
                 'friend_id' => $this->getFriendResourceId($friendStatus),
             ]),
-            $this->mergeWhen($friendStatus === 2, fn () => [
+            $this->mergeWhen($friendStatus === FriendDriver::SENT_FRIEND_REQUEST, fn () => [
                 'sent_friend_id' => $this->getFriendResourceId($friendStatus),
             ]),
-            $this->mergeWhen($friendStatus === 3, fn () => [
+            $this->mergeWhen($friendStatus === FriendDriver::PENDING_FRIEND_REQUEST, fn () => [
                 'pending_friend_id' => $this->getFriendResourceId($friendStatus),
             ]),
         ];
@@ -143,7 +142,7 @@ class ProviderResource extends JsonResource
     private function canMessageFirst(): bool
     {
         return Messenger::canMessageProviderFirst($this->provider)
-            && ! Messenger::getProvider()->is($this->provider);
+            && Messenger::getProvider()->isNot($this->provider);
     }
 
     /**
@@ -152,7 +151,7 @@ class ProviderResource extends JsonResource
     private function isFriendable(): bool
     {
         return Messenger::isProviderFriendable($this->provider)
-            && ! Messenger::getProvider()->is($this->provider);
+            && Messenger::getProvider()->isNot($this->provider);
     }
 
     /**
@@ -188,7 +187,7 @@ class ProviderResource extends JsonResource
     private function getLastActive(int $friendStatus)
     {
         if (Messenger::isOnlineStatusEnabled()) {
-            return $friendStatus === 1
+            return $friendStatus === FriendDriver::FRIEND
                 ? $this->provider->{$this->provider->getProviderLastActiveColumn()}
                 : null;
         }

@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Actions\Messenger;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Http\Request;
 use RTippin\Messenger\Actions\BaseMessengerAction;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\StatusHeartbeatEvent;
 use RTippin\Messenger\Messenger;
 
@@ -75,7 +76,7 @@ class OnlineStatus extends BaseMessengerAction
     private function updateLastActiveTime(): self
     {
         if ($this->messenger->isOnlineStatusEnabled()
-            && $this->messenger->getProviderMessenger()->online_status !== 0) {
+            && $this->messenger->getProviderMessenger()->online_status !== MessengerProvider::OFFLINE) {
             $this->messenger->getProvider()->forceFill([
                 $this->messenger->getProvider()->getProviderLastActiveColumn() => now(),
             ])->save();

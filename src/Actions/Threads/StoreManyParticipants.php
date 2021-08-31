@@ -149,7 +149,7 @@ class StoreManyParticipants extends ThreadParticipantAction
             $providers = (new Collection($providers))
                 ->transform(fn (array $provider) => $this->getProvider($provider['alias'], $provider['id']))
                 ->filter(fn ($provider) => ! is_null($provider))
-                ->reject(fn (MessengerProvider $provider) => $this->friends->friendStatus($provider) !== 1);
+                ->reject(fn (MessengerProvider $provider) => $this->friends->friendStatus($provider) !== FriendDriver::FRIEND);
 
             return $isNewGroup
                 ? $providers

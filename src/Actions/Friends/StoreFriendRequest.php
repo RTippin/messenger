@@ -129,7 +129,7 @@ class StoreFriendRequest extends BaseMessengerAction
             throw new FriendException('Not authorized to add friend.');
         }
 
-        if ($this->friends->friendStatus($this->recipient) !== 0) {
+        if ($this->friends->friendStatus($this->recipient) !== FriendDriver::NOT_FRIEND) {
             throw new FriendException("You are already friends, or have a pending request with {$this->recipient->getProviderName()}.");
         }
     }

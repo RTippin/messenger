@@ -9,6 +9,15 @@ use Illuminate\Database\Eloquent\Model;
  */
 interface MessengerProvider
 {
+    const OFFLINE = 0;
+    const ONLINE = 1;
+    const AWAY = 2;
+    const ONLINE_STATUS = [
+        0 => 'OFFLINE',
+        1 => 'ONLINE',
+        2 => 'AWAY',
+    ];
+
     /**
      * Get the provider settings and alias override, if set.
      *

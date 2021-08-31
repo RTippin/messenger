@@ -126,16 +126,18 @@ class FriendBroker implements FriendDriver
     public function friendStatus($provider = null): int
     {
         if ($this->isFriend($provider)) {
-            return 1;
-        }
-        if ($this->isSentFriendRequest($provider)) {
-            return 2;
-        }
-        if ($this->isPendingFriendRequest($provider)) {
-            return 3;
+            return self::FRIEND;
         }
 
-        return 0;
+        if ($this->isSentFriendRequest($provider)) {
+            return self::SENT_FRIEND_REQUEST;
+        }
+
+        if ($this->isPendingFriendRequest($provider)) {
+            return self::PENDING_FRIEND_REQUEST;
+        }
+
+        return self::NOT_FRIEND;
     }
 
     /**
@@ -144,11 +146,11 @@ class FriendBroker implements FriendDriver
     public function getFriendResource(int $friendStatus, $provider = null)
     {
         switch ($friendStatus) {
-            case 1:
+            case self::FRIEND:
                 return $this->getFriend($provider);
-            case 2:
+            case self::SENT_FRIEND_REQUEST:
                 return $this->getSentFriend($provider);
-            case 3:
+            case self::PENDING_FRIEND_REQUEST:
                 return $this->getPendingFriend($provider);
         }
 

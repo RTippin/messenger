@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Messenger\OnlineStatus;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\StatusHeartbeatEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -56,7 +57,7 @@ class OnlineStatusTest extends FeatureTestCase
             'updated_at' => $before,
         ]);
         Messenger::getProviderMessenger()->update([
-            'online_status' => 0,
+            'online_status' => MessengerProvider::OFFLINE,
         ]);
 
         app(OnlineStatus::class)->execute(false);

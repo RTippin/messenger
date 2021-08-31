@@ -10,6 +10,17 @@ use RTippin\Messenger\Models\Thread;
 
 interface FriendDriver
 {
+    const NOT_FRIEND = 0;
+    const FRIEND = 1;
+    const SENT_FRIEND_REQUEST = 2;
+    const PENDING_FRIEND_REQUEST = 3;
+    const STATUS = [
+        0 => 'NOT_FRIEND',
+        1 => 'FRIEND',
+        2 => 'SENT_FRIEND_REQUEST',
+        3 => 'PENDING_FRIEND_REQUEST',
+    ];
+
     /**
      * @param bool $withRelations
      * @return Friend|Collection

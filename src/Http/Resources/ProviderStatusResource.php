@@ -9,7 +9,6 @@ use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Repositories\ThreadRepository;
-use RTippin\Messenger\Support\Definitions;
 
 class ProviderStatusResource extends JsonResource
 {
@@ -42,7 +41,7 @@ class ProviderStatusResource extends JsonResource
             'provider' => (new ProviderResource($this->provider))->resolve(),
             'active_calls_count' => $this->activeCallsCount(),
             'online_status' => $this->provider->getProviderOnlineStatus(),
-            'online_status_verbose' => Definitions::OnlineStatus[$this->provider->getProviderOnlineStatus()],
+            'online_status_verbose' => $this->provider->getProviderOnlineStatusVerbose(),
             'unread_threads_count' => $this->unreadThreadsCount(),
             'pending_friends_count' => $this->pendingFriendsCount(),
             'settings' => Messenger::getProviderMessenger($this->provider)->toArray(),
