@@ -25,17 +25,17 @@ class StoreMessengerAvatar extends MessengerAvatarAction
     }
 
     /**
-     * @param mixed ...$parameters
-     * @var MessengerAvatarRequest[0]
+     * @param UploadedFile $image
      * @return $this
+     * @see MessengerAvatarRequest
      * @throws FeatureDisabledException|FileServiceException|Exception
      */
-    public function execute(...$parameters): self
+    public function execute(UploadedFile $image): self
     {
         $this->bailWhenFeatureDisabled();
 
         $this->attemptTransactionOrRollbackFile(
-            $this->upload($parameters[0]['image'])
+            $this->upload($image)
         );
 
         return $this;

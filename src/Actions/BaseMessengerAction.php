@@ -96,11 +96,6 @@ abstract class BaseMessengerAction implements Action
     /**
      * @inheritDoc
      */
-    abstract public function execute(...$parameters);
-
-    /**
-     * @inheritDoc
-     */
     public static function disableEvents(): void
     {
         static::$allEventsSilenced = true;
@@ -151,7 +146,8 @@ abstract class BaseMessengerAction implements Action
      */
     public function chain(string $abstractAction): Action
     {
-        if (! is_subclass_of($abstractAction, self::class)) {
+        if (! is_subclass_of($abstractAction, self::class)
+            || ! method_exists($abstractAction, 'execute')) {
             throw new LogicException('Invalid chained action.');
         }
 

@@ -137,7 +137,7 @@ class BotController
 
         return $storeBotAvatar->execute(
             $bot,
-            $request->validated()
+            $request->validated()['image']
         )->getJsonResource();
     }
 

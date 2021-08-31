@@ -33,9 +33,7 @@ class StoreMessengerAvatarTest extends FeatureTestCase
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Avatar upload is currently disabled.');
 
-        app(StoreMessengerAvatar::class)->execute([
-            'image' => UploadedFile::fake()->image('avatar.jpg'),
-        ]);
+        app(StoreMessengerAvatar::class)->execute(UploadedFile::fake()->image('avatar.jpg'));
     }
 
     /** @test */
@@ -54,9 +52,7 @@ class StoreMessengerAvatarTest extends FeatureTestCase
         ]);
         $fileService->shouldReceive('destroy')->andThrow(new Exception('Storage Error'));
 
-        app(StoreMessengerAvatar::class)->execute([
-            'image' => UploadedFile::fake()->image('avatar.jpg'),
-        ]);
+        app(StoreMessengerAvatar::class)->execute(UploadedFile::fake()->image('avatar.jpg'));
     }
 
     /** @test */
@@ -64,9 +60,7 @@ class StoreMessengerAvatarTest extends FeatureTestCase
     {
         Carbon::setTestNow($updated = now()->addMinutes(5));
 
-        app(StoreMessengerAvatar::class)->execute([
-            'image' => UploadedFile::fake()->image('avatar.jpg'),
-        ]);
+        app(StoreMessengerAvatar::class)->execute(UploadedFile::fake()->image('avatar.jpg'));
 
         $this->assertDatabaseHas('users', [
             'id' => $this->tippin->getKey(),
@@ -78,9 +72,7 @@ class StoreMessengerAvatarTest extends FeatureTestCase
     /** @test */
     public function it_stores_image()
     {
-        app(StoreMessengerAvatar::class)->execute([
-            'image' => UploadedFile::fake()->image('avatar.jpg'),
-        ]);
+        app(StoreMessengerAvatar::class)->execute(UploadedFile::fake()->image('avatar.jpg'));
 
         Storage::disk('public')->assertExists($this->directory.'/'.$this->tippin->picture);
     }
@@ -95,9 +87,7 @@ class StoreMessengerAvatarTest extends FeatureTestCase
             'disk' => 'public',
         ]);
 
-        app(StoreMessengerAvatar::class)->execute([
-            'image' => UploadedFile::fake()->image('avatar2.jpg'),
-        ]);
+        app(StoreMessengerAvatar::class)->execute(UploadedFile::fake()->image('avatar.jpg'));
 
         $this->assertNotSame('avatar.jpg', $this->tippin->picture);
         Storage::disk('public')->assertExists($this->directory.'/'.$this->tippin->picture);

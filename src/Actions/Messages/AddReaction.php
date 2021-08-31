@@ -80,18 +80,19 @@ class AddReaction extends BaseMessengerAction
     /**
      * Add a reaction to the given message.
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var Message[1]
-     * @var string[2]
+     * @param Thread $thread
+     * @param Message $message
+     * @param string $reaction
      * @return $this
      * @throws FeatureDisabledException|ReactionException|Throwable
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread,
+                            Message $message,
+                            string $reaction): self
     {
-        $this->setThread($parameters[0])
-            ->setMessage($parameters[1])
-            ->prepareReaction($parameters[2]);
+        $this->setThread($thread)
+            ->setMessage($message)
+            ->prepareReaction($reaction);
 
         $this->bailIfAddReactionChecksFail();
 
@@ -261,7 +262,7 @@ class AddReaction extends BaseMessengerAction
     }
 
     /**
-     * Store reaction. Mark message as reacted to.
+     * Store reaction. Mark the message as reacted to.
      */
     private function storeReaction(): void
     {

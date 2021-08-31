@@ -48,18 +48,20 @@ class UpdateParticipantPermissions extends ThreadParticipantAction
     /**
      * Update the participants permissions.
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var Participant[1]
-     * @var ParticipantPermissionsRequest[2]
+     * @param Thread $thread
+     * @param Participant $participant
+     * @param array $params
      * @return $this
+     * @see ParticipantPermissionsRequest
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread,
+                            Participant $participant,
+                            array $params): self
     {
-        $this->setThread($parameters[0])
+        $this->setThread($thread)
             ->updateParticipant(
-                $parameters[1],
-                $parameters[2]
+                $participant,
+                $params
             )
             ->generateResource();
 

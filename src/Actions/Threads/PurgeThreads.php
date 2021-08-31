@@ -29,15 +29,11 @@ class PurgeThreads extends BaseMessengerAction
      * from storage under the thread, then force delete thread
      * itself from database.
      *
-     * @param mixed ...$parameters
-     * @var Collection[0]
+     * @param Collection $threads
      * @return $this
      */
-    public function execute(...$parameters): self
+    public function execute(Collection $threads): self
     {
-        /** @var Collection $threads */
-        $threads = $parameters[0];
-
         $threads->each(fn (Thread $thread) => $this->purge($thread));
 
         return $this;

@@ -39,9 +39,7 @@ class StoreGroupAvatarTest extends FeatureTestCase
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Group avatars are currently disabled.');
 
-        app(StoreGroupAvatar::class)->execute(Thread::factory()->group()->create(), [
-            'image' => UploadedFile::fake()->image('picture.jpg'),
-        ]);
+        app(StoreGroupAvatar::class)->execute(Thread::factory()->group()->create(), UploadedFile::fake()->image('picture.jpg'));
     }
 
     /** @test */
@@ -60,9 +58,7 @@ class StoreGroupAvatarTest extends FeatureTestCase
         ]);
         $fileService->shouldReceive('destroy')->andThrow(new Exception('Storage Error'));
 
-        app(StoreGroupAvatar::class)->execute($thread, [
-            'image' => UploadedFile::fake()->image('picture.jpg'),
-        ]);
+        app(StoreGroupAvatar::class)->execute($thread, UploadedFile::fake()->image('picture.jpg'));
     }
 
     /** @test */
@@ -70,9 +66,7 @@ class StoreGroupAvatarTest extends FeatureTestCase
     {
         $thread = Thread::factory()->group()->create();
 
-        app(StoreGroupAvatar::class)->execute($thread, [
-            'image' => UploadedFile::fake()->image('picture.jpg'),
-        ]);
+        app(StoreGroupAvatar::class)->execute($thread, UploadedFile::fake()->image('picture.jpg'));
 
         $this->assertNotNull($thread->image);
     }
@@ -85,9 +79,7 @@ class StoreGroupAvatarTest extends FeatureTestCase
             'disk' => 'messenger',
         ]);
 
-        app(StoreGroupAvatar::class)->execute($thread, [
-            'image' => UploadedFile::fake()->image('picture.jpg'),
-        ]);
+        app(StoreGroupAvatar::class)->execute($thread, UploadedFile::fake()->image('picture.jpg'));
 
         Storage::disk('messenger')->assertMissing($thread->getAvatarDirectory().'/avatar.jpg');
         Storage::disk('messenger')->assertExists($thread->getAvatarPath());
@@ -103,9 +95,7 @@ class StoreGroupAvatarTest extends FeatureTestCase
         ]);
         $thread = Thread::factory()->group()->create();
 
-        app(StoreGroupAvatar::class)->execute($thread, [
-            'image' => UploadedFile::fake()->image('picture.jpg'),
-        ]);
+        app(StoreGroupAvatar::class)->execute($thread, UploadedFile::fake()->image('picture.jpg'));
 
         Event::assertDispatched(function (ThreadAvatarBroadcast $event) use ($thread) {
             $this->assertContains('presence-messenger.thread.'.$thread->id, $event->broadcastOn());
@@ -128,9 +118,7 @@ class StoreGroupAvatarTest extends FeatureTestCase
         Bus::fake();
         $thread = Thread::factory()->group()->create();
 
-        app(StoreGroupAvatar::class)->withoutBroadcast()->execute($thread, [
-            'image' => UploadedFile::fake()->image('picture.jpg'),
-        ]);
+        app(StoreGroupAvatar::class)->withoutBroadcast()->execute($thread, UploadedFile::fake()->image('picture.jpg'));
 
         Bus::assertDispatched(ThreadAvatarMessage::class);
     }
@@ -143,9 +131,7 @@ class StoreGroupAvatarTest extends FeatureTestCase
         Messenger::setSystemMessageSubscriber('queued', false);
         $thread = Thread::factory()->group()->create();
 
-        app(StoreGroupAvatar::class)->withoutBroadcast()->execute($thread, [
-            'image' => UploadedFile::fake()->image('picture.jpg'),
-        ]);
+        app(StoreGroupAvatar::class)->withoutBroadcast()->execute($thread, UploadedFile::fake()->image('picture.jpg'));
 
         Bus::assertDispatchedSync(ThreadAvatarMessage::class);
     }
@@ -158,9 +144,7 @@ class StoreGroupAvatarTest extends FeatureTestCase
         Messenger::setSystemMessageSubscriber('enabled', false);
         $thread = Thread::factory()->group()->create();
 
-        app(StoreGroupAvatar::class)->withoutBroadcast()->execute($thread, [
-            'image' => UploadedFile::fake()->image('picture.jpg'),
-        ]);
+        app(StoreGroupAvatar::class)->withoutBroadcast()->execute($thread, UploadedFile::fake()->image('picture.jpg'));
 
         Bus::assertNotDispatched(ThreadAvatarMessage::class);
     }

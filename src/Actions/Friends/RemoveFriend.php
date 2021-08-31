@@ -49,14 +49,13 @@ class RemoveFriend extends BaseMessengerAction
      * Remove and destroy our friend relationship. This will
      * remove our friend model and its inverse/mirrored model.
      *
-     * @param mixed ...$parameters
-     * @var Friend[0]
+     * @param Friend $friend
      * @return $this
      * @throws Exception|Throwable
      */
-    public function execute(...$parameters): self
+    public function execute(Friend $friend): self
     {
-        $this->friend = $parameters[0];
+        $this->friend = $friend;
 
         $this->getInverseFriend()
             ->handleTransactions()

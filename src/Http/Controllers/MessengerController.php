@@ -43,7 +43,7 @@ class MessengerController
     }
 
     /**
-     * Display the providers messenger.
+     * Display the provider's messenger.
      *
      * @return MessengerResource
      */
@@ -93,7 +93,7 @@ class MessengerController
      */
     public function updateAvatar(MessengerAvatarRequest $request, StoreMessengerAvatar $storeAvatar): MessengerResource
     {
-        $storeAvatar->execute($request->validated());
+        $storeAvatar->execute($request->validated()['image']);
 
         return new MessengerResource(
             $this->messenger->getProviderMessenger()

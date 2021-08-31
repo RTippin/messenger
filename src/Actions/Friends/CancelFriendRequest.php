@@ -43,14 +43,13 @@ class CancelFriendRequest extends BaseMessengerAction
     /**
      * Cancel and destroy our sent friend request.
      *
-     * @param mixed ...$parameters
-     * @var SentFriend [0]
+     * @param SentFriend $sent
      * @return $this
      * @throws Exception
      */
-    public function execute(...$parameters): self
+    public function execute(SentFriend $sent): self
     {
-        $this->sentFriend = $parameters[0];
+        $this->sentFriend = $sent;
 
         $this->destroySentFriend()
             ->generateResource()

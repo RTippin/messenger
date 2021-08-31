@@ -56,26 +56,28 @@ class StoreImageMessage extends NewMessageAction
      * Store / upload new image message, update thread
      * updated_at, mark read for participant, broadcast.
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var ImageMessageRequest[1]
-     * @var string|null[2]
+     * @param Thread $thread
+     * @param array $params
+     * @param string|null $senderIp
      * @return $this
+     * @see ImageMessageRequest
      * @throws Throwable|FeatureDisabledException|FileServiceException
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread,
+                            array $params,
+                            ?string $senderIp = null): self
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->setThread($parameters[0]);
+        $this->setThread($thread);
 
-        $image = $this->upload($parameters[1]['image']);
+        $image = $this->upload($params['image']);
 
         $this->setMessageType('IMAGE_MESSAGE')
             ->setMessageBody($image)
-            ->setMessageOptionalParameters($parameters[1])
+            ->setMessageOptionalParameters($params)
             ->setMessageOwner($this->messenger->getProvider())
-            ->setSenderIp($parameters[2] ?? null);
+            ->setSenderIp($senderIp);
 
         $this->attemptTransactionOrRollbackFile($image);
 

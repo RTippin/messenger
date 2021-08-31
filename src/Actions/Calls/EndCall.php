@@ -59,14 +59,13 @@ class EndCall extends BaseMessengerAction
      * End the call immediately if it is still active. Teardown with
      * our video provider will be picked up by the event listener.
      *
-     * @param mixed ...$parameters
+     * @param Call $call
      * @return $this
-     * @var Call[0]
      * @throws Throwable
      */
-    public function execute(...$parameters): self
+    public function execute(Call $call): self
     {
-        $this->setCall($parameters[0]);
+        $this->setCall($call);
 
         if (! $this->hasNoEndingLockout()) {
             $this->setEndingLockout();

@@ -12,19 +12,18 @@ use Throwable;
 class StoreBotAvatar extends BotAvatarAction
 {
     /**
-     * @param mixed ...$parameters
-     * @var Bot[0]
-     * @var UploadedFile[1]['image']
+     * @param Bot $bot
+     * @param UploadedFile $image
      * @return $this
      * @throws FeatureDisabledException|FileServiceException|Exception
      */
-    public function execute(...$parameters): self
+    public function execute(Bot $bot, UploadedFile $image): self
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->setBot($parameters[0]);
+        $this->setBot($bot);
 
-        $this->attemptTransactionOrRollbackFile($this->upload($parameters[1]['image']));
+        $this->attemptTransactionOrRollbackFile($this->upload($image));
 
         $this->generateResource()->fireEvents();
 

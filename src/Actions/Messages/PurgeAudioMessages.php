@@ -29,16 +29,12 @@ class PurgeAudioMessages extends BaseMessengerAction
      * the file from storage, then force delete message itself
      * from database.
      *
-     * @param mixed ...$parameters
-     * @var Collection[0]
+     * @param Collection $audioMessages
      * @return $this
      */
-    public function execute(...$parameters): self
+    public function execute(Collection $audioMessages): self
     {
-        /** @var Collection $audioFiles */
-        $audioFiles = $parameters[0];
-
-        $audioFiles->each(fn (Message $audio) => $this->purge($audio));
+        $audioMessages->each(fn (Message $audio) => $this->purge($audio));
 
         return $this;
     }

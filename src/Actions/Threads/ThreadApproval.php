@@ -51,17 +51,16 @@ class ThreadApproval extends ThreadParticipantAction
     }
 
     /**
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var bool[1]
+     * @param Thread $thread
+     * @param bool $approved
      * @return $this
      * @throws ThreadApprovalException|Exception
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread, bool $approved): self
     {
-        $this->approved = $parameters[1];
+        $this->approved = $approved;
 
-        $this->setThread($parameters[0]);
+        $this->setThread($thread);
 
         $this->bailIfThreadDoesntNeedApproval();
 

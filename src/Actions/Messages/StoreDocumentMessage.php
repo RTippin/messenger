@@ -56,26 +56,28 @@ class StoreDocumentMessage extends NewMessageAction
      * Store / upload new document message, update thread
      * updated_at, mark read for participant, broadcast.
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var DocumentMessageRequest[1]
-     * @var string|null[2]
+     * @param Thread $thread
+     * @param array $params
+     * @param string|null $senderIp
      * @return $this
+     * @see DocumentMessageRequest
      * @throws Throwable|FeatureDisabledException|FileServiceException
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread,
+                            array $params,
+                            ?string $senderIp = null): self
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->setThread($parameters[0]);
+        $this->setThread($thread);
 
-        $document = $this->upload($parameters[1]['document']);
+        $document = $this->upload($params['document']);
 
         $this->setMessageType('DOCUMENT_MESSAGE')
             ->setMessageBody($document)
-            ->setMessageOptionalParameters($parameters[1])
+            ->setMessageOptionalParameters($params)
             ->setMessageOwner($this->messenger->getProvider())
-            ->setSenderIp($parameters[2] ?? null);
+            ->setSenderIp($senderIp);
 
         $this->attemptTransactionOrRollbackFile($document);
 

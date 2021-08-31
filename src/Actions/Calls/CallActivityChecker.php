@@ -38,16 +38,12 @@ class CallActivityChecker extends BaseMessengerAction
      * end empty calls or remove participants who are not in
      * cache and have not officially left the call.
      *
-     * @param mixed ...$parameters
-     * @var Collection[0]
+     * @param Collection $calls
      * @return $this
      * @throws Throwable
      */
-    public function execute(...$parameters): self
+    public function execute(Collection $calls): self
     {
-        /** @var Collection $calls */
-        $calls = $parameters[0];
-
         $calls->each(fn (Call $call) => $this->performActivityChecks($call));
 
         return $this;

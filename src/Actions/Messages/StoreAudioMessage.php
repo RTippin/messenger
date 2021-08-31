@@ -56,26 +56,28 @@ class StoreAudioMessage extends NewMessageAction
      * Store / upload new audio message, update thread
      * updated_at, mark read for participant, broadcast.
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var AudioMessageRequest[1]
-     * @var string|null[2]
+     * @param Thread $thread
+     * @param array $params
+     * @param string|null $senderIp
      * @return $this
+     * @see AudioMessageRequest
      * @throws Throwable|FeatureDisabledException|FileServiceException
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread,
+                            array $params,
+                            ?string $senderIp = null): self
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->setThread($parameters[0]);
+        $this->setThread($thread);
 
-        $audio = $this->upload($parameters[1]['audio']);
+        $audio = $this->upload($params['audio']);
 
         $this->setMessageType('AUDIO_MESSAGE')
             ->setMessageBody($audio)
-            ->setMessageOptionalParameters($parameters[1])
+            ->setMessageOptionalParameters($params)
             ->setMessageOwner($this->messenger->getProvider())
-            ->setSenderIp($parameters[2] ?? null);
+            ->setSenderIp($senderIp);
 
         $this->attemptTransactionOrRollbackFile($audio);
 

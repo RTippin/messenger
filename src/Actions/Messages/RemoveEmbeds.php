@@ -47,15 +47,14 @@ class RemoveEmbeds extends BaseMessengerAction
     /**
      * Set embeds to false on the given message.
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var Message[1]
+     * @param Thread $thread
+     * @param Message $message
      * @return $this
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread, Message $message): self
     {
-        $this->setThread($parameters[0])
-            ->setMessage($parameters[1])
+        $this->setThread($thread)
+            ->setMessage($message)
             ->setEmbedsToFalse()
             ->fireBroadcast()
             ->fireEvents();

@@ -61,14 +61,13 @@ class LeaveThread extends BaseMessengerAction
     /**
      * Leave the group thread. Archive the group if no one ie left.
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
+     * @param Thread $thread
      * @return $this
      * @throws Throwable
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread): self
     {
-        $this->setThread($parameters[0])->handleTransactions();
+        $this->setThread($thread)->handleTransactions();
 
         if (! $this->threadArchived) {
             $this->fireBroadcast()->fireEvents();

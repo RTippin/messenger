@@ -29,15 +29,11 @@ class PurgeBots extends BaseMessengerAction
      * storage directory files, then force delete the bot
      * itself from database.
      *
-     * @param mixed ...$parameters
-     * @var Collection[0]
+     * @param Collection $bots
      * @return $this
      */
-    public function execute(...$parameters): self
+    public function execute(Collection $bots): self
     {
-        /** @var Collection $bots */
-        $bots = $parameters[0];
-
         $bots->each(fn (Bot $bot) => $this->purge($bot));
 
         return $this;

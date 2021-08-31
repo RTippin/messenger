@@ -27,14 +27,13 @@ class CallBrokerTeardown extends BaseMessengerAction
     /**
      * Teardown the call with the video provider.
      *
-     * @param mixed ...$parameters
-     * @var Call[0]
+     * @param Call $call
      * @return $this
      * @throws CallBrokerException
      */
-    public function execute(...$parameters): self
+    public function execute(Call $call): self
     {
-        $this->setCall($parameters[0]->fresh());
+        $this->setCall($call);
 
         if (! $this->getCall()->isTornDown()) {
             $this->teardownCallWithProvider()->updateCall();

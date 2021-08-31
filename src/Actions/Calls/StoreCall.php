@@ -47,20 +47,19 @@ class StoreCall extends NewCallAction
      * is false. We use our new call event to hook into creating a
      * video room using our desired video call service.
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var bool|null[1]
+     * @param Thread $thread
+     * @param bool $setupComplete
      * @return $this
      * @throws NewCallException|Throwable|FeatureDisabledException
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread, bool $setupComplete = false): self
     {
-        $this->setThread($parameters[0]);
+        $this->setThread($thread);
 
         $this->bailIfInitiateCallChecksFail();
 
         $this->setCallLockout()
-            ->handleTransactions($parameters[1] ?? false)
+            ->handleTransactions($setupComplete)
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();

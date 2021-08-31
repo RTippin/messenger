@@ -58,15 +58,14 @@ class IgnoreCall extends BaseMessengerAction
      * Ignore the incoming call. If private call, we will
      * end it immediately as well.
      *
-     * @param mixed ...$parameters
+     * @param Thread $thread
+     * @param Call $call
      * @return $this
-     * @var Thread[0]
-     * @var Call[1]
      * @throws Throwable
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread, Call $call): self
     {
-        $this->setThread($parameters[0])->setCall($parameters[1]);
+        $this->setThread($thread)->setCall($call);
 
         $this->getCall()->setRelations([
             'thread' => $this->getThread(),

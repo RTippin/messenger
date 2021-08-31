@@ -38,16 +38,15 @@ class MarkParticipantRead extends BaseMessengerAction
     /**
      * Update participants last_read.
      *
-     * @param mixed ...$parameters
-     * @var Participant[0]
-     * @var Thread|null[1]
+     * @param Participant|null $participant
+     * @param Thread|null $thread
      * @return $this
      */
-    public function execute(...$parameters): self
+    public function execute(?Participant $participant = null, ?Thread $thread = null): self
     {
-        $this->setParticipant($parameters[0] ?? null);
+        $this->setParticipant($participant);
 
-        if ($this->shouldUpdateTimestamp($parameters[1] ?? null)) {
+        if ($this->shouldUpdateTimestamp($thread)) {
             $this->markParticipantRead();
         }
 

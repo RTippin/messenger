@@ -80,16 +80,16 @@ class StoreFriendRequest extends BaseMessengerAction
     /**
      * Store our new sent friend request and notify the recipient!
      *
-     * @param mixed ...$parameters
-     * @var FriendRequest[0]
+     * @param array $params
      * @return $this
+     * @see FriendRequest
      * @throws FriendException|ProviderNotFoundException
      */
-    public function execute(...$parameters): self
+    public function execute(array $params): self
     {
         $this->locateAndSetRecipientProvider(
-            $parameters[0]['recipient_alias'],
-            $parameters[0]['recipient_id']
+            $params['recipient_alias'],
+            $params['recipient_id']
         );
 
         $this->bailIfRecipientIsNotValid();

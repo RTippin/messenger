@@ -26,13 +26,12 @@ class UnmuteThread extends ThreadParticipantAction
     /**
      * Unmute the thread for the current participant.
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
+     * @param Thread $thread
      * @return $this
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread): self
     {
-        $this->setThread($parameters[0])
+        $this->setThread($thread)
             ->updateParticipant(
                 $this->getThread()->currentParticipant(),
                 ['muted' => false]

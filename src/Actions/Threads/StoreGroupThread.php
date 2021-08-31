@@ -55,16 +55,16 @@ class StoreGroupThread extends NewThreadAction
      * Create a new group thread! If an array of provider alias/id is present,
      * we will also add the first batch of participants in this cycle.
      *
-     * @param array ...$parameters
-     * @var GroupThreadRequest[0]
+     * @param array $params
      * @return $this
+     * @see GroupThreadRequest
      * @throws Throwable
      */
-    public function execute(...$parameters): self
+    public function execute(array $params): self
     {
         $this->handleTransactions(
-            $parameters[0]['subject'],
-            $parameters[0]['providers'] ?? []
+            $params['subject'],
+            $params['providers'] ?? []
         )
             ->generateResource()
             ->fireBroadcast()

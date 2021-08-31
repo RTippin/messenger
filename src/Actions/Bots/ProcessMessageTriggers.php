@@ -77,23 +77,25 @@ class ProcessMessageTriggers extends BaseMessengerAction
      * Process all matching actions that the message
      * body matches through the action triggers.
      *
-     * @param mixed ...$parameters
-     * @param Thread[0]
-     * @param Message[1]
-     * @param bool[2]
-     * @param null|string[3]
+     * @param Thread $thread
+     * @param Message $message
+     * @param bool $isGroupAdmin
+     * @param null|string $senderIp
      * @return $this
      * @throws FeatureDisabledException
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread,
+                            Message $message,
+                            bool $isGroupAdmin,
+                            ?string $senderIp = null): self
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->isGroupAdmin = $parameters[2];
-        $this->senderIp = $parameters[3] ?? null;
+        $this->isGroupAdmin = $isGroupAdmin;
+        $this->senderIp = $senderIp;
         $this->botsTriggered = new Collection;
 
-        $this->setThread($parameters[0])->setMessage($parameters[1]);
+        $this->setThread($thread)->setMessage($message);
 
         foreach ($this->getBotActions() as $action) {
             $this->matchActionTriggers($action);

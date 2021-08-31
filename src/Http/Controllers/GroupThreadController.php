@@ -112,7 +112,7 @@ class GroupThreadController
 
         return $storeGroupAvatar->execute(
             $thread,
-            $request->validated()
+            $request->validated()['image']
         )->getJsonResource();
     }
 

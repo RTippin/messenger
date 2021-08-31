@@ -43,14 +43,13 @@ class DenyFriendRequest extends BaseMessengerAction
     /**
      * Deny and destroy the pending friend request.
      *
-     * @param mixed ...$parameters
+     * @param PendingFriend $pending
      * @return $this
      * @throws Exception
-     * @var PendingFriend [0]
      */
-    public function execute(...$parameters): self
+    public function execute(PendingFriend $pending): self
     {
-        $this->pendingFriend = $parameters[0];
+        $this->pendingFriend = $pending;
 
         $this->destroyPendingFriend()
             ->generateResource()

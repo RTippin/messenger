@@ -48,16 +48,15 @@ class RemoveParticipant extends BaseMessengerAction
     /**
      * Remove the participant from the group.
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var Participant[1]
+     * @param Thread $thread
+     * @param Participant $participant
      * @return $this
      * @throws Exception
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread, Participant $participant): self
     {
-        $this->setThread($parameters[0])
-            ->setParticipant($parameters[1])
+        $this->setThread($thread)
+            ->setParticipant($participant)
             ->removeParticipant()
             ->fireBroadcast()
             ->fireEvents();

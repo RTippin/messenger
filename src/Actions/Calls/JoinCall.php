@@ -47,16 +47,13 @@ class JoinCall extends CallParticipantAction
     /**
      * Join/Re-join the call and set the call participant in cache.
      *
-     * @param mixed ...$parameters
-     * @var Call[0]
-     * @var bool|null[1]
+     * @param Call $call
+     * @param bool $isNewCall
      * @return $this
      */
-    public function execute(...$parameters): self
+    public function execute(Call $call, bool $isNewCall = false): self
     {
-        $this->setCall($parameters[0]);
-
-        $isNewCall = $parameters[1] ?? false;
+        $this->setCall($call);
 
         if ($isNewCall || ! $this->getCall()->hasJoinedCall()) {
             $this->storeParticipant($this->messenger->getProvider());

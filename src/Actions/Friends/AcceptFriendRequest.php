@@ -67,14 +67,13 @@ class AcceptFriendRequest extends BaseMessengerAction
      * Accept the pending friend request. We will remove the pending model
      * and create two mirrored friend models to link our friendship!
      *
-     * @param mixed ...$parameters
-     * @var PendingFriend[0]
+     * @param PendingFriend $pending
      * @return $this
      * @throws Throwable
      */
-    public function execute(...$parameters): self
+    public function execute(PendingFriend $pending): self
     {
-        $this->pending = $parameters[0];
+        $this->pending = $pending;
 
         $this->handleTransactions()
             ->generateResource()

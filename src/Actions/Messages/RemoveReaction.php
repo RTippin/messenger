@@ -70,19 +70,20 @@ class RemoveReaction extends BaseMessengerAction
     /**
      * Remove a reaction from the given message.
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var Message[1]
-     * @var MessageReaction[2]
+     * @param Thread $thread
+     * @param Message $message
+     * @param MessageReaction $reaction
      * @return $this
      * @throws Throwable|FeatureDisabledException
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread,
+                            Message $message,
+                            MessageReaction $reaction): self
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->setThread($parameters[0])->setMessage($parameters[1]);
-        $this->reaction = $parameters[2];
+        $this->setThread($thread)->setMessage($message);
+        $this->reaction = $reaction;
         $this->reactionsCount = $this->getMessage()->reactions()->count();
 
         $this->handleTransactions()

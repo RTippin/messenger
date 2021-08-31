@@ -35,19 +35,18 @@ class UpdateBotAction extends BaseMessengerAction
     }
 
     /**
-     * @param mixed ...$parameters
-     * @var BotAction[0]
-     * @var array[1]
+     * @param BotAction $action
+     * @param array $params
      * @return $this
      * @see MessengerBots::generateHandlerData()
      * @throws FeatureDisabledException
      */
-    public function execute(...$parameters): self
+    public function execute(BotAction $action, array $params): self
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->setBotAction($parameters[0])
-            ->updateBotAction($parameters[1])
+        $this->setBotAction($action)
+            ->updateBotAction($params)
             ->generateResource()
             ->fireEvents();
 

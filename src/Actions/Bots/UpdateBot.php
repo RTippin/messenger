@@ -41,21 +41,21 @@ class UpdateBot extends BaseMessengerAction
     }
 
     /**
-     * @param mixed ...$parameters
-     * @var Bot[0]
-     * @var BotRequest[1]
+     * @param Bot $bot
+     * @param array $params
      * @return $this
+     * @see BotRequest
      * @throws FeatureDisabledException
      */
-    public function execute(...$parameters): self
+    public function execute(Bot $bot, array $params): self
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->setBot($parameters[0]);
+        $this->setBot($bot);
 
         $this->originalName = $this->getBot()->name;
 
-        $this->updateBot($parameters[1])->generateResource();
+        $this->updateBot($params)->generateResource();
 
         if ($this->getBot()->wasChanged()) {
             $this->fireEvents();

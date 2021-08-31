@@ -48,16 +48,15 @@ class PromoteAdmin extends ThreadParticipantAction
     /**
      * Promote the participant to admin!
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var Participant[1]
+     * @param Thread $thread
+     * @param Participant $participant
      * @return $this
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread, Participant $participant): self
     {
-        $this->setThread($parameters[0])
+        $this->setThread($thread)
             ->updateParticipant(
-                $parameters[1],
+                $participant,
                 Definitions::DefaultAdminParticipant
             )
             ->generateResource()

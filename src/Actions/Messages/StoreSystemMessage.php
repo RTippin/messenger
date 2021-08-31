@@ -34,21 +34,23 @@ class StoreSystemMessage extends NewMessageAction
     /**
      * Store new system message, update thread updated_at.
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var MessengerProvider[1]
-     * @var string[2]
-     * @var string[3]
+     * @param Thread $thread
+     * @param MessengerProvider $provider
+     * @param string $body
+     * @param string $type
      * @return $this
      * @throws Throwable
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread,
+                            MessengerProvider $provider,
+                            string $body,
+                            string $type): self
     {
         if ($this->messenger->isSystemMessagesEnabled()) {
-            $this->setThread($parameters[0])
-                ->setMessageType($parameters[3])
-                ->setMessageBody($parameters[2])
-                ->setMessageOwner($parameters[1])
+            $this->setThread($thread)
+                ->setMessageType($type)
+                ->setMessageBody($body)
+                ->setMessageOwner($provider)
                 ->handleTransactions()
                 ->generateResource()
                 ->fireBroadcast()

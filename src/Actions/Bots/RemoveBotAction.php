@@ -35,16 +35,15 @@ class RemoveBotAction extends BaseMessengerAction
     }
 
     /**
-     * @param mixed ...$parameters
-     * @var BotAction[0]
+     * @param BotAction $action
      * @return $this
      * @throws Exception|FeatureDisabledException
      */
-    public function execute(...$parameters): self
+    public function execute(BotAction $action): self
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->setBotAction($parameters[0])
+        $this->setBotAction($action)
             ->destroyBotAction()
             ->fireEvents();
 

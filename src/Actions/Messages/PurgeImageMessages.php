@@ -29,16 +29,12 @@ class PurgeImageMessages extends BaseMessengerAction
      * the image from storage, then force delete message itself
      * from database.
      *
-     * @param mixed ...$parameters
-     * @var Collection[0]
+     * @param Collection $imageMessages
      * @return $this
      */
-    public function execute(...$parameters): self
+    public function execute(Collection $imageMessages): self
     {
-        /** @var Collection $images */
-        $images = $parameters[0];
-
-        $images->each(fn (Message $image) => $this->purge($image));
+        $imageMessages->each(fn (Message $image) => $this->purge($image));
 
         return $this;
     }

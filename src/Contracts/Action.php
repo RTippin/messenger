@@ -17,14 +17,6 @@ use RTippin\Messenger\Models\Thread;
 interface Action
 {
     /**
-     * Executes the action, allowing variable number of params.
-     *
-     * @param mixed ...$parameters
-     * @return $this
-     */
-    public function execute(...$parameters);
-
-    /**
      * Disables all events and broadcast globally
      * for any actions during the request cycle.
      */

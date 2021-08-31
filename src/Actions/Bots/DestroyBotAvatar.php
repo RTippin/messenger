@@ -8,16 +8,15 @@ use RTippin\Messenger\Models\Bot;
 class DestroyBotAvatar extends BotAvatarAction
 {
     /**
-     * @param mixed ...$parameters
-     * @param Bot[0]
+     * @param Bot $bot
      * @return $this
      * @throws FeatureDisabledException
      */
-    public function execute(...$parameters): self
+    public function execute(Bot $bot): self
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->setBot($parameters[0])
+        $this->setBot($bot)
             ->removeOldIfExist()
             ->updateBotAvatar(null)
             ->generateResource();

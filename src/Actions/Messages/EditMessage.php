@@ -73,20 +73,21 @@ class EditMessage extends BaseMessengerAction
     /**
      * Update the given message.
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var Message[1]
-     * @var string[2]
+     * @param Thread $thread
+     * @param Message $message
+     * @param string $newBody
      * @return $this
      * @throws FeatureDisabledException|Throwable
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread,
+                            Message $message,
+                            string $newBody): self
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->setThread($parameters[0])
-            ->setMessage($parameters[1])
-            ->handleTransactions($parameters[2])
+        $this->setThread($thread)
+            ->setMessage($message)
+            ->handleTransactions($newBody)
             ->generateResource();
 
         if ($this->getMessage()->wasChanged()) {

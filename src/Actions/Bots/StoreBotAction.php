@@ -47,20 +47,22 @@ class StoreBotAction extends BaseMessengerAction
     }
 
     /**
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var Bot[1]
-     * @var array[2]
+     * @param Thread $thread
+     * @param Bot $bot
+     * @param array $params
+     * @return $this
      * @see MessengerBots::generateHandlerData()
      * @throws FeatureDisabledException|BotException
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread,
+                            Bot $bot,
+                            array $params): self
     {
-        $this->setThread($parameters[0])->setBot($parameters[1]);
+        $this->setThread($thread)->setBot($bot);
 
-        $this->bailIfCanAddBotActionFails($parameters[2]);
+        $this->bailIfCanAddBotActionFails($params);
 
-        $this->storeBotAction($parameters[2])
+        $this->storeBotAction($params)
             ->generateResource()
             ->fireEvents();
 

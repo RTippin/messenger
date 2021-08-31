@@ -56,16 +56,16 @@ class UpdateGroupSettings extends BaseMessengerAction
      * changes over the presence channel and an event for when
      * the group name changes.
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var ThreadSettingsRequest[1]
+     * @param Thread $thread
+     * @param array $params
      * @return $this
+     * @see ThreadSettingsRequest
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread, array $params): self
     {
-        $this->setThread($parameters[0])
-            ->determineIfGroupNameChanged($parameters[1]['subject'])
-            ->updateThread($parameters[1])
+        $this->setThread($thread)
+            ->determineIfGroupNameChanged($params['subject'])
+            ->updateThread($params)
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();

@@ -47,16 +47,15 @@ class JoinWithInvite extends InviteAction
     }
 
     /**
-     * @param mixed ...$parameters
-     * @var Invite[0]
+     * @param Invite $invite
      * @return $this
      * @throws Exception|Throwable|FeatureDisabledException
      */
-    public function execute(...$parameters): self
+    public function execute(Invite $invite): self
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->invite = $parameters[0];
+        $this->invite = $invite;
 
         $this->setThread($this->invite->thread)
             ->handleTransactions()

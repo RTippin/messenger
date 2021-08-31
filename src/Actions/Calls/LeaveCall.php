@@ -37,16 +37,15 @@ class LeaveCall extends CallParticipantAction
     /**
      * Leave the call!
      *
-     * @param mixed ...$parameters
-     * @var Call[0]
-     * @var CallParticipant[1]
+     * @param Call $call
+     * @param CallParticipant $participant
      * @return $this
      */
-    public function execute(...$parameters): self
+    public function execute(Call $call, CallParticipant $participant): self
     {
-        $this->setCall($parameters[0])
-            ->updateParticipant(...$this->participantLeft($parameters[1]))
-            ->removeParticipantInCallCache($parameters[1])
+        $this->setCall($call)
+            ->updateParticipant(...$this->participantLeft($participant))
+            ->removeParticipantInCallCache($participant)
             ->fireBroadcast()
             ->fireEvents();
 

@@ -42,15 +42,14 @@ class OnlineStatus extends BaseMessengerAction
     }
 
     /**
-     * @param mixed ...$parameters
-     * @var bool[0]
+     * @param bool $away
      * @return $this
      */
-    public function execute(...$parameters): self
+    public function execute(bool $away): self
     {
-        $this->setOnlineStatus($parameters[0])
+        $this->setOnlineStatus($away)
             ->updateLastActiveTime()
-            ->fireEvents($parameters[0]);
+            ->fireEvents($away);
 
         return $this;
     }

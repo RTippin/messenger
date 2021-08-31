@@ -24,15 +24,15 @@ class UpdateMessengerSettings extends BaseMessengerAction
     }
 
     /**
-     * @param mixed ...$parameters
-     * @var array|MessengerSettingsRequest[0]
+     * @param array $params
      * @return $this
+     * @see MessengerSettingsRequest
      */
-    public function execute(...$parameters): self
+    public function execute(array $params): self
     {
-        $this->messenger->getProviderMessenger()->update($parameters[0]);
+        $this->messenger->getProviderMessenger()->update($params);
 
-        $this->setOnlineCacheStatus($parameters[0]['online_status']);
+        $this->setOnlineCacheStatus($params['online_status']);
 
         return $this;
     }

@@ -46,18 +46,19 @@ class KickCallParticipant extends CallParticipantAction
     /**
      * Kick or un-kick the call participant!
      *
-     * @param mixed ...$parameters
-     * @var Call[0]
-     * @var CallParticipant[1]
-     * @var bool[2]
+     * @param Call $call
+     * @param CallParticipant $participant
+     * @param bool $kicked
      * @return $this
      */
-    public function execute(...$parameters): self
+    public function execute(Call $call,
+                            CallParticipant $participant,
+                            bool $kicked): self
     {
-        $this->setCall($parameters[0])
+        $this->setCall($call)
             ->updateParticipant(
-                $parameters[1],
-                $this->participantState($parameters[2])
+                $participant,
+                $this->participantState($kicked)
             );
 
         if ($this->getCallParticipant()->wasChanged()) {

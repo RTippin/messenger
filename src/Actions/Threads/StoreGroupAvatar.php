@@ -13,18 +13,18 @@ use Throwable;
 class StoreGroupAvatar extends GroupAvatarAction
 {
     /**
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var GroupAvatarRequest[1]
+     * @param Thread $thread
+     * @param UploadedFile $image
      * @return $this
+     * @see GroupAvatarRequest
      * @throws FeatureDisabledException|FileServiceException|Exception
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread, UploadedFile $image): self
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->setThread($parameters[0])
-            ->attemptTransactionOrRollbackFile($this->uploadAvatar($parameters[1]['image']))
+        $this->setThread($thread)
+            ->attemptTransactionOrRollbackFile($this->uploadAvatar($image))
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();

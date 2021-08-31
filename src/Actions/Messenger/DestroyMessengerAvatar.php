@@ -20,11 +20,10 @@ class DestroyMessengerAvatar extends MessengerAvatarAction
     }
 
     /**
-     * @param mixed ...$parameters
      * @return $this
      * @throws FeatureDisabledException
      */
-    public function execute(...$parameters): self
+    public function execute(): self
     {
         $this->bailWhenFeatureDisabled();
 

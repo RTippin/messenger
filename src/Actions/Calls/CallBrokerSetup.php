@@ -28,16 +28,15 @@ class CallBrokerSetup extends BaseMessengerAction
     /**
      * Setup the call with the video provider.
      *
-     * @param mixed ...$parameters
+     * @param Thread $thread
+     * @param Call $call
      * @return $this
-     * @var Thread[0]
-     * @var Call[1]
      * @throws CallBrokerException
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread, Call $call): self
     {
-        $this->setThread($parameters[0])
-            ->setCall($parameters[1]->fresh())
+        $this->setThread($thread)
+            ->setCall($call)
             ->checkCallNeedsToBeSetup();
 
         if ($this->getCall()->isActive()) {

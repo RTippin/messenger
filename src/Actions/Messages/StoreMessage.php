@@ -52,21 +52,23 @@ class StoreMessage extends NewMessageAction
      * Store new message, update thread updated_at,
      * mark read for participant, broadcast.
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var MessageRequest[1]
-     * @var string|null[2]
+     * @param Thread $thread
+     * @param array $params
+     * @param string|null $senderIp
      * @return $this
+     * @see MessageRequest
      * @throws Throwable
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread,
+                            array $params,
+                            ?string $senderIp = null): self
     {
-        $this->setThread($parameters[0])
+        $this->setThread($thread)
             ->setMessageType('MESSAGE')
-            ->setMessageBody($this->emoji->toShort($parameters[1]['message']) ?: null)
-            ->setMessageOptionalParameters($parameters[1])
+            ->setMessageBody($this->emoji->toShort($params['message']) ?: null)
+            ->setMessageOptionalParameters($params)
             ->setMessageOwner($this->messenger->getProvider())
-            ->setSenderIp($parameters[2] ?? null)
+            ->setSenderIp($senderIp)
             ->handleTransactions()
             ->generateResource()
             ->fireBroadcast()

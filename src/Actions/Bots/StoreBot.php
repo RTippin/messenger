@@ -38,18 +38,18 @@ class StoreBot extends BaseMessengerAction
     /**
      * Create a new thread bot!
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var BotRequest[1]
+     * @param Thread $thread
+     * @param array $params
      * @return $this
+     * @see BotRequest
      * @throws FeatureDisabledException
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread, array $params): self
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->setThread($parameters[0])
-            ->storeBot($parameters[1])
+        $this->setThread($thread)
+            ->storeBot($params)
             ->generateResource()
             ->fireEvents();
 

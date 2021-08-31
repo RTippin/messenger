@@ -47,14 +47,13 @@ class ArchiveThread extends BaseMessengerAction
     /**
      * Archive the thread :(.
      *
-     * @param mixed ...$parameters
+     * @param Thread $thread
      * @return $this
-     * @var Thread[0]
      * @throws Exception
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread): self
     {
-        $this->setThread($parameters[0])
+        $this->setThread($thread)
             ->archiveThread()
             ->fireBroadcast()
             ->fireEvents();

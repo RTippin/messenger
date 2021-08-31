@@ -78,20 +78,19 @@ class StoreManyParticipants extends ThreadParticipantAction
      * Store a collection of participants to a group, or restore
      * soft_deleted participants if already existed in trash.
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var array[1]
-     * @var bool|null[2]
+     * @param Thread $thread
+     * @param array $providers
+     * @param bool $isNewGroup
      * @return $this
      * @throws Throwable
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread,
+                            array $providers,
+                            bool $isNewGroup = false): self
     {
-        $this->setThread($parameters[0]);
+        $this->setThread($thread);
 
-        $isNewGroup = $parameters[2] ?? false;
-
-        $providers = $this->locateValidProviders($parameters[1], $isNewGroup);
+        $providers = $this->locateValidProviders($providers, $isNewGroup);
 
         $this->handleTransactions($providers, $isNewGroup);
 

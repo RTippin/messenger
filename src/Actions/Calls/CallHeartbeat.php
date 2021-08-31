@@ -9,13 +9,12 @@ class CallHeartbeat extends CallParticipantAction
     /**
      * Keeps the call participant in cache to show we are still in the call.
      *
-     * @param mixed ...$parameters
-     * @var Call[0]
+     * @param Call $call
      * @return $this
      */
-    public function execute(...$parameters): self
+    public function execute(Call $call): self
     {
-        $this->setCall($parameters[0])
+        $this->setCall($call)
             ->setParticipantInCallCache(
                 $this->getCall()->currentCallParticipant()
             );

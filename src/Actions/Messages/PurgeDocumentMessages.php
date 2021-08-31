@@ -29,16 +29,12 @@ class PurgeDocumentMessages extends BaseMessengerAction
      * the file from storage, then force delete message itself
      * from database.
      *
-     * @param mixed ...$parameters
-     * @var Collection[0]
+     * @param Collection $documentMessages
      * @return $this
      */
-    public function execute(...$parameters): self
+    public function execute(Collection $documentMessages): self
     {
-        /** @var Collection $documents */
-        $documents = $parameters[0];
-
-        $documents->each(fn (Message $document) => $this->purge($document));
+        $documentMessages->each(fn (Message $document) => $this->purge($document));
 
         return $this;
     }

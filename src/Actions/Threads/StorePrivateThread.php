@@ -100,25 +100,23 @@ class StorePrivateThread extends NewThreadAction
      * Create a new private thread. Check one does not already exist between the
      * two providers, and that they are allowed to initiate a conversation.
      *
-     * @param mixed ...$parameters
-     * @var PrivateThreadRequest[0]
+     * @param array $params
      * @return $this
+     * @see PrivateThreadRequest
      * @throws AuthorizationException|Throwable
      */
-    public function execute(...$parameters): self
+    public function execute(array $params): self
     {
-        $inputs = $parameters[0];
-
         $this->setRecipientAndExistingThread(
-            $inputs['recipient_alias'],
-            $inputs['recipient_id']
+            $params['recipient_alias'],
+            $params['recipient_id']
         );
 
         $this->bailIfCannotCreateThread();
 
-        $this->setMessageActions($inputs)
+        $this->setMessageActions($params)
             ->determineIfPending()
-            ->handleTransactions($inputs)
+            ->handleTransactions($params)
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();

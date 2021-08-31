@@ -31,9 +31,7 @@ class StoreBotAvatarTest extends FeatureTestCase
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Bot avatars are currently disabled.');
 
-        app(StoreBotAvatar::class)->execute($bot, [
-            'image' => UploadedFile::fake()->image('avatar.jpg'),
-        ]);
+        app(StoreBotAvatar::class)->execute($bot, UploadedFile::fake()->image('avatar.jpg'));
     }
 
     /** @test */
@@ -45,9 +43,7 @@ class StoreBotAvatarTest extends FeatureTestCase
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Bot avatars are currently disabled.');
 
-        app(StoreBotAvatar::class)->execute($bot, [
-            'image' => UploadedFile::fake()->image('avatar.jpg'),
-        ]);
+        app(StoreBotAvatar::class)->execute($bot, UploadedFile::fake()->image('avatar.jpg'));
     }
 
     /** @test */
@@ -66,9 +62,7 @@ class StoreBotAvatarTest extends FeatureTestCase
         ]);
         $fileService->shouldReceive('destroy')->andThrow(new Exception('Storage Error'));
 
-        app(StoreBotAvatar::class)->execute($bot, [
-            'image' => UploadedFile::fake()->image('avatar.jpg'),
-        ]);
+        app(StoreBotAvatar::class)->execute($bot, UploadedFile::fake()->image('avatar.jpg'));
     }
 
     /** @test */
@@ -77,9 +71,7 @@ class StoreBotAvatarTest extends FeatureTestCase
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
         Carbon::setTestNow($updated = now()->addMinutes(5));
 
-        app(StoreBotAvatar::class)->execute($bot, [
-            'image' => UploadedFile::fake()->image('avatar.jpg'),
-        ]);
+        app(StoreBotAvatar::class)->execute($bot, UploadedFile::fake()->image('avatar.jpg'));
 
         $this->assertDatabaseHas('bots', [
             'id' => $bot->id,
@@ -93,9 +85,7 @@ class StoreBotAvatarTest extends FeatureTestCase
     {
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
 
-        app(StoreBotAvatar::class)->execute($bot, [
-            'image' => UploadedFile::fake()->image('avatar.jpg'),
-        ]);
+        app(StoreBotAvatar::class)->execute($bot, UploadedFile::fake()->image('avatar.jpg'));
 
         Storage::disk('messenger')->assertExists($bot->getAvatarPath());
     }
@@ -108,9 +98,7 @@ class StoreBotAvatarTest extends FeatureTestCase
             'disk' => 'messenger',
         ]);
 
-        app(StoreBotAvatar::class)->execute($bot, [
-            'image' => UploadedFile::fake()->image('avatar.jpg'),
-        ]);
+        app(StoreBotAvatar::class)->execute($bot, UploadedFile::fake()->image('avatar.jpg'));
 
         $this->assertNotSame('avatar.jpg', $bot->avatar);
         Storage::disk('messenger')->assertExists($bot->getAvatarPath());
@@ -127,9 +115,7 @@ class StoreBotAvatarTest extends FeatureTestCase
             BotAvatarEvent::class,
         ]);
 
-        app(StoreBotAvatar::class)->execute($bot, [
-            'image' => UploadedFile::fake()->image('avatar.jpg'),
-        ]);
+        app(StoreBotAvatar::class)->execute($bot, UploadedFile::fake()->image('avatar.jpg'));
 
         Event::assertDispatched(function (BotAvatarEvent $event) use ($bot) {
             return $bot->id === $event->bot->id;
@@ -144,9 +130,7 @@ class StoreBotAvatarTest extends FeatureTestCase
         Messenger::setProvider($this->tippin);
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
 
-        app(StoreBotAvatar::class)->execute($bot, [
-            'image' => UploadedFile::fake()->image('avatar.jpg'),
-        ]);
+        app(StoreBotAvatar::class)->execute($bot, UploadedFile::fake()->image('avatar.jpg'));
 
         Bus::assertDispatched(BotAvatarMessage::class);
     }
@@ -159,9 +143,7 @@ class StoreBotAvatarTest extends FeatureTestCase
         Messenger::setProvider($this->tippin)->setSystemMessageSubscriber('queued', false);
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
 
-        app(StoreBotAvatar::class)->execute($bot, [
-            'image' => UploadedFile::fake()->image('avatar.jpg'),
-        ]);
+        app(StoreBotAvatar::class)->execute($bot, UploadedFile::fake()->image('avatar.jpg'));
 
         Bus::assertDispatchedSync(BotAvatarMessage::class);
     }
@@ -174,9 +156,7 @@ class StoreBotAvatarTest extends FeatureTestCase
         Messenger::setProvider($this->tippin)->setSystemMessageSubscriber('enabled', false);
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
 
-        app(StoreBotAvatar::class)->execute($bot, [
-            'image' => UploadedFile::fake()->image('avatar.jpg'),
-        ]);
+        app(StoreBotAvatar::class)->execute($bot, UploadedFile::fake()->image('avatar.jpg'));
 
         Bus::assertNotDispatched(BotAvatarMessage::class);
     }

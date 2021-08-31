@@ -10,16 +10,16 @@ use RTippin\Messenger\Models\Thread;
 class DestroyGroupAvatar extends GroupAvatarAction
 {
     /**
-     * @param mixed ...$parameters
+     * @param Thread $thread
      * @return $this
      * @var Thread[0]
      * @throws FeatureDisabledException|FileServiceException|Exception
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread): self
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->setThread($parameters[0])
+        $this->setThread($thread)
             ->removeOldIfExist()
             ->updateGroupAvatar(null)
             ->generateResource();

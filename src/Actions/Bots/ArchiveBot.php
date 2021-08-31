@@ -35,16 +35,15 @@ class ArchiveBot extends BaseMessengerAction
     }
 
     /**
-     * @param mixed ...$parameters
-     * @var Bot[0]
+     * @param Bot $bot
      * @return $this
      * @throws Exception|FeatureDisabledException
      */
-    public function execute(...$parameters): self
+    public function execute(Bot $bot): self
     {
         $this->bailIfBotsDisabled();
 
-        $this->setBot($parameters[0])
+        $this->setBot($bot)
             ->archiveBot()
             ->fireEvents();
 

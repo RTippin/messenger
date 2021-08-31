@@ -41,18 +41,18 @@ class StoreInvite extends InviteAction
     /**
      * Create a new thread invite!
      *
-     * @param mixed ...$parameters
-     * @var Thread[0]
-     * @var InviteRequest[1]
+     * @param Thread $thread
+     * @param array $params
      * @return $this
+     * @see InviteRequest
      * @throws FeatureDisabledException
      */
-    public function execute(...$parameters): self
+    public function execute(Thread $thread, array $params): self
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->setThread($parameters[0])
-            ->storeInvite($parameters[1])
+        $this->setThread($thread)
+            ->storeInvite($params)
             ->generateResource()
             ->fireEvents();
 
