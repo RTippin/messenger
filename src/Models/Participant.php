@@ -54,6 +54,29 @@ class Participant extends Model implements Ownerable
         SoftDeletes,
         Uuids;
 
+    const DefaultPermissions = [
+        'add_participants' => false,
+        'manage_bots' => false,
+        'manage_invites' => false,
+        'admin' => false,
+        'deleted_at' => null,
+        'pending' => false,
+        'start_calls' => false,
+        'send_knocks' => false,
+        'send_messages' => true,
+    ];
+    const AdminPermissions = [
+        'add_participants' => true,
+        'manage_bots' => true,
+        'manage_invites' => true,
+        'admin' => true,
+        'deleted_at' => null,
+        'pending' => false,
+        'start_calls' => true,
+        'send_knocks' => true,
+        'send_messages' => true,
+    ];
+
     /**
      * The database table used by the model.
      *

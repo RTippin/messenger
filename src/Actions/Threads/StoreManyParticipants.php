@@ -12,9 +12,9 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Http\Resources\Broadcast\NewThreadBroadcastResource;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\ProvidersRepository;
-use RTippin\Messenger\Support\Definitions;
 use Throwable;
 
 class StoreManyParticipants extends ThreadParticipantAction
@@ -189,7 +189,7 @@ class StoreManyParticipants extends ThreadParticipantAction
     {
         if ($isNewGroup) {
             return $providers->transform(function (MessengerProvider $provider) {
-                return $this->storeParticipant($provider, Definitions::DefaultParticipant)->getParticipant(true);
+                return $this->storeParticipant($provider, Participant::DefaultPermissions)->getParticipant(true);
             });
         }
 

@@ -412,14 +412,14 @@ class MessengerComposer
     {
         try {
             $this->database->transaction(function () {
-                $thread = Thread::create(Definitions::DefaultThread);
+                $thread = Thread::create(Thread::DefaultSettings);
 
-                $thread->participants()->create(array_merge(Definitions::DefaultParticipant, [
+                $thread->participants()->create(array_merge(Participant::DefaultPermissions, [
                     'owner_id' => $this->messenger->getProvider()->getKey(),
                     'owner_type' => $this->messenger->getProvider()->getMorphClass(),
                 ]));
 
-                $thread->participants()->create(array_merge(Definitions::DefaultParticipant, [
+                $thread->participants()->create(array_merge(Participant::DefaultPermissions, [
                     'owner_id' => $this->to->getKey(),
                     'owner_type' => $this->to->getMorphClass(),
                 ]));

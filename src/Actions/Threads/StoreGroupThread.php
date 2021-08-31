@@ -10,7 +10,8 @@ use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Http\Request\GroupThreadRequest;
 use RTippin\Messenger\Messenger;
-use RTippin\Messenger\Support\Definitions;
+use RTippin\Messenger\Models\Participant;
+use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Support\MessageTransformer;
 use Throwable;
 
@@ -116,7 +117,7 @@ class StoreGroupThread extends NewThreadAction
     private function groupThreadAttributes(string $subject): array
     {
         return [
-            'type' => 2,
+            'type' => Thread::GROUP,
             'subject' => $subject,
             'add_participants' => true,
             'invitations' => true,
@@ -142,7 +143,7 @@ class StoreGroupThread extends NewThreadAction
         return [
             $this->getThread(),
             $this->messenger->getProvider(),
-            Definitions::DefaultAdminParticipant,
+            Participant::AdminPermissions,
         ];
     }
 

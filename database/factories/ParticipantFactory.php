@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use RTippin\Messenger\Models\Participant;
-use RTippin\Messenger\Support\Definitions;
 
 class ParticipantFactory extends Factory
 {
@@ -22,7 +21,7 @@ class ParticipantFactory extends Factory
      */
     public function definition(): array
     {
-        return array_merge(Definitions::DefaultParticipant, [
+        return array_merge(Participant::DefaultPermissions, [
             'muted' => false,
         ]);
     }
@@ -46,7 +45,7 @@ class ParticipantFactory extends Factory
     public function admin(): Factory
     {
         return $this->state(function (array $attributes) {
-            return Definitions::DefaultAdminParticipant;
+            return Participant::AdminPermissions;
         });
     }
 

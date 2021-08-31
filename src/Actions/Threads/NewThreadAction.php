@@ -7,7 +7,6 @@ use RTippin\Messenger\Http\Resources\Broadcast\NewThreadBroadcastResource;
 use RTippin\Messenger\Http\Resources\ThreadResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Support\Definitions;
 
 abstract class NewThreadAction extends BaseMessengerAction
 {
@@ -39,7 +38,7 @@ abstract class NewThreadAction extends BaseMessengerAction
      */
     protected function storeThread(array $attributes = []): self
     {
-        $this->setThread(Thread::create(array_merge(Definitions::DefaultThread, $attributes)));
+        $this->setThread(Thread::create(array_merge(Thread::DefaultSettings, $attributes)));
 
         return $this;
     }

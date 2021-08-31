@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Actions\Threads;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\Participant;
-use RTippin\Messenger\Support\Definitions;
 
 abstract class ThreadParticipantAction extends BaseMessengerAction
 {
@@ -50,7 +49,7 @@ abstract class ThreadParticipantAction extends BaseMessengerAction
             ->setRelation('owner', $provider);
 
         if ($participant->trashed()) {
-            $participant->update(Definitions::DefaultParticipant);
+            $participant->update(Participant::DefaultPermissions);
         }
 
         $this->setParticipant($participant);

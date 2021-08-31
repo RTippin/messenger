@@ -10,7 +10,6 @@ use RTippin\Messenger\Http\Resources\ParticipantResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Support\Definitions;
 
 class PromoteAdmin extends ThreadParticipantAction
 {
@@ -57,7 +56,7 @@ class PromoteAdmin extends ThreadParticipantAction
         $this->setThread($thread)
             ->updateParticipant(
                 $participant,
-                Definitions::DefaultAdminParticipant
+                Participant::AdminPermissions
             )
             ->generateResource()
             ->fireBroadcast()

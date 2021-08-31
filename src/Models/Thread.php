@@ -14,7 +14,6 @@ use RTippin\Messenger\Contracts\HasPresenceChannel;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\ThreadFactory;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
@@ -59,6 +58,25 @@ class Thread extends Model implements HasPresenceChannel
         ScopesProvider,
         SoftDeletes,
         Uuids;
+
+    const PRIVATE = 1;
+    const GROUP = 2;
+    const TYPE = [
+        1 => 'PRIVATE',
+        2 => 'GROUP',
+    ];
+    const DefaultSettings = [
+        'type' => self::PRIVATE,
+        'subject' => null,
+        'image' => null,
+        'calling' => true,
+        'invitations' => false,
+        'add_participants' => false,
+        'messaging' => true,
+        'knocks' => true,
+        'chat_bots' => false,
+        'lockout' => false,
+    ];
 
     /**
      * The database table used by the model.
@@ -314,7 +332,7 @@ class Thread extends Model implements HasPresenceChannel
      */
     public function getTypeVerbose(): string
     {
-        return Definitions::Thread[$this->type];
+        return self::TYPE[$this->type];
     }
 
     /**
@@ -322,7 +340,7 @@ class Thread extends Model implements HasPresenceChannel
      */
     public function isGroup(): bool
     {
-        return $this->type === 2;
+        return $this->type === self::GROUP;
     }
 
     /**
@@ -330,7 +348,7 @@ class Thread extends Model implements HasPresenceChannel
      */
     public function isPrivate(): bool
     {
-        return $this->type === 1;
+        return $this->type === self::PRIVATE;
     }
 
     /**

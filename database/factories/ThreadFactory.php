@@ -22,7 +22,7 @@ class ThreadFactory extends Factory
      */
     public function definition(): array
     {
-        return Definitions::DefaultThread;
+        return Thread::DefaultSettings;
     }
 
     /**
@@ -34,7 +34,7 @@ class ThreadFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'type' => 2,
+                'type' => Thread::GROUP,
                 'subject' => $this->faker->company,
                 'image' => null,
                 'add_participants' => true,

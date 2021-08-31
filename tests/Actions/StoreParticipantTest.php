@@ -5,7 +5,6 @@ namespace RTippin\Messenger\Tests\Actions;
 use RTippin\Messenger\Actions\Threads\StoreParticipant;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
 class StoreParticipantTest extends FeatureTestCase
@@ -31,7 +30,7 @@ class StoreParticipantTest extends FeatureTestCase
     {
         $thread = Thread::factory()->group()->create();
 
-        app(StoreParticipant::class)->execute($thread, $this->doe, Definitions::DefaultAdminParticipant);
+        app(StoreParticipant::class)->execute($thread, $this->doe, Participant::AdminPermissions);
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->doe->getKey(),
