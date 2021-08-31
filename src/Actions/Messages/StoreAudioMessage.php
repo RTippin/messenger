@@ -11,6 +11,7 @@ use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\FileServiceException;
 use RTippin\Messenger\Http\Request\AudioMessageRequest;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\FileService;
 use Throwable;
@@ -73,7 +74,7 @@ class StoreAudioMessage extends NewMessageAction
 
         $audio = $this->upload($params['audio']);
 
-        $this->setMessageType('AUDIO_MESSAGE')
+        $this->setMessageType(Message::AUDIO_MESSAGE)
             ->setMessageBody($audio)
             ->setMessageOptionalParameters($params)
             ->setMessageOwner($this->messenger->getProvider())

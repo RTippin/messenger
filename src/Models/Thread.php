@@ -235,7 +235,7 @@ class Thread extends Model implements HasPresenceChannel
      */
     public function scopeGroup(Builder $query): Builder
     {
-        return $query->where('type', '=', 2);
+        return $query->where('type', '=', self::GROUP);
     }
 
     /**
@@ -246,7 +246,7 @@ class Thread extends Model implements HasPresenceChannel
      */
     public function scopePrivate(Builder $query): Builder
     {
-        return $query->where('type', '=', 1);
+        return $query->where('type', '=', self::PRIVATE);
     }
 
     /**

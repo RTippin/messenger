@@ -68,7 +68,7 @@ class MessageTransformer
      */
     public static function makeJoinedWithInvite(Thread $thread, MessengerProvider $provider): array
     {
-        return self::generateStoreResponse($thread, $provider, 'joined', 'PARTICIPANT_JOINED_WITH_INVITE');
+        return self::generateStoreResponse($thread, $provider, 'joined', Message::PARTICIPANT_JOINED_WITH_INVITE);
     }
 
     /**
@@ -83,7 +83,7 @@ class MessageTransformer
     {
         $body = (new Collection(['call_id' => $call->id]))->toJson();
 
-        return self::generateStoreResponse($thread, $provider, $body, 'VIDEO_CALL');
+        return self::generateStoreResponse($thread, $provider, $body, Message::VIDEO_CALL);
     }
 
     /**
@@ -93,7 +93,7 @@ class MessageTransformer
      */
     public static function makeGroupAvatarChanged(Thread $thread, MessengerProvider $provider): array
     {
-        return self::generateStoreResponse($thread, $provider, 'updated the avatar', 'GROUP_AVATAR_CHANGED');
+        return self::generateStoreResponse($thread, $provider, 'updated the avatar', Message::GROUP_AVATAR_CHANGED);
     }
 
     /**
@@ -105,7 +105,7 @@ class MessageTransformer
     {
         $body = $thread->isGroup() ? 'archived the group' : 'archived the conversation';
 
-        return self::generateStoreResponse($thread, $provider, $body, 'THREAD_ARCHIVED');
+        return self::generateStoreResponse($thread, $provider, $body, Message::THREAD_ARCHIVED);
     }
 
     /**
@@ -118,7 +118,7 @@ class MessageTransformer
                                             MessengerProvider $provider,
                                             string $subject): array
     {
-        return self::generateStoreResponse($thread, $provider, "created $subject", 'GROUP_CREATED');
+        return self::generateStoreResponse($thread, $provider, "created $subject", Message::GROUP_CREATED);
     }
 
     /**
@@ -131,7 +131,7 @@ class MessageTransformer
                                             MessengerProvider $provider,
                                             string $subject): array
     {
-        return self::generateStoreResponse($thread, $provider, "renamed the group to $subject", 'GROUP_RENAMED');
+        return self::generateStoreResponse($thread, $provider, "renamed the group to $subject", Message::GROUP_RENAMED);
     }
 
     /**
@@ -146,7 +146,7 @@ class MessageTransformer
     {
         $body = self::generateParticipantJson($participant);
 
-        return self::generateStoreResponse($thread, $provider, $body, 'DEMOTED_ADMIN');
+        return self::generateStoreResponse($thread, $provider, $body, Message::DEMOTED_ADMIN);
     }
 
     /**
@@ -161,7 +161,7 @@ class MessageTransformer
     {
         $body = self::generateParticipantJson($participant);
 
-        return self::generateStoreResponse($thread, $provider, $body, 'PROMOTED_ADMIN');
+        return self::generateStoreResponse($thread, $provider, $body, Message::PROMOTED_ADMIN);
     }
 
     /**
@@ -171,7 +171,7 @@ class MessageTransformer
      */
     public static function makeGroupLeft(Thread $thread, MessengerProvider $provider): array
     {
-        return self::generateStoreResponse($thread, $provider, 'left', 'PARTICIPANT_LEFT_GROUP');
+        return self::generateStoreResponse($thread, $provider, 'left', Message::PARTICIPANT_LEFT_GROUP);
     }
 
     /**
@@ -186,7 +186,7 @@ class MessageTransformer
     {
         $body = self::generateParticipantJson($participant);
 
-        return self::generateStoreResponse($thread, $provider, $body, 'PARTICIPANT_REMOVED');
+        return self::generateStoreResponse($thread, $provider, $body, Message::PARTICIPANT_REMOVED);
     }
 
     /**
@@ -204,7 +204,7 @@ class MessageTransformer
             'owner_type' => $participant->owner_type,
         ])->toJson();
 
-        return self::generateStoreResponse($thread, $provider, $body, 'PARTICIPANTS_ADDED');
+        return self::generateStoreResponse($thread, $provider, $body, Message::PARTICIPANTS_ADDED);
     }
 
     /**
@@ -217,7 +217,7 @@ class MessageTransformer
                                         MessengerProvider $provider,
                                         string $botName): array
     {
-        return self::generateStoreResponse($thread, $provider, "added $botName BOT", 'BOT_ADDED');
+        return self::generateStoreResponse($thread, $provider, "added $botName BOT", Message::BOT_ADDED);
     }
 
     /**
@@ -232,7 +232,7 @@ class MessageTransformer
                                           string $oldName,
                                           string $botName): array
     {
-        return self::generateStoreResponse($thread, $provider, "renamed the BOT ( $oldName ) to $botName", 'BOT_RENAMED');
+        return self::generateStoreResponse($thread, $provider, "renamed the BOT ( $oldName ) to $botName", Message::BOT_RENAMED);
     }
 
     /**
@@ -245,7 +245,7 @@ class MessageTransformer
                                                 MessengerProvider $provider,
                                                 string $botName): array
     {
-        return self::generateStoreResponse($thread, $provider, "updated the avatar for $botName BOT", 'BOT_AVATAR_CHANGED');
+        return self::generateStoreResponse($thread, $provider, "updated the avatar for $botName BOT", Message::BOT_AVATAR_CHANGED);
     }
 
     /**
@@ -258,7 +258,7 @@ class MessageTransformer
                                           MessengerProvider $provider,
                                           string $botName): array
     {
-        return self::generateStoreResponse($thread, $provider, "removed $botName BOT", 'BOT_REMOVED');
+        return self::generateStoreResponse($thread, $provider, "removed $botName BOT", Message::BOT_REMOVED);
     }
 
     /**
@@ -432,14 +432,14 @@ class MessageTransformer
      * @param Thread $thread
      * @param MessengerProvider $provider
      * @param string $body
-     * @param string $type
+     * @param int $type
      * @return array
      * @see StoreSystemMessage
      */
     private static function generateStoreResponse(Thread $thread,
                                                   MessengerProvider $provider,
                                                   string $body,
-                                                  string $type): array
+                                                  int $type): array
     {
         return [$thread, $provider, $body, $type];
     }

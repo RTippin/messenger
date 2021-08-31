@@ -14,7 +14,6 @@ use RTippin\Messenger\Http\Request\BaseMessageRequest;
 use RTippin\Messenger\Http\Resources\MessageResource;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Message;
-use RTippin\Messenger\Support\Definitions;
 use Throwable;
 
 abstract class NewMessageAction extends BaseMessengerAction
@@ -86,12 +85,12 @@ abstract class NewMessageAction extends BaseMessengerAction
     }
 
     /**
-     * @param string $type
+     * @param int $type
      * @return $this
      */
-    protected function setMessageType(string $type): self
+    protected function setMessageType(int $type): self
     {
-        $this->messageType = array_search($type, Definitions::Message);
+        $this->messageType = $type;
 
         return $this;
     }

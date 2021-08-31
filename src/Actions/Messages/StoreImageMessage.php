@@ -11,6 +11,7 @@ use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\FileServiceException;
 use RTippin\Messenger\Http\Request\ImageMessageRequest;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\FileService;
 use Throwable;
@@ -73,7 +74,7 @@ class StoreImageMessage extends NewMessageAction
 
         $image = $this->upload($params['image']);
 
-        $this->setMessageType('IMAGE_MESSAGE')
+        $this->setMessageType(Message::IMAGE_MESSAGE)
             ->setMessageBody($image)
             ->setMessageOptionalParameters($params)
             ->setMessageOwner($this->messenger->getProvider())

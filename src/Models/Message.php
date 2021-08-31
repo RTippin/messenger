@@ -16,7 +16,6 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\MessageFactory;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\ScopesProvider;
@@ -58,10 +57,52 @@ class Message extends Model implements Ownerable
         SoftDeletes,
         Uuids;
 
-    /**
-     * Message types that are not system messages.
-     */
-    const NonSystemTypes = [0, 1, 2, 3];
+    const MESSAGE = 0;
+    const IMAGE_MESSAGE = 1;
+    const DOCUMENT_MESSAGE = 2;
+    const AUDIO_MESSAGE = 3;
+    const PARTICIPANT_JOINED_WITH_INVITE = 88;
+    const VIDEO_CALL = 90;
+    const GROUP_AVATAR_CHANGED = 91;
+    const THREAD_ARCHIVED = 92;
+    const GROUP_CREATED = 93;
+    const GROUP_RENAMED = 94;
+    const DEMOTED_ADMIN = 95;
+    const PROMOTED_ADMIN = 96;
+    const PARTICIPANT_LEFT_GROUP = 97;
+    const PARTICIPANT_REMOVED = 98;
+    const PARTICIPANTS_ADDED = 99;
+    const BOT_ADDED = 100;
+    const BOT_RENAMED = 101;
+    const BOT_AVATAR_CHANGED = 102;
+    const BOT_REMOVED = 103;
+    const NonSystemTypes = [
+        self::MESSAGE,
+        self::IMAGE_MESSAGE,
+        self::DOCUMENT_MESSAGE,
+        self::AUDIO_MESSAGE,
+    ];
+    const TYPE = [
+        0 => 'MESSAGE',
+        1 => 'IMAGE_MESSAGE',
+        2 => 'DOCUMENT_MESSAGE',
+        3 => 'AUDIO_MESSAGE',
+        88 => 'PARTICIPANT_JOINED_WITH_INVITE',
+        90 => 'VIDEO_CALL',
+        91 => 'GROUP_AVATAR_CHANGED',
+        92 => 'THREAD_ARCHIVED',
+        93 => 'GROUP_CREATED',
+        94 => 'GROUP_RENAMED',
+        95 => 'DEMOTED_ADMIN',
+        96 => 'PROMOTED_ADMIN',
+        97 => 'PARTICIPANT_LEFT_GROUP',
+        98 => 'PARTICIPANT_REMOVED',
+        99 => 'PARTICIPANTS_ADDED',
+        100 => 'BOT_ADDED',
+        101 => 'BOT_RENAMED',
+        102 => 'BOT_AVATAR_CHANGED',
+        103 => 'BOT_REMOVED',
+    ];
 
     /**
      * The database table used by the model.
@@ -170,7 +211,7 @@ class Message extends Model implements Ownerable
      */
     public function scopeText(Builder $query): Builder
     {
-        return $query->where('type', '=', 0);
+        return $query->where('type', '=', self::MESSAGE);
     }
 
     /**
@@ -203,7 +244,7 @@ class Message extends Model implements Ownerable
      */
     public function scopeImage(Builder $query): Builder
     {
-        return $query->where('type', '=', 1);
+        return $query->where('type', '=', self::IMAGE_MESSAGE);
     }
 
     /**
@@ -214,7 +255,7 @@ class Message extends Model implements Ownerable
      */
     public function scopeDocument(Builder $query): Builder
     {
-        return $query->where('type', '=', 2);
+        return $query->where('type', '=', self::DOCUMENT_MESSAGE);
     }
 
     /**
@@ -225,7 +266,7 @@ class Message extends Model implements Ownerable
      */
     public function scopeAudio(Builder $query): Builder
     {
-        return $query->where('type', '=', 3);
+        return $query->where('type', '=', self::AUDIO_MESSAGE);
     }
 
     /**
@@ -273,7 +314,7 @@ class Message extends Model implements Ownerable
      */
     public function getTypeVerbose(): string
     {
-        return Definitions::Message[$this->type];
+        return self::TYPE[$this->type];
     }
 
     /**
@@ -386,7 +427,7 @@ class Message extends Model implements Ownerable
      */
     public function isText(): bool
     {
-        return $this->type === 0;
+        return $this->type === self::MESSAGE;
     }
 
     /**
@@ -418,7 +459,7 @@ class Message extends Model implements Ownerable
      */
     public function isImage(): bool
     {
-        return $this->type === 1;
+        return $this->type === self::IMAGE_MESSAGE;
     }
 
     /**
@@ -426,7 +467,7 @@ class Message extends Model implements Ownerable
      */
     public function isDocument(): bool
     {
-        return $this->type === 2;
+        return $this->type === self::DOCUMENT_MESSAGE;
     }
 
     /**
@@ -434,7 +475,7 @@ class Message extends Model implements Ownerable
      */
     public function isAudio(): bool
     {
-        return $this->type === 3;
+        return $this->type === self::AUDIO_MESSAGE;
     }
 
     /**

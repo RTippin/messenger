@@ -11,6 +11,7 @@ use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\FileServiceException;
 use RTippin\Messenger\Http\Request\DocumentMessageRequest;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\FileService;
 use Throwable;
@@ -73,7 +74,7 @@ class StoreDocumentMessage extends NewMessageAction
 
         $document = $this->upload($params['document']);
 
-        $this->setMessageType('DOCUMENT_MESSAGE')
+        $this->setMessageType(Message::DOCUMENT_MESSAGE)
             ->setMessageBody($document)
             ->setMessageOptionalParameters($params)
             ->setMessageOwner($this->messenger->getProvider())

@@ -24,7 +24,7 @@ class MessageTransformerTest extends FeatureTestCase
             $thread,
             $this->tippin,
             'joined',
-            'PARTICIPANT_JOINED_WITH_INVITE',
+            Message::PARTICIPANT_JOINED_WITH_INVITE,
         ], MessageTransformer::makeJoinedWithInvite($thread, $this->tippin));
     }
 
@@ -38,7 +38,7 @@ class MessageTransformerTest extends FeatureTestCase
             $thread,
             $this->tippin,
             '{"call_id":"'.$call->id.'"}',
-            'VIDEO_CALL',
+            Message::VIDEO_CALL,
         ], MessageTransformer::makeVideoCall($thread, $this->tippin, $call));
     }
 
@@ -51,7 +51,7 @@ class MessageTransformerTest extends FeatureTestCase
             $thread,
             $this->tippin,
             'updated the avatar',
-            'GROUP_AVATAR_CHANGED',
+            Message::GROUP_AVATAR_CHANGED,
         ], MessageTransformer::makeGroupAvatarChanged($thread, $this->tippin));
     }
 
@@ -64,7 +64,7 @@ class MessageTransformerTest extends FeatureTestCase
             $thread,
             $this->tippin,
             'archived the conversation',
-            'THREAD_ARCHIVED',
+            Message::THREAD_ARCHIVED,
         ], MessageTransformer::makeThreadArchived($thread, $this->tippin));
     }
 
@@ -77,7 +77,7 @@ class MessageTransformerTest extends FeatureTestCase
             $thread,
             $this->tippin,
             'archived the group',
-            'THREAD_ARCHIVED',
+            Message::THREAD_ARCHIVED,
         ], MessageTransformer::makeThreadArchived($thread, $this->tippin));
     }
 
@@ -90,7 +90,7 @@ class MessageTransformerTest extends FeatureTestCase
             $thread,
             $this->tippin,
             'created Group Name',
-            'GROUP_CREATED',
+            Message::GROUP_CREATED,
         ], MessageTransformer::makeGroupCreated($thread, $this->tippin, 'Group Name'));
     }
 
@@ -103,7 +103,7 @@ class MessageTransformerTest extends FeatureTestCase
             $thread,
             $this->tippin,
             'renamed the group to Renamed',
-            'GROUP_RENAMED',
+            Message::GROUP_RENAMED,
         ], MessageTransformer::makeGroupRenamed($thread, $this->tippin, 'Renamed'));
     }
 
@@ -118,7 +118,7 @@ class MessageTransformerTest extends FeatureTestCase
 
         $this->assertSame($thread, $make[0]);
         $this->assertSame($this->tippin, $make[1]);
-        $this->assertSame('DEMOTED_ADMIN', $make[3]);
+        $this->assertSame(Message::DEMOTED_ADMIN, $make[3]);
         $this->assertSame($json, [
             'owner_id' => $this->tippin->getKey(),
             'owner_type' => $this->tippin->getMorphClass(),
@@ -136,7 +136,7 @@ class MessageTransformerTest extends FeatureTestCase
 
         $this->assertSame($thread, $make[0]);
         $this->assertSame($this->tippin, $make[1]);
-        $this->assertSame('PROMOTED_ADMIN', $make[3]);
+        $this->assertSame(Message::PROMOTED_ADMIN, $make[3]);
         $this->assertSame($json, [
             'owner_id' => $this->tippin->getKey(),
             'owner_type' => $this->tippin->getMorphClass(),
@@ -152,7 +152,7 @@ class MessageTransformerTest extends FeatureTestCase
             $thread,
             $this->tippin,
             'left',
-            'PARTICIPANT_LEFT_GROUP',
+            Message::PARTICIPANT_LEFT_GROUP,
         ], MessageTransformer::makeGroupLeft($thread, $this->tippin));
     }
 
@@ -167,7 +167,7 @@ class MessageTransformerTest extends FeatureTestCase
 
         $this->assertSame($thread, $make[0]);
         $this->assertSame($this->tippin, $make[1]);
-        $this->assertSame('PARTICIPANT_REMOVED', $make[3]);
+        $this->assertSame(Message::PARTICIPANT_REMOVED, $make[3]);
         $this->assertSame($json, [
             'owner_id' => $this->tippin->getKey(),
             'owner_type' => $this->tippin->getMorphClass(),
@@ -186,7 +186,7 @@ class MessageTransformerTest extends FeatureTestCase
 
         $this->assertSame($thread, $make[0]);
         $this->assertSame($this->tippin, $make[1]);
-        $this->assertSame('PARTICIPANTS_ADDED', $make[3]);
+        $this->assertSame(Message::PARTICIPANTS_ADDED, $make[3]);
         $this->assertSame($json, [
             [
                 'owner_id' => $this->tippin->getKey(),
@@ -208,7 +208,7 @@ class MessageTransformerTest extends FeatureTestCase
             $thread,
             $this->tippin,
             'added Test Bot BOT',
-            'BOT_ADDED',
+            Message::BOT_ADDED,
         ], MessageTransformer::makeBotAdded($thread, $this->tippin, 'Test Bot'));
     }
 
@@ -221,7 +221,7 @@ class MessageTransformerTest extends FeatureTestCase
             $thread,
             $this->tippin,
             'renamed the BOT ( Test Bot ) to Renamed',
-            'BOT_RENAMED',
+            Message::BOT_RENAMED,
         ], MessageTransformer::makeBotRenamed($thread, $this->tippin, 'Test Bot', 'Renamed'));
     }
 
@@ -234,7 +234,7 @@ class MessageTransformerTest extends FeatureTestCase
             $thread,
             $this->tippin,
             'updated the avatar for Test Bot BOT',
-            'BOT_AVATAR_CHANGED',
+            Message::BOT_AVATAR_CHANGED,
         ], MessageTransformer::makeBotAvatarChanged($thread, $this->tippin, 'Test Bot'));
     }
 
@@ -247,7 +247,7 @@ class MessageTransformerTest extends FeatureTestCase
             $thread,
             $this->tippin,
             'removed Test Bot BOT',
-            'BOT_REMOVED',
+            Message::BOT_REMOVED,
         ], MessageTransformer::makeBotRemoved($thread, $this->tippin, 'Test Bot'));
     }
 
@@ -348,7 +348,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 88,
+                'type' => Message::PARTICIPANT_JOINED_WITH_INVITE,
                 'body' => MessageTransformer::makeJoinedWithInvite($thread, $this->tippin)[2],
             ]);
 
@@ -364,7 +364,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 90,
+                'type' => Message::VIDEO_CALL,
                 'body' => MessageTransformer::makeVideoCall($thread, $this->tippin, $call)[2],
             ]);
 
@@ -379,7 +379,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 90,
+                'type' => Message::VIDEO_CALL,
                 'body' => '',
             ]);
 
@@ -395,7 +395,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 90,
+                'type' => Message::VIDEO_CALL,
                 'body' => MessageTransformer::makeVideoCall($thread, $this->tippin, $call)[2],
             ]);
 
@@ -411,7 +411,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 90,
+                'type' => Message::VIDEO_CALL,
                 'body' => MessageTransformer::makeVideoCall($thread, $this->tippin, $call)[2],
             ]);
 
@@ -427,7 +427,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 90,
+                'type' => Message::VIDEO_CALL,
                 'body' => MessageTransformer::makeVideoCall($thread, $this->tippin, $call)[2],
             ]);
         $this->doe->delete();
@@ -444,7 +444,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->doe)
             ->create([
-                'type' => 90,
+                'type' => Message::VIDEO_CALL,
                 'body' => MessageTransformer::makeVideoCall($thread, $this->tippin, $call)[2],
             ]);
         $this->doe->delete();
@@ -461,7 +461,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 90,
+                'type' => Message::VIDEO_CALL,
                 'body' => MessageTransformer::makeVideoCall($thread, $this->tippin, $call)[2],
             ]);
 
@@ -477,7 +477,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 90,
+                'type' => Message::VIDEO_CALL,
                 'body' => MessageTransformer::makeVideoCall($thread, $this->tippin, $call)[2],
             ]);
 
@@ -500,7 +500,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 90,
+                'type' => Message::VIDEO_CALL,
                 'body' => MessageTransformer::makeVideoCall($thread, $this->tippin, $call)[2],
             ]);
 
@@ -525,7 +525,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 90,
+                'type' => Message::VIDEO_CALL,
                 'body' => MessageTransformer::makeVideoCall($thread, $this->tippin, $call)[2],
             ]);
 
@@ -540,7 +540,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 91,
+                'type' => Message::GROUP_AVATAR_CHANGED,
                 'body' => MessageTransformer::makeGroupAvatarChanged($thread, $this->tippin)[2],
             ]);
 
@@ -555,7 +555,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 92,
+                'type' => Message::THREAD_ARCHIVED,
                 'body' => MessageTransformer::makeThreadArchived($thread, $this->tippin)[2],
             ]);
 
@@ -570,7 +570,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 92,
+                'type' => Message::THREAD_ARCHIVED,
                 'body' => MessageTransformer::makeThreadArchived($thread, $this->tippin)[2],
             ]);
 
@@ -585,7 +585,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 93,
+                'type' => Message::GROUP_CREATED,
                 'body' => MessageTransformer::makeGroupCreated($thread, $this->tippin, 'Some Group')[2],
             ]);
 
@@ -600,7 +600,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 94,
+                'type' => Message::GROUP_RENAMED,
                 'body' => MessageTransformer::makeGroupRenamed($thread, $this->tippin, 'Some Group')[2],
             ]);
 
@@ -616,7 +616,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 95,
+                'type' => Message::DEMOTED_ADMIN,
                 'body' => MessageTransformer::makeParticipantDemoted($thread, $this->tippin, $participant)[2],
             ]);
 
@@ -631,7 +631,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 95,
+                'type' => Message::DEMOTED_ADMIN,
                 'body' => '',
             ]);
 
@@ -647,7 +647,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 96,
+                'type' => Message::PROMOTED_ADMIN,
                 'body' => MessageTransformer::makeParticipantPromoted($thread, $this->tippin, $participant)[2],
             ]);
 
@@ -662,7 +662,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 96,
+                'type' => Message::PROMOTED_ADMIN,
                 'body' => '',
             ]);
 
@@ -677,7 +677,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 97,
+                'type' => Message::PARTICIPANT_LEFT_GROUP,
                 'body' => MessageTransformer::makeGroupLeft($thread, $this->tippin)[2],
             ]);
 
@@ -693,7 +693,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 98,
+                'type' => Message::PARTICIPANT_REMOVED,
                 'body' => MessageTransformer::makeRemovedFromGroup($thread, $this->tippin, $participant)[2],
             ]);
 
@@ -708,7 +708,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 98,
+                'type' => Message::PARTICIPANT_REMOVED,
                 'body' => '',
             ]);
 
@@ -724,7 +724,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 99,
+                'type' => Message::PARTICIPANTS_ADDED,
                 'body' => MessageTransformer::makeParticipantsAdded($thread, $this->tippin, collect([$participant]))[2],
             ]);
 
@@ -739,7 +739,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 99,
+                'type' => Message::PARTICIPANTS_ADDED,
                 'body' => '',
             ]);
 
@@ -757,7 +757,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 99,
+                'type' => Message::PARTICIPANTS_ADDED,
                 'body' => MessageTransformer::makeParticipantsAdded($thread, $this->tippin, $participants)[2],
             ]);
 
@@ -775,7 +775,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 99,
+                'type' => Message::PARTICIPANTS_ADDED,
                 'body' => MessageTransformer::makeParticipantsAdded($thread, $this->tippin, $participants)[2],
             ]);
         $this->doe->delete();
@@ -795,7 +795,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 99,
+                'type' => Message::PARTICIPANTS_ADDED,
                 'body' => MessageTransformer::makeParticipantsAdded($thread, $this->tippin, $participants)[2],
             ]);
 
@@ -815,7 +815,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 99,
+                'type' => Message::PARTICIPANTS_ADDED,
                 'body' => MessageTransformer::makeParticipantsAdded($thread, $this->tippin, $participants)[2],
             ]);
 
@@ -837,7 +837,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 99,
+                'type' => Message::PARTICIPANTS_ADDED,
                 'body' => MessageTransformer::makeParticipantsAdded($thread, $this->tippin, $participants)[2],
             ]);
 
@@ -852,7 +852,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 100,
+                'type' => Message::BOT_ADDED,
                 'body' => MessageTransformer::makeBotAdded($thread, $this->tippin, 'Test Bot')[2],
             ]);
 
@@ -867,7 +867,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 101,
+                'type' => Message::BOT_RENAMED,
                 'body' => MessageTransformer::makeBotRenamed($thread, $this->tippin, 'Test Bot', 'Renamed')[2],
             ]);
 
@@ -882,7 +882,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 102,
+                'type' => Message::BOT_AVATAR_CHANGED,
                 'body' => MessageTransformer::makeBotAvatarChanged($thread, $this->tippin, 'Test Bot')[2],
             ]);
 
@@ -897,7 +897,7 @@ class MessageTransformerTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->create([
-                'type' => 103,
+                'type' => Message::BOT_REMOVED,
                 'body' => MessageTransformer::makeBotRemoved($thread, $this->tippin, 'Test Bot')[2],
             ]);
 
