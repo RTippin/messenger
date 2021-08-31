@@ -2,6 +2,9 @@
 
 namespace RTippin\Messenger\Support;
 
+/**
+ * @deprecated Constants moved to model's and interfaces now.
+ */
 class Definitions
 {
     /**
