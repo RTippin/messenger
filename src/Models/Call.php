@@ -14,7 +14,6 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\CallFactory;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Support\Definitions;
 use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
@@ -46,6 +45,11 @@ class Call extends Model implements HasPresenceChannel, Ownerable
         HasOwner,
         ScopesProvider,
         Uuids;
+
+    const VIDEO = 1;
+    const TYPE = [
+        1 => 'VIDEO',
+    ];
 
     /**
      * The database table used by the model.
@@ -119,7 +123,7 @@ class Call extends Model implements HasPresenceChannel, Ownerable
      */
     public function getTypeVerbose(): string
     {
-        return Definitions::Call[$this->type];
+        return self::TYPE[$this->type];
     }
 
     /**
@@ -130,7 +134,7 @@ class Call extends Model implements HasPresenceChannel, Ownerable
      */
     public function scopeVideoCall(Builder $query): Builder
     {
-        return $query->where('type', '=', 1);
+        return $query->where('type', '=', self::VIDEO);
     }
 
     /**
@@ -194,7 +198,7 @@ class Call extends Model implements HasPresenceChannel, Ownerable
      */
     public function isVideoCall(): bool
     {
-        return $this->type === 1;
+        return $this->type === self::VIDEO;
     }
 
     /**

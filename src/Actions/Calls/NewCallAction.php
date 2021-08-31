@@ -13,7 +13,6 @@ use RTippin\Messenger\Exceptions\NewCallException;
 use RTippin\Messenger\Http\Resources\Broadcast\NewCallBroadcastResource;
 use RTippin\Messenger\Http\Resources\CallResource;
 use RTippin\Messenger\Messenger;
-use RTippin\Messenger\Support\Definitions;
 
 abstract class NewCallAction extends BaseMessengerAction
 {
@@ -132,17 +131,17 @@ abstract class NewCallAction extends BaseMessengerAction
     }
 
     /**
-     * @param string $type
+     * @param int $type
      * @param bool $isSetupComplete
      * @return $this
      */
-    protected function storeCall(string $type, bool $isSetupComplete): self
+    protected function storeCall(int $type, bool $isSetupComplete): self
     {
         $this->setCall(
             $this->getThread()
                 ->calls()
                 ->create([
-                    'type' => array_search($type, Definitions::Call),
+                    'type' => $type,
                     'owner_id' => $this->messenger->getProvider()->getKey(),
                     'owner_type' => $this->messenger->getProvider()->getMorphClass(),
                     'setup_complete' => $isSetupComplete,

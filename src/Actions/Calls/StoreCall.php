@@ -9,6 +9,7 @@ use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\NewCallException;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\Thread;
 use Throwable;
 
@@ -88,7 +89,7 @@ class StoreCall extends NewCallAction
      */
     private function executeTransactions(bool $setupComplete): void
     {
-        $this->storeCall('VIDEO', $setupComplete);
+        $this->storeCall(Call::VIDEO, $setupComplete);
 
         $participant = $this->chain(JoinCall::class)
             ->withoutDispatches()

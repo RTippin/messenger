@@ -22,7 +22,7 @@ class CallFactory extends Factory
     public function definition(): array
     {
         return [
-            'type' => 1,
+            'type' => Call::VIDEO,
             'call_ended' => null,
             'setup_complete' => false,
             'teardown_complete' => false,
