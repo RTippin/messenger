@@ -127,7 +127,7 @@ class StoreAudioMessage extends NewMessageAction
     private function upload(UploadedFile $audio): string
     {
         return $this->fileService
-            ->setType('audio')
+            ->setType(FileService::TYPE_AUDIO)
             ->setDisk($this->getThread()->getStorageDisk())
             ->setDirectory($this->getThread()->getAudioDirectory())
             ->upload($audio);

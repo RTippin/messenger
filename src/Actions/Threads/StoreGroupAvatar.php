@@ -8,6 +8,7 @@ use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\FileServiceException;
 use RTippin\Messenger\Http\Request\GroupAvatarRequest;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Services\FileService;
 use Throwable;
 
 class StoreGroupAvatar extends GroupAvatarAction
@@ -62,7 +63,7 @@ class StoreGroupAvatar extends GroupAvatarAction
     private function uploadAvatar(UploadedFile $image): string
     {
         return $this->fileService
-            ->setType('image')
+            ->setType(FileService::TYPE_IMAGE)
             ->setDisk($this->getThread()->getStorageDisk())
             ->setDirectory($this->getThread()->getAvatarDirectory())
             ->upload($image);

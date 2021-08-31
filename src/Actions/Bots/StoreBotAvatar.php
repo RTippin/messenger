@@ -7,6 +7,7 @@ use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\FileServiceException;
 use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Services\FileService;
 use Throwable;
 
 class StoreBotAvatar extends BotAvatarAction
@@ -59,7 +60,7 @@ class StoreBotAvatar extends BotAvatarAction
     private function upload(UploadedFile $file): string
     {
         return $this->fileService
-            ->setType('image')
+            ->setType(FileService::TYPE_IMAGE)
             ->setDisk($this->getBot()->getStorageDisk())
             ->setDirectory($this->getBot()->getAvatarDirectory())
             ->upload($file);

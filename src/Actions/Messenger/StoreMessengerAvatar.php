@@ -80,7 +80,7 @@ class StoreMessengerAvatar extends MessengerAvatarAction
     private function upload(UploadedFile $file): string
     {
         return $this->fileService
-            ->setType('image')
+            ->setType(FileService::TYPE_IMAGE)
             ->setDisk($this->messenger->getAvatarStorage('disk'))
             ->setDirectory($this->getDirectory())
             ->upload($file);

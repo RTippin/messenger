@@ -26,7 +26,7 @@ class FileServiceTest extends TestCase
         $image = UploadedFile::fake()->image('test.jpg');
 
         $name = $this->fileService->setDisk('messenger')
-            ->setType('image')
+            ->setType(FileService::TYPE_IMAGE)
             ->upload($image);
 
         $this->assertStringContainsString('img_', $name);
@@ -39,7 +39,7 @@ class FileServiceTest extends TestCase
         $document = UploadedFile::fake()->create('test_123_rev_2.pdf', 500, 'application/pdf');
 
         $name = $this->fileService->setDisk('messenger')
-            ->setType('document')
+            ->setType(FileService::TYPE_DOCUMENT)
             ->upload($document);
 
         $this->assertNotSame('test_123_rev_2.pdf', $name);
@@ -53,7 +53,7 @@ class FileServiceTest extends TestCase
         $image = UploadedFile::fake()->image('test.jpg');
 
         $name = $this->fileService->setDisk('messenger')
-            ->setType('image')
+            ->setType(FileService::TYPE_IMAGE)
             ->setDirectory('test/1234')
             ->upload($image);
 
