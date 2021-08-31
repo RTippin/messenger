@@ -3,6 +3,19 @@
 
 ---
 
+### [v1.4.0 (08-31-2021)](https://github.com/RTippin/messenger/compare/v1.3.0...v1.4.0)
+
+#### Added
+- New constants on `Thread`, `Participant`, `Message`, and `Call` models.
+- New constants on `FriendDriver` and `MessengerProvider` interfaces.
+- New constants on `FileService`.
+
+#### Changed
+- `Definitions` support class has been deprecated.
+- All constants from `Definitions` have been moved to their respective model/interface.
+
+---
+
 ### [v1.3.0 (08-29-2021)](https://github.com/RTippin/messenger/compare/v1.2.0...v1.3.0)
 
 #### Added
