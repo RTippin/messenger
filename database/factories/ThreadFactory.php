@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use RTippin\Messenger\Models\Thread;
-use RTippin\Messenger\Support\Definitions;
 
 class ThreadFactory extends Factory
 {
