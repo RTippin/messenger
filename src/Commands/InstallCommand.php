@@ -71,7 +71,7 @@ class InstallCommand extends Command
     }
 
     /**
-     * Register the Telescope service provider in the application configuration file.
+     * Register the Messenger service provider in the application configuration file.
      */
     private function registerMessengerServiceProvider(): void
     {
