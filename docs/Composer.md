@@ -307,7 +307,7 @@ Echo.join('messenger.thread.1234-5678').listenForWhisper('typing', handleTyping)
   "provider_id" : 1234,
   "provider_alias" : "user",
   "name" : "John Doe",
-  "avatar" : "/path/to/avatar.jpg",
+  "avatar" : "/path/to/avatar.jpg"
 }
 ```
 
@@ -325,7 +325,7 @@ Echo.join('messenger.thread.1234-5678').listenForWhisper('stop-typing', handleSt
   "provider_id" : 1234,
   "provider_alias" : "user",
   "name" : "John Doe",
-  "avatar" : "/path/to/avatar.jpg",
+  "avatar" : "/path/to/avatar.jpg"
 }
 ```
 
@@ -344,7 +344,7 @@ Echo.join('messenger.thread.1234-5678').listenForWhisper('read', handleMessageSe
   "provider_alias" : "user",
   "name" : "John Doe",
   "avatar" : "/path/to/avatar.jpg",
-  "message_id" : "1234-5678-9999",
+  "message_id" : "1234-5678-9999"
 }
 ```
 
@@ -483,7 +483,7 @@ Echo.join('messenger.thread.1234-5678')
   "id" : 1234,
   "name" : "John Doe",
   "typing" : true,
-  "extra" : "typing",
+  "extra" : "typing"
 }
 ```
 ***Stopped typing broadcast data***
@@ -492,7 +492,7 @@ Echo.join('messenger.thread.1234-5678')
   "id" : 1234,
   "name" : "John Doe",
   "typing" : false,
-  "extra" : "not typing",
+  "extra" : "not typing"
 }
 ```
 ***Read / seen broadcast data***
@@ -501,7 +501,7 @@ Echo.join('messenger.thread.1234-5678')
   "id" : 1234,
   "name" : "John Doe",
   "message_id" : "1234-5678-9999",
-  "extra" : "seen",
+  "extra" : "seen"
 }
 ```
 

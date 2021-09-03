@@ -19,7 +19,7 @@ return [
     | Filesystem settings for provider avatars and thread files
     |--------------------------------------------------------------------------
     |
-    | For each option below, please seleck the filesystem disk and leading
+    | For each option below, please select the filesystem disk and leading
     | directory you wish you use.
     |
     | *The avatar is where we will store a providers uploaded image. By default,
@@ -54,8 +54,8 @@ return [
     | Messenger routing config
     |--------------------------------------------------------------------------
     |
-    | Our API is the core of this package, and bootstrap all of our policies
-    | and controllers for you. Our built in middleware 'messenger.provider'
+    | Our API is the core of this package, and bootstrap's all of our policies
+    | and controllers for you. The included middleware 'messenger.provider'
     | simply takes the authenticated user via the request and sets them
     | as the current messenger provider. You are free to use your own
     | custom middleware to set your provider, as well as  any other
@@ -64,8 +64,8 @@ return [
     | All API routes return json, and are best used stateless through
     | auth:api such as passport or sanctum.
     |
-    | Invite api has individual middleware control so you may allow
-    | both guest or authed users to access.
+    | Invite api has individual middleware control, giving fine-grain control
+    | such as allowing both guest and authed users to access.
     |
     | *For the broadcasting channels to register, you must have already
     | setup/defined your laravel apps broadcast driver.

@@ -381,6 +381,70 @@ class MessengerServiceProvider extends ServiceProvider
 }
 ```
 
+---
+
+## API Flow
+- With bots now enabled, and your bot handler's registered, you may use the API to manage a group threads bots.
+- In order to create a new Bot in your group thread, the group settings must have `chat_botss` enabled, and the user creating the bot must be a group admin, or a participant with permissions to `manage_bots`.
+
+#### Example storing a new bot
+
+```js
+axios.post('/api/messenger/threads/{thread}/bots', {
+  name: "Test Bot",
+  enabled: true,
+  hide_actions: false,
+  cooldown: 0
+});
+```
+
+- Once a bot is created, you can view available handler's you may attach to the bot.
+- When attaching a handler, our base rules that are always required are: 
+  - `handler : [string, your handler alias]` 
+  - `cooldown : [between:0,900]`
+  - `admin_only ; [bool]`
+  - `enabled : [bool]`
+- If your handler defined the overrides `triggers` or `match`, then those parameters you defined can be omitted (backend also ignores) when posting to attach.
+- When not overridden, the rules are as follows:
+  - `triggers : [array, min:1]`
+  - `match : [string, one of our match methods shown above]`
+- Any additional fields required will be those you defined on your handler's `rules()`, if any.
+
+#### Example adding our `HelloBot` we made above
+- Our match and triggers are already overridden, and we defined no extra rules on the handler. Only the base rules are required.
+```js
+axios.post('/api/messenger/threads/{thread}/bots/{bot}/actions', {
+  "handler": "hello",
+  "cooldown": 0,
+  "admin_only": false,
+  "enabled": true
+});
+```
+
+#### Example adding our `ReplyBot` we made above
+- We have no overrides on our ReplyBot, but we did define the custom rule for `replies`. All rules are required, as well as the extra rules we defined on the handler.
+```js
+axios.post('/api/messenger/threads/{thread}/bots/{bot}/actions', {
+  "handler": "reply",
+  "cooldown": 0,
+  "admin_only": false,
+  "enabled": true,
+  "match": "contains:caseless",
+  "triggers": [
+    "help",
+    "support"
+  ],
+  "replies": [
+    "Why are you asking me?",
+    "I say google it!"
+  ]
+});
+```
+
+- Now that our bot has been created and is enabled, as well as having both our custom handler's attached, we can trigger them!
+- For `HelloBot`, sending a message that contains any of the triggers `hello|hi|hey` will cause the handler to send our message and reaction!
+- For `ReplyBot`, sending a message that contains our triggers `help|support` will cause the handler to reply with the two messages `Why are you asking me?` and `I say google it!`,
+
 [link-messenger-bots]: https://github.com/RTippin/messenger-bots
 [link-bot-subscriber]: https://github.com/RTippin/messenger/blob/1.x/src/Listeners/BotSubscriber.php
 [link-action-handler]: https://github.com/RTippin/messenger/blob/1.x/src/Actions/Bots/BotActionHandler.php

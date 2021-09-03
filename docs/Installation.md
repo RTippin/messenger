@@ -162,7 +162,7 @@ class User extends Authenticatable implements MessengerProvider
 ### Devices
 
 - Devices are a helpful way for you to attach a listener onto our [PushNotificationEvent][link-push-event]. When any broadcast over a private channel occurs, we forward a stripped down list of all recipients/providers and their types/IDs, along with the original data broadcasted over websockets, and the event name.
-  - To use this default event, you must be using our `default` broadcast driver, and have `push_notifications` enabled. How you use the data from our event to send push notifications (FCM etc) is up to you!
+  - To use this default event, you must be using our `default` broadcast driver, and have `push_notifications` enabled. How you use the data from our event to send push notifications (FCM, APN, etc.) is up to you!
 
 ---
 
@@ -248,6 +248,23 @@ public function getProviderName(): string
 public function getProviderAvatarColumn(): string
 {
     return 'avatar';
+}
+```
+
+- If your provider (Eg: `User`) does not have any "avatar/picture" column, or you wish to add a new custom one for use with messenger only, you may create a custom migration to add your new column (must be `nullable`).
+
+***Example Migration and new avatar column override for `User`:***
+
+```php
+//Your migration
+Schema::table('users', function (Blueprint $table) {
+    $table->string('messenger_avatar')->nullable();
+});
+
+//User model override
+public function getProviderAvatarColumn(): string
+{
+    return 'messenger_avatar';
 }
 ```
 

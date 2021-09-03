@@ -13,7 +13,7 @@
 #### SET THIS BEFORE MIGRATING
 
 - All of our tables that have relations to one of your `MessengerProvider` models will use `morphTo` relation columns. If your providers use UUIDs (char 36) as their primary keys, then set this to true. 
-- Please note that if you use multiple providers, they all must have matching primary key types (int / char / etc).
+- Please note that if you use multiple providers, they all must have matching primary key types (int / char / etc.).
 - This also determines the primary key type on our `Bot` model and its related columns.
 
 ---

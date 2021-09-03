@@ -5,7 +5,7 @@
 - Our broadcast driver implementation ([BroadcastBroker][link-broadcast-broker]) will already be bound into the container by default.
 - This driver is responsible for extracting private/presence channel names and dispatching the broadcast event that any action in our system calls for.
     - If push notifications are enabled, this broker will also forward its data to our [PushNotificationService][link-push-notify]. The service will then fire a [PushNotificationEvent][link-push-event] that you can attach a listener to handle your own FCM / other service.
-- ALL events we broadcast implement laravel's `ShouldBroadcastNow` interface, and will not be queued, but broadcast immediately.
+- ALL events we broadcast implement laravel's `ShouldBroadcastNow` interface, and will not be queued, but broadcasted immediately.
 
 ---
 
