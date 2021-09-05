@@ -6,6 +6,8 @@ use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use RTippin\Messenger\Actions\BaseMessengerAction;
+use RTippin\Messenger\Broadcasting\FriendRemovedBroadcast;
+use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\FriendRemovedEvent;
 use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Models\Friend;
@@ -13,6 +15,11 @@ use Throwable;
 
 class RemoveFriend extends BaseMessengerAction
 {
+    /**
+     * @var BroadcastDriver
+     */
+    private BroadcastDriver $broadcaster;
+
     /**
      * @var DatabaseManager
      */
@@ -36,11 +43,15 @@ class RemoveFriend extends BaseMessengerAction
     /**
      * RemoveFriend constructor.
      *
+     * @param BroadcastDriver $broadcaster
      * @param DatabaseManager $database
      * @param Dispatcher $dispatcher
      */
-    public function __construct(DatabaseManager $database, Dispatcher $dispatcher)
+    public function __construct(BroadcastDriver $broadcaster,
+                                DatabaseManager $database,
+                                Dispatcher $dispatcher)
     {
+        $this->broadcaster = $broadcaster;
         $this->database = $database;
         $this->dispatcher = $dispatcher;
     }
@@ -57,9 +68,10 @@ class RemoveFriend extends BaseMessengerAction
     {
         $this->friend = $friend;
 
-        $this->getInverseFriend()
+        $this->setInverseFriend()
             ->handleTransactions()
             ->generateResource()
+            ->fireBroadcast()
             ->fireEvents();
 
         return $this;
@@ -107,11 +119,27 @@ class RemoveFriend extends BaseMessengerAction
     /**
      * @return $this
      */
-    private function getInverseFriend(): self
+    private function setInverseFriend(): self
     {
         $this->inverseFriend = Friend::forProviderWithModel($this->friend, 'party')
             ->forProviderWithModel($this->friend, 'owner', 'party')
             ->first();
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function fireBroadcast(): self
+    {
+        if ($this->shouldFireBroadcast()
+            && ! is_null($this->inverseFriend)) {
+            $this->broadcaster
+                ->to($this->inverseFriend)
+                ->with(['friend_id' => $this->inverseFriend->id])
+                ->broadcast(FriendRemovedBroadcast::class);
+        }
 
         return $this;
     }
@@ -124,7 +152,7 @@ class RemoveFriend extends BaseMessengerAction
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new FriendRemovedEvent(
                 $this->friend->withoutRelations(),
-                $this->inverseFriend->withoutRelations()
+                optional($this->inverseFriend)->withoutRelations()
             ));
         }
     }

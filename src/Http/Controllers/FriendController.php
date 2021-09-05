@@ -53,6 +53,7 @@ class FriendController
      * @param Friend $friend
      * @return ProviderResource
      * @throws Throwable|AuthorizationException
+     * @todo Return success response, not json resource.
      */
     public function destroy(RemoveFriend $removeFriend, Friend $friend): ProviderResource
     {

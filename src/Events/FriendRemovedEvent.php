@@ -25,7 +25,7 @@ class FriendRemovedEvent
      * @param Friend $friend
      * @param Friend|null $inverseFriend
      */
-    public function __construct(Friend $friend, ?Friend $inverseFriend = null)
+    public function __construct(Friend $friend, ?Friend $inverseFriend)
     {
         $this->friend = $friend;
         $this->inverseFriend = $inverseFriend;

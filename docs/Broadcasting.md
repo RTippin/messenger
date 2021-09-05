@@ -42,6 +42,7 @@ DemotedAdminBroadcast::class => 'demoted.admin',
 FriendApprovedBroadcast::class => 'friend.approved',
 FriendCancelledBroadcast::class => 'friend.cancelled',
 FriendDeniedBroadcast::class => 'friend.denied',
+FriendRemovedBroadcast::class => 'friend.removed',
 FriendRequestBroadcast::class => 'friend.request',
 KickedFromCallBroadcast::class => 'call.kicked',
 KnockBroadcast::class => 'knock.knock',
@@ -77,6 +78,7 @@ Echo.private('messenger.user.1')
   .listen('.friend.request', friendRequest)
   .listen('.friend.approved', friendApproved)
   .listen('.friend.cancelled', friendCancelled)
+  .listen('.friend.removed', friendRemoved)
   .listen('.promoted.admin', promotedAdmin)
   .listen('.demoted.admin', demotedAdmin)
   .listen('.permissions.updated', permissionsUpdated)
