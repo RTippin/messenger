@@ -274,6 +274,26 @@ class MessengerComposerTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_sends_message_without_broadcast_and_events()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+        $thread = $this->createGroupThread($this->tippin);
+
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->silent(true)
+            ->message('Test');
+
+        Event::assertNotDispatched(NewMessageBroadcast::class);
+        Event::assertNotDispatched(NewMessageEvent::class);
+    }
+
+    /** @test */
     public function it_sends_image_message_with_existing_thread()
     {
         $thread = Thread::create();
@@ -387,6 +407,26 @@ class MessengerComposerTest extends FeatureTestCase
 
         Event::assertNotDispatched(NewMessageBroadcast::class);
         Event::assertDispatched(NewMessageEvent::class);
+    }
+
+    /** @test */
+    public function it_sends_image_message_without_broadcast_and_events()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+        $thread = $this->createGroupThread($this->tippin);
+
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->silent(true)
+            ->image(UploadedFile::fake()->image('test.jpg'));
+
+        Event::assertNotDispatched(NewMessageBroadcast::class);
+        Event::assertNotDispatched(NewMessageEvent::class);
     }
 
     /** @test */
@@ -505,6 +545,26 @@ class MessengerComposerTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_sends_document_message_without_broadcast_and_events()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+        $thread = $this->createGroupThread($this->tippin);
+
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->silent(true)
+            ->document(UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'));
+
+        Event::assertNotDispatched(NewMessageBroadcast::class);
+        Event::assertNotDispatched(NewMessageEvent::class);
+    }
+
+    /** @test */
     public function it_sends_audio_message_with_existing_thread()
     {
         $thread = Thread::create();
@@ -620,6 +680,26 @@ class MessengerComposerTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_sends_audio_message_without_broadcast_and_events()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+        $thread = $this->createGroupThread($this->tippin);
+
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->silent(true)
+            ->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
+
+        Event::assertNotDispatched(NewMessageBroadcast::class);
+        Event::assertNotDispatched(NewMessageEvent::class);
+    }
+
+    /** @test */
     public function it_adds_reaction()
     {
         $thread = Thread::create();
@@ -730,6 +810,27 @@ class MessengerComposerTest extends FeatureTestCase
 
         Event::assertNotDispatched(ReactionAddedBroadcast::class);
         Event::assertDispatched(ReactionAddedEvent::class);
+    }
+
+    /** @test */
+    public function it_adds_reaction_without_broadcast_and_events()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            ReactionAddedBroadcast::class,
+            ReactionAddedEvent::class,
+        ]);
+        $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->silent(true)
+            ->reaction($message, ':joy:');
+
+        Event::assertNotDispatched(ReactionAddedBroadcast::class);
+        Event::assertNotDispatched(ReactionAddedEvent::class);
     }
 
     /** @test */
@@ -862,6 +963,26 @@ class MessengerComposerTest extends FeatureTestCase
 
         Event::assertNotDispatched(ParticipantReadBroadcast::class);
         Event::assertDispatched(ParticipantReadEvent::class);
+    }
+
+    /** @test */
+    public function it_marks_read_without_broadcast_and_events()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            ParticipantReadBroadcast::class,
+            ParticipantReadEvent::class,
+        ]);
+        $thread = $this->createGroupThread($this->tippin);
+
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->silent(true)
+            ->read();
+
+        Event::assertNotDispatched(ParticipantReadBroadcast::class);
+        Event::assertNotDispatched(ParticipantReadEvent::class);
     }
 
     /** @test */

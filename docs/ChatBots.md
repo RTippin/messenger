@@ -164,7 +164,7 @@ class TestBot extends BotActionHandler
 - Returns a [MessengerComposer][link-messenger-composer] instance with the `TO` preset with the `Thread` our triggering `Message` belongs to, and `FROM` preset as the `Bot` the `BotAction` triggered belongs to.
     - Please note that each time you call `$this->composer()`, you will be given a new instance.
 - This has the most common use cases for what a bot may do (message, send an image/audio/document message, add message reaction, knock)
-    - `silent()` Silences any realtime broadcast.
+    - `silent()` Silences any broadcast emitted.
     - `message()` Sends a message. Optional reply to ID and extra payload.
     - `image()` Uploads an image message. Optional reply to ID and extra payload.
     - `document()` Uploads a document message. Optional reply to ID and extra payload.

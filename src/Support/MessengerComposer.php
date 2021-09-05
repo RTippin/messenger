@@ -56,7 +56,12 @@ class MessengerComposer
     /**
      * @var bool
      */
-    private bool $silent = false;
+    private bool $emitActionBroadcast = true;
+
+    /**
+     * @var bool
+     */
+    private bool $emitActionEvents = true;
 
     /**
      * MessengerComposer constructor.
@@ -117,13 +122,16 @@ class MessengerComposer
     }
 
     /**
-     * When sending our composed payload, silence any broadcast events.
+     * When executing the action, no broadcast will be emitted. Optional flag
+     * withoutEvents disables events from dispatching in the action as well.
      *
+     * @param bool $withoutEvents
      * @return $this
      */
-    public function silent(): self
+    public function silent(bool $withoutEvents = false): self
     {
-        $this->silent = true;
+        $this->emitActionBroadcast = false;
+        $this->emitActionEvents = ! $withoutEvents;
 
         return $this;
     }
@@ -434,15 +442,16 @@ class MessengerComposer
     }
 
     /**
-     * If silent was called, we will disable
-     * broadcast from the action supplied.
-     *
      * @param BaseMessengerAction $action
      */
     private function silenceActionWhenSilent(BaseMessengerAction $action): void
     {
-        if ($this->silent) {
+        if (! $this->emitActionBroadcast) {
             $action->withoutBroadcast();
+        }
+
+        if (! $this->emitActionEvents) {
+            $action->withoutEvents();
         }
     }
 
@@ -453,7 +462,8 @@ class MessengerComposer
      */
     private function flush(): void
     {
-        $this->silent = false;
+        $this->emitActionBroadcast = true;
+        $this->emitActionEvents = true;
         $this->to = null;
         $this->messenger->unsetScopedProvider();
     }

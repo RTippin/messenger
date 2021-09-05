@@ -31,8 +31,8 @@ MessengerComposer::to($receiver)
 ### `from(MessengerProvider $provider)`
 - Set the provider who is composing. (acting as the logged-in user)
 
-### `silent()`
-- When sending our composed payload, silence any broadcast events.
+### `silent(bool $withoutEvents = false)`
+- When executing the action, no broadcast will be emitted. Optional flag `withoutEvents` disables events from dispatching in the action as well.
 
 ```php
 use App\Models\User;
@@ -44,12 +44,13 @@ public function testing(): void
 {
     MessengerComposer::to(Thread::first())
       ->from(User::first())
-      ->message('I store and broadcast a new message to the given thread from the provided user!');
+      ->silent()
+      ->message('I store a new message to the given thread from the provided user without broadcasting the message!');
     
     MessengerComposer::to(User::latest()->first())
       ->from(User::oldest()->first())
-      ->silent()
-      ->message('I store a new message in a private thread between our two users without broadcasting it!');
+      ->silent(true)
+      ->message('I store a new message in a private thread between our two users without broadcasting or firing the new message event!');
 }
 ```
 
