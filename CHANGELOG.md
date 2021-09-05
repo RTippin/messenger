@@ -3,6 +3,19 @@
 
 ---
 
+### [v1.5.0 (09-05-2021)](https://github.com/RTippin/messenger/compare/v1.4.0...v1.5.0)
+
+#### Added
+- `FriendRemovedBroadcast` when a friend is removed.
+- `withoutEvents` boolean flag on `MessengerComposer::silent(bool $withoutEvents = false)` to disable both broadcast and events for an action.
+
+#### Changed
+- `AuthenticateOptional::class` | `auth.optional` middleware deprecated.
+- `Invite` model's `code` increased to 10 characters in length on creation.
+- Code cleanup / typo fixes.
+
+---
+
 ### [v1.4.0 (08-31-2021)](https://github.com/RTippin/messenger/compare/v1.3.0...v1.4.0)
 
 #### Added
