@@ -8,6 +8,7 @@ use RTippin\Messenger\Actions\Invites\StoreInvite;
 use RTippin\Messenger\Events\NewInviteEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -49,6 +50,7 @@ class StoreInviteTest extends FeatureTestCase
             'max_use' => 0,
             'expires_at' => null,
         ]);
+        $this->assertSame(10, mb_strlen(Invite::first()->code));
     }
 
     /** @test */
@@ -69,6 +71,7 @@ class StoreInviteTest extends FeatureTestCase
             'max_use' => 0,
             'expires_at' => $expires,
         ]);
+        $this->assertSame(10, mb_strlen(Invite::first()->code));
     }
 
     /** @test */

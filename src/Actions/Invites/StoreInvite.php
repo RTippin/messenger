@@ -99,7 +99,7 @@ class StoreInvite extends InviteAction
      */
     private function generateInviteCode(): string
     {
-        return Str::upper(Str::random(8));
+        return Str::upper(Str::random(10));
     }
 
     /**
