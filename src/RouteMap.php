@@ -45,6 +45,7 @@ trait RouteMap
 
         $router->aliasMiddleware('messenger.provider', SetMessengerProvider::class);
 
+        /** @deprecated */
         $router->aliasMiddleware('auth.optional', AuthenticateOptional::class);
     }
 

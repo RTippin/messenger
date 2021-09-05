@@ -59,7 +59,7 @@
         'domain' => null,
         'prefix' => 'api/messenger',
         'middleware' => ['web', 'auth', 'messenger.provider:required'],
-        'invite_api_middleware' => ['web', 'auth.optional', 'messenger.provider'],
+        'invite_api_middleware' => ['web', 'messenger.provider'],
     ],
     'assets' => [
         'domain' => null,

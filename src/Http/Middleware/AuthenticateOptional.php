@@ -8,6 +8,9 @@ use Illuminate\Auth\Middleware\Authenticate as Middleware;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 
+/**
+ * @deprecated This middleware served no purpose and will be removed in v2.
+ */
 class AuthenticateOptional extends Middleware
 {
     /**
