@@ -29,23 +29,21 @@
         'directory' => 'images',
     ],
     'threads' => [
-        'disk' => 'messenger',
+        'disk' => 'public',
         'directory' => 'threads',
     ],
 ],
 ```
 
-- The default path used for avatar uploads from your providers is set to the default `public` disk laravel uses in the `filesystem.php` config file. Images would then be saved under `storage_path('app/public/images')`
-- The default path used for any uploads belonging to a thread is set to the `messenger` disk, which you will have to create within your `filesystem.php` config, or set to a disk of your choosing. Using the below example, thread files would be located under `storage_path('app/messenger/threads')`
-
-***Example disk in filesystem.php:***
-```php
-'messenger' => [
-    'driver' => 'local',
-    'root' => storage_path('app/messenger'),
-    'url' => env('APP_URL').'/storage',
-],
-```
+- Our default `disk` for both `avatars` and `threads` is `public`, laravel's default disk defined in the `filesystem.php` config file. You may choose any disk you have defined.
+- `avatars` is where each provider's uploaded profile images are stored. By default, this will store into the following path, prefixed by the directory:
+  - `storage_path('app/public/images/{alias}/{id}')`
+- `threads` is where any uploads pertaining to a given thread are stored, such as images, documents, and audio files. By using the default config above, thread files will be stored in the following paths, prefixed by the directory:
+  - Avatar - `storage_path('app/public/threads/{threadID}/avatar')`
+  - Images - `storage_path('app/public/threads/{threadID}/images')`
+  - Documents - `storage_path('app/public/threads/{threadID}/documents')`
+  - Audio - `storage_path('app/public/threads/{threadID}/audio')`
+  - Bots - `storage_path('app/public/threads/{threadID}/bots/{botID}')`
 
 ---
 

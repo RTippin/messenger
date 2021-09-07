@@ -22,20 +22,22 @@ return [
     | For each option below, please select the filesystem disk and leading
     | directory you wish you use.
     |
-    | *The avatar is where we will store a providers uploaded image. By default,
-    | this will store into the storage_path('app/public/images/{alias}/{id}'),
-    | given laravel's default 'public' disk followed by 'images' directory
+    | *The "avatars" is where each provider's uploaded profile images are stored.
+    | By default, this will store into the following path
+    | prefixed by the directory:
     |
-    | *The threads option is where a thread avatar, image messages, and document
-    | messages will be stored. You should not use the public directory as we
-    | will process all files securely though the backend on request.
+    | **Provider avatars - storage_path('app/public/images/{alias}/{id}')
     |
-    | //Thread files
+    | *The "threads" is where we store any uploads pertaining to a given thread,
+    | such as images, documents, and audio files. By using the default config
+    | below, thread files will be stored in the following paths prefixed by
+    | the directory:
     |
-    | **Avatar - {disk}/{directory}/{threadID}/avatar
-    | **Images - {disk}/{directory}/{threadID}/images
-    | **Documents - {disk}/{directory}/{threadID}/documents
-    | **Audio - {disk}/{directory}/{threadID}/audio
+    | **Avatar - storage_path('app/public/threads/{threadID}/avatar')
+    | **Images - storage_path('app/public/threads/{threadID}/images')
+    | **Documents - storage_path('app/public/threads/{threadID}/documents')
+    | **Audio - storage_path('app/public/threads/{threadID}/audio')
+    | **Bots - storage_path('app/public/threads/{threadID}/bots/{botID}')
     |
     */
     'storage' => [
@@ -44,7 +46,7 @@ return [
             'directory' => 'images',
         ],
         'threads' => [
-            'disk' => 'messenger',
+            'disk' => 'public',
             'directory' => 'threads',
         ],
     ],
