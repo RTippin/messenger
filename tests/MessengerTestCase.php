@@ -17,13 +17,13 @@ class MessengerTestCase extends TestCase
      * Set TRUE to run all feature test with
      * provider models/tables using UUIDS.
      */
-    protected bool $useUUID = true;
+    protected bool $useUUID = false;
 
     /**
      * Set TRUE to run all feature test with
      * relation morph map set for providers.
      */
-    protected bool $useMorphMap = true;
+    protected bool $useMorphMap = false;
 
     /**
      * Set TRUE to log both HTTP responses
