@@ -12,7 +12,7 @@
 
 #### SET THIS BEFORE MIGRATING
 
-- All of our tables that have relations to one of your `MessengerProvider` models will use `morphTo` relation columns. If your providers use UUIDs (char 36) as their primary keys, then set this to true. 
+- All the tables that have relations to one of your `MessengerProvider` models will use `morphTo` relation columns. If your providers use UUIDs (char 36) as their primary keys, then set this to true. 
 - Please note that if you use multiple providers, they all must have matching primary key types (int / char / etc.).
 - This also determines the primary key type on our `Bot` model and its related columns.
 
@@ -72,11 +72,39 @@
     ],
 ],
 ```
-- Our API is the core of this package. The api routes bootstrap all of our policies and controllers for you!
-- Asset routes deliver all files (images, avatars, documents, audio files, etc).
-- Channels are what we broadcast our realtime data over! The included private channel: `private-messenger.{alias}.{id}`. Thread presence channel: `presence-messenger.thread.{thread}`. Call presence channel: `presence-messenger.call.{call}.thread.{thread}`
+- `api` - The core routes of this package. They bootstrap all the policies and controllers!
+- `assets` - Routes that deliver all files (images, avatars, documents, audio files, etc).
+- `channels` - The broadcast channels utilized for realtime data! 
+  - `MessengerProvider` private channel: `private-messenger.{alias}.{id}`
+  - `Thread` presence channel: `presence-messenger.thread.{thread}`. 
+  - `Call` presence channel: `presence-messenger.call.{call}.thread.{thread}`
 - For each section of routes, you may choose your desired endpoint domain, prefix and middleware.
-- The default `messenger.provider` middleware is included with this package and simply sets the active messenger provider by grabbing the authed user from `$request->user()`. See [SetMessengerProvider][link-set-provider-middleware] for more information.
+- The default `messenger.provider` middleware is included with the package and simply sets the active messenger provider by grabbing the authenticated user from `$request->user()`. 
+  - See [SetMessengerProvider][link-set-provider-middleware] for more information.
+
+***Example middleware using Sanctum***
+
+```php
+'routing' => [
+    'api' => [
+        'domain' => null,
+        'prefix' => 'api/messenger',
+        'middleware' => ['api', 'auth:sanctum', 'messenger.provider:required'],
+        'invite_api_middleware' => ['api', 'messenger.provider'],
+    ],
+    'assets' => [
+        'domain' => null,
+        'prefix' => 'messenger/assets',
+        'middleware' => ['api', 'cache.headers:public, max-age=86400;'],
+    ],
+    'channels' => [
+        'enabled' => true,
+        'domain' => null,
+        'prefix' => 'api',
+        'middleware' => ['api', 'auth:sanctum', 'messenger.provider:required'],
+    ],
+],
+```
 
 ---
 
@@ -92,7 +120,8 @@
     'attachment' => 15, // Applies to uploading images/documents per thread
 ],
 ```
-- You can set the rate limits for our API, including fine grain control over search, messaging, and attachment uploads. Setting a limit to `0` will remove its rate limiter entirely.
+- You can set the rate limits for the API, including fine grain control over search, messaging, and attachment uploads. 
+  - Setting a limit to `0` will remove its rate limiter entirely.
 
 ---
 
