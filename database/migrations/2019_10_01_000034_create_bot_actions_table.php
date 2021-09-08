@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Support\Helpers;
 
 class CreateBotActionsTable extends Migration
@@ -16,7 +17,7 @@ class CreateBotActionsTable extends Migration
     {
         Schema::create('bot_actions', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            if (config('messenger.provider_uuids')) {
+            if (Messenger::shouldUseUuids()) {
                 $table->uuid('bot_id');
             } else {
                 $table->unsignedBigInteger('bot_id');

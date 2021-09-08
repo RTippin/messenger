@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Support;
 use Exception;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Carbon;
+use RTippin\Messenger\Messenger;
 
 class Helpers
 {
@@ -55,7 +56,7 @@ class Helpers
      */
     public static function SchemaMorphType(string $column, Blueprint $table): void
     {
-        if (config('messenger.provider_uuids')) {
+        if (Messenger::shouldUseUuids()) {
             $table->uuidMorphs($column);
         } else {
             $table->numericMorphs($column);

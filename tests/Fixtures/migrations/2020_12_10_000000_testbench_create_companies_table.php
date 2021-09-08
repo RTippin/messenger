@@ -3,6 +3,7 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use RTippin\Messenger\Messenger;
 
 class TestbenchCreateCompaniesTable extends Migration
 {
@@ -14,7 +15,7 @@ class TestbenchCreateCompaniesTable extends Migration
     public function up()
     {
         Schema::create('companies', function (Blueprint $table) {
-            if (config('messenger.provider_uuids')) {
+            if (Messenger::shouldUseUuids()) {
                 $table->uuid('id')->primary();
             } else {
                 $table->id();

@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Commands;
 
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
+use RTippin\Messenger\Messenger;
 
 class InstallCommand extends Command
 {
@@ -110,6 +111,7 @@ class InstallCommand extends Command
     private function configureUuids(): void
     {
         config(['messenger.provider_uuids' => true]);
+        Messenger::shouldUseUuids(true);
 
         file_put_contents(
             config_path('messenger.php'),

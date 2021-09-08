@@ -70,16 +70,16 @@ class MessengerServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->registerRouterServices();
-        $this->registerPolicies();
-        $this->registerSubscribers();
-        $this->registerChannels();
+        Messenger::shouldUseUuids(config('messenger.provider_uuids'));
 
         Relation::morphMap([
             'bots' => Bot::class,
         ]);
 
-        MessengerBots::shouldUseUuids(config('messenger.provider_uuids'));
+        $this->registerRouterServices();
+        $this->registerPolicies();
+        $this->registerSubscribers();
+        $this->registerChannels();
 
         Collection::macro('forProvider', function (MessengerProvider $provider, string $morph = 'owner'): Collection {
             /** @var Collection $this */

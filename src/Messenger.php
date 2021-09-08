@@ -27,6 +27,11 @@ final class Messenger
     private Collection $providers;
 
     /**
+     * @var bool
+     */
+    private static bool $useUuid = false;
+
+    /**
      * Messenger constructor.
      */
     public function __construct()
@@ -34,6 +39,21 @@ final class Messenger
         $this->providers = new Collection;
         $this->setMessengerConfig();
         $this->setBotProvider();
+    }
+
+    /**
+     * This determines if we use UUID or BigInt for provider related models and migrations.
+     *
+     * @param bool|null $shouldUseUuids
+     * @return bool
+     */
+    public static function shouldUseUuids(?bool $shouldUseUuids = null): bool
+    {
+        if (is_null($shouldUseUuids)) {
+            return self::$useUuid;
+        }
+
+        return self::$useUuid = $shouldUseUuids;
     }
 
     /**

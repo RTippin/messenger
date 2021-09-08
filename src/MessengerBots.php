@@ -28,11 +28,6 @@ final class MessengerBots
     ];
 
     /**
-     * @var bool
-     */
-    private static bool $useUuid = false;
-
-    /**
      * @var Collection
      */
     private Collection $handlers;
@@ -58,21 +53,6 @@ final class MessengerBots
     public function __construct()
     {
         $this->handlers = new Collection;
-    }
-
-    /**
-     * This determines if we use UUID or BigInt on the bot model and migrations.
-     *
-     * @param bool|null $shouldUseUuids
-     * @return bool
-     */
-    public static function shouldUseUuids(?bool $shouldUseUuids = null): bool
-    {
-        if (is_null($shouldUseUuids)) {
-            return self::$useUuid;
-        }
-
-        return self::$useUuid = $shouldUseUuids;
     }
 
     /**

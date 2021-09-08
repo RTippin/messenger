@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User;
 use Illuminate\Support\Str;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Traits\Messageable;
 use RTippin\Messenger\Traits\Search;
 
@@ -27,9 +28,9 @@ class UserModel extends User implements MessengerProvider
 
     public function __construct(array $attributes = [])
     {
-        $this->setKeyType(config('messenger.provider_uuids') ? 'string' : 'int');
+        $this->setKeyType(Messenger::shouldUseUuids() ? 'string' : 'int');
 
-        $this->setIncrementing(! config('messenger.provider_uuids'));
+        $this->setIncrementing(! Messenger::shouldUseUuids());
 
         parent::__construct($attributes);
     }
@@ -50,8 +51,8 @@ class UserModel extends User implements MessengerProvider
         parent::boot();
 
         static::creating(function (Model $model) {
-            if (config('messenger.provider_uuids')) {
-                $model->id = Str::orderedUuid()->toString();
+            if (Messenger::shouldUseUuids()) {
+                $model->{$model->getKeyName()} = Str::orderedUuid()->toString();
             }
         });
     }

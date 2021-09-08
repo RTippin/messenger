@@ -14,9 +14,9 @@ use Illuminate\Support\Str;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\BotFactory;
-use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Facades\Messenger as MessengerFacade;
 use RTippin\Messenger\Facades\MessengerBots;
-use RTippin\Messenger\MessengerBots as Bots;
+use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\ScopesProvider;
@@ -53,9 +53,9 @@ class Bot extends Model implements MessengerProvider, Ownerable
      */
     public function __construct(array $attributes = [])
     {
-        $this->setKeyType(Bots::shouldUseUuids() ? 'string' : 'int');
+        $this->setKeyType(Messenger::shouldUseUuids() ? 'string' : 'int');
 
-        $this->setIncrementing(! Bots::shouldUseUuids());
+        $this->setIncrementing(! Messenger::shouldUseUuids());
 
         parent::__construct($attributes);
     }
@@ -91,8 +91,8 @@ class Bot extends Model implements MessengerProvider, Ownerable
         parent::boot();
 
         static::creating(function (Model $model) {
-            if (Bots::shouldUseUuids()) {
-                $model->id = Str::orderedUuid()->toString();
+            if (Messenger::shouldUseUuids()) {
+                $model->{$model->getKeyName()} = Str::orderedUuid()->toString();
             }
         });
     }
@@ -178,7 +178,7 @@ class Bot extends Model implements MessengerProvider, Ownerable
      */
     public function getStorageDisk(): string
     {
-        return Messenger::getThreadStorage('disk');
+        return MessengerFacade::getThreadStorage('disk');
     }
 
     /**
@@ -186,7 +186,7 @@ class Bot extends Model implements MessengerProvider, Ownerable
      */
     public function getStorageDirectory(): string
     {
-        return Messenger::getThreadStorage('directory')."/$this->thread_id/bots/$this->id";
+        return MessengerFacade::getThreadStorage('directory')."/$this->thread_id/bots/$this->id";
     }
 
     /**
