@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Http\Request;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use RTippin\Messenger\Contracts\MessengerProvider;
 
 class MessengerSettingsRequest extends FormRequest
 {
@@ -20,7 +21,15 @@ class MessengerSettingsRequest extends FormRequest
             'message_sound' => ['required', 'boolean'],
             'notify_sound' => ['required', 'boolean'],
             'dark_mode' => ['required', 'boolean'],
-            'online_status' => ['required', 'integer', Rule::in([0, 1, 2])],
+            'online_status' => [
+                'required',
+                'integer',
+                Rule::in([
+                    MessengerProvider::OFFLINE,
+                    MessengerProvider::ONLINE,
+                    MessengerProvider::AWAY,
+                ]),
+            ],
         ];
     }
 }

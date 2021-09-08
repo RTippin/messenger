@@ -73,11 +73,4 @@ interface MessengerProvider
      * @return int
      */
     public function getProviderOnlineStatus(): int;
-
-    /**
-     * Verbose meaning of the online status number.
-     *
-     * @return string
-     */
-    public function getProviderOnlineStatusVerbose(): string;
 }

@@ -131,6 +131,7 @@ trait Messageable
     /**
      * Verbose meaning of the online status number.
      *
+     * @deprecated To be removed in v2. No longer used in the backend.
      * @return string
      */
     public function getProviderOnlineStatusVerbose(): string

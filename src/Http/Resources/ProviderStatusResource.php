@@ -41,7 +41,7 @@ class ProviderStatusResource extends JsonResource
             'provider' => (new ProviderResource($this->provider))->resolve(),
             'active_calls_count' => $this->activeCallsCount(),
             'online_status' => $this->provider->getProviderOnlineStatus(),
-            'online_status_verbose' => $this->provider->getProviderOnlineStatusVerbose(),
+            'online_status_verbose' => MessengerProvider::ONLINE_STATUS[$this->provider->getProviderOnlineStatus()],
             'unread_threads_count' => $this->unreadThreadsCount(),
             'pending_friends_count' => $this->pendingFriendsCount(),
             'settings' => Messenger::getProviderMessenger($this->provider)->toArray(),

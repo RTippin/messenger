@@ -489,7 +489,7 @@ trait MessengerProviders
                 : MessengerProvider::AWAY;
         }
 
-        return 0;
+        return MessengerProvider::OFFLINE;
     }
 
     /**

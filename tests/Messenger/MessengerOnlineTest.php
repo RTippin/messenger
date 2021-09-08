@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Messenger;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
@@ -247,29 +248,29 @@ class MessengerOnlineTest extends FeatureTestCase
     {
         $this->messenger->setProvider($this->tippin);
 
-        $this->assertSame(0, $this->messenger->getProviderOnlineStatus());
+        $this->assertSame(MessengerProvider::OFFLINE, $this->messenger->getProviderOnlineStatus());
 
         Cache::put("user:online:{$this->tippin->getKey()}", 'online');
 
-        $this->assertSame(1, $this->messenger->getProviderOnlineStatus());
+        $this->assertSame(MessengerProvider::ONLINE, $this->messenger->getProviderOnlineStatus());
 
         Cache::put("user:online:{$this->tippin->getKey()}", 'away');
 
-        $this->assertSame(2, $this->messenger->getProviderOnlineStatus());
+        $this->assertSame(MessengerProvider::AWAY, $this->messenger->getProviderOnlineStatus());
     }
 
     /** @test */
     public function it_returns_online_status_number_for_given_provider()
     {
-        $this->assertSame(0, $this->messenger->getProviderOnlineStatus($this->doe));
+        $this->assertSame(MessengerProvider::OFFLINE, $this->messenger->getProviderOnlineStatus($this->doe));
 
         Cache::put("user:online:{$this->doe->getKey()}", 'online');
 
-        $this->assertSame(1, $this->messenger->getProviderOnlineStatus($this->doe));
+        $this->assertSame(MessengerProvider::ONLINE, $this->messenger->getProviderOnlineStatus($this->doe));
 
         Cache::put("user:online:{$this->doe->getKey()}", 'away');
 
-        $this->assertSame(2, $this->messenger->getProviderOnlineStatus($this->doe));
+        $this->assertSame(MessengerProvider::AWAY, $this->messenger->getProviderOnlineStatus($this->doe));
     }
 
     /** @test */
@@ -279,14 +280,14 @@ class MessengerOnlineTest extends FeatureTestCase
             'id' => 404,
         ]);
 
-        $this->assertSame(0, $this->messenger->getProviderOnlineStatus($invalid));
+        $this->assertSame(MessengerProvider::OFFLINE, $this->messenger->getProviderOnlineStatus($invalid));
 
         Cache::put("user:online:{$invalid->getKey()}", 'online');
 
-        $this->assertSame(0, $this->messenger->getProviderOnlineStatus($invalid));
+        $this->assertSame(MessengerProvider::OFFLINE, $this->messenger->getProviderOnlineStatus($invalid));
 
         Cache::put("user:online:{$invalid->getKey()}", 'away');
 
-        $this->assertSame(0, $this->messenger->getProviderOnlineStatus($invalid));
+        $this->assertSame(MessengerProvider::OFFLINE, $this->messenger->getProviderOnlineStatus($invalid));
     }
 }

@@ -226,15 +226,7 @@ class Bot extends Model implements MessengerProvider, Ownerable
      */
     public function getProviderOnlineStatus(): int
     {
-        return 0;
-    }
-
-    /**
-     * @return string
-     */
-    public function getProviderOnlineStatusVerbose(): string
-    {
-        return 'offline';
+        return MessengerProvider::OFFLINE;
     }
 
     /**
@@ -273,7 +265,7 @@ class Bot extends Model implements MessengerProvider, Ownerable
     }
 
     /**
-     * Set the bots cooldown.
+     * Set the bot cooldown.
      */
     public function startCooldown(): void
     {
@@ -283,7 +275,7 @@ class Bot extends Model implements MessengerProvider, Ownerable
     }
 
     /**
-     * Release the bots cooldown.
+     * Release the bot cooldown.
      */
     public function releaseCooldown(): void
     {

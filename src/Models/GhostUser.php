@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Support\Helpers;
 
@@ -153,14 +154,6 @@ class GhostUser extends Model
      */
     public function getProviderOnlineStatus(): int
     {
-        return 0;
-    }
-
-    /**
-     * @return string
-     */
-    public function getProviderOnlineStatusVerbose(): string
-    {
-        return 'offline';
+        return MessengerProvider::OFFLINE;
     }
 }
