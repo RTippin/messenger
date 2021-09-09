@@ -24,8 +24,8 @@ class CallActivityChecker extends BaseMessengerAction
     /**
      * CallActivityChecker constructor.
      *
-     * @param EndCall $endCall
-     * @param LeaveCall $leaveCall
+     * @param  EndCall  $endCall
+     * @param  LeaveCall  $leaveCall
      */
     public function __construct(EndCall $endCall, LeaveCall $leaveCall)
     {
@@ -38,7 +38,7 @@ class CallActivityChecker extends BaseMessengerAction
      * end empty calls or remove participants who are not in
      * cache and have not officially left the call.
      *
-     * @param Collection $calls
+     * @param  Collection  $calls
      * @return $this
      * @throws Throwable
      */
@@ -50,7 +50,7 @@ class CallActivityChecker extends BaseMessengerAction
     }
 
     /**
-     * @param Call $call
+     * @param  Call  $call
      * @throws Throwable
      */
     private function performActivityChecks(Call $call): void
@@ -61,7 +61,7 @@ class CallActivityChecker extends BaseMessengerAction
     }
 
     /**
-     * @param Call $call
+     * @param  Call  $call
      * @return bool
      * @throws Throwable
      */
@@ -77,7 +77,7 @@ class CallActivityChecker extends BaseMessengerAction
     }
 
     /**
-     * @param Call $call
+     * @param  Call  $call
      */
     private function removeInactiveParticipants(Call $call): void
     {
@@ -85,8 +85,8 @@ class CallActivityChecker extends BaseMessengerAction
     }
 
     /**
-     * @param Call $call
-     * @param CallParticipant $participant
+     * @param  Call  $call
+     * @param  CallParticipant  $participant
      */
     private function removeIfNotInCache(Call $call, CallParticipant $participant): void
     {

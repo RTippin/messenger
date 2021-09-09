@@ -23,8 +23,8 @@ class BotAvatarEvent
     /**
      * Create a new event instance.
      *
-     * @param MessengerProvider $provider
-     * @param Bot $bot
+     * @param  MessengerProvider  $provider
+     * @param  Bot  $bot
      */
     public function __construct(MessengerProvider $provider, Bot $bot)
     {

@@ -21,7 +21,7 @@ class CallChannel
     /**
      * Create a new channel instance.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -32,8 +32,8 @@ class CallChannel
      * Authenticate the provider's access to the channel.
      *
      * @param $user
-     * @param Thread $thread
-     * @param Call $call
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return ProviderResource
      * @throws AuthorizationException
      */

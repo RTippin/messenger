@@ -36,8 +36,8 @@ class PushNotificationService
     /**
      * PushNotificationService constructor.
      *
-     * @param Messenger $messenger
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger, Dispatcher $dispatcher)
     {
@@ -50,7 +50,7 @@ class PushNotificationService
      * contain a mix of messenger providers and any of our
      * internal models that implement Ownerable.
      *
-     * @param Collection $recipients
+     * @param  Collection  $recipients
      * @return $this
      */
     public function to(Collection $recipients): self
@@ -63,7 +63,7 @@ class PushNotificationService
     /**
      * Set the resource we will use to broadcast out.
      *
-     * @param array $resource
+     * @param  array  $resource
      * @return $this
      */
     public function with(array $resource): self
@@ -79,7 +79,7 @@ class PushNotificationService
      * that do not have devices enabled, then fire the event with the formatted data
      * for our listener to handle on the queue.
      *
-     * @param string|BroadcastEvent $abstract
+     * @param  string|BroadcastEvent  $abstract
      */
     public function notify(string $abstract): void
     {
@@ -100,7 +100,7 @@ class PushNotificationService
     /**
      * Construct the broadcast event to get the name defined.
      *
-     * @param string $abstract
+     * @param  string  $abstract
      * @return string|null
      */
     private function getBroadcastAs(string $abstract): ?string
@@ -132,7 +132,7 @@ class PushNotificationService
     }
 
     /**
-     * @param MessengerProvider|Ownerable|mixed $recipient
+     * @param  MessengerProvider|Ownerable|mixed  $recipient
      * @return array|null
      */
     private function extractProvider($recipient): ?array
@@ -156,8 +156,8 @@ class PushNotificationService
     }
 
     /**
-     * @param string $broadcastAs
-     * @param Collection $recipients
+     * @param  string  $broadcastAs
+     * @param  Collection  $recipients
      */
     private function dispatchNotification(string $broadcastAs, Collection $recipients): void
     {

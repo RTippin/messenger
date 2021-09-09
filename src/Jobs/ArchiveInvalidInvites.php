@@ -18,7 +18,7 @@ class ArchiveInvalidInvites extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param Collection $invites
+     * @param  Collection  $invites
      */
     public function __construct(Collection $invites)
     {
@@ -28,7 +28,7 @@ class ArchiveInvalidInvites extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param ArchiveInvite $archiveInvite
+     * @param  ArchiveInvite  $archiveInvite
      * @return void
      * @throws Exception|FeatureDisabledException
      */

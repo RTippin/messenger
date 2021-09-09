@@ -9,7 +9,7 @@ class FileServiceException extends HttpException
     /**
      * FileServiceException constructor.
      *
-     * @param string|null $message
+     * @param  string|null  $message
      */
     public function __construct(?string $message = null)
     {

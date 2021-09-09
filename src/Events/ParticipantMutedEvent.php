@@ -17,7 +17,7 @@ class ParticipantMutedEvent
     /**
      * Create a new event instance.
      *
-     * @param Participant $participant
+     * @param  Participant  $participant
      */
     public function __construct(Participant $participant)
     {

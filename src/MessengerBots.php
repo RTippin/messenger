@@ -59,8 +59,8 @@ final class MessengerBots
      * Set the handlers we want to register. These can then be attached to
      * a bots action, and executed when a match is found.
      *
-     * @param array $handlers
-     * @param bool $overwrite
+     * @param  array  $handlers
+     * @param  bool  $overwrite
      */
     public function registerHandlers(array $handlers, bool $overwrite = false): void
     {
@@ -103,7 +103,7 @@ final class MessengerBots
     /**
      * Get all or an individual bot handlers settings.
      *
-     * @param string|null $handlerOrAlias
+     * @param  string|null  $handlerOrAlias
      * @return array|null
      */
     public function getHandlerSettings(?string $handlerOrAlias = null): ?array
@@ -163,7 +163,7 @@ final class MessengerBots
     /**
      * Get the description for the match method.
      *
-     * @param string|null $match
+     * @param  string|null  $match
      * @return string|null
      */
     public function getMatchDescription(?string $match = null): ?string
@@ -174,7 +174,7 @@ final class MessengerBots
     /**
      * Locate a valid handler class using the class itself, or an alias.
      *
-     * @param string|null $handlerOrAlias
+     * @param  string|null  $handlerOrAlias
      * @return string|null
      */
     public function findHandler(?string $handlerOrAlias = null): ?string
@@ -191,7 +191,7 @@ final class MessengerBots
     /**
      * Check if the given handler or alias is valid.
      *
-     * @param string|null $handlerOrAlias
+     * @param  string|null  $handlerOrAlias
      * @return bool
      */
     public function isValidHandler(?string $handlerOrAlias = null): bool
@@ -204,7 +204,7 @@ final class MessengerBots
      * If the handler matches what we already have initialized,
      * return that instance instead.
      *
-     * @param string|null $handlerOrAlias
+     * @param  string|null  $handlerOrAlias
      * @return BotActionHandler
      * @throws BotException
      */
@@ -270,8 +270,8 @@ final class MessengerBots
      * The handler validator can be overwritten if an action's handler class
      * or alias is supplied. We will then attempt to initialize it directly.
      *
-     * @param array $data
-     * @param string|null $handlerOrAlias
+     * @param  array  $data
+     * @param  string|null  $handlerOrAlias
      * @return array
      * @throws ValidationException|BotException
      */
@@ -297,7 +297,7 @@ final class MessengerBots
     }
 
     /**
-     * @param array $data
+     * @param  array  $data
      * @return string
      * @throws ValidationException
      */
@@ -309,7 +309,7 @@ final class MessengerBots
     }
 
     /**
-     * @param array $data
+     * @param  array  $data
      * @return array
      * @throws ValidationException
      */
@@ -323,7 +323,7 @@ final class MessengerBots
     }
 
     /**
-     * @param array $data
+     * @param  array  $data
      * @return void
      * @throws ValidationException
      */
@@ -376,7 +376,7 @@ final class MessengerBots
     /**
      * Make the final data array we will pass to create a new BotAction.
      *
-     * @param array $data
+     * @param  array  $data
      * @return array
      */
     private function generateHandlerData(array $data): array
@@ -401,7 +401,7 @@ final class MessengerBots
      * Strip any non-base rules from the array, then call to the handlers
      * serialize to json encode our payload.
      *
-     * @param array $data
+     * @param  array  $data
      * @return string|null
      */
     private function generatePayload(array $data): ?string
@@ -421,7 +421,7 @@ final class MessengerBots
      * Combine the final triggers to be a single string, separated by the
      * pipe (|), and removing duplicates.
      *
-     * @param string|array $triggers
+     * @param  string|array  $triggers
      * @return string
      */
     private function formatTriggers($triggers): string
@@ -487,7 +487,7 @@ final class MessengerBots
     /**
      * Generate the handler settings resource array.
      *
-     * @param string $handler
+     * @param  string  $handler
      * @return array
      */
     private function makeHandlerSettings(string $handler): array

@@ -38,10 +38,10 @@ class IgnoreCall extends BaseMessengerAction
     /**
      * IgnoreCall constructor.
      *
-     * @param BroadcastDriver $broadcaster
-     * @param Dispatcher $dispatcher
-     * @param EndCall $endCall
-     * @param Messenger $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  Dispatcher  $dispatcher
+     * @param  EndCall  $endCall
+     * @param  Messenger  $messenger
      */
     public function __construct(BroadcastDriver $broadcaster,
                                 Dispatcher $dispatcher,
@@ -58,8 +58,8 @@ class IgnoreCall extends BaseMessengerAction
      * Ignore the incoming call. If private call, we will
      * end it immediately as well.
      *
-     * @param Thread $thread
-     * @param Call $call
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return $this
      * @throws Throwable
      */

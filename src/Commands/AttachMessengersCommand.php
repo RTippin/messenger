@@ -58,7 +58,7 @@ class AttachMessengersCommand extends Command
     }
 
     /**
-     * @param string $provider
+     * @param  string  $provider
      */
     private function attachForProvider(string $provider): void
     {
@@ -75,7 +75,7 @@ class AttachMessengersCommand extends Command
     }
 
     /**
-     * @param Collection $models
+     * @param  Collection  $models
      */
     private function firstOrCreateMessenger(Collection $models): void
     {
@@ -83,7 +83,7 @@ class AttachMessengersCommand extends Command
     }
 
     /**
-     * @param Collection $models
+     * @param  Collection  $models
      */
     private function forceCreateMessenger(Collection $models): void
     {

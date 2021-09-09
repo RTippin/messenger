@@ -55,7 +55,7 @@ class PurgeBotsCommand extends Command
     }
 
     /**
-     * @param Collection $bots
+     * @param  Collection  $bots
      * @return void
      */
     private function dispatchJob(Collection $bots): void

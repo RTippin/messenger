@@ -22,8 +22,8 @@ class FriendApprovedEvent
     /**
      * Create a new event instance.
      *
-     * @param Friend $friend
-     * @param Friend $inverseFriend
+     * @param  Friend  $friend
+     * @param  Friend  $inverseFriend
      */
     public function __construct(Friend $friend, Friend $inverseFriend)
     {

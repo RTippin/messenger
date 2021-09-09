@@ -17,7 +17,7 @@ class DemotedAdminMessage extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param DemotedAdminEvent $event
+     * @param  DemotedAdminEvent  $event
      */
     public function __construct(DemotedAdminEvent $event)
     {
@@ -27,7 +27,7 @@ class DemotedAdminMessage extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param StoreSystemMessage $message
+     * @param  StoreSystemMessage  $message
      * @return void
      * @throws Throwable
      */

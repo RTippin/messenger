@@ -43,9 +43,9 @@ class RemoveFriend extends BaseMessengerAction
     /**
      * RemoveFriend constructor.
      *
-     * @param BroadcastDriver $broadcaster
-     * @param DatabaseManager $database
-     * @param Dispatcher $dispatcher
+     * @param  BroadcastDriver  $broadcaster
+     * @param  DatabaseManager  $database
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(BroadcastDriver $broadcaster,
                                 DatabaseManager $database,
@@ -60,7 +60,7 @@ class RemoveFriend extends BaseMessengerAction
      * Remove and destroy our friend relationship. This will
      * remove our friend model and its inverse/mirrored model.
      *
-     * @param Friend $friend
+     * @param  Friend  $friend
      * @return $this
      * @throws Exception|Throwable
      */

@@ -17,8 +17,8 @@ class Search extends Controller
     }
 
     /**
-     * @param SearchProvidersService $search
-     * @param string|null $query
+     * @param  SearchProvidersService  $search
+     * @param  string|null  $query
      * @return SearchCollection
      */
     public function __invoke(SearchProvidersService $search, ?string $query = null): SearchCollection

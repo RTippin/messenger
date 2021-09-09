@@ -17,7 +17,7 @@ class ParticipantsAddedMessage extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param ParticipantsAddedEvent $event
+     * @param  ParticipantsAddedEvent  $event
      */
     public function __construct(ParticipantsAddedEvent $event)
     {
@@ -27,7 +27,7 @@ class ParticipantsAddedMessage extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param StoreSystemMessage $message
+     * @param  StoreSystemMessage  $message
      * @return void
      * @throws Throwable
      */

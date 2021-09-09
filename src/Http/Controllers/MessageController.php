@@ -36,8 +36,8 @@ class MessageController extends Controller
     /**
      * Display a listing of the most recent messages.
      *
-     * @param MessageRepository $repository
-     * @param Thread $thread
+     * @param  MessageRepository  $repository
+     * @param  Thread  $thread
      * @return MessageCollection
      * @throws AuthorizationException
      */
@@ -57,9 +57,9 @@ class MessageController extends Controller
     /**
      * Display message history pagination.
      *
-     * @param MessageRepository $repository
-     * @param Thread $thread
-     * @param Message $message
+     * @param  MessageRepository  $repository
+     * @param  Thread  $thread
+     * @param  Message  $message
      * @return MessageCollection
      * @throws AuthorizationException
      */
@@ -83,9 +83,9 @@ class MessageController extends Controller
     /**
      * Store a new message.
      *
-     * @param MessageRequest $request
-     * @param StoreMessage $storeMessage
-     * @param Thread $thread
+     * @param  MessageRequest  $request
+     * @param  StoreMessage  $storeMessage
+     * @param  Thread  $thread
      * @return MessageResource
      * @throws AuthorizationException|Throwable
      */
@@ -108,8 +108,8 @@ class MessageController extends Controller
     /**
      * Display the message.
      *
-     * @param Thread $thread
-     * @param Message $message
+     * @param  Thread  $thread
+     * @param  Message  $message
      * @return MessageResource
      * @throws AuthorizationException
      */
@@ -126,8 +126,8 @@ class MessageController extends Controller
     /**
      * Display the message edits.
      *
-     * @param Thread $thread
-     * @param Message $message
+     * @param  Thread  $thread
+     * @param  Message  $message
      * @return MessageEditCollection
      * @throws AuthorizationException
      */
@@ -144,10 +144,10 @@ class MessageController extends Controller
     /**
      * Update the message body.
      *
-     * @param EditMessageRequest $request
-     * @param EditMessage $editMessage
-     * @param Thread $thread
-     * @param Message $message
+     * @param  EditMessageRequest  $request
+     * @param  EditMessage  $editMessage
+     * @param  Thread  $thread
+     * @param  Message  $message
      * @return MessageResource
      * @throws AuthorizationException|Throwable
      */
@@ -171,9 +171,9 @@ class MessageController extends Controller
     /**
      * Remove embeds from message.
      *
-     * @param RemoveEmbeds $removeEmbeds
-     * @param Thread $thread
-     * @param Message $message
+     * @param  RemoveEmbeds  $removeEmbeds
+     * @param  Thread  $thread
+     * @param  Message  $message
      * @return JsonResponse
      * @throws AuthorizationException
      */
@@ -195,9 +195,9 @@ class MessageController extends Controller
     /**
      * Remove the message.
      *
-     * @param ArchiveMessage $archiveMessage
-     * @param Thread $thread
-     * @param Message $message
+     * @param  ArchiveMessage  $archiveMessage
+     * @param  Thread  $thread
+     * @param  Message  $message
      * @return JsonResponse
      * @throws AuthorizationException|Exception
      */

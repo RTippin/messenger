@@ -23,8 +23,8 @@ class NewThreadEvent
     /**
      * Create a new event instance.
      *
-     * @param Thread $thread
-     * @param MessengerProvider $provider
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
      */
     public function __construct(MessengerProvider $provider, Thread $thread)
     {

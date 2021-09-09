@@ -28,9 +28,9 @@ class BotActionHandledEvent
     /**
      * Create a new event instance.
      *
-     * @param BotAction $action
-     * @param Message $message
-     * @param string $trigger
+     * @param  BotAction  $action
+     * @param  Message  $message
+     * @param  string  $trigger
      */
     public function __construct(BotAction $action,
                                 Message $message,

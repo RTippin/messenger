@@ -31,8 +31,8 @@ class DenyFriendRequest extends BaseMessengerAction
     /**
      * DenyFriendRequest constructor.
      *
-     * @param Dispatcher $dispatcher
-     * @param BroadcastDriver $broadcaster
+     * @param  Dispatcher  $dispatcher
+     * @param  BroadcastDriver  $broadcaster
      */
     public function __construct(Dispatcher $dispatcher, BroadcastDriver $broadcaster)
     {
@@ -43,7 +43,7 @@ class DenyFriendRequest extends BaseMessengerAction
     /**
      * Deny and destroy the pending friend request.
      *
-     * @param PendingFriend $pending
+     * @param  PendingFriend  $pending
      * @return $this
      * @throws Exception
      */

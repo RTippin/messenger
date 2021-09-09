@@ -28,8 +28,8 @@ class StoreInvite extends InviteAction
     /**
      * StoreInvite constructor.
      *
-     * @param Messenger $messenger
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger, Dispatcher $dispatcher)
     {
@@ -41,8 +41,8 @@ class StoreInvite extends InviteAction
     /**
      * Create a new thread invite!
      *
-     * @param Thread $thread
-     * @param array $params
+     * @param  Thread  $thread
+     * @param  array  $params
      * @return $this
      * @see InviteRequest
      * @throws FeatureDisabledException
@@ -60,7 +60,7 @@ class StoreInvite extends InviteAction
     }
 
     /**
-     * @param array $params
+     * @param  array  $params
      * @return $this
      */
     private function storeInvite(array $params): self
@@ -82,7 +82,7 @@ class StoreInvite extends InviteAction
     }
 
     /**
-     * @param string|null $expires
+     * @param  string|null  $expires
      * @return Carbon|null
      */
     private function setExpiresAt(?string $expires): ?Carbon

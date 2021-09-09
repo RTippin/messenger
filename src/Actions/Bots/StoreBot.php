@@ -26,8 +26,8 @@ class StoreBot extends BaseMessengerAction
     /**
      * StoreBot constructor.
      *
-     * @param Messenger $messenger
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger, Dispatcher $dispatcher)
     {
@@ -38,8 +38,8 @@ class StoreBot extends BaseMessengerAction
     /**
      * Create a new thread bot!
      *
-     * @param Thread $thread
-     * @param array $params
+     * @param  Thread  $thread
+     * @param  array  $params
      * @return $this
      * @see BotRequest
      * @throws FeatureDisabledException
@@ -67,7 +67,7 @@ class StoreBot extends BaseMessengerAction
     }
 
     /**
-     * @param array $params
+     * @param  array  $params
      * @return $this
      */
     private function storeBot(array $params): self

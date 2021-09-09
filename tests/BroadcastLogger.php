@@ -15,8 +15,8 @@ trait BroadcastLogger
     /**
      * Store the given broadcast event.
      *
-     * @param MessengerBroadcast|string $event
-     * @param string|null $context
+     * @param  MessengerBroadcast|string  $event
+     * @param  string|null  $context
      */
     public function logBroadcast($event, ?string $context = null): void
     {
@@ -30,8 +30,8 @@ trait BroadcastLogger
     }
 
     /**
-     * @param MessengerBroadcast $event
-     * @param string|null $context
+     * @param  MessengerBroadcast  $event
+     * @param  string|null  $context
      */
     private function storeBroadcast(MessengerBroadcast $event, ?string $context): void
     {
@@ -61,7 +61,7 @@ trait BroadcastLogger
     }
 
     /**
-     * @param array $broadcast
+     * @param  array  $broadcast
      */
     private function storeBroadcastFile(array $broadcast): void
     {

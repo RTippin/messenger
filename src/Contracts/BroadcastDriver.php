@@ -15,7 +15,7 @@ interface BroadcastDriver
      * Generate all available participants for the current
      * thread to broadcast to.
      *
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return $this
      */
     public function toAllInThread(Thread $thread): self;
@@ -24,7 +24,7 @@ interface BroadcastDriver
      * Generate all available participants for the current thread,
      * excluding current provider.
      *
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return $this
      */
     public function toOthersInThread(Thread $thread): self;
@@ -34,7 +34,7 @@ interface BroadcastDriver
      * contain a mix of messenger providers or any of our
      * internal models that implement Ownerable.
      *
-     * @param Collection $recipients
+     * @param  Collection  $recipients
      * @return $this
      */
     public function toSelected(Collection $recipients): self;
@@ -42,7 +42,7 @@ interface BroadcastDriver
     /**
      * Set recipient to a single instance of the types listed below.
      *
-     * @param MessengerProvider|Ownerable|mixed $recipient
+     * @param  MessengerProvider|Ownerable|mixed  $recipient
      * @return $this
      */
     public function to($recipient): self;
@@ -50,7 +50,7 @@ interface BroadcastDriver
     /**
      * Set single presence channel to broadcast on. Accepts Call or Thread.
      *
-     * @param HasPresenceChannel|mixed $entity
+     * @param  HasPresenceChannel|mixed  $entity
      * @return $this
      */
     public function toPresence($entity): self;
@@ -59,7 +59,7 @@ interface BroadcastDriver
      * Set many presence channels to broadcast on. Collection may
      * contain a mix of Call and Thread models.
      *
-     * @param Collection $presence
+     * @param  Collection  $presence
      * @return $this
      */
     public function toManyPresence(Collection $presence): self;
@@ -67,7 +67,7 @@ interface BroadcastDriver
     /**
      * Set the resource we will use to broadcast out.
      *
-     * @param array $with
+     * @param  array  $with
      * @return $this
      */
     public function with(array $with): self;
@@ -76,7 +76,7 @@ interface BroadcastDriver
      * Check the abstract event class implements our contract so that we may
      * inject the channels and resource, then broadcast the resource!
      *
-     * @param string|BroadcastEvent $abstract
+     * @param  string|BroadcastEvent  $abstract
      */
     public function broadcast(string $abstract): void;
 }

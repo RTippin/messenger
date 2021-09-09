@@ -17,7 +17,7 @@ class PurgeDocumentMessages extends BaseMessengerAction
     /**
      * PurgeDocumentMessages constructor.
      *
-     * @param FileService $fileService
+     * @param  FileService  $fileService
      */
     public function __construct(FileService $fileService)
     {
@@ -29,7 +29,7 @@ class PurgeDocumentMessages extends BaseMessengerAction
      * the file from storage, then force delete message itself
      * from database.
      *
-     * @param Collection $documentMessages
+     * @param  Collection  $documentMessages
      * @return $this
      */
     public function execute(Collection $documentMessages): self
@@ -40,7 +40,7 @@ class PurgeDocumentMessages extends BaseMessengerAction
     }
 
     /**
-     * @param Message $document
+     * @param  Message  $document
      */
     private function purge(Message $document): void
     {
@@ -50,7 +50,7 @@ class PurgeDocumentMessages extends BaseMessengerAction
     }
 
     /**
-     * @param Message $document
+     * @param  Message  $document
      */
     private function destroyDocument(Message $document): void
     {
@@ -60,7 +60,7 @@ class PurgeDocumentMessages extends BaseMessengerAction
     }
 
     /**
-     * @param Message $document
+     * @param  Message  $document
      */
     private function destroyMessage(Message $document): void
     {

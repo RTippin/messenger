@@ -23,8 +23,8 @@ class CallIgnoredEvent
     /**
      * Create a new event instance.
      *
-     * @param Call $call
-     * @param MessengerProvider $provider
+     * @param  Call  $call
+     * @param  MessengerProvider  $provider
      */
     public function __construct(Call $call, MessengerProvider $provider)
     {

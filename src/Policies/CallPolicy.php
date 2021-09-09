@@ -15,7 +15,7 @@ class CallPolicy
      * Determine whether the provider can view the calls.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function viewAny($user, Thread $thread): Response
@@ -29,8 +29,8 @@ class CallPolicy
      * Determine whether the provider can view the call.
      *
      * @param $user
-     * @param Thread $thread
-     * @param Call $call
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return Response
      */
     public function view($user, Call $call, Thread $thread): Response
@@ -44,8 +44,8 @@ class CallPolicy
      * Determine whether the provider can connect to the call socket channel.
      *
      * @param $user
-     * @param Thread $thread
-     * @param Call $call
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return Response
      */
     public function socket($user, Call $call, Thread $thread): Response
@@ -62,7 +62,7 @@ class CallPolicy
      * Determine whether the provider can start a new call.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function create($user, Thread $thread): Response
@@ -78,8 +78,8 @@ class CallPolicy
      * Determine whether the provider join the call.
      *
      * @param $user
-     * @param Call $call
-     * @param Thread $thread
+     * @param  Call  $call
+     * @param  Thread  $thread
      * @return Response
      */
     public function join($user, Call $call, Thread $thread): Response
@@ -95,8 +95,8 @@ class CallPolicy
      * Determine whether the provider can leave the call.
      *
      * @param $user
-     * @param Thread $thread
-     * @param Call $call
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return Response
      */
     public function leave($user, Call $call, Thread $thread): Response
@@ -113,8 +113,8 @@ class CallPolicy
      * Determine whether the provider can end the call.
      *
      * @param $user
-     * @param Thread $thread
-     * @param Call $call
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return Response
      */
     public function end($user, Call $call, Thread $thread): Response
@@ -133,8 +133,8 @@ class CallPolicy
      * Determine whether the provider can ignore the call.
      *
      * @param $user
-     * @param Thread $thread
-     * @param Call $call
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return Response
      */
     public function ignore($user, Call $call, Thread $thread): Response
@@ -150,8 +150,8 @@ class CallPolicy
      * Determine whether the provider can use the call heartbeat.
      *
      * @param $user
-     * @param Thread $thread
-     * @param Call $call
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return Response
      */
     public function heartbeat($user, Call $call, Thread $thread): Response

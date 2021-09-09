@@ -22,8 +22,8 @@ class CallEndedEvent
     /**
      * Create a new event instance.
      *
-     * @param MessengerProvider|null $provider
-     * @param Call $call
+     * @param  MessengerProvider|null  $provider
+     * @param  Call  $call
      */
     public function __construct(?MessengerProvider $provider, Call $call)
     {

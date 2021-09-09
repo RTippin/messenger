@@ -14,7 +14,7 @@ class IsThreadUnread
     /**
      * Is the thread unread for current participant?
      *
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return JsonResponse
      * @throws AuthorizationException
      */

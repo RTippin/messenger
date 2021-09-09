@@ -80,8 +80,8 @@ trait MessengerProviders
      * You may even choose to set multiple different providers in a row during a single cycle,
      * such as in a custom job or action.
      *
-     * @param MessengerProvider|mixed|null $provider
-     * @param bool $scoped
+     * @param  MessengerProvider|mixed|null  $provider
+     * @param  bool  $scoped
      * @return $this
      * @throws InvalidProviderException
      */
@@ -113,7 +113,7 @@ trait MessengerProviders
     /**
      * Overwrites our active provider while preserving any prior provider set.
      *
-     * @param MessengerProvider|mixed|null $provider
+     * @param  MessengerProvider|mixed|null  $provider
      * @return $this
      * @throws InvalidProviderException
      */
@@ -128,7 +128,7 @@ trait MessengerProviders
      * This will firstOrCreate a messenger model instance
      * for the given or currently set provider.
      *
-     * @param MessengerProvider|mixed|null $provider
+     * @param  MessengerProvider|mixed|null  $provider
      * @return MessengerModel|null
      */
     public function getProviderMessenger($provider = null): ?MessengerModel
@@ -160,8 +160,8 @@ trait MessengerProviders
     /**
      * Unset the active provider.
      *
-     * @param bool $scoped
-     * @param bool $flush
+     * @param  bool  $scoped
+     * @param  bool  $flush
      * @return $this
      * @throws InvalidProviderException
      */
@@ -209,7 +209,7 @@ trait MessengerProviders
     /**
      * Get the current or scoped Messenger Provider.
      *
-     * @param bool $withoutRelations
+     * @param  bool  $withoutRelations
      * @return MessengerProvider|Model|null
      */
     public function getProvider(bool $withoutRelations = false): ?MessengerProvider
@@ -258,7 +258,7 @@ trait MessengerProviders
     /**
      * Can the current Messenger Provider message given provider first?
      *
-     * @param MessengerProvider|Model|null $provider
+     * @param  MessengerProvider|Model|null  $provider
      * @return bool
      */
     public function canMessageProviderFirst($provider = null): bool
@@ -272,7 +272,7 @@ trait MessengerProviders
      * Can the current Messenger Provider initiate a
      * friend request with given provider?
      *
-     * @param MessengerProvider|Model|null $provider
+     * @param  MessengerProvider|Model|null  $provider
      * @return bool
      */
     public function canFriendProvider($provider = null): bool
@@ -285,7 +285,7 @@ trait MessengerProviders
     /**
      * Can the current Messenger Provider search the given provider?
      *
-     * @param MessengerProvider|Model|null $provider
+     * @param  MessengerProvider|Model|null  $provider
      * @return bool
      */
     public function canSearchProvider($provider = null): bool
@@ -388,7 +388,7 @@ trait MessengerProviders
     /**
      * Put the given or loaded model into cache as online.
      *
-     * @param null|string|MessengerProvider $provider
+     * @param  null|string|MessengerProvider  $provider
      */
     public function setProviderToOnline($provider = null): void
     {
@@ -406,7 +406,7 @@ trait MessengerProviders
     /**
      * Remove the given or loaded model from online cache.
      *
-     * @param null|string|MessengerProvider $provider
+     * @param  null|string|MessengerProvider  $provider
      */
     public function setProviderToOffline($provider = null): void
     {
@@ -421,7 +421,7 @@ trait MessengerProviders
     /**
      * Put the given or loaded model into cache as away.
      *
-     * @param null|string|MessengerProvider $provider
+     * @param  null|string|MessengerProvider  $provider
      */
     public function setProviderToAway($provider = null): void
     {
@@ -437,7 +437,7 @@ trait MessengerProviders
     /**
      * Check if cache has online key for given or loaded model.
      *
-     * @param null|string|MessengerProvider $provider
+     * @param  null|string|MessengerProvider  $provider
      * @return bool
      */
     public function isProviderOnline($provider = null): bool
@@ -455,7 +455,7 @@ trait MessengerProviders
     /**
      * Check if cache has away key for given or loaded model.
      *
-     * @param null|string|MessengerProvider $provider
+     * @param  null|string|MessengerProvider  $provider
      * @return bool
      */
     public function isProviderAway($provider = null): bool
@@ -474,7 +474,7 @@ trait MessengerProviders
      * Get the status number representing online status of given or loaded model
      * 0 = offline, 1 = online, 2 = away.
      *
-     * @param null|string|MessengerProvider $provider
+     * @param  null|string|MessengerProvider  $provider
      * @return int
      */
     public function getProviderOnlineStatus($provider = null): int
@@ -493,7 +493,7 @@ trait MessengerProviders
     }
 
     /**
-     * @param array $limits
+     * @param  array  $limits
      * @return array
      */
     private function getCanMessageFirstClasses(array $limits): array
@@ -508,7 +508,7 @@ trait MessengerProviders
     }
 
     /**
-     * @param array $limits
+     * @param  array  $limits
      * @return array
      */
     private function getCanFriendClasses(array $limits): array
@@ -523,7 +523,7 @@ trait MessengerProviders
     }
 
     /**
-     * @param array $limits
+     * @param  array  $limits
      * @return array
      */
     private function getCanSearchClasses(array $limits): array
@@ -538,8 +538,8 @@ trait MessengerProviders
     }
 
     /**
-     * @param array $providers
-     * @param array $limits
+     * @param  array  $providers
+     * @param  array  $limits
      * @return array
      */
     private function filterCanList(array $providers, array $limits): array
@@ -575,7 +575,7 @@ trait MessengerProviders
     }
 
     /**
-     * @param MessengerProvider $provider
+     * @param  MessengerProvider  $provider
      * @return int
      */
     private function getOnlineStatusSetting(MessengerProvider $provider): int
@@ -584,7 +584,7 @@ trait MessengerProviders
     }
 
     /**
-     * @param MessengerProvider $provider
+     * @param  MessengerProvider  $provider
      */
     private function setToOnline(MessengerProvider $provider): void
     {
@@ -596,7 +596,7 @@ trait MessengerProviders
     }
 
     /**
-     * @param MessengerProvider $provider
+     * @param  MessengerProvider  $provider
      */
     private function setToAway(MessengerProvider $provider): void
     {
@@ -608,7 +608,7 @@ trait MessengerProviders
     }
 
     /**
-     * @param MessengerProvider $provider
+     * @param  MessengerProvider  $provider
      */
     private function setToOffline(MessengerProvider $provider): void
     {

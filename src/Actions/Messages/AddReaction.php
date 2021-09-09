@@ -58,11 +58,11 @@ class AddReaction extends BaseMessengerAction
     /**
      * AddReaction constructor.
      *
-     * @param BroadcastDriver $broadcaster
-     * @param DatabaseManager $database
-     * @param Dispatcher $dispatcher
-     * @param Messenger $messenger
-     * @param EmojiInterface $emoji
+     * @param  BroadcastDriver  $broadcaster
+     * @param  DatabaseManager  $database
+     * @param  Dispatcher  $dispatcher
+     * @param  Messenger  $messenger
+     * @param  EmojiInterface  $emoji
      */
     public function __construct(BroadcastDriver $broadcaster,
                                 DatabaseManager $database,
@@ -80,9 +80,9 @@ class AddReaction extends BaseMessengerAction
     /**
      * Add a reaction to the given message.
      *
-     * @param Thread $thread
-     * @param Message $message
-     * @param string $reaction
+     * @param  Thread  $thread
+     * @param  Message  $message
+     * @param  string  $reaction
      * @return $this
      * @throws FeatureDisabledException|ReactionException|Throwable
      */
@@ -122,7 +122,7 @@ class AddReaction extends BaseMessengerAction
     /**
      * Set our reaction to the first valid emoji, or null if none found.
      *
-     * @param string $reaction
+     * @param  string  $reaction
      */
     private function prepareReaction(string $reaction): void
     {

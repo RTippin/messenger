@@ -24,8 +24,8 @@ class MessageReactionController
     /**
      * Display a listing of the message reactions.
      *
-     * @param Thread $thread
-     * @param Message $message
+     * @param  Thread  $thread
+     * @param  Message  $message
      * @return MessageReactionCollection
      * @throws AuthorizationException
      */
@@ -44,10 +44,10 @@ class MessageReactionController
     /**
      * Store a new reaction for the given message.
      *
-     * @param MessageReactionRequest $request
-     * @param AddReaction $addReaction
-     * @param Thread $thread
-     * @param Message $message
+     * @param  MessageReactionRequest  $request
+     * @param  AddReaction  $addReaction
+     * @param  Thread  $thread
+     * @param  Message  $message
      * @return MessageReactionResource
      * @throws Throwable|ReactionException|FeatureDisabledException|AuthorizationException
      */
@@ -72,10 +72,10 @@ class MessageReactionController
     /**
      * Remove the specified reaction from the given message.
      *
-     * @param RemoveReaction $removeReaction
-     * @param Thread $thread
-     * @param Message $message
-     * @param MessageReaction $reaction
+     * @param  RemoveReaction  $removeReaction
+     * @param  Thread  $thread
+     * @param  Message  $message
+     * @param  MessageReaction  $reaction
      * @return JsonResponse
      * @throws AuthorizationException|Throwable
      */

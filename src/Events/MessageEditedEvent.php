@@ -22,8 +22,8 @@ class MessageEditedEvent
     /**
      * Create a new event instance.
      *
-     * @param Message $message
-     * @param string|null $originalBody
+     * @param  Message  $message
+     * @param  string|null  $originalBody
      */
     public function __construct(Message $message, ?string $originalBody)
     {

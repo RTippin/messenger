@@ -27,7 +27,7 @@ class BotResource extends JsonResource
     /**
      * Transform the resource into an array.
      *
-     * @param  Request $request
+     * @param  Request  $request
      * @return array
      */
     public function toArray($request): array
@@ -59,7 +59,7 @@ class BotResource extends JsonResource
     }
 
     /**
-     * @param Bot $bot
+     * @param  Bot  $bot
      * @return array
      */
     private function addAvatar(Bot $bot): array
@@ -74,7 +74,7 @@ class BotResource extends JsonResource
     }
 
     /**
-     * @param Bot $bot
+     * @param  Bot  $bot
      * @return int
      */
     private function addValidActionsCount(Bot $bot): int
@@ -83,7 +83,7 @@ class BotResource extends JsonResource
     }
 
     /**
-     * @param Bot $bot
+     * @param  Bot  $bot
      * @return array
      */
     private function addValidActions(Bot $bot): array

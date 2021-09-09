@@ -31,9 +31,9 @@ class PromoteAdmin extends ThreadParticipantAction
     /**
      * PromoteAdmin constructor.
      *
-     * @param Messenger $messenger
-     * @param BroadcastDriver $broadcaster
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
@@ -47,8 +47,8 @@ class PromoteAdmin extends ThreadParticipantAction
     /**
      * Promote the participant to admin!
      *
-     * @param Thread $thread
-     * @param Participant $participant
+     * @param  Thread  $thread
+     * @param  Participant  $participant
      * @return $this
      */
     public function execute(Thread $thread, Participant $participant): self

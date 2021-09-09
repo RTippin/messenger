@@ -85,7 +85,7 @@ class BotAction extends Model implements Ownerable
     /**
      * Scope actions that are enabled.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeEnabled(Builder $query): Builder
@@ -96,7 +96,7 @@ class BotAction extends Model implements Ownerable
     /**
      * Scope actions that have a valid handler set.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeValidHandler(Builder $query): Builder
@@ -107,8 +107,8 @@ class BotAction extends Model implements Ownerable
     /**
      * Scope actions that have a valid handler set.
      *
-     * @param Builder $query
-     * @param string $handler
+     * @param  Builder  $query
+     * @param  string  $handler
      * @return Builder
      */
     public function scopeHandler(Builder $query, string $handler): Builder
@@ -119,8 +119,8 @@ class BotAction extends Model implements Ownerable
     /**
      * Scope actions that belong to a bot using thread id, and is enabled.
      *
-     * @param Builder $query
-     * @param string $threadId
+     * @param  Builder  $query
+     * @param  string  $threadId
      * @return Builder
      */
     public function scopeValidFromThread(Builder $query, string $threadId): Builder

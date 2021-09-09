@@ -16,7 +16,7 @@ class UpdateMessengerSettings extends BaseMessengerAction
     /**
      * UpdateMessengerSettings constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -24,7 +24,7 @@ class UpdateMessengerSettings extends BaseMessengerAction
     }
 
     /**
-     * @param array $params
+     * @param  array  $params
      * @return $this
      * @see MessengerSettingsRequest
      */
@@ -38,7 +38,7 @@ class UpdateMessengerSettings extends BaseMessengerAction
     }
 
     /**
-     * @param int $onlineStatus
+     * @param  int  $onlineStatus
      */
     private function setOnlineCacheStatus(int $onlineStatus): void
     {

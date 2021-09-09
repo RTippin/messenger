@@ -16,7 +16,7 @@ abstract class InviteAction extends BaseMessengerAction
     /**
      * InviteAction constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {

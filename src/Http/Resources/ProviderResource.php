@@ -36,10 +36,10 @@ class ProviderResource extends JsonResource
     /**
      * ProviderResource constructor.
      *
-     * @param mixed $provider
-     * @param bool $addOptions
-     * @param int|null $forceFriendStatus
-     * @param bool $addBaseModel
+     * @param  mixed  $provider
+     * @param  bool  $addOptions
+     * @param  int|null  $forceFriendStatus
+     * @param  bool  $addBaseModel
      */
     public function __construct($provider,
                                 bool $addOptions = false,
@@ -78,7 +78,7 @@ class ProviderResource extends JsonResource
     }
 
     /**
-     * @param mixed $provider
+     * @param  mixed  $provider
      */
     private function setProvider($provider): void
     {
@@ -155,7 +155,7 @@ class ProviderResource extends JsonResource
     }
 
     /**
-     * @param bool $isFriendable
+     * @param  bool  $isFriendable
      * @return bool
      */
     private function canFriend(bool $isFriendable): bool
@@ -172,7 +172,7 @@ class ProviderResource extends JsonResource
     }
 
     /**
-     * @param bool $isSearchable
+     * @param  bool  $isSearchable
      * @return bool
      */
     private function canSearch(bool $isSearchable): bool
@@ -181,7 +181,7 @@ class ProviderResource extends JsonResource
     }
 
     /**
-     * @param int $friendStatus
+     * @param  int  $friendStatus
      * @return Carbon|string|null
      */
     private function getLastActive(int $friendStatus)
@@ -208,7 +208,7 @@ class ProviderResource extends JsonResource
     }
 
     /**
-     * @param int $friendStatus
+     * @param  int  $friendStatus
      * @return string|null
      */
     private function getFriendResourceId(int $friendStatus): ?string

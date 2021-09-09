@@ -21,8 +21,8 @@ abstract class MessengerAvatarAction extends BaseMessengerAction
     /**
      * MessengerAvatarAction constructor.
      *
-     * @param Messenger $messenger
-     * @param FileService $fileService
+     * @param  Messenger  $messenger
+     * @param  FileService  $fileService
      */
     public function __construct(Messenger $messenger, FileService $fileService)
     {
@@ -53,7 +53,7 @@ abstract class MessengerAvatarAction extends BaseMessengerAction
     }
 
     /**
-     * @param string|null $file
+     * @param  string|null  $file
      */
     protected function updateProviderAvatar(?string $file): void
     {

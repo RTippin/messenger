@@ -20,7 +20,7 @@ class ProviderStatusResource extends JsonResource
     /**
      * ProviderStatusResource constructor.
      *
-     * @param mixed $provider
+     * @param  mixed  $provider
      */
     public function __construct($provider)
     {

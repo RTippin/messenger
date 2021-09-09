@@ -16,7 +16,7 @@ class MuteThread extends ThreadParticipantAction
     /**
      * MuteThread constructor.
      *
-     * @param Dispatcher $dispatcher
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Dispatcher $dispatcher)
     {
@@ -26,7 +26,7 @@ class MuteThread extends ThreadParticipantAction
     /**
      * Mute the thread for the current participant.
      *
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return $this
      */
     public function execute(Thread $thread): self

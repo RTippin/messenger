@@ -16,8 +16,8 @@ class InviteResource extends JsonResource
 
     /**
      * InviteResource constructor.
-     * @param Invite $invite
-     * @param bool $joining
+     * @param  Invite  $invite
+     * @param  bool  $joining
      */
     public function __construct(Invite $invite, bool $joining = false)
     {
@@ -50,7 +50,7 @@ class InviteResource extends JsonResource
     }
 
     /**
-     * @param Invite $invite
+     * @param  Invite  $invite
      * @return array
      */
     private function joinOptions(Invite $invite): array
@@ -67,7 +67,7 @@ class InviteResource extends JsonResource
     }
 
     /**
-     * @param Invite $invite
+     * @param  Invite  $invite
      * @return bool
      */
     private function isAlreadyInThread(Invite $invite): bool

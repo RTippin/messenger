@@ -9,7 +9,7 @@ class FriendException extends AuthorizationException
     /**
      * FriendException constructor.
      *
-     * @param string $message
+     * @param  string  $message
      */
     public function __construct(string $message = 'Friend action denied.')
     {

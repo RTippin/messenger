@@ -19,7 +19,7 @@ class PrivateThreadController
     /**
      * Display a listing of the most recent private threads.
      *
-     * @param PrivateThreadRepository $repository
+     * @param  PrivateThreadRepository  $repository
      * @return PrivateThreadCollection
      * @throws AuthorizationException
      */
@@ -35,8 +35,8 @@ class PrivateThreadController
     /**
      * Display private threads history pagination.
      *
-     * @param PrivateThreadRepository $repository
-     * @param Thread $private
+     * @param  PrivateThreadRepository  $repository
+     * @param  Thread  $private
      * @return PrivateThreadCollection
      * @throws AuthorizationException
      */
@@ -54,8 +54,8 @@ class PrivateThreadController
     /**
      * Store a new private thread.
      *
-     * @param PrivateThreadRequest $request
-     * @param StorePrivateThread $storePrivateThread
+     * @param  PrivateThreadRequest  $request
+     * @param  StorePrivateThread  $storePrivateThread
      * @return ThreadResource
      * @throws AuthorizationException
      * @throws Throwable

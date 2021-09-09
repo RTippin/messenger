@@ -302,7 +302,7 @@ trait MessengerConfig
     /**
      * Set the configuration properties dynamically.
      *
-     * @param  array $params
+     * @param  array  $params
      * @return $this
      */
     public function setConfig(array $params): self
@@ -364,7 +364,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $messageSizeLimit
+     * @param  int  $messageSizeLimit
      * @return $this
      */
     public function setMessageSizeLimit(int $messageSizeLimit): self
@@ -375,7 +375,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param bool $pushNotifications
+     * @param  bool  $pushNotifications
      * @return $this
      */
     public function setPushNotifications(bool $pushNotifications): self
@@ -402,7 +402,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param bool $messageEdits
+     * @param  bool  $messageEdits
      * @return $this
      */
     public function setMessageEdits(bool $messageEdits): self
@@ -421,7 +421,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param bool $messageEditsView
+     * @param  bool  $messageEditsView
      * @return $this
      */
     public function setMessageEditsView(bool $messageEditsView): self
@@ -440,7 +440,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param bool $messageReactions
+     * @param  bool  $messageReactions
      * @return $this
      */
     public function setMessageReactions(bool $messageReactions): self
@@ -459,7 +459,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $messageReactionsMax
+     * @param  int  $messageReactionsMax
      * @return $this
      */
     public function setMessageReactionsMax(int $messageReactionsMax): self
@@ -478,7 +478,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param bool $knockKnock
+     * @param  bool  $knockKnock
      * @return $this
      */
     public function setKnockKnock(bool $knockKnock): self
@@ -497,7 +497,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $knockTimeout
+     * @param  int  $knockTimeout
      * @return $this
      */
     public function setKnockTimeout(int $knockTimeout): self
@@ -508,7 +508,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $minutesDisabled
+     * @param  int  $minutesDisabled
      * @return $this
      */
     public function disableCallsTemporarily(int $minutesDisabled): self
@@ -552,7 +552,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param bool $calling
+     * @param  bool  $calling
      * @return $this
      */
     public function setCalling(bool $calling): self
@@ -571,7 +571,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param bool $bots
+     * @param  bool  $bots
      * @return $this
      */
     public function setBots(bool $bots): self
@@ -590,7 +590,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param bool $systemMessages
+     * @param  bool  $systemMessages
      * @return $this
      */
     public function setSystemMessages(bool $systemMessages): self
@@ -601,7 +601,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param bool $invites
+     * @param  bool  $invites
      * @return $this
      */
     public function setThreadInvites(bool $invites): self
@@ -620,7 +620,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $maxInviteCount
+     * @param  int  $maxInviteCount
      * @return $this
      */
     public function setThreadInvitesMaxCount(int $maxInviteCount): self
@@ -647,7 +647,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param bool $messageImageUpload
+     * @param  bool  $messageImageUpload
      * @return $this
      */
     public function setMessageImageUpload(bool $messageImageUpload): self
@@ -666,7 +666,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $messageImageSizeLimit
+     * @param  int  $messageImageSizeLimit
      * @return $this
      */
     public function setMessageImageSizeLimit(int $messageImageSizeLimit): self
@@ -685,7 +685,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param string $messageImageMimeTypes
+     * @param  string  $messageImageMimeTypes
      * @return $this
      */
     public function setMessageImageMimeTypes(string $messageImageMimeTypes): self
@@ -704,7 +704,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param bool $messageAudioUpload
+     * @param  bool  $messageAudioUpload
      * @return $this
      */
     public function setMessageAudioUpload(bool $messageAudioUpload): self
@@ -723,7 +723,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $messageAudioSizeLimit
+     * @param  int  $messageAudioSizeLimit
      * @return $this
      */
     public function setMessageAudioSizeLimit(int $messageAudioSizeLimit): self
@@ -742,7 +742,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param string $messageAudioMimeTypes
+     * @param  string  $messageAudioMimeTypes
      * @return $this
      */
     public function setMessageAudioMimeTypes(string $messageAudioMimeTypes): self
@@ -761,7 +761,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param bool $messageDocumentUpload
+     * @param  bool  $messageDocumentUpload
      * @return $this
      */
     public function setMessageDocumentUpload(bool $messageDocumentUpload): self
@@ -780,7 +780,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $messageDocumentSizeLimit
+     * @param  int  $messageDocumentSizeLimit
      * @return $this
      */
     public function setMessageDocumentSizeLimit(int $messageDocumentSizeLimit): self
@@ -799,7 +799,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param string $messageDocumentMimeTypes
+     * @param  string  $messageDocumentMimeTypes
      * @return $this
      */
     public function setMessageDocumentMimeTypes(string $messageDocumentMimeTypes): self
@@ -818,7 +818,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param bool $providerAvatars
+     * @param  bool  $providerAvatars
      * @return $this
      */
     public function setProviderAvatars(bool $providerAvatars): self
@@ -837,7 +837,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param bool $threadAvatars
+     * @param  bool  $threadAvatars
      * @return $this
      */
     public function setThreadAvatars(bool $threadAvatars): self
@@ -856,7 +856,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param bool $botAvatars
+     * @param  bool  $botAvatars
      * @return $this
      */
     public function setBotAvatars(bool $botAvatars): self
@@ -875,7 +875,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $avatarSizeLimit
+     * @param  int  $avatarSizeLimit
      * @return $this
      */
     public function setAvatarSizeLimit(int $avatarSizeLimit): self
@@ -894,7 +894,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param string $avatarMimeTypes
+     * @param  string  $avatarMimeTypes
      * @return $this
      */
     public function setAvatarMimeTypes(string $avatarMimeTypes): self
@@ -913,7 +913,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param bool $onlineStatus
+     * @param  bool  $onlineStatus
      * @return $this
      */
     public function setOnlineStatus(bool $onlineStatus): self
@@ -932,7 +932,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $onlineCacheLifetime
+     * @param  int  $onlineCacheLifetime
      * @return $this
      */
     public function setOnlineCacheLifetime(int $onlineCacheLifetime): self
@@ -951,7 +951,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $threadsIndexCount
+     * @param  int  $threadsIndexCount
      * @return $this
      */
     public function setThreadsIndexCount(int $threadsIndexCount): self
@@ -970,7 +970,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $apiRateLimit
+     * @param  int  $apiRateLimit
      * @return $this
      */
     public function setApiRateLimit(int $apiRateLimit): self
@@ -989,7 +989,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $searchRateLimit
+     * @param  int  $searchRateLimit
      * @return $this
      */
     public function setSearchRateLimit(int $searchRateLimit): self
@@ -1008,7 +1008,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $messageRateLimit
+     * @param  int  $messageRateLimit
      * @return $this
      */
     public function setMessageRateLimit(int $messageRateLimit): self
@@ -1027,7 +1027,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $attachmentRateLimit
+     * @param  int  $attachmentRateLimit
      * @return $this
      */
     public function setAttachmentRateLimit(int $attachmentRateLimit): self
@@ -1046,7 +1046,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $searchPageCount
+     * @param  int  $searchPageCount
      * @return $this
      */
     public function setSearchPageCount(int $searchPageCount): self
@@ -1065,7 +1065,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $threadsPageCount
+     * @param  int  $threadsPageCount
      * @return $this
      */
     public function setThreadsPageCount(int $threadsPageCount): self
@@ -1084,7 +1084,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $participantsIndexCount
+     * @param  int  $participantsIndexCount
      * @return $this
      */
     public function setParticipantsIndexCount(int $participantsIndexCount): self
@@ -1103,7 +1103,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $participantsPageCount
+     * @param  int  $participantsPageCount
      * @return $this
      */
     public function setParticipantsPageCount(int $participantsPageCount): self
@@ -1122,7 +1122,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $messagesIndexCount
+     * @param  int  $messagesIndexCount
      * @return $this
      */
     public function setMessagesIndexCount(int $messagesIndexCount): self
@@ -1141,7 +1141,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $messagesPageCount
+     * @param  int  $messagesPageCount
      * @return $this
      */
     public function setMessagesPageCount(int $messagesPageCount): self
@@ -1160,7 +1160,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $callsIndexCount
+     * @param  int  $callsIndexCount
      * @return $this
      */
     public function setCallsIndexCount(int $callsIndexCount): self
@@ -1179,7 +1179,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param int $callsPageCount
+     * @param  int  $callsPageCount
      * @return $this
      */
     public function setCallsPageCount(int $callsPageCount): self
@@ -1190,7 +1190,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param string|null $config
+     * @param  string|null  $config
      * @return array|string
      */
     public function getAvatarStorage(?string $config = null)
@@ -1203,7 +1203,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param string|null $config
+     * @param  string|null  $config
      * @return array|string
      */
     public function getThreadStorage(?string $config = null)
@@ -1216,7 +1216,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param string $driver
+     * @param  string  $driver
      * @return $this
      * @throws InvalidArgumentException
      */
@@ -1232,7 +1232,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param string $driver
+     * @param  string  $driver
      * @return $this
      * @throws InvalidArgumentException
      */
@@ -1248,7 +1248,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param string $driver
+     * @param  string  $driver
      * @return $this
      * @throws InvalidArgumentException
      */
@@ -1312,7 +1312,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param string $option
+     * @param  string  $option
      * @return bool|string
      */
     public function getBotSubscriber(string $option)
@@ -1321,8 +1321,8 @@ trait MessengerConfig
     }
 
     /**
-     * @param string $option
-     * @param bool|string $value
+     * @param  string  $option
+     * @param  bool|string  $value
      * @return $this
      */
     public function setBotSubscriber(string $option, $value): self
@@ -1333,7 +1333,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param string $option
+     * @param  string  $option
      * @return bool|string
      */
     public function getCallSubscriber(string $option)
@@ -1342,8 +1342,8 @@ trait MessengerConfig
     }
 
     /**
-     * @param string $option
-     * @param bool|string $value
+     * @param  string  $option
+     * @param  bool|string  $value
      * @return $this
      */
     public function setCallSubscriber(string $option, $value): self
@@ -1354,7 +1354,7 @@ trait MessengerConfig
     }
 
     /**
-     * @param string $option
+     * @param  string  $option
      * @return bool|string
      */
     public function getSystemMessageSubscriber(string $option)
@@ -1363,8 +1363,8 @@ trait MessengerConfig
     }
 
     /**
-     * @param string $option
-     * @param bool|string $value
+     * @param  string  $option
+     * @param  bool|string  $value
      * @return $this
      */
     public function setSystemMessageSubscriber(string $option, $value): self

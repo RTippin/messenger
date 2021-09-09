@@ -12,9 +12,9 @@ class FindRecipientThread
      * Attempt to locate an existing private thread given
      * the alias and id given of another provider.
      *
-     * @param ThreadLocatorService $locator
-     * @param string $alias
-     * @param string $id
+     * @param  ThreadLocatorService  $locator
+     * @param  string  $alias
+     * @param  string  $id
      * @return RecipientThreadResource
      * @throws ProviderNotFoundException
      */

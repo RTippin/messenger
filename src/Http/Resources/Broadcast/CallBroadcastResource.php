@@ -16,7 +16,7 @@ class CallBroadcastResource extends JsonResource
     /**
      * CallBroadcastResource constructor.
      *
-     * @param Call $call
+     * @param  Call  $call
      */
     public function __construct(Call $call)
     {

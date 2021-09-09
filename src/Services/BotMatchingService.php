@@ -7,9 +7,9 @@ use Illuminate\Support\Str;
 class BotMatchingService
 {
     /**
-     * @param string $method
-     * @param string $trigger
-     * @param string|null $message
+     * @param  string  $method
+     * @param  string  $trigger
+     * @param  string|null  $message
      * @return bool
      */
     public function matches(string $method, string $trigger, ?string $message): bool
@@ -30,9 +30,9 @@ class BotMatchingService
     /**
      * The trigger must match the message exactly.
      *
-     * @param string $trigger
-     * @param string|null $message
-     * @param bool $caseless
+     * @param  string  $trigger
+     * @param  string|null  $message
+     * @param  bool  $caseless
      * @return bool
      */
     private function matchExact(string $trigger, ?string $message, bool $caseless = false): bool
@@ -47,9 +47,9 @@ class BotMatchingService
      * The trigger can be anywhere within a message.
      * Cannot be part of or inside another word.
      *
-     * @param string $trigger
-     * @param string|null $message
-     * @param bool $caseless
+     * @param  string  $trigger
+     * @param  string|null  $message
+     * @param  bool  $caseless
      * @return bool
      */
     private function matchContains(string $trigger, ?string $message, bool $caseless = false): bool
@@ -64,9 +64,9 @@ class BotMatchingService
      * The trigger can be anywhere within a message,
      * including inside another word.
      *
-     * @param string $trigger
-     * @param string|null $message
-     * @param bool $caseless
+     * @param  string  $trigger
+     * @param  string|null  $message
+     * @param  bool  $caseless
      * @return bool
      */
     private function matchContainsAny(string $trigger, ?string $message, bool $caseless = false): bool
@@ -81,9 +81,9 @@ class BotMatchingService
      * The trigger must be the lead phrase within the message.
      * Cannot be part of or inside another word.
      *
-     * @param string $trigger
-     * @param string|null $message
-     * @param bool $caseless
+     * @param  string  $trigger
+     * @param  string|null  $message
+     * @param  bool  $caseless
      * @return bool
      */
     private function matchStartsWith(string $trigger, ?string $message, bool $caseless = false): bool
@@ -96,8 +96,8 @@ class BotMatchingService
     }
 
     /**
-     * @param string|null $string
-     * @param bool $lower
+     * @param  string|null  $string
+     * @param  bool  $lower
      * @return string
      */
     private function prepareMessage(?string $string, bool $lower): string

@@ -18,7 +18,7 @@ class ImageMessageRepository
     /**
      * ImageMessageRepository constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -26,7 +26,7 @@ class ImageMessageRepository
     }
 
     /**
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Collection
      */
     public function getThreadImagesIndex(Thread $thread): Collection
@@ -40,8 +40,8 @@ class ImageMessageRepository
     }
 
     /**
-     * @param Thread $thread
-     * @param Message $message
+     * @param  Thread  $thread
+     * @param  Message  $message
      * @return Collection
      */
     public function getThreadImagesPage(Thread $thread, Message $message): Collection

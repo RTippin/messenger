@@ -27,9 +27,9 @@ class StatusHeartbeatEvent
     /**
      * Create a new event instance.
      *
-     * @param MessengerProvider $provider
-     * @param bool $away
-     * @param string $IP
+     * @param  MessengerProvider  $provider
+     * @param  bool  $away
+     * @param  string  $IP
      */
     public function __construct(MessengerProvider $provider,
                                 bool $away,

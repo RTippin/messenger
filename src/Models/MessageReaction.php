@@ -103,8 +103,8 @@ class MessageReaction extends Model implements Ownerable
     /**
      * Scope a query for matching reactions.
      *
-     * @param Builder $query
-     * @param string $reaction
+     * @param  Builder  $query
+     * @param  string  $reaction
      * @return Builder
      */
     public function scopeWhereReaction(Builder $query, string $reaction): Builder
@@ -115,8 +115,8 @@ class MessageReaction extends Model implements Ownerable
     /**
      * Scope a query for matching reactions.
      *
-     * @param Builder $query
-     * @param string $reaction
+     * @param  Builder  $query
+     * @param  string  $reaction
      * @return Builder
      */
     public function scopeNotReaction(Builder $query, string $reaction): Builder

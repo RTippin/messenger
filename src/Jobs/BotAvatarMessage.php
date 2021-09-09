@@ -17,7 +17,7 @@ class BotAvatarMessage extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param BotAvatarEvent $event
+     * @param  BotAvatarEvent  $event
      */
     public function __construct(BotAvatarEvent $event)
     {
@@ -27,7 +27,7 @@ class BotAvatarMessage extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param StoreSystemMessage $message
+     * @param  StoreSystemMessage  $message
      * @return void
      * @throws Throwable
      */

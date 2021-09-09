@@ -42,10 +42,10 @@ class LeaveThread extends BaseMessengerAction
     /**
      * LeaveThread constructor.
      *
-     * @param Messenger $messenger
-     * @param BroadcastDriver $broadcaster
-     * @param Dispatcher $dispatcher
-     * @param DatabaseManager $database
+     * @param  Messenger  $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  Dispatcher  $dispatcher
+     * @param  DatabaseManager  $database
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
@@ -61,7 +61,7 @@ class LeaveThread extends BaseMessengerAction
     /**
      * Leave the group thread. Archive the group if no one ie left.
      *
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return $this
      * @throws Throwable
      */

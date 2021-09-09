@@ -23,8 +23,8 @@ class ParticipantResource extends JsonResource
     /**
      * ParticipantResource constructor.
      *
-     * @param Participant $participant
-     * @param Thread $thread
+     * @param  Participant  $participant
+     * @param  Thread  $thread
      */
     public function __construct(Participant $participant, Thread $thread)
     {

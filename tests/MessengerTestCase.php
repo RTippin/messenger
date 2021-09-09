@@ -38,7 +38,7 @@ class MessengerTestCase extends TestCase
     protected bool $withBroadcastLogging = false;
 
     /**
-     * @param Application $app
+     * @param  Application  $app
      * @return string[]
      */
     protected function getPackageProviders($app): array
@@ -49,7 +49,7 @@ class MessengerTestCase extends TestCase
     }
 
     /**
-     * @param Application $app
+     * @param  Application  $app
      */
     protected function getEnvironmentSetUp($app): void
     {

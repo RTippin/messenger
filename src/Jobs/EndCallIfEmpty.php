@@ -16,7 +16,7 @@ class EndCallIfEmpty extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param CallLeftEvent $event
+     * @param  CallLeftEvent  $event
      */
     public function __construct(CallLeftEvent $event)
     {
@@ -26,7 +26,7 @@ class EndCallIfEmpty extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param EndCall $endCall
+     * @param  EndCall  $endCall
      * @return void
      * @throws Throwable
      */

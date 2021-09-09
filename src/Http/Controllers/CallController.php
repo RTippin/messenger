@@ -20,8 +20,8 @@ class CallController
     /**
      * Display a listing of the most recent calls.
      *
-     * @param CallRepository $repository
-     * @param Thread $thread
+     * @param  CallRepository  $repository
+     * @param  Thread  $thread
      * @return CallCollection
      * @throws AuthorizationException
      */
@@ -41,9 +41,9 @@ class CallController
     /**
      * Display call history pagination.
      *
-     * @param CallRepository $repository
-     * @param Thread $thread
-     * @param Call $call
+     * @param  CallRepository  $repository
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return CallCollection
      * @throws AuthorizationException
      */
@@ -67,8 +67,8 @@ class CallController
     /**
      * Start a new call.
      *
-     * @param StoreCall $storeCall
-     * @param Thread $thread
+     * @param  StoreCall  $storeCall
+     * @param  Thread  $thread
      * @return CallResource
      * @throws AuthorizationException|Throwable|NewCallException
      */
@@ -85,8 +85,8 @@ class CallController
     /**
      * Display the call.
      *
-     * @param Thread $thread
-     * @param Call $call
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return CallResource
      * @throws AuthorizationException
      */

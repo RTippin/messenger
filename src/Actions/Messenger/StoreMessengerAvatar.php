@@ -16,8 +16,8 @@ class StoreMessengerAvatar extends MessengerAvatarAction
     /**
      * StoreMessengerAvatar constructor.
      *
-     * @param Messenger $messenger
-     * @param FileService $fileService
+     * @param  Messenger  $messenger
+     * @param  FileService  $fileService
      */
     public function __construct(Messenger $messenger, FileService $fileService)
     {
@@ -25,7 +25,7 @@ class StoreMessengerAvatar extends MessengerAvatarAction
     }
 
     /**
-     * @param UploadedFile $image
+     * @param  UploadedFile  $image
      * @return $this
      * @see MessengerAvatarRequest
      * @throws FeatureDisabledException|FileServiceException|Exception
@@ -46,7 +46,7 @@ class StoreMessengerAvatar extends MessengerAvatarAction
      * database actions fail, we want to remove the avatar
      * from storage and rethrow the exception.
      *
-     * @param string $fileName
+     * @param  string  $fileName
      * @throws Exception
      */
     private function attemptTransactionOrRollbackFile(string $fileName): void
@@ -73,7 +73,7 @@ class StoreMessengerAvatar extends MessengerAvatarAction
     }
 
     /**
-     * @param UploadedFile $file
+     * @param  UploadedFile  $file
      * @return string
      * @throws FileServiceException
      */

@@ -31,9 +31,9 @@ class JoinCall extends CallParticipantAction
     /**
      * JoinCall constructor.
      *
-     * @param Messenger $messenger
-     * @param BroadcastDriver $broadcaster
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
@@ -47,8 +47,8 @@ class JoinCall extends CallParticipantAction
     /**
      * Join/Re-join the call and set the call participant in cache.
      *
-     * @param Call $call
-     * @param bool $isNewCall
+     * @param  Call  $call
+     * @param  bool  $isNewCall
      * @return $this
      */
     public function execute(Call $call, bool $isNewCall = false): self

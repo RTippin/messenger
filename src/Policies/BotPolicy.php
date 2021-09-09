@@ -14,7 +14,7 @@ class BotPolicy
      * Determine whether the provider can view thread bots.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function viewAny($user, Thread $thread): Response
@@ -29,7 +29,7 @@ class BotPolicy
      * Determine whether the provider can view the bot.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function view($user, Thread $thread): Response
@@ -44,7 +44,7 @@ class BotPolicy
      * Determine whether the provider can create a new bot.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function create($user, Thread $thread): Response
@@ -58,7 +58,7 @@ class BotPolicy
      * Determine whether the provider can edit the bot.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function update($user, Thread $thread): Response
@@ -72,7 +72,7 @@ class BotPolicy
      * Determine whether the provider can delete the bot.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function delete($user, Thread $thread): Response

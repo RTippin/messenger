@@ -16,8 +16,8 @@ class JoinGroupInvite
     use AuthorizesRequests;
 
     /**
-     * @param JoinWithInvite $joinWithInvite
-     * @param Invite $invite
+     * @param  JoinWithInvite  $joinWithInvite
+     * @param  Invite  $invite
      * @return Participant
      * @throws AuthorizationException|Exception|Throwable|FeatureDisabledException
      */

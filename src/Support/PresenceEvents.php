@@ -45,7 +45,7 @@ class PresenceEvents
     private static ?Closure $readClosure = null;
 
     /**
-     * @param Closure $typing
+     * @param  Closure  $typing
      */
     public static function setTypingClosure(Closure $typing): void
     {
@@ -53,7 +53,7 @@ class PresenceEvents
     }
 
     /**
-     * @param string $abstractTyping
+     * @param  string  $abstractTyping
      * @throws InvalidArgumentException
      */
     public static function setTypingClass(string $abstractTyping): void
@@ -74,7 +74,7 @@ class PresenceEvents
     }
 
     /**
-     * @param Closure $stopTyping
+     * @param  Closure  $stopTyping
      */
     public static function setStopTypingClosure(Closure $stopTyping): void
     {
@@ -82,7 +82,7 @@ class PresenceEvents
     }
 
     /**
-     * @param string $abstractStopTyping
+     * @param  string  $abstractStopTyping
      * @throws InvalidArgumentException
      */
     public static function setStopTypingClass(string $abstractStopTyping): void
@@ -103,7 +103,7 @@ class PresenceEvents
     }
 
     /**
-     * @param Closure $read
+     * @param  Closure  $read
      */
     public static function setReadClosure(Closure $read): void
     {
@@ -111,7 +111,7 @@ class PresenceEvents
     }
 
     /**
-     * @param string $abstractRead
+     * @param  string  $abstractRead
      * @throws InvalidArgumentException
      */
     public static function setReadClass(string $abstractRead): void
@@ -132,7 +132,7 @@ class PresenceEvents
     }
 
     /**
-     * @param MessengerProvider $provider
+     * @param  MessengerProvider  $provider
      * @return array
      */
     public static function makeTypingEvent(MessengerProvider $provider): array
@@ -150,7 +150,7 @@ class PresenceEvents
     }
 
     /**
-     * @param MessengerProvider $provider
+     * @param  MessengerProvider  $provider
      * @return array
      */
     public static function makeStopTypingEvent(MessengerProvider $provider): array
@@ -168,8 +168,8 @@ class PresenceEvents
     }
 
     /**
-     * @param MessengerProvider $provider
-     * @param Message|null $message
+     * @param  MessengerProvider  $provider
+     * @param  Message|null  $message
      * @return array
      */
     public static function makeReadEvent(MessengerProvider $provider, ?Message $message = null): array

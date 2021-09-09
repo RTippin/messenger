@@ -18,7 +18,7 @@ class CallBrokerSetup extends BaseMessengerAction
     /**
      * CallBrokerSetup constructor.
      *
-     * @param VideoDriver $videoDriver
+     * @param  VideoDriver  $videoDriver
      */
     public function __construct(VideoDriver $videoDriver)
     {
@@ -28,8 +28,8 @@ class CallBrokerSetup extends BaseMessengerAction
     /**
      * Setup the call with the video provider.
      *
-     * @param Thread $thread
-     * @param Call $call
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return $this
      * @throws CallBrokerException
      */
@@ -71,7 +71,7 @@ class CallBrokerSetup extends BaseMessengerAction
     }
 
     /**
-     * @param string $message
+     * @param  string  $message
      * @throws CallBrokerException
      */
     private function throwSetupFailed(string $message): void

@@ -28,9 +28,9 @@ class ThreadApprovalBroadcastResource extends JsonResource
     /**
      * ThreadApprovalBroadcastResource constructor.
      *
-     * @param MessengerProvider $provider
-     * @param Thread $thread
-     * @param bool $approved
+     * @param  MessengerProvider  $provider
+     * @param  Thread  $thread
+     * @param  bool  $approved
      */
     public function __construct(MessengerProvider $provider,
                                 Thread $thread,

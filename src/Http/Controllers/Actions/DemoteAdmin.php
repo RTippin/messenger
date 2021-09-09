@@ -16,9 +16,9 @@ class DemoteAdmin
     /**
      * Demote participant from admin.
      *
-     * @param DemoteAdminAction $demoteAdmin
-     * @param Thread $thread
-     * @param Participant $participant
+     * @param  DemoteAdminAction  $demoteAdmin
+     * @param  Thread  $thread
+     * @param  Participant  $participant
      * @return ParticipantResource
      * @throws AuthorizationException
      */

@@ -26,8 +26,8 @@ class MarkParticipantRead extends BaseMessengerAction
     /**
      * MarkParticipantRead constructor.
      *
-     * @param BroadcastDriver $broadcaster
-     * @param Dispatcher $dispatcher
+     * @param  BroadcastDriver  $broadcaster
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(BroadcastDriver $broadcaster, Dispatcher $dispatcher)
     {
@@ -38,8 +38,8 @@ class MarkParticipantRead extends BaseMessengerAction
     /**
      * Update participants last_read.
      *
-     * @param Participant|null $participant
-     * @param Thread|null $thread
+     * @param  Participant|null  $participant
+     * @param  Thread|null  $thread
      * @return $this
      */
     public function execute(?Participant $participant = null, ?Thread $thread = null): self
@@ -54,7 +54,7 @@ class MarkParticipantRead extends BaseMessengerAction
     }
 
     /**
-     * @param Thread|null $thread
+     * @param  Thread|null  $thread
      * @return bool
      */
     private function shouldUpdateTimestamp(?Thread $thread): bool

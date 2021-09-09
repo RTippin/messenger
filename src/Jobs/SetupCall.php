@@ -16,7 +16,7 @@ class SetupCall extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param CallStartedEvent $event
+     * @param  CallStartedEvent  $event
      */
     public function __construct(CallStartedEvent $event)
     {
@@ -26,7 +26,7 @@ class SetupCall extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param CallBrokerSetup $broker
+     * @param  CallBrokerSetup  $broker
      * @return void
      * @throws CallBrokerException
      */

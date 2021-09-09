@@ -17,7 +17,7 @@ class ThreadArchivedMessage extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param ThreadArchivedEvent $event
+     * @param  ThreadArchivedEvent  $event
      */
     public function __construct(ThreadArchivedEvent $event)
     {
@@ -27,7 +27,7 @@ class ThreadArchivedMessage extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param StoreSystemMessage $message
+     * @param  StoreSystemMessage  $message
      * @return void
      * @throws Throwable
      */

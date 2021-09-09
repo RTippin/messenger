@@ -12,7 +12,7 @@ abstract class CallParticipantAction extends BaseMessengerAction
     /**
      * Store a fresh new participant.
      *
-     * @param MessengerProvider $provider
+     * @param  MessengerProvider  $provider
      * @return $this
      */
     protected function storeParticipant(MessengerProvider $provider): self
@@ -31,8 +31,8 @@ abstract class CallParticipantAction extends BaseMessengerAction
     }
 
     /**
-     * @param CallParticipant $participant
-     * @param array $attributes
+     * @param  CallParticipant  $participant
+     * @param  array  $attributes
      * @return $this
      */
     protected function updateParticipant(CallParticipant $participant, array $attributes): self
@@ -48,7 +48,7 @@ abstract class CallParticipantAction extends BaseMessengerAction
      * Put the participant in cache so that we may tell if a participant
      * left without a proper post to the backend (left_call null).
      *
-     * @param CallParticipant $participant
+     * @param  CallParticipant  $participant
      * @return $this
      */
     protected function setParticipantInCallCache(CallParticipant $participant): self
@@ -61,7 +61,7 @@ abstract class CallParticipantAction extends BaseMessengerAction
     /**
      * Remove the participant from cache.
      *
-     * @param CallParticipant $participant
+     * @param  CallParticipant  $participant
      * @return $this
      */
     protected function removeParticipantInCallCache(CallParticipant $participant): self

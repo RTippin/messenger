@@ -26,8 +26,8 @@ class ParticipantController
     /**
      * Display a listing of the participants, oldest first.
      *
-     * @param ParticipantRepository $repository
-     * @param Thread $thread
+     * @param  ParticipantRepository  $repository
+     * @param  Thread  $thread
      * @return ParticipantCollection
      * @throws AuthorizationException
      */
@@ -47,9 +47,9 @@ class ParticipantController
     /**
      * Display participant history pagination.
      *
-     * @param ParticipantRepository $repository
-     * @param Thread $thread
-     * @param Participant $participant
+     * @param  ParticipantRepository  $repository
+     * @param  Thread  $thread
+     * @param  Participant  $participant
      * @return ParticipantCollection
      * @throws AuthorizationException
      */
@@ -73,9 +73,9 @@ class ParticipantController
     /**
      * Store one or many new participants.
      *
-     * @param AddParticipantsRequest $request
-     * @param StoreManyParticipants $storeManyParticipants
-     * @param Thread $thread
+     * @param  AddParticipantsRequest  $request
+     * @param  StoreManyParticipants  $storeManyParticipants
+     * @param  Thread  $thread
      * @return Collection
      * @throws AuthorizationException|Throwable
      */
@@ -97,8 +97,8 @@ class ParticipantController
     /**
      * Display the participant.
      *
-     * @param Thread $thread
-     * @param Participant $participant
+     * @param  Thread  $thread
+     * @param  Participant  $participant
      * @return ParticipantResource
      * @throws AuthorizationException
      */
@@ -118,10 +118,10 @@ class ParticipantController
     /**
      * Update the participants permissions.
      *
-     * @param ParticipantPermissionsRequest $request
-     * @param UpdateParticipantPermissions $permissions
-     * @param Thread $thread
-     * @param Participant $participant
+     * @param  ParticipantPermissionsRequest  $request
+     * @param  UpdateParticipantPermissions  $permissions
+     * @param  Thread  $thread
+     * @param  Participant  $participant
      * @return ParticipantResource
      * @throws AuthorizationException
      */
@@ -145,9 +145,9 @@ class ParticipantController
     /**
      * Remove the participant.
      *
-     * @param RemoveParticipant $removeParticipant
-     * @param Thread $thread
-     * @param Participant $participant
+     * @param  RemoveParticipant  $removeParticipant
+     * @param  Thread  $thread
+     * @param  Participant  $participant
      * @return JsonResponse|mixed|null
      * @throws AuthorizationException|Exception
      */

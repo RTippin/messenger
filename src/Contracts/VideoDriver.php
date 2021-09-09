@@ -14,8 +14,8 @@ interface VideoDriver
      * decide what parameters we may want to use for setting up
      * a video room.
      *
-     * @param Thread $thread
-     * @param Call $call
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return bool
      */
     public function create(Thread $thread, Call $call): bool;
@@ -26,7 +26,7 @@ interface VideoDriver
      * model as we should have saved any information needed for
      * teardown there.
      *
-     * @param Call $call
+     * @param  Call  $call
      * @return mixed
      */
     public function destroy(Call $call): bool;

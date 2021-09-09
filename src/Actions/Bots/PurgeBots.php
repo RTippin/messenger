@@ -17,7 +17,7 @@ class PurgeBots extends BaseMessengerAction
     /**
      * PurgeBots constructor.
      *
-     * @param FileService $fileService
+     * @param  FileService  $fileService
      */
     public function __construct(FileService $fileService)
     {
@@ -29,7 +29,7 @@ class PurgeBots extends BaseMessengerAction
      * storage directory files, then force delete the bot
      * itself from database.
      *
-     * @param Collection $bots
+     * @param  Collection  $bots
      * @return $this
      */
     public function execute(Collection $bots): self
@@ -40,7 +40,7 @@ class PurgeBots extends BaseMessengerAction
     }
 
     /**
-     * @param Bot $bot
+     * @param  Bot  $bot
      */
     private function purge(Bot $bot): void
     {
@@ -50,7 +50,7 @@ class PurgeBots extends BaseMessengerAction
     }
 
     /**
-     * @param Bot $bot
+     * @param  Bot  $bot
      */
     private function destroyBotDirectory(Bot $bot): void
     {
@@ -61,7 +61,7 @@ class PurgeBots extends BaseMessengerAction
     }
 
     /**
-     * @param Bot $bot
+     * @param  Bot  $bot
      */
     private function destroyBot(Bot $bot): void
     {

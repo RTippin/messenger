@@ -15,7 +15,7 @@ class PurgeDocumentMessages extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param Collection $documents
+     * @param  Collection  $documents
      */
     public function __construct(Collection $documents)
     {
@@ -25,7 +25,7 @@ class PurgeDocumentMessages extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param PurgeDocumentMessagesAction $purgeDocuments
+     * @param  PurgeDocumentMessagesAction  $purgeDocuments
      * @return void
      */
     public function handle(PurgeDocumentMessagesAction $purgeDocuments): void

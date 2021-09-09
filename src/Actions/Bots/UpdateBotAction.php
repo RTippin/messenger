@@ -25,8 +25,8 @@ class UpdateBotAction extends BaseMessengerAction
     /**
      * UpdateBotAction constructor.
      *
-     * @param Messenger $messenger
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger, Dispatcher $dispatcher)
     {
@@ -35,8 +35,8 @@ class UpdateBotAction extends BaseMessengerAction
     }
 
     /**
-     * @param BotAction $action
-     * @param array $params
+     * @param  BotAction  $action
+     * @param  array  $params
      * @return $this
      * @see MessengerBots::generateHandlerData()
      * @throws FeatureDisabledException
@@ -64,7 +64,7 @@ class UpdateBotAction extends BaseMessengerAction
     }
 
     /**
-     * @param array $params
+     * @param  array  $params
      * @return $this
      */
     private function updateBotAction(array $params): self

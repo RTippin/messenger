@@ -14,8 +14,8 @@ use Throwable;
 class StoreGroupAvatar extends GroupAvatarAction
 {
     /**
-     * @param Thread $thread
-     * @param UploadedFile $image
+     * @param  Thread  $thread
+     * @param  UploadedFile  $image
      * @return $this
      * @see GroupAvatarRequest
      * @throws FeatureDisabledException|FileServiceException|Exception
@@ -38,7 +38,7 @@ class StoreGroupAvatar extends GroupAvatarAction
      * database actions fail, we want to remove the avatar
      * from storage and rethrow the exception.
      *
-     * @param string $fileName
+     * @param  string  $fileName
      * @return $this
      * @throws Exception
      */
@@ -56,7 +56,7 @@ class StoreGroupAvatar extends GroupAvatarAction
     }
 
     /**
-     * @param UploadedFile $image
+     * @param  UploadedFile  $image
      * @return string|null
      * @throws FileServiceException
      */

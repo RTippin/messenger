@@ -11,8 +11,8 @@ class DestroyMessengerAvatar extends MessengerAvatarAction
     /**
      * DestroyMessengerAvatar constructor.
      *
-     * @param Messenger $messenger
-     * @param FileService $fileService
+     * @param  Messenger  $messenger
+     * @param  FileService  $fileService
      */
     public function __construct(Messenger $messenger, FileService $fileService)
     {

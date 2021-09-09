@@ -24,7 +24,7 @@ class ThreadPolicy
      * Determine whether the provider can view the thread.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function view($user, Thread $thread): Response
@@ -38,7 +38,7 @@ class ThreadPolicy
      * Determine whether the provider can join the thread socket channel.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function socket($user, Thread $thread): Response
@@ -54,7 +54,7 @@ class ThreadPolicy
      * Determine whether the provider can accept or deny a pending thread request.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function approval($user, Thread $thread): Response
@@ -69,7 +69,7 @@ class ThreadPolicy
      * Determine whether the provider can use a group thread method.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function groupMethod($user, Thread $thread): Response
@@ -84,7 +84,7 @@ class ThreadPolicy
      * Determine whether the provider can add group participants.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function addParticipants($user, Thread $thread): Response
@@ -98,7 +98,7 @@ class ThreadPolicy
      * Determine whether the provider can send a knock.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function sendKnock($user, Thread $thread): Response
@@ -112,7 +112,7 @@ class ThreadPolicy
      * Determine whether the provider can use a private thread method.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function privateMethod($user, Thread $thread): Response
@@ -136,7 +136,7 @@ class ThreadPolicy
      * Determine whether the provider can manage the group thread settings.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function settings($user, Thread $thread): Response
@@ -152,7 +152,7 @@ class ThreadPolicy
      * Determine whether the provider can update the thread.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function update($user, Thread $thread): Response
@@ -168,7 +168,7 @@ class ThreadPolicy
      * Determine whether the provider can mute or unmute the thread.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function mutes($user, Thread $thread): Response
@@ -183,7 +183,7 @@ class ThreadPolicy
      * Determine whether the provider can leave group thread.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function leave($user, Thread $thread): Response
@@ -207,7 +207,7 @@ class ThreadPolicy
      * Determine whether the provider can delete the thread.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function delete($user, Thread $thread): Response

@@ -16,9 +16,9 @@ class PromoteAdmin
     /**
      * Promote participant to admin.
      *
-     * @param PromoteAdminAction $promoteAdmin
-     * @param Thread $thread
-     * @param Participant $participant
+     * @param  PromoteAdminAction  $promoteAdmin
+     * @param  Thread  $thread
+     * @param  Participant  $participant
      * @return ParticipantResource
      * @throws AuthorizationException
      */

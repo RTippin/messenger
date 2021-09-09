@@ -66,10 +66,10 @@ class MessengerComposer
     /**
      * MessengerComposer constructor.
      *
-     * @param Messenger $messenger
-     * @param BroadcastDriver $broadcaster
-     * @param DatabaseManager $database
-     * @param PrivateThreadRepository $locator
+     * @param  Messenger  $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  DatabaseManager  $database
+     * @param  PrivateThreadRepository  $locator
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
@@ -91,7 +91,7 @@ class MessengerComposer
      * two providers is ignored, and the thread will not be
      * marked pending.
      *
-     * @param MessengerProvider|Thread $entity
+     * @param  MessengerProvider|Thread  $entity
      * @return $this
      * @throws MessengerComposerException
      */
@@ -110,7 +110,7 @@ class MessengerComposer
     /**
      * Set the provider who is composing.
      *
-     * @param MessengerProvider $provider
+     * @param  MessengerProvider  $provider
      * @return $this
      * @throws InvalidProviderException
      */
@@ -125,7 +125,7 @@ class MessengerComposer
      * When executing the action, no broadcast will be emitted. Optional flag
      * withoutEvents disables events from dispatching in the action as well.
      *
-     * @param bool $withoutEvents
+     * @param  bool  $withoutEvents
      * @return $this
      */
     public function silent(bool $withoutEvents = false): self
@@ -139,9 +139,9 @@ class MessengerComposer
     /**
      * Send a message. Optional reply to message ID and extra data allowed.
      *
-     * @param string|null $message
-     * @param string|null $replyingToId
-     * @param array|null $extra
+     * @param  string|null  $message
+     * @param  string|null  $replyingToId
+     * @param  array|null  $extra
      * @return StoreMessage
      * @throws MessengerComposerException|Throwable
      */
@@ -167,9 +167,9 @@ class MessengerComposer
     /**
      * Send an image message. Optional reply to message ID and extra data allowed.
      *
-     * @param UploadedFile $image
-     * @param string|null $replyingToId
-     * @param array|null $extra
+     * @param  UploadedFile  $image
+     * @param  string|null  $replyingToId
+     * @param  array|null  $extra
      * @return StoreImageMessage
      * @throws MessengerComposerException|Throwable
      */
@@ -195,9 +195,9 @@ class MessengerComposer
     /**
      * Send a document message. Optional reply to message ID and extra data allowed.
      *
-     * @param UploadedFile $document
-     * @param string|null $replyingToId
-     * @param array|null $extra
+     * @param  UploadedFile  $document
+     * @param  string|null  $replyingToId
+     * @param  array|null  $extra
      * @return StoreDocumentMessage
      * @throws MessengerComposerException|Throwable
      */
@@ -223,9 +223,9 @@ class MessengerComposer
     /**
      * Send an audio message. Optional reply to message ID and extra data allowed.
      *
-     * @param UploadedFile $audio
-     * @param string|null $replyingToId
-     * @param array|null $extra
+     * @param  UploadedFile  $audio
+     * @param  string|null  $replyingToId
+     * @param  array|null  $extra
      * @return StoreAudioMessage
      * @throws MessengerComposerException|Throwable
      */
@@ -251,8 +251,8 @@ class MessengerComposer
     /**
      * Add a reaction to the supplied message.
      *
-     * @param Message $message
-     * @param string $reaction
+     * @param  Message  $message
+     * @param  string  $reaction
      * @return AddReaction
      * @throws MessengerComposerException|ReactionException
      * @throws Throwable|FeatureDisabledException
@@ -295,7 +295,7 @@ class MessengerComposer
     /**
      * Mark the "FROM" provider or given participant as read.
      *
-     * @param Participant|null $participant
+     * @param  Participant|null  $participant
      * @return MarkParticipantRead
      * @throws MessengerComposerException|Throwable
      */
@@ -442,7 +442,7 @@ class MessengerComposer
     }
 
     /**
-     * @param BaseMessengerAction $action
+     * @param  BaseMessengerAction  $action
      */
     private function silenceActionWhenSilent(BaseMessengerAction $action): void
     {

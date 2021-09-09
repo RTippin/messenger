@@ -19,7 +19,7 @@ class MessageEditResource extends JsonResource
     /**
      * MessageEditResource constructor.
      *
-     * @param MessageEdit $message
+     * @param  MessageEdit  $message
      */
     public function __construct(MessageEdit $message)
     {

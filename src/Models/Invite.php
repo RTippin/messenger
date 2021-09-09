@@ -88,7 +88,7 @@ class Invite extends Model implements Ownerable
     /**
      * Scope valid invites that have not expired or reached max use.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeValid(Builder $query): Builder
@@ -105,7 +105,7 @@ class Invite extends Model implements Ownerable
     /**
      * Scope invalid invites that are not yet deleted but are expired / past max use.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeInvalid(Builder $query): Builder
@@ -151,7 +151,7 @@ class Invite extends Model implements Ownerable
     }
 
     /**
-     * @param string $size
+     * @param  string  $size
      * @return string|null
      */
     public function getInvitationAvatarRoute(string $size = 'sm'): ?string

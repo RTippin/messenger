@@ -15,7 +15,7 @@ class CallParticipantPolicy
      * Determine whether the provider can view call participants.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function viewAny($user, Thread $thread): Response
@@ -29,7 +29,7 @@ class CallParticipantPolicy
      * Determine whether the provider can view the call participant.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function view($user, Thread $thread): Response
@@ -43,8 +43,8 @@ class CallParticipantPolicy
      * Determine whether the provider can update the call participant.
      *
      * @param $user
-     * @param Thread $thread
-     * @param Call $call
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return Response
      */
     public function update($user, Thread $thread, Call $call): Response

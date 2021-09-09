@@ -16,7 +16,7 @@ class EmojiService implements EmojiInterface
     /**
      * Emoji constructor.
      *
-     * @param Client $joyPixelClient
+     * @param  Client  $joyPixelClient
      */
     public function __construct(Client $joyPixelClient)
     {
@@ -64,7 +64,7 @@ class EmojiService implements EmojiInterface
     }
 
     /**
-     * @param string|null $shortcode
+     * @param  string|null  $shortcode
      * @return bool
      */
     private function checkShortcodeExist(?string $shortcode): bool

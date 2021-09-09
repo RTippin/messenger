@@ -12,7 +12,7 @@ class ThreadArchiveState
     use AuthorizesRequests;
 
     /**
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return JsonResponse
      * @throws AuthorizationException
      */

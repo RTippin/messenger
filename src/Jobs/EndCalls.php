@@ -17,7 +17,7 @@ class EndCalls extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param Collection $calls
+     * @param  Collection  $calls
      */
     public function __construct(Collection $calls)
     {
@@ -27,7 +27,7 @@ class EndCalls extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param EndCall $endCall
+     * @param  EndCall  $endCall
      * @return void
      * @throws Throwable
      */

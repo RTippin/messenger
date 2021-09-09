@@ -17,11 +17,11 @@ class RenderMessageImage
     /**
      * Render message image.
      *
-     * @param ImageRenderService $service
-     * @param Thread $thread
-     * @param Message $message
-     * @param string $size
-     * @param string $image
+     * @param  ImageRenderService  $service
+     * @param  Thread  $thread
+     * @param  Message  $message
+     * @param  string  $size
+     * @param  string  $image
      * @return StreamedResponse|BinaryFileResponse
      * @throws FileNotFoundException
      */

@@ -20,7 +20,7 @@ class MessagePolicy
     /**
      * MessagePolicy constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -31,7 +31,7 @@ class MessagePolicy
      * Determine whether the provider can view messages.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function viewAny($user, Thread $thread): Response
@@ -45,7 +45,7 @@ class MessagePolicy
      * Determine whether the provider can view the message.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function view($user, Thread $thread): Response
@@ -59,8 +59,8 @@ class MessagePolicy
      * Determine whether the provider can view the message edits.
      *
      * @param $user
-     * @param Message $message
-     * @param Thread $thread
+     * @param  Message  $message
+     * @param  Thread  $thread
      * @return Response
      */
     public function viewEdits($user, Message $message, Thread $thread): Response
@@ -77,7 +77,7 @@ class MessagePolicy
      * Determine whether the provider can create a message.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function create($user, Thread $thread): Response
@@ -91,7 +91,7 @@ class MessagePolicy
      * Determine whether the provider can create a document message.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function createDocument($user, Thread $thread): Response
@@ -105,7 +105,7 @@ class MessagePolicy
      * Determine whether the provider can create an audio message.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function createAudio($user, Thread $thread): Response
@@ -119,7 +119,7 @@ class MessagePolicy
      * Determine whether the provider can create an image message.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function createImage($user, Thread $thread): Response
@@ -133,8 +133,8 @@ class MessagePolicy
      * Determine whether the provider can edit the message.
      *
      * @param $user
-     * @param Message $message
-     * @param Thread $thread
+     * @param  Message  $message
+     * @param  Thread  $thread
      * @return Response
      */
     public function update($user, Message $message, Thread $thread): Response
@@ -151,8 +151,8 @@ class MessagePolicy
      * Determine whether the provider can remove embeds from the message.
      *
      * @param $user
-     * @param Message $message
-     * @param Thread $thread
+     * @param  Message  $message
+     * @param  Thread  $thread
      * @return Response
      */
     public function removeEmbeds($user, Message $message, Thread $thread): Response
@@ -170,8 +170,8 @@ class MessagePolicy
      * Determine whether the provider can delete the message.
      *
      * @param $user
-     * @param Message $message
-     * @param Thread $thread
+     * @param  Message  $message
+     * @param  Thread  $thread
      * @return Response
      */
     public function delete($user, Message $message, Thread $thread): Response

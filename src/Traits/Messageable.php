@@ -98,7 +98,7 @@ trait Messageable
      * Get the route of the avatar for your provider. We will call this
      * from our resource classes using sm/md/lg .
      *
-     * @param string $size
+     * @param  string  $size
      * @return string|null
      */
     public function getProviderAvatarRoute(string $size = 'sm'): ?string

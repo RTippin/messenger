@@ -28,9 +28,9 @@ class NewThreadBroadcastResource extends JsonResource
     /**
      * NewThreadBroadcastResource constructor.
      *
-     * @param MessengerProvider $provider
-     * @param Thread $thread
-     * @param bool $pending
+     * @param  MessengerProvider  $provider
+     * @param  Thread  $thread
+     * @param  bool  $pending
      */
     public function __construct(MessengerProvider $provider,
                                 Thread $thread,

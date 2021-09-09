@@ -30,8 +30,8 @@ class AudioMessageController extends Controller
     /**
      * Display a listing of the most recent audio files.
      *
-     * @param AudioMessageRepository $repository
-     * @param Thread $thread
+     * @param  AudioMessageRepository  $repository
+     * @param  Thread  $thread
      * @return AudioMessageCollection
      * @throws AuthorizationException
      */
@@ -51,9 +51,9 @@ class AudioMessageController extends Controller
     /**
      * Display audio history pagination.
      *
-     * @param AudioMessageRepository $repository
-     * @param Thread $thread
-     * @param Message $audio
+     * @param  AudioMessageRepository  $repository
+     * @param  Thread  $thread
+     * @param  Message  $audio
      * @return AudioMessageCollection
      * @throws AuthorizationException
      */
@@ -77,9 +77,9 @@ class AudioMessageController extends Controller
     /**
      * Store a new audio message.
      *
-     * @param AudioMessageRequest $request
-     * @param StoreAudioMessage $storeAudioMessage
-     * @param Thread $thread
+     * @param  AudioMessageRequest  $request
+     * @param  StoreAudioMessage  $storeAudioMessage
+     * @param  Thread  $thread
      * @return MessageResource
      * @throws AuthorizationException|Throwable|FileServiceException
      */

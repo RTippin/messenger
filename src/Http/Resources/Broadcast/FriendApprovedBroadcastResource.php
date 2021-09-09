@@ -17,7 +17,7 @@ class FriendApprovedBroadcastResource extends JsonResource
     /**
      * FriendApprovedBroadcastResource constructor.
      *
-     * @param Friend $friend
+     * @param  Friend  $friend
      */
     public function __construct(Friend $friend)
     {

@@ -15,7 +15,7 @@ class PurgeBots extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param Collection $bots
+     * @param  Collection  $bots
      */
     public function __construct(Collection $bots)
     {
@@ -25,7 +25,7 @@ class PurgeBots extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param PurgeBotsAction $purgeBots
+     * @param  PurgeBotsAction  $purgeBots
      * @return void
      */
     public function handle(PurgeBotsAction $purgeBots): void

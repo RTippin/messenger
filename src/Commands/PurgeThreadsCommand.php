@@ -55,7 +55,7 @@ class PurgeThreadsCommand extends Command
     }
 
     /**
-     * @param Collection $threads
+     * @param  Collection  $threads
      * @return void
      */
     private function dispatchJob(Collection $threads): void

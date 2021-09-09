@@ -34,10 +34,10 @@ class StoreSystemMessage extends NewMessageAction
     /**
      * Store new system message, update thread updated_at.
      *
-     * @param Thread $thread
-     * @param MessengerProvider $provider
-     * @param string $body
-     * @param string $type
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
+     * @param  string  $body
+     * @param  string  $type
      * @return $this
      * @throws Throwable
      */

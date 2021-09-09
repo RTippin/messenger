@@ -16,7 +16,7 @@ class CheckCallsActivity extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param Collection $calls
+     * @param  Collection  $calls
      */
     public function __construct(Collection $calls)
     {
@@ -26,7 +26,7 @@ class CheckCallsActivity extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param CallActivityChecker $checker
+     * @param  CallActivityChecker  $checker
      * @return void
      * @throws Throwable
      */

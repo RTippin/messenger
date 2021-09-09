@@ -13,8 +13,8 @@ use Throwable;
 class StoreBotAvatar extends BotAvatarAction
 {
     /**
-     * @param Bot $bot
-     * @param UploadedFile $image
+     * @param  Bot  $bot
+     * @param  UploadedFile  $image
      * @return $this
      * @throws FeatureDisabledException|FileServiceException|Exception
      */
@@ -36,7 +36,7 @@ class StoreBotAvatar extends BotAvatarAction
      * database actions fail, we want to remove the avatar
      * from storage and rethrow the exception.
      *
-     * @param string $fileName
+     * @param  string  $fileName
      * @throws Exception
      */
     private function attemptTransactionOrRollbackFile(string $fileName): void
@@ -53,7 +53,7 @@ class StoreBotAvatar extends BotAvatarAction
     }
 
     /**
-     * @param UploadedFile $file
+     * @param  UploadedFile  $file
      * @return string
      * @throws FileServiceException
      */

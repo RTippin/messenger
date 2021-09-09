@@ -24,7 +24,7 @@ class CallsUpCommand extends Command
     /**
      * Execute the console command.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      * @return void
      */
     public function handle(Messenger $messenger): void

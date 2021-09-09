@@ -104,7 +104,7 @@ trait RouteMap
     /**
      * Get the Messenger API route group configuration array.
      *
-     * @param bool $invite
+     * @param  bool  $invite
      * @return array
      */
     private function apiRouteConfiguration(bool $invite = false): array

@@ -18,7 +18,7 @@ class MessageRepository
     /**
      * MessageRepository constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -26,7 +26,7 @@ class MessageRepository
     }
 
     /**
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Collection
      */
     public function getThreadMessagesIndex(Thread $thread): Collection
@@ -39,8 +39,8 @@ class MessageRepository
     }
 
     /**
-     * @param Thread $thread
-     * @param Message $message
+     * @param  Thread  $thread
+     * @param  Message  $message
      * @return Collection
      */
     public function getThreadMessagesPage(Thread $thread, Message $message): Collection

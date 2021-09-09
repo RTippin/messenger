@@ -73,12 +73,12 @@ class StorePrivateThread extends NewThreadAction
     /**
      * StorePrivateThread constructor.
      *
-     * @param Messenger $messenger
-     * @param BroadcastDriver $broadcaster
-     * @param DatabaseManager $database
-     * @param Dispatcher $dispatcher
-     * @param FriendDriver $friends
-     * @param ThreadLocatorService $locator
+     * @param  Messenger  $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  DatabaseManager  $database
+     * @param  Dispatcher  $dispatcher
+     * @param  FriendDriver  $friends
+     * @param  ThreadLocatorService  $locator
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
@@ -100,7 +100,7 @@ class StorePrivateThread extends NewThreadAction
      * Create a new private thread. Check one does not already exist between the
      * two providers, and that they are allowed to initiate a conversation.
      *
-     * @param array $params
+     * @param  array  $params
      * @return $this
      * @see PrivateThreadRequest
      * @throws AuthorizationException|Throwable
@@ -125,7 +125,7 @@ class StorePrivateThread extends NewThreadAction
     }
 
     /**
-     * @param array $inputs
+     * @param  array  $inputs
      * @return $this
      * @throws Throwable
      */
@@ -144,7 +144,7 @@ class StorePrivateThread extends NewThreadAction
      * Execute all actions that must occur for
      * a successful private thread creation.
      *
-     * @param array $inputs
+     * @param  array  $inputs
      */
     private function executeTransactions(array $inputs): void
     {
@@ -212,7 +212,7 @@ class StorePrivateThread extends NewThreadAction
 
     /**
      * @mixin NewMessageAction
-     * @param array $inputs
+     * @param  array  $inputs
      * @return array
      */
     private function storeMessage(array $inputs): array
@@ -245,8 +245,8 @@ class StorePrivateThread extends NewThreadAction
     }
 
     /**
-     * @param string $alias
-     * @param string $id
+     * @param  string  $alias
+     * @param  string  $id
      */
     private function setRecipientAndExistingThread(string $alias, string $id): void
     {
@@ -261,7 +261,7 @@ class StorePrivateThread extends NewThreadAction
      * Determine which type of message was sent
      * to initiate this thread.
      *
-     * @param array $inputs
+     * @param  array  $inputs
      * @return $this
      */
     private function setMessageActions(array $inputs): self

@@ -16,7 +16,7 @@ use RTippin\Messenger\Models\Thread;
 class MessageTransformer
 {
     /**
-     * @param Message $message
+     * @param  Message  $message
      * @return string
      */
     public static function transform(Message $message): string
@@ -44,7 +44,7 @@ class MessageTransformer
     }
 
     /**
-     * @param string|null $body
+     * @param  string|null  $body
      * @return string
      */
     public static function sanitizedBody(?string $body): string
@@ -53,7 +53,7 @@ class MessageTransformer
     }
 
     /**
-     * @param string|null $body
+     * @param  string|null  $body
      * @return array|null
      */
     public static function decodeBodyJson(?string $body): ?array
@@ -62,8 +62,8 @@ class MessageTransformer
     }
 
     /**
-     * @param Thread $thread
-     * @param MessengerProvider $provider
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
      * @return array
      */
     public static function makeJoinedWithInvite(Thread $thread, MessengerProvider $provider): array
@@ -72,9 +72,9 @@ class MessageTransformer
     }
 
     /**
-     * @param Thread $thread
-     * @param MessengerProvider $provider
-     * @param Call $call
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
+     * @param  Call  $call
      * @return array
      */
     public static function makeVideoCall(Thread $thread,
@@ -87,8 +87,8 @@ class MessageTransformer
     }
 
     /**
-     * @param Thread $thread
-     * @param MessengerProvider $provider
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
      * @return array
      */
     public static function makeGroupAvatarChanged(Thread $thread, MessengerProvider $provider): array
@@ -97,8 +97,8 @@ class MessageTransformer
     }
 
     /**
-     * @param Thread $thread
-     * @param MessengerProvider $provider
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
      * @return array
      */
     public static function makeThreadArchived(Thread $thread, MessengerProvider $provider): array
@@ -109,9 +109,9 @@ class MessageTransformer
     }
 
     /**
-     * @param Thread $thread
-     * @param MessengerProvider $provider
-     * @param string $subject
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
+     * @param  string  $subject
      * @return array
      */
     public static function makeGroupCreated(Thread $thread,
@@ -122,9 +122,9 @@ class MessageTransformer
     }
 
     /**
-     * @param Thread $thread
-     * @param MessengerProvider $provider
-     * @param string $subject
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
+     * @param  string  $subject
      * @return array
      */
     public static function makeGroupRenamed(Thread $thread,
@@ -135,9 +135,9 @@ class MessageTransformer
     }
 
     /**
-     * @param Thread $thread
-     * @param MessengerProvider $provider
-     * @param Participant $participant
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
+     * @param  Participant  $participant
      * @return array
      */
     public static function makeParticipantDemoted(Thread $thread,
@@ -150,9 +150,9 @@ class MessageTransformer
     }
 
     /**
-     * @param Thread $thread
-     * @param MessengerProvider $provider
-     * @param Participant $participant
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
+     * @param  Participant  $participant
      * @return array
      */
     public static function makeParticipantPromoted(Thread $thread,
@@ -165,8 +165,8 @@ class MessageTransformer
     }
 
     /**
-     * @param Thread $thread
-     * @param MessengerProvider $provider
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
      * @return array
      */
     public static function makeGroupLeft(Thread $thread, MessengerProvider $provider): array
@@ -175,9 +175,9 @@ class MessageTransformer
     }
 
     /**
-     * @param Thread $thread
-     * @param MessengerProvider $provider
-     * @param Participant $participant
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
+     * @param  Participant  $participant
      * @return array
      */
     public static function makeRemovedFromGroup(Thread $thread,
@@ -190,9 +190,9 @@ class MessageTransformer
     }
 
     /**
-     * @param Thread $thread
-     * @param MessengerProvider $provider
-     * @param Collection $participants
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
+     * @param  Collection  $participants
      * @return array
      */
     public static function makeParticipantsAdded(Thread $thread,
@@ -208,9 +208,9 @@ class MessageTransformer
     }
 
     /**
-     * @param Thread $thread
-     * @param MessengerProvider $provider
-     * @param string $botName
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
+     * @param  string  $botName
      * @return array
      */
     public static function makeBotAdded(Thread $thread,
@@ -221,10 +221,10 @@ class MessageTransformer
     }
 
     /**
-     * @param Thread $thread
-     * @param MessengerProvider $provider
-     * @param string $oldName
-     * @param string $botName
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
+     * @param  string  $oldName
+     * @param  string  $botName
      * @return array
      */
     public static function makeBotRenamed(Thread $thread,
@@ -236,9 +236,9 @@ class MessageTransformer
     }
 
     /**
-     * @param Thread $thread
-     * @param MessengerProvider $provider
-     * @param string $botName
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
+     * @param  string  $botName
      * @return array
      */
     public static function makeBotAvatarChanged(Thread $thread,
@@ -249,9 +249,9 @@ class MessageTransformer
     }
 
     /**
-     * @param Thread $thread
-     * @param MessengerProvider $provider
-     * @param string $botName
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
+     * @param  string  $botName
      * @return array
      */
     public static function makeBotRemoved(Thread $thread,
@@ -262,8 +262,8 @@ class MessageTransformer
     }
 
     /**
-     * @param Message $message
-     * @param array|null $data
+     * @param  Message  $message
+     * @param  array|null  $data
      * @return GhostUser|MessengerProvider
      */
     public static function locateContentOwner(Message $message, ?array $data)
@@ -293,8 +293,8 @@ class MessageTransformer
     }
 
     /**
-     * @param Message $message
-     * @param array|null $bodyJson
+     * @param  Message  $message
+     * @param  array|null  $bodyJson
      * @return string
      */
     private static function transformVideoCall(Message $message, ?array $bodyJson): string
@@ -349,8 +349,8 @@ class MessageTransformer
     }
 
     /**
-     * @param Message $message
-     * @param array|null $bodyJson
+     * @param  Message  $message
+     * @param  array|null  $bodyJson
      * @return string
      */
     private static function transformAdminAdded(Message $message, ?array $bodyJson): string
@@ -359,8 +359,8 @@ class MessageTransformer
     }
 
     /**
-     * @param Message $message
-     * @param array|null $bodyJson
+     * @param  Message  $message
+     * @param  array|null  $bodyJson
      * @return string
      */
     private static function transformAdminRemoved(Message $message, ?array $bodyJson): string
@@ -369,8 +369,8 @@ class MessageTransformer
     }
 
     /**
-     * @param Message $message
-     * @param array|null $bodyJson
+     * @param  Message  $message
+     * @param  array|null  $bodyJson
      * @return string
      */
     private static function transformParticipantRemoved(Message $message, ?array $bodyJson): string
@@ -379,8 +379,8 @@ class MessageTransformer
     }
 
     /**
-     * @param Message $message
-     * @param array|null $bodyJson
+     * @param  Message  $message
+     * @param  array|null  $bodyJson
      * @return string
      */
     private static function transformParticipantsAdded(Message $message, ?array $bodyJson): string
@@ -417,7 +417,7 @@ class MessageTransformer
     }
 
     /**
-     * @param Participant $participant
+     * @param  Participant  $participant
      * @return string
      */
     private static function generateParticipantJson(Participant $participant): string
@@ -429,10 +429,10 @@ class MessageTransformer
     }
 
     /**
-     * @param Thread $thread
-     * @param MessengerProvider $provider
-     * @param string $body
-     * @param int $type
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
+     * @param  string  $body
+     * @param  int  $type
      * @return array
      * @see StoreSystemMessage
      */

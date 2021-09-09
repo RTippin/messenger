@@ -19,7 +19,7 @@ class FriendController
     /**
      * Display a listing of the providers friends.
      *
-     * @param FriendDriver $repository
+     * @param  FriendDriver  $repository
      * @return FriendCollection
      * @throws AuthorizationException
      */
@@ -35,7 +35,7 @@ class FriendController
     /**
      * Display the friend.
      *
-     * @param Friend $friend
+     * @param  Friend  $friend
      * @return FriendResource
      * @throws AuthorizationException
      */
@@ -49,8 +49,8 @@ class FriendController
     /**
      * Remove the friend.
      *
-     * @param RemoveFriend $removeFriend
-     * @param Friend $friend
+     * @param  RemoveFriend  $removeFriend
+     * @param  Friend  $friend
      * @return ProviderResource
      * @throws Throwable|AuthorizationException
      * @todo Return success response, not json resource.

@@ -17,7 +17,7 @@ class ThreadNameMessage extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param ThreadSettingsEvent $event
+     * @param  ThreadSettingsEvent  $event
      */
     public function __construct(ThreadSettingsEvent $event)
     {
@@ -27,7 +27,7 @@ class ThreadNameMessage extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param StoreSystemMessage $message
+     * @param  StoreSystemMessage  $message
      * @return void
      * @throws Throwable
      */

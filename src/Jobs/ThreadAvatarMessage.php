@@ -17,7 +17,7 @@ class ThreadAvatarMessage extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param ThreadAvatarEvent $event
+     * @param  ThreadAvatarEvent  $event
      */
     public function __construct(ThreadAvatarEvent $event)
     {
@@ -27,7 +27,7 @@ class ThreadAvatarMessage extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param StoreSystemMessage $message
+     * @param  StoreSystemMessage  $message
      * @return void
      * @throws Throwable
      */

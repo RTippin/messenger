@@ -9,7 +9,7 @@ class MessengerComposerException extends AuthorizationException
     /**
      * MessengerComposerException constructor.
      *
-     * @param string $message
+     * @param  string  $message
      */
     public function __construct(string $message = 'Messenger Composer Failed.')
     {

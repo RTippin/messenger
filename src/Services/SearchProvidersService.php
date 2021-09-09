@@ -40,7 +40,7 @@ class SearchProvidersService
     /**
      * SearchProvidersService constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -64,7 +64,7 @@ class SearchProvidersService
      * Set the query string, sanitize it, and break into array
      * Form the messenger whereHasMorph query.
      *
-     * @param string|null $searchQuery
+     * @param  string|null  $searchQuery
      * @return $this
      */
     public function search(string $searchQuery = null): self

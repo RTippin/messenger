@@ -20,7 +20,7 @@ class AvailableBotHandlers
     private MessengerBots $bots;
 
     /**
-     * @param MessengerBots $bots
+     * @param  MessengerBots  $bots
      */
     public function __construct(MessengerBots $bots)
     {
@@ -32,8 +32,8 @@ class AvailableBotHandlers
      * choose from, rejecting any handlers that are marked as unique
      * and have already attached to the bot provided.
      *
-     * @param Thread $thread
-     * @param Bot $bot
+     * @param  Thread  $thread
+     * @param  Bot  $bot
      * @return array
      * @throws AuthorizationException
      */
@@ -48,7 +48,7 @@ class AvailableBotHandlers
     }
 
     /**
-     * @param Bot $bot
+     * @param  Bot  $bot
      * @return array
      */
     private function generateAvailableHandlers(Bot $bot): array

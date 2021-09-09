@@ -22,8 +22,8 @@ class BotActionRemovedEvent
     /**
      * Create a new event instance.
      *
-     * @param MessengerProvider|null $provider
-     * @param array $action
+     * @param  MessengerProvider|null  $provider
+     * @param  array  $action
      */
     public function __construct(?MessengerProvider $provider, array $action)
     {

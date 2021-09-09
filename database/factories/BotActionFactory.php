@@ -60,7 +60,7 @@ class BotActionFactory extends Factory
     /**
      * Set the actions handler.
      *
-     * @param string $handler
+     * @param  string  $handler
      * @return Factory
      */
     public function handler(string $handler): Factory
@@ -75,7 +75,7 @@ class BotActionFactory extends Factory
     /**
      * Set the actions trigger.
      *
-     * @param string|null $triggers
+     * @param  string|null  $triggers
      * @return Factory
      */
     public function triggers(?string $triggers): Factory
@@ -90,7 +90,7 @@ class BotActionFactory extends Factory
     /**
      * Set the actions payload.
      *
-     * @param string|array|null $payload
+     * @param  string|array|null  $payload
      * @return Factory
      */
     public function payload($payload = null): Factory
@@ -109,7 +109,7 @@ class BotActionFactory extends Factory
     /**
      * Indicate the method used for matching trigger.
      *
-     * @param string $match
+     * @param  string  $match
      * @return Factory
      */
     public function match(string $match): Factory

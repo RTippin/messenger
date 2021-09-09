@@ -59,7 +59,7 @@ class GhostUser extends Model
     /**
      * Overwrite save method to do nothing.
      *
-     * @param array $options
+     * @param  array  $options
      * @return bool
      */
     public function save(array $options = []): bool
@@ -70,8 +70,8 @@ class GhostUser extends Model
     /**
      * Overwrite update method to do nothing.
      *
-     * @param array $attributes
-     * @param array $options
+     * @param  array  $attributes
+     * @param  array  $options
      * @return bool
      */
     public function update(array $attributes = [], array $options = []): bool
@@ -134,7 +134,7 @@ class GhostUser extends Model
     }
 
     /**
-     * @param string $size
+     * @param  string  $size
      * @return string|null
      */
     public function getProviderAvatarRoute(string $size = 'sm'): ?string

@@ -31,8 +31,8 @@ class UpdateBot extends BaseMessengerAction
     /**
      * UpdateBot constructor.
      *
-     * @param Messenger $messenger
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger, Dispatcher $dispatcher)
     {
@@ -41,8 +41,8 @@ class UpdateBot extends BaseMessengerAction
     }
 
     /**
-     * @param Bot $bot
-     * @param array $params
+     * @param  Bot  $bot
+     * @param  array  $params
      * @return $this
      * @see BotRequest
      * @throws FeatureDisabledException
@@ -75,7 +75,7 @@ class UpdateBot extends BaseMessengerAction
     }
 
     /**
-     * @param array $params
+     * @param  array  $params
      * @return $this
      */
     private function updateBot(array $params): self

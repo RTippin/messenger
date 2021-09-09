@@ -23,8 +23,8 @@ class InviteArchivedEvent
     /**
      * Create a new event instance.
      *
-     * @param MessengerProvider|null $provider
-     * @param Invite $invite
+     * @param  MessengerProvider|null  $provider
+     * @param  Invite  $invite
      */
     public function __construct(?MessengerProvider $provider, Invite $invite)
     {

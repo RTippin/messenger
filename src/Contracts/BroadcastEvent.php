@@ -28,7 +28,7 @@ interface BroadcastEvent
     /**
      * Set the data we will use to broadcast out.
      *
-     * @param array $resource
+     * @param  array  $resource
      * @return self
      */
     public function setResource(array $resource): self;
@@ -36,7 +36,7 @@ interface BroadcastEvent
     /**
      * Set the channels we will use to broadcast on.
      *
-     * @param array $channels
+     * @param  array  $channels
      * @return self
      */
     public function setChannels(array $channels): self;

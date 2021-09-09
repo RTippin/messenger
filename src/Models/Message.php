@@ -206,7 +206,7 @@ class Message extends Model implements Ownerable
     /**
      * Scope a query for only regular text based messages.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeText(Builder $query): Builder
@@ -217,7 +217,7 @@ class Message extends Model implements Ownerable
     /**
      * Scope a query for anything but system messages.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeNonSystem(Builder $query): Builder
@@ -228,7 +228,7 @@ class Message extends Model implements Ownerable
     /**
      * Scope a query for only system messages.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeSystem(Builder $query): Builder
@@ -239,7 +239,7 @@ class Message extends Model implements Ownerable
     /**
      * Scope a query for only image messages.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeImage(Builder $query): Builder
@@ -250,7 +250,7 @@ class Message extends Model implements Ownerable
     /**
      * Scope a query for only document messages.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeDocument(Builder $query): Builder
@@ -261,7 +261,7 @@ class Message extends Model implements Ownerable
     /**
      * Scope a query for only document messages.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeAudio(Builder $query): Builder
@@ -318,7 +318,7 @@ class Message extends Model implements Ownerable
     }
 
     /**
-     * @param string $size
+     * @param  string  $size
      * @return string|null
      */
     public function getImageViewRoute(string $size = 'sm'): ?string
@@ -495,7 +495,7 @@ class Message extends Model implements Ownerable
     }
 
     /**
-     * @param string|null $id
+     * @param  string|null  $id
      * @return Message
      */
     public function setTemporaryId(?string $id = null): self

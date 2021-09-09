@@ -103,7 +103,7 @@ class MessageFactory extends Factory
     /**
      * Indicate message is a system message.
      *
-     * @param int|null $type
+     * @param  int|null  $type
      * @return Factory
      */
     public function system(?int $type = null): Factory
@@ -147,7 +147,7 @@ class MessageFactory extends Factory
     /**
      * Set the messages reply to ID.
      *
-     * @param string $messageId
+     * @param  string  $messageId
      * @return Factory
      */
     public function reply(string $messageId): Factory

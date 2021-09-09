@@ -14,9 +14,9 @@ class SystemMessageCollection extends MessengerCollection
      * LogsCollection constructor.
      *
      * @param $resource
-     * @param Thread $thread
-     * @param bool $paginate
-     * @param string|null $pageId
+     * @param  Thread  $thread
+     * @param  bool  $paginate
+     * @param  string|null  $pageId
      */
     public function __construct($resource,
                                 Thread $thread,

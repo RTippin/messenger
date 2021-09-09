@@ -23,8 +23,8 @@ class EmbedsRemovedEvent
     /**
      * Create a new event instance.
      *
-     * @param MessengerProvider $provider
-     * @param Message $message
+     * @param  MessengerProvider  $provider
+     * @param  Message  $message
      */
     public function __construct(MessengerProvider $provider, Message $message)
     {

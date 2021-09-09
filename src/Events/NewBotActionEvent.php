@@ -17,7 +17,7 @@ class NewBotActionEvent
     /**
      * Create a new event instance.
      *
-     * @param BotAction $botAction
+     * @param  BotAction  $botAction
      */
     public function __construct(BotAction $botAction)
     {

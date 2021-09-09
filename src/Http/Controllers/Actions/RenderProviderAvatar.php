@@ -12,11 +12,11 @@ class RenderProviderAvatar
     /**
      * Render provider avatar.
      *
-     * @param ImageRenderService $service
-     * @param string $alias
-     * @param string $id
-     * @param string $size
-     * @param string $image
+     * @param  ImageRenderService  $service
+     * @param  string  $alias
+     * @param  string  $id
+     * @param  string  $size
+     * @param  string  $image
      * @return StreamedResponse|BinaryFileResponse
      * @throws FileNotFoundException
      */

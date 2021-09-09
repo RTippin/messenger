@@ -27,9 +27,9 @@ class PushNotificationEvent
     /**
      * Create a new event instance.
      *
-     * @param string $broadcastAs
-     * @param array $data
-     * @param Collection $recipients
+     * @param  string  $broadcastAs
+     * @param  array  $data
+     * @param  Collection  $recipients
      */
     public function __construct(string $broadcastAs,
                                 array $data,

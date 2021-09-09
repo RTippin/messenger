@@ -17,7 +17,7 @@ class JoinedWithInviteMessage extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param InviteUsedEvent $event
+     * @param  InviteUsedEvent  $event
      */
     public function __construct(InviteUsedEvent $event)
     {
@@ -27,7 +27,7 @@ class JoinedWithInviteMessage extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param StoreSystemMessage $message
+     * @param  StoreSystemMessage  $message
      * @return void
      * @throws Throwable
      */

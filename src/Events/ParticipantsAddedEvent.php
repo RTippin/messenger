@@ -29,9 +29,9 @@ class ParticipantsAddedEvent
     /**
      * Create a new event instance.
      *
-     * @param MessengerProvider $provider
-     * @param Thread $thread
-     * @param Collection $participants
+     * @param  MessengerProvider  $provider
+     * @param  Thread  $thread
+     * @param  Collection  $participants
      */
     public function __construct(MessengerProvider $provider,
                                 Thread $thread,

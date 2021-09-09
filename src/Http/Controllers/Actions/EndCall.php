@@ -17,9 +17,9 @@ class EndCall
     /**
      * End the call.
      *
-     * @param EndCallAction $endCall
-     * @param Thread $thread
-     * @param Call $call
+     * @param  EndCallAction  $endCall
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return JsonResponse
      * @throws AuthorizationException|Throwable
      */

@@ -16,7 +16,7 @@ class TeardownCall extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param CallEndedEvent $event
+     * @param  CallEndedEvent  $event
      */
     public function __construct(CallEndedEvent $event)
     {
@@ -26,7 +26,7 @@ class TeardownCall extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param CallBrokerTeardown $broker
+     * @param  CallBrokerTeardown  $broker
      * @return void
      * @throws CallBrokerException
      */

@@ -17,9 +17,9 @@ class IgnoreCall
     /**
      * Leave the call.
      *
-     * @param IgnoreCallAction $ignoreCall
-     * @param Thread $thread
-     * @param Call $call
+     * @param  IgnoreCallAction  $ignoreCall
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return JsonResponse
      * @throws AuthorizationException|Throwable
      */

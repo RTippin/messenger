@@ -51,7 +51,7 @@ class HttpTestCase extends FeatureTestCase
     /**
      * Call this method inside any http tests to instruct us to log the response.
      *
-     * @param string|null $status
+     * @param  string|null  $status
      */
     public function logCurrentRequest(?string $status = null): void
     {
@@ -62,10 +62,10 @@ class HttpTestCase extends FeatureTestCase
     }
 
     /**
-     * @param string $method
-     * @param string $uri
-     * @param array $data
-     * @param array $headers
+     * @param  string  $method
+     * @param  string  $uri
+     * @param  array  $data
+     * @param  array  $headers
      * @return TestResponse
      */
     public function json($method, $uri, array $data = [], array $headers = []): TestResponse
@@ -86,11 +86,11 @@ class HttpTestCase extends FeatureTestCase
     }
 
     /**
-     * @param Route $route
-     * @param TestResponse $response
-     * @param string $method
-     * @param string $query
-     * @param array $payload
+     * @param  Route  $route
+     * @param  TestResponse  $response
+     * @param  string  $method
+     * @param  string  $query
+     * @param  array  $payload
      */
     private function storeTestResponse(Route $route,
                                        TestResponse $response,
@@ -140,7 +140,7 @@ class HttpTestCase extends FeatureTestCase
     }
 
     /**
-     * @param array $responses
+     * @param  array  $responses
      */
     private function storeResponsesFile(array $responses): void
     {
@@ -148,7 +148,7 @@ class HttpTestCase extends FeatureTestCase
     }
 
     /**
-     * @param TestResponse $response
+     * @param  TestResponse  $response
      * @return string
      */
     private function generateResponseStatus(TestResponse $response): string
@@ -159,7 +159,7 @@ class HttpTestCase extends FeatureTestCase
     }
 
     /**
-     * @param array $payload
+     * @param  array  $payload
      * @return array
      */
     private function sanitizePayload(array $payload): array
@@ -178,7 +178,7 @@ class HttpTestCase extends FeatureTestCase
     }
 
     /**
-     * @param int $size
+     * @param  int  $size
      * @return int|string
      */
     private static function formatBytes(int $size)

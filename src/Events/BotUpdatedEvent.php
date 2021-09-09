@@ -28,9 +28,9 @@ class BotUpdatedEvent
     /**
      * Create a new event instance.
      *
-     * @param MessengerProvider $provider
-     * @param Bot $bot
-     * @param string $originalName
+     * @param  MessengerProvider  $provider
+     * @param  Bot  $bot
+     * @param  string  $originalName
      */
     public function __construct(MessengerProvider $provider,
                                 Bot $bot,
