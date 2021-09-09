@@ -32,7 +32,7 @@ abstract class BaseMessageRequest extends FormRequest
     /**
      * Generate the rules needed based on the attributes passed.
      *
-     * @param array $fields
+     * @param  array  $fields
      * @return array
      */
     protected function generateRules(array $fields): array

@@ -23,10 +23,10 @@ class StoreCall extends NewCallAction
     /**
      * StoreCall constructor.
      *
-     * @param Messenger $messenger
-     * @param BroadcastDriver $broadcaster
-     * @param Dispatcher $dispatcher
-     * @param DatabaseManager $database
+     * @param  Messenger  $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  Dispatcher  $dispatcher
+     * @param  DatabaseManager  $database
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
@@ -48,8 +48,8 @@ class StoreCall extends NewCallAction
      * is false. We use our new call event to hook into creating a
      * video room using our desired video call service.
      *
-     * @param Thread $thread
-     * @param bool $setupComplete
+     * @param  Thread  $thread
+     * @param  bool  $setupComplete
      * @return $this
      * @throws NewCallException|Throwable|FeatureDisabledException
      */
@@ -69,7 +69,7 @@ class StoreCall extends NewCallAction
     }
 
     /**
-     * @param bool $setupComplete
+     * @param  bool  $setupComplete
      * @return $this
      * @throws Throwable
      */
@@ -85,7 +85,7 @@ class StoreCall extends NewCallAction
     }
 
     /**
-     * @param bool $setupComplete
+     * @param  bool  $setupComplete
      */
     private function executeTransactions(bool $setupComplete): void
     {

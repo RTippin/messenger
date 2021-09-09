@@ -49,10 +49,10 @@ class ImageRenderService
     /**
      * ImageRenderService constructor.
      *
-     * @param Messenger $messenger
-     * @param FilesystemManager $filesystemManager
-     * @param ResponseFactory $responseFactory
-     * @param ImageManager $imageManager
+     * @param  Messenger  $messenger
+     * @param  FilesystemManager  $filesystemManager
+     * @param  ResponseFactory  $responseFactory
+     * @param  ImageManager  $imageManager
      */
     public function __construct(Messenger $messenger,
                                 FilesystemManager $filesystemManager,
@@ -66,10 +66,10 @@ class ImageRenderService
     }
 
     /**
-     * @param string $alias
-     * @param string $id
-     * @param string $size
-     * @param string $image
+     * @param  string  $alias
+     * @param  string  $id
+     * @param  string  $size
+     * @param  string  $image
      * @return StreamedResponse|BinaryFileResponse
      * @throws FileNotFoundException
      */
@@ -101,9 +101,9 @@ class ImageRenderService
     }
 
     /**
-     * @param Message $message
-     * @param string $size
-     * @param string $fileNameChallenge
+     * @param  Message  $message
+     * @param  string  $size
+     * @param  string  $fileNameChallenge
      * @return BinaryFileResponse|StreamedResponse
      * @throws FileNotFoundException
      */
@@ -136,9 +136,9 @@ class ImageRenderService
     }
 
     /**
-     * @param Thread $thread
-     * @param string $size
-     * @param string $fileNameChallenge
+     * @param  Thread  $thread
+     * @param  string  $size
+     * @param  string  $fileNameChallenge
      * @return StreamedResponse|BinaryFileResponse
      * @throws FileNotFoundException
      */
@@ -175,9 +175,9 @@ class ImageRenderService
     }
 
     /**
-     * @param Bot $bot
-     * @param string $size
-     * @param string $fileNameChallenge
+     * @param  Bot  $bot
+     * @param  string  $size
+     * @param  string  $fileNameChallenge
      * @return StreamedResponse|BinaryFileResponse
      * @throws FileNotFoundException
      */
@@ -212,7 +212,7 @@ class ImageRenderService
     }
 
     /**
-     * @param string|null $alias
+     * @param  string|null  $alias
      * @return BinaryFileResponse
      */
     private function renderDefaultImage(?string $alias = null): BinaryFileResponse
@@ -240,8 +240,8 @@ class ImageRenderService
     }
 
     /**
-     * @param string $file
-     * @param string $size
+     * @param  string  $file
+     * @param  string  $size
      * @return BinaryFileResponse|Response
      */
     private function renderImageSize(string $file, string $size)
@@ -274,7 +274,7 @@ class ImageRenderService
     }
 
     /**
-     * @param string $extension
+     * @param  string  $extension
      * @return bool
      */
     private function shouldResize(string $extension): bool

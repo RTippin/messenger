@@ -25,8 +25,8 @@ class ArchiveBot extends BaseMessengerAction
     /**
      * ArchiveBot constructor.
      *
-     * @param Messenger $messenger
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger, Dispatcher $dispatcher)
     {
@@ -35,7 +35,7 @@ class ArchiveBot extends BaseMessengerAction
     }
 
     /**
-     * @param Bot $bot
+     * @param  Bot  $bot
      * @return $this
      * @throws Exception|FeatureDisabledException
      */

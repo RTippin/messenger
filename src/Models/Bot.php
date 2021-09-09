@@ -206,7 +206,7 @@ class Bot extends Model implements MessengerProvider, Ownerable
     }
 
     /**
-     * @param string $size
+     * @param  string  $size
      * @return string|null
      */
     public function getProviderAvatarRoute(string $size = 'sm'): ?string
@@ -232,7 +232,7 @@ class Bot extends Model implements MessengerProvider, Ownerable
     /**
      * Are actions visible to regular participants?
      *
-     * @param Thread|null $thread
+     * @param  Thread|null  $thread
      * @return bool
      */
     public function isActionsVisible(?Thread $thread = null): bool

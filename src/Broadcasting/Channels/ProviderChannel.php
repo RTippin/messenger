@@ -14,7 +14,7 @@ class ProviderChannel
     /**
      * Create a new channel instance.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -25,8 +25,8 @@ class ProviderChannel
      * Authenticate the provider's access to the channel.
      *
      * @param $user
-     * @param string|null $alias
-     * @param string|null $id
+     * @param  string|null  $alias
+     * @param  string|null  $id
      * @return bool
      */
     public function join($user, ?string $alias = null, ?string $id = null): bool

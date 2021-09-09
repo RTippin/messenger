@@ -10,7 +10,7 @@ class UnreadThreadsCount
     /**
      * How many unread threads does current provider have?
      *
-     * @param ThreadRepository $repository
+     * @param  ThreadRepository  $repository
      * @return JsonResponse
      */
     public function __invoke(ThreadRepository $repository): JsonResponse

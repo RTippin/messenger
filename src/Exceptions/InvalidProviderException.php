@@ -9,7 +9,7 @@ class InvalidProviderException extends AuthorizationException
     /**
      * InvalidProviderException constructor.
      *
-     * @param string $message
+     * @param  string  $message
      */
     public function __construct(string $message = 'Messenger provider not set or compatible.')
     {

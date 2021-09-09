@@ -25,8 +25,8 @@ class LeaveCall extends CallParticipantAction
     /**
      * LeaveCall constructor.
      *
-     * @param BroadcastDriver $broadcaster
-     * @param Dispatcher $dispatcher
+     * @param  BroadcastDriver  $broadcaster
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(BroadcastDriver $broadcaster, Dispatcher $dispatcher)
     {
@@ -37,8 +37,8 @@ class LeaveCall extends CallParticipantAction
     /**
      * Leave the call!
      *
-     * @param Call $call
-     * @param CallParticipant $participant
+     * @param  Call  $call
+     * @param  CallParticipant  $participant
      * @return $this
      */
     public function execute(Call $call, CallParticipant $participant): self
@@ -53,7 +53,7 @@ class LeaveCall extends CallParticipantAction
     }
 
     /**
-     * @param CallParticipant $participant
+     * @param  CallParticipant  $participant
      * @return array
      */
     private function participantLeft(CallParticipant $participant): array

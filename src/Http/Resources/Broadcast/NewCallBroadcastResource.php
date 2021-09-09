@@ -23,8 +23,8 @@ class NewCallBroadcastResource extends JsonResource
     /**
      * NewCallBroadcastResource constructor.
      *
-     * @param MessengerProvider $provider
-     * @param Call $call
+     * @param  MessengerProvider  $provider
+     * @param  Call  $call
      */
     public function __construct(MessengerProvider $provider, Call $call)
     {

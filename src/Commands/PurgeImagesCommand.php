@@ -57,7 +57,7 @@ class PurgeImagesCommand extends Command
     }
 
     /**
-     * @param Collection $images
+     * @param  Collection  $images
      * @return void
      */
     private function dispatchJob(Collection $images): void

@@ -17,7 +17,7 @@ class PurgeThreads extends BaseMessengerAction
     /**
      * PurgeThreads constructor.
      *
-     * @param FileService $fileService
+     * @param  FileService  $fileService
      */
     public function __construct(FileService $fileService)
     {
@@ -29,7 +29,7 @@ class PurgeThreads extends BaseMessengerAction
      * from storage under the thread, then force delete thread
      * itself from database.
      *
-     * @param Collection $threads
+     * @param  Collection  $threads
      * @return $this
      */
     public function execute(Collection $threads): self
@@ -40,7 +40,7 @@ class PurgeThreads extends BaseMessengerAction
     }
 
     /**
-     * @param Thread $thread
+     * @param  Thread  $thread
      */
     private function purge(Thread $thread): void
     {
@@ -50,7 +50,7 @@ class PurgeThreads extends BaseMessengerAction
     }
 
     /**
-     * @param Thread $thread
+     * @param  Thread  $thread
      */
     private function destroyDirectory(Thread $thread): void
     {
@@ -61,7 +61,7 @@ class PurgeThreads extends BaseMessengerAction
     }
 
     /**
-     * @param Thread $thread
+     * @param  Thread  $thread
      */
     private function destroyThread(Thread $thread): void
     {

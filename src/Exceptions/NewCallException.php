@@ -9,7 +9,7 @@ class NewCallException extends AuthorizationException
     /**
      * NewCallException constructor.
      *
-     * @param string $message
+     * @param  string  $message
      */
     public function __construct(string $message = 'New call failed.')
     {

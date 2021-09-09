@@ -28,7 +28,7 @@ class InvitesCheckCommand extends Command
     /**
      * Execute the console command.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      * @return void
      */
     public function handle(Messenger $messenger): void
@@ -56,7 +56,7 @@ class InvitesCheckCommand extends Command
     }
 
     /**
-     * @param Collection $invites
+     * @param  Collection  $invites
      * @return void
      */
     private function dispatchJob(Collection $invites): void

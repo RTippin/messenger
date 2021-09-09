@@ -15,7 +15,7 @@ class PurgeAudioMessages extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param Collection $audioFiles
+     * @param  Collection  $audioFiles
      */
     public function __construct(Collection $audioFiles)
     {
@@ -25,7 +25,7 @@ class PurgeAudioMessages extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param PurgeAudioMessagesAction $purgeAudio
+     * @param  PurgeAudioMessagesAction  $purgeAudio
      * @return void
      */
     public function handle(PurgeAudioMessagesAction $purgeAudio): void

@@ -19,7 +19,7 @@ class CallRepository
     /**
      * CallRepository constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -49,7 +49,7 @@ class CallRepository
     }
 
     /**
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Collection
      */
     public function getThreadCallsIndex(Thread $thread): Collection
@@ -63,8 +63,8 @@ class CallRepository
     }
 
     /**
-     * @param Thread $thread
-     * @param Call $call
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return Collection
      */
     public function getThreadCallsPage(Thread $thread, Call $call): Collection

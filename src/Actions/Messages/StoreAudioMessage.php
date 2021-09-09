@@ -31,11 +31,11 @@ class StoreAudioMessage extends NewMessageAction
     /**
      * StoreAudioMessage constructor.
      *
-     * @param BroadcastDriver $broadcaster
-     * @param DatabaseManager $database
-     * @param Dispatcher $dispatcher
-     * @param Messenger $messenger
-     * @param FileService $fileService
+     * @param  BroadcastDriver  $broadcaster
+     * @param  DatabaseManager  $database
+     * @param  Dispatcher  $dispatcher
+     * @param  Messenger  $messenger
+     * @param  FileService  $fileService
      */
     public function __construct(BroadcastDriver $broadcaster,
                                 DatabaseManager $database,
@@ -57,9 +57,9 @@ class StoreAudioMessage extends NewMessageAction
      * Store / upload new audio message, update thread
      * updated_at, mark read for participant, broadcast.
      *
-     * @param Thread $thread
-     * @param array $params
-     * @param string|null $senderIp
+     * @param  Thread  $thread
+     * @param  array  $params
+     * @param  string|null  $senderIp
      * @return $this
      * @see AudioMessageRequest
      * @throws Throwable|FeatureDisabledException|FileServiceException
@@ -94,7 +94,7 @@ class StoreAudioMessage extends NewMessageAction
      * our database actions fail, we want to remove the file
      * from storage and rethrow the exception.
      *
-     * @param string $fileName
+     * @param  string  $fileName
      * @throws Exception
      */
     private function attemptTransactionOrRollbackFile(string $fileName): void
@@ -121,7 +121,7 @@ class StoreAudioMessage extends NewMessageAction
     }
 
     /**
-     * @param UploadedFile $audio
+     * @param  UploadedFile  $audio
      * @return string
      * @throws FileServiceException
      */

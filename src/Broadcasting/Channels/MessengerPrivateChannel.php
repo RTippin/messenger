@@ -12,7 +12,7 @@ class MessengerPrivateChannel extends Channel
     /**
      * Create a new private channel instance.
      *
-     * @param Ownerable|MessengerProvider $model
+     * @param  Ownerable|MessengerProvider  $model
      */
     public function __construct($model, string $channel = '')
     {

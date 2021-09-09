@@ -14,8 +14,8 @@ class GroupThreadCollection extends MessengerCollection
      * GroupThreadCollection constructor.
      *
      * @param $resource
-     * @param bool $paginate
-     * @param string|null $pageId
+     * @param  bool  $paginate
+     * @param  string|null  $pageId
      */
     public function __construct($resource,
                                 bool $paginate = false,

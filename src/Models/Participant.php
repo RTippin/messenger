@@ -170,7 +170,7 @@ class Participant extends Model implements Ownerable
     /**
      * Scope for participants that are admins.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeAdmins(Builder $query): Builder
@@ -181,7 +181,7 @@ class Participant extends Model implements Ownerable
     /**
      * Scope for participants that are not muted.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeNotMuted(Builder $query): Builder
@@ -192,7 +192,7 @@ class Participant extends Model implements Ownerable
     /**
      * Scope for participants that are not pending.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeNotPending(Builder $query): Builder
@@ -203,7 +203,7 @@ class Participant extends Model implements Ownerable
     /**
      * Scope for participants that are valid providers.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeValidProviders(Builder $query): Builder

@@ -27,11 +27,11 @@ class StoreMessage extends NewMessageAction
     /**
      * StoreMessage constructor.
      *
-     * @param BroadcastDriver $broadcaster
-     * @param DatabaseManager $database
-     * @param Dispatcher $dispatcher
-     * @param Messenger $messenger
-     * @param EmojiInterface $emoji
+     * @param  BroadcastDriver  $broadcaster
+     * @param  DatabaseManager  $database
+     * @param  Dispatcher  $dispatcher
+     * @param  Messenger  $messenger
+     * @param  EmojiInterface  $emoji
      */
     public function __construct(BroadcastDriver $broadcaster,
                                 DatabaseManager $database,
@@ -53,9 +53,9 @@ class StoreMessage extends NewMessageAction
      * Store new message, update thread updated_at,
      * mark read for participant, broadcast.
      *
-     * @param Thread $thread
-     * @param array $params
-     * @param string|null $senderIp
+     * @param  Thread  $thread
+     * @param  array  $params
+     * @param  string|null  $senderIp
      * @return $this
      * @see MessageRequest
      * @throws Throwable

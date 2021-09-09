@@ -15,7 +15,7 @@ class PurgeThreads extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param Collection $threads
+     * @param  Collection  $threads
      */
     public function __construct(Collection $threads)
     {
@@ -25,7 +25,7 @@ class PurgeThreads extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param PurgeThreadsAction $purgeThreads
+     * @param  PurgeThreadsAction  $purgeThreads
      * @return void
      */
     public function handle(PurgeThreadsAction $purgeThreads): void

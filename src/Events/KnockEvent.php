@@ -23,8 +23,8 @@ class KnockEvent
     /**
      * Create a new event instance.
      *
-     * @param MessengerProvider $provider
-     * @param Thread $thread
+     * @param  MessengerProvider  $provider
+     * @param  Thread  $thread
      */
     public function __construct(MessengerProvider $provider, Thread $thread)
     {

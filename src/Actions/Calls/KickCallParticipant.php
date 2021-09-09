@@ -30,9 +30,9 @@ class KickCallParticipant extends CallParticipantAction
     /**
      * KickCallParticipant constructor.
      *
-     * @param Messenger $messenger
-     * @param BroadcastDriver $broadcaster
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
@@ -46,9 +46,9 @@ class KickCallParticipant extends CallParticipantAction
     /**
      * Kick or un-kick the call participant!
      *
-     * @param Call $call
-     * @param CallParticipant $participant
-     * @param bool $kicked
+     * @param  Call  $call
+     * @param  CallParticipant  $participant
+     * @param  bool  $kicked
      * @return $this
      */
     public function execute(Call $call,
@@ -69,7 +69,7 @@ class KickCallParticipant extends CallParticipantAction
     }
 
     /**
-     * @param bool $kicked
+     * @param  bool  $kicked
      * @return array
      */
     private function participantState(bool $kicked): array

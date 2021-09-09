@@ -18,7 +18,7 @@ class PrivateThreadRepository
     /**
      * PrivateThreadRepository constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -26,7 +26,7 @@ class PrivateThreadRepository
     }
 
     /**
-     * @param MessengerProvider|null $recipient
+     * @param  MessengerProvider|null  $recipient
      * @return Thread|null
      */
     public function getProviderPrivateThreadWithRecipient(MessengerProvider $recipient = null): ?Thread
@@ -62,7 +62,7 @@ class PrivateThreadRepository
     }
 
     /**
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Collection
      */
     public function getProviderPrivateThreadsPage(Thread $thread): Collection

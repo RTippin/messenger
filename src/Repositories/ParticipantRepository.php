@@ -19,7 +19,7 @@ class ParticipantRepository
     /**
      * ParticipantRepository constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -29,8 +29,8 @@ class ParticipantRepository
     /**
      * Get all participants who pass our requirements for broadcasting.
      *
-     * @param Thread $thread
-     * @param bool $withoutProvider
+     * @param  Thread  $thread
+     * @param  bool  $withoutProvider
      * @return Collection
      */
     public function getThreadBroadcastableParticipants(Thread $thread, bool $withoutProvider = false): Collection
@@ -46,7 +46,7 @@ class ParticipantRepository
     }
 
     /**
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Collection
      */
     public function getThreadParticipantsIndex(Thread $thread): Collection
@@ -59,8 +59,8 @@ class ParticipantRepository
     }
 
     /**
-     * @param Thread $thread
-     * @param Participant $participant
+     * @param  Thread  $thread
+     * @param  Participant  $participant
      * @return Collection
      */
     public function getThreadParticipantsPage(Thread $thread, Participant $participant): Collection

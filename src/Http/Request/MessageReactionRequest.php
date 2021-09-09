@@ -10,7 +10,7 @@ class MessageReactionRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @param HasEmoji $hasEmoji
+     * @param  HasEmoji  $hasEmoji
      * @return array
      */
     public function rules(HasEmoji $hasEmoji): array

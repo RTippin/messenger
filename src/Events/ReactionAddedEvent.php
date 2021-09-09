@@ -17,7 +17,7 @@ class ReactionAddedEvent
     /**
      * Create a new event instance.
      *
-     * @param MessageReaction $reaction
+     * @param  MessageReaction  $reaction
      */
     public function __construct(MessageReaction $reaction)
     {

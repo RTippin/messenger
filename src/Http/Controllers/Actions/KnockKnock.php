@@ -23,7 +23,7 @@ class KnockKnock
     /**
      * KnockKnock constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -34,8 +34,8 @@ class KnockKnock
      * Check if provider can knock in thread and
      * no timeout exist, then knock! 👊✊.
      *
-     * @param SendKnock $sendKnock
-     * @param Thread $thread
+     * @param  SendKnock  $sendKnock
+     * @param  Thread  $thread
      * @return JsonResponse
      * @throws AuthorizationException|FeatureDisabledException|KnockException
      */

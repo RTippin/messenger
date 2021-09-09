@@ -17,7 +17,7 @@ class FriendRequestBroadcastResource extends JsonResource
     /**
      * FriendRequestBroadcastResource constructor.
      *
-     * @param SentFriend $friend
+     * @param  SentFriend  $friend
      */
     public function __construct(SentFriend $friend)
     {

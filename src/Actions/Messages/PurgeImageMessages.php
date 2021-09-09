@@ -17,7 +17,7 @@ class PurgeImageMessages extends BaseMessengerAction
     /**
      * PurgeImageMessages constructor.
      *
-     * @param FileService $fileService
+     * @param  FileService  $fileService
      */
     public function __construct(FileService $fileService)
     {
@@ -29,7 +29,7 @@ class PurgeImageMessages extends BaseMessengerAction
      * the image from storage, then force delete message itself
      * from database.
      *
-     * @param Collection $imageMessages
+     * @param  Collection  $imageMessages
      * @return $this
      */
     public function execute(Collection $imageMessages): self
@@ -40,7 +40,7 @@ class PurgeImageMessages extends BaseMessengerAction
     }
 
     /**
-     * @param Message $image
+     * @param  Message  $image
      */
     private function purge(Message $image): void
     {
@@ -50,7 +50,7 @@ class PurgeImageMessages extends BaseMessengerAction
     }
 
     /**
-     * @param Message $image
+     * @param  Message  $image
      */
     private function destroyImage(Message $image): void
     {
@@ -60,7 +60,7 @@ class PurgeImageMessages extends BaseMessengerAction
     }
 
     /**
-     * @param Message $image
+     * @param  Message  $image
      */
     private function destroyMessage(Message $image): void
     {

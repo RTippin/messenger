@@ -50,9 +50,9 @@ class AcceptFriendRequest extends BaseMessengerAction
     /**
      * AcceptFriendRequest constructor.
      *
-     * @param DatabaseManager $database
-     * @param BroadcastDriver $broadcaster
-     * @param Dispatcher $dispatcher
+     * @param  DatabaseManager  $database
+     * @param  BroadcastDriver  $broadcaster
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(DatabaseManager $database,
                                 BroadcastDriver $broadcaster,
@@ -67,7 +67,7 @@ class AcceptFriendRequest extends BaseMessengerAction
      * Accept the pending friend request. We will remove the pending model
      * and create two mirrored friend models to link our friendship!
      *
-     * @param PendingFriend $pending
+     * @param  PendingFriend  $pending
      * @return $this
      * @throws Throwable
      */

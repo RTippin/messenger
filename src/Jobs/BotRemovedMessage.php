@@ -17,7 +17,7 @@ class BotRemovedMessage extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param BotArchivedEvent $event
+     * @param  BotArchivedEvent  $event
      */
     public function __construct(BotArchivedEvent $event)
     {
@@ -27,7 +27,7 @@ class BotRemovedMessage extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param StoreSystemMessage $message
+     * @param  StoreSystemMessage  $message
      * @return void
      * @throws Throwable
      */

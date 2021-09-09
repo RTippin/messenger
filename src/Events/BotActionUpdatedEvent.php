@@ -23,8 +23,8 @@ class BotActionUpdatedEvent
     /**
      * Create a new event instance.
      *
-     * @param MessengerProvider $provider
-     * @param BotAction $action
+     * @param  MessengerProvider  $provider
+     * @param  BotAction  $action
      */
     public function __construct(MessengerProvider $provider, BotAction $action)
     {

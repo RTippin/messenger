@@ -62,10 +62,10 @@ class BroadcastBroker implements BroadcastDriver
     /**
      * BroadcastBroker constructor.
      *
-     * @param Messenger $messenger
-     * @param ParticipantRepository $participantRepository
-     * @param PushNotificationService $pushNotification
-     * @param Factory $broadcast
+     * @param  Messenger  $messenger
+     * @param  ParticipantRepository  $participantRepository
+     * @param  PushNotificationService  $pushNotification
+     * @param  Factory  $broadcast
      */
     public function __construct(Messenger $messenger,
                                 ParticipantRepository $participantRepository,
@@ -190,7 +190,7 @@ class BroadcastBroker implements BroadcastDriver
     }
 
     /**
-     * @param Ownerable|MessengerProvider|mixed $recipient
+     * @param  Ownerable|MessengerProvider|mixed  $recipient
      * @return string|null
      */
     protected function generatePrivateChannel($recipient): ?string
@@ -216,7 +216,7 @@ class BroadcastBroker implements BroadcastDriver
     }
 
     /**
-     * @param HasPresenceChannel|mixed $entity
+     * @param  HasPresenceChannel|mixed  $entity
      * @return string|null
      */
     protected function generatePresenceChannel($entity): ?string
@@ -229,8 +229,8 @@ class BroadcastBroker implements BroadcastDriver
     }
 
     /**
-     * @param string|MessengerBroadcast $abstractBroadcast
-     * @param Collection $channels
+     * @param  string|MessengerBroadcast  $abstractBroadcast
+     * @param  Collection  $channels
      */
     protected function executeBroadcast(string $abstractBroadcast, Collection $channels): void
     {
@@ -247,7 +247,7 @@ class BroadcastBroker implements BroadcastDriver
     }
 
     /**
-     * @param string $abstractBroadcast
+     * @param  string  $abstractBroadcast
      */
     protected function executePushNotify(string $abstractBroadcast): void
     {

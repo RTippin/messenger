@@ -29,9 +29,9 @@ class MessageResource extends JsonResource
     /**
      * MessageResource constructor.
      *
-     * @param Message $message
-     * @param Thread $thread
-     * @param bool $addRelatedItems
+     * @param  Message  $message
+     * @param  Thread  $thread
+     * @param  bool  $addRelatedItems
      */
     public function __construct(Message $message,
                                 Thread $thread,

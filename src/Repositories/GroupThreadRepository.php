@@ -17,7 +17,7 @@ class GroupThreadRepository
     /**
      * GroupThreadRepository constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -42,7 +42,7 @@ class GroupThreadRepository
     }
 
     /**
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Collection
      */
     public function getProviderGroupThreadsPage(Thread $thread): Collection

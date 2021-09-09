@@ -16,7 +16,7 @@ class CallSubscriber
     /**
      * Register the listeners for the subscriber.
      *
-     * @param Dispatcher $events
+     * @param  Dispatcher  $events
      * @return void
      */
     public function subscribe(Dispatcher $events): void
@@ -27,7 +27,7 @@ class CallSubscriber
     }
 
     /**
-     * @param CallEndedEvent $event
+     * @param  CallEndedEvent  $event
      */
     public function teardownCall(CallEndedEvent $event): void
     {
@@ -39,7 +39,7 @@ class CallSubscriber
     }
 
     /**
-     * @param CallLeftEvent $event
+     * @param  CallLeftEvent  $event
      */
     public function endCallIfEmpty(CallLeftEvent $event): void
     {
@@ -51,7 +51,7 @@ class CallSubscriber
     }
 
     /**
-     * @param CallStartedEvent $event
+     * @param  CallStartedEvent  $event
      */
     public function setupCall(CallStartedEvent $event): void
     {

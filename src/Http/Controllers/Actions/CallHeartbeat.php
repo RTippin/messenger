@@ -14,9 +14,9 @@ class CallHeartbeat
     use AuthorizesRequests;
 
     /**
-     * @param Heartbeat $heartbeat
-     * @param Thread $thread
-     * @param Call $call
+     * @param  Heartbeat  $heartbeat
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return JsonResponse
      * @throws AuthorizationException
      */

@@ -29,9 +29,9 @@ class InviteUsedEvent
     /**
      * Create a new event instance.
      *
-     * @param MessengerProvider $provider
-     * @param Thread $thread
-     * @param Invite $invite
+     * @param  MessengerProvider  $provider
+     * @param  Thread  $thread
+     * @param  Invite  $invite
      */
     public function __construct(MessengerProvider $provider,
                                 Thread $thread,

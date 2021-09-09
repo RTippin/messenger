@@ -28,9 +28,9 @@ trait ScopesProvider
     /**
      * Scope a query for belonging to the given provider.
      *
-     * @param Builder $query
-     * @param MessengerProvider $provider
-     * @param string $morph
+     * @param  Builder  $query
+     * @param  MessengerProvider  $provider
+     * @param  string  $morph
      * @return Builder
      */
     public function scopeForProvider(Builder $query,
@@ -44,9 +44,9 @@ trait ScopesProvider
     /**
      * Scope a query not belonging to the given provider.
      *
-     * @param Builder $query
-     * @param MessengerProvider $provider
-     * @param string $morph
+     * @param  Builder  $query
+     * @param  MessengerProvider  $provider
+     * @param  string  $morph
      * @return Builder
      */
     public function scopeNotProvider(Builder $query,
@@ -59,10 +59,10 @@ trait ScopesProvider
     /**
      * Scope a query for belonging to the given model using relation keys present.
      *
-     * @param Builder $query
-     * @param Model $model
-     * @param string $modelKey
-     * @param string $morphKey
+     * @param  Builder  $query
+     * @param  Model  $model
+     * @param  string  $modelKey
+     * @param  string  $morphKey
      * @return Builder
      */
     public function scopeForProviderWithModel(Builder $query,
@@ -77,10 +77,10 @@ trait ScopesProvider
     /**
      * Scope a query not belonging to the given model using relation keys present.
      *
-     * @param Builder $query
-     * @param Model $model
-     * @param string $modelKey
-     * @param string $morphKey
+     * @param  Builder  $query
+     * @param  Model  $model
+     * @param  string  $modelKey
+     * @param  string  $morphKey
      * @return Builder
      */
     public function scopeNotProviderWithModel(Builder $query,

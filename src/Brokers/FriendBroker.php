@@ -36,7 +36,7 @@ class FriendBroker implements FriendDriver
     /**
      * FriendBroker constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {

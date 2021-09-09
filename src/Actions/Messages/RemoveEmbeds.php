@@ -31,9 +31,9 @@ class RemoveEmbeds extends BaseMessengerAction
     /**
      * RemoveEmbeds constructor.
      *
-     * @param BroadcastDriver $broadcaster
-     * @param Dispatcher $dispatcher
-     * @param Messenger $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  Dispatcher  $dispatcher
+     * @param  Messenger  $messenger
      */
     public function __construct(BroadcastDriver $broadcaster,
                                 Dispatcher $dispatcher,
@@ -47,8 +47,8 @@ class RemoveEmbeds extends BaseMessengerAction
     /**
      * Set embeds to false on the given message.
      *
-     * @param Thread $thread
-     * @param Message $message
+     * @param  Thread  $thread
+     * @param  Message  $message
      * @return $this
      */
     public function execute(Thread $thread, Message $message): self

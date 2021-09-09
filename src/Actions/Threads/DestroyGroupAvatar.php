@@ -10,7 +10,7 @@ use RTippin\Messenger\Models\Thread;
 class DestroyGroupAvatar extends GroupAvatarAction
 {
     /**
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return $this
      * @var Thread[0]
      * @throws FeatureDisabledException|FileServiceException|Exception

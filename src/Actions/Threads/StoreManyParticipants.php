@@ -52,12 +52,12 @@ class StoreManyParticipants extends ThreadParticipantAction
     /**
      * StoreManyParticipants constructor.
      *
-     * @param Messenger $messenger
-     * @param BroadcastDriver $broadcaster
-     * @param Dispatcher $dispatcher
-     * @param ProvidersRepository $providersRepository
-     * @param DatabaseManager $database
-     * @param FriendDriver $friends
+     * @param  Messenger  $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  Dispatcher  $dispatcher
+     * @param  ProvidersRepository  $providersRepository
+     * @param  DatabaseManager  $database
+     * @param  FriendDriver  $friends
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
@@ -78,9 +78,9 @@ class StoreManyParticipants extends ThreadParticipantAction
      * Store a collection of participants to a group, or restore
      * soft_deleted participants if already existed in trash.
      *
-     * @param Thread $thread
-     * @param array $providers
-     * @param bool $isNewGroup
+     * @param  Thread  $thread
+     * @param  array  $providers
+     * @param  bool  $isNewGroup
      * @return $this
      * @throws Throwable
      */
@@ -98,8 +98,8 @@ class StoreManyParticipants extends ThreadParticipantAction
     }
 
     /**
-     * @param Collection $providers
-     * @param bool $isNewGroup
+     * @param  Collection  $providers
+     * @param  bool  $isNewGroup
      * @return void
      * @throws Throwable
      */
@@ -116,8 +116,8 @@ class StoreManyParticipants extends ThreadParticipantAction
      * Execute all actions that must occur for
      * adding multiple participants to group.
      *
-     * @param Collection $providers
-     * @param bool $isNewGroup
+     * @param  Collection  $providers
+     * @param  bool  $isNewGroup
      */
     private function executeTransactions(Collection $providers, bool $isNewGroup): void
     {
@@ -139,8 +139,8 @@ class StoreManyParticipants extends ThreadParticipantAction
      * Locate valid providers given alias/id key value pairs, if any. Remove null
      * results and providers who are not friends with the master set provider.
      *
-     * @param array|null $providers
-     * @param bool $isNewGroup
+     * @param  array|null  $providers
+     * @param  bool  $isNewGroup
      * @return Collection
      */
     private function locateValidProviders(array $providers, bool $isNewGroup): Collection
@@ -160,7 +160,7 @@ class StoreManyParticipants extends ThreadParticipantAction
     }
 
     /**
-     * @param Collection $providers
+     * @param  Collection  $providers
      * @return Collection
      */
     private function rejectExistingParticipants(Collection $providers): Collection
@@ -171,8 +171,8 @@ class StoreManyParticipants extends ThreadParticipantAction
     }
 
     /**
-     * @param string $alias
-     * @param string $id
+     * @param  string  $alias
+     * @param  string  $id
      * @return MessengerProvider|null
      */
     private function getProvider(string $alias, string $id): ?MessengerProvider
@@ -181,8 +181,8 @@ class StoreManyParticipants extends ThreadParticipantAction
     }
 
     /**
-     * @param Collection $providers
-     * @param bool $isNewGroup
+     * @param  Collection  $providers
+     * @param  bool  $isNewGroup
      * @return Collection
      */
     private function storeManyParticipants(Collection $providers, bool $isNewGroup): Collection

@@ -14,11 +14,11 @@ class RenderBotAvatar
     /**
      * Render group avatar.
      *
-     * @param ImageRenderService $service
-     * @param Thread $thread
-     * @param Bot $bot
-     * @param string $size
-     * @param string $image
+     * @param  ImageRenderService  $service
+     * @param  Thread  $thread
+     * @param  Bot  $bot
+     * @param  string  $size
+     * @param  string  $image
      * @return StreamedResponse|BinaryFileResponse
      * @throws FileNotFoundException
      */

@@ -33,9 +33,9 @@ class StoreBotAction extends BaseMessengerAction
     /**
      * StoreBotAction constructor.
      *
-     * @param Messenger $messenger
-     * @param MessengerBots $bots
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  MessengerBots  $bots
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger,
                                 MessengerBots $bots,
@@ -47,9 +47,9 @@ class StoreBotAction extends BaseMessengerAction
     }
 
     /**
-     * @param Thread $thread
-     * @param Bot $bot
-     * @param array $params
+     * @param  Thread  $thread
+     * @param  Bot  $bot
+     * @param  array  $params
      * @return $this
      * @see MessengerBots::generateHandlerData()
      * @throws FeatureDisabledException|BotException
@@ -88,7 +88,7 @@ class StoreBotAction extends BaseMessengerAction
     }
 
     /**
-     * @param string $handler
+     * @param  string  $handler
      * @return bool
      * @throws BotException
      */
@@ -98,7 +98,7 @@ class StoreBotAction extends BaseMessengerAction
     }
 
     /**
-     * @param string $handler
+     * @param  string  $handler
      * @return bool
      */
     private function botHasHandler(string $handler): bool
@@ -110,7 +110,7 @@ class StoreBotAction extends BaseMessengerAction
     }
 
     /**
-     * @param array $params
+     * @param  array  $params
      * @return $this
      */
     private function storeBotAction(array $params): self

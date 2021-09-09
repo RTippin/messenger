@@ -30,9 +30,9 @@ abstract class BotAvatarAction extends BaseMessengerAction
     /**
      * BotAvatarAction constructor.
      *
-     * @param Messenger $messenger
-     * @param FileService $fileService
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  FileService  $fileService
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger,
                                 FileService $fileService,
@@ -69,7 +69,7 @@ abstract class BotAvatarAction extends BaseMessengerAction
     }
 
     /**
-     * @param string|null $avatar
+     * @param  string|null  $avatar
      * @return $this
      */
     protected function updateBotAvatar(?string $avatar): self

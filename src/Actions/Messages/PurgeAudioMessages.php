@@ -17,7 +17,7 @@ class PurgeAudioMessages extends BaseMessengerAction
     /**
      * PurgeAudioMessages constructor.
      *
-     * @param FileService $fileService
+     * @param  FileService  $fileService
      */
     public function __construct(FileService $fileService)
     {
@@ -29,7 +29,7 @@ class PurgeAudioMessages extends BaseMessengerAction
      * the file from storage, then force delete message itself
      * from database.
      *
-     * @param Collection $audioMessages
+     * @param  Collection  $audioMessages
      * @return $this
      */
     public function execute(Collection $audioMessages): self
@@ -40,7 +40,7 @@ class PurgeAudioMessages extends BaseMessengerAction
     }
 
     /**
-     * @param Message $audio
+     * @param  Message  $audio
      */
     private function purge(Message $audio): void
     {
@@ -50,7 +50,7 @@ class PurgeAudioMessages extends BaseMessengerAction
     }
 
     /**
-     * @param Message $audio
+     * @param  Message  $audio
      */
     private function destroyAudio(Message $audio): void
     {
@@ -60,7 +60,7 @@ class PurgeAudioMessages extends BaseMessengerAction
     }
 
     /**
-     * @param Message $audio
+     * @param  Message  $audio
      */
     private function destroyMessage(Message $audio): void
     {

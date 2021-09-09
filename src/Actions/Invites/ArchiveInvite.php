@@ -24,8 +24,8 @@ class ArchiveInvite extends InviteAction
     /**
      * ArchiveInvite constructor.
      *
-     * @param Messenger $messenger
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger, Dispatcher $dispatcher)
     {
@@ -35,7 +35,7 @@ class ArchiveInvite extends InviteAction
     }
 
     /**
-     * @param Invite $invite
+     * @param  Invite  $invite
      * @return $this
      * @throws Exception|FeatureDisabledException
      */

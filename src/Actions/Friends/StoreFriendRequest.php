@@ -58,11 +58,11 @@ class StoreFriendRequest extends BaseMessengerAction
     /**
      * StoreFriendRequest constructor.
      *
-     * @param Messenger $messenger
-     * @param ProvidersRepository $providersRepository
-     * @param BroadcastDriver $broadcaster
-     * @param Dispatcher $dispatcher
-     * @param FriendDriver $friends
+     * @param  Messenger  $messenger
+     * @param  ProvidersRepository  $providersRepository
+     * @param  BroadcastDriver  $broadcaster
+     * @param  Dispatcher  $dispatcher
+     * @param  FriendDriver  $friends
      */
     public function __construct(Messenger $messenger,
                                 ProvidersRepository $providersRepository,
@@ -80,7 +80,7 @@ class StoreFriendRequest extends BaseMessengerAction
     /**
      * Store our new sent friend request and notify the recipient!
      *
-     * @param array $params
+     * @param  array  $params
      * @return $this
      * @see FriendRequest
      * @throws FriendException|ProviderNotFoundException
@@ -103,8 +103,8 @@ class StoreFriendRequest extends BaseMessengerAction
     }
 
     /**
-     * @param string $alias
-     * @param string $id
+     * @param  string  $alias
+     * @param  string  $id
      */
     private function locateAndSetRecipientProvider(string $alias, string $id): void
     {

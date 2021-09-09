@@ -23,8 +23,8 @@ class BotActionFailedEvent
     /**
      * Create a new event instance.
      *
-     * @param BotAction $action
-     * @param Throwable $exception
+     * @param  BotAction  $action
+     * @param  Throwable  $exception
      */
     public function __construct(BotAction $action, Throwable $exception)
     {

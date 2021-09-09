@@ -29,8 +29,8 @@ class DocumentMessageController extends Controller
     /**
      * Display a listing of the most recent document files.
      *
-     * @param DocumentMessageRepository $repository
-     * @param Thread $thread
+     * @param  DocumentMessageRepository  $repository
+     * @param  Thread  $thread
      * @return DocumentMessageCollection
      * @throws AuthorizationException
      */
@@ -50,9 +50,9 @@ class DocumentMessageController extends Controller
     /**
      * Display document history pagination.
      *
-     * @param DocumentMessageRepository $repository
-     * @param Thread $thread
-     * @param Message $document
+     * @param  DocumentMessageRepository  $repository
+     * @param  Thread  $thread
+     * @param  Message  $document
      * @return DocumentMessageCollection
      * @throws AuthorizationException
      */
@@ -76,9 +76,9 @@ class DocumentMessageController extends Controller
     /**
      * Upload a new document file message.
      *
-     * @param DocumentMessageRequest $request
-     * @param StoreDocumentMessage $storeDocumentMessage
-     * @param Thread $thread
+     * @param  DocumentMessageRequest  $request
+     * @param  StoreDocumentMessage  $storeDocumentMessage
+     * @param  Thread  $thread
      * @return MessageResource
      * @throws AuthorizationException|Throwable
      */

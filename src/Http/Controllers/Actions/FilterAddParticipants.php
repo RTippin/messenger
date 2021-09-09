@@ -13,8 +13,8 @@ class FilterAddParticipants
     use AuthorizesRequests;
 
     /**
-     * @param FriendDriver $repository
-     * @param Thread $thread
+     * @param  FriendDriver  $repository
+     * @param  Thread  $thread
      * @return FriendCollection
      * @throws AuthorizationException
      */

@@ -54,7 +54,7 @@ interface Action
      * Chain many actions together! Defaults to disabling DB
      * transactions and added events per Action class.
      *
-     * @param string|Action $abstractAction
+     * @param  string|Action  $abstractAction
      * @return Action
      * @throws LogicException
      */
@@ -93,7 +93,7 @@ interface Action
     /**
      * Get the raw data response from what the action is working with.
      *
-     * @param bool $withoutRelations
+     * @param  bool  $withoutRelations
      * @return Model|mixed
      */
     public function getData(bool $withoutRelations = false);
@@ -107,13 +107,13 @@ interface Action
     /**
      * Get the thread model the action may be holding.
      *
-     * @param bool $withoutRelations
+     * @param  bool  $withoutRelations
      * @return Thread|null
      */
     public function getThread(bool $withoutRelations = false): ?Thread;
 
     /**
-     * @param ?Thread $thread
+     * @param  ?Thread  $thread
      * @return $this
      */
     public function setThread(?Thread $thread = null);
@@ -121,13 +121,13 @@ interface Action
     /**
      * Get the participant model the action may be holding.
      *
-     * @param false $withoutRelations
+     * @param  false  $withoutRelations
      * @return Participant|null
      */
     public function getParticipant(bool $withoutRelations = false): ?Participant;
 
     /**
-     * @param Participant|null $participant
+     * @param  Participant|null  $participant
      * @return $this
      */
     public function setParticipant(?Participant $participant = null): self;
@@ -135,13 +135,13 @@ interface Action
     /**
      * Get the call participant model the action may be holding.
      *
-     * @param false $withoutRelations
+     * @param  false  $withoutRelations
      * @return CallParticipant|null
      */
     public function getCallParticipant(bool $withoutRelations = false): ?CallParticipant;
 
     /**
-     * @param CallParticipant|null $participant
+     * @param  CallParticipant|null  $participant
      * @return $this
      */
     public function setCallParticipant(?CallParticipant $participant = null): self;
@@ -149,13 +149,13 @@ interface Action
     /**
      * Get the message model the action may be holding.
      *
-     * @param false $withoutRelations
+     * @param  false  $withoutRelations
      * @return Message|null
      */
     public function getMessage(bool $withoutRelations = false): ?Message;
 
     /**
-     * @param Message|null $message
+     * @param  Message|null  $message
      * @return $this
      */
     public function setMessage(?Message $message = null): self;
@@ -163,13 +163,13 @@ interface Action
     /**
      * Get the call model the action may be holding.
      *
-     * @param bool $withoutRelations
+     * @param  bool  $withoutRelations
      * @return Call|null
      */
     public function getCall(bool $withoutRelations = false): ?Call;
 
     /**
-     * @param ?Call $call
+     * @param  ?Call  $call
      * @return $this
      */
     public function setCall(?Call $call = null);
@@ -177,13 +177,13 @@ interface Action
     /**
      * Get the bot model the action may be holding.
      *
-     * @param bool $withoutRelations
+     * @param  bool  $withoutRelations
      * @return Bot|null
      */
     public function getBot(bool $withoutRelations = false): ?Bot;
 
     /**
-     * @param ?Bot $bot
+     * @param  ?Bot  $bot
      * @return $this
      */
     public function setBot(?Bot $bot = null);
@@ -191,13 +191,13 @@ interface Action
     /**
      * Get the bot action model the action may be holding.
      *
-     * @param bool $withoutRelations
+     * @param  bool  $withoutRelations
      * @return BotAction|null
      */
     public function getBotAction(bool $withoutRelations = false): ?BotAction;
 
     /**
-     * @param BotAction|null $botAction
+     * @param  BotAction|null  $botAction
      * @return mixed
      */
     public function setBotAction(?BotAction $botAction = null);

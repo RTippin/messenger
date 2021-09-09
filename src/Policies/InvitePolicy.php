@@ -20,7 +20,7 @@ class InvitePolicy
     /**
      * InvitePolicy constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -31,7 +31,7 @@ class InvitePolicy
      * Determine whether the provider can view thread invites.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function viewAny($user, Thread $thread): Response
@@ -45,7 +45,7 @@ class InvitePolicy
      * Determine whether the provider can create a thread invite.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function create($user, Thread $thread): Response
@@ -64,7 +64,7 @@ class InvitePolicy
      * Determine whether the provider can delete the invite.
      *
      * @param $user
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Response
      */
     public function delete($user, Thread $thread): Response
@@ -78,7 +78,7 @@ class InvitePolicy
      * Determine whether the provider can join using the invite.
      *
      * @param $user
-     * @param Invite $code
+     * @param  Invite  $code
      * @return Response
      */
     public function join($user, Invite $code): Response

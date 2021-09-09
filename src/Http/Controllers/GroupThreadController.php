@@ -28,7 +28,7 @@ class GroupThreadController
     /**
      * Display a listing of the most recent group threads.
      *
-     * @param GroupThreadRepository $repository
+     * @param  GroupThreadRepository  $repository
      * @return GroupThreadCollection
      * @throws AuthorizationException
      */
@@ -44,8 +44,8 @@ class GroupThreadController
     /**
      * Display group threads history pagination.
      *
-     * @param GroupThreadRepository $repository
-     * @param Thread $group
+     * @param  GroupThreadRepository  $repository
+     * @param  Thread  $group
      * @return GroupThreadCollection
      * @throws AuthorizationException
      */
@@ -63,7 +63,7 @@ class GroupThreadController
     /**
      * Display group thread settings.
      *
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return ThreadSettingsResource
      * @throws AuthorizationException
      */
@@ -77,9 +77,9 @@ class GroupThreadController
     /**
      * Update the group settings.
      *
-     * @param ThreadSettingsRequest $request
-     * @param UpdateGroupSettings $updateGroupSettings
-     * @param Thread $thread
+     * @param  ThreadSettingsRequest  $request
+     * @param  UpdateGroupSettings  $updateGroupSettings
+     * @param  Thread  $thread
      * @return ThreadSettingsResource
      * @throws AuthorizationException
      */
@@ -98,9 +98,9 @@ class GroupThreadController
     /**
      * Store the group avatar.
      *
-     * @param GroupAvatarRequest $request
-     * @param StoreGroupAvatar $storeGroupAvatar
-     * @param Thread $thread
+     * @param  GroupAvatarRequest  $request
+     * @param  StoreGroupAvatar  $storeGroupAvatar
+     * @param  Thread  $thread
      * @return ThreadSettingsResource
      * @throws FeatureDisabledException|AuthorizationException
      */
@@ -119,8 +119,8 @@ class GroupThreadController
     /**
      * Remove the group avatar.
      *
-     * @param DestroyGroupAvatar $destroyGroupAvatar
-     * @param Thread $thread
+     * @param  DestroyGroupAvatar  $destroyGroupAvatar
+     * @param  Thread  $thread
      * @return ThreadSettingsResource
      * @throws AuthorizationException|FeatureDisabledException
      */
@@ -134,8 +134,8 @@ class GroupThreadController
     /**
      * Store a new group thread.
      *
-     * @param GroupThreadRequest $request
-     * @param StoreGroupThread $storeGroupThread
+     * @param  GroupThreadRequest  $request
+     * @param  StoreGroupThread  $storeGroupThread
      * @return ThreadResource
      * @throws Throwable
      */
@@ -151,8 +151,8 @@ class GroupThreadController
     /**
      * Leave a group thread.
      *
-     * @param LeaveThread $leaveThread
-     * @param Thread $thread
+     * @param  LeaveThread  $leaveThread
+     * @param  Thread  $thread
      * @return JsonResponse
      * @throws AuthorizationException|Throwable
      */

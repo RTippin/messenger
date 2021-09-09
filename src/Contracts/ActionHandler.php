@@ -60,12 +60,12 @@ interface ActionHandler
     /**
      * Sets the relevant data used when processing a handler from a message trigger.
      *
-     * @param Thread $thread
-     * @param BotAction $action
-     * @param Message $message
-     * @param string|null $matchingTrigger
-     * @param bool $isGroupAdmin
-     * @param string|null $senderIp
+     * @param  Thread  $thread
+     * @param  BotAction  $action
+     * @param  Message  $message
+     * @param  string|null  $matchingTrigger
+     * @param  bool  $isGroupAdmin
+     * @param  string|null  $senderIp
      * @return $this
      */
     public function setDataForMessage(Thread $thread,
@@ -109,7 +109,7 @@ interface ActionHandler
     /**
      * If storing payload data, return the json encoded string.
      *
-     * @param array|null $payload
+     * @param  array|null  $payload
      * @return string|null
      */
     public function serializePayload(?array $payload): ?string;
@@ -117,7 +117,7 @@ interface ActionHandler
     /**
      * Decode the actions payload.
      *
-     * @param string|null $key
+     * @param  string|null  $key
      * @return array|string|null
      */
     public function getPayload(?string $key = null);
@@ -126,7 +126,7 @@ interface ActionHandler
      * Helper method to globally set testing for action handlers. Allows
      * extended handlers to configure different paths when testing.
      *
-     * @param bool|null $testing
+     * @param  bool|null  $testing
      * @return bool
      */
     public static function isTesting(?bool $testing = null): bool;

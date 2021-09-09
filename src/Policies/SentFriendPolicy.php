@@ -19,7 +19,7 @@ class SentFriendPolicy
     /**
      * SentFriendPolicy constructor.
      *
-     * @param Messenger $service
+     * @param  Messenger  $service
      */
     public function __construct(Messenger $service)
     {
@@ -43,7 +43,7 @@ class SentFriendPolicy
      * Determine whether the provider can view the sent friend request.
      *
      * @param $user
-     * @param SentFriend $sent
+     * @param  SentFriend  $sent
      * @return Response
      */
     public function view($user, SentFriend $sent): Response
@@ -72,7 +72,7 @@ class SentFriendPolicy
      * Determine whether the provider can cancel sent friend request.
      *
      * @param $user
-     * @param SentFriend $sent
+     * @param  SentFriend  $sent
      * @return Response
      */
     public function delete($user, SentFriend $sent): Response

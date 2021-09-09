@@ -15,8 +15,8 @@ class MuteThread
     /**
      * Mute the thread to stop further notifications/updates.
      *
-     * @param MuteThreadAction $muteThread
-     * @param Thread $thread
+     * @param  MuteThreadAction  $muteThread
+     * @param  Thread  $thread
      * @return JsonResponse
      * @throws AuthorizationException
      */

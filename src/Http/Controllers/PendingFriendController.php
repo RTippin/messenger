@@ -22,7 +22,7 @@ class PendingFriendController
     /**
      * Display a listing of the providers pending friends.
      *
-     * @param FriendDriver $repository
+     * @param  FriendDriver  $repository
      * @return PendingFriendCollection
      * @throws AuthorizationException
      */
@@ -38,7 +38,7 @@ class PendingFriendController
     /**
      * Display the pending friend.
      *
-     * @param PendingFriend $pending
+     * @param  PendingFriend  $pending
      * @return PendingFriendResource
      * @throws AuthorizationException
      */
@@ -52,8 +52,8 @@ class PendingFriendController
     /**
      * Accept the pending friend request.
      *
-     * @param AcceptFriendRequest $acceptFriendRequest
-     * @param PendingFriend $pending
+     * @param  AcceptFriendRequest  $acceptFriendRequest
+     * @param  PendingFriend  $pending
      * @return FriendResource
      * @throws Throwable|AuthorizationException
      */
@@ -68,8 +68,8 @@ class PendingFriendController
     /**
      * Deny the pending friend request.
      *
-     * @param DenyFriendRequest $denyFriendRequest
-     * @param PendingFriend $pending
+     * @param  DenyFriendRequest  $denyFriendRequest
+     * @param  PendingFriend  $pending
      * @return ProviderResource
      * @throws Exception|AuthorizationException
      */

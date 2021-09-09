@@ -32,9 +32,9 @@ class RemoveParticipant extends BaseMessengerAction
     /**
      * RemoveParticipant constructor.
      *
-     * @param Messenger $messenger
-     * @param BroadcastDriver $broadcaster
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
@@ -48,8 +48,8 @@ class RemoveParticipant extends BaseMessengerAction
     /**
      * Remove the participant from the group.
      *
-     * @param Thread $thread
-     * @param Participant $participant
+     * @param  Thread  $thread
+     * @param  Participant  $participant
      * @return $this
      * @throws Exception
      */

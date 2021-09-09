@@ -28,7 +28,7 @@ class CallsActivityCheckCommand extends Command
     /**
      * Execute the console command.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      * @return void
      */
     public function handle(Messenger $messenger): void
@@ -56,7 +56,7 @@ class CallsActivityCheckCommand extends Command
     }
 
     /**
-     * @param Collection $calls
+     * @param  Collection  $calls
      * @return void
      */
     private function dispatchJob(Collection $calls): void

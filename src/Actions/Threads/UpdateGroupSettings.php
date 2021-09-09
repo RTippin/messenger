@@ -38,9 +38,9 @@ class UpdateGroupSettings extends BaseMessengerAction
     /**
      * UpdateGroupSettings constructor.
      *
-     * @param Messenger $messenger
-     * @param BroadcastDriver $broadcaster
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
@@ -56,8 +56,8 @@ class UpdateGroupSettings extends BaseMessengerAction
      * changes over the presence channel and an event for when
      * the group name changes.
      *
-     * @param Thread $thread
-     * @param array $params
+     * @param  Thread  $thread
+     * @param  array  $params
      * @return $this
      * @see ThreadSettingsRequest
      */
@@ -74,7 +74,7 @@ class UpdateGroupSettings extends BaseMessengerAction
     }
 
     /**
-     * @param array $attributes
+     * @param  array  $attributes
      * @return $this
      */
     private function updateThread(array $attributes): self
@@ -91,7 +91,7 @@ class UpdateGroupSettings extends BaseMessengerAction
     }
 
     /**
-     * @param string $name
+     * @param  string  $name
      * @return $this
      */
     private function determineIfGroupNameChanged(string $name): self

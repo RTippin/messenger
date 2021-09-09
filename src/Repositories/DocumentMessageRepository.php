@@ -18,7 +18,7 @@ class DocumentMessageRepository
     /**
      * DocumentMessageRepository constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -26,7 +26,7 @@ class DocumentMessageRepository
     }
 
     /**
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Collection
      */
     public function getThreadDocumentsIndex(Thread $thread): Collection
@@ -40,8 +40,8 @@ class DocumentMessageRepository
     }
 
     /**
-     * @param Thread $thread
-     * @param Message $message
+     * @param  Thread  $thread
+     * @param  Message  $message
      * @return Collection
      */
     public function getThreadDocumentsPage(Thread $thread, Message $message): Collection

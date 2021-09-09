@@ -28,9 +28,9 @@ class ThreadSettingsEvent
     /**
      * Create a new event instance.
      *
-     * @param MessengerProvider $provider
-     * @param Thread $thread
-     * @param bool $nameChanged
+     * @param  MessengerProvider  $provider
+     * @param  Thread  $thread
+     * @param  bool  $nameChanged
      */
     public function __construct(MessengerProvider $provider,
                                 Thread $thread,

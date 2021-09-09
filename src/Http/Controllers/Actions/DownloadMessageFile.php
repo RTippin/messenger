@@ -27,8 +27,8 @@ class DownloadMessageFile
     /**
      * DownloadMessageFile constructor.
      *
-     * @param Messenger $messenger
-     * @param FilesystemManager $filesystemManager
+     * @param  Messenger  $messenger
+     * @param  FilesystemManager  $filesystemManager
      */
     public function __construct(Messenger $messenger, FilesystemManager $filesystemManager)
     {
@@ -39,9 +39,9 @@ class DownloadMessageFile
     /**
      * Download message document.
      *
-     * @param Thread $thread
-     * @param Message $message
-     * @param string $file
+     * @param  Thread  $thread
+     * @param  Message  $message
+     * @param  string  $file
      * @return StreamedResponse
      * @throws FileNotFoundException
      */
@@ -57,8 +57,8 @@ class DownloadMessageFile
     }
 
     /**
-     * @param Message $message
-     * @param string $fileNameChallenge
+     * @param  Message  $message
+     * @param  string  $fileNameChallenge
      * @return void
      */
     private function bailIfFileDoesntExist(Message $message, string $fileNameChallenge): void

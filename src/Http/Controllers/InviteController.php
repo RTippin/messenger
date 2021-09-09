@@ -25,7 +25,7 @@ class InviteController
     /**
      * Display all invites for the group thread.
      *
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return InviteCollection
      * @throws AuthorizationException
      */
@@ -49,9 +49,9 @@ class InviteController
     /**
      * Store a new group invite.
      *
-     * @param InviteRequest $request
-     * @param StoreInvite $storeInvite
-     * @param Thread $thread
+     * @param  InviteRequest  $request
+     * @param  StoreInvite  $storeInvite
+     * @param  Thread  $thread
      * @return InviteResource
      * @throws AuthorizationException
      */
@@ -73,7 +73,7 @@ class InviteController
     /**
      * Show the invite without owner. This is for public consumption.
      *
-     * @param Invite $invite
+     * @param  Invite  $invite
      * @return InviteResource
      */
     public function show(Invite $invite): InviteResource
@@ -84,10 +84,10 @@ class InviteController
     /**
      * Render invites group avatar.
      *
-     * @param ImageRenderService $service
-     * @param Invite $invite
-     * @param string $size
-     * @param string $image
+     * @param  ImageRenderService  $service
+     * @param  Invite  $invite
+     * @param  string  $size
+     * @param  string  $image
      * @return StreamedResponse|BinaryFileResponse
      * @throws AuthorizationException
      * @throws FileNotFoundException
@@ -107,9 +107,9 @@ class InviteController
     /**
      * Remove the group invite.
      *
-     * @param ArchiveInvite $archiveInvite
-     * @param Thread $thread
-     * @param Invite $invite
+     * @param  ArchiveInvite  $archiveInvite
+     * @param  Thread  $thread
+     * @param  Invite  $invite
      * @return JsonResponse
      * @throws AuthorizationException|Exception
      */

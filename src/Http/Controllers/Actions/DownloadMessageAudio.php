@@ -29,8 +29,8 @@ class DownloadMessageAudio
     /**
      * DownloadMessageAudio constructor.
      *
-     * @param Messenger $messenger
-     * @param FilesystemManager $filesystemManager
+     * @param  Messenger  $messenger
+     * @param  FilesystemManager  $filesystemManager
      */
     public function __construct(Messenger $messenger, FilesystemManager $filesystemManager)
     {
@@ -41,10 +41,10 @@ class DownloadMessageAudio
     /**
      * Stream or download message audio.
      *
-     * @param Request $request
-     * @param Thread $thread
-     * @param Message $message
-     * @param string $audio
+     * @param  Request  $request
+     * @param  Thread  $thread
+     * @param  Message  $message
+     * @param  string  $audio
      * @return BinaryFileResponse|StreamedResponse
      * @throws FileNotFoundException
      */
@@ -61,7 +61,7 @@ class DownloadMessageAudio
     }
 
     /**
-     * @param Message $message
+     * @param  Message  $message
      * @return StreamedResponse
      */
     private function downloadResponse(Message $message): StreamedResponse
@@ -72,7 +72,7 @@ class DownloadMessageAudio
     }
 
     /**
-     * @param Message $message
+     * @param  Message  $message
      * @return BinaryFileResponse
      */
     private function streamResponse(Message $message): BinaryFileResponse
@@ -89,8 +89,8 @@ class DownloadMessageAudio
     }
 
     /**
-     * @param Message $message
-     * @param string $audioNameChallenge
+     * @param  Message  $message
+     * @param  string  $audioNameChallenge
      * @return void
      * @throws FileNotFoundException
      */

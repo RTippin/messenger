@@ -18,7 +18,7 @@ class ThreadRepository
     /**
      * ThreadRepository constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -42,7 +42,7 @@ class ThreadRepository
     }
 
     /**
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return Collection
      */
     public function getProviderThreadsPage(Thread $thread): Collection

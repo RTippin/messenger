@@ -32,9 +32,9 @@ class ArchiveMessage extends BaseMessengerAction
     /**
      * ArchiveMessage constructor.
      *
-     * @param Messenger $messenger
-     * @param BroadcastDriver $broadcaster
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
@@ -48,8 +48,8 @@ class ArchiveMessage extends BaseMessengerAction
     /**
      * Archive the message.
      *
-     * @param Thread $thread
-     * @param Message $message
+     * @param  Thread  $thread
+     * @param  Message  $message
      * @return $this
      * @throws Exception
      */

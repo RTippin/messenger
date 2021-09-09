@@ -22,8 +22,8 @@ class ReactionRemovedEvent
     /**
      * Create a new event instance.
      *
-     * @param MessengerProvider $provider
-     * @param array $reaction
+     * @param  MessengerProvider  $provider
+     * @param  array  $reaction
      */
     public function __construct(MessengerProvider $provider, array $reaction)
     {

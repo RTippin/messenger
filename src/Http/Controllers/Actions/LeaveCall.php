@@ -16,9 +16,9 @@ class LeaveCall
     /**
      * Leave the call.
      *
-     * @param LeaveCallAction $leaveCall
-     * @param Thread $thread
-     * @param Call $call
+     * @param  LeaveCallAction  $leaveCall
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return JsonResponse
      * @throws AuthorizationException
      */

@@ -23,7 +23,7 @@ abstract class NewThreadAction extends BaseMessengerAction
     /**
      * NewThreadAction constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -33,7 +33,7 @@ abstract class NewThreadAction extends BaseMessengerAction
     /**
      * Store a fresh new thread.
      *
-     * @param array $attributes
+     * @param  array  $attributes
      * @return $this
      */
     protected function storeThread(array $attributes = []): self

@@ -8,7 +8,7 @@ use RTippin\Messenger\Models\Bot;
 class DestroyBotAvatar extends BotAvatarAction
 {
     /**
-     * @param Bot $bot
+     * @param  Bot  $bot
      * @return $this
      * @throws FeatureDisabledException
      */

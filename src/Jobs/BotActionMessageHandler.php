@@ -24,7 +24,7 @@ class BotActionMessageHandler extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param ProcessMessageTriggers $process
+     * @param  ProcessMessageTriggers  $process
      * @return void
      * @throws FeatureDisabledException
      */

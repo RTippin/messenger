@@ -17,7 +17,7 @@ class CallBrokerTeardown extends BaseMessengerAction
     /**
      * CallBrokerTeardown constructor.
      *
-     * @param VideoDriver $videoDriver
+     * @param  VideoDriver  $videoDriver
      */
     public function __construct(VideoDriver $videoDriver)
     {
@@ -27,7 +27,7 @@ class CallBrokerTeardown extends BaseMessengerAction
     /**
      * Teardown the call with the video provider.
      *
-     * @param Call $call
+     * @param  Call  $call
      * @return $this
      * @throws CallBrokerException
      */

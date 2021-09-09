@@ -11,8 +11,8 @@ abstract class ThreadParticipantAction extends BaseMessengerAction
     /**
      * Store a fresh new participant.
      *
-     * @param MessengerProvider $provider
-     * @param array $attributes
+     * @param  MessengerProvider  $provider
+     * @param  array  $attributes
      * @return $this
      */
     protected function storeParticipant(MessengerProvider $provider, array $attributes = []): self
@@ -33,7 +33,7 @@ abstract class ThreadParticipantAction extends BaseMessengerAction
     /**
      * Store or restore a group participant.
      *
-     * @param MessengerProvider $provider
+     * @param  MessengerProvider  $provider
      * @return $this
      */
     protected function storeOrRestoreParticipant(MessengerProvider $provider): self
@@ -58,8 +58,8 @@ abstract class ThreadParticipantAction extends BaseMessengerAction
     }
 
     /**
-     * @param Participant $participant
-     * @param array $attributes
+     * @param  Participant  $participant
+     * @param  array  $attributes
      * @return $this
      */
     protected function updateParticipant(Participant $participant, array $attributes): self

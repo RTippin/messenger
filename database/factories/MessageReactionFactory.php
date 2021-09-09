@@ -42,7 +42,7 @@ class MessageReactionFactory extends Factory
     /**
      * Set the message reaction.
      *
-     * @param string $reaction
+     * @param  string  $reaction
      * @return Factory
      */
     public function reaction(string $reaction): Factory

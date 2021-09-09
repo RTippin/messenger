@@ -71,9 +71,9 @@ abstract class NewMessageAction extends BaseMessengerAction
     /**
      * NewMessageAction constructor.
      *
-     * @param BroadcastDriver $broadcaster
-     * @param DatabaseManager $database
-     * @param Dispatcher $dispatcher
+     * @param  BroadcastDriver  $broadcaster
+     * @param  DatabaseManager  $database
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(BroadcastDriver $broadcaster,
                                 DatabaseManager $database,
@@ -85,7 +85,7 @@ abstract class NewMessageAction extends BaseMessengerAction
     }
 
     /**
-     * @param int $type
+     * @param  int  $type
      * @return $this
      */
     protected function setMessageType(int $type): self
@@ -96,7 +96,7 @@ abstract class NewMessageAction extends BaseMessengerAction
     }
 
     /**
-     * @param string|null $body
+     * @param  string|null  $body
      * @return $this
      */
     protected function setMessageBody(?string $body): self
@@ -107,7 +107,7 @@ abstract class NewMessageAction extends BaseMessengerAction
     }
 
     /**
-     * @param array $parameters
+     * @param  array  $parameters
      * @return $this
      * @see BaseMessageRequest
      */
@@ -123,7 +123,7 @@ abstract class NewMessageAction extends BaseMessengerAction
     }
 
     /**
-     * @param MessengerProvider $owner
+     * @param  MessengerProvider  $owner
      * @return $this
      */
     protected function setMessageOwner(MessengerProvider $owner): self
@@ -134,7 +134,7 @@ abstract class NewMessageAction extends BaseMessengerAction
     }
 
     /**
-     * @param string|null $senderIp
+     * @param  string|null  $senderIp
      * @return $this
      */
     protected function setSenderIp(?string $senderIp): self
@@ -222,7 +222,7 @@ abstract class NewMessageAction extends BaseMessengerAction
     }
 
     /**
-     * @param string|null $replyToId
+     * @param  string|null  $replyToId
      */
     private function setReplyingToMessage(?string $replyToId): void
     {

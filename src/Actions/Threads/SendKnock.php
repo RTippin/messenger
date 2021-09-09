@@ -34,9 +34,9 @@ class SendKnock extends BaseMessengerAction
     /**
      * SendKnock constructor.
      *
-     * @param Messenger $messenger
-     * @param BroadcastDriver $broadcaster
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
@@ -50,7 +50,7 @@ class SendKnock extends BaseMessengerAction
     /**
      * Send a nice KNOCK to the thread!
      *
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return $this
      * @throws FeatureDisabledException|KnockException
      */

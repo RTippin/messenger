@@ -17,7 +17,7 @@ class FriendDeniedEvent
     /**
      * Create a new event instance.
      *
-     * @param PendingFriend $friend
+     * @param  PendingFriend  $friend
      */
     public function __construct(PendingFriend $friend)
     {

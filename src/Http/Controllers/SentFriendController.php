@@ -23,7 +23,7 @@ class SentFriendController
     /**
      * Display a listing of the providers sent friend request.
      *
-     * @param FriendDriver $repository
+     * @param  FriendDriver  $repository
      * @return SentFriendCollection
      * @throws AuthorizationException
      */
@@ -39,8 +39,8 @@ class SentFriendController
     /**
      * Store a new friend request.
      *
-     * @param FriendRequest $request
-     * @param StoreFriendRequest $storeFriendRequest
+     * @param  FriendRequest  $request
+     * @param  StoreFriendRequest  $storeFriendRequest
      * @return SentFriendResource
      * @throws AuthorizationException|NotFoundHttpException|FriendException
      */
@@ -56,7 +56,7 @@ class SentFriendController
     /**
      * Display the sent friend request.
      *
-     * @param SentFriend $sent
+     * @param  SentFriend  $sent
      * @return SentFriendResource
      * @throws AuthorizationException
      */
@@ -70,8 +70,8 @@ class SentFriendController
     /**
      * Cancel the sent friend request.
      *
-     * @param CancelFriendRequest $cancelFriendRequest
-     * @param SentFriend $sent
+     * @param  CancelFriendRequest  $cancelFriendRequest
+     * @param  SentFriend  $sent
      * @return ProviderResource
      * @throws Exception|AuthorizationException
      */

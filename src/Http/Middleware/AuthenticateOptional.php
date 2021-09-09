@@ -16,9 +16,9 @@ class AuthenticateOptional extends Middleware
     /**
      * Handle an incoming request.
      *
-     * @param Request $request
-     * @param Closure $next
-     * @param string[] ...$guards
+     * @param  Request  $request
+     * @param  Closure  $next
+     * @param  string[]  ...$guards
      * @return mixed
      */
     public function handle($request, Closure $next, ...$guards)
@@ -35,7 +35,7 @@ class AuthenticateOptional extends Middleware
     /**
      * Get the path the user should be redirected to when they are not authenticated.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return RedirectResponse|void
      */
     protected function redirectTo($request)

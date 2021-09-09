@@ -19,7 +19,7 @@ class PendingFriendPolicy
     /**
      * PendingFriendPolicy constructor.
      *
-     * @param Messenger $service
+     * @param  Messenger  $service
      */
     public function __construct(Messenger $service)
     {
@@ -43,7 +43,7 @@ class PendingFriendPolicy
      * Determine whether the provider can view the pending friend.
      *
      * @param $user
-     * @param PendingFriend $pending
+     * @param  PendingFriend  $pending
      * @return Response
      */
     public function view($user, PendingFriend $pending): Response
@@ -59,7 +59,7 @@ class PendingFriendPolicy
      * Determine whether the provider can accept the pending friend.
      *
      * @param $user
-     * @param PendingFriend $pending
+     * @param  PendingFriend  $pending
      * @return Response
      */
     public function update($user, PendingFriend $pending): Response
@@ -75,7 +75,7 @@ class PendingFriendPolicy
      * Determine whether the provider can deny the pending friend.
      *
      * @param $user
-     * @param PendingFriend $pending
+     * @param  PendingFriend  $pending
      * @return Response
      */
     public function delete($user, PendingFriend $pending): Response

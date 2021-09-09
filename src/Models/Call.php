@@ -129,7 +129,7 @@ class Call extends Model implements HasPresenceChannel, Ownerable
     /**
      * Scope a query for only video calls.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeVideoCall(Builder $query): Builder
@@ -140,7 +140,7 @@ class Call extends Model implements HasPresenceChannel, Ownerable
     /**
      * Scope a query for only video calls.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeActive(Builder $query): Builder
@@ -149,8 +149,8 @@ class Call extends Model implements HasPresenceChannel, Ownerable
     }
 
     /**
-     * @param Builder $query
-     * @param MessengerProvider $provider
+     * @param  Builder  $query
+     * @param  MessengerProvider  $provider
      * @return Builder
      */
     public function scopeHasProvider(Builder $query, MessengerProvider $provider): Builder
@@ -202,7 +202,7 @@ class Call extends Model implements HasPresenceChannel, Ownerable
     }
 
     /**
-     * @param Thread|null $thread
+     * @param  Thread|null  $thread
      * @return bool
      */
     public function isGroupCall(?Thread $thread = null): bool
@@ -213,7 +213,7 @@ class Call extends Model implements HasPresenceChannel, Ownerable
     }
 
     /**
-     * @param Thread|null $thread
+     * @param  Thread|null  $thread
      * @return string|null
      */
     public function name(?Thread $thread = null): ?string
@@ -237,7 +237,7 @@ class Call extends Model implements HasPresenceChannel, Ownerable
     }
 
     /**
-     * @param Thread|null $thread
+     * @param  Thread|null  $thread
      * @return bool
      */
     public function isCallAdmin(?Thread $thread = null): bool

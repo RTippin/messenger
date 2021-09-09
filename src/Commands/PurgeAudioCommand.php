@@ -57,7 +57,7 @@ class PurgeAudioCommand extends Command
     }
 
     /**
-     * @param Collection $audioFiles
+     * @param  Collection  $audioFiles
      * @return void
      */
     private function dispatchJob(Collection $audioFiles): void

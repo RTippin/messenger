@@ -22,8 +22,8 @@ class FriendRemovedEvent
     /**
      * Create a new event instance.
      *
-     * @param Friend $friend
-     * @param Friend|null $inverseFriend
+     * @param  Friend  $friend
+     * @param  Friend|null  $inverseFriend
      */
     public function __construct(Friend $friend, ?Friend $inverseFriend)
     {

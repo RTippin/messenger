@@ -9,7 +9,7 @@ class KnockException extends AuthorizationException
     /**
      * KnockException constructor.
      *
-     * @param string $message
+     * @param  string  $message
      */
     public function __construct(string $message = 'Knock knock denied.')
     {

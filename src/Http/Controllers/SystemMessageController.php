@@ -16,8 +16,8 @@ class SystemMessageController
     /**
      * Display a listing of the most recent system messages.
      *
-     * @param SystemMessageRepository $repository
-     * @param Thread $thread
+     * @param  SystemMessageRepository  $repository
+     * @param  Thread  $thread
      * @return SystemMessageCollection
      * @throws AuthorizationException
      */
@@ -37,9 +37,9 @@ class SystemMessageController
     /**
      * Display system message history pagination.
      *
-     * @param SystemMessageRepository $repository
-     * @param Thread $thread
-     * @param Message $log
+     * @param  SystemMessageRepository  $repository
+     * @param  Thread  $thread
+     * @param  Message  $log
      * @return SystemMessageCollection
      * @throws AuthorizationException
      */

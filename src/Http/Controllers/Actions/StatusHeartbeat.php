@@ -12,9 +12,9 @@ class StatusHeartbeat
     /**
      * Update providers online cache state.
      *
-     * @param StatusHeartbeatRequest $request
-     * @param Messenger $messenger
-     * @param OnlineStatus $onlineStatus
+     * @param  StatusHeartbeatRequest  $request
+     * @param  Messenger  $messenger
+     * @param  OnlineStatus  $onlineStatus
      * @return ProviderStatusResource
      */
     public function __invoke(StatusHeartbeatRequest $request,

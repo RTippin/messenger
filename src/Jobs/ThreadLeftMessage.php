@@ -17,7 +17,7 @@ class ThreadLeftMessage extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param ThreadLeftEvent $event
+     * @param  ThreadLeftEvent  $event
      */
     public function __construct(ThreadLeftEvent $event)
     {
@@ -27,7 +27,7 @@ class ThreadLeftMessage extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param StoreSystemMessage $message
+     * @param  StoreSystemMessage  $message
      * @return void
      * @throws Throwable
      */

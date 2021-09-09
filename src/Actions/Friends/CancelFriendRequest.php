@@ -31,8 +31,8 @@ class CancelFriendRequest extends BaseMessengerAction
     /**
      * CancelFriendRequest constructor.
      *
-     * @param Dispatcher $dispatcher
-     * @param BroadcastDriver $broadcaster
+     * @param  Dispatcher  $dispatcher
+     * @param  BroadcastDriver  $broadcaster
      */
     public function __construct(Dispatcher $dispatcher, BroadcastDriver $broadcaster)
     {
@@ -43,7 +43,7 @@ class CancelFriendRequest extends BaseMessengerAction
     /**
      * Cancel and destroy our sent friend request.
      *
-     * @param SentFriend $sent
+     * @param  SentFriend  $sent
      * @return $this
      * @throws Exception
      */

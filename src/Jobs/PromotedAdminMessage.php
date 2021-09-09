@@ -17,7 +17,7 @@ class PromotedAdminMessage extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param PromotedAdminEvent $event
+     * @param  PromotedAdminEvent  $event
      */
     public function __construct(PromotedAdminEvent $event)
     {
@@ -27,7 +27,7 @@ class PromotedAdminMessage extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param StoreSystemMessage $message
+     * @param  StoreSystemMessage  $message
      * @return void
      * @throws Throwable
      */

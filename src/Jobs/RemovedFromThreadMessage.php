@@ -17,7 +17,7 @@ class RemovedFromThreadMessage extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param RemovedFromThreadEvent $event
+     * @param  RemovedFromThreadEvent  $event
      */
     public function __construct(RemovedFromThreadEvent $event)
     {
@@ -27,7 +27,7 @@ class RemovedFromThreadMessage extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param StoreSystemMessage $message
+     * @param  StoreSystemMessage  $message
      * @return void
      * @throws Throwable
      */

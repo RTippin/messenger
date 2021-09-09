@@ -34,9 +34,9 @@ abstract class NewCallAction extends BaseMessengerAction
     /**
      * NewCallAction constructor.
      *
-     * @param Messenger $messenger
-     * @param BroadcastDriver $broadcaster
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
@@ -131,8 +131,8 @@ abstract class NewCallAction extends BaseMessengerAction
     }
 
     /**
-     * @param int $type
-     * @param bool $isSetupComplete
+     * @param  int  $type
+     * @param  bool  $isSetupComplete
      * @return $this
      */
     protected function storeCall(int $type, bool $isSetupComplete): self

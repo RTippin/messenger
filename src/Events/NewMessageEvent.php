@@ -33,10 +33,10 @@ class NewMessageEvent
     /**
      * Create a new event instance.
      *
-     * @param Message $message
-     * @param Thread $thread
-     * @param bool $isGroupAdmin
-     * @param string|null $senderIp
+     * @param  Message  $message
+     * @param  Thread  $thread
+     * @param  bool  $isGroupAdmin
+     * @param  string|null  $senderIp
      */
     public function __construct(Message $message,
                                 Thread $thread,

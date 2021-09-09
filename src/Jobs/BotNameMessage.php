@@ -17,7 +17,7 @@ class BotNameMessage extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param BotUpdatedEvent $event
+     * @param  BotUpdatedEvent  $event
      */
     public function __construct(BotUpdatedEvent $event)
     {
@@ -27,7 +27,7 @@ class BotNameMessage extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param StoreSystemMessage $message
+     * @param  StoreSystemMessage  $message
      * @return void
      * @throws Throwable
      */

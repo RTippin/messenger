@@ -9,7 +9,7 @@ class BotException extends AuthorizationException
     /**
      * BotException constructor.
      *
-     * @param string $message
+     * @param  string  $message
      */
     public function __construct(string $message = 'Bot Error.')
     {

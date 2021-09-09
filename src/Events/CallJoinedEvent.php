@@ -23,8 +23,8 @@ class CallJoinedEvent
     /**
      * Create a new event instance.
      *
-     * @param Call $call
-     * @param CallParticipant $participant
+     * @param  Call  $call
+     * @param  CallParticipant  $participant
      */
     public function __construct(Call $call, CallParticipant $participant)
     {

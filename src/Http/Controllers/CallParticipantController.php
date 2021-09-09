@@ -20,8 +20,8 @@ class CallParticipantController
     /**
      * Display a listing of the calls participants.
      *
-     * @param Thread $thread
-     * @param Call $call
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return CallParticipantCollection
      * @throws AuthorizationException
      */
@@ -40,9 +40,9 @@ class CallParticipantController
     /**
      * Display the call  participant.
      *
-     * @param Thread $thread
-     * @param Call $call
-     * @param CallParticipant $participant
+     * @param  Thread  $thread
+     * @param  Call  $call
+     * @param  CallParticipant  $participant
      * @return CallParticipantResource
      * @throws AuthorizationException
      */
@@ -63,11 +63,11 @@ class CallParticipantController
     /**
      * Kick or un-kick call participant.
      *
-     * @param KickCallParticipantRequest $request
-     * @param KickCallParticipant $kickCallParticipant
-     * @param Thread $thread
-     * @param Call $call
-     * @param CallParticipant $participant
+     * @param  KickCallParticipantRequest  $request
+     * @param  KickCallParticipant  $kickCallParticipant
+     * @param  Thread  $thread
+     * @param  Call  $call
+     * @param  CallParticipant  $participant
      * @return JsonResponse
      * @throws AuthorizationException
      */

@@ -17,7 +17,7 @@ class CallEndedMessage extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param CallEndedEvent $event
+     * @param  CallEndedEvent  $event
      */
     public function __construct(CallEndedEvent $event)
     {
@@ -27,7 +27,7 @@ class CallEndedMessage extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param StoreSystemMessage $message
+     * @param  StoreSystemMessage  $message
      * @return void
      * @throws Throwable
      */

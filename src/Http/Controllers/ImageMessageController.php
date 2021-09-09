@@ -30,8 +30,8 @@ class ImageMessageController extends Controller
     /**
      * Display a listing of the most recent image files.
      *
-     * @param ImageMessageRepository $repository
-     * @param Thread $thread
+     * @param  ImageMessageRepository  $repository
+     * @param  Thread  $thread
      * @return ImageMessageCollection
      * @throws AuthorizationException
      */
@@ -51,9 +51,9 @@ class ImageMessageController extends Controller
     /**
      * Display image history pagination.
      *
-     * @param ImageMessageRepository $repository
-     * @param Thread $thread
-     * @param Message $image
+     * @param  ImageMessageRepository  $repository
+     * @param  Thread  $thread
+     * @param  Message  $image
      * @return ImageMessageCollection
      * @throws AuthorizationException
      */
@@ -77,9 +77,9 @@ class ImageMessageController extends Controller
     /**
      * Upload a new image message.
      *
-     * @param ImageMessageRequest $request
-     * @param StoreImageMessage $storeImageMessage
-     * @param Thread $thread
+     * @param  ImageMessageRequest  $request
+     * @param  StoreImageMessage  $storeImageMessage
+     * @param  Thread  $thread
      * @return MessageResource
      * @throws AuthorizationException|Throwable|FileServiceException
      */

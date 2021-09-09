@@ -25,7 +25,7 @@ class MessengerController
     /**
      * MessengerController constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -57,7 +57,7 @@ class MessengerController
     /**
      * Display a listing of the providers active calls.
      *
-     * @param ThreadRepository $threadRepository
+     * @param  ThreadRepository  $threadRepository
      * @return ActiveCallCollection
      */
     public function activeCalls(ThreadRepository $threadRepository): ActiveCallCollection
@@ -70,8 +70,8 @@ class MessengerController
     /**
      * Update the providers messenger settings.
      *
-     * @param MessengerSettingsRequest $request
-     * @param UpdateMessengerSettings $settings
+     * @param  MessengerSettingsRequest  $request
+     * @param  UpdateMessengerSettings  $settings
      * @return MessengerResource
      */
     public function updateSettings(MessengerSettingsRequest $request, UpdateMessengerSettings $settings): MessengerResource
@@ -86,8 +86,8 @@ class MessengerController
     /**
      * Update the providers avatar.
      *
-     * @param MessengerAvatarRequest $request
-     * @param StoreMessengerAvatar $storeAvatar
+     * @param  MessengerAvatarRequest  $request
+     * @param  StoreMessengerAvatar  $storeAvatar
      * @return MessengerResource
      * @throws FeatureDisabledException|FileServiceException|Exception
      */
@@ -103,7 +103,7 @@ class MessengerController
     /**
      * Remove the providers avatar.
      *
-     * @param DestroyMessengerAvatar $destroyMessengerAvatar
+     * @param  DestroyMessengerAvatar  $destroyMessengerAvatar
      * @return MessengerResource
      * @throws FeatureDisabledException
      */

@@ -26,8 +26,8 @@ class BotActionController
     /**
      * Display a listing of bot actions.
      *
-     * @param Thread $thread
-     * @param Bot $bot
+     * @param  Thread  $thread
+     * @param  Bot  $bot
      * @return BotActionCollection
      * @throws AuthorizationException
      */
@@ -49,9 +49,9 @@ class BotActionController
     /**
      * Display the bot action.
      *
-     * @param Thread $thread
-     * @param Bot $bot
-     * @param BotAction $action
+     * @param  Thread  $thread
+     * @param  Bot  $bot
+     * @param  BotAction  $action
      * @return BotActionResource
      * @throws AuthorizationException
      */
@@ -71,11 +71,11 @@ class BotActionController
     }
 
     /**
-     * @param Request $request
-     * @param MessengerBots $bots
-     * @param StoreBotAction $storeBotAction
-     * @param Thread $thread
-     * @param Bot $bot
+     * @param  Request  $request
+     * @param  MessengerBots  $bots
+     * @param  StoreBotAction  $storeBotAction
+     * @param  Thread  $thread
+     * @param  Bot  $bot
      * @return BotActionResource
      * @throws FeatureDisabledException|ValidationException
      * @throws BotException|AuthorizationException
@@ -101,12 +101,12 @@ class BotActionController
     }
 
     /**
-     * @param Request $request
-     * @param MessengerBots $bots
-     * @param UpdateBotAction $updateBotAction
-     * @param Thread $thread
-     * @param Bot $bot
-     * @param BotAction $action
+     * @param  Request  $request
+     * @param  MessengerBots  $bots
+     * @param  UpdateBotAction  $updateBotAction
+     * @param  Thread  $thread
+     * @param  Bot  $bot
+     * @param  BotAction  $action
      * @return BotActionResource
      * @throws FeatureDisabledException|ValidationException
      * @throws BotException|AuthorizationException
@@ -134,10 +134,10 @@ class BotActionController
     /**
      * Remove the bot action.
      *
-     * @param RemoveBotAction $removeBotAction
-     * @param Thread $thread
-     * @param Bot $bot
-     * @param BotAction $action
+     * @param  RemoveBotAction  $removeBotAction
+     * @param  Thread  $thread
+     * @param  Bot  $bot
+     * @param  BotAction  $action
      * @return JsonResponse
      * @throws AuthorizationException|FeatureDisabledException
      */

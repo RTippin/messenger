@@ -44,7 +44,7 @@ final class Messenger
     /**
      * This determines if we use UUID or BigInt for provider related models and migrations.
      *
-     * @param bool|null $shouldUseUuids
+     * @param  bool|null  $shouldUseUuids
      * @return bool
      */
     public static function shouldUseUuids(?bool $shouldUseUuids = null): bool
@@ -59,8 +59,8 @@ final class Messenger
     /**
      * Set all providers we want to use in this messenger system.
      *
-     * @param array $providers
-     * @param bool $overwrite
+     * @param  array  $providers
+     * @param  bool  $overwrite
      */
     public function registerProviders(array $providers, bool $overwrite = false): void
     {
@@ -81,7 +81,7 @@ final class Messenger
     /**
      * Check if provider is valid by seeing if alias exist.
      *
-     * @param MessengerProvider|string|null $provider
+     * @param  MessengerProvider|string|null  $provider
      * @return bool
      */
     public function isValidMessengerProvider($provider = null): bool
@@ -92,7 +92,7 @@ final class Messenger
     /**
      * Get the defined alias of the provider class defined in config.
      *
-     * @param MessengerProvider|string|null $provider
+     * @param  MessengerProvider|string|null  $provider
      * @return string|null
      */
     public function findProviderAlias($provider = null): ?string
@@ -109,7 +109,7 @@ final class Messenger
     /**
      * Get the provider class for the given alias.
      *
-     * @param string $alias
+     * @param  string  $alias
      * @return string|null
      */
     public function findAliasProvider(string $alias): ?string
@@ -123,7 +123,7 @@ final class Messenger
      * Get all provider classes using morph alias overrides. If return full
      * class is true, we return full class namespaces ignoring morph maps.
      *
-     * @param bool $returnFullClass
+     * @param  bool  $returnFullClass
      * @return array
      */
     public function getAllProviders(bool $returnFullClass = false): array
@@ -153,7 +153,7 @@ final class Messenger
     /**
      * Determine if the provider is searchable.
      *
-     * @param MessengerProvider|string|null $provider
+     * @param  MessengerProvider|string|null  $provider
      * @return bool
      */
     public function isProviderSearchable($provider = null): bool
@@ -169,7 +169,7 @@ final class Messenger
     /**
      * Determine if the provider is friendable.
      *
-     * @param MessengerProvider|string|null $provider
+     * @param  MessengerProvider|string|null  $provider
      * @return bool
      */
     public function isProviderFriendable($provider = null): bool
@@ -183,7 +183,7 @@ final class Messenger
     }
 
     /**
-     * @param string $alias
+     * @param  string  $alias
      * @return string|null
      */
     public function getProviderDefaultAvatarPath(string $alias): ?string
@@ -199,7 +199,7 @@ final class Messenger
      * Get all searchable provider classes using morph alias overrides. If return
      * full class is true, we return full class namespaces ignoring morph maps.
      *
-     * @param bool $returnFullClass
+     * @param  bool  $returnFullClass
      * @return array
      */
     public function getAllSearchableProviders(bool $returnFullClass = false): array
@@ -220,7 +220,7 @@ final class Messenger
      * Get all friendable provider classes using morph alias overrides. If return
      * full class is true, we return full class namespaces ignoring morph maps.
      *
-     * @param bool $returnFullClass
+     * @param  bool  $returnFullClass
      * @return array
      */
     public function getAllFriendableProviders(bool $returnFullClass = false): array
@@ -241,7 +241,7 @@ final class Messenger
      * Get all provider classes with devices using morph alias overrides. If return
      * full class is true, we return full class namespaces ignoring morph maps.
      *
-     * @param bool $returnFullClass
+     * @param  bool  $returnFullClass
      * @return array
      */
     public function getAllProvidersWithDevices(bool $returnFullClass = false): array
@@ -309,7 +309,7 @@ final class Messenger
     }
 
     /**
-     * @param MessengerProvider|string $provider
+     * @param  MessengerProvider|string  $provider
      * @return array
      */
     private function makeProviderSettings(string $provider): array
@@ -332,7 +332,7 @@ final class Messenger
     /**
      * Get the classname/alias for polymorphic relations.
      *
-     * @param string $provider
+     * @param  string  $provider
      * @return string
      */
     private function determineProviderMorphClass(string $provider): string

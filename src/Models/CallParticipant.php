@@ -73,7 +73,7 @@ class CallParticipant extends Model implements Ownerable
     /**
      * Scope a query for only video calls.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeInCall(Builder $query): Builder

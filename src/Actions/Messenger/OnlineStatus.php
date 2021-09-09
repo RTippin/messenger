@@ -29,9 +29,9 @@ class OnlineStatus extends BaseMessengerAction
     /**
      * OnlineStatus constructor.
      *
-     * @param Dispatcher $dispatcher
-     * @param Request $request
-     * @param Messenger $messenger
+     * @param  Dispatcher  $dispatcher
+     * @param  Request  $request
+     * @param  Messenger  $messenger
      */
     public function __construct(Dispatcher $dispatcher,
                                 Request $request,
@@ -43,7 +43,7 @@ class OnlineStatus extends BaseMessengerAction
     }
 
     /**
-     * @param bool $away
+     * @param  bool  $away
      * @return $this
      */
     public function execute(bool $away): self
@@ -56,7 +56,7 @@ class OnlineStatus extends BaseMessengerAction
     }
 
     /**
-     * @param bool $away
+     * @param  bool  $away
      * @return $this
      */
     private function setOnlineStatus(bool $away): self
@@ -86,7 +86,7 @@ class OnlineStatus extends BaseMessengerAction
     }
 
     /**
-     * @param bool $away
+     * @param  bool  $away
      */
     private function fireEvents(bool $away): void
     {

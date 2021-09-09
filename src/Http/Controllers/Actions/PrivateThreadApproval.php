@@ -14,9 +14,9 @@ class PrivateThreadApproval
     use AuthorizesRequests;
 
     /**
-     * @param ThreadApprovalRequest $request
-     * @param ThreadApproval $threadApproval
-     * @param Thread $thread
+     * @param  ThreadApprovalRequest  $request
+     * @param  ThreadApproval  $threadApproval
+     * @param  Thread  $thread
      * @return JsonResponse
      * @throws AuthorizationException
      */

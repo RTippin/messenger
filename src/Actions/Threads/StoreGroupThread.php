@@ -35,10 +35,10 @@ class StoreGroupThread extends NewThreadAction
     /**
      * StoreGroupThread constructor.
      *
-     * @param Messenger $messenger
-     * @param BroadcastDriver $broadcaster
-     * @param DatabaseManager $database
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  DatabaseManager  $database
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
@@ -56,7 +56,7 @@ class StoreGroupThread extends NewThreadAction
      * Create a new group thread! If an array of provider alias/id is present,
      * we will also add the first batch of participants in this cycle.
      *
-     * @param array $params
+     * @param  array  $params
      * @return $this
      * @see GroupThreadRequest
      * @throws Throwable
@@ -75,8 +75,8 @@ class StoreGroupThread extends NewThreadAction
     }
 
     /**
-     * @param string $subject
-     * @param array $providers
+     * @param  string  $subject
+     * @param  array  $providers
      * @return $this
      * @throws Throwable
      */
@@ -95,8 +95,8 @@ class StoreGroupThread extends NewThreadAction
      * Execute all actions that must occur for
      * a successful private thread creation.
      *
-     * @param string $subject
-     * @param array $providers
+     * @param  string  $subject
+     * @param  array  $providers
      */
     private function executeTransactions(string $subject, array $providers): void
     {
@@ -111,7 +111,7 @@ class StoreGroupThread extends NewThreadAction
     }
 
     /**
-     * @param string $subject
+     * @param  string  $subject
      * @return array
      */
     private function groupThreadAttributes(string $subject): array
@@ -126,7 +126,7 @@ class StoreGroupThread extends NewThreadAction
 
     /**
      * @mixin StoreSystemMessage
-     * @param string $subject
+     * @param  string  $subject
      * @return array
      */
     private function createdSystemMessage(string $subject): array
@@ -148,7 +148,7 @@ class StoreGroupThread extends NewThreadAction
     }
 
     /**
-     * @param array $providers
+     * @param  array  $providers
      * @mixin StoreManyParticipants
      * @return array
      */

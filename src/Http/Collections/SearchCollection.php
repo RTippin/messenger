@@ -29,9 +29,9 @@ class SearchCollection extends MessengerCollection
      * OwnerCollection constructor.
      *
      * @param $resource
-     * @param null $searchQuery
-     * @param array|null $searchQueryItems
-     * @param bool $addOptions
+     * @param  null  $searchQuery
+     * @param  array|null  $searchQueryItems
+     * @param  bool  $addOptions
      */
     public function __construct($resource,
                                 $searchQuery = null,
@@ -48,7 +48,7 @@ class SearchCollection extends MessengerCollection
     /**
      * Transform the resource collection into an array.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return array
      */
     public function toArray($request): array
@@ -59,7 +59,7 @@ class SearchCollection extends MessengerCollection
     /**
      * Get additional data that should be returned with the resource array.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return array
      */
     public function with($request): array

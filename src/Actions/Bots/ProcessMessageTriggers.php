@@ -57,10 +57,10 @@ class ProcessMessageTriggers extends BaseMessengerAction
     /**
      * ProcessMessageTriggers constructor.
      *
-     * @param Messenger $messenger
-     * @param MessengerBots $bots
-     * @param BotMatchingService $matcher
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  MessengerBots  $bots
+     * @param  BotMatchingService  $matcher
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger,
                                 MessengerBots $bots,
@@ -77,10 +77,10 @@ class ProcessMessageTriggers extends BaseMessengerAction
      * Process all matching actions that the message
      * body matches through the action triggers.
      *
-     * @param Thread $thread
-     * @param Message $message
-     * @param bool $isGroupAdmin
-     * @param null|string $senderIp
+     * @param  Thread  $thread
+     * @param  Message  $message
+     * @param  bool  $isGroupAdmin
+     * @param  null|string  $senderIp
      * @return $this
      * @throws FeatureDisabledException
      */
@@ -109,7 +109,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
     /**
      * Loop through the triggers, and attempt to handle ones that match.
      *
-     * @param BotAction $action
+     * @param  BotAction  $action
      */
     private function matchActionTriggers(BotAction $action): void
     {
@@ -130,8 +130,8 @@ class ProcessMessageTriggers extends BaseMessengerAction
      * cooldown, if any. Fire events when the action is handled
      * or failed.
      *
-     * @param BotAction $action
-     * @param string $trigger
+     * @param  BotAction  $action
+     * @param  string  $trigger
      */
     private function handleAction(BotAction $action, string $trigger): void
     {
@@ -185,7 +185,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
      * active cooldowns. If the action has the admin_only flag,
      * the group admin flag must also be true.
      *
-     * @param BotAction $action
+     * @param  BotAction  $action
      * @return bool
      */
     private function shouldExecute(BotAction $action): bool
@@ -195,7 +195,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
     }
 
     /**
-     * @param BotAction $action
+     * @param  BotAction  $action
      * @return bool
      */
     private function hasPermissionToTrigger(BotAction $action): bool
@@ -209,7 +209,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
      * Flush the Bots service, removing any prior initialized handler.
      * Set the bot being triggered, and start the action cooldown.
      *
-     * @param BotAction $action
+     * @param  BotAction  $action
      */
     private function botActionStarting(BotAction $action): void
     {
@@ -223,7 +223,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
      * the cooldown. Then flush the Bots service, removing any the
      * initialized handler.
      *
-     * @param BotAction $action
+     * @param  BotAction  $action
      */
     private function botActionEnding(BotAction $action): void
     {
@@ -247,8 +247,8 @@ class ProcessMessageTriggers extends BaseMessengerAction
     }
 
     /**
-     * @param BotAction $action
-     * @param string $trigger
+     * @param  BotAction  $action
+     * @param  string  $trigger
      */
     private function fireHandledEvent(BotAction $action, string $trigger): void
     {
@@ -262,8 +262,8 @@ class ProcessMessageTriggers extends BaseMessengerAction
     }
 
     /**
-     * @param BotAction $action
-     * @param Throwable $exception
+     * @param  BotAction  $action
+     * @param  Throwable  $exception
      */
     private function fireFailedEvent(BotAction $action, Throwable $exception): void
     {

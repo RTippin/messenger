@@ -35,11 +35,11 @@ class ThreadResource extends JsonResource
     /**
      * ThreadResource constructor.
      *
-     * @param Thread $thread
-     * @param bool $addSystemFeatures
-     * @param bool $addParticipants
-     * @param bool $addMessages
-     * TODO - Remove deprecated {relations?} from loader route.
+     * @param  Thread  $thread
+     * @param  bool  $addSystemFeatures
+     * @param  bool  $addParticipants
+     * @param  bool  $addMessages
+     *                             TODO - Remove deprecated {relations?} from loader route.
      */
     public function __construct(Thread $thread,
                                 bool $addSystemFeatures = false,

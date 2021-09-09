@@ -12,7 +12,7 @@ class BotSubscriber
     /**
      * Register the listeners for the subscriber.
      *
-     * @param Dispatcher $events
+     * @param  Dispatcher  $events
      * @return void
      */
     public function subscribe(Dispatcher $events): void
@@ -21,7 +21,7 @@ class BotSubscriber
     }
 
     /**
-     * @param NewMessageEvent $event
+     * @param  NewMessageEvent  $event
      */
     public function newMessage(NewMessageEvent $event): void
     {
@@ -33,7 +33,7 @@ class BotSubscriber
     }
 
     /**
-     * @param NewMessageEvent $event
+     * @param  NewMessageEvent  $event
      * @return bool
      */
     private function shouldDispatch(NewMessageEvent $event): bool

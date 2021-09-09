@@ -24,8 +24,8 @@ class ThreadSettingsBroadcastResource extends JsonResource
     /**
      * ThreadSettingsBroadcastResource constructor.
      *
-     * @param MessengerProvider $provider
-     * @param Thread $thread
+     * @param  MessengerProvider  $provider
+     * @param  Thread  $thread
      */
     public function __construct(MessengerProvider $provider, Thread $thread)
     {

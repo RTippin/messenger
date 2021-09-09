@@ -17,7 +17,7 @@ class FriendRequestEvent
     /**
      * Create a new event instance.
      *
-     * @param SentFriend $friend
+     * @param  SentFriend  $friend
      */
     public function __construct(SentFriend $friend)
     {

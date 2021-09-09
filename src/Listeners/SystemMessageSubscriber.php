@@ -38,7 +38,7 @@ class SystemMessageSubscriber
     /**
      * Register the listeners for the subscriber.
      *
-     * @param Dispatcher $events
+     * @param  Dispatcher  $events
      * @return void
      */
     public function subscribe(Dispatcher $events): void
@@ -60,7 +60,7 @@ class SystemMessageSubscriber
     }
 
     /**
-     * @param CallEndedEvent $event
+     * @param  CallEndedEvent  $event
      */
     public function callEndedMessage(CallEndedEvent $event): void
     {
@@ -72,7 +72,7 @@ class SystemMessageSubscriber
     }
 
     /**
-     * @param DemotedAdminEvent $event
+     * @param  DemotedAdminEvent  $event
      */
     public function demotedAdminMessage(DemotedAdminEvent $event): void
     {
@@ -84,7 +84,7 @@ class SystemMessageSubscriber
     }
 
     /**
-     * @param InviteUsedEvent $event
+     * @param  InviteUsedEvent  $event
      */
     public function joinedWithInviteMessage(InviteUsedEvent $event): void
     {
@@ -96,7 +96,7 @@ class SystemMessageSubscriber
     }
 
     /**
-     * @param ParticipantsAddedEvent $event
+     * @param  ParticipantsAddedEvent  $event
      */
     public function participantsAddedMessage(ParticipantsAddedEvent $event): void
     {
@@ -108,7 +108,7 @@ class SystemMessageSubscriber
     }
 
     /**
-     * @param PromotedAdminEvent $event
+     * @param  PromotedAdminEvent  $event
      */
     public function promotedAdminMessage(PromotedAdminEvent $event): void
     {
@@ -120,7 +120,7 @@ class SystemMessageSubscriber
     }
 
     /**
-     * @param RemovedFromThreadEvent $event
+     * @param  RemovedFromThreadEvent  $event
      */
     public function removedFromThreadMessage(RemovedFromThreadEvent $event): void
     {
@@ -132,7 +132,7 @@ class SystemMessageSubscriber
     }
 
     /**
-     * @param ThreadArchivedEvent $event
+     * @param  ThreadArchivedEvent  $event
      */
     public function threadArchivedMessage(ThreadArchivedEvent $event): void
     {
@@ -144,7 +144,7 @@ class SystemMessageSubscriber
     }
 
     /**
-     * @param ThreadAvatarEvent $event
+     * @param  ThreadAvatarEvent  $event
      */
     public function threadAvatarMessage(ThreadAvatarEvent $event): void
     {
@@ -156,7 +156,7 @@ class SystemMessageSubscriber
     }
 
     /**
-     * @param ThreadLeftEvent $event
+     * @param  ThreadLeftEvent  $event
      */
     public function threadLeftMessage(ThreadLeftEvent $event): void
     {
@@ -168,7 +168,7 @@ class SystemMessageSubscriber
     }
 
     /**
-     * @param ThreadSettingsEvent $event
+     * @param  ThreadSettingsEvent  $event
      */
     public function threadNameMessage(ThreadSettingsEvent $event): void
     {
@@ -180,7 +180,7 @@ class SystemMessageSubscriber
     }
 
     /**
-     * @param NewBotEvent $event
+     * @param  NewBotEvent  $event
      */
     public function botAddedMessage(NewBotEvent $event): void
     {
@@ -192,7 +192,7 @@ class SystemMessageSubscriber
     }
 
     /**
-     * @param BotUpdatedEvent $event
+     * @param  BotUpdatedEvent  $event
      */
     public function botNameMessage(BotUpdatedEvent $event): void
     {
@@ -204,7 +204,7 @@ class SystemMessageSubscriber
     }
 
     /**
-     * @param BotAvatarEvent $event
+     * @param  BotAvatarEvent  $event
      */
     public function botAvatarMessage(BotAvatarEvent $event): void
     {
@@ -216,7 +216,7 @@ class SystemMessageSubscriber
     }
 
     /**
-     * @param BotArchivedEvent $event
+     * @param  BotArchivedEvent  $event
      */
     public function botRemovedMessage(BotArchivedEvent $event): void
     {

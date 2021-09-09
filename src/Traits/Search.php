@@ -9,9 +9,9 @@ trait Search
     /**
      * Typical use case for searching users through the name or email columns.
      *
-     * @param Builder $query
-     * @param string $search
-     * @param array $searchItems
+     * @param  Builder  $query
+     * @param  string  $search
+     * @param  array  $searchItems
      */
     public static function getProviderSearchableBuilder(Builder $query,
                                                         string $search,

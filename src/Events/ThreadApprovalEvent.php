@@ -28,9 +28,9 @@ class ThreadApprovalEvent
     /**
      * Create a new event instance.
      *
-     * @param Thread $thread
-     * @param MessengerProvider $provider
-     * @param bool $approved
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
+     * @param  bool  $approved
      */
     public function __construct(MessengerProvider $provider,
                                 Thread $thread,

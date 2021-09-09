@@ -15,8 +15,8 @@ class UnmuteThread
     /**
      * Un-Mute the thread.
      *
-     * @param UnmuteThreadAction $unmuteThread
-     * @param Thread $thread
+     * @param  UnmuteThreadAction  $unmuteThread
+     * @param  Thread  $thread
      * @return JsonResponse
      * @throws AuthorizationException
      */

@@ -32,9 +32,9 @@ class JoinWithInvite extends InviteAction
     /**
      * JoinWithInvite constructor.
      *
-     * @param Messenger $messenger
-     * @param DatabaseManager $database
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  DatabaseManager  $database
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger,
                                 DatabaseManager $database,
@@ -47,7 +47,7 @@ class JoinWithInvite extends InviteAction
     }
 
     /**
-     * @param Invite $invite
+     * @param  Invite  $invite
      * @return $this
      * @throws Exception|Throwable|FeatureDisabledException
      */
@@ -83,7 +83,7 @@ class JoinWithInvite extends InviteAction
      * Execute all actions that must occur for
      * a successful private thread creation.
      *
-     * @return  void
+     * @return void
      */
     private function executeTransactions(): void
     {

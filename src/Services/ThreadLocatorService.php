@@ -49,9 +49,9 @@ class ThreadLocatorService
     /**
      * ThreadLocatorService constructor.
      *
-     * @param Messenger $messenger
-     * @param ProvidersRepository $providersRepository
-     * @param PrivateThreadRepository $privateThreadRepository
+     * @param  Messenger  $messenger
+     * @param  ProvidersRepository  $providersRepository
+     * @param  PrivateThreadRepository  $privateThreadRepository
      */
     public function __construct(Messenger $messenger,
                                 ProvidersRepository $providersRepository,
@@ -63,7 +63,7 @@ class ThreadLocatorService
     }
 
     /**
-     * @param string $alias
+     * @param  string  $alias
      * @return $this
      */
     public function setAlias(string $alias): self
@@ -74,7 +74,7 @@ class ThreadLocatorService
     }
 
     /**
-     * @param string $id
+     * @param  string  $id
      * @return $this
      */
     public function setId(string $id): self

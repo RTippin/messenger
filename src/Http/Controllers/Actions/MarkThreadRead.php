@@ -15,8 +15,8 @@ class MarkThreadRead
     /**
      * Mark thread read for current participant.
      *
-     * @param MarkParticipantRead $markParticipantRead
-     * @param Thread $thread
+     * @param  MarkParticipantRead  $markParticipantRead
+     * @param  Thread  $thread
      * @return JsonResponse
      * @throws AuthorizationException
      */

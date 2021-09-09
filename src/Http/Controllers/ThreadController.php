@@ -19,7 +19,7 @@ class ThreadController
     /**
      * Display a listing of the most recent updated threads.
      *
-     * @param ThreadRepository $repository
+     * @param  ThreadRepository  $repository
      * @return ThreadCollection
      * @throws AuthorizationException
      */
@@ -35,8 +35,8 @@ class ThreadController
     /**
      * Display threads history pagination.
      *
-     * @param ThreadRepository $repository
-     * @param Thread $thread
+     * @param  ThreadRepository  $repository
+     * @param  Thread  $thread
      * @return ThreadCollection
      * @throws AuthorizationException
      */
@@ -54,7 +54,7 @@ class ThreadController
     /**
      * Display the thread.
      *
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return ThreadResource
      * @throws AuthorizationException
      */
@@ -72,8 +72,8 @@ class ThreadController
     /**
      * Remove the thread.
      *
-     * @param ArchiveThread $archiveThread
-     * @param Thread $thread
+     * @param  ArchiveThread  $archiveThread
+     * @param  Thread  $thread
      * @return JsonResponse
      * @throws Exception|AuthorizationException
      */

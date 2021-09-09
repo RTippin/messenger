@@ -25,7 +25,7 @@ class BotController
     /**
      * Display a listing of bots.
      *
-     * @param Thread $thread
+     * @param  Thread  $thread
      * @return BotCollection
      * @throws AuthorizationException
      */
@@ -47,8 +47,8 @@ class BotController
     /**
      * Display the bot.
      *
-     * @param Thread $thread
-     * @param Bot $bot
+     * @param  Thread  $thread
+     * @param  Bot  $bot
      * @return BotResource
      * @throws AuthorizationException
      */
@@ -68,9 +68,9 @@ class BotController
     /**
      * Store a bot.
      *
-     * @param BotRequest $request
-     * @param StoreBot $storeBot
-     * @param Thread $thread
+     * @param  BotRequest  $request
+     * @param  StoreBot  $storeBot
+     * @param  Thread  $thread
      * @return BotResource
      * @throws AuthorizationException|FeatureDisabledException
      */
@@ -92,10 +92,10 @@ class BotController
     /**
      * Update the bot.
      *
-     * @param BotRequest $request
-     * @param UpdateBot $updateBot
-     * @param Thread $thread
-     * @param Bot $bot
+     * @param  BotRequest  $request
+     * @param  UpdateBot  $updateBot
+     * @param  Thread  $thread
+     * @param  Bot  $bot
      * @return BotResource
      * @throws AuthorizationException|FeatureDisabledException
      */
@@ -118,10 +118,10 @@ class BotController
     /**
      * Store the bots avatar.
      *
-     * @param BotAvatarRequest $request
-     * @param StoreBotAvatar $storeBotAvatar
-     * @param Thread $thread
-     * @param Bot $bot
+     * @param  BotAvatarRequest  $request
+     * @param  StoreBotAvatar  $storeBotAvatar
+     * @param  Thread  $thread
+     * @param  Bot  $bot
      * @return BotResource
      * @throws AuthorizationException|FeatureDisabledException
      */
@@ -144,9 +144,9 @@ class BotController
     /**
      * Remove the bots avatar.
      *
-     * @param DestroyBotAvatar $destroyBotAvatar
-     * @param Thread $thread
-     * @param Bot $bot
+     * @param  DestroyBotAvatar  $destroyBotAvatar
+     * @param  Thread  $thread
+     * @param  Bot  $bot
      * @return BotResource
      * @throws AuthorizationException|FeatureDisabledException
      */
@@ -165,9 +165,9 @@ class BotController
     /**
      * Remove the bot.
      *
-     * @param ArchiveBot $archiveBot
-     * @param Thread $thread
-     * @param Bot $bot
+     * @param  ArchiveBot  $archiveBot
+     * @param  Thread  $thread
+     * @param  Bot  $bot
      * @return JsonResponse
      * @throws AuthorizationException|FeatureDisabledException
      */

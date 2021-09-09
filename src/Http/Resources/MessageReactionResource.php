@@ -22,8 +22,8 @@ class MessageReactionResource extends JsonResource
     /**
      * MessageReactionResource constructor.
      *
-     * @param MessageReaction $reaction
-     * @param Message|null $message
+     * @param  MessageReaction  $reaction
+     * @param  Message|null  $message
      */
     public function __construct(MessageReaction $reaction, ?Message $message = null)
     {

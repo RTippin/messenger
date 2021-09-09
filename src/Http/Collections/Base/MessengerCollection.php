@@ -51,7 +51,7 @@ abstract class MessengerCollection extends ResourceCollection
      * We go ahead and attempt to create and resolve each individual
      * resource, returning null should one fail.
      *
-     * @param mixed $resource
+     * @param  mixed  $resource
      * @return array|null
      */
     abstract protected function makeResource($resource): ?array;

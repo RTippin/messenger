@@ -29,9 +29,9 @@ class KickedFromCallEvent
     /**
      * Create a new event instance.
      *
-     * @param MessengerProvider $provider
-     * @param Call $call
-     * @param CallParticipant $participant
+     * @param  MessengerProvider  $provider
+     * @param  Call  $call
+     * @param  CallParticipant  $participant
      */
     public function __construct(MessengerProvider $provider,
                                 Call $call,

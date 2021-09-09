@@ -37,7 +37,7 @@ class Helpers
     }
 
     /**
-     * @param Carbon|null $timestamp
+     * @param  Carbon|null  $timestamp
      * @return string|null
      */
     public static function PrecisionTime(?Carbon $timestamp = null): ?string
@@ -50,8 +50,8 @@ class Helpers
     /**
      * Helper to set morph key type in migrations.
      *
-     * @param string $column
-     * @param Blueprint $table
+     * @param  string  $column
+     * @param  Blueprint  $table
      * @return void
      */
     public static function SchemaMorphType(string $column, Blueprint $table): void

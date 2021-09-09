@@ -15,7 +15,7 @@ class ProvidersRepository
     /**
      * ProvidersRepository constructor.
      *
-     * @param Messenger $messenger
+     * @param  Messenger  $messenger
      */
     public function __construct(Messenger $messenger)
     {
@@ -23,8 +23,8 @@ class ProvidersRepository
     }
 
     /**
-     * @param string $alias
-     * @param string $id
+     * @param  string  $alias
+     * @param  string  $id
      * @return MessengerProvider|null
      */
     public function getProviderUsingAliasAndId(string $alias, string $id): ?MessengerProvider

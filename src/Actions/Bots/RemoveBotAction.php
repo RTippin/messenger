@@ -25,8 +25,8 @@ class RemoveBotAction extends BaseMessengerAction
     /**
      * RemoveBotAction constructor.
      *
-     * @param Messenger $messenger
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger, Dispatcher $dispatcher)
     {
@@ -35,7 +35,7 @@ class RemoveBotAction extends BaseMessengerAction
     }
 
     /**
-     * @param BotAction $action
+     * @param  BotAction  $action
      * @return $this
      * @throws Exception|FeatureDisabledException
      */

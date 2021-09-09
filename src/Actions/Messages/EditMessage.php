@@ -51,11 +51,11 @@ class EditMessage extends BaseMessengerAction
     /**
      * EditMessage constructor.
      *
-     * @param BroadcastDriver $broadcaster
-     * @param DatabaseManager $database
-     * @param Dispatcher $dispatcher
-     * @param Messenger $messenger
-     * @param EmojiInterface $emoji
+     * @param  BroadcastDriver  $broadcaster
+     * @param  DatabaseManager  $database
+     * @param  Dispatcher  $dispatcher
+     * @param  Messenger  $messenger
+     * @param  EmojiInterface  $emoji
      */
     public function __construct(BroadcastDriver $broadcaster,
                                 DatabaseManager $database,
@@ -73,9 +73,9 @@ class EditMessage extends BaseMessengerAction
     /**
      * Update the given message.
      *
-     * @param Thread $thread
-     * @param Message $message
-     * @param string $newBody
+     * @param  Thread  $thread
+     * @param  Message  $message
+     * @param  string  $newBody
      * @return $this
      * @throws FeatureDisabledException|Throwable
      */
@@ -108,7 +108,7 @@ class EditMessage extends BaseMessengerAction
     }
 
     /**
-     * @param string $body
+     * @param  string  $body
      * @return $this
      * @throws Throwable
      */
@@ -124,7 +124,7 @@ class EditMessage extends BaseMessengerAction
     }
 
     /**
-     * @param string $body
+     * @param  string  $body
      * @return $this
      */
     private function executeTransactions(string $body): self

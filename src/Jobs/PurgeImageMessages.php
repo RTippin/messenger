@@ -15,7 +15,7 @@ class PurgeImageMessages extends BaseMessengerJob
     /**
      * Create a new job instance.
      *
-     * @param Collection $images
+     * @param  Collection  $images
      */
     public function __construct(Collection $images)
     {
@@ -25,7 +25,7 @@ class PurgeImageMessages extends BaseMessengerJob
     /**
      * Execute the job.
      *
-     * @param PurgeImageMessagesAction $purgeImages
+     * @param  PurgeImageMessagesAction  $purgeImages
      * @return void
      */
     public function handle(PurgeImageMessagesAction $purgeImages): void

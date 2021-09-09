@@ -19,7 +19,7 @@ class FriendPolicy
     /**
      * FriendPolicy constructor.
      *
-     * @param Messenger $service
+     * @param  Messenger  $service
      */
     public function __construct(Messenger $service)
     {
@@ -41,7 +41,7 @@ class FriendPolicy
      * Determine whether the provider can view a friend.
      *
      * @param $user
-     * @param Friend $friend
+     * @param  Friend  $friend
      * @return Response
      */
     public function view($user, Friend $friend): Response
@@ -57,7 +57,7 @@ class FriendPolicy
      * Determine whether the provider can delete the friend.
      *
      * @param $user
-     * @param Friend $friend
+     * @param  Friend  $friend
      * @return Response
      */
     public function delete($user, Friend $friend): Response

@@ -28,9 +28,9 @@ class CallResource extends JsonResource
     /**
      * CallResource constructor.
      *
-     * @param Call $call
-     * @param Thread $thread
-     * @param bool $addParticipants
+     * @param  Call  $call
+     * @param  Thread  $thread
+     * @param  bool  $addParticipants
      */
     public function __construct(Call $call,
                                 Thread $thread,

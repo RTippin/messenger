@@ -11,8 +11,8 @@ class MessengerApi
     /**
      * Middleware applied to our API / DATA routes.
      *
-     * @param Request $request
-     * @param Closure $next
+     * @param  Request  $request
+     * @param  Closure  $next
      * @return mixed
      */
     public function handle(Request $request, Closure $next)

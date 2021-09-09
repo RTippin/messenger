@@ -51,10 +51,10 @@ class RemoveReaction extends BaseMessengerAction
     /**
      * RemoveReaction constructor.
      *
-     * @param BroadcastDriver $broadcaster
-     * @param DatabaseManager $database
-     * @param Dispatcher $dispatcher
-     * @param Messenger $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  DatabaseManager  $database
+     * @param  Dispatcher  $dispatcher
+     * @param  Messenger  $messenger
      */
     public function __construct(BroadcastDriver $broadcaster,
                                 DatabaseManager $database,
@@ -70,9 +70,9 @@ class RemoveReaction extends BaseMessengerAction
     /**
      * Remove a reaction from the given message.
      *
-     * @param Thread $thread
-     * @param Message $message
-     * @param MessageReaction $reaction
+     * @param  Thread  $thread
+     * @param  Message  $message
+     * @param  MessageReaction  $reaction
      * @return $this
      * @throws Throwable|FeatureDisabledException
      */

@@ -39,10 +39,10 @@ class EndCall extends BaseMessengerAction
     /**
      * EndCall constructor.
      *
-     * @param Messenger $messenger
-     * @param BroadcastDriver $broadcaster
-     * @param DatabaseManager $database
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  DatabaseManager  $database
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
@@ -59,7 +59,7 @@ class EndCall extends BaseMessengerAction
      * End the call immediately if it is still active. Teardown with
      * our video provider will be picked up by the event listener.
      *
-     * @param Call $call
+     * @param  Call  $call
      * @return $this
      * @throws Throwable
      */

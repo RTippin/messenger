@@ -230,7 +230,7 @@ class Thread extends Model implements HasPresenceChannel
     /**
      * Scope a query for only group threads.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopeGroup(Builder $query): Builder
@@ -241,7 +241,7 @@ class Thread extends Model implements HasPresenceChannel
     /**
      * Scope a query for only private threads.
      *
-     * @param Builder $query
+     * @param  Builder  $query
      * @return Builder
      */
     public function scopePrivate(Builder $query): Builder
@@ -250,8 +250,8 @@ class Thread extends Model implements HasPresenceChannel
     }
 
     /**
-     * @param Builder $query
-     * @param MessengerProvider $provider
+     * @param  Builder  $query
+     * @param  MessengerProvider  $provider
      * @return Builder
      */
     public function scopeHasProvider(Builder $query, MessengerProvider $provider): Builder
@@ -447,7 +447,7 @@ class Thread extends Model implements HasPresenceChannel
     }
 
     /**
-     * @param string $size
+     * @param  string  $size
      * @return string|null
      */
     public function getThreadAvatarRoute(string $size = 'sm'): ?string

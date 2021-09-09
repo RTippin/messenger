@@ -28,9 +28,9 @@ class RemovedFromThreadEvent
 
     /**
      * Create a new event instance.
-     * @param MessengerProvider $provider
-     * @param Thread $thread
-     * @param Participant $participant
+     * @param  MessengerProvider  $provider
+     * @param  Thread  $thread
+     * @param  Participant  $participant
      */
     public function __construct(MessengerProvider $provider,
                                 Thread $thread,

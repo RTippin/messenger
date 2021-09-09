@@ -19,7 +19,7 @@ class MessageReactionCollection extends ResourceCollection
     /**
      * Transform the resource collection into an array.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @return array
      */
     public function toArray($request): array
@@ -52,7 +52,7 @@ class MessageReactionCollection extends ResourceCollection
      * We go ahead and attempt to create and resolve each individual
      * resource, returning null should one fail.
      *
-     * @param MessageReaction $reaction
+     * @param  MessageReaction  $reaction
      * @return array|null
      */
     private function makeResource(MessageReaction $reaction): ?array

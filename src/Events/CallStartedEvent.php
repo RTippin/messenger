@@ -23,8 +23,8 @@ class CallStartedEvent
     /**
      * Create a new event instance.
      *
-     * @param Call $call
-     * @param Thread $thread
+     * @param  Call  $call
+     * @param  Thread  $thread
      */
     public function __construct(Call $call, Thread $thread)
     {

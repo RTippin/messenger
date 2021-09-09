@@ -10,10 +10,10 @@ class StoreParticipant extends ThreadParticipantAction
     /**
      * Store a single, fresh or restored participant for the provided thread.
      *
-     * @param Thread $thread
-     * @param MessengerProvider $provider
-     * @param array $params
-     * @param bool $checkRestore
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
+     * @param  array  $params
+     * @param  bool  $checkRestore
      * @return $this
      */
     public function execute(Thread $thread,

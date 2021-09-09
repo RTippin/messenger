@@ -42,7 +42,7 @@ class FileService
     /**
      * FileService constructor.
      *
-     * @param FilesystemManager $filesystemManager
+     * @param  FilesystemManager  $filesystemManager
      */
     public function __construct(FilesystemManager $filesystemManager)
     {
@@ -50,7 +50,7 @@ class FileService
     }
 
     /**
-     * @param string $type
+     * @param  string  $type
      * @return $this
      */
     public function setType(string $type): self
@@ -61,7 +61,7 @@ class FileService
     }
 
     /**
-     * @param string $disk
+     * @param  string  $disk
      * @return $this
      */
     public function setDisk(string $disk): self
@@ -72,7 +72,7 @@ class FileService
     }
 
     /**
-     * @param string $directory
+     * @param  string  $directory
      * @return $this
      */
     public function setDirectory(string $directory): self
@@ -83,7 +83,7 @@ class FileService
     }
 
     /**
-     * @param string $name
+     * @param  string  $name
      * @return $this
      */
     public function setName(string $name): self
@@ -94,7 +94,7 @@ class FileService
     }
 
     /**
-     * @param UploadedFile $file
+     * @param  UploadedFile  $file
      * @return string
      * @throws FileServiceException
      */
@@ -116,7 +116,7 @@ class FileService
     }
 
     /**
-     * @param string $file
+     * @param  string  $file
      * @return bool
      */
     public function destroy(string $file): bool
@@ -153,7 +153,7 @@ class FileService
     }
 
     /**
-     * @param UploadedFile $file
+     * @param  UploadedFile  $file
      * @return string
      */
     private function nameFile(UploadedFile $file): string
@@ -179,7 +179,7 @@ class FileService
     }
 
     /**
-     * @param UploadedFile $file
+     * @param  UploadedFile  $file
      * @return string
      */
     private function getOriginalName(UploadedFile $file): string
@@ -188,8 +188,8 @@ class FileService
     }
 
     /**
-     * @param UploadedFile $file
-     * @param string $name
+     * @param  UploadedFile  $file
+     * @param  string  $name
      * @return bool
      */
     private function storeFile(UploadedFile $file, string $name): bool
@@ -200,7 +200,7 @@ class FileService
     }
 
     /**
-     * @param string $message
+     * @param  string  $message
      * @throws FileServiceException
      */
     private function throwFileServiceException(string $message): void

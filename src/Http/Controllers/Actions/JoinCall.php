@@ -16,9 +16,9 @@ class JoinCall
     /**
      * Store or restore a call participant / join call.
      *
-     * @param JoinCallAction $joinCall
-     * @param Thread $thread
-     * @param Call $call
+     * @param  JoinCallAction  $joinCall
+     * @param  Thread  $thread
+     * @param  Call  $call
      * @return CallParticipantResource
      * @throws AuthorizationException
      */

@@ -38,10 +38,10 @@ abstract class GroupAvatarAction extends BaseMessengerAction
     /**
      * GroupAvatarAction constructor.
      *
-     * @param Messenger $messenger
-     * @param BroadcastDriver $broadcaster
-     * @param FileService $fileService
-     * @param Dispatcher $dispatcher
+     * @param  Messenger  $messenger
+     * @param  BroadcastDriver  $broadcaster
+     * @param  FileService  $fileService
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
@@ -80,7 +80,7 @@ abstract class GroupAvatarAction extends BaseMessengerAction
     }
 
     /**
-     * @param string|null $avatar
+     * @param  string|null  $avatar
      * @return $this
      */
     protected function updateGroupAvatar(?string $avatar): self

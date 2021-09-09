@@ -10,7 +10,7 @@ class MessengerPresenceChannel extends Channel
     /**
      * Create a new presence channel instance.
      *
-     * @param HasPresenceChannel $model
+     * @param  HasPresenceChannel  $model
      */
     public function __construct(HasPresenceChannel $model)
     {

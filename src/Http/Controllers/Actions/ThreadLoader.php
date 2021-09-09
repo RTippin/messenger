@@ -25,8 +25,8 @@ class ThreadLoader
      * Display the specified thread with loaded relations for messages
      * and participants. We will also mark the thread as read.
      *
-     * @param MarkParticipantRead $read
-     * @param Thread $thread
+     * @param  MarkParticipantRead  $read
+     * @param  Thread  $thread
      * @return ThreadResource
      * @throws AuthorizationException
      */
