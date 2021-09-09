@@ -71,6 +71,7 @@ $ composer require rtippin/messenger
 - ### [Configuration][link-configuration]
 - ### [Commands][link-commands]
 - ### [Broadcasting][link-broadcasting]
+- ### [Events][link-events]
 - ### [Chat Bots][link-chat-bots]
 - ### [Calling][link-calling]
 - ### [Messenger Composer][link-messenger-composer]
@@ -119,6 +120,7 @@ If you discover any security related issues, please email author instead of usin
 [link-configuration]: docs/Configuration.md
 [link-commands]: docs/Commands.md
 [link-broadcasting]: docs/Broadcasting.md
+[link-events]: docs/Events.md
 [link-calling]: docs/Calling.md
 [link-chat-bots]: docs/ChatBots.md
 [link-helpers]: docs/Helpers.md

@@ -83,6 +83,268 @@
 
 ---
 
+### `CallLeftEvent`
+- Dispatched when a `CallParticipant` left `Call`.
+  - `$event->participant` : `CallParticipant` model that left the `Call`.
+  - `$event->call` : `Call` model that was left.
+
+---
+
+### `CallStartedEvent`
+- Dispatched when a `Call` is created.
+  - `$event->thread` : `Thread` model the `Call` belongs to.
+  - `$event->call` : `Call` model that was created.
+
+---
+
+### `DemotedAdminEvent`
+- Dispatched when a `Participant` is demoted from group admin.
+  - `$event->provider` : `MessengerProvider` provider that demoted the `Participant`.
+  - `$event->thread` : `Thread` model the `Participant` belongs to.
+  - `$event->participant` : `Participant` model that was demoted.
+
+---
+
+### `EmbedsRemovedEvent`
+- Dispatched when embeds on a `Message` are removed.
+  - `$event->provider` : `MessengerProvider` provider that removed embeds.
+  - `$event->message` : `Message` model embeds were removed from.
+
+---
+
+### `FriendApprovedEvent`
+- Dispatched when a `PendingFriend` is accepted.
+  - `$event->friend` : `Friend` model that was created.
+  - `$event->inverseFriend` : `Friend` inverse model that was created.
+
+---
+
+### `FriendCancelledEvent`
+- Dispatched when a `SentFriend` is cancelled.
+  - `$event->friend` : `SentFriend` model that was deleted.
+
+---
+
+### `FriendDeniedEvent`
+- Dispatched when a `PendingFriend` is denied.
+  - `$event->friend` : `PendingFriend` model that was denied.
+
+---
+
+### `FriendRemovedEvent`
+- Dispatched when a `Friend` is removed.
+  - `$event->friend` : `Friend` model being removed.
+  - `$event->inverseFriend` : `?Friend` nullable inverse model to the `Friend` removed.
+
+---
+
+### `FriendRequestEvent`
+- Dispatched when a `SentFriend` is created.
+  - `$event->friend` : `SentFriend` model that was created.
+
+---
+
+### `InviteArchivedEvent`
+- Dispatched when an `Invite` is archived.
+  - `$event->provider` : `?MessengerProvider` nullable provider that archived the `Invite`.
+  - `$event->invite` : `Invite` model that was archived.
+
+---
+
+### `InviteUsedEvent`
+- Dispatched when an `Invite` is used to join a `Thread`.
+  - `$event->provider` : `MessengerProvider` provider that used the `Invite` to join the `Thread`.
+  - `$event->thread` : `Thread` model the `Invite` belongs to.
+  - `$event->invite` : `Invite` model used to join the `Thread`.
+
+---
+
+### `KickedFromCallEvent`
+- Dispatched when a `CallParticipant` is kicked or un-kicked.
+  - `$event->provider` : `MessengerProvider` provider that kicked/un-kicked the `CallParticipant`.
+  - `$event->participant` : `CallParticipant` model that was kicked/un-kicked.
+  - `$event->call` : `Call` model the `CallParticipant` belongs to.
+
+---
+
+### `KnockEvent`
+- Dispatched when a knock is sent to a `Thread`.
+  - `$event->provider` : `MessengerProvider` provider that sent the knock.
+  - `$event->thread` : `Thread` model the knock was sent to.
+
+---
+
+### `MessageArchivedEvent`
+- Dispatched when a `Message` is archived.
+  - `$event->provider` : `MessengerProvider` provider archived the `Message`.
+  - `$event->message` : `Message` model that was archived.
+
+---
+
+### `MessageEditedEvent`
+- Dispatched when a `Message` is edited.
+  - `$event->message` : `Message` model that was archived.
+  - `$event->originalBody` : `?string` nullable original body of the message being edited.
+
+---
+
+### `NewBotActionEvent`
+- Dispatched when a `BotAction` is created.
+  - `$event->botAction` : `BotAction` model that was created.
+
+---
+
+### `NewBotEvent`
+- Dispatched when a `Bot` is created.
+  - `$event->bot` : `Bot` model that was created.
+
+---
+
+### `NewInviteEvent`
+- Dispatched when an `Invite` is created.
+  - `$event->invite` : `Invite` model that was created.
+
+---
+
+### `NewMessageEvent`
+- Dispatched when a `Message` is created.
+  - `$event->message` : `Message` model that was created.
+  - `$event->thread` : `Thread` model the `Message` belongs to.
+  - `$event->isGroupAdmin` : `bool` whether the message sender is a group thread admin or not.
+  - `$event->senderIp` : `?string` nullable IP of the message sender.
+
+---
+
+### `NewThreadEvent`
+- Dispatched when a `Thread` is created.
+  - `$event->provider` : `MessengerProvider` provider that created the `Thread`.
+  - `$event->thread` : `Thread` model that was created.
+
+---
+
+### `ParticipantMutedEvent`
+- Dispatched when a `Participant` mutes its `Thread`.
+  - `$event->participant` : `Participant` model that was muted.
+
+---
+
+### `ParticipantPermissionsEvent`
+- Dispatched when a `Participant` permissions is updated.
+  - `$event->provider` : `MessengerProvider` provider that updated the `Participant` permissions.
+  - `$event->thread` : `Thread` model the `Participant` belongs to.
+  - `$event->participant` : `Participant` model that was updated.
+
+---
+
+### `ParticipantReadEvent`
+- Dispatched when a `Participant` marks a `Thread` as read.
+  - `$event->participant` : `Participant` model that was marked read.
+
+---
+
+### `ParticipantsAddedEvent`
+- Dispatched when adding participants to a `Thread`.
+  - `$event->provider` : `MessengerProvider` provider adding the participants.
+  - `$event->thread` : `Thread` model the added participants belong to.
+  - `$event->participants` : `Collection` of `Participant` models that were added to the `Thread`.
+
+---
+
+### `ParticipantUnMutedEvent`
+- Dispatched when a `Participant` un-mutes its `Thread`.
+  - `$event->participant` : `Participant` model that was un-muted.
+
+---
+
+### `PromotedAdminEvent`
+- Dispatched when a `Participant` is promoted to a group admin.
+  - `$event->provider` : `MessengerProvider` provider that promoted the `Participant`.
+  - `$event->thread` : `Thread` model the `Participant` belongs to.
+  - `$event->participant` : `Participant` model that was promoted.
+
+---
+
+### `PushNotificationEvent`
+- Dispatched when any `private channel` broadcast is emitted.
+  - `$event->broadcastAs` : `string` broadcast event name.
+  - `$event->recipients` : `Collection` of all recipient `ID/TYPE` the broadcast was sent to.
+  - `$event->data` : `array` data that was sent in the broadcast.
+
+---
+
+### `ReactionAddedEvent`
+- Dispatched when a `MessageReaction` is created.
+  - `$event->reaction` : `MessageReaction` model that was created.
+
+---
+
+### `ReactionRemovedEvent`
+- Dispatched when a `MessageReaction` is deleted.
+  - `$event->provider` : `MessengerProvider` provider that deleted the `MessageReaction`.
+  - `$event->reaction` : `array` data of the removed `MessageReaction` model.
+
+---
+
+### `ReactionRemovedEvent`
+- Dispatched when a `MessageReaction` is deleted.
+  - `$event->provider` : `MessengerProvider` provider that deleted the `MessageReaction`.
+  - `$event->reaction` : `array` data of the removed `MessageReaction` model.
+
+---
+
+### `RemovedFromThreadEvent`
+- Dispatched when a `Participant` is removed from a `Thread`.
+  - `$event->provider` : `MessengerProvider` provider that removed the `Participant`.
+  - `$event->thread` : `Thread` model the `Participant` was removed from.
+  - `$event->participant` : `Participant` model that was removed.
+
+---
+
+### `StatusHeartbeatEvent`
+- Dispatched when a `MessengerProvider` hits the `heartbeat` endpoint.
+  - `$event->provider` : `MessengerProvider` provider using the `heartbeat`.
+  - `$event->IP` : `string` IP from the `MessengerProvider`.
+  - `$event->away` : `bool` whether the `MessengerProvider` is away/idle or not.
+
+---
+
+### `ThreadApprovalEvent`
+- Dispatched when a private `Thread` approval is approved or denied.
+  - `$event->provider` : `MessengerProvider` provider that approved/denied the approval.
+  - `$event->thread` : `Thread` model being approved/denied.
+  - `$event->approved` : `bool` whether the `Thread` was approved or denied.
+
+---
+
+### `ThreadArchivedEvent`
+- Dispatched when a `Thread` is archived.
+  - `$event->provider` : `?MessengerProvider` nullable provider that archived the `Thread`.
+  - `$event->thread` : `Thread` model that was archived.
+
+---
+
+### `ThreadAvatarEvent`
+- Dispatched when a `Thread` avatar is uploaded or removed.
+  - `$event->provider` : `MessengerProvider` provider that updated the `Thread` avatar.
+  - `$event->thread` : `Thread` model that was updated.
+
+---
+
+### `ThreadLeftEvent`
+- Dispatched when a `Participant` leaves a group `Thread`.
+  - `$event->provider` : `MessengerProvider` provider that left the `Thread`.
+  - `$event->thread` : `Thread` model that was left.
+  - `$event->participant` : `Participant` model that left the `Thread`.
+
+---
+
+### `ThreadSettingsEvent`
+- Dispatched when a group `Thread` settings is updated.
+  - `$event->provider` : `MessengerProvider` provider that updated the `Thread` settings.
+  - `$event->thread` : `Thread` model being updated.
+  - `$event->nameChanged` : `bool` whether the `Thread` name was changed or not.
+
+---
 
 
 [link-system-message-subscriber]: https://github.com/RTippin/messenger/blob/1.x/src/Listeners/SystemMessageSubscriber.php
