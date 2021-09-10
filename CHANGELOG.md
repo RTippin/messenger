@@ -3,6 +3,17 @@
 
 ---
 
+### [v1.6.0 (09-10-2021)](https://github.com/RTippin/messenger/compare/v1.5.0...v1.6.0)
+
+#### Changed
+- `MessengerComposer` will now emit events/broadcast when a new thread is created. The new thread will also now be marked as pending if the two providers are not friends.
+- `storage.threads.disk` config default changed to `public` from `messenger`.
+- Deprecated `getProviderOnlineStatusVerbose` from our `MessengerProvider` interface.
+- Moved `shouldUseUuids` static method from `MessengerBots` to `Messenger` class.
+- CS fixer updates.
+
+---
+
 ### [v1.5.0 (09-05-2021)](https://github.com/RTippin/messenger/compare/v1.4.0...v1.5.0)
 
 #### Added
