@@ -98,11 +98,10 @@ class MessengerComposerTest extends FeatureTestCase
         $this->expectException(MessengerComposerException::class);
         $this->expectExceptionMessage('New Private Failed');
 
-        app(MessengerComposer::class)->to($this->doe)->from($this->tippin)->message('Test');
-
-        $this->assertDatabaseCount('threads', 0);
-        $this->assertDatabaseCount('participants', 0);
-        $this->assertDatabaseCount('messages', 0);
+        $this->composer
+            ->to($this->doe)
+            ->from($this->tippin)
+            ->message('Test');
     }
 
     /** @test */
