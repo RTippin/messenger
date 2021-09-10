@@ -60,6 +60,18 @@ class StorePrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_doesnt_check_if_thread_exist_between_providers_if_using_recipient_override()
+    {
+        $this->createPrivateThread($this->tippin, $this->doe);
+
+        app(StorePrivateThread::class)->execute([
+            'message' => 'Hello World!',
+        ], $this->doe);
+
+        $this->assertDatabaseCount('threads', 2);
+    }
+
+    /** @test */
     public function it_throws_exception_if_provider_interactions_denies_messaging_first()
     {
         UserModel::$cantMessage = [CompanyModel::class];
@@ -74,6 +86,21 @@ class StorePrivateThreadTest extends FeatureTestCase
             'recipient_alias' => 'company',
             'recipient_id' => $this->developers->getKey(),
         ]);
+    }
+
+    /** @test */
+    public function it_throws_exception_if_provider_interactions_denies_messaging_first_with_recipient_override()
+    {
+        UserModel::$cantMessage = [CompanyModel::class];
+        Messenger::registerProviders([UserModel::class, CompanyModel::class]);
+        Messenger::setProvider($this->tippin);
+
+        $this->expectException(NewThreadException::class);
+        $this->expectExceptionMessage('Not authorized to start conversations with Developers.');
+
+        app(StorePrivateThread::class)->execute([
+            'message' => 'Hello World!',
+        ], $this->developers);
     }
 
     /** @test */
@@ -92,6 +119,42 @@ class StorePrivateThreadTest extends FeatureTestCase
             'type' => 0,
             'body' => 'Hello World!',
         ]);
+    }
+
+    /** @test */
+    public function it_stores_thread_with_participants_and_no_message()
+    {
+        app(StorePrivateThread::class)->execute([
+            'recipient_alias' => 'user',
+            'recipient_id' => $this->doe->getKey(),
+        ]);
+
+        $this->assertDatabaseCount('threads', 1);
+        $this->assertDatabaseCount('participants', 2);
+        $this->assertDatabaseCount('messages', 0);
+    }
+
+    /** @test */
+    public function it_stores_thread_with_participants_and_no_message_using_recipient_override()
+    {
+        app(StorePrivateThread::class)->execute([], $this->doe);
+
+        $this->assertDatabaseCount('threads', 1);
+        $this->assertDatabaseCount('participants', 2);
+        $this->assertDatabaseCount('messages', 0);
+    }
+
+    /** @test */
+    public function it_stores_thread_with_participants_and_message_using_recipient_override()
+    {
+        app(StorePrivateThread::class)->execute([
+            'message' => 'Hello World!',
+        ], $this->doe);
+
+        $this->assertDatabaseCount('threads', 1);
+        $this->assertDatabaseCount('participants', 2);
+        $this->assertDatabaseCount('messages', 1);
+        $this->assertDatabaseCount('messages', 1);
     }
 
     /** @test */
@@ -116,6 +179,25 @@ class StorePrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_marks_recipient_pending_if_not_friends_using_recipient_override()
+    {
+        app(StorePrivateThread::class)->execute([
+            'message' => 'Hello World!',
+        ], $this->doe);
+
+        $this->assertDatabaseHas('participants', [
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => $this->tippin->getMorphClass(),
+            'pending' => false,
+        ]);
+        $this->assertDatabaseHas('participants', [
+            'owner_id' => $this->doe->getKey(),
+            'owner_type' => $this->doe->getMorphClass(),
+            'pending' => true,
+        ]);
+    }
+
+    /** @test */
     public function it_is_not_pending_if_providers_are_friends()
     {
         $this->createFriends($this->tippin, $this->doe);
@@ -125,6 +207,27 @@ class StorePrivateThreadTest extends FeatureTestCase
             'recipient_alias' => 'user',
             'recipient_id' => $this->doe->getKey(),
         ]);
+
+        $this->assertDatabaseHas('participants', [
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => $this->tippin->getMorphClass(),
+            'pending' => false,
+        ]);
+        $this->assertDatabaseHas('participants', [
+            'owner_id' => $this->doe->getKey(),
+            'owner_type' => $this->doe->getMorphClass(),
+            'pending' => false,
+        ]);
+    }
+
+    /** @test */
+    public function it_is_not_pending_if_providers_are_friends_using_recipient_override()
+    {
+        $this->createFriends($this->tippin, $this->doe);
+
+        app(StorePrivateThread::class)->execute([
+            'message' => 'Hello World!',
+        ], $this->doe);
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->tippin->getKey(),
@@ -226,6 +329,19 @@ class StorePrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_stores_image_message_with_recipient_override()
+    {
+        app(StorePrivateThread::class)->execute([
+            'image' => UploadedFile::fake()->image('picture.jpg'),
+        ], $this->doe);
+
+        $this->assertDatabaseHas('messages', [
+            'type' => 1,
+        ]);
+        Storage::disk('messenger')->assertExists(Message::image()->first()->getImagePath());
+    }
+
+    /** @test */
     public function it_stores_document_message()
     {
         app(StorePrivateThread::class)->execute([
@@ -241,6 +357,19 @@ class StorePrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_stores_document_message_with_recipient_override()
+    {
+        app(StorePrivateThread::class)->execute([
+            'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+        ], $this->doe);
+
+        $this->assertDatabaseHas('messages', [
+            'type' => 2,
+        ]);
+        Storage::disk('messenger')->assertExists(Message::document()->first()->getDocumentPath());
+    }
+
+    /** @test */
     public function it_stores_audio_message()
     {
         app(StorePrivateThread::class)->execute([
@@ -248,6 +377,19 @@ class StorePrivateThreadTest extends FeatureTestCase
             'recipient_alias' => 'user',
             'recipient_id' => $this->doe->getKey(),
         ]);
+
+        $this->assertDatabaseHas('messages', [
+            'type' => 3,
+        ]);
+        Storage::disk('messenger')->assertExists(Message::audio()->first()->getAudioPath());
+    }
+
+    /** @test */
+    public function it_stores_audio_message_with_recipient_override()
+    {
+        app(StorePrivateThread::class)->execute([
+            'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
+        ], $this->doe);
 
         $this->assertDatabaseHas('messages', [
             'type' => 3,

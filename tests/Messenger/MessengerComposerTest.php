@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Messenger;
 
 use Exception;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Messages\AddReaction;
@@ -14,15 +13,18 @@ use RTippin\Messenger\Actions\Messages\StoreImageMessage;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
 use RTippin\Messenger\Actions\Threads\MarkParticipantRead;
 use RTippin\Messenger\Actions\Threads\SendKnock;
+use RTippin\Messenger\Actions\Threads\StorePrivateThread;
 use RTippin\Messenger\Broadcasting\ClientEvents\Read;
 use RTippin\Messenger\Broadcasting\ClientEvents\StopTyping;
 use RTippin\Messenger\Broadcasting\ClientEvents\Typing;
 use RTippin\Messenger\Broadcasting\KnockBroadcast;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
+use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
 use RTippin\Messenger\Broadcasting\ParticipantReadBroadcast;
 use RTippin\Messenger\Broadcasting\ReactionAddedBroadcast;
 use RTippin\Messenger\Events\KnockEvent;
 use RTippin\Messenger\Events\NewMessageEvent;
+use RTippin\Messenger\Events\NewThreadEvent;
 use RTippin\Messenger\Events\ParticipantReadEvent;
 use RTippin\Messenger\Events\ReactionAddedEvent;
 use RTippin\Messenger\Exceptions\MessengerComposerException;
@@ -89,10 +91,12 @@ class MessengerComposerTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_when_storing_new_private_thread_fails()
     {
-        DB::shouldReceive('transaction')->andThrow(new Exception('DB Error'));
+        $this->mock(StorePrivateThread::class)
+            ->shouldReceive('execute')
+            ->andThrow(new Exception('New Private Failed'));
 
         $this->expectException(MessengerComposerException::class);
-        $this->expectExceptionMessage('Storing new private failed with the message: DB Error');
+        $this->expectExceptionMessage('New Private Failed');
 
         app(MessengerComposer::class)->to($this->doe)->from($this->tippin)->message('Test');
 
@@ -124,6 +128,106 @@ class MessengerComposerTest extends FeatureTestCase
 
         $this->assertTrue(Messenger::isScopedProviderSet());
         $this->assertSame($this->doe, Messenger::getProvider());
+    }
+
+    /** @test */
+    public function it_creates_new_pending_thread_if_not_friends()
+    {
+        $this->composer
+            ->to($this->doe)
+            ->from($this->tippin)
+            ->message('Test');
+
+        $this->assertDatabaseCount('threads', 1);
+        $this->assertDatabaseHas('participants', [
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => $this->tippin->getMorphClass(),
+            'pending' => false,
+        ]);
+        $this->assertDatabaseHas('participants', [
+            'owner_id' => $this->doe->getKey(),
+            'owner_type' => $this->doe->getMorphClass(),
+            'pending' => true,
+        ]);
+    }
+
+    /** @test */
+    public function it_creates_new_non_pending_thread_if_friends()
+    {
+        $this->createFriends($this->tippin, $this->doe);
+
+        $this->composer
+            ->to($this->doe)
+            ->from($this->tippin)
+            ->message('Test');
+
+        $this->assertDatabaseCount('threads', 1);
+        $this->assertDatabaseHas('participants', [
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => $this->tippin->getMorphClass(),
+            'pending' => false,
+        ]);
+        $this->assertDatabaseHas('participants', [
+            'owner_id' => $this->doe->getKey(),
+            'owner_type' => $this->doe->getMorphClass(),
+            'pending' => false,
+        ]);
+    }
+
+    /** @test */
+    public function it_created_new_thread_firing_events()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            NewThreadBroadcast::class,
+            NewThreadEvent::class,
+        ]);
+
+        $this->composer
+            ->to($this->doe)
+            ->from($this->tippin)
+            ->message('Test');
+
+        Event::assertDispatched(NewThreadBroadcast::class);
+        Event::assertDispatched(NewThreadEvent::class);
+    }
+
+    /** @test */
+    public function it_creates_new_thread_without_broadcast()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            NewThreadBroadcast::class,
+            NewThreadEvent::class,
+        ]);
+
+        $this->composer
+            ->to($this->doe)
+            ->from($this->tippin)
+            ->silent()
+            ->message('Test');
+
+        Event::assertNotDispatched(NewThreadBroadcast::class);
+        Event::assertDispatched(NewThreadEvent::class);
+    }
+
+    /** @test */
+    public function it_creates_new_thread_without_broadcast_and_events()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            NewThreadBroadcast::class,
+            NewThreadEvent::class,
+        ]);
+
+        $this->composer
+            ->to($this->doe)
+            ->from($this->tippin)
+            ->silent(true)
+            ->message('Test');
+
+        Event::assertNotDispatched(NewThreadBroadcast::class);
+        Event::assertNotDispatched(NewThreadEvent::class);
     }
 
     /** @test */

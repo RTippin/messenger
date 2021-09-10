@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Support;
 
-use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Messages\AddReaction;
@@ -12,6 +11,7 @@ use RTippin\Messenger\Actions\Messages\StoreImageMessage;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
 use RTippin\Messenger\Actions\Threads\MarkParticipantRead;
 use RTippin\Messenger\Actions\Threads\SendKnock;
+use RTippin\Messenger\Actions\Threads\StorePrivateThread;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
@@ -39,11 +39,6 @@ class MessengerComposer
     private BroadcastDriver $broadcaster;
 
     /**
-     * @var DatabaseManager
-     */
-    private DatabaseManager $database;
-
-    /**
      * @var PrivateThreadRepository
      */
     private PrivateThreadRepository $locator;
@@ -68,28 +63,23 @@ class MessengerComposer
      *
      * @param  Messenger  $messenger
      * @param  BroadcastDriver  $broadcaster
-     * @param  DatabaseManager  $database
      * @param  PrivateThreadRepository  $locator
      */
     public function __construct(Messenger $messenger,
                                 BroadcastDriver $broadcaster,
-                                DatabaseManager $database,
                                 PrivateThreadRepository $locator)
     {
         $this->messenger = $messenger;
         $this->broadcaster = $broadcaster;
-        $this->database = $database;
         $this->locator = $locator;
     }
 
     /**
-     * Set the thread or provider we want to compose to. If a provider
-     * is supplied, we will attempt to locate a private thread between
-     * the "TO" and "FROM" providers. If no private thread is found,
-     * one will be created. Please note that when a private thread
-     * is created through this composer, friend status between the
-     * two providers is ignored, and the thread will not be
-     * marked pending.
+     * Set the thread or provider we want to compose to. If a provider is supplied,
+     * we will attempt to locate an existing private thread between the "TO" and
+     * "FROM" providers. If no private thread is found, one will be created. If
+     * the two providers are not friends, the new thread will be marked as
+     * pending for the recipient.
      *
      * @param  MessengerProvider|Thread  $entity
      * @return $this
@@ -387,11 +377,7 @@ class MessengerComposer
             return $this->to;
         }
 
-        $thread = $this->locator->getProviderPrivateThreadWithRecipient($this->to);
-
-        return $this->to = is_null($thread)
-            ? $this->makePrivateThread()
-            : $thread;
+        return $this->to = $this->locator->getProviderPrivateThreadWithRecipient($this->to) ?: $this->makePrivateThread();
     }
 
     /**
@@ -418,27 +404,17 @@ class MessengerComposer
      */
     private function makePrivateThread(): Thread
     {
+        $action = app(StorePrivateThread::class);
+
+        $this->silenceActionWhenSilent($action);
+
         try {
-            $this->database->transaction(function () {
-                $thread = Thread::create(Thread::DefaultSettings);
-
-                $thread->participants()->create(array_merge(Participant::DefaultPermissions, [
-                    'owner_id' => $this->messenger->getProvider()->getKey(),
-                    'owner_type' => $this->messenger->getProvider()->getMorphClass(),
-                ]));
-
-                $thread->participants()->create(array_merge(Participant::DefaultPermissions, [
-                    'owner_id' => $this->to->getKey(),
-                    'owner_type' => $this->to->getMorphClass(),
-                ]));
-
-                $this->to = $thread;
-            });
+            $action->execute([], $this->to);
         } catch (Throwable $e) {
-            throw new MessengerComposerException('Storing new private failed with the message: '.$e->getMessage());
+            throw new MessengerComposerException($e->getMessage());
         }
 
-        return $this->to;
+        return $this->to = $action->getThread();
     }
 
     /**

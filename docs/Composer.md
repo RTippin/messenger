@@ -25,8 +25,8 @@ MessengerComposer::to($receiver)
 ---
 
 ### `to($entity)`
-- Set the `Thread` or `MessengerProvider` we want to compose `TO`. If a provider is supplied, we will attempt to locate a private thread between the `TO` and `FROM` providers. If no private thread is found, one will be created.
-  - Please note that when a private thread is created through this composer, friend status between the two providers is ignored, and the thread will not be marked pending.
+- Set the `Thread` or `MessengerProvider` we want to compose `TO`. If a provider is supplied, we will attempt to locate an existing private thread between the `TO` and `FROM` providers. If no private thread is found, one will be created.
+  - If the two providers are not friends, the new thread will be marked as pending for the `TO` recipient.
 
 ### `from(MessengerProvider $provider)`
 - Set the provider who is composing. (acting as the logged-in user)

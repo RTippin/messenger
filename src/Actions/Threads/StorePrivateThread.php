@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Actions\Threads;
 
-use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use RTippin\Messenger\Actions\Messages\NewMessageAction;
@@ -39,16 +38,6 @@ class StorePrivateThread extends NewThreadAction
      * @var MessengerProvider|null
      */
     private ?MessengerProvider $recipient;
-
-    /**
-     * @var string
-     */
-    private string $messageActionType;
-
-    /**
-     * @var string
-     */
-    private string $messageActionKey;
 
     /**
      * @var BroadcastDriver
@@ -99,23 +88,29 @@ class StorePrivateThread extends NewThreadAction
     /**
      * Create a new private thread. Check one does not already exist between the
      * two providers, and that they are allowed to initiate a conversation.
+     * Skip checking for an existing thread if a recipient is provided.
      *
      * @param  array  $params
+     * @param  MessengerProvider|null  $recipient
      * @return $this
      * @see PrivateThreadRequest
-     * @throws AuthorizationException|Throwable
+     * @throws NewThreadException|ProviderNotFoundException|Throwable
      */
-    public function execute(array $params): self
+    public function execute(array $params, ?MessengerProvider $recipient = null): self
     {
-        $this->setRecipientAndExistingThread(
-            $params['recipient_alias'],
-            $params['recipient_id']
-        );
+        if (! is_null($recipient)) {
+            $this->recipient = $recipient;
+            $this->existingThread = null;
+        } else {
+            $this->setRecipientAndExistingThread(
+                $params['recipient_alias'],
+                $params['recipient_id']
+            );
+        }
 
         $this->bailIfCannotCreateThread();
 
-        $this->setMessageActions($params)
-            ->determineIfPending()
+        $this->determineIfPending()
             ->handleTransactions($params)
             ->generateResource()
             ->fireBroadcast()
@@ -125,16 +120,16 @@ class StorePrivateThread extends NewThreadAction
     }
 
     /**
-     * @param  array  $inputs
+     * @param  array  $params
      * @return $this
      * @throws Throwable
      */
-    private function handleTransactions(array $inputs): self
+    private function handleTransactions(array $params): self
     {
         if ($this->isChained()) {
-            $this->executeTransactions($inputs);
+            $this->executeTransactions($params);
         } else {
-            $this->database->transaction(fn () => $this->executeTransactions($inputs));
+            $this->database->transaction(fn () => $this->executeTransactions($params));
         }
 
         return $this;
@@ -144,17 +139,20 @@ class StorePrivateThread extends NewThreadAction
      * Execute all actions that must occur for
      * a successful private thread creation.
      *
-     * @param  array  $inputs
+     * @param  array  $params
      */
-    private function executeTransactions(array $inputs): void
+    private function executeTransactions(array $params): void
     {
         $this->storeThread()
             ->chain(StoreParticipant::class)
             ->execute(...$this->creatorParticipant())
-            ->execute(...$this->recipientParticipant())
-            ->chain($this->messageActionType)
-            ->withoutDispatches()
-            ->execute(...$this->storeMessage($inputs));
+            ->execute(...$this->recipientParticipant());
+
+        if (! is_null($action = $this->getMessageAction($params))) {
+            $this->chain($action[0])
+                ->withoutDispatches()
+                ->execute(...$this->storeMessage($params, $action[1]));
+        }
     }
 
     /**
@@ -213,14 +211,15 @@ class StorePrivateThread extends NewThreadAction
     /**
      * @mixin NewMessageAction
      * @param  array  $inputs
+     * @param  string  $key
      * @return array
      */
-    private function storeMessage(array $inputs): array
+    private function storeMessage(array $inputs, string $key): array
     {
         return [
             $this->getThread(),
             [
-                $this->messageActionKey => $inputs[$this->messageActionKey],
+                $key => $inputs[$key],
                 'extra' => $inputs['extra'] ?? null,
             ],
         ];
@@ -259,28 +258,30 @@ class StorePrivateThread extends NewThreadAction
 
     /**
      * Determine which type of message was sent
-     * to initiate this thread.
+     * to initiate this thread, if any.
      *
-     * @param  array  $inputs
-     * @return $this
+     * @param  array  $params
+     * @return array|null
      */
-    private function setMessageActions(array $inputs): self
+    private function getMessageAction(array $params): ?array
     {
-        if (array_key_exists('message', $inputs)) {
-            $this->messageActionType = StoreMessage::class;
-            $this->messageActionKey = 'message';
-        } elseif (array_key_exists('image', $inputs)) {
-            $this->messageActionType = StoreImageMessage::class;
-            $this->messageActionKey = 'image';
-        } elseif (array_key_exists('document', $inputs)) {
-            $this->messageActionType = StoreDocumentMessage::class;
-            $this->messageActionKey = 'document';
-        } elseif (array_key_exists('audio', $inputs)) {
-            $this->messageActionType = StoreAudioMessage::class;
-            $this->messageActionKey = 'audio';
+        if (array_key_exists('message', $params)) {
+            return [StoreMessage::class, 'message'];
         }
 
-        return $this;
+        if (array_key_exists('image', $params)) {
+            return [StoreImageMessage::class, 'image'];
+        }
+
+        if (array_key_exists('document', $params)) {
+            return [StoreDocumentMessage::class, 'document'];
+        }
+
+        if (array_key_exists('audio', $params)) {
+            return [StoreAudioMessage::class, 'audio'];
+        }
+
+        return null;
     }
 
     /**
