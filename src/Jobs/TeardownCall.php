@@ -28,6 +28,7 @@ class TeardownCall extends BaseMessengerJob
      *
      * @param  CallBrokerTeardown  $broker
      * @return void
+     *
      * @throws CallBrokerException
      */
     public function handle(CallBrokerTeardown $broker): void

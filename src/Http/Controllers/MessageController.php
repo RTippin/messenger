@@ -39,6 +39,7 @@ class MessageController extends Controller
      * @param  MessageRepository  $repository
      * @param  Thread  $thread
      * @return MessageCollection
+     *
      * @throws AuthorizationException
      */
     public function index(MessageRepository $repository, Thread $thread): MessageCollection
@@ -61,6 +62,7 @@ class MessageController extends Controller
      * @param  Thread  $thread
      * @param  Message  $message
      * @return MessageCollection
+     *
      * @throws AuthorizationException
      */
     public function paginate(MessageRepository $repository,
@@ -87,6 +89,7 @@ class MessageController extends Controller
      * @param  StoreMessage  $storeMessage
      * @param  Thread  $thread
      * @return MessageResource
+     *
      * @throws AuthorizationException|Throwable
      */
     public function store(MessageRequest $request,
@@ -111,6 +114,7 @@ class MessageController extends Controller
      * @param  Thread  $thread
      * @param  Message  $message
      * @return MessageResource
+     *
      * @throws AuthorizationException
      */
     public function show(Thread $thread, Message $message): MessageResource
@@ -129,6 +133,7 @@ class MessageController extends Controller
      * @param  Thread  $thread
      * @param  Message  $message
      * @return MessageEditCollection
+     *
      * @throws AuthorizationException
      */
     public function showEdits(Thread $thread, Message $message): MessageEditCollection
@@ -149,6 +154,7 @@ class MessageController extends Controller
      * @param  Thread  $thread
      * @param  Message  $message
      * @return MessageResource
+     *
      * @throws AuthorizationException|Throwable
      */
     public function update(EditMessageRequest $request,
@@ -175,6 +181,7 @@ class MessageController extends Controller
      * @param  Thread  $thread
      * @param  Message  $message
      * @return JsonResponse
+     *
      * @throws AuthorizationException
      */
     public function removeEmbeds(RemoveEmbeds $removeEmbeds,
@@ -199,6 +206,7 @@ class MessageController extends Controller
      * @param  Thread  $thread
      * @param  Message  $message
      * @return JsonResponse
+     *
      * @throws AuthorizationException|Exception
      */
     public function destroy(ArchiveMessage $archiveMessage,

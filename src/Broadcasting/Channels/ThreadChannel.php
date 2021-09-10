@@ -33,6 +33,7 @@ class ThreadChannel
      * @param $user
      * @param  Thread  $thread
      * @return ProviderResource
+     *
      * @throws AuthorizationException
      */
     public function join($user, Thread $thread): ProviderResource

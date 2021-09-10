@@ -109,6 +109,7 @@ abstract class NewMessageAction extends BaseMessengerAction
     /**
      * @param  array  $parameters
      * @return $this
+     *
      * @see BaseMessageRequest
      */
     protected function setMessageOptionalParameters(array $parameters): self
@@ -146,6 +147,7 @@ abstract class NewMessageAction extends BaseMessengerAction
 
     /**
      * @return $this
+     *
      * @throws Throwable
      */
     protected function handleTransactions(): self

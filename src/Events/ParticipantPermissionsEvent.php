@@ -28,6 +28,7 @@ class ParticipantPermissionsEvent
 
     /**
      * Create a new event instance.
+     *
      * @param  MessengerProvider  $provider
      * @param  Thread  $thread
      * @param  Participant  $participant

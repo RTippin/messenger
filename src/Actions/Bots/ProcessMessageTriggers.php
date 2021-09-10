@@ -82,6 +82,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
      * @param  bool  $isGroupAdmin
      * @param  null|string  $senderIp
      * @return $this
+     *
      * @throws FeatureDisabledException
      */
     public function execute(Thread $thread,

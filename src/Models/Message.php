@@ -38,10 +38,12 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read \RTippin\Messenger\Models\MessageEdit $edits
  * @property-read \RTippin\Messenger\Models\MessageReaction $reactions
  * @property-read \RTippin\Messenger\Models\Message $replyTo
+ *
  * @method static \Illuminate\Database\Query\Builder|Message onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|Message withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Message withoutTrashed()
  * @mixin Model|\Eloquent
+ *
  * @method static Builder|Message text()
  * @method static Builder|Message document()
  * @method static Builder|Message image()

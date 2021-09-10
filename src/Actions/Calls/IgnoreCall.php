@@ -61,6 +61,7 @@ class IgnoreCall extends BaseMessengerAction
      * @param  Thread  $thread
      * @param  Call  $call
      * @return $this
+     *
      * @throws Throwable
      */
     public function execute(Thread $thread, Call $call): self

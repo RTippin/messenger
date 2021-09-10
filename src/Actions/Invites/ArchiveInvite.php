@@ -37,6 +37,7 @@ class ArchiveInvite extends InviteAction
     /**
      * @param  Invite  $invite
      * @return $this
+     *
      * @throws Exception|FeatureDisabledException
      */
     public function execute(Invite $invite): self
@@ -52,6 +53,7 @@ class ArchiveInvite extends InviteAction
 
     /**
      * @return $this
+     *
      * @throws Exception
      */
     private function archiveInvite(): self

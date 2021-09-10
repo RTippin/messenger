@@ -27,6 +27,7 @@ class BotController
      *
      * @param  Thread  $thread
      * @return BotCollection
+     *
      * @throws AuthorizationException
      */
     public function index(Thread $thread): BotCollection
@@ -50,6 +51,7 @@ class BotController
      * @param  Thread  $thread
      * @param  Bot  $bot
      * @return BotResource
+     *
      * @throws AuthorizationException
      */
     public function show(Thread $thread, Bot $bot): BotResource
@@ -72,6 +74,7 @@ class BotController
      * @param  StoreBot  $storeBot
      * @param  Thread  $thread
      * @return BotResource
+     *
      * @throws AuthorizationException|FeatureDisabledException
      */
     public function store(BotRequest $request,
@@ -97,6 +100,7 @@ class BotController
      * @param  Thread  $thread
      * @param  Bot  $bot
      * @return BotResource
+     *
      * @throws AuthorizationException|FeatureDisabledException
      */
     public function update(BotRequest $request,
@@ -123,6 +127,7 @@ class BotController
      * @param  Thread  $thread
      * @param  Bot  $bot
      * @return BotResource
+     *
      * @throws AuthorizationException|FeatureDisabledException
      */
     public function storeAvatar(BotAvatarRequest $request,
@@ -148,6 +153,7 @@ class BotController
      * @param  Thread  $thread
      * @param  Bot  $bot
      * @return BotResource
+     *
      * @throws AuthorizationException|FeatureDisabledException
      */
     public function destroyAvatar(DestroyBotAvatar $destroyBotAvatar,
@@ -169,6 +175,7 @@ class BotController
      * @param  Thread  $thread
      * @param  Bot  $bot
      * @return JsonResponse
+     *
      * @throws AuthorizationException|FeatureDisabledException
      */
     public function destroy(ArchiveBot $archiveBot,

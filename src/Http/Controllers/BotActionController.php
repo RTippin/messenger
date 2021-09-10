@@ -29,6 +29,7 @@ class BotActionController
      * @param  Thread  $thread
      * @param  Bot  $bot
      * @return BotActionCollection
+     *
      * @throws AuthorizationException
      */
     public function index(Thread $thread, Bot $bot): BotActionCollection
@@ -53,6 +54,7 @@ class BotActionController
      * @param  Bot  $bot
      * @param  BotAction  $action
      * @return BotActionResource
+     *
      * @throws AuthorizationException
      */
     public function show(Thread $thread,
@@ -77,6 +79,7 @@ class BotActionController
      * @param  Thread  $thread
      * @param  Bot  $bot
      * @return BotActionResource
+     *
      * @throws FeatureDisabledException|ValidationException
      * @throws BotException|AuthorizationException
      */
@@ -108,6 +111,7 @@ class BotActionController
      * @param  Bot  $bot
      * @param  BotAction  $action
      * @return BotActionResource
+     *
      * @throws FeatureDisabledException|ValidationException
      * @throws BotException|AuthorizationException
      */
@@ -139,6 +143,7 @@ class BotActionController
      * @param  Bot  $bot
      * @param  BotAction  $action
      * @return JsonResponse
+     *
      * @throws AuthorizationException|FeatureDisabledException
      */
     public function destroy(RemoveBotAction $removeBotAction,

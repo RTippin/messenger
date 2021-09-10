@@ -83,6 +83,7 @@ trait MessengerProviders
      * @param  MessengerProvider|mixed|null  $provider
      * @param  bool  $scoped
      * @return $this
+     *
      * @throws InvalidProviderException
      */
     public function setProvider($provider = null, bool $scoped = false): self
@@ -115,6 +116,7 @@ trait MessengerProviders
      *
      * @param  MessengerProvider|mixed|null  $provider
      * @return $this
+     *
      * @throws InvalidProviderException
      */
     public function setScopedProvider($provider = null): self
@@ -163,6 +165,7 @@ trait MessengerProviders
      * @param  bool  $scoped
      * @param  bool  $flush
      * @return $this
+     *
      * @throws InvalidProviderException
      */
     public function unsetProvider(bool $scoped = false, bool $flush = false): self
@@ -197,6 +200,7 @@ trait MessengerProviders
      * Unset the active scoped provider. Re-set the previous provider, if one was set.
      *
      * @return $this
+     *
      * @throws InvalidProviderException
      */
     public function unsetScopedProvider(): self

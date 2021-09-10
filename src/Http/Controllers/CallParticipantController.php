@@ -23,6 +23,7 @@ class CallParticipantController
      * @param  Thread  $thread
      * @param  Call  $call
      * @return CallParticipantCollection
+     *
      * @throws AuthorizationException
      */
     public function index(Thread $thread, Call $call): CallParticipantCollection
@@ -44,6 +45,7 @@ class CallParticipantController
      * @param  Call  $call
      * @param  CallParticipant  $participant
      * @return CallParticipantResource
+     *
      * @throws AuthorizationException
      */
     public function show(Thread $thread,
@@ -69,6 +71,7 @@ class CallParticipantController
      * @param  Call  $call
      * @param  CallParticipant  $participant
      * @return JsonResponse
+     *
      * @throws AuthorizationException
      */
     public function update(KickCallParticipantRequest $request,

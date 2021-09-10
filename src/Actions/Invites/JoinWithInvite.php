@@ -49,6 +49,7 @@ class JoinWithInvite extends InviteAction
     /**
      * @param  Invite  $invite
      * @return $this
+     *
      * @throws Exception|Throwable|FeatureDisabledException
      */
     public function execute(Invite $invite): self
@@ -66,6 +67,7 @@ class JoinWithInvite extends InviteAction
 
     /**
      * @return $this
+     *
      * @throws Throwable
      */
     private function handleTransactions(): self
@@ -108,6 +110,7 @@ class JoinWithInvite extends InviteAction
      * Execute params for self participant.
      *
      * @mixin StoreParticipant
+     *
      * @return array
      */
     private function addParticipant(): array

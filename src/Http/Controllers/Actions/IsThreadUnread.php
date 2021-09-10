@@ -16,6 +16,7 @@ class IsThreadUnread
      *
      * @param  Thread  $thread
      * @return JsonResponse
+     *
      * @throws AuthorizationException
      */
     public function __invoke(Thread $thread): JsonResponse

@@ -38,7 +38,9 @@ class UpdateBotAction extends BaseMessengerAction
      * @param  BotAction  $action
      * @param  array  $params
      * @return $this
+     *
      * @see MessengerBots::generateHandlerData()
+     *
      * @throws FeatureDisabledException
      */
     public function execute(BotAction $action, array $params): self

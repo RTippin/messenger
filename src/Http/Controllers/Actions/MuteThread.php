@@ -18,6 +18,7 @@ class MuteThread
      * @param  MuteThreadAction  $muteThread
      * @param  Thread  $thread
      * @return JsonResponse
+     *
      * @throws AuthorizationException
      */
     public function __invoke(MuteThreadAction $muteThread, Thread $thread): JsonResponse

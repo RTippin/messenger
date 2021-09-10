@@ -41,7 +41,9 @@ class StoreBot extends BaseMessengerAction
      * @param  Thread  $thread
      * @param  array  $params
      * @return $this
+     *
      * @see BotRequest
+     *
      * @throws FeatureDisabledException
      */
     public function execute(Thread $thread, array $params): self

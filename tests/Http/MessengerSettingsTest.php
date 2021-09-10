@@ -47,6 +47,7 @@ class MessengerSettingsTest extends HttpTestCase
     /**
      * @test
      * @dataProvider settingsValidation
+     *
      * @param $boolInput
      * @param $intInput
      */

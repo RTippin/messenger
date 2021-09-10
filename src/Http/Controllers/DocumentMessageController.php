@@ -32,6 +32,7 @@ class DocumentMessageController extends Controller
      * @param  DocumentMessageRepository  $repository
      * @param  Thread  $thread
      * @return DocumentMessageCollection
+     *
      * @throws AuthorizationException
      */
     public function index(DocumentMessageRepository $repository, Thread $thread): DocumentMessageCollection
@@ -54,6 +55,7 @@ class DocumentMessageController extends Controller
      * @param  Thread  $thread
      * @param  Message  $document
      * @return DocumentMessageCollection
+     *
      * @throws AuthorizationException
      */
     public function paginate(DocumentMessageRepository $repository,
@@ -80,6 +82,7 @@ class DocumentMessageController extends Controller
      * @param  StoreDocumentMessage  $storeDocumentMessage
      * @param  Thread  $thread
      * @return MessageResource
+     *
      * @throws AuthorizationException|Throwable
      */
     public function store(DocumentMessageRequest $request,

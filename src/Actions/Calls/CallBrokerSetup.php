@@ -31,6 +31,7 @@ class CallBrokerSetup extends BaseMessengerAction
      * @param  Thread  $thread
      * @param  Call  $call
      * @return $this
+     *
      * @throws CallBrokerException
      */
     public function execute(Thread $thread, Call $call): self
@@ -48,6 +49,7 @@ class CallBrokerSetup extends BaseMessengerAction
 
     /**
      * @return void
+     *
      * @throws CallBrokerException
      */
     private function checkCallNeedsToBeSetup(): void
@@ -59,6 +61,7 @@ class CallBrokerSetup extends BaseMessengerAction
 
     /**
      * @return $this
+     *
      * @throws CallBrokerException
      */
     private function setupCallWithProvider(): self
@@ -72,6 +75,7 @@ class CallBrokerSetup extends BaseMessengerAction
 
     /**
      * @param  string  $message
+     *
      * @throws CallBrokerException
      */
     private function throwSetupFailed(string $message): void

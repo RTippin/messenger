@@ -148,6 +148,7 @@ class AudioMessageTest extends HttpTestCase
     /**
      * @test
      * @dataProvider audioPassesValidation
+     *
      * @param $audioValue
      */
     public function send_audio_message_passes_audio_validation($audioValue)
@@ -168,6 +169,7 @@ class AudioMessageTest extends HttpTestCase
     /**
      * @test
      * @dataProvider audioFailsValidation
+     *
      * @param $audioValue
      */
     public function send_audio_message_fails_audio_validation($audioValue)

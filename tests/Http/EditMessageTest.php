@@ -198,6 +198,7 @@ class EditMessageTest extends HttpTestCase
     /**
      * @test
      * @dataProvider editPassesValidation
+     *
      * @param $value
      */
     public function edit_message_passes_validation($value)
@@ -218,6 +219,7 @@ class EditMessageTest extends HttpTestCase
     /**
      * @test
      * @dataProvider editFailsValidation
+     *
      * @param $value
      */
     public function edit_message_fails_validation($value)

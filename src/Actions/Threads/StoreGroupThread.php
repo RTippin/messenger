@@ -58,7 +58,9 @@ class StoreGroupThread extends NewThreadAction
      *
      * @param  array  $params
      * @return $this
+     *
      * @see GroupThreadRequest
+     *
      * @throws Throwable
      */
     public function execute(array $params): self
@@ -78,6 +80,7 @@ class StoreGroupThread extends NewThreadAction
      * @param  string  $subject
      * @param  array  $providers
      * @return $this
+     *
      * @throws Throwable
      */
     private function handleTransactions(string $subject, array $providers): self
@@ -126,6 +129,7 @@ class StoreGroupThread extends NewThreadAction
 
     /**
      * @mixin StoreSystemMessage
+     *
      * @param  string  $subject
      * @return array
      */
@@ -136,6 +140,7 @@ class StoreGroupThread extends NewThreadAction
 
     /**
      * @mixin StoreParticipant
+     *
      * @return array
      */
     private function creatorParticipant(): array
@@ -150,6 +155,7 @@ class StoreGroupThread extends NewThreadAction
     /**
      * @param  array  $providers
      * @mixin StoreManyParticipants
+     *
      * @return array
      */
     private function manyParticipants(array $providers): array

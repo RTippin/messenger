@@ -34,6 +34,7 @@ class SetMessengerProvider
      * @param  Closure  $next
      * @param  null  $required
      * @return mixed
+     *
      * @throws InvalidProviderException
      */
     public function handle(Request $request, Closure $next, $required = null)
@@ -52,6 +53,7 @@ class SetMessengerProvider
      * you need to grab the model that is authed.
      *
      * @param  Request  $request
+     *
      * @throws InvalidProviderException
      */
     protected function setProvider(Request $request): void

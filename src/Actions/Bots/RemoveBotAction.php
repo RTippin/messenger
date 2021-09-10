@@ -37,6 +37,7 @@ class RemoveBotAction extends BaseMessengerAction
     /**
      * @param  BotAction  $action
      * @return $this
+     *
      * @throws Exception|FeatureDisabledException
      */
     public function execute(BotAction $action): self
@@ -62,6 +63,7 @@ class RemoveBotAction extends BaseMessengerAction
 
     /**
      * @return $this
+     *
      * @throws Exception
      */
     private function destroyBotAction(): self

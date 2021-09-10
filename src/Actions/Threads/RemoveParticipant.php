@@ -51,6 +51,7 @@ class RemoveParticipant extends BaseMessengerAction
      * @param  Thread  $thread
      * @param  Participant  $participant
      * @return $this
+     *
      * @throws Exception
      */
     public function execute(Thread $thread, Participant $participant): self
@@ -66,6 +67,7 @@ class RemoveParticipant extends BaseMessengerAction
 
     /**
      * @return $this
+     *
      * @throws Exception
      */
     private function removeParticipant(): self

@@ -59,6 +59,7 @@ class UpdateGroupSettings extends BaseMessengerAction
      * @param  Thread  $thread
      * @param  array  $params
      * @return $this
+     *
      * @see ThreadSettingsRequest
      */
     public function execute(Thread $thread, array $params): self

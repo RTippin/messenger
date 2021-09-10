@@ -59,6 +59,7 @@ trait PolicyMap
      * Register the application's policies.
      *
      * @return void
+     *
      * @throws BindingResolutionException
      */
     private function registerPolicies(): void

@@ -434,6 +434,7 @@ class MessageTransformer
      * @param  string  $body
      * @param  int  $type
      * @return array
+     *
      * @see StoreSystemMessage
      */
     private static function generateStoreResponse(Thread $thread,

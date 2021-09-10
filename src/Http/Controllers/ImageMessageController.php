@@ -33,6 +33,7 @@ class ImageMessageController extends Controller
      * @param  ImageMessageRepository  $repository
      * @param  Thread  $thread
      * @return ImageMessageCollection
+     *
      * @throws AuthorizationException
      */
     public function index(ImageMessageRepository $repository, Thread $thread): ImageMessageCollection
@@ -55,6 +56,7 @@ class ImageMessageController extends Controller
      * @param  Thread  $thread
      * @param  Message  $image
      * @return ImageMessageCollection
+     *
      * @throws AuthorizationException
      */
     public function paginate(ImageMessageRepository $repository,
@@ -81,6 +83,7 @@ class ImageMessageController extends Controller
      * @param  StoreImageMessage  $storeImageMessage
      * @param  Thread  $thread
      * @return MessageResource
+     *
      * @throws AuthorizationException|Throwable|FileServiceException
      */
     public function store(ImageMessageRequest $request,

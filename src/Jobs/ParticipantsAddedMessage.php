@@ -29,6 +29,7 @@ class ParticipantsAddedMessage extends BaseMessengerJob
      *
      * @param  StoreSystemMessage  $message
      * @return void
+     *
      * @throws Throwable
      */
     public function handle(StoreSystemMessage $message): void

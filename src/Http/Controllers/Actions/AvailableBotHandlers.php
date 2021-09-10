@@ -35,6 +35,7 @@ class AvailableBotHandlers
      * @param  Thread  $thread
      * @param  Bot  $bot
      * @return array
+     *
      * @throws AuthorizationException
      */
     public function __invoke(Thread $thread, Bot $bot): array

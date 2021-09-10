@@ -25,6 +25,7 @@ class SentFriendController
      *
      * @param  FriendDriver  $repository
      * @return SentFriendCollection
+     *
      * @throws AuthorizationException
      */
     public function index(FriendDriver $repository): SentFriendCollection
@@ -42,6 +43,7 @@ class SentFriendController
      * @param  FriendRequest  $request
      * @param  StoreFriendRequest  $storeFriendRequest
      * @return SentFriendResource
+     *
      * @throws AuthorizationException|NotFoundHttpException|FriendException
      */
     public function store(FriendRequest $request, StoreFriendRequest $storeFriendRequest): SentFriendResource
@@ -58,6 +60,7 @@ class SentFriendController
      *
      * @param  SentFriend  $sent
      * @return SentFriendResource
+     *
      * @throws AuthorizationException
      */
     public function show(SentFriend $sent): SentFriendResource
@@ -73,6 +76,7 @@ class SentFriendController
      * @param  CancelFriendRequest  $cancelFriendRequest
      * @param  SentFriend  $sent
      * @return ProviderResource
+     *
      * @throws Exception|AuthorizationException
      */
     public function destroy(CancelFriendRequest $cancelFriendRequest, SentFriend $sent): ProviderResource

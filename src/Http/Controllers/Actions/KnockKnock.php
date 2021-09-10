@@ -37,6 +37,7 @@ class KnockKnock
      * @param  SendKnock  $sendKnock
      * @param  Thread  $thread
      * @return JsonResponse
+     *
      * @throws AuthorizationException|FeatureDisabledException|KnockException
      */
     public function __invoke(SendKnock $sendKnock, Thread $thread): JsonResponse

@@ -49,6 +49,7 @@ class ArchiveThread extends BaseMessengerAction
      *
      * @param  Thread  $thread
      * @return $this
+     *
      * @throws Exception
      */
     public function execute(Thread $thread): self
@@ -63,6 +64,7 @@ class ArchiveThread extends BaseMessengerAction
 
     /**
      * @return $this
+     *
      * @throws Exception
      */
     private function archiveThread(): self

@@ -21,6 +21,7 @@ class DestroyMessengerAvatar extends MessengerAvatarAction
 
     /**
      * @return $this
+     *
      * @throws FeatureDisabledException
      */
     public function execute(): self

@@ -54,6 +54,7 @@ class PresenceEvents
 
     /**
      * @param  string  $abstractTyping
+     *
      * @throws InvalidArgumentException
      */
     public static function setTypingClass(string $abstractTyping): void
@@ -83,6 +84,7 @@ class PresenceEvents
 
     /**
      * @param  string  $abstractStopTyping
+     *
      * @throws InvalidArgumentException
      */
     public static function setStopTypingClass(string $abstractStopTyping): void
@@ -112,6 +114,7 @@ class PresenceEvents
 
     /**
      * @param  string  $abstractRead
+     *
      * @throws InvalidArgumentException
      */
     public static function setReadClass(string $abstractRead): void

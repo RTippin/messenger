@@ -262,6 +262,7 @@ class PrivateMessageTest extends HttpTestCase
     /**
      * @test
      * @dataProvider messagePassesValidation
+     *
      * @param $messageValue
      * @param $tempIdValue
      */
@@ -282,6 +283,7 @@ class PrivateMessageTest extends HttpTestCase
     /**
      * @test
      * @dataProvider messageFailsValidation
+     *
      * @param $messageValue
      * @param $tempIdValue
      */
@@ -307,6 +309,7 @@ class PrivateMessageTest extends HttpTestCase
     /**
      * @test
      * @dataProvider messageExtraFailsValidation
+     *
      * @param $extraValue
      */
     public function send_message_extra_fails_validation($extraValue)
@@ -331,6 +334,7 @@ class PrivateMessageTest extends HttpTestCase
     /**
      * @test
      * @dataProvider messageExtraPassesValidation
+     *
      * @param $extraValue
      * @param $extraOutput
      */

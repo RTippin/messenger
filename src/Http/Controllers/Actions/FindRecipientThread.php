@@ -16,6 +16,7 @@ class FindRecipientThread
      * @param  string  $alias
      * @param  string  $id
      * @return RecipientThreadResource
+     *
      * @throws ProviderNotFoundException
      */
     public function __invoke(ThreadLocatorService $locator,

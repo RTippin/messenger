@@ -37,6 +37,7 @@ class ArchiveBot extends BaseMessengerAction
     /**
      * @param  Bot  $bot
      * @return $this
+     *
      * @throws Exception|FeatureDisabledException
      */
     public function execute(Bot $bot): self
@@ -62,6 +63,7 @@ class ArchiveBot extends BaseMessengerAction
 
     /**
      * @return $this
+     *
      * @throws Exception
      */
     private function archiveBot(): self

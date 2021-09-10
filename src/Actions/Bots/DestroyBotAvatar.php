@@ -10,6 +10,7 @@ class DestroyBotAvatar extends BotAvatarAction
     /**
      * @param  Bot  $bot
      * @return $this
+     *
      * @throws FeatureDisabledException
      */
     public function execute(Bot $bot): self

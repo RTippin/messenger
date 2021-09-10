@@ -29,6 +29,7 @@ class ParticipantController
      * @param  ParticipantRepository  $repository
      * @param  Thread  $thread
      * @return ParticipantCollection
+     *
      * @throws AuthorizationException
      */
     public function index(ParticipantRepository $repository, Thread $thread): ParticipantCollection
@@ -51,6 +52,7 @@ class ParticipantController
      * @param  Thread  $thread
      * @param  Participant  $participant
      * @return ParticipantCollection
+     *
      * @throws AuthorizationException
      */
     public function paginate(ParticipantRepository $repository,
@@ -77,6 +79,7 @@ class ParticipantController
      * @param  StoreManyParticipants  $storeManyParticipants
      * @param  Thread  $thread
      * @return Collection
+     *
      * @throws AuthorizationException|Throwable
      */
     public function store(AddParticipantsRequest $request,
@@ -100,6 +103,7 @@ class ParticipantController
      * @param  Thread  $thread
      * @param  Participant  $participant
      * @return ParticipantResource
+     *
      * @throws AuthorizationException
      */
     public function show(Thread $thread, Participant $participant): ParticipantResource
@@ -123,6 +127,7 @@ class ParticipantController
      * @param  Thread  $thread
      * @param  Participant  $participant
      * @return ParticipantResource
+     *
      * @throws AuthorizationException
      */
     public function update(ParticipantPermissionsRequest $request,
@@ -149,6 +154,7 @@ class ParticipantController
      * @param  Thread  $thread
      * @param  Participant  $participant
      * @return JsonResponse|mixed|null
+     *
      * @throws AuthorizationException|Exception
      */
     public function destroy(RemoveParticipant $removeParticipant,

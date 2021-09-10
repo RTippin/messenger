@@ -53,6 +53,7 @@ interface ActionHandler
      * and return the composer ready for an action!
      *
      * @return MessengerComposer
+     *
      * @throws InvalidProviderException|MessengerComposerException
      */
     public function composer(): MessengerComposer;

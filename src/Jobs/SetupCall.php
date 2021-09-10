@@ -28,6 +28,7 @@ class SetupCall extends BaseMessengerJob
      *
      * @param  CallBrokerSetup  $broker
      * @return void
+     *
      * @throws CallBrokerException
      */
     public function handle(CallBrokerSetup $broker): void

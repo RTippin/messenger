@@ -20,6 +20,7 @@ class PromoteAdmin
      * @param  Thread  $thread
      * @param  Participant  $participant
      * @return ParticipantResource
+     *
      * @throws AuthorizationException
      */
     public function __invoke(PromoteAdminAction $promoteAdmin,

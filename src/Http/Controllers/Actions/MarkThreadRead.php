@@ -18,6 +18,7 @@ class MarkThreadRead
      * @param  MarkParticipantRead  $markParticipantRead
      * @param  Thread  $thread
      * @return JsonResponse
+     *
      * @throws AuthorizationException
      */
     public function __invoke(MarkParticipantRead $markParticipantRead, Thread $thread): JsonResponse

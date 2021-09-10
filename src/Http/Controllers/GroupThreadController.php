@@ -30,6 +30,7 @@ class GroupThreadController
      *
      * @param  GroupThreadRepository  $repository
      * @return GroupThreadCollection
+     *
      * @throws AuthorizationException
      */
     public function index(GroupThreadRepository $repository): GroupThreadCollection
@@ -47,6 +48,7 @@ class GroupThreadController
      * @param  GroupThreadRepository  $repository
      * @param  Thread  $group
      * @return GroupThreadCollection
+     *
      * @throws AuthorizationException
      */
     public function paginate(GroupThreadRepository $repository, Thread $group): GroupThreadCollection
@@ -65,6 +67,7 @@ class GroupThreadController
      *
      * @param  Thread  $thread
      * @return ThreadSettingsResource
+     *
      * @throws AuthorizationException
      */
     public function settings(Thread $thread): ThreadSettingsResource
@@ -81,6 +84,7 @@ class GroupThreadController
      * @param  UpdateGroupSettings  $updateGroupSettings
      * @param  Thread  $thread
      * @return ThreadSettingsResource
+     *
      * @throws AuthorizationException
      */
     public function updateSettings(ThreadSettingsRequest $request,
@@ -102,6 +106,7 @@ class GroupThreadController
      * @param  StoreGroupAvatar  $storeGroupAvatar
      * @param  Thread  $thread
      * @return ThreadSettingsResource
+     *
      * @throws FeatureDisabledException|AuthorizationException
      */
     public function storeAvatar(GroupAvatarRequest $request,
@@ -122,6 +127,7 @@ class GroupThreadController
      * @param  DestroyGroupAvatar  $destroyGroupAvatar
      * @param  Thread  $thread
      * @return ThreadSettingsResource
+     *
      * @throws AuthorizationException|FeatureDisabledException
      */
     public function destroyAvatar(DestroyGroupAvatar $destroyGroupAvatar, Thread $thread): ThreadSettingsResource
@@ -137,6 +143,7 @@ class GroupThreadController
      * @param  GroupThreadRequest  $request
      * @param  StoreGroupThread  $storeGroupThread
      * @return ThreadResource
+     *
      * @throws Throwable
      */
     public function store(GroupThreadRequest $request, StoreGroupThread $storeGroupThread): ThreadResource
@@ -154,6 +161,7 @@ class GroupThreadController
      * @param  LeaveThread  $leaveThread
      * @param  Thread  $thread
      * @return JsonResponse
+     *
      * @throws AuthorizationException|Throwable
      */
     public function leave(LeaveThread $leaveThread, Thread $thread): JsonResponse

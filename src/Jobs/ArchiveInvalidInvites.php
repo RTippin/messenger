@@ -30,6 +30,7 @@ class ArchiveInvalidInvites extends BaseMessengerJob
      *
      * @param  ArchiveInvite  $archiveInvite
      * @return void
+     *
      * @throws Exception|FeatureDisabledException
      */
     public function handle(ArchiveInvite $archiveInvite): void

@@ -44,7 +44,9 @@ class UpdateBot extends BaseMessengerAction
      * @param  Bot  $bot
      * @param  array  $params
      * @return $this
+     *
      * @see BotRequest
+     *
      * @throws FeatureDisabledException
      */
     public function execute(Bot $bot, array $params): self

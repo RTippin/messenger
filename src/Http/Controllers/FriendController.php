@@ -21,6 +21,7 @@ class FriendController
      *
      * @param  FriendDriver  $repository
      * @return FriendCollection
+     *
      * @throws AuthorizationException
      */
     public function index(FriendDriver $repository): FriendCollection
@@ -37,6 +38,7 @@ class FriendController
      *
      * @param  Friend  $friend
      * @return FriendResource
+     *
      * @throws AuthorizationException
      */
     public function show(Friend $friend): FriendResource
@@ -52,7 +54,9 @@ class FriendController
      * @param  RemoveFriend  $removeFriend
      * @param  Friend  $friend
      * @return ProviderResource
+     *
      * @throws Throwable|AuthorizationException
+     *
      * @todo Return success response, not json resource.
      */
     public function destroy(RemoveFriend $removeFriend, Friend $friend): ProviderResource

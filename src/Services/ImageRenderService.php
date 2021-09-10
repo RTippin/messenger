@@ -71,6 +71,7 @@ class ImageRenderService
      * @param  string  $size
      * @param  string  $image
      * @return StreamedResponse|BinaryFileResponse
+     *
      * @throws FileNotFoundException
      */
     public function renderProviderAvatar(string $alias,
@@ -105,6 +106,7 @@ class ImageRenderService
      * @param  string  $size
      * @param  string  $fileNameChallenge
      * @return BinaryFileResponse|StreamedResponse
+     *
      * @throws FileNotFoundException
      */
     public function renderMessageImage(Message $message,
@@ -140,6 +142,7 @@ class ImageRenderService
      * @param  string  $size
      * @param  string  $fileNameChallenge
      * @return StreamedResponse|BinaryFileResponse
+     *
      * @throws FileNotFoundException
      */
     public function renderGroupAvatar(Thread $thread,
@@ -179,6 +182,7 @@ class ImageRenderService
      * @param  string  $size
      * @param  string  $fileNameChallenge
      * @return StreamedResponse|BinaryFileResponse
+     *
      * @throws FileNotFoundException
      */
     public function renderBotAvatar(Bot $bot,

@@ -33,6 +33,7 @@ class AudioMessageController extends Controller
      * @param  AudioMessageRepository  $repository
      * @param  Thread  $thread
      * @return AudioMessageCollection
+     *
      * @throws AuthorizationException
      */
     public function index(AudioMessageRepository $repository, Thread $thread): AudioMessageCollection
@@ -55,6 +56,7 @@ class AudioMessageController extends Controller
      * @param  Thread  $thread
      * @param  Message  $audio
      * @return AudioMessageCollection
+     *
      * @throws AuthorizationException
      */
     public function paginate(AudioMessageRepository $repository,
@@ -81,6 +83,7 @@ class AudioMessageController extends Controller
      * @param  StoreAudioMessage  $storeAudioMessage
      * @param  Thread  $thread
      * @return MessageResource
+     *
      * @throws AuthorizationException|Throwable|FileServiceException
      */
     public function store(AudioMessageRequest $request,

@@ -23,6 +23,7 @@ class CallController
      * @param  CallRepository  $repository
      * @param  Thread  $thread
      * @return CallCollection
+     *
      * @throws AuthorizationException
      */
     public function index(CallRepository $repository, Thread $thread): CallCollection
@@ -45,6 +46,7 @@ class CallController
      * @param  Thread  $thread
      * @param  Call  $call
      * @return CallCollection
+     *
      * @throws AuthorizationException
      */
     public function paginate(CallRepository $repository,
@@ -70,6 +72,7 @@ class CallController
      * @param  StoreCall  $storeCall
      * @param  Thread  $thread
      * @return CallResource
+     *
      * @throws AuthorizationException|Throwable|NewCallException
      */
     public function store(StoreCall $storeCall, Thread $thread): CallResource
@@ -88,6 +91,7 @@ class CallController
      * @param  Thread  $thread
      * @param  Call  $call
      * @return CallResource
+     *
      * @throws AuthorizationException
      */
     public function show(Thread $thread, Call $call): CallResource

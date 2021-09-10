@@ -41,6 +41,7 @@ class StatusHeartbeatTest extends HttpTestCase
     /**
      * @test
      * @dataProvider awayValidation
+     *
      * @param $awayValue
      */
     public function messenger_heartbeat_checks_boolean($awayValue)

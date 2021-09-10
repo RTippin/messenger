@@ -29,6 +29,7 @@ class EndCalls extends BaseMessengerJob
      *
      * @param  EndCall  $endCall
      * @return void
+     *
      * @throws Throwable
      */
     public function handle(EndCall $endCall): void

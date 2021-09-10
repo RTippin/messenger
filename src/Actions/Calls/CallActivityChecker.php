@@ -40,6 +40,7 @@ class CallActivityChecker extends BaseMessengerAction
      *
      * @param  Collection  $calls
      * @return $this
+     *
      * @throws Throwable
      */
     public function execute(Collection $calls): self
@@ -51,6 +52,7 @@ class CallActivityChecker extends BaseMessengerAction
 
     /**
      * @param  Call  $call
+     *
      * @throws Throwable
      */
     private function performActivityChecks(Call $call): void
@@ -63,6 +65,7 @@ class CallActivityChecker extends BaseMessengerAction
     /**
      * @param  Call  $call
      * @return bool
+     *
      * @throws Throwable
      */
     private function endIfEmpty(Call $call): bool

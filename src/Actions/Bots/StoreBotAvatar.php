@@ -16,6 +16,7 @@ class StoreBotAvatar extends BotAvatarAction
      * @param  Bot  $bot
      * @param  UploadedFile  $image
      * @return $this
+     *
      * @throws FeatureDisabledException|FileServiceException|Exception
      */
     public function execute(Bot $bot, UploadedFile $image): self
@@ -37,6 +38,7 @@ class StoreBotAvatar extends BotAvatarAction
      * from storage and rethrow the exception.
      *
      * @param  string  $fileName
+     *
      * @throws Exception
      */
     private function attemptTransactionOrRollbackFile(string $fileName): void
@@ -55,6 +57,7 @@ class StoreBotAvatar extends BotAvatarAction
     /**
      * @param  UploadedFile  $file
      * @return string
+     *
      * @throws FileServiceException
      */
     private function upload(UploadedFile $file): string

@@ -82,7 +82,9 @@ class StoreFriendRequest extends BaseMessengerAction
      *
      * @param  array  $params
      * @return $this
+     *
      * @see FriendRequest
+     *
      * @throws FriendException|ProviderNotFoundException
      */
     public function execute(array $params): self

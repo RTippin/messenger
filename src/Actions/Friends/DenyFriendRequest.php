@@ -45,6 +45,7 @@ class DenyFriendRequest extends BaseMessengerAction
      *
      * @param  PendingFriend  $pending
      * @return $this
+     *
      * @throws Exception
      */
     public function execute(PendingFriend $pending): self
@@ -61,6 +62,7 @@ class DenyFriendRequest extends BaseMessengerAction
 
     /**
      * @return $this
+     *
      * @throws Exception
      */
     private function destroyPendingFriend(): self

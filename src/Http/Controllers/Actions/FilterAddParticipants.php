@@ -16,6 +16,7 @@ class FilterAddParticipants
      * @param  FriendDriver  $repository
      * @param  Thread  $thread
      * @return FriendCollection
+     *
      * @throws AuthorizationException
      */
     public function __invoke(FriendDriver $repository, Thread $thread): FriendCollection

@@ -21,7 +21,9 @@ use RTippin\Messenger\Traits\Uuids;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property-read \RTippin\Messenger\Models\Call $call
  * @mixin Model|\Eloquent
+ *
  * @property bool $kicked
+ *
  * @method static \Illuminate\Database\Eloquent\Builder|CallParticipant whereKicked($value)
  * @method static Builder|CallParticipant inCall()
  */

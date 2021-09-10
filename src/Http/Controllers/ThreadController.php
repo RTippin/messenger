@@ -21,6 +21,7 @@ class ThreadController
      *
      * @param  ThreadRepository  $repository
      * @return ThreadCollection
+     *
      * @throws AuthorizationException
      */
     public function index(ThreadRepository $repository): ThreadCollection
@@ -38,6 +39,7 @@ class ThreadController
      * @param  ThreadRepository  $repository
      * @param  Thread  $thread
      * @return ThreadCollection
+     *
      * @throws AuthorizationException
      */
     public function paginate(ThreadRepository $repository, Thread $thread): ThreadCollection
@@ -56,6 +58,7 @@ class ThreadController
      *
      * @param  Thread  $thread
      * @return ThreadResource
+     *
      * @throws AuthorizationException
      */
     public function show(Thread $thread): ThreadResource
@@ -75,6 +78,7 @@ class ThreadController
      * @param  ArchiveThread  $archiveThread
      * @param  Thread  $thread
      * @return JsonResponse
+     *
      * @throws Exception|AuthorizationException
      */
     public function destroy(ArchiveThread $archiveThread, Thread $thread): JsonResponse
