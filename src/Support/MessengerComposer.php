@@ -423,12 +423,10 @@ class MessengerComposer
         $this->silenceActionWhenSilent($action);
 
         try {
-            $action->execute([], $this->to);
+            return $action->execute([], $this->to)->getThread();
         } catch (Throwable $e) {
             throw new MessengerComposerException($e->getMessage());
         }
-
-        return $this->to = $action->getThread();
     }
 
     /**
