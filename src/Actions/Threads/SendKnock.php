@@ -52,6 +52,7 @@ class SendKnock extends BaseMessengerAction
      *
      * @param  Thread  $thread
      * @return $this
+     *
      * @throws FeatureDisabledException|KnockException
      */
     public function execute(Thread $thread): self
@@ -68,6 +69,7 @@ class SendKnock extends BaseMessengerAction
 
     /**
      * @return $this
+     *
      * @throws FeatureDisabledException|KnockException
      */
     private function bailIfCannotKnockAtThread(): self

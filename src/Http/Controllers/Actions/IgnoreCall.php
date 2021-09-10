@@ -21,6 +21,7 @@ class IgnoreCall
      * @param  Thread  $thread
      * @param  Call  $call
      * @return JsonResponse
+     *
      * @throws AuthorizationException|Throwable
      */
     public function __invoke(IgnoreCallAction $ignoreCall,

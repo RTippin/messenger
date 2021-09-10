@@ -20,6 +20,7 @@ class LeaveCall
      * @param  Thread  $thread
      * @param  Call  $call
      * @return JsonResponse
+     *
      * @throws AuthorizationException
      */
     public function __invoke(LeaveCallAction $leaveCall,

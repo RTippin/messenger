@@ -21,6 +21,7 @@ class PrivateThreadController
      *
      * @param  PrivateThreadRepository  $repository
      * @return PrivateThreadCollection
+     *
      * @throws AuthorizationException
      */
     public function index(PrivateThreadRepository $repository): PrivateThreadCollection
@@ -38,6 +39,7 @@ class PrivateThreadController
      * @param  PrivateThreadRepository  $repository
      * @param  Thread  $private
      * @return PrivateThreadCollection
+     *
      * @throws AuthorizationException
      */
     public function paginate(PrivateThreadRepository $repository, Thread $private): PrivateThreadCollection
@@ -57,6 +59,7 @@ class PrivateThreadController
      * @param  PrivateThreadRequest  $request
      * @param  StorePrivateThread  $storePrivateThread
      * @return ThreadResource
+     *
      * @throws AuthorizationException
      * @throws Throwable
      */

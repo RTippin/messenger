@@ -144,6 +144,7 @@ class GroupThreadAvatarTest extends HttpTestCase
     /**
      * @test
      * @dataProvider avatarPassesValidation
+     *
      * @param $avatarValue
      */
     public function group_avatar_upload_passes_validations($avatarValue)
@@ -162,6 +163,7 @@ class GroupThreadAvatarTest extends HttpTestCase
     /**
      * @test
      * @dataProvider avatarFailedValidation
+     *
      * @param $avatarValue
      */
     public function group_avatar_upload_fails_validations($avatarValue)

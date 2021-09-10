@@ -74,6 +74,7 @@ class RemoveReaction extends BaseMessengerAction
      * @param  Message  $message
      * @param  MessageReaction  $reaction
      * @return $this
+     *
      * @throws Throwable|FeatureDisabledException
      */
     public function execute(Thread $thread,
@@ -95,6 +96,7 @@ class RemoveReaction extends BaseMessengerAction
 
     /**
      * @return void
+     *
      * @throws FeatureDisabledException
      */
     private function bailWhenFeatureDisabled(): void
@@ -106,6 +108,7 @@ class RemoveReaction extends BaseMessengerAction
 
     /**
      * @return $this
+     *
      * @throws Throwable
      */
     private function handleTransactions(): self

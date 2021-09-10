@@ -19,6 +19,7 @@ class SystemMessageController
      * @param  SystemMessageRepository  $repository
      * @param  Thread  $thread
      * @return SystemMessageCollection
+     *
      * @throws AuthorizationException
      */
     public function index(SystemMessageRepository $repository, Thread $thread): SystemMessageCollection
@@ -41,6 +42,7 @@ class SystemMessageController
      * @param  Thread  $thread
      * @param  Message  $log
      * @return SystemMessageCollection
+     *
      * @throws AuthorizationException
      */
     public function paginate(SystemMessageRepository $repository,

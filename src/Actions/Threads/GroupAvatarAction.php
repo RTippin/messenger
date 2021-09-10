@@ -56,6 +56,7 @@ abstract class GroupAvatarAction extends BaseMessengerAction
 
     /**
      * @return void
+     *
      * @throws FeatureDisabledException
      */
     protected function bailWhenFeatureDisabled(): void

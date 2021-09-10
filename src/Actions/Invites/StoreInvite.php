@@ -44,7 +44,9 @@ class StoreInvite extends InviteAction
      * @param  Thread  $thread
      * @param  array  $params
      * @return $this
+     *
      * @see InviteRequest
+     *
      * @throws FeatureDisabledException
      */
     public function execute(Thread $thread, array $params): self

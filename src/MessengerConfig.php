@@ -1218,6 +1218,7 @@ trait MessengerConfig
     /**
      * @param  string  $driver
      * @return $this
+     *
      * @throws InvalidArgumentException
      */
     public function setBroadcastDriver(string $driver): self
@@ -1234,6 +1235,7 @@ trait MessengerConfig
     /**
      * @param  string  $driver
      * @return $this
+     *
      * @throws InvalidArgumentException
      */
     public function setVideoDriver(string $driver): self
@@ -1250,6 +1252,7 @@ trait MessengerConfig
     /**
      * @param  string  $driver
      * @return $this
+     *
      * @throws InvalidArgumentException
      */
     public function setFriendDriver(string $driver): self

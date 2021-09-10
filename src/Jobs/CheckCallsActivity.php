@@ -28,6 +28,7 @@ class CheckCallsActivity extends BaseMessengerJob
      *
      * @param  CallActivityChecker  $checker
      * @return void
+     *
      * @throws Throwable
      */
     public function handle(CallActivityChecker $checker): void

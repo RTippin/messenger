@@ -63,6 +63,7 @@ class LeaveThread extends BaseMessengerAction
      *
      * @param  Thread  $thread
      * @return $this
+     *
      * @throws Throwable
      */
     public function execute(Thread $thread): self

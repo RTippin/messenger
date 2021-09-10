@@ -20,6 +20,7 @@ class JoinCall
      * @param  Thread  $thread
      * @param  Call  $call
      * @return CallParticipantResource
+     *
      * @throws AuthorizationException
      */
     public function __invoke(JoinCallAction $joinCall,

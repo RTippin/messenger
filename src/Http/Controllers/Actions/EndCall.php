@@ -21,6 +21,7 @@ class EndCall
      * @param  Thread  $thread
      * @param  Call  $call
      * @return JsonResponse
+     *
      * @throws AuthorizationException|Throwable
      */
     public function __invoke(EndCallAction $endCall,

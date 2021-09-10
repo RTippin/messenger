@@ -84,6 +84,7 @@ class AddReaction extends BaseMessengerAction
      * @param  Message  $message
      * @param  string  $reaction
      * @return $this
+     *
      * @throws FeatureDisabledException|ReactionException|Throwable
      */
     public function execute(Thread $thread,
@@ -106,6 +107,7 @@ class AddReaction extends BaseMessengerAction
 
     /**
      * @return $this
+     *
      * @throws Throwable
      */
     private function handleTransactions(): self

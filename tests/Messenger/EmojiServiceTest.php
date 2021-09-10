@@ -19,6 +19,7 @@ class EmojiServiceTest extends MessengerTestCase
     /**
      * @test
      * @dataProvider hasEmojiStrings
+     *
      * @param $string
      * @param $string2
      */
@@ -31,6 +32,7 @@ class EmojiServiceTest extends MessengerTestCase
     /**
      * @test
      * @dataProvider doesntHaveEmojiStrings
+     *
      * @param $string
      */
     public function it_verifies_emoji_doesnt_exist($string)
@@ -41,6 +43,7 @@ class EmojiServiceTest extends MessengerTestCase
     /**
      * @test
      * @dataProvider hasShortcodeResponse
+     *
      * @param $string
      * @param $expected
      */
@@ -52,6 +55,7 @@ class EmojiServiceTest extends MessengerTestCase
     /**
      * @test
      * @dataProvider doesntHaveEmojiStrings
+     *
      * @param $string
      */
     public function it_returns_empty_shortcode_array_if_no_valid_emojis($string)
@@ -62,6 +66,7 @@ class EmojiServiceTest extends MessengerTestCase
     /**
      * @test
      * @dataProvider hasSingleShortcodeResponse
+     *
      * @param $string
      * @param $expected
      */
@@ -73,6 +78,7 @@ class EmojiServiceTest extends MessengerTestCase
     /**
      * @test
      * @dataProvider stringInputs
+     *
      * @param $string
      * @param $expected
      */

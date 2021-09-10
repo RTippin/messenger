@@ -393,6 +393,7 @@ class BotsTest extends HttpTestCase
     /**
      * @test
      * @dataProvider botFailsValidation
+     *
      * @param $name
      * @param $enabled
      * @param $hide
@@ -420,6 +421,7 @@ class BotsTest extends HttpTestCase
     /**
      * @test
      * @dataProvider botPassesValidation
+     *
      * @param $name
      * @param $enabled
      * @param $hide
@@ -444,6 +446,7 @@ class BotsTest extends HttpTestCase
     /**
      * @test
      * @dataProvider botFailsValidation
+     *
      * @param $name
      * @param $enabled
      * @param $cooldown
@@ -472,6 +475,7 @@ class BotsTest extends HttpTestCase
     /**
      * @test
      * @dataProvider botPassesValidation
+     *
      * @param $name
      * @param $enabled
      * @param $hide

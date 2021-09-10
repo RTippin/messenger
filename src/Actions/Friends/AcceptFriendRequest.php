@@ -69,6 +69,7 @@ class AcceptFriendRequest extends BaseMessengerAction
      *
      * @param  PendingFriend  $pending
      * @return $this
+     *
      * @throws Throwable
      */
     public function execute(PendingFriend $pending): self
@@ -85,6 +86,7 @@ class AcceptFriendRequest extends BaseMessengerAction
 
     /**
      * @return $this
+     *
      * @throws Throwable
      */
     private function handleTransactions(): self
@@ -100,6 +102,7 @@ class AcceptFriendRequest extends BaseMessengerAction
 
     /**
      * Execute transactions.
+     *
      * @throws Exception
      */
     private function executeTransactions(): void

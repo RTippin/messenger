@@ -56,6 +56,7 @@ interface Action
      *
      * @param  string|Action  $abstractAction
      * @return Action
+     *
      * @throws LogicException
      */
     public function chain(string $abstractAction): Action;

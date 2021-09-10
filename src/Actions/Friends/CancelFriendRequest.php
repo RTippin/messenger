@@ -45,6 +45,7 @@ class CancelFriendRequest extends BaseMessengerAction
      *
      * @param  SentFriend  $sent
      * @return $this
+     *
      * @throws Exception
      */
     public function execute(SentFriend $sent): self
@@ -61,6 +62,7 @@ class CancelFriendRequest extends BaseMessengerAction
 
     /**
      * @return $this
+     *
      * @throws Exception
      */
     private function destroySentFriend(): self

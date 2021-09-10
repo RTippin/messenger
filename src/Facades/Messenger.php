@@ -158,6 +158,7 @@ use RTippin\Messenger\Models\Participant;
  * @method static \RTippin\Messenger\Messenger setSystemMessageSubscriber(string $option, $value)
  *
  * @mixin \RTippin\Messenger\Messenger
+ *
  * @see \RTippin\Messenger\Messenger
  */
 class Messenger extends Facade

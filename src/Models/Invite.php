@@ -26,6 +26,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property \Illuminate\Support\Carbon|null $updated_at
  * @property \Illuminate\Support\Carbon|null $deleted_at
  * @property-read \RTippin\Messenger\Models\Thread $thread
+ *
  * @method static \Illuminate\Database\Query\Builder|\RTippin\Messenger\Models\Invite onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|\RTippin\Messenger\Models\Invite withTrashed()
  * @method static \Illuminate\Database\Query\Builder|\RTippin\Messenger\Models\Invite withoutTrashed()

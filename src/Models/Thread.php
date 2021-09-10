@@ -43,6 +43,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read int|null $participants_count
  * @property-read \RTippin\Messenger\Models\Message|null $latestMessage
  * @property-read \RTippin\Messenger\Models\Bot[] $bots
+ *
  * @method static Builder|Thread group()
  * @method static Builder|Thread private()
  * @method static Builder|Thread hasProvider(MessengerProvider $provider)
@@ -50,6 +51,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static \Illuminate\Database\Query\Builder|Thread withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Thread withoutTrashed()
  * @mixin Model|\Eloquent
+ *
  * @property bool $invitations
  */
 class Thread extends Model implements HasPresenceChannel

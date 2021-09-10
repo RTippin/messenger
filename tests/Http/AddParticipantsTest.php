@@ -258,6 +258,7 @@ class AddParticipantsTest extends HttpTestCase
     /**
      * @test
      * @dataProvider providersValidation
+     *
      * @param $providers
      * @param $errors
      */

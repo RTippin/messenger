@@ -61,6 +61,7 @@ class EndCall extends BaseMessengerAction
      *
      * @param  Call  $call
      * @return $this
+     *
      * @throws Throwable
      */
     public function execute(Call $call): self
@@ -98,6 +99,7 @@ class EndCall extends BaseMessengerAction
 
     /**
      * @return $this
+     *
      * @throws Throwable
      */
     private function handleTransactions(): self

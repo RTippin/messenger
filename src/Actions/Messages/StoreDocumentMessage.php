@@ -61,7 +61,9 @@ class StoreDocumentMessage extends NewMessageAction
      * @param  array  $params
      * @param  string|null  $senderIp
      * @return $this
+     *
      * @see DocumentMessageRequest
+     *
      * @throws Throwable|FeatureDisabledException|FileServiceException
      */
     public function execute(Thread $thread,
@@ -95,6 +97,7 @@ class StoreDocumentMessage extends NewMessageAction
      * from storage and rethrow the exception.
      *
      * @param  string  $fileName
+     *
      * @throws Exception
      */
     private function attemptTransactionOrRollbackFile(string $fileName): void
@@ -123,6 +126,7 @@ class StoreDocumentMessage extends NewMessageAction
     /**
      * @param  UploadedFile  $file
      * @return string
+     *
      * @throws FileServiceException
      */
     private function upload(UploadedFile $file): string

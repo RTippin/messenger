@@ -82,6 +82,7 @@ class StoreManyParticipants extends ThreadParticipantAction
      * @param  array  $providers
      * @param  bool  $isNewGroup
      * @return $this
+     *
      * @throws Throwable
      */
     public function execute(Thread $thread,
@@ -101,6 +102,7 @@ class StoreManyParticipants extends ThreadParticipantAction
      * @param  Collection  $providers
      * @param  bool  $isNewGroup
      * @return void
+     *
      * @throws Throwable
      */
     private function handleTransactions(Collection $providers, bool $isNewGroup): void

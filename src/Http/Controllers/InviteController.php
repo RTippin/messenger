@@ -27,6 +27,7 @@ class InviteController
      *
      * @param  Thread  $thread
      * @return InviteCollection
+     *
      * @throws AuthorizationException
      */
     public function index(Thread $thread): InviteCollection
@@ -53,6 +54,7 @@ class InviteController
      * @param  StoreInvite  $storeInvite
      * @param  Thread  $thread
      * @return InviteResource
+     *
      * @throws AuthorizationException
      */
     public function store(InviteRequest $request,
@@ -89,6 +91,7 @@ class InviteController
      * @param  string  $size
      * @param  string  $image
      * @return StreamedResponse|BinaryFileResponse
+     *
      * @throws AuthorizationException
      * @throws FileNotFoundException
      */
@@ -111,6 +114,7 @@ class InviteController
      * @param  Thread  $thread
      * @param  Invite  $invite
      * @return JsonResponse
+     *
      * @throws AuthorizationException|Exception
      */
     public function destroy(ArchiveInvite $archiveInvite,

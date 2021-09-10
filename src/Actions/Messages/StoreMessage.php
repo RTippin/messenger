@@ -57,7 +57,9 @@ class StoreMessage extends NewMessageAction
      * @param  array  $params
      * @param  string|null  $senderIp
      * @return $this
+     *
      * @see MessageRequest
+     *
      * @throws Throwable
      */
     public function execute(Thread $thread,

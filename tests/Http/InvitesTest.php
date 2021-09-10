@@ -250,6 +250,7 @@ class InvitesTest extends HttpTestCase
     /**
      * @test
      * @dataProvider inviteValidationFailsUses
+     *
      * @param $usesValue
      */
     public function create_invite_fails_uses_validation($usesValue)
@@ -270,6 +271,7 @@ class InvitesTest extends HttpTestCase
     /**
      * @test
      * @dataProvider inviteValidationFailsExpires
+     *
      * @param $expiresValue
      */
     public function create_invite_fails_expires_validation($expiresValue)
@@ -291,6 +293,7 @@ class InvitesTest extends HttpTestCase
     /**
      * @test
      * @dataProvider inviteValidationPassesExpires
+     *
      * @param $expiresValue
      */
     public function create_invite_passes_expires_validation($expiresValue)

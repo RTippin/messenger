@@ -89,6 +89,7 @@ class MessengerController
      * @param  MessengerAvatarRequest  $request
      * @param  StoreMessengerAvatar  $storeAvatar
      * @return MessengerResource
+     *
      * @throws FeatureDisabledException|FileServiceException|Exception
      */
     public function updateAvatar(MessengerAvatarRequest $request, StoreMessengerAvatar $storeAvatar): MessengerResource
@@ -105,6 +106,7 @@ class MessengerController
      *
      * @param  DestroyMessengerAvatar  $destroyMessengerAvatar
      * @return MessengerResource
+     *
      * @throws FeatureDisabledException
      */
     public function destroyAvatar(DestroyMessengerAvatar $destroyMessengerAvatar): MessengerResource

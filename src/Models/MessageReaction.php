@@ -23,6 +23,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property-read \RTippin\Messenger\Models\Message $message
  * @mixin Model|\Eloquent
+ *
  * @method static Builder|MessageReaction whereReaction(string $reaction)
  * @method static Builder|MessageReaction notReaction(string $reaction)
  */

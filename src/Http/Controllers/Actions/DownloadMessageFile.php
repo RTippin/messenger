@@ -43,6 +43,7 @@ class DownloadMessageFile
      * @param  Message  $message
      * @param  string  $file
      * @return StreamedResponse
+     *
      * @throws FileNotFoundException
      */
     public function __invoke(Thread $thread,

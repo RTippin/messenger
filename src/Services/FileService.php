@@ -96,6 +96,7 @@ class FileService
     /**
      * @param  UploadedFile  $file
      * @return string
+     *
      * @throws FileServiceException
      */
     public function upload(UploadedFile $file): string
@@ -201,6 +202,7 @@ class FileService
 
     /**
      * @param  string  $message
+     *
      * @throws FileServiceException
      */
     private function throwFileServiceException(string $message): void

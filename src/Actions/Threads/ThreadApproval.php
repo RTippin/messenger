@@ -54,6 +54,7 @@ class ThreadApproval extends ThreadParticipantAction
      * @param  Thread  $thread
      * @param  bool  $approved
      * @return $this
+     *
      * @throws ThreadApprovalException|Exception
      */
     public function execute(Thread $thread, bool $approved): self
@@ -73,6 +74,7 @@ class ThreadApproval extends ThreadParticipantAction
 
     /**
      * @return $this
+     *
      * @throws Exception
      */
     private function handleTransactions(): self

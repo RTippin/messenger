@@ -89,6 +89,7 @@ class StoreSystemMessageTest extends FeatureTestCase
     /**
      * @test
      * @dataProvider messageTypes
+     *
      * @param $type
      */
     public function it_stores_message_type_using_description($type)

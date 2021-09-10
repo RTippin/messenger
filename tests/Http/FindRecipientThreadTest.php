@@ -83,6 +83,7 @@ class FindRecipientThreadTest extends HttpTestCase
     /**
      * @test
      * @dataProvider locatorValidation
+     *
      * @param $alias
      * @param $id
      */

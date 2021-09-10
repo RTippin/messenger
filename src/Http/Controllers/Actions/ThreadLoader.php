@@ -28,6 +28,7 @@ class ThreadLoader
      * @param  MarkParticipantRead  $read
      * @param  Thread  $thread
      * @return ThreadResource
+     *
      * @throws AuthorizationException
      */
     public function __invoke(MarkParticipantRead $read, Thread $thread): ThreadResource

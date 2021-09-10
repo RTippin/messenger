@@ -113,6 +113,7 @@ class SearchProvidersServiceTest extends FeatureTestCase
     /**
      * @test
      * @dataProvider splitQueries
+     *
      * @param $query
      * @param $expected
      */
@@ -126,6 +127,7 @@ class SearchProvidersServiceTest extends FeatureTestCase
     /**
      * @test
      * @dataProvider splitQueriesDuplicates
+     *
      * @param $query
      * @param $expected
      */

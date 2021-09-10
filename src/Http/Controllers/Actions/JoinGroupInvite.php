@@ -19,6 +19,7 @@ class JoinGroupInvite
      * @param  JoinWithInvite  $joinWithInvite
      * @param  Invite  $invite
      * @return Participant
+     *
      * @throws AuthorizationException|Exception|Throwable|FeatureDisabledException
      */
     public function __invoke(JoinWithInvite $joinWithInvite, Invite $invite): Participant

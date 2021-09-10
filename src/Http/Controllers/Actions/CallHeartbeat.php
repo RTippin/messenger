@@ -18,6 +18,7 @@ class CallHeartbeat
      * @param  Thread  $thread
      * @param  Call  $call
      * @return JsonResponse
+     *
      * @throws AuthorizationException
      */
     public function __invoke(Heartbeat $heartbeat,

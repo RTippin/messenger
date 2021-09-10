@@ -93,7 +93,9 @@ class StorePrivateThread extends NewThreadAction
      * @param  array  $params
      * @param  MessengerProvider|null  $recipient
      * @return $this
+     *
      * @see PrivateThreadRequest
+     *
      * @throws NewThreadException|ProviderNotFoundException|Throwable
      */
     public function execute(array $params, ?MessengerProvider $recipient = null): self
@@ -122,6 +124,7 @@ class StorePrivateThread extends NewThreadAction
     /**
      * @param  array  $params
      * @return $this
+     *
      * @throws Throwable
      */
     private function handleTransactions(array $params): self
@@ -185,6 +188,7 @@ class StorePrivateThread extends NewThreadAction
 
     /**
      * @mixin StoreParticipant
+     *
      * @return array
      */
     private function creatorParticipant(): array
@@ -197,6 +201,7 @@ class StorePrivateThread extends NewThreadAction
 
     /**
      * @mixin StoreParticipant
+     *
      * @return array
      */
     private function recipientParticipant(): array
@@ -210,6 +215,7 @@ class StorePrivateThread extends NewThreadAction
 
     /**
      * @mixin NewMessageAction
+     *
      * @param  array  $inputs
      * @param  string  $key
      * @return array

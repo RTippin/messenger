@@ -181,6 +181,7 @@ class PushNotificationServiceTest extends FeatureTestCase
     /**
      * @test
      * @dataProvider modelsWithOwner
+     *
      * @param $model
      */
     public function it_notifies_ownerable_models_owner($model)

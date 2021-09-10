@@ -18,6 +18,7 @@ class RenderProviderAvatar
      * @param  string  $size
      * @param  string  $image
      * @return StreamedResponse|BinaryFileResponse
+     *
      * @throws FileNotFoundException
      */
     public function __invoke(ImageRenderService $service,

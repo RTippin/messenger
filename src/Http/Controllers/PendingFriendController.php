@@ -24,6 +24,7 @@ class PendingFriendController
      *
      * @param  FriendDriver  $repository
      * @return PendingFriendCollection
+     *
      * @throws AuthorizationException
      */
     public function index(FriendDriver $repository): PendingFriendCollection
@@ -40,6 +41,7 @@ class PendingFriendController
      *
      * @param  PendingFriend  $pending
      * @return PendingFriendResource
+     *
      * @throws AuthorizationException
      */
     public function show(PendingFriend $pending): PendingFriendResource
@@ -55,6 +57,7 @@ class PendingFriendController
      * @param  AcceptFriendRequest  $acceptFriendRequest
      * @param  PendingFriend  $pending
      * @return FriendResource
+     *
      * @throws Throwable|AuthorizationException
      */
     public function update(AcceptFriendRequest $acceptFriendRequest, PendingFriend $pending): FriendResource
@@ -71,6 +74,7 @@ class PendingFriendController
      * @param  DenyFriendRequest  $denyFriendRequest
      * @param  PendingFriend  $pending
      * @return ProviderResource
+     *
      * @throws Exception|AuthorizationException
      */
     public function destroy(DenyFriendRequest $denyFriendRequest, PendingFriend $pending): ProviderResource

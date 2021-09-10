@@ -586,6 +586,7 @@ class MessengerBotsTest extends MessengerTestCase
 
     /**
      * @test
+     *
      * @param $match
      * @param $cooldown
      * @param $admin
@@ -617,6 +618,7 @@ class MessengerBotsTest extends MessengerTestCase
 
     /**
      * @test
+     *
      * @param $triggers
      * @param $errorKeys
      * @dataProvider triggersFailValidation
@@ -643,6 +645,7 @@ class MessengerBotsTest extends MessengerTestCase
 
     /**
      * @test
+     *
      * @param $matches
      * @dataProvider passesValidatingMatches
      */
@@ -663,6 +666,7 @@ class MessengerBotsTest extends MessengerTestCase
 
     /**
      * @test
+     *
      * @param $cooldown
      * @dataProvider passesValidatingCooldown
      */
@@ -683,6 +687,7 @@ class MessengerBotsTest extends MessengerTestCase
 
     /**
      * @test
+     *
      * @param $extra
      * @param $errorKeys
      * @dataProvider handlerRulesFailValidation
@@ -708,6 +713,7 @@ class MessengerBotsTest extends MessengerTestCase
 
     /**
      * @test
+     *
      * @param $triggers
      * @param $result
      * @dataProvider triggersGetFormatted

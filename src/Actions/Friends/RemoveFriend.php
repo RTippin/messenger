@@ -62,6 +62,7 @@ class RemoveFriend extends BaseMessengerAction
      *
      * @param  Friend  $friend
      * @return $this
+     *
      * @throws Exception|Throwable
      */
     public function execute(Friend $friend): self
@@ -79,6 +80,7 @@ class RemoveFriend extends BaseMessengerAction
 
     /**
      * @return $this
+     *
      * @throws Throwable
      */
     private function handleTransactions(): self

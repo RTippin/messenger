@@ -51,7 +51,9 @@ class StoreBotAction extends BaseMessengerAction
      * @param  Bot  $bot
      * @param  array  $params
      * @return $this
+     *
      * @see MessengerBots::generateHandlerData()
+     *
      * @throws FeatureDisabledException|BotException
      */
     public function execute(Thread $thread,
@@ -90,6 +92,7 @@ class StoreBotAction extends BaseMessengerAction
     /**
      * @param  string  $handler
      * @return bool
+     *
      * @throws BotException
      */
     private function authorizeHandler(string $handler): bool

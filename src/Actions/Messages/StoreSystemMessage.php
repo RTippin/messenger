@@ -39,6 +39,7 @@ class StoreSystemMessage extends NewMessageAction
      * @param  string  $body
      * @param  string  $type
      * @return $this
+     *
      * @throws Throwable
      */
     public function execute(Thread $thread,

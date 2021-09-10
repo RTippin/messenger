@@ -206,6 +206,7 @@ final class MessengerBots
      *
      * @param  string|null  $handlerOrAlias
      * @return BotActionHandler
+     *
      * @throws BotException
      */
     public function initializeHandler(?string $handlerOrAlias = null): BotActionHandler
@@ -273,6 +274,7 @@ final class MessengerBots
      * @param  array  $data
      * @param  string|null  $handlerOrAlias
      * @return array
+     *
      * @throws ValidationException|BotException
      */
     public function resolveHandlerData(array $data, ?string $handlerOrAlias = null): array
@@ -299,6 +301,7 @@ final class MessengerBots
     /**
      * @param  array  $data
      * @return string
+     *
      * @throws ValidationException
      */
     private function validateHandlerAlias(array $data): string
@@ -311,6 +314,7 @@ final class MessengerBots
     /**
      * @param  array  $data
      * @return array
+     *
      * @throws ValidationException
      */
     private function validateHandlerSettings(array $data): array
@@ -325,6 +329,7 @@ final class MessengerBots
     /**
      * @param  array  $data
      * @return void
+     *
      * @throws ValidationException
      */
     private function validateFormattedTriggers(array $data): void
@@ -473,6 +478,7 @@ final class MessengerBots
      *
      * @param $settings
      * @return bool
+     *
      * @throws BotException
      */
     private function authorizesHandler($settings): bool

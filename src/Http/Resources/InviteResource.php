@@ -16,6 +16,7 @@ class InviteResource extends JsonResource
 
     /**
      * InviteResource constructor.
+     *
      * @param  Invite  $invite
      * @param  bool  $joining
      */

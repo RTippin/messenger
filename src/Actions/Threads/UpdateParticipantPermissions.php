@@ -52,6 +52,7 @@ class UpdateParticipantPermissions extends ThreadParticipantAction
      * @param  Participant  $participant
      * @param  array  $params
      * @return $this
+     *
      * @see ParticipantPermissionsRequest
      */
     public function execute(Thread $thread,

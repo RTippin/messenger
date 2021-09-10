@@ -27,6 +27,7 @@ class MessageReactionController
      * @param  Thread  $thread
      * @param  Message  $message
      * @return MessageReactionCollection
+     *
      * @throws AuthorizationException
      */
     public function index(Thread $thread, Message $message): MessageReactionCollection
@@ -49,6 +50,7 @@ class MessageReactionController
      * @param  Thread  $thread
      * @param  Message  $message
      * @return MessageReactionResource
+     *
      * @throws Throwable|ReactionException|FeatureDisabledException|AuthorizationException
      */
     public function store(MessageReactionRequest $request,
@@ -77,6 +79,7 @@ class MessageReactionController
      * @param  Message  $message
      * @param  MessageReaction  $reaction
      * @return JsonResponse
+     *
      * @throws AuthorizationException|Throwable
      */
     public function destroy(RemoveReaction $removeReaction,

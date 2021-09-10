@@ -51,6 +51,7 @@ class StoreCall extends NewCallAction
      * @param  Thread  $thread
      * @param  bool  $setupComplete
      * @return $this
+     *
      * @throws NewCallException|Throwable|FeatureDisabledException
      */
     public function execute(Thread $thread, bool $setupComplete = false): self
@@ -71,6 +72,7 @@ class StoreCall extends NewCallAction
     /**
      * @param  bool  $setupComplete
      * @return $this
+     *
      * @throws Throwable
      */
     private function handleTransactions(bool $setupComplete): self

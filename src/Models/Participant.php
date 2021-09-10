@@ -37,10 +37,12 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read \Illuminate\Database\Eloquent\Collection|\RTippin\Messenger\Models\Message[] $messages
  * @property-read int|null $messages_count
  * @property-read \RTippin\Messenger\Models\Thread $thread
+ *
  * @method static \Illuminate\Database\Query\Builder|Participant onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|Participant withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Participant withoutTrashed()
  * @mixin Model|\Eloquent
+ *
  * @method static Builder|Participant admins()
  * @method static Builder|Participant validProviders()
  * @method static Builder|Participant notMuted()

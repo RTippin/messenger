@@ -46,6 +46,7 @@ class DownloadMessageAudio
      * @param  Message  $message
      * @param  string  $audio
      * @return BinaryFileResponse|StreamedResponse
+     *
      * @throws FileNotFoundException
      */
     public function __invoke(Request $request,
@@ -92,6 +93,7 @@ class DownloadMessageAudio
      * @param  Message  $message
      * @param  string  $audioNameChallenge
      * @return void
+     *
      * @throws FileNotFoundException
      */
     private function bailIfAudioDoesntExist(Message $message, string $audioNameChallenge): void

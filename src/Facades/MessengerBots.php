@@ -24,6 +24,7 @@ use RTippin\Messenger\Models\BotAction;
  * @method static array resolveHandlerData(array $data, ?BotAction $action = null)
  *
  * @mixin \RTippin\Messenger\MessengerBots
+ *
  * @see \RTippin\Messenger\MessengerBots
  */
 class MessengerBots extends Facade

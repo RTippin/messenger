@@ -18,6 +18,7 @@ class PrivateThreadApproval
      * @param  ThreadApproval  $threadApproval
      * @param  Thread  $thread
      * @return JsonResponse
+     *
      * @throws AuthorizationException
      */
     public function __invoke(ThreadApprovalRequest $request,

@@ -83,6 +83,7 @@ class MessengerComposer
      *
      * @param  MessengerProvider|Thread  $entity
      * @return $this
+     *
      * @throws MessengerComposerException
      */
     public function to($entity): self
@@ -102,6 +103,7 @@ class MessengerComposer
      *
      * @param  MessengerProvider  $provider
      * @return $this
+     *
      * @throws InvalidProviderException
      */
     public function from(MessengerProvider $provider): self
@@ -133,6 +135,7 @@ class MessengerComposer
      * @param  string|null  $replyingToId
      * @param  array|null  $extra
      * @return StoreMessage
+     *
      * @throws MessengerComposerException|Throwable
      */
     public function message(?string $message,
@@ -161,6 +164,7 @@ class MessengerComposer
      * @param  string|null  $replyingToId
      * @param  array|null  $extra
      * @return StoreImageMessage
+     *
      * @throws MessengerComposerException|Throwable
      */
     public function image(UploadedFile $image,
@@ -189,6 +193,7 @@ class MessengerComposer
      * @param  string|null  $replyingToId
      * @param  array|null  $extra
      * @return StoreDocumentMessage
+     *
      * @throws MessengerComposerException|Throwable
      */
     public function document(UploadedFile $document,
@@ -217,6 +222,7 @@ class MessengerComposer
      * @param  string|null  $replyingToId
      * @param  array|null  $extra
      * @return StoreAudioMessage
+     *
      * @throws MessengerComposerException|Throwable
      */
     public function audio(UploadedFile $audio,
@@ -244,6 +250,7 @@ class MessengerComposer
      * @param  Message  $message
      * @param  string  $reaction
      * @return AddReaction
+     *
      * @throws MessengerComposerException|ReactionException
      * @throws Throwable|FeatureDisabledException
      */
@@ -268,6 +275,7 @@ class MessengerComposer
      * Send a knock to the given thread.
      *
      * @return SendKnock
+     *
      * @throws FeatureDisabledException|KnockException
      * @throws MessengerComposerException|Throwable
      */
@@ -287,6 +295,7 @@ class MessengerComposer
      *
      * @param  Participant|null  $participant
      * @return MarkParticipantRead
+     *
      * @throws MessengerComposerException|Throwable
      */
     public function read(?Participant $participant = null): MarkParticipantRead
@@ -308,6 +317,7 @@ class MessengerComposer
      * Emit a typing presence client event.
      *
      * @return $this
+     *
      * @throws MessengerComposerException
      */
     public function emitTyping(): self
@@ -324,6 +334,7 @@ class MessengerComposer
      * Emit a stopped typing presence client event.
      *
      * @return $this
+     *
      * @throws MessengerComposerException
      */
     public function emitStopTyping(): self
@@ -340,6 +351,7 @@ class MessengerComposer
      * Emit a read/seen presence client event.
      *
      * @return $this
+     *
      * @throws MessengerComposerException
      */
     public function emitRead(?Message $message = null): self
@@ -367,6 +379,7 @@ class MessengerComposer
      * reusing composer methods.
      *
      * @return Thread
+     *
      * @throws MessengerComposerException
      */
     private function resolveThread(): Thread
@@ -400,6 +413,7 @@ class MessengerComposer
      * Make the private thread between the TO and FROM providers.
      *
      * @return Thread
+     *
      * @throws MessengerComposerException
      */
     private function makePrivateThread(): Thread

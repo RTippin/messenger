@@ -27,7 +27,9 @@ class StoreMessengerAvatar extends MessengerAvatarAction
     /**
      * @param  UploadedFile  $image
      * @return $this
+     *
      * @see MessengerAvatarRequest
+     *
      * @throws FeatureDisabledException|FileServiceException|Exception
      */
     public function execute(UploadedFile $image): self
@@ -47,6 +49,7 @@ class StoreMessengerAvatar extends MessengerAvatarAction
      * from storage and rethrow the exception.
      *
      * @param  string  $fileName
+     *
      * @throws Exception
      */
     private function attemptTransactionOrRollbackFile(string $fileName): void
@@ -75,6 +78,7 @@ class StoreMessengerAvatar extends MessengerAvatarAction
     /**
      * @param  UploadedFile  $file
      * @return string
+     *
      * @throws FileServiceException
      */
     private function upload(UploadedFile $file): string

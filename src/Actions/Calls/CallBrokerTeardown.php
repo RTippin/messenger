@@ -29,6 +29,7 @@ class CallBrokerTeardown extends BaseMessengerAction
      *
      * @param  Call  $call
      * @return $this
+     *
      * @throws CallBrokerException
      */
     public function execute(Call $call): self

@@ -66,6 +66,7 @@ class MessengerServiceProvider extends ServiceProvider
      * Perform post-registration booting of services.
      *
      * @return void
+     *
      * @throws BindingResolutionException
      */
     public function boot(): void
@@ -133,6 +134,7 @@ class MessengerServiceProvider extends ServiceProvider
      * Register the Event Subscribers.
      *
      * @return void
+     *
      * @throws BindingResolutionException
      */
     private function registerSubscribers()

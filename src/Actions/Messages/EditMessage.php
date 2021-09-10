@@ -77,6 +77,7 @@ class EditMessage extends BaseMessengerAction
      * @param  Message  $message
      * @param  string  $newBody
      * @return $this
+     *
      * @throws FeatureDisabledException|Throwable
      */
     public function execute(Thread $thread,
@@ -110,6 +111,7 @@ class EditMessage extends BaseMessengerAction
     /**
      * @param  string  $body
      * @return $this
+     *
      * @throws Throwable
      */
     private function handleTransactions(string $body): self

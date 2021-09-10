@@ -31,6 +31,7 @@ use RTippin\Messenger\Models\Message;
  * @method static MarkParticipantRead read()
  *
  * @mixin \RTippin\Messenger\Support\MessengerComposer
+ *
  * @see \RTippin\Messenger\Support\MessengerComposer
  */
 class MessengerComposer extends Facade

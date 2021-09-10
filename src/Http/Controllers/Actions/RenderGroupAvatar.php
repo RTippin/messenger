@@ -21,6 +21,7 @@ class RenderGroupAvatar
      * @param  string  $size
      * @param  string  $image
      * @return StreamedResponse|BinaryFileResponse
+     *
      * @throws FileNotFoundException|FileNotFoundException
      */
     public function __invoke(ImageRenderService $service,
