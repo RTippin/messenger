@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Support;
 
 use Exception;
 use Illuminate\Support\Collection;
-use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Call;
@@ -68,7 +67,12 @@ class MessageTransformer
      */
     public static function makeJoinedWithInvite(Thread $thread, MessengerProvider $provider): array
     {
-        return self::generateStoreResponse($thread, $provider, 'joined', Message::PARTICIPANT_JOINED_WITH_INVITE);
+        return [
+            $thread,
+            $provider,
+            'joined',
+            Message::PARTICIPANT_JOINED_WITH_INVITE,
+        ];
     }
 
     /**
@@ -81,9 +85,12 @@ class MessageTransformer
                                          MessengerProvider $provider,
                                          Call $call): array
     {
-        $body = (new Collection(['call_id' => $call->id]))->toJson();
-
-        return self::generateStoreResponse($thread, $provider, $body, Message::VIDEO_CALL);
+        return [
+            $thread,
+            $provider,
+            (new Collection(['call_id' => $call->id]))->toJson(),
+            Message::VIDEO_CALL,
+        ];
     }
 
     /**
@@ -93,7 +100,12 @@ class MessageTransformer
      */
     public static function makeGroupAvatarChanged(Thread $thread, MessengerProvider $provider): array
     {
-        return self::generateStoreResponse($thread, $provider, 'updated the avatar', Message::GROUP_AVATAR_CHANGED);
+        return [
+            $thread,
+            $provider,
+            'updated the avatar',
+            Message::GROUP_AVATAR_CHANGED,
+        ];
     }
 
     /**
@@ -103,9 +115,12 @@ class MessageTransformer
      */
     public static function makeThreadArchived(Thread $thread, MessengerProvider $provider): array
     {
-        $body = $thread->isGroup() ? 'archived the group' : 'archived the conversation';
-
-        return self::generateStoreResponse($thread, $provider, $body, Message::THREAD_ARCHIVED);
+        return [
+            $thread,
+            $provider,
+            ($thread->isGroup() ? 'archived the group' : 'archived the conversation'),
+            Message::THREAD_ARCHIVED,
+        ];
     }
 
     /**
@@ -118,7 +133,12 @@ class MessageTransformer
                                             MessengerProvider $provider,
                                             string $subject): array
     {
-        return self::generateStoreResponse($thread, $provider, "created $subject", Message::GROUP_CREATED);
+        return [
+            $thread,
+            $provider,
+            "created $subject",
+            Message::GROUP_CREATED,
+        ];
     }
 
     /**
@@ -131,7 +151,12 @@ class MessageTransformer
                                             MessengerProvider $provider,
                                             string $subject): array
     {
-        return self::generateStoreResponse($thread, $provider, "renamed the group to $subject", Message::GROUP_RENAMED);
+        return [
+            $thread,
+            $provider,
+            "renamed the group to $subject",
+            Message::GROUP_RENAMED,
+        ];
     }
 
     /**
@@ -144,9 +169,12 @@ class MessageTransformer
                                                   MessengerProvider $provider,
                                                   Participant $participant): array
     {
-        $body = self::generateParticipantJson($participant);
-
-        return self::generateStoreResponse($thread, $provider, $body, Message::DEMOTED_ADMIN);
+        return [
+            $thread,
+            $provider,
+            self::generateParticipantJson($participant),
+            Message::DEMOTED_ADMIN,
+        ];
     }
 
     /**
@@ -159,9 +187,12 @@ class MessageTransformer
                                                    MessengerProvider $provider,
                                                    Participant $participant): array
     {
-        $body = self::generateParticipantJson($participant);
-
-        return self::generateStoreResponse($thread, $provider, $body, Message::PROMOTED_ADMIN);
+        return [
+            $thread,
+            $provider,
+            self::generateParticipantJson($participant),
+            Message::PROMOTED_ADMIN,
+        ];
     }
 
     /**
@@ -171,7 +202,12 @@ class MessageTransformer
      */
     public static function makeGroupLeft(Thread $thread, MessengerProvider $provider): array
     {
-        return self::generateStoreResponse($thread, $provider, 'left', Message::PARTICIPANT_LEFT_GROUP);
+        return [
+            $thread,
+            $provider,
+            'left',
+            Message::PARTICIPANT_LEFT_GROUP,
+        ];
     }
 
     /**
@@ -184,9 +220,12 @@ class MessageTransformer
                                                 MessengerProvider $provider,
                                                 Participant $participant): array
     {
-        $body = self::generateParticipantJson($participant);
-
-        return self::generateStoreResponse($thread, $provider, $body, Message::PARTICIPANT_REMOVED);
+        return [
+            $thread,
+            $provider,
+            self::generateParticipantJson($participant),
+            Message::PARTICIPANT_REMOVED,
+        ];
     }
 
     /**
@@ -204,7 +243,12 @@ class MessageTransformer
             'owner_type' => $participant->owner_type,
         ])->toJson();
 
-        return self::generateStoreResponse($thread, $provider, $body, Message::PARTICIPANTS_ADDED);
+        return [
+            $thread,
+            $provider,
+            $body,
+            Message::PARTICIPANTS_ADDED,
+        ];
     }
 
     /**
@@ -217,7 +261,12 @@ class MessageTransformer
                                         MessengerProvider $provider,
                                         string $botName): array
     {
-        return self::generateStoreResponse($thread, $provider, "added $botName BOT", Message::BOT_ADDED);
+        return [
+            $thread,
+            $provider,
+            "added $botName BOT",
+            Message::BOT_ADDED,
+        ];
     }
 
     /**
@@ -232,7 +281,12 @@ class MessageTransformer
                                           string $oldName,
                                           string $botName): array
     {
-        return self::generateStoreResponse($thread, $provider, "renamed the BOT ( $oldName ) to $botName", Message::BOT_RENAMED);
+        return [
+            $thread,
+            $provider,
+            "renamed the BOT ( $oldName ) to $botName",
+            Message::BOT_RENAMED,
+        ];
     }
 
     /**
@@ -245,7 +299,12 @@ class MessageTransformer
                                                 MessengerProvider $provider,
                                                 string $botName): array
     {
-        return self::generateStoreResponse($thread, $provider, "updated the avatar for $botName BOT", Message::BOT_AVATAR_CHANGED);
+        return [
+            $thread,
+            $provider,
+            "updated the avatar for $botName BOT",
+            Message::BOT_AVATAR_CHANGED,
+        ];
     }
 
     /**
@@ -258,7 +317,12 @@ class MessageTransformer
                                           MessengerProvider $provider,
                                           string $botName): array
     {
-        return self::generateStoreResponse($thread, $provider, "removed $botName BOT", Message::BOT_REMOVED);
+        return [
+            $thread,
+            $provider,
+            "removed $botName BOT",
+            Message::BOT_REMOVED,
+        ];
     }
 
     /**
@@ -426,22 +490,5 @@ class MessageTransformer
             'owner_id' => $participant->owner_id,
             'owner_type' => $participant->owner_type,
         ]))->toJson();
-    }
-
-    /**
-     * @param  Thread  $thread
-     * @param  MessengerProvider  $provider
-     * @param  string  $body
-     * @param  int  $type
-     * @return array
-     *
-     * @see StoreSystemMessage
-     */
-    private static function generateStoreResponse(Thread $thread,
-                                                  MessengerProvider $provider,
-                                                  string $body,
-                                                  int $type): array
-    {
-        return [$thread, $provider, $body, $type];
     }
 }
