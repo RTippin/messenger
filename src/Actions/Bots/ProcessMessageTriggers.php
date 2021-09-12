@@ -121,6 +121,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
                 $this->getMessage()->body
             )) {
                 $this->handleAction($action, $trigger);
+                break;
             }
         }
     }

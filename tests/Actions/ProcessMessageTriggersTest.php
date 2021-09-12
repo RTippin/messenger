@@ -58,6 +58,25 @@ class ProcessMessageTriggersTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_executes_handle_once_if_multiple_triggers_match_for_a_single_action()
+    {
+        MessengerBots::registerHandlers([SillyBotHandler::class]);
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => 'test testing']);
+        BotAction::factory()
+            ->for(Bot::factory()->for($thread)->owner($this->tippin)->create())
+            ->owner($this->tippin)
+            ->handler(SillyBotHandler::class)
+            ->triggers('test|testing')
+            ->match('contains:caseless')
+            ->create();
+
+        app(ProcessMessageTriggers::class)->execute($thread, $message, true);
+
+        $this->assertDatabaseCount('messages', 2);
+    }
+
+    /** @test */
     public function it_flushes_active_handler_before_and_after_executing()
     {
         MessengerBots::registerHandlers([
