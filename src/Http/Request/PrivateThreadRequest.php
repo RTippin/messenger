@@ -20,7 +20,7 @@ class PrivateThreadRequest extends BaseMessageRequest
         return [
             'recipient_id' => ['required', new IntegerOrString],
             'recipient_alias' => ['required', 'string'],
-            'message' => ['required_without_all:document,image,audio', 'string', "max:$messageLimit"],
+            'message' => ['required_without_all:document,image,audio,video', 'string', "max:$messageLimit"],
             'extra' => ['nullable', 'array'],
         ];
     }
@@ -34,24 +34,31 @@ class PrivateThreadRequest extends BaseMessageRequest
     public function withValidator(Validator $validator): void
     {
         $validator->sometimes('document', [
-            'required_without_all:message,image,audio',
+            'required_without_all:message,image,audio,video',
             'max:'.Messenger::getMessageDocumentSizeLimit(),
             'file',
             'mimes:'.Messenger::getMessageDocumentMimeTypes(),
         ], fn () => Messenger::isMessageDocumentUploadEnabled());
 
         $validator->sometimes('image', [
-            'required_without_all:document,message,audio',
+            'required_without_all:document,message,audio,video',
             'max:'.Messenger::getMessageImageSizeLimit(),
             'file',
             'mimes:'.Messenger::getMessageImageMimeTypes(),
         ], fn () => Messenger::isMessageImageUploadEnabled());
 
         $validator->sometimes('audio', [
-            'required_without_all:message,image,document',
+            'required_without_all:message,image,document,video',
             'max:'.Messenger::getMessageAudioSizeLimit(),
             'file',
             'mimes:'.Messenger::getMessageAudioMimeTypes(),
         ], fn () => Messenger::isMessageAudioUploadEnabled());
+
+        $validator->sometimes('video', [
+            'required_without_all:message,image,document,audio',
+            'max:'.Messenger::getMessageVideoSizeLimit(),
+            'file',
+            'mimes:'.Messenger::getMessageVideoMimeTypes(),
+        ], fn () => Messenger::isMessageVideoUploadEnabled());
     }
 }

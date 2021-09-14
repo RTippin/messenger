@@ -122,6 +122,20 @@ class PrivateThreadsTest extends HttpTestCase
     }
 
     /** @test */
+    public function creating_new_private_thread_with_video()
+    {
+        $this->logCurrentRequest('VIDEO');
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.privates.store'), [
+            'video' => UploadedFile::fake()->create('test.mov', 500, 'video/quicktime'),
+            'recipient_alias' => 'user',
+            'recipient_id' => $this->doe->getKey(),
+        ])
+            ->assertSuccessful();
+    }
+
+    /** @test */
     public function creating_new_private_forbidden_when_one_exist()
     {
         $this->logCurrentRequest();

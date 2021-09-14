@@ -9,6 +9,7 @@ use RTippin\Messenger\Actions\Messages\StoreAudioMessage;
 use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
 use RTippin\Messenger\Actions\Messages\StoreImageMessage;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
+use RTippin\Messenger\Actions\Messages\StoreVideoMessage;
 use RTippin\Messenger\Broadcasting\NewThreadBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\FriendDriver;
@@ -285,6 +286,10 @@ class StorePrivateThread extends NewThreadAction
 
         if (array_key_exists('audio', $params)) {
             return [StoreAudioMessage::class, 'audio'];
+        }
+
+        if (array_key_exists('video', $params)) {
+            return [StoreVideoMessage::class, 'video'];
         }
 
         return null;

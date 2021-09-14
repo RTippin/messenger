@@ -398,6 +398,34 @@ class StorePrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_stores_video_message()
+    {
+        app(StorePrivateThread::class)->execute([
+            'video' => UploadedFile::fake()->create('test.mov', 500, 'video/quicktime'),
+            'recipient_alias' => 'user',
+            'recipient_id' => $this->doe->getKey(),
+        ]);
+
+        $this->assertDatabaseHas('messages', [
+            'type' => Message::VIDEO_MESSAGE,
+        ]);
+        Storage::disk('messenger')->assertExists(Message::video()->first()->getVideoPath());
+    }
+
+    /** @test */
+    public function it_stores_video_message_with_recipient_override()
+    {
+        app(StorePrivateThread::class)->execute([
+            'video' => UploadedFile::fake()->create('test.mov', 500, 'video/quicktime'),
+        ], $this->doe);
+
+        $this->assertDatabaseHas('messages', [
+            'type' => Message::VIDEO_MESSAGE,
+        ]);
+        Storage::disk('messenger')->assertExists(Message::video()->first()->getVideoPath());
+    }
+
+    /** @test */
     public function it_can_add_extra_data_on_message()
     {
         app(StorePrivateThread::class)->execute([
