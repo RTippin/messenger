@@ -409,10 +409,10 @@ class AssetsTest extends HttpTestCase
             ]);
 
         $this->getJson(route('messenger.threads.videos.download', [
-                'thread' => $thread->id,
-                'message' => $message->id,
-                'video' => 'foo.mov',
-            ]).'?stream=true')
+            'thread' => $thread->id,
+            'message' => $message->id,
+            'video' => 'foo.mov',
+        ]).'?stream=true')
             ->assertSuccessful()
             ->assertHeader('content-type', 'application/x-empty');
     }
