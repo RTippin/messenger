@@ -101,6 +101,21 @@ class MessageFactory extends Factory
     }
 
     /**
+     * Indicate message is audio.
+     *
+     * @return Factory
+     */
+    public function video(): Factory
+    {
+        return $this->state(function (array $attributes) {
+            return [
+                'type' => 4,
+                'body' => 'video.mov',
+            ];
+        });
+    }
+
+    /**
      * Indicate message is a system message.
      *
      * @param  int|null  $type

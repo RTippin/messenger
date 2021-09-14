@@ -12,6 +12,7 @@ class FileService
     const TYPE_IMAGE = 'image';
     const TYPE_DOCUMENT = 'document';
     const TYPE_AUDIO = 'audio';
+    const TYPE_VIDEO = 'video';
     const TYPE_DEFAULT = null;
 
     /**
@@ -174,6 +175,7 @@ class FileService
                 return 'img_'.Str::uuid()->toString().".$extension";
             case self::TYPE_DOCUMENT:
             case self::TYPE_AUDIO:
+            case self::TYPE_VIDEO:
                 return $this->getOriginalName($file).'_'.now()->timestamp.".$extension";
             default: return $this->getOriginalName($file).$extension;
         }

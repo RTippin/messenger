@@ -197,6 +197,21 @@ trait MessengerConfig
     private string $messageAudioMimeTypes;
 
     /**
+     * @var bool
+     */
+    private bool $messageVideoUpload;
+
+    /**
+     * @var int
+     */
+    private int $messageVideoSizeLimit;
+
+    /**
+     * @var string
+     */
+    private string $messageVideoMimeTypes;
+
+    /**
      * @var int
      */
     private int $apiRateLimit;
@@ -805,6 +820,63 @@ trait MessengerConfig
     public function setMessageDocumentMimeTypes(string $messageDocumentMimeTypes): self
     {
         $this->messageDocumentMimeTypes = $messageDocumentMimeTypes;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isMessageVideoUploadEnabled(): bool
+    {
+        return $this->messageVideoUpload;
+    }
+
+    /**
+     * @param  bool  $messageVideoUpload
+     * @return $this
+     */
+    public function setMessageVideoUpload(bool $messageVideoUpload): self
+    {
+        $this->messageVideoUpload = $messageVideoUpload;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMessageVideoSizeLimit(): int
+    {
+        return $this->messageVideoSizeLimit;
+    }
+
+    /**
+     * @param  int  $messageVideoSizeLimit
+     * @return $this
+     */
+    public function setMessageVideoSizeLimit(int $messageVideoSizeLimit): self
+    {
+        $this->messageVideoSizeLimit = $messageVideoSizeLimit;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMessageVideoMimeTypes(): string
+    {
+        return $this->messageVideoMimeTypes;
+    }
+
+    /**
+     * @param  string  $messageVideoMimeTypes
+     * @return $this
+     */
+    public function setMessageVideoMimeTypes(string $messageVideoMimeTypes): self
+    {
+        $this->messageVideoMimeTypes = $messageVideoMimeTypes;
 
         return $this;
     }
@@ -1437,5 +1509,20 @@ trait MessengerConfig
             'calls' => config('messenger.calling.subscriber'),
             'system_messages' => config('messenger.system_messages.subscriber'),
         ];
+
+        $this->setNewFeatureConfigs();
+    }
+
+    /**
+     * Set configs that were added before a major release, as we
+     * need to check if the nested config value exists.
+     *
+     * @TODO Remove in v2.
+     */
+    private function setNewFeatureConfigs(): void
+    {
+        $this->messageVideoUpload = config('messenger.files.message_videos.upload') ?? false;
+        $this->messageVideoSizeLimit = config('messenger.files.message_videos.size_limit') ?? 0;
+        $this->messageVideoMimeTypes = config('messenger.files.message_videos.mime_types') ?? 'NaN';
     }
 }

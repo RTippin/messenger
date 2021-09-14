@@ -185,6 +185,7 @@ class MessageTest extends FeatureTestCase
         $this->assertFalse($message->isDocument());
         $this->assertFalse($message->isText());
         $this->assertFalse($message->isAudio());
+        $this->assertFalse($message->isVideo());
         $this->assertSame(1, Message::image()->count());
         $this->assertSame('IMAGE_MESSAGE', $message->getTypeVerbose());
         $this->assertSame("threads/$thread->id/images/picture.jpg", $message->getImagePath());
@@ -203,6 +204,7 @@ class MessageTest extends FeatureTestCase
         $this->assertFalse($message->isImage());
         $this->assertFalse($message->isText());
         $this->assertFalse($message->isAudio());
+        $this->assertFalse($message->isVideo());
         $this->assertSame(1, Message::document()->count());
         $this->assertSame('DOCUMENT_MESSAGE', $message->getTypeVerbose());
         $this->assertSame("threads/$thread->id/documents/document.pdf", $message->getDocumentPath());
@@ -221,10 +223,30 @@ class MessageTest extends FeatureTestCase
         $this->assertTrue($message->notSystemMessage());
         $this->assertFalse($message->isImage());
         $this->assertFalse($message->isText());
+        $this->assertFalse($message->isVideo());
         $this->assertSame(1, Message::audio()->count());
         $this->assertSame('AUDIO_MESSAGE', $message->getTypeVerbose());
         $this->assertSame("threads/$thread->id/audio/sound.mp3", $message->getAudioPath());
         $this->assertSame("/messenger/assets/threads/$thread->id/audio/$message->id/sound.mp3", $message->getAudioDownloadRoute());
+    }
+
+    /** @test */
+    public function video_message()
+    {
+        $thread = Thread::factory()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->video()->create();
+
+        $this->assertTrue($message->isVideo());
+        $this->assertFalse($message->isAudio());
+        $this->assertFalse($message->isDocument());
+        $this->assertFalse($message->isSystemMessage());
+        $this->assertTrue($message->notSystemMessage());
+        $this->assertFalse($message->isImage());
+        $this->assertFalse($message->isText());
+        $this->assertSame(1, Message::video()->count());
+        $this->assertSame('VIDEO_MESSAGE', $message->getTypeVerbose());
+        $this->assertSame("threads/$thread->id/videos/video.mov", $message->getVideoPath());
+        $this->assertSame('', $message->getVideoDownloadRoute());
     }
 
     /** @test */

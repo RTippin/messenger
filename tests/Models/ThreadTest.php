@@ -139,6 +139,7 @@ class ThreadTest extends FeatureTestCase
         $this->assertSame("threads/$thread->id/images", $thread->getImagesDirectory());
         $this->assertSame("threads/$thread->id/documents", $thread->getDocumentsDirectory());
         $this->assertSame("threads/$thread->id/audio", $thread->getAudioDirectory());
+        $this->assertSame("threads/$thread->id/videos", $thread->getVideoDirectory());
         $this->assertSame("threads/$thread->id/avatar", $thread->getAvatarDirectory());
     }
 

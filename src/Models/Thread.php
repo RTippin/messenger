@@ -316,6 +316,14 @@ class Thread extends Model implements HasPresenceChannel
     /**
      * @return string
      */
+    public function getVideoDirectory(): string
+    {
+        return "{$this->getStorageDirectory()}/videos";
+    }
+
+    /**
+     * @return string
+     */
     public function getAvatarDirectory(): string
     {
         return "{$this->getStorageDirectory()}/avatar";

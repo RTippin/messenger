@@ -48,6 +48,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static Builder|Message document()
  * @method static Builder|Message image()
  * @method static Builder|Message audio()
+ * @method static Builder|Message video()
  * @method static Builder|Message system()
  * @method static Builder|Message nonSystem()
  */
@@ -63,6 +64,7 @@ class Message extends Model implements Ownerable
     const IMAGE_MESSAGE = 1;
     const DOCUMENT_MESSAGE = 2;
     const AUDIO_MESSAGE = 3;
+    const VIDEO_MESSAGE = 4;
     const PARTICIPANT_JOINED_WITH_INVITE = 88;
     const VIDEO_CALL = 90;
     const GROUP_AVATAR_CHANGED = 91;
@@ -83,12 +85,14 @@ class Message extends Model implements Ownerable
         self::IMAGE_MESSAGE,
         self::DOCUMENT_MESSAGE,
         self::AUDIO_MESSAGE,
+        self::VIDEO_MESSAGE,
     ];
     const TYPE = [
         0 => 'MESSAGE',
         1 => 'IMAGE_MESSAGE',
         2 => 'DOCUMENT_MESSAGE',
         3 => 'AUDIO_MESSAGE',
+        4 => 'VIDEO_MESSAGE',
         88 => 'PARTICIPANT_JOINED_WITH_INVITE',
         90 => 'VIDEO_CALL',
         91 => 'GROUP_AVATAR_CHANGED',
@@ -272,6 +276,17 @@ class Message extends Model implements Ownerable
     }
 
     /**
+     * Scope a query for only document messages.
+     *
+     * @param  Builder  $query
+     * @return Builder
+     */
+    public function scopeVideo(Builder $query): Builder
+    {
+        return $query->where('type', '=', self::VIDEO_MESSAGE);
+    }
+
+    /**
      * @return string
      */
     public function getStorageDisk(): string
@@ -309,6 +324,14 @@ class Message extends Model implements Ownerable
     public function getAudioPath(): string
     {
         return "{$this->getStorageDirectory()}/audio/$this->body";
+    }
+
+    /**
+     * @return string
+     */
+    public function getVideoPath(): string
+    {
+        return "{$this->getStorageDirectory()}/videos/$this->body";
     }
 
     /**
@@ -373,6 +396,19 @@ class Message extends Model implements Ownerable
                 'audio' => $this->body,
             ]
         );
+    }
+
+    /**
+     * @return string|null
+     * @TODO
+     */
+    public function getVideoDownloadRoute(): ?string
+    {
+        if (! $this->isVideo()) {
+            return null;
+        }
+
+        return '';
     }
 
     /**
@@ -478,6 +514,14 @@ class Message extends Model implements Ownerable
     public function isAudio(): bool
     {
         return $this->type === self::AUDIO_MESSAGE;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isVideo(): bool
+    {
+        return $this->type === self::VIDEO_MESSAGE;
     }
 
     /**

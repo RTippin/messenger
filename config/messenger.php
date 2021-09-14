@@ -137,6 +137,11 @@ return [
             'size_limit' => env('MESSENGER_MESSAGE_AUDIO_SIZE_LIMIT', 10240),
             'mime_types' => env('MESSENGER_MESSAGE_AUDIO_MIME_TYPES', 'aac,mp3,oga,ogg,wav,weba,webm'),
         ],
+        'message_videos' => [
+            'upload' => env('MESSENGER_MESSAGE_VIDEO_UPLOAD', true),
+            'size_limit' => env('MESSENGER_MESSAGE_VIDEO_SIZE_LIMIT', 15360),
+            'mime_types' => env('MESSENGER_MESSAGE_VIDEO_MIME_TYPES', 'avi,mp4,m4a,ogv,webm,3gp,3g2,wmv,mov,ogg'),
+        ],
         'avatars' => [
             'providers' => env('MESSENGER_PROVIDER_AVATARS_ENABLED', true),
             'threads' => env('MESSENGER_THREAD_AVATARS_ENABLED', true),
