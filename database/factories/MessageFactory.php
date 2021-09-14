@@ -22,7 +22,7 @@ class MessageFactory extends Factory
     public function definition(): array
     {
         return [
-            'type' => 0,
+            'type' => Message::MESSAGE,
             'body' => $this->faker->realText(rand(10, 200), rand(1, 4)),
             'edited' => false,
             'reacted' => false,
@@ -64,7 +64,7 @@ class MessageFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'type' => 1,
+                'type' => Message::IMAGE_MESSAGE,
                 'body' => 'picture.jpg',
             ];
         });
@@ -79,7 +79,7 @@ class MessageFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'type' => 2,
+                'type' => Message::DOCUMENT_MESSAGE,
                 'body' => 'document.pdf',
             ];
         });
@@ -94,7 +94,7 @@ class MessageFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'type' => 3,
+                'type' => Message::AUDIO_MESSAGE,
                 'body' => 'sound.mp3',
             ];
         });
@@ -109,7 +109,7 @@ class MessageFactory extends Factory
     {
         return $this->state(function (array $attributes) {
             return [
-                'type' => 4,
+                'type' => Message::VIDEO_MESSAGE,
                 'body' => 'video.mov',
             ];
         });
@@ -125,7 +125,7 @@ class MessageFactory extends Factory
     {
         return $this->state(function (array $attributes) use ($type) {
             return [
-                'type' => $type ?? rand(90, 103),
+                'type' => $type ?: rand(90, 103),
                 'body' => 'This is a system message.',
             ];
         });
