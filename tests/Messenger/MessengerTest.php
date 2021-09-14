@@ -907,7 +907,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame('jpg,jpeg,png,bmp,gif,webp', $this->messenger->getMessageImageMimeTypes());
         $this->assertSame('jpg,jpeg,png,bmp,gif,webp', $this->messenger->getAvatarMimeTypes());
         $this->assertSame('aac,mp3,oga,ogg,wav,weba,webm', $this->messenger->getMessageAudioMimeTypes());
-        $this->assertSame('avi,mp4,m4a,ogv,webm,3gp,3g2,wmv,mov,ogg', $this->messenger->getMessageVideoMimeTypes());
+        $this->assertSame('avi,mp4,ogv,webm,3gp,3g2,wmv,mov', $this->messenger->getMessageVideoMimeTypes());
         $this->assertTrue($this->messenger->getBotSubscriber('enabled'));
         $this->assertTrue($this->messenger->getCallSubscriber('enabled'));
         $this->assertTrue($this->messenger->getSystemMessageSubscriber('enabled'));
