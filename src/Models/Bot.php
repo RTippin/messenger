@@ -211,7 +211,7 @@ class Bot extends Model implements MessengerProvider, Ownerable
      */
     public function getProviderAvatarRoute(string $size = 'sm'): ?string
     {
-        return Helpers::Route('messenger.threads.bots.avatar.render',
+        return Helpers::Route('assets.messenger.threads.bots.avatar.render',
             [
                 'thread' => $this->thread_id,
                 'bot' => $this->id,

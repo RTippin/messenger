@@ -462,7 +462,7 @@ class Thread extends Model implements HasPresenceChannel
      */
     public function getThreadAvatarRoute(string $size = 'sm'): ?string
     {
-        return Helpers::Route('messenger.threads.avatar.render',
+        return Helpers::Route('assets.messenger.threads.avatar.render',
             [
                 'thread' => $this->id,
                 'size' => $size,

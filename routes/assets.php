@@ -16,7 +16,7 @@ use RTippin\Messenger\Http\Controllers\InviteController;
 |--------------------------------------------------------------------------
 */
 
-Route::name('messenger.')->group(function () {
+Route::name('assets.messenger.')->group(function () {
     Route::prefix('threads/{thread}')->name('threads.')->group(function () {
         Route::get('avatar/{size}/{image}', RenderGroupAvatar::class)->name('avatar.render');
         Route::get('bots/{bot}/avatar/{size}/{image}', RenderBotAvatar::class)->name('bots.avatar.render');

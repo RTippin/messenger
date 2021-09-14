@@ -23,7 +23,7 @@ class AssetsTest extends HttpTestCase
             'disk' => 'public',
         ]);
 
-        $this->getJson(route('messenger.provider.avatar.render', [
+        $this->getJson(route('assets.messenger.provider.avatar.render', [
             'alias' => 'user',
             'id' => $this->tippin->getKey(),
             'size' => 'lg',
@@ -45,7 +45,7 @@ class AssetsTest extends HttpTestCase
             'disk' => 'public',
         ]);
 
-        $this->getJson(route('messenger.provider.avatar.render', [
+        $this->getJson(route('assets.messenger.provider.avatar.render', [
             'alias' => 'user',
             'id' => $this->tippin->getKey(),
             'size' => 'lg',
@@ -60,7 +60,7 @@ class AssetsTest extends HttpTestCase
     /** @test */
     public function it_renders_default_provider_avatar()
     {
-        $this->getJson(route('messenger.provider.avatar.render', [
+        $this->getJson(route('assets.messenger.provider.avatar.render', [
             'alias' => 'user',
             'id' => $this->tippin->getKey(),
             'size' => 'lg',
@@ -81,7 +81,7 @@ class AssetsTest extends HttpTestCase
             'disk' => 'messenger',
         ]);
 
-        $this->getJson(route('messenger.threads.avatar.render', [
+        $this->getJson(route('assets.messenger.threads.avatar.render', [
             'thread' => $thread->id,
             'size' => 'lg',
             'image' => 'avatar.jpg',
@@ -100,7 +100,7 @@ class AssetsTest extends HttpTestCase
             'disk' => 'messenger',
         ]);
 
-        $this->getJson(route('messenger.threads.avatar.render', [
+        $this->getJson(route('assets.messenger.threads.avatar.render', [
             'thread' => $thread->id,
             'size' => 'lg',
             'image' => 'unknown.jpg',
@@ -116,7 +116,7 @@ class AssetsTest extends HttpTestCase
     {
         $thread = Thread::factory()->group()->create(['image' => null]);
 
-        $this->getJson(route('messenger.threads.avatar.render', [
+        $this->getJson(route('assets.messenger.threads.avatar.render', [
             'thread' => $thread->id,
             'size' => 'lg',
             'image' => 'default.png',
@@ -137,7 +137,7 @@ class AssetsTest extends HttpTestCase
             'disk' => 'messenger',
         ]);
 
-        $this->getJson(route('messenger.threads.bots.avatar.render', [
+        $this->getJson(route('assets.messenger.threads.bots.avatar.render', [
             'thread' => $thread->id,
             'bot' => $bot->id,
             'size' => 'lg',
@@ -158,7 +158,7 @@ class AssetsTest extends HttpTestCase
             'disk' => 'messenger',
         ]);
 
-        $this->getJson(route('messenger.threads.bots.avatar.render', [
+        $this->getJson(route('assets.messenger.threads.bots.avatar.render', [
             'thread' => $thread->id,
             'bot' => $bot->id,
             'size' => 'lg',
@@ -176,7 +176,7 @@ class AssetsTest extends HttpTestCase
         $thread = Thread::factory()->group()->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
 
-        $this->getJson(route('messenger.threads.bots.avatar.render', [
+        $this->getJson(route('assets.messenger.threads.bots.avatar.render', [
             'thread' => $thread->id,
             'bot' => $bot->id,
             'size' => 'lg',
@@ -198,7 +198,7 @@ class AssetsTest extends HttpTestCase
             'disk' => 'messenger',
         ]);
 
-        $this->getJson(route('messenger.threads.gallery.render', [
+        $this->getJson(route('assets.messenger.threads.gallery.render', [
             'thread' => $thread->id,
             'message' => $message->id,
             'size' => 'lg',
@@ -219,7 +219,7 @@ class AssetsTest extends HttpTestCase
             'disk' => 'messenger',
         ]);
 
-        $this->getJson(route('messenger.threads.gallery.render', [
+        $this->getJson(route('assets.messenger.threads.gallery.render', [
             'thread' => $thread->id,
             'message' => $message->id,
             'size' => 'lg',
@@ -237,7 +237,7 @@ class AssetsTest extends HttpTestCase
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->image()->create(['body' => 'foo.jpg']);
 
-        $this->getJson(route('messenger.threads.gallery.render', [
+        $this->getJson(route('assets.messenger.threads.gallery.render', [
             'thread' => $thread->id,
             'message' => $message->id,
             'size' => 'lg',
@@ -261,7 +261,7 @@ class AssetsTest extends HttpTestCase
                 'disk' => 'messenger',
             ]);
 
-        $this->getJson(route('messenger.threads.files.download', [
+        $this->getJson(route('assets.messenger.threads.files.download', [
             'thread' => $thread->id,
             'message' => $message->id,
             'file' => 'foo.pdf',
@@ -283,7 +283,7 @@ class AssetsTest extends HttpTestCase
                 'disk' => 'messenger',
             ]);
 
-        $this->getJson(route('messenger.threads.files.download', [
+        $this->getJson(route('assets.messenger.threads.files.download', [
             'thread' => $thread->id,
             'message' => $message->id,
             'file' => 'bar.pdf',
@@ -298,7 +298,7 @@ class AssetsTest extends HttpTestCase
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->document()->create(['body' => 'foo.pdf']);
 
-        $this->getJson(route('messenger.threads.files.download', [
+        $this->getJson(route('assets.messenger.threads.files.download', [
             'thread' => $thread->id,
             'message' => $message->id,
             'file' => 'foo.pdf',
@@ -318,7 +318,7 @@ class AssetsTest extends HttpTestCase
                 'disk' => 'messenger',
             ]);
 
-        $this->getJson(route('messenger.threads.audio.download', [
+        $this->getJson(route('assets.messenger.threads.audio.download', [
             'thread' => $thread->id,
             'message' => $message->id,
             'audio' => 'foo.mp3',
@@ -340,7 +340,7 @@ class AssetsTest extends HttpTestCase
                 'disk' => 'messenger',
             ]);
 
-        $this->getJson(route('messenger.threads.audio.download', [
+        $this->getJson(route('assets.messenger.threads.audio.download', [
             'thread' => $thread->id,
             'message' => $message->id,
             'audio' => 'foo.mp3',
@@ -360,7 +360,7 @@ class AssetsTest extends HttpTestCase
                 'disk' => 'messenger',
             ]);
 
-        $this->getJson(route('messenger.threads.audio.download', [
+        $this->getJson(route('assets.messenger.threads.audio.download', [
             'thread' => $thread->id,
             'message' => $message->id,
             'audio' => 'bar.mp3',
@@ -375,7 +375,7 @@ class AssetsTest extends HttpTestCase
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->audio()->create(['body' => 'foo.mp3']);
 
-        $this->getJson(route('messenger.threads.audio.download', [
+        $this->getJson(route('assets.messenger.threads.audio.download', [
             'thread' => $thread->id,
             'message' => $message->id,
             'audio' => 'foo.mp3',
@@ -395,7 +395,7 @@ class AssetsTest extends HttpTestCase
                 'disk' => 'messenger',
             ]);
 
-        $this->getJson(route('messenger.threads.videos.download', [
+        $this->getJson(route('assets.messenger.threads.videos.download', [
             'thread' => $thread->id,
             'message' => $message->id,
             'video' => 'foo.mov',
@@ -417,7 +417,7 @@ class AssetsTest extends HttpTestCase
                 'disk' => 'messenger',
             ]);
 
-        $this->getJson(route('messenger.threads.videos.download', [
+        $this->getJson(route('assets.messenger.threads.videos.download', [
             'thread' => $thread->id,
             'message' => $message->id,
             'video' => 'foo.mov',
@@ -437,7 +437,7 @@ class AssetsTest extends HttpTestCase
                 'disk' => 'messenger',
             ]);
 
-        $this->getJson(route('messenger.threads.videos.download', [
+        $this->getJson(route('assets.messenger.threads.videos.download', [
             'thread' => $thread->id,
             'message' => $message->id,
             'video' => 'bar.mov',
@@ -452,7 +452,7 @@ class AssetsTest extends HttpTestCase
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->video()->create(['body' => 'foo.mov']);
 
-        $this->getJson(route('messenger.threads.videos.download', [
+        $this->getJson(route('assets.messenger.threads.videos.download', [
             'thread' => $thread->id,
             'message' => $message->id,
             'video' => 'foo.mov',
@@ -470,7 +470,7 @@ class AssetsTest extends HttpTestCase
             'disk' => 'messenger',
         ]);
 
-        $this->getJson(route('messenger.invites.avatar.render', [
+        $this->getJson(route('assets.messenger.invites.avatar.render', [
             'invite' => $invite->code,
             'size' => 'lg',
             'image' => 'avatar.jpg',
@@ -491,7 +491,7 @@ class AssetsTest extends HttpTestCase
             'disk' => 'messenger',
         ]);
 
-        $this->getJson(route('messenger.invites.avatar.render', [
+        $this->getJson(route('assets.messenger.invites.avatar.render', [
             'invite' => $invite->code,
             'size' => 'lg',
             'image' => 'avatar.jpg',
@@ -508,7 +508,7 @@ class AssetsTest extends HttpTestCase
             'disk' => 'messenger',
         ]);
 
-        $this->getJson(route('messenger.invites.avatar.render', [
+        $this->getJson(route('assets.messenger.invites.avatar.render', [
             'invite' => $invite->code,
             'size' => 'lg',
             'image' => 'unknown.jpg',
@@ -525,7 +525,7 @@ class AssetsTest extends HttpTestCase
         $thread = Thread::factory()->group()->create(['image' => null]);
         $invite = Invite::factory()->for($thread)->owner($this->tippin)->create();
 
-        $this->getJson(route('messenger.invites.avatar.render', [
+        $this->getJson(route('assets.messenger.invites.avatar.render', [
             'invite' => $invite->code,
             'size' => 'lg',
             'image' => 'default.png',
