@@ -22,6 +22,7 @@ use RTippin\Messenger\Commands\PurgeDocumentsCommand;
 use RTippin\Messenger\Commands\PurgeImagesCommand;
 use RTippin\Messenger\Commands\PurgeMessagesCommand;
 use RTippin\Messenger\Commands\PurgeThreadsCommand;
+use RTippin\Messenger\Commands\PurgeVideosCommand;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\EmojiInterface;
 use RTippin\Messenger\Contracts\FriendDriver;
@@ -113,6 +114,7 @@ class MessengerServiceProvider extends ServiceProvider
             PurgeImagesCommand::class,
             PurgeMessagesCommand::class,
             PurgeThreadsCommand::class,
+            PurgeVideosCommand::class,
         ]);
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
