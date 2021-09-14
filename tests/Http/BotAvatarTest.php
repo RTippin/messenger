@@ -120,7 +120,7 @@ class BotAvatarTest extends HttpTestCase
         $thread = $this->createGroupThread($this->tippin);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         $this->actingAs($this->tippin);
-        UploadedFile::fake()->image('avatar.jpg')->storeAs($bot->getStorageDirectory(), 'avatar.jpg', [
+        UploadedFile::fake()->image('avatar.jpg')->storeAs($bot->getAvatarDirectory(), 'avatar.jpg', [
             'disk' => 'messenger',
         ]);
         $this->actingAs($this->tippin);

@@ -17,17 +17,17 @@ class FeatureTestCase extends MessengerTestCase
     /**
      * @var MessengerProvider|UserModel|Authenticatable
      */
-    protected $tippin;
+    protected UserModel $tippin;
 
     /**
      * @var MessengerProvider|UserModel|Authenticatable
      */
-    protected $doe;
+    protected UserModel $doe;
 
     /**
      * @var MessengerProvider|CompanyModel|Authenticatable
      */
-    protected $developers;
+    protected CompanyModel $developers;
 
     /**
      * Setup feature test requirements.

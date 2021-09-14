@@ -76,6 +76,10 @@ class MessengerTestCase extends TestCase
         $config->set('messenger.bots.enabled', true);
         $config->set('messenger.storage.avatars.disk', 'public');
         $config->set('messenger.storage.threads.disk', 'messenger');
+        $config->set('messenger.files.default_not_found_image', __DIR__.'/Fixtures/404.png');
+        $config->set('messenger.files.default_ghost_avatar', __DIR__.'/Fixtures/404.png');
+        $config->set('messenger.files.default_thread_avatar', __DIR__.'/Fixtures/404.png');
+        $config->set('messenger.files.default_bot_avatar', __DIR__.'/Fixtures/404.png');
 
         if ($this->useMorphMap) {
             Relation::morphMap([
