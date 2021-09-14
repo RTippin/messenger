@@ -122,7 +122,18 @@ class HttpTestCase extends FeatureTestCase
             $responses[$route->getName()][$method][$status]['payload'] = ['No Payload'];
         }
 
-        $responses[$route->getName()][$method][$status]['response'] = json_decode($response->getContent(), true);
+        if ($response->headers->has('content-disposition')) {
+            $responses[$route->getName()][$method][$status]['response'] = [
+                'context' => 'Asset Response',
+                'headers' => [
+                    'content-type' => $response->headers->get('content-type'),
+                    'content-length' => $response->headers->get('content-length'),
+                    'content-disposition' => $response->headers->get('content-disposition'),
+                ],
+            ];
+        } else {
+            $responses[$route->getName()][$method][$status]['response'] = json_decode($response->getContent(), true);
+        }
 
         $this->storeResponsesFile($responses);
     }

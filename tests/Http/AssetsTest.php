@@ -15,6 +15,7 @@ class AssetsTest extends HttpTestCase
     /** @test */
     public function it_renders_provider_avatar()
     {
+        $this->logCurrentRequest();
         $this->tippin->update(['picture' => 'avatar.jpg']);
         $directory = Messenger::getAvatarStorage('directory').'/user/'.$this->tippin->getKey();
 
@@ -74,6 +75,7 @@ class AssetsTest extends HttpTestCase
     /** @test */
     public function it_renders_group_thread_avatar()
     {
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create(['image' => 'avatar.jpg']);
         UploadedFile::fake()->image('avatar.jpg')->storeAs($thread->getAvatarDirectory(), 'avatar.jpg', [
             'disk' => 'messenger',
@@ -128,6 +130,7 @@ class AssetsTest extends HttpTestCase
     /** @test */
     public function it_renders_bot_avatar()
     {
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create(['avatar' => 'avatar.jpg']);
         UploadedFile::fake()->image('avatar.jpg')->storeAs($bot->getAvatarDirectory(), 'avatar.jpg', [
@@ -188,6 +191,7 @@ class AssetsTest extends HttpTestCase
     /** @test */
     public function it_renders_message_image()
     {
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->image()->create(['body' => 'foo.jpg']);
         UploadedFile::fake()->image('foo.jpg')->storeAs($thread->getImagesDirectory(), 'foo.jpg', [
@@ -248,6 +252,7 @@ class AssetsTest extends HttpTestCase
     /** @test */
     public function it_downloads_message_document()
     {
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->document()->create(['body' => 'foo.pdf']);
         UploadedFile::fake()
@@ -289,6 +294,7 @@ class AssetsTest extends HttpTestCase
     /** @test */
     public function it_doesnt_download_message_document_if_file_not_found()
     {
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->document()->create(['body' => 'foo.pdf']);
 
@@ -303,6 +309,7 @@ class AssetsTest extends HttpTestCase
     /** @test */
     public function it_downloads_message_audio()
     {
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->audio()->create(['body' => 'foo.mp3']);
         UploadedFile::fake()
@@ -364,6 +371,7 @@ class AssetsTest extends HttpTestCase
     /** @test */
     public function it_doesnt_download_message_audio_if_file_not_found()
     {
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->audio()->create(['body' => 'foo.mp3']);
 
@@ -378,6 +386,7 @@ class AssetsTest extends HttpTestCase
     /** @test */
     public function it_downloads_message_video()
     {
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->video()->create(['body' => 'foo.mov']);
         UploadedFile::fake()
@@ -439,6 +448,7 @@ class AssetsTest extends HttpTestCase
     /** @test */
     public function it_doesnt_download_message_video_if_file_not_found()
     {
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->video()->create(['body' => 'foo.mov']);
 
@@ -453,6 +463,7 @@ class AssetsTest extends HttpTestCase
     /** @test */
     public function it_renders_group_thread_avatar_through_invite()
     {
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create(['image' => 'avatar.jpg']);
         $invite = Invite::factory()->for($thread)->owner($this->tippin)->create();
         UploadedFile::fake()->image('avatar.jpg')->storeAs($thread->getAvatarDirectory(), 'avatar.jpg', [
@@ -473,6 +484,7 @@ class AssetsTest extends HttpTestCase
     /** @test */
     public function it_is_forbidden_to_view_group_thread_avatar_if_invite_invalid()
     {
+        $this->logCurrentRequest();
         $thread = Thread::factory()->group()->create(['image' => 'avatar.jpg']);
         $invite = Invite::factory()->for($thread)->owner($this->tippin)->invalid()->create();
         UploadedFile::fake()->image('avatar.jpg')->storeAs($thread->getAvatarDirectory(), 'avatar.jpg', [
