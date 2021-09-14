@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Tests\Commands;
 
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Bus;
-use RTippin\Messenger\Jobs\PurgeAudioMessages;
 use RTippin\Messenger\Jobs\PurgeVideoMessages;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
