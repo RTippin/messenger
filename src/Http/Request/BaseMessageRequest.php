@@ -13,7 +13,7 @@ abstract class BaseMessageRequest extends FormRequest
     private array $generatedRuleset = [];
 
     /**
-     * If extra data is set, check if array. If not, let us
+     * If extra data is set, check if an array. If not, let us
      * try to json decode and overwrite as an array.
      *
      * @return void
@@ -63,6 +63,10 @@ abstract class BaseMessageRequest extends FormRequest
 
         if (in_array('document', $fields)) {
             $this->generateDocumentRule();
+        }
+
+        if (in_array('video', $fields)) {
+            $this->generateVideoRule();
         }
 
         return $this->generatedRuleset;
@@ -133,5 +137,16 @@ abstract class BaseMessageRequest extends FormRequest
         $mimes = Messenger::getMessageDocumentMimeTypes();
 
         $this->generatedRuleset['document'] = ['required', "max:$limit", 'file', "mimes:$mimes"];
+    }
+
+    /**
+     * Video file ruleset.
+     */
+    private function generateVideoRule(): void
+    {
+        $limit = Messenger::getMessageVideoSizeLimit();
+        $mimes = Messenger::getMessageVideoMimeTypes();
+
+        $this->generatedRuleset['video'] = ['required', "max:$limit", 'file', "mimes:$mimes"];
     }
 }

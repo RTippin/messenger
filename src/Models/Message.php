@@ -400,7 +400,6 @@ class Message extends Model implements Ownerable
 
     /**
      * @return string|null
-     * @TODO
      */
     public function getVideoDownloadRoute(): ?string
     {
@@ -408,7 +407,13 @@ class Message extends Model implements Ownerable
             return null;
         }
 
-        return '';
+        return Helpers::Route('messenger.threads.videos.download',
+            [
+                'thread' => $this->thread_id,
+                'message' => $this->id,
+                'video' => $this->body,
+            ]
+        );
     }
 
     /**

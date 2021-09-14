@@ -130,6 +130,20 @@ class MessagePolicy
     }
 
     /**
+     * Determine whether the provider can create a video message.
+     *
+     * @param $user
+     * @param  Thread  $thread
+     * @return Response
+     */
+    public function createVideo($user, Thread $thread): Response
+    {
+        return $this->messenger->isMessageVideoUploadEnabled() && $thread->canMessage()
+            ? $this->allow()
+            : $this->deny('Not authorized to upload video messages.');
+    }
+
+    /**
      * Determine whether the provider can edit the message.
      *
      * @param $user

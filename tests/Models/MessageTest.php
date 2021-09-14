@@ -246,7 +246,7 @@ class MessageTest extends FeatureTestCase
         $this->assertSame(1, Message::video()->count());
         $this->assertSame('VIDEO_MESSAGE', $message->getTypeVerbose());
         $this->assertSame("threads/$thread->id/videos/video.mov", $message->getVideoPath());
-        $this->assertSame('', $message->getVideoDownloadRoute());
+        $this->assertSame("/messenger/assets/threads/$thread->id/videos/$message->id/video.mov", $message->getVideoDownloadRoute());
     }
 
     /** @test */

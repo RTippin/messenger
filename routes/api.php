@@ -42,6 +42,7 @@ use RTippin\Messenger\Http\Controllers\PrivateThreadController;
 use RTippin\Messenger\Http\Controllers\SentFriendController;
 use RTippin\Messenger\Http\Controllers\SystemMessageController;
 use RTippin\Messenger\Http\Controllers\ThreadController;
+use RTippin\Messenger\Http\Controllers\VideoMessageController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,7 +57,7 @@ Route::name('api.messenger.')->group(function () {
     Route::post('join/{invite:code}', JoinGroupInvite::class)->name('invites.join.store');
     //Search
     Route::get('search/{query?}', Search::class)->name('search');
-    //Friends routes
+    //Friend routes
     Route::prefix('friends')->name('friends.')->group(function () {
         Route::apiResource('pending', PendingFriendController::class)->except('store');
         Route::apiResource('sent', SentFriendController::class)->except('update');
@@ -86,6 +87,7 @@ Route::name('api.messenger.')->group(function () {
         Route::get('images/page/{image}', [ImageMessageController::class, 'paginate'])->name('images.page');
         Route::get('documents/page/{document}', [DocumentMessageController::class, 'paginate'])->name('documents.page');
         Route::get('audio/page/{audio}', [AudioMessageController::class, 'paginate'])->name('audio.page');
+        Route::get('videos/page/{video}', [VideoMessageController::class, 'paginate'])->name('videos.page');
         //Common
         Route::delete('messages/{message}/embeds', [MessageController::class, 'removeEmbeds'])->name('messages.embeds.destroy');
         Route::get('load/{relations?}', ThreadLoader::class)->name('loader');
@@ -126,6 +128,7 @@ Route::name('api.messenger.')->group(function () {
     Route::apiResource('threads.images', ImageMessageController::class)->only(['index', 'store']);
     Route::apiResource('threads.documents', DocumentMessageController::class)->only(['index', 'store']);
     Route::apiResource('threads.audio', AudioMessageController::class)->only(['index', 'store']);
+    Route::apiResource('threads.videos', VideoMessageController::class)->only(['index', 'store']);
     Route::apiResource('threads.invites', InviteController::class)->only(['index', 'store', 'destroy']);
     Route::apiResource('threads.calls', CallController::class)->except(['update', 'destroy']);
     Route::prefix('threads/{thread}/calls/{call}')->name('threads.calls.')->group(function () {

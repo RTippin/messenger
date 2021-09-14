@@ -9,6 +9,7 @@ use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\FileServiceException;
+use RTippin\Messenger\Http\Request\VideoMessageRequest;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
@@ -61,7 +62,7 @@ class StoreVideoMessage extends NewMessageAction
      * @param  string|null  $senderIp
      * @return $this
      *
-     * @TODO
+     * @see VideoMessageRequest
      *
      * @throws Throwable|FeatureDisabledException|FileServiceException
      */

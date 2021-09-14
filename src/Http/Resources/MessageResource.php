@@ -96,6 +96,9 @@ class MessageResource extends JsonResource
             'audio' => $this->when($this->message->isAudio(),
                 fn () => $this->message->getAudioDownloadRoute()
             ),
+            'video' => $this->when($this->message->isVideo(),
+                fn () => $this->message->getVideoDownloadRoute()
+            ),
             $this->mergeWhen($this->message->isImage(),
                 fn () => $this->linksForImage()
             ),
