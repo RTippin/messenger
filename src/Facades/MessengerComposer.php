@@ -9,6 +9,7 @@ use RTippin\Messenger\Actions\Messages\StoreAudioMessage;
 use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
 use RTippin\Messenger\Actions\Messages\StoreImageMessage;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
+use RTippin\Messenger\Actions\Messages\StoreVideoMessage;
 use RTippin\Messenger\Actions\Threads\MarkParticipantRead;
 use RTippin\Messenger\Actions\Threads\SendKnock;
 use RTippin\Messenger\Contracts\MessengerProvider;
@@ -25,7 +26,8 @@ use RTippin\Messenger\Models\Message;
  * @method static StoreMessage message(string $message, ?string $replyingToId = null, ?array $extra = null)
  * @method static StoreImageMessage image(UploadedFile $image, ?string $replyingToId = null, ?array $extra = null)
  * @method static StoreDocumentMessage document(UploadedFile $document, ?string $replyingToId = null, ?array $extra = null)
- * @method static StoreAudioMessage audio(UploadedFile $document, ?string $replyingToId = null, ?array $extra = null)
+ * @method static StoreAudioMessage audio(UploadedFile $audio, ?string $replyingToId = null, ?array $extra = null)
+ * @method static StoreVideoMessage video(UploadedFile $video, ?string $replyingToId = null, ?array $extra = null)
  * @method static AddReaction reaction(Message $message, string $reaction)
  * @method static SendKnock knock()
  * @method static MarkParticipantRead read()

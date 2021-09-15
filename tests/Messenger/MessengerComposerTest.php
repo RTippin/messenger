@@ -11,6 +11,7 @@ use RTippin\Messenger\Actions\Messages\StoreAudioMessage;
 use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
 use RTippin\Messenger\Actions\Messages\StoreImageMessage;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
+use RTippin\Messenger\Actions\Messages\StoreVideoMessage;
 use RTippin\Messenger\Actions\Threads\MarkParticipantRead;
 use RTippin\Messenger\Actions\Threads\SendKnock;
 use RTippin\Messenger\Actions\Threads\StorePrivateThread;
@@ -797,6 +798,141 @@ class MessengerComposerTest extends FeatureTestCase
             ->from($this->tippin)
             ->silent(true)
             ->audio(UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'));
+
+        Event::assertNotDispatched(NewMessageBroadcast::class);
+        Event::assertNotDispatched(NewMessageEvent::class);
+    }
+
+    /** @test */
+    public function it_sends_video_message_with_existing_thread()
+    {
+        $thread = Thread::create();
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->video(UploadedFile::fake()->create('test.mov', 500, 'video/quicktime'));
+
+        $this->assertDatabaseHas('messages', [
+            'thread_id' => $thread->id,
+            'owner_id' => $this->tippin->getKey(),
+            'owner_type' => $this->tippin->getMorphClass(),
+            'type' => Message::VIDEO_MESSAGE,
+        ]);
+    }
+
+    /** @test */
+    public function it_sends_video_message_and_returns_video_action()
+    {
+        $video = $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->video(UploadedFile::fake()->create('test.mov', 500, 'video/quicktime'));
+
+        $this->assertInstanceOf(StoreVideoMessage::class, $video);
+    }
+
+    /** @test */
+    public function it_sends_video_message_and_creates_new_thread()
+    {
+        $this->composer
+            ->to($this->doe)
+            ->from($this->tippin)
+            ->video(UploadedFile::fake()->create('test.mov', 500, 'video/quicktime'));
+
+        $this->assertDatabaseCount('threads', 1);
+        $this->assertDatabaseCount('participants', 2);
+        $this->assertDatabaseCount('messages', 1);
+    }
+
+    /** @test */
+    public function it_sends_video_message_and_flushes_state()
+    {
+        //Set our thread and user. Sending the video should flush our states.
+        $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->video(UploadedFile::fake()->create('test.mov', 500, 'video/quicktime'));
+
+        $this->assertNull(Messenger::getProvider());
+        $this->assertFalse(Messenger::isProviderSet());
+
+        $this->expectException(MessengerComposerException::class);
+        $this->expectExceptionMessage('No "TO" entity has been set.');
+        //TO and FROM have been reset, thus we expect an exception calling to
+        //the method on the same instance without setting a new TO and FROM.
+        $this->composer->video(UploadedFile::fake()->create('test.mov', 500, 'video/quicktime'));
+    }
+
+    /** @test */
+    public function it_sends_video_message_and_flushes_state_reverting_prior_provider()
+    {
+        //Set our main provider to doe.
+        Messenger::setProvider($this->doe);
+        //Our scoped provider tippin will be set for the video action.
+        //When complete, doe should be reverted to the active provider.
+        $this->composer
+            ->to(Thread::create())
+            ->from($this->tippin)
+            ->video(UploadedFile::fake()->create('test.mov', 500, 'video/quicktime'));
+
+        $this->assertSame($this->doe, Messenger::getProvider());
+        $this->assertFalse(Messenger::isScopedProviderSet());
+    }
+
+    /** @test */
+    public function it_sends_video_message_with_events()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+        $thread = $this->createGroupThread($this->tippin);
+
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->video(UploadedFile::fake()->create('test.mov', 500, 'video/quicktime'));
+
+        Event::assertDispatched(NewMessageBroadcast::class);
+        Event::assertDispatched(NewMessageEvent::class);
+    }
+
+    /** @test */
+    public function it_sends_video_message_without_broadcast()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+        $thread = $this->createGroupThread($this->tippin);
+
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->silent()
+            ->video(UploadedFile::fake()->create('test.mov', 500, 'video/quicktime'));
+
+        Event::assertNotDispatched(NewMessageBroadcast::class);
+        Event::assertDispatched(NewMessageEvent::class);
+    }
+
+    /** @test */
+    public function it_sends_video_message_without_broadcast_and_events()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            NewMessageBroadcast::class,
+            NewMessageEvent::class,
+        ]);
+        $thread = $this->createGroupThread($this->tippin);
+
+        $this->composer
+            ->to($thread)
+            ->from($this->tippin)
+            ->silent(true)
+            ->video(UploadedFile::fake()->create('test.mov', 500, 'video/quicktime'));
 
         Event::assertNotDispatched(NewMessageBroadcast::class);
         Event::assertNotDispatched(NewMessageEvent::class);

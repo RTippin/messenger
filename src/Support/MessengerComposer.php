@@ -9,6 +9,7 @@ use RTippin\Messenger\Actions\Messages\StoreAudioMessage;
 use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
 use RTippin\Messenger\Actions\Messages\StoreImageMessage;
 use RTippin\Messenger\Actions\Messages\StoreMessage;
+use RTippin\Messenger\Actions\Messages\StoreVideoMessage;
 use RTippin\Messenger\Actions\Threads\MarkParticipantRead;
 use RTippin\Messenger\Actions\Threads\SendKnock;
 use RTippin\Messenger\Actions\Threads\StorePrivateThread;
@@ -235,6 +236,35 @@ class MessengerComposer
 
         $action->execute($this->resolveThread(), [
             'audio' => $audio,
+            'reply_to_id' => $replyingToId,
+            'extra' => $extra,
+        ]);
+
+        $this->flush();
+
+        return $action;
+    }
+
+    /**
+     * Send a video message. Optional reply to message ID and extra data allowed.
+     *
+     * @param  UploadedFile  $video
+     * @param  string|null  $replyingToId
+     * @param  array|null  $extra
+     * @return StoreVideoMessage
+     *
+     * @throws MessengerComposerException|Throwable
+     */
+    public function video(UploadedFile $video,
+                          ?string $replyingToId = null,
+                          ?array $extra = null): StoreVideoMessage
+    {
+        $action = app(StoreVideoMessage::class);
+
+        $this->silenceActionWhenSilent($action);
+
+        $action->execute($this->resolveThread(), [
+            'video' => $video,
             'reply_to_id' => $replyingToId,
             'extra' => $extra,
         ]);
