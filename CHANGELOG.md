@@ -3,7 +3,7 @@
 
 ---
 
-### v1.7.0 (xx-xx-2021)
+### [v1.7.0 (09-15-2021)](https://github.com/RTippin/messenger/compare/v1.6.0...v1.7.0)
 
 #### Added
 - Video message upload support `Message::VIDEO_MESSAGE | type 4`.
