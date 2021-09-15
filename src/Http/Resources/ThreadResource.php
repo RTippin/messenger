@@ -25,33 +25,24 @@ class ThreadResource extends JsonResource
     /**
      * @var false
      */
-    private bool $addParticipants;
-
-    /**
-     * @var false
-     */
-    private bool $addMessages;
+    private bool $addResources;
 
     /**
      * ThreadResource constructor.
      *
      * @param  Thread  $thread
      * @param  bool  $addSystemFeatures
-     * @param  bool  $addParticipants
-     * @param  bool  $addMessages
-     *                             TODO - Remove deprecated {relations?} from loader route.
+     * @param  bool  $addResources
      */
     public function __construct(Thread $thread,
                                 bool $addSystemFeatures = false,
-                                bool $addParticipants = false,
-                                bool $addMessages = false)
+                                bool $addResources = false)
     {
         parent::__construct($thread);
 
         $this->thread = $thread;
         $this->addSystemFeatures = $addSystemFeatures;
-        $this->addParticipants = $addParticipants;
-        $this->addMessages = $addMessages;
+        $this->addResources = $addResources;
     }
 
     /**
@@ -100,10 +91,10 @@ class ThreadResource extends JsonResource
                 'active_call' => $this->when($this->thread->hasActiveCall(),
                     fn () => $this->addActiveCall()
                 ),
-                'participants' => $this->when($this->addParticipants,
+                'participants' => $this->when($this->addResources,
                     fn () => $this->addParticipants()
                 ),
-                'messages' => $this->when($this->addMessages,
+                'messages' => $this->when($this->addResources,
                     fn () => $this->addMessages()
                 ),
                 'latest_message' => $this->addRecentMessage(),

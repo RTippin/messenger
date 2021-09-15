@@ -130,7 +130,9 @@ class MessageResource extends JsonResource
     public function addReactions(): array
     {
         return (new MessageReactionCollection(
-            $this->message->reactions()->with('owner')->get()
+            $this->message->relationLoaded('reactions')
+                ? $this->message->reactions
+                : $this->message->reactions()->with('owner')->get()
         ))->resolve();
     }
 

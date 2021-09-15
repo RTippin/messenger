@@ -43,7 +43,6 @@ class ThreadLoader
         return new ThreadResource(
             $thread->load(self::LOAD),
             true,
-            true,
             true
         );
     }

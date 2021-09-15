@@ -34,7 +34,10 @@ class MessageRepository
         return $thread->messages()
             ->latest()
             ->limit($this->messenger->getMessagesIndexCount())
-            ->with('owner')
+            ->with([
+                'owner',
+                'reactions.owner',
+            ])
             ->get();
     }
 
@@ -47,7 +50,10 @@ class MessageRepository
     {
         return $thread->messages()
             ->latest()
-            ->with('owner')
+            ->with([
+                'owner',
+                'reactions.owner',
+            ])
             ->where('created_at', '<=', Helpers::PrecisionTime($message->created_at))
             ->where('id', '!=', $message->id)
             ->limit($this->messenger->getMessagesPageCount())
