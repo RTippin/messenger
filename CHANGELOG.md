@@ -3,6 +3,35 @@
 
 ---
 
+### v1.7.0 (xx-xx-2021)
+
+#### Added
+- Video message upload support `Message::VIDEO_MESSAGE | type 4`.
+  - `StoreVideoMessage` action.
+  - `video()` method to `MessengerComposer`
+  - `messenger:purge:videos` command and accompanying job/action.
+  - Private threads can be created using a video message.
+
+#### Changed
+- `assets` prefix on our asset route names (not paths).
+- Eager loading of message reactions for message collections.
+
+#### Notes / Updating
+- This update is backwards compatible, however, video messages will be disabled by default until you add the new nested values to your published `messenger.php` configs `files` array.
+
+```php
+'files' => [
+    // Add new message_videos
+    'message_videos' => [
+        'upload' => env('MESSENGER_MESSAGE_VIDEO_UPLOAD', true),
+        'size_limit' => env('MESSENGER_MESSAGE_VIDEO_SIZE_LIMIT', 15360),
+        'mime_types' => env('MESSENGER_MESSAGE_VIDEO_MIME_TYPES', 'avi,mp4,ogv,webm,3gp,3g2,wmv,mov'),
+    ],
+],
+```
+
+---
+
 ### [v1.6.0 (09-10-2021)](https://github.com/RTippin/messenger/compare/v1.5.0...v1.6.0)
 
 #### Changed
