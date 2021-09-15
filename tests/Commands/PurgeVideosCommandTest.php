@@ -21,7 +21,7 @@ class PurgeVideosCommandTest extends FeatureTestCase
     /** @test */
     public function it_doesnt_find_video()
     {
-        $this->artisan('messenger:purge:video')
+        $this->artisan('messenger:purge:videos')
             ->expectsOutput('No video messages archived 30 days or greater found.')
             ->assertExitCode(0);
 
@@ -31,7 +31,7 @@ class PurgeVideosCommandTest extends FeatureTestCase
     /** @test */
     public function it_can_set_days()
     {
-        $this->artisan('messenger:purge:video', [
+        $this->artisan('messenger:purge:videos', [
             '--days' => 10,
         ])
             ->expectsOutput('No video messages archived 10 days or greater found.')
@@ -49,7 +49,7 @@ class PurgeVideosCommandTest extends FeatureTestCase
             ->video()
             ->create(['deleted_at' => now()->subMonths(2)]);
 
-        $this->artisan('messenger:purge:video')
+        $this->artisan('messenger:purge:videos')
             ->expectsOutput('1 video messages archived 30 days or greater found. Purging dispatched!')
             ->assertExitCode(0);
 
@@ -65,7 +65,7 @@ class PurgeVideosCommandTest extends FeatureTestCase
             ->video()
             ->create(['deleted_at' => now()->subMonths(2)]);
 
-        $this->artisan('messenger:purge:video', [
+        $this->artisan('messenger:purge:videos', [
             '--now' => true,
         ])
             ->expectsOutput('1 video messages archived 30 days or greater found. Purging completed!')
@@ -88,7 +88,7 @@ class PurgeVideosCommandTest extends FeatureTestCase
             ->count(2)
             ->create();
 
-        $this->artisan('messenger:purge:video', [
+        $this->artisan('messenger:purge:videos', [
             '--days' => 7,
         ])
             ->expectsOutput('2 video messages archived 7 days or greater found. Purging dispatched!')
@@ -110,7 +110,7 @@ class PurgeVideosCommandTest extends FeatureTestCase
                 'deleted_at' => now()->subYear(),
             ]);
 
-        $this->artisan('messenger:purge:video')
+        $this->artisan('messenger:purge:videos')
             ->expectsOutput('200 video messages archived 30 days or greater found. Purging dispatched!')
             ->assertExitCode(0);
 

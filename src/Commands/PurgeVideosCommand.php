@@ -14,7 +14,7 @@ class PurgeVideosCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'messenger:purge:video 
+    protected $signature = 'messenger:purge:videos 
                                             {--now : Perform requested checks now instead of dispatching job}
                                             {--days=30 : Purge video messages soft deleted X days ago or greater}';
 
