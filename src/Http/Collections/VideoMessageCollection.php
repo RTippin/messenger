@@ -60,7 +60,7 @@ class VideoMessageCollection extends MessengerCollection
     protected function makeResource($resource): ?array
     {
         try {
-            return (new MessageResource($resource, $this->thread, true))->resolve();
+            return (new MessageResource($resource, $this->thread))->resolve();
         } catch (Throwable $t) {
             report($t);
         }
