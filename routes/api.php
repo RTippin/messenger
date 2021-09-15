@@ -90,6 +90,7 @@ Route::name('api.messenger.')->group(function () {
         Route::get('videos/page/{video}', [VideoMessageController::class, 'paginate'])->name('videos.page');
         //Common
         Route::delete('messages/{message}/embeds', [MessageController::class, 'removeEmbeds'])->name('messages.embeds.destroy');
+        //TODO v2 remove {relations?}
         Route::get('load/{relations?}', ThreadLoader::class)->name('loader');
         Route::get('logs', [SystemMessageController::class, 'index'])->name('logs');
         Route::get('mark-read', MarkThreadRead::class)->name('mark.read');
