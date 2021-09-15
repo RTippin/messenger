@@ -24,7 +24,7 @@
 - Support for morph maps on your provider models. See: [Morph Maps][link-morph-maps]
 - Private and group threads.
 - Permissions per participant within a group thread.
-- Send image, document or audio messages.
+- Send image, document, audio, and video messages.
 - Message reactions, replies, edits, and deletion.
 - Group thread chat-bots. [Bot addon][link-messenger-bots]
 - Friends, Search, and Online status systems.
@@ -42,6 +42,7 @@
 ### Upcoming for v2
 - Temporary Ephemeral conversations.
 - Improved API pagination / filters.
+- Condense attachment routes.
 - Possible extraction of friends system.
 - Better image manipulation / saving of multiple sizes.
 - Encryption of messages (E2E is the long term goal).

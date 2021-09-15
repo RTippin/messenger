@@ -37,6 +37,7 @@ return [
     | **Images - storage_path('app/public/threads/{threadID}/images')
     | **Documents - storage_path('app/public/threads/{threadID}/documents')
     | **Audio - storage_path('app/public/threads/{threadID}/audio')
+    | **Video - storage_path('app/public/threads/{threadID}/videos')
     | **Bots - storage_path('app/public/threads/{threadID}/bots/{botID}')
     |
     */

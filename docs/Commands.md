@@ -57,6 +57,13 @@
 
 ---
 
+### `php artisan messenger:purge:videos` | `--now` | `--days=30`
+- We will purge all soft deleted video messages that were archived past the set days (30 default). We run it through our action to remove the video file from storage and message from the database.
+- `--days=X` flag to set how many days in the past to start at.
+- `--now` flag to run immediately without dispatching jobs to queue.
+
+---
+
 ### `php artisan messenger:purge:images` | `--now` | `--days=30`
 - We will purge all soft deleted image messages that were archived past the set days (30 default). We run it through our action to remove the image from storage and message from the database.
 - `--days=X` flag to set how many days in the past to start at.
@@ -111,6 +118,7 @@ class Kernel extends ConsoleKernel
         $schedule->command('messenger:purge:documents')->dailyAt('4:00');
         $schedule->command('messenger:purge:audio')->dailyAt('5:00');
         $schedule->command('messenger:purge:bots')->dailyAt('6:00');
+        $schedule->command('messenger:purge:videos')->dailyAt('7:00');
     }
 }
 ```

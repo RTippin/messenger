@@ -18,35 +18,6 @@
 
 ---
 
-### Storage
-
-***Default:***
-
-```php
-'storage' => [
-    'avatars' => [
-        'disk' => 'public',
-        'directory' => 'images',
-    ],
-    'threads' => [
-        'disk' => 'public',
-        'directory' => 'threads',
-    ],
-],
-```
-
-- Our default `disk` for both `avatars` and `threads` is `public`, laravel's default disk defined in the `filesystem.php` config file. You may choose any disk you have defined.
-- `avatars` is where each provider's uploaded profile images are stored. By default, this will store into the following path, prefixed by the directory:
-  - `storage_path('app/public/images/{alias}/{id}')`
-- `threads` is where any uploads pertaining to a given thread are stored, such as images, documents, and audio files. By using the default config above, thread files will be stored in the following paths, prefixed by the directory:
-  - Avatar - `storage_path('app/public/threads/{threadID}/avatar')`
-  - Images - `storage_path('app/public/threads/{threadID}/images')`
-  - Documents - `storage_path('app/public/threads/{threadID}/documents')`
-  - Audio - `storage_path('app/public/threads/{threadID}/audio')`
-  - Bots - `storage_path('app/public/threads/{threadID}/bots/{botID}')`
-
----
-
 ### Routing
 
 ***Default:***
@@ -122,6 +93,84 @@
 ```
 - You can set the rate limits for the API, including fine grain control over search, messaging, and attachment uploads. 
   - Setting a limit to `0` will remove its rate limiter entirely.
+
+---
+
+### Storage
+
+***Default:***
+
+```php
+'storage' => [
+    'avatars' => [
+        'disk' => 'public',
+        'directory' => 'images',
+    ],
+    'threads' => [
+        'disk' => 'public',
+        'directory' => 'threads',
+    ],
+],
+```
+
+- Our default `disk` for both `avatars` and `threads` is `public`, laravel's default disk defined in the `filesystem.php` config file. You may choose any disk you have defined.
+- `avatars` is where each provider's uploaded profile images are stored. By default, this will store into the following path, prefixed by the directory:
+  - `storage_path('app/public/images/{alias}/{id}')`
+- `threads` is where any uploads pertaining to a given thread are stored, such as images, documents, and audio files. By using the default config above, thread files will be stored in the following paths, prefixed by the directory:
+  - Avatar - `storage_path('app/public/threads/{threadID}/avatar')`
+  - Images - `storage_path('app/public/threads/{threadID}/images')`
+  - Documents - `storage_path('app/public/threads/{threadID}/documents')`
+  - Audio - `storage_path('app/public/threads/{threadID}/audio')`
+  - Video - `storage_path('app/public/threads/{threadID}/videos')`
+  - Bots - `storage_path('app/public/threads/{threadID}/bots/{botID}')`
+
+---
+
+### Files
+
+***Default:***
+
+```php
+'files' => [
+    'message_documents' => [
+        'upload' => env('MESSENGER_MESSAGE_DOCUMENT_UPLOAD', true),
+        'size_limit' => env('MESSENGER_MESSAGE_DOCUMENT_SIZE_LIMIT', 10240),
+        'mime_types' => env('MESSENGER_MESSAGE_DOCUMENT_MIME_TYPES', 'csv,doc,docx,json,pdf,ppt,pptx,rar,rtf,txt,xls,xlsx,xml,zip,7z'),
+    ],
+    'message_images' => [
+        'upload' => env('MESSENGER_MESSAGE_IMAGE_UPLOAD', true),
+        'size_limit' => env('MESSENGER_MESSAGE_IMAGE_SIZE_LIMIT', 5120),
+        'mime_types' => env('MESSENGER_MESSAGE_IMAGE_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,webp'),
+    ],
+    'message_audio' => [
+        'upload' => env('MESSENGER_MESSAGE_AUDIO_UPLOAD', true),
+        'size_limit' => env('MESSENGER_MESSAGE_AUDIO_SIZE_LIMIT', 10240),
+        'mime_types' => env('MESSENGER_MESSAGE_AUDIO_MIME_TYPES', 'aac,mp3,oga,ogg,wav,weba,webm'),
+    ],
+    'message_videos' => [
+        'upload' => env('MESSENGER_MESSAGE_VIDEO_UPLOAD', true),
+        'size_limit' => env('MESSENGER_MESSAGE_VIDEO_SIZE_LIMIT', 15360),
+        'mime_types' => env('MESSENGER_MESSAGE_VIDEO_MIME_TYPES', 'avi,mp4,ogv,webm,3gp,3g2,wmv,mov'),
+    ],
+    'avatars' => [
+        'providers' => env('MESSENGER_PROVIDER_AVATARS_ENABLED', true),
+        'threads' => env('MESSENGER_THREAD_AVATARS_ENABLED', true),
+        'bots' => env('MESSENGER_BOT_AVATARS_ENABLED', true),
+        'size_limit' => env('MESSENGER_AVATARS_SIZE_LIMIT', 5120),
+        'mime_types' => env('MESSENGER_AVATARS_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,webp'),
+    ],
+    'default_not_found_image' => public_path('vendor/messenger/images/image404.png'),
+    'default_ghost_avatar' => public_path('vendor/messenger/images/users.png'),
+    'default_thread_avatar' => public_path('vendor/messenger/images/threads.png'),
+    'default_bot_avatar' => public_path('vendor/messenger/images/bots.png'),
+],
+```
+
+- Enable/disable the upload message attachments.
+- Enable/disable the upload of avatars for providers, threads, and bots.
+- Set upload max size limits, in kilobytes.
+- Set allowed mime types on uploaded files, using the extension separated by a comma (following laravel's validation rule `mime:pdf,docx`).
+- Set default images for a missing image, ghost profile, group thread avatar, and bot avatar.
 
 ---
 
@@ -276,47 +325,6 @@
     - You may disable this feature, or specify how long a users online status will live within the cache.
 
 ---
-
-### Files
-
-***Default:***
-
-```php
-'files' => [
-    'message_documents' => [
-        'upload' => env('MESSENGER_MESSAGE_DOCUMENT_UPLOAD', true),
-        'size_limit' => env('MESSENGER_MESSAGE_DOCUMENT_SIZE_LIMIT', 10240),
-        'mime_types' => env('MESSENGER_MESSAGE_DOCUMENT_MIME_TYPES', 'csv,doc,docx,json,pdf,ppt,pptx,rar,rtf,txt,xls,xlsx,xml,zip,7z'),
-    ],
-    'message_images' => [
-        'upload' => env('MESSENGER_MESSAGE_IMAGE_UPLOAD', true),
-        'size_limit' => env('MESSENGER_MESSAGE_IMAGE_SIZE_LIMIT', 5120),
-        'mime_types' => env('MESSENGER_MESSAGE_IMAGE_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,webp'),
-    ],
-    'message_audio' => [
-        'upload' => env('MESSENGER_MESSAGE_AUDIO_UPLOAD', true),
-        'size_limit' => env('MESSENGER_MESSAGE_AUDIO_SIZE_LIMIT', 10240),
-        'mime_types' => env('MESSENGER_MESSAGE_AUDIO_MIME_TYPES', 'aac,mp3,oga,ogg,wav,weba,webm'),
-    ],
-    'avatars' => [
-        'providers' => env('MESSENGER_PROVIDER_AVATARS_ENABLED', true),
-        'threads' => env('MESSENGER_THREAD_AVATARS_ENABLED', true),
-        'bots' => env('MESSENGER_BOT_AVATARS_ENABLED', true),
-        'size_limit' => env('MESSENGER_AVATARS_SIZE_LIMIT', 5120),
-        'mime_types' => env('MESSENGER_AVATARS_MIME_TYPES', 'jpg,jpeg,png,bmp,gif,webp'),
-    ],
-    'default_not_found_image' => public_path('vendor/messenger/images/image404.png'),
-    'default_ghost_avatar' => public_path('vendor/messenger/images/users.png'),
-    'default_thread_avatar' => public_path('vendor/messenger/images/threads.png'),
-    'default_bot_avatar' => public_path('vendor/messenger/images/bots.png'),
-],
-```
-
-- Enable/disable the upload message attachments.
-- Enable/disable the upload and removal of avatars for providers, threads, and bots.
-- Set upload max size limits, in kilobytes.
-- Set allowed mime types on uploaded files, using the extension separated by a comma (following laravel's validation rule `mime:pdf,docx`).
-- Set a different default image to serve for a group thread, and the image used when another image is not found.
 
 ### Collections
 

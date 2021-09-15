@@ -160,6 +160,32 @@ public function testing(Request $request, Thread $thread): MessageResource
 
 ---
 
+### `video(UploadedFile $video, ?string $replyingToId = null, ?array $extra = null)`
+- Send a video message. Optional reply to message ID and extra data allowed.
+
+```php
+use Illuminate\Http\Request;
+use RTippin\Messenger\Facades\MessengerComposer;
+use RTippin\Messenger\Http\Resources\MessageResource;
+use RTippin\Messenger\Models\Thread;
+
+public function testing(Request $request, Thread $thread): MessageResource
+{
+    //Send inline directly.
+    MessengerComposer::to($thread)
+      ->from($request->user())
+      ->video($request->file('video'));
+      
+    //Send and return the message actions json resource.
+    return MessengerComposer::to($thread)
+      ->from($request->user())
+      ->video($request->file('video'))
+      ->getJsonResource();
+}
+```
+
+---
+
 ### `reaction(Message $message, string $reaction)`
 - Add a reaction to the supplied message.
 

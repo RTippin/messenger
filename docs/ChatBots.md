@@ -169,6 +169,7 @@ class TestBot extends BotActionHandler
     - `image()` Uploads an image message. Optional reply to ID and extra payload.
     - `document()` Uploads a document message. Optional reply to ID and extra payload.
     - `audio()` Uploads an audio message. Optional reply to ID and extra payload.
+    - `video()` Uploads a video message. Optional reply to ID and extra payload.
     - `reaction()` Adds a reaction to the message.
     - `knock()` Sends a knock to the current thread.
     - `read()` Marks the thread read for the `FROM` or set participant.
