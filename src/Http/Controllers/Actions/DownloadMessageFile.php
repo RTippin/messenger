@@ -3,22 +3,13 @@
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
 use Illuminate\Filesystem\FilesystemManager;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use RTippin\Messenger\Exceptions\FileNotFoundException;
-use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DownloadMessageFile
 {
-    use AuthorizesRequests;
-
-    /**
-     * @var Messenger
-     */
-    private Messenger $messenger;
-
     /**
      * @var FilesystemManager
      */
@@ -27,12 +18,10 @@ class DownloadMessageFile
     /**
      * DownloadMessageFile constructor.
      *
-     * @param  Messenger  $messenger
      * @param  FilesystemManager  $filesystemManager
      */
-    public function __construct(Messenger $messenger, FilesystemManager $filesystemManager)
+    public function __construct(FilesystemManager $filesystemManager)
     {
-        $this->messenger = $messenger;
         $this->filesystemManager = $filesystemManager;
     }
 

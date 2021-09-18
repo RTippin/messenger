@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
 use Illuminate\Contracts\Filesystem\FileNotFoundException;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\ImageRenderService;
@@ -12,8 +11,6 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class RenderMessageImage
 {
-    use AuthorizesRequests;
-
     /**
      * Render message image.
      *
