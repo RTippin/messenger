@@ -183,9 +183,9 @@ final class MessengerBots
             return $handlerOrAlias;
         }
 
-        return $this->handlers->search(function ($settings) use ($handlerOrAlias) {
-            return $settings['alias'] === $handlerOrAlias;
-        }) ?: null;
+        return $this->handlers->search(
+            fn ($settings) =>  $settings['alias'] === $handlerOrAlias
+        ) ?: null;
     }
 
     /**
@@ -196,7 +196,7 @@ final class MessengerBots
      */
     public function isValidHandler(?string $handlerOrAlias = null): bool
     {
-        return (bool) $this->findHandler($handlerOrAlias ?? '');
+        return (bool) $this->findHandler($handlerOrAlias);
     }
 
     /**
@@ -284,7 +284,7 @@ final class MessengerBots
 
         // Validate and initialize the handler / alias
         $this->initializeHandler(
-            $handlerOrAlias ?? $this->validateHandlerAlias($data)
+            $handlerOrAlias ?: $this->validateHandlerAlias($data)
         );
 
         // Gather the generated data array from our validated and merged properties

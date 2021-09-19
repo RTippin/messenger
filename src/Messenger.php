@@ -99,11 +99,12 @@ final class Messenger
     {
         $baseClass = $this->getClassNameString($provider);
 
-        $search = $this->providers->search(function ($item, $class) use ($baseClass) {
-            return $baseClass === $class || $item['morph_class'] === $baseClass;
-        }) ?: null;
+        $search = $this->providers->search(
+            fn ($item, $class) => $baseClass === $class
+                || $item['morph_class'] === $baseClass
+        ) ?: null;
 
-        return $search ? $this->providers->get($search)['alias'] : null;
+        return $this->providers->get($search)['alias'] ?? null;
     }
 
     /**
@@ -114,9 +115,10 @@ final class Messenger
      */
     public function findAliasProvider(string $alias): ?string
     {
-        return $this->providers->search(function ($item) use ($alias) {
-            return $item['alias'] === $alias || $item['morph_class'] === $alias;
-        }) ?: null;
+        return $this->providers->search(
+            fn ($item) => $item['alias'] === $alias
+                || $item['morph_class'] === $alias
+        ) ?: null;
     }
 
     /**
@@ -160,10 +162,11 @@ final class Messenger
     {
         $baseClass = $this->getClassNameString($provider);
 
-        return (bool) $this->providers->search(function ($item, $class) use ($baseClass) {
-            return ($baseClass === $class || $item['morph_class'] === $baseClass)
-                && $item['searchable'] === true;
-        });
+        return (bool) $this->providers->search(
+            fn ($item, $class) => ($baseClass === $class
+                    || $item['morph_class'] === $baseClass)
+                && $item['searchable'] === true
+        );
     }
 
     /**
@@ -176,10 +179,11 @@ final class Messenger
     {
         $baseClass = $this->getClassNameString($provider);
 
-        return (bool) $this->providers->search(function ($item, $class) use ($baseClass) {
-            return ($baseClass === $class || $item['morph_class'] === $baseClass)
-                && $item['friendable'] === true;
-        });
+        return (bool) $this->providers->search(
+            fn ($item, $class) => ($baseClass === $class
+                    || $item['morph_class'] === $baseClass)
+                && $item['friendable'] === true
+        );
     }
 
     /**
@@ -188,11 +192,11 @@ final class Messenger
      */
     public function getProviderDefaultAvatarPath(string $alias): ?string
     {
-        $search = $this->providers->search(function ($item) use ($alias) {
-            return $item['alias'] === $alias;
-        }) ?: null;
+        $search = $this->providers->search(
+            fn ($item) => $item['alias'] === $alias
+        ) ?: null;
 
-        return $search ? $this->providers->get($search)['default_avatar'] : null;
+        return $this->providers->get($search)['default_avatar'] ?? null;
     }
 
     /**

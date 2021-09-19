@@ -381,9 +381,10 @@ trait MessengerProviders
      */
     public function getSearchableForCurrentProvider(): array
     {
-        return $this->providers->filter(function ($settings, $class) {
-            return $settings['searchable'] === true && in_array($class, $this->providerCanSearch);
-        })
+        return $this->providers->filter(
+            fn ($settings, $class) => $settings['searchable'] === true
+                && in_array($class, $this->providerCanSearch)
+        )
             ->map(fn ($provider) => $provider['morph_class'])
             ->flatten()
             ->toArray();
