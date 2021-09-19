@@ -20,7 +20,7 @@ trait ChannelMap
      *
      * @throws BindingResolutionException
      */
-    private function registerChannels()
+    private function registerChannels(): void
     {
         if (config('messenger.routing.channels.enabled')) {
             $this->app->make(BroadcastManager::class)->routes($this->channelRouteConfiguration());

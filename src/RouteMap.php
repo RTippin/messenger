@@ -112,9 +112,11 @@ trait RouteMap
         return [
             'domain' => config('messenger.routing.api.domain'),
             'prefix' => trim(config('messenger.routing.api.prefix'), '/'),
-            'middleware' => $invite
-                ? $this->mergeApiMiddleware(config('messenger.routing.api.invite_api_middleware'))
-                : $this->mergeApiMiddleware(config('messenger.routing.api.middleware')),
+            'middleware' => $this->mergeApiMiddleware(
+                $invite
+                    ? config('messenger.routing.api.invite_api_middleware')
+                    : config('messenger.routing.api.middleware')
+            ),
         ];
     }
 
