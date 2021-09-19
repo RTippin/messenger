@@ -11,16 +11,6 @@ use Throwable;
 class ActiveCallCollection extends MessengerCollection
 {
     /**
-     * ActiveCallCollection constructor.
-     *
-     * @param $resource
-     */
-    public function __construct($resource)
-    {
-        parent::__construct($resource);
-    }
-
-    /**
      * Transform the resource collection into an array.
      *
      * @param  Request  $request

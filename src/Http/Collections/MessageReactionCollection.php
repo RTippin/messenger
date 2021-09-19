@@ -4,18 +4,12 @@ namespace RTippin\Messenger\Http\Collections;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
-use Illuminate\Support\Collection;
 use RTippin\Messenger\Http\Resources\MessageReactionResource;
 use RTippin\Messenger\Models\MessageReaction;
 use Throwable;
 
 class MessageReactionCollection extends ResourceCollection
 {
-    /**
-     * @var Collection
-     */
-    private Collection $transformed;
-
     /**
      * Transform the resource collection into an array.
      *
@@ -24,8 +18,6 @@ class MessageReactionCollection extends ResourceCollection
      */
     public function toArray($request): array
     {
-        $this->safeTransformer();
-
         return [
             'data' => $this->condenseReactions(),
             'meta' => [
@@ -36,16 +28,22 @@ class MessageReactionCollection extends ResourceCollection
     }
 
     /**
-     * Transform the collection to resources, safe guarding against
-     * breaking the entire collection should one resource fail.
-     *
-     * @return void
+     * @return array
      */
-    private function safeTransformer(): void
+    private function condenseReactions(): array
     {
-        $this->transformed = $this->collection
+        return $this->collection
             ->map(fn ($reaction) => $this->makeResource($reaction))
-            ->reject(fn ($reaction) => is_null($reaction));
+            ->filter()
+            ->uniqueStrict('reaction')
+            ->pluck('reaction')
+            ->mapWithKeys(
+                fn ($reaction) => [
+                    $reaction => $this->collection->reject(
+                        fn ($react) => $react['reaction'] !== $reaction
+                    )->values(),
+                ])
+            ->toArray();
     }
 
     /**
@@ -64,19 +62,5 @@ class MessageReactionCollection extends ResourceCollection
         }
 
         return null;
-    }
-
-    /**
-     * @return array
-     */
-    private function condenseReactions(): array
-    {
-        return $this->transformed
-            ->uniqueStrict('reaction')
-            ->pluck('reaction')
-            ->mapWithKeys(fn ($reaction) => [
-                $reaction => $this->transformed->reject(fn ($react) => $react['reaction'] !== $reaction)->values(),
-            ])
-            ->toArray();
     }
 }

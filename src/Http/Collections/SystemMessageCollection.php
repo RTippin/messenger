@@ -11,7 +11,7 @@ use Throwable;
 class SystemMessageCollection extends MessengerCollection
 {
     /**
-     * LogsCollection constructor.
+     * SystemMessageCollection constructor.
      *
      * @param $resource
      * @param  Thread  $thread

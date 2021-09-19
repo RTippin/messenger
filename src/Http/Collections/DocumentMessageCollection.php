@@ -11,7 +11,7 @@ use Throwable;
 class DocumentMessageCollection extends MessengerCollection
 {
     /**
-     * ImagesCollection constructor.
+     * DocumentMessageCollection constructor.
      *
      * @param $resource
      * @param  Thread  $thread

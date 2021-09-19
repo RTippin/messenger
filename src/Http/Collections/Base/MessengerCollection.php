@@ -43,7 +43,7 @@ abstract class MessengerCollection extends ResourceCollection
     {
         return $this->collection
             ->map(fn ($resource) => $this->makeResource($resource))
-            ->reject(fn ($resource) => is_null($resource))
+            ->filter()
             ->toArray();
     }
 

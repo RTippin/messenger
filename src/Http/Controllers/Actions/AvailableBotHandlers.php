@@ -56,7 +56,8 @@ class AvailableBotHandlers
     {
         $unique = $bot->validUniqueActions()
             ->get()
-            ->transform(fn (BotAction $action) => $action->getHandlerSettings()['alias'] ?? '')
+            ->transform(fn (BotAction $action) => $action->getHandlerSettings()['alias'] ?? null)
+            ->filter()
             ->toArray();
 
         return (new Collection($this->bots->getAuthorizedHandlers()))

@@ -26,7 +26,7 @@ class SearchCollection extends MessengerCollection
     private ?array $searchQueryItems;
 
     /**
-     * OwnerCollection constructor.
+     * SearchCollection constructor.
      *
      * @param $resource
      * @param  null  $searchQuery
