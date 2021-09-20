@@ -330,7 +330,7 @@ trait MessengerProviders
     /**
      * Get a ghost participant model.
      *
-     * @param  string $threadId
+     * @param  string  $threadId
      * @return Participant
      */
     public function getGhostParticipant(string $threadId): Participant
