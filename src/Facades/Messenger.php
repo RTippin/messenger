@@ -107,7 +107,7 @@ use RTippin\Messenger\Models\Participant;
  * @method static bool canSearchProvider($provider = null)
  * @method static GhostUser getGhostProvider()
  * @method static GhostUser getGhostBot()
- * @method static Participant getGhostParticipant($threadId)
+ * @method static Participant getGhostParticipant(string $threadId)
  * @method static array getSearchableForCurrentProvider()
  * @method static string getApiEndpoint()
  * @method static bool isChannelRoutesEnabled()

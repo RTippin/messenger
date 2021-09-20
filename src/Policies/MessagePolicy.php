@@ -155,8 +155,7 @@ class MessagePolicy
     {
         return ! $thread->isLocked()
         && $message->isText()
-        && (string) $this->messenger->getProvider()->getKey() === (string) $message->owner_id
-        && $this->messenger->getProvider()->getMorphClass() === $message->owner_type
+        && $message->isOwnedByCurrentProvider()
             ? $this->allow()
             : $this->deny('Not authorized to edit message.');
     }
@@ -173,8 +172,7 @@ class MessagePolicy
     {
         return ! $thread->isLocked()
         && $message->showEmbeds()
-        && (((string) $this->messenger->getProvider()->getKey() === (string) $message->owner_id
-                && $this->messenger->getProvider()->getMorphClass() === $message->owner_type)
+        && ($message->isOwnedByCurrentProvider()
             || $thread->isAdmin())
             ? $this->allow()
             : $this->deny('Not authorized to remove message embeds.');
@@ -192,8 +190,7 @@ class MessagePolicy
     {
         return ! $thread->isLocked()
         && $message->notSystemMessage()
-        && (((string) $this->messenger->getProvider()->getKey() === (string) $message->owner_id
-                && $this->messenger->getProvider()->getMorphClass() === $message->owner_type)
+        && ($message->isOwnedByCurrentProvider()
             || $thread->isAdmin())
             ? $this->allow()
             : $this->deny('Not authorized to remove message.');

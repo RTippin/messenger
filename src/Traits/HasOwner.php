@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Traits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Facades\Messenger;
 
 /**
@@ -35,5 +36,18 @@ trait HasOwner
         }
 
         return '';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function isOwnedByCurrentProvider(): bool
+    {
+        if (! Messenger::isProviderSet()) {
+            return false;
+        }
+
+        return (string) Messenger::getProvider()->getKey() === (string) $this->owner_id
+            && Messenger::getProvider()->getMorphClass() === $this->owner_type;
     }
 }

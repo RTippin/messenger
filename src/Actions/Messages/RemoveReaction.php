@@ -159,8 +159,7 @@ class RemoveReaction extends BaseMessengerAction
      */
     private function checkBroadcastToMessageOwner(): void
     {
-        if ((string) $this->messenger->getProvider()->getKey() === (string) $this->getMessage()->owner_id
-            && $this->messenger->getProvider()->getMorphClass() === $this->getMessage()->owner_type) {
+        if ($this->getMessage()->isOwnedByCurrentProvider()) {
             // We are the owner, break;
             return;
         }

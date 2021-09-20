@@ -72,6 +72,22 @@ class PendingFriend extends Model
     }
 
     /**
+     * Compare the recipient relation to the
+     * current provider to see if they match.
+     *
+     * @return bool
+     */
+    public function isRecipientCurrentProvider(): bool
+    {
+        if (! Messenger::isProviderSet()) {
+            return false;
+        }
+
+        return (string) Messenger::getProvider()->getKey() === (string) $this->recipient_id
+            && Messenger::getProvider()->getMorphClass() === $this->recipient_type;
+    }
+
+    /**
      * Create a new factory instance for the model.
      *
      * @return Factory

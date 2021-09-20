@@ -24,4 +24,12 @@ interface Ownerable
      * @return string
      */
     public function getOwnerPrivateChannel(): string;
+
+    /**
+     * Compare the morph relation on the given model
+     * to the current provider to see if they match.
+     *
+     * @return bool
+     */
+    public function isOwnedByCurrentProvider(): bool;
 }

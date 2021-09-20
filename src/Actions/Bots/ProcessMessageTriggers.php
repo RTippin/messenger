@@ -98,9 +98,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
 
         $this->setThread($thread)->setMessage($message);
 
-        foreach ($this->getBotActions() as $action) {
-            $this->matchActionTriggers($action);
-        }
+        $this->getBotActions()->each(fn (BotAction $action) => $this->matchActionTriggers($action));
 
         $this->startTriggeredBotCooldowns();
 

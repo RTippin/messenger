@@ -48,9 +48,8 @@ class SentFriendPolicy
      */
     public function view($user, SentFriend $sent): Response
     {
-        return ($this->messenger->providerHasFriends()
-            && (string) $this->messenger->getProvider()->getKey() === (string) $sent->sender_id
-            && $this->messenger->getProvider()->getMorphClass() === $sent->sender_type)
+        return $this->messenger->providerHasFriends()
+        && $sent->isSenderCurrentProvider()
             ? $this->allow()
             : $this->deny('Not authorized to view sent friend request.');
     }
@@ -77,9 +76,8 @@ class SentFriendPolicy
      */
     public function delete($user, SentFriend $sent): Response
     {
-        return ($this->messenger->providerHasFriends()
-            && (string) $this->messenger->getProvider()->getKey() === (string) $sent->sender_id
-            && $this->messenger->getProvider()->getMorphClass() === $sent->sender_type)
+        return $this->messenger->providerHasFriends()
+        && $sent->isSenderCurrentProvider()
             ? $this->allow()
             : $this->deny('Not authorized to view remove friend request.');
     }

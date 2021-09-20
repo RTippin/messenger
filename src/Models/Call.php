@@ -244,13 +244,11 @@ class Call extends Model implements HasPresenceChannel, Ownerable
      */
     public function isCallAdmin(?Thread $thread = null): bool
     {
-        if ($this->hasEnded()
-            || ! $this->currentCallParticipant()) {
+        if ($this->hasEnded() || ! $this->currentCallParticipant()) {
             return false;
         }
 
-        if ((string) Messenger::getProvider()->getKey() === (string) $this->owner_id
-            && Messenger::getProvider()->getMorphClass() === $this->owner_type) {
+        if ($this->isOwnedByCurrentProvider()) {
             return true;
         }
 

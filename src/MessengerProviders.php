@@ -330,10 +330,10 @@ trait MessengerProviders
     /**
      * Get a ghost participant model.
      *
-     * @param $threadId
+     * @param  string $threadId
      * @return Participant
      */
-    public function getGhostParticipant($threadId): Participant
+    public function getGhostParticipant(string $threadId): Participant
     {
         if ($this->ghostParticipant
             && $this->ghostParticipant->thread_id === $threadId) {

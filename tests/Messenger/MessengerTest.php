@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Messenger;
 
+use Illuminate\Support\Str;
 use InvalidArgumentException;
 use RTippin\Messenger\Brokers\BroadcastBroker;
 use RTippin\Messenger\Brokers\FriendBroker;
@@ -18,7 +19,11 @@ use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\GhostUser;
+use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\MessageReaction;
 use RTippin\Messenger\Models\Participant;
+use RTippin\Messenger\Models\PendingFriend;
+use RTippin\Messenger\Models\SentFriend;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\Fixtures\CompanyModel;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
@@ -508,11 +513,8 @@ class MessengerTest extends MessengerTestCase
     public function it_sets_provider()
     {
         $friends = app(FriendDriver::class);
-        $provider = new UserModel([
-            'id' => 1,
-            'name' => 'Richard Tippin',
-            'email' => 'tippindev@gmail.com',
-            'password' => 'secret',
+        $provider = UserModel::factory()->make([
+            'id' => $this->useUUID ? Str::orderedUuid()->toString() : 1,
         ]);
         $this->messenger->setProvider($provider);
         $expected = [
@@ -524,7 +526,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertNotSame($provider, $this->messenger->getProvider(true));
         $this->assertNotSame($friends, app(FriendDriver::class));
         $this->assertSame('user', $this->messenger->getProviderAlias());
-        $this->assertSame(1, $this->messenger->getProvider()->getKey());
+        $this->assertSame($provider->getKey(), $this->messenger->getProvider()->getKey());
         $this->assertSame(UserModel::class, get_class($this->messenger->getProvider()));
         $this->assertTrue(app()->bound(MessengerProvider::class));
         $this->assertSame($provider, app(MessengerProvider::class));
@@ -538,11 +540,8 @@ class MessengerTest extends MessengerTestCase
     public function it_sets_scoped_provider()
     {
         $friends = app(FriendDriver::class);
-        $scoped = new UserModel([
-            'id' => 1,
-            'name' => 'Richard Tippin',
-            'email' => 'tippindev@gmail.com',
-            'password' => 'secret',
+        $scoped = UserModel::factory()->make([
+            'id' => $this->useUUID ? Str::orderedUuid()->toString() : 1,
         ]);
         $this->messenger->setScopedProvider($scoped);
         $expected = [
@@ -554,7 +553,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertNotSame($scoped, $this->messenger->getProvider(true));
         $this->assertNotSame($friends, app(FriendDriver::class));
         $this->assertSame('user', $this->messenger->getProviderAlias());
-        $this->assertSame(1, $this->messenger->getProvider()->getKey());
+        $this->assertSame($scoped->getKey(), $this->messenger->getProvider()->getKey());
         $this->assertSame(UserModel::class, get_class($this->messenger->getProvider()));
         $this->assertTrue(app()->bound(MessengerProvider::class));
         $this->assertSame($scoped, app(MessengerProvider::class));
@@ -568,17 +567,11 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_returns_scoped_provider_instead_of_first_provider_when_set()
     {
-        $provider = new UserModel([
-            'id' => 1,
-            'name' => 'Richard Tippin',
-            'email' => 'tippindev@gmail.com',
-            'password' => 'secret',
+        $provider = UserModel::factory()->make([
+            'id' => $this->useUUID ? Str::orderedUuid()->toString() : 1,
         ]);
-        $scoped = new UserModel([
-            'id' => 2,
-            'name' => 'John Doe',
-            'email' => 'doe@example.org',
-            'password' => 'secret',
+        $scoped = CompanyModel::factory()->make([
+            'id' => $this->useUUID ? Str::orderedUuid()->toString() : 1,
         ]);
         $this->messenger->setProvider($provider)->setScopedProvider($scoped);
 
@@ -591,11 +584,8 @@ class MessengerTest extends MessengerTestCase
     {
         UserModel::$cantSearch = [CompanyModel::class];
         $this->messenger->registerProviders([UserModel::class, CompanyModel::class]);
-        $provider = new UserModel([
-            'id' => 1,
-            'name' => 'Richard Tippin',
-            'email' => 'tippindev@gmail.com',
-            'password' => 'secret',
+        $provider = UserModel::factory()->make([
+            'id' => $this->useUUID ? Str::orderedUuid()->toString() : 1,
         ]);
         $this->messenger->setProvider($provider);
         $expected = [
@@ -608,11 +598,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_unsets_provider()
     {
-        $provider = new UserModel([
-            'id' => 1,
-            'name' => 'Richard Tippin',
-            'email' => 'tippindev@gmail.com',
-            'password' => 'secret',
+        $provider = UserModel::factory()->make([
+            'id' => $this->useUUID ? Str::orderedUuid()->toString() : 1,
         ]);
 
         $this->messenger->setProvider($provider);
@@ -635,11 +622,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_unsets_scoped_provider()
     {
-        $provider = new UserModel([
-            'id' => 1,
-            'name' => 'Richard Tippin',
-            'email' => 'tippindev@gmail.com',
-            'password' => 'secret',
+        $provider = UserModel::factory()->make([
+            'id' => $this->useUUID ? Str::orderedUuid()->toString() : 1,
         ]);
 
         $this->messenger->setScopedProvider($provider);
@@ -663,17 +647,11 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_unsets_scoped_provider_and_sets_previous_provider()
     {
-        $provider = new UserModel([
-            'id' => 1,
-            'name' => 'Richard Tippin',
-            'email' => 'tippindev@gmail.com',
-            'password' => 'secret',
+        $provider = UserModel::factory()->make([
+            'id' => $this->useUUID ? Str::orderedUuid()->toString() : 1,
         ]);
-        $scoped = new UserModel([
-            'id' => 2,
-            'name' => 'John Doe',
-            'email' => 'doe@example.org',
-            'password' => 'secret',
+        $scoped = CompanyModel::factory()->make([
+            'id' => $this->useUUID ? Str::orderedUuid()->toString() : 1,
         ]);
         $this->messenger->setProvider($provider)->setScopedProvider($scoped);
         $friends = app(FriendDriver::class);
@@ -693,20 +671,8 @@ class MessengerTest extends MessengerTestCase
     /** @test */
     public function it_flushes_messenger()
     {
-        $provider = new UserModel([
-            'id' => 1,
-            'name' => 'Richard Tippin',
-            'email' => 'tippindev@gmail.com',
-            'password' => 'secret',
-        ]);
-        $scoped = new UserModel([
-            'id' => 2,
-            'name' => 'John Doe',
-            'email' => 'doe@example.org',
-            'password' => 'secret',
-        ]);
-        $this->messenger->setProvider($provider)
-            ->setScopedProvider($scoped)
+        $this->messenger->setProvider(UserModel::factory()->make())
+            ->setScopedProvider(CompanyModel::factory()->make())
             ->setCalling(false)
             ->setBots(false)
             ->setSystemMessages(false);
