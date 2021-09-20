@@ -82,11 +82,18 @@ class MessageReactionTest extends HttpTestCase
     }
 
     /** @test */
-    public function participant_can_view_reacts()
+    public function it_condenses_reactions_and_owners()
     {
         $this->logCurrentRequest();
         $thread = $this->createGroupThread($this->tippin, $this->doe);
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        $owner = [
+            'owner' => [
+                'provider_id',
+                'provider_alias',
+                'avatar',
+            ],
+        ];
         MessageReaction::factory()
             ->for($message)
             ->owner($this->tippin)
@@ -122,12 +129,29 @@ class MessageReactionTest extends HttpTestCase
             ->assertJsonCount(6, 'data')
             ->assertJsonStructure([
                 'data' => [
-                    ':one:',
-                    ':two:',
-                    ':three:',
-                    ':four:',
-                    ':five:',
-                    ':six:',
+                    ':one:' => [
+                        $owner,
+                        $owner,
+                    ],
+                    ':two:' => [
+                        $owner,
+                        $owner,
+                    ],
+                    ':three:' => [
+                        $owner,
+                        $owner,
+                    ],
+                    ':four:' => [
+                        $owner,
+                        $owner,
+                    ],
+                    ':five:' => [
+                        $owner,
+                        $owner,
+                    ],
+                    ':six:' => [
+                        $owner,
+                    ],
                 ],
             ])
             ->assertJson([

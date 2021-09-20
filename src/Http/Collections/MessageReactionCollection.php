@@ -33,16 +33,13 @@ class MessageReactionCollection extends ResourceCollection
     private function condenseReactions(): array
     {
         return $this->collection
-            ->map(fn ($reaction) => $this->makeResource($reaction))
+            ->transform(fn (MessageReaction $reaction) => $this->makeResource($reaction))
             ->filter()
             ->uniqueStrict('reaction')
             ->pluck('reaction')
-            ->mapWithKeys(
-                fn ($reaction) => [
-                    $reaction => $this->collection->reject(
-                        fn ($react) => $react['reaction'] !== $reaction
-                    )->values(),
-                ])
+            ->mapWithKeys(fn (string $reaction) => [
+                $reaction => $this->collection->where('reaction', $reaction)->values(),
+            ])
             ->toArray();
     }
 
