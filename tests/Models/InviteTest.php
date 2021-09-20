@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Models;
 
 use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Models\Thread;
@@ -61,6 +62,32 @@ class InviteTest extends FeatureTestCase
         ]);
 
         $this->assertInstanceOf(GhostUser::class, $invite->owner);
+    }
+
+    /** @test */
+    public function it_is_owned_by_current_provider()
+    {
+        Messenger::setProvider($this->tippin);
+        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+
+        $this->assertTrue($invite->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_is_not_owned_by_current_provider()
+    {
+        Messenger::setProvider($this->doe);
+        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+
+        $this->assertFalse($invite->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_has_private_owner_channel()
+    {
+        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+
+        $this->assertSame('user.'.$this->tippin->getKey(), $invite->getOwnerPrivateChannel());
     }
 
     /** @test */

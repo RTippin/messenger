@@ -3,6 +3,8 @@
 namespace RTippin\Messenger\Tests\Models;
 
 use Illuminate\Support\Carbon;
+use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
 use RTippin\Messenger\Models\Thread;
@@ -50,5 +52,58 @@ class MessageReactionTest extends FeatureTestCase
         $this->assertInstanceOf(Message::class, $reaction->message);
         $this->assertSame($this->tippin->getKey(), $reaction->owner->getKey());
         $this->assertSame($message->id, $reaction->message->id);
+    }
+
+    /** @test */
+    public function owner_returns_ghost_if_not_found()
+    {
+        $reaction = MessageReaction::factory()->for(
+            Message::factory()->for(
+                Thread::factory()->create()
+            )->owner($this->tippin)->create()
+        )->create([
+            'owner_id' => 404,
+            'owner_type' => $this->tippin->getMorphClass(),
+        ]);
+
+        $this->assertInstanceOf(GhostUser::class, $reaction->owner);
+    }
+
+    /** @test */
+    public function it_is_owned_by_current_provider()
+    {
+        Messenger::setProvider($this->tippin);
+        $reaction = MessageReaction::factory()->for(
+            Message::factory()->for(
+                Thread::factory()->create()
+            )->owner($this->tippin)->create()
+        )->owner($this->tippin)->create();
+
+        $this->assertTrue($reaction->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_is_not_owned_by_current_provider()
+    {
+        Messenger::setProvider($this->doe);
+        $reaction = MessageReaction::factory()->for(
+            Message::factory()->for(
+                Thread::factory()->create()
+            )->owner($this->tippin)->create()
+        )->owner($this->tippin)->create();
+
+        $this->assertFalse($reaction->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_has_private_owner_channel()
+    {
+        $reaction = MessageReaction::factory()->for(
+            Message::factory()->for(
+                Thread::factory()->create()
+            )->owner($this->tippin)->create()
+        )->owner($this->tippin)->create();
+
+        $this->assertSame('user.'.$this->tippin->getKey(), $reaction->getOwnerPrivateChannel());
     }
 }

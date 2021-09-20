@@ -81,6 +81,32 @@ class ParticipantTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_is_owned_by_current_provider()
+    {
+        Messenger::setProvider($this->tippin);
+        $participant = Participant::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+
+        $this->assertTrue($participant->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_is_not_owned_by_current_provider()
+    {
+        Messenger::setProvider($this->doe);
+        $participant = Participant::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+
+        $this->assertFalse($participant->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_has_private_owner_channel()
+    {
+        $participant = Participant::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+
+        $this->assertSame('user.'.$this->tippin->getKey(), $participant->getOwnerPrivateChannel());
+    }
+
+    /** @test */
     public function it_has_last_seen_message()
     {
         $thread = Thread::factory()->group()->create();

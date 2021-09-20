@@ -84,6 +84,32 @@ class CallTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_is_owned_by_current_provider()
+    {
+        Messenger::setProvider($this->tippin);
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+
+        $this->assertTrue($call->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_is_not_owned_by_current_provider()
+    {
+        Messenger::setProvider($this->doe);
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+
+        $this->assertFalse($call->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_has_private_owner_channel()
+    {
+        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+
+        $this->assertSame('user.'.$this->tippin->getKey(), $call->getOwnerPrivateChannel());
+    }
+
+    /** @test */
     public function call_type_verbose()
     {
         $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();

@@ -44,4 +44,30 @@ class MessengerTest extends FeatureTestCase
         $this->assertSame($this->tippin->getKey(), $messenger->owner->getKey());
         $this->assertInstanceOf(MessengerProvider::class, $messenger->owner);
     }
+
+    /** @test */
+    public function it_is_owned_by_current_provider()
+    {
+        MessengerFacade::setProvider($this->tippin);
+        $messenger = MessengerFacade::getProviderMessenger($this->tippin);
+
+        $this->assertTrue($messenger->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_is_not_owned_by_current_provider()
+    {
+        MessengerFacade::setProvider($this->doe);
+        $messenger = MessengerFacade::getProviderMessenger($this->tippin);
+
+        $this->assertFalse($messenger->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_has_private_owner_channel()
+    {
+        $messenger = MessengerFacade::getProviderMessenger($this->tippin);
+
+        $this->assertSame('user.'.$this->tippin->getKey(), $messenger->getOwnerPrivateChannel());
+    }
 }

@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Models;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Message;
@@ -79,6 +80,32 @@ class MessageTest extends FeatureTestCase
         $this->assertInstanceOf(MessengerProvider::class, $message->owner);
         $this->assertInstanceOf(Collection::class, $message->edits);
         $this->assertInstanceOf(Collection::class, $message->reactions);
+    }
+
+    /** @test */
+    public function it_is_owned_by_current_provider()
+    {
+        Messenger::setProvider($this->tippin);
+        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+
+        $this->assertTrue($message->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_is_not_owned_by_current_provider()
+    {
+        Messenger::setProvider($this->doe);
+        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+
+        $this->assertFalse($message->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_has_private_owner_channel()
+    {
+        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+
+        $this->assertSame('user.'.$this->tippin->getKey(), $message->getOwnerPrivateChannel());
     }
 
     /** @test */

@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Models;
 
 use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\PendingFriend;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -55,5 +56,23 @@ class PendingFriendTest extends FeatureTestCase
 
         $this->assertInstanceOf(GhostUser::class, $pending->sender);
         $this->assertInstanceOf(GhostUser::class, $pending->recipient);
+    }
+
+    /** @test */
+    public function its_recipient_is_the_current_provider()
+    {
+        Messenger::setProvider($this->tippin);
+        $pending = PendingFriend::factory()->providers($this->doe, $this->tippin)->create();
+
+        $this->assertTrue($pending->isRecipientCurrentProvider());
+    }
+
+    /** @test */
+    public function its_recipient_is_not_the_current_provider()
+    {
+        Messenger::setProvider($this->doe);
+        $pending = PendingFriend::factory()->providers($this->doe, $this->tippin)->create();
+
+        $this->assertFalse($pending->isRecipientCurrentProvider());
     }
 }

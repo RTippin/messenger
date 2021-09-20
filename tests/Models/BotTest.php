@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Tests\Models;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\GhostUser;
@@ -55,6 +56,32 @@ class BotTest extends FeatureTestCase
         ]);
 
         $this->assertInstanceOf(GhostUser::class, $bot->owner);
+    }
+
+    /** @test */
+    public function it_is_owned_by_current_provider()
+    {
+        Messenger::setProvider($this->tippin);
+        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+
+        $this->assertTrue($bot->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_is_not_owned_by_current_provider()
+    {
+        Messenger::setProvider($this->doe);
+        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+
+        $this->assertFalse($bot->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_has_private_owner_channel()
+    {
+        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+
+        $this->assertSame('user.'.$this->tippin->getKey(), $bot->getOwnerPrivateChannel());
     }
 
     /** @test */

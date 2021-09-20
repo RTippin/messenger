@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Models;
 
 use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -55,5 +56,31 @@ class FriendTest extends FeatureTestCase
 
         $this->assertInstanceOf(GhostUser::class, $friend->owner);
         $this->assertInstanceOf(GhostUser::class, $friend->party);
+    }
+
+    /** @test */
+    public function it_is_owned_by_current_provider()
+    {
+        Messenger::setProvider($this->tippin);
+        $friend = Friend::factory()->providers($this->tippin, $this->doe)->create();
+
+        $this->assertTrue($friend->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_is_not_owned_by_current_provider()
+    {
+        Messenger::setProvider($this->doe);
+        $friend = Friend::factory()->providers($this->tippin, $this->doe)->create();
+
+        $this->assertFalse($friend->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_has_private_owner_channel()
+    {
+        $friend = Friend::factory()->providers($this->tippin, $this->doe)->create();
+
+        $this->assertSame('user.'.$this->tippin->getKey(), $friend->getOwnerPrivateChannel());
     }
 }

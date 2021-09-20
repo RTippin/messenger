@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Models;
 
 use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\GhostUser;
@@ -66,6 +67,44 @@ class CallParticipantTest extends FeatureTestCase
         ]);
 
         $this->assertInstanceOf(GhostUser::class, $participant->owner);
+    }
+
+    /** @test */
+    public function it_is_owned_by_current_provider()
+    {
+        Messenger::setProvider($this->tippin);
+        $participant = CallParticipant::factory()->for(
+            Call::factory()->for(
+                Thread::factory()->create()
+            )->owner($this->tippin)->create()
+        )->owner($this->tippin)->left()->create();
+
+        $this->assertTrue($participant->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_is_not_owned_by_current_provider()
+    {
+        Messenger::setProvider($this->doe);
+        $participant = CallParticipant::factory()->for(
+            Call::factory()->for(
+                Thread::factory()->create()
+            )->owner($this->tippin)->create()
+        )->owner($this->tippin)->left()->create();
+
+        $this->assertFalse($participant->isOwnedByCurrentProvider());
+    }
+
+    /** @test */
+    public function it_has_private_owner_channel()
+    {
+        $participant = CallParticipant::factory()->for(
+            Call::factory()->for(
+                Thread::factory()->create()
+            )->owner($this->tippin)->create()
+        )->owner($this->tippin)->left()->create();
+
+        $this->assertSame('user.'.$this->tippin->getKey(), $participant->getOwnerPrivateChannel());
     }
 
     /** @test */
