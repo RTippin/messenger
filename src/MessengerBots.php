@@ -438,7 +438,7 @@ final class MessengerBots
         return (new Collection(preg_split('/[|,]/', $triggers)))
             ->transform(fn ($item) => trim($item))
             ->unique()
-            ->reject(fn ($value) => empty($value))
+            ->filter()
             ->implode('|');
     }
 
