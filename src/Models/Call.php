@@ -34,7 +34,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string|null $payload
  * @property bool $setup_complete
  * @property bool $teardown_complete
- *
  * @property-read Collection|CallParticipant[] $participants
  * @property-read int|null $participants_count
  * @property-read Thread $thread

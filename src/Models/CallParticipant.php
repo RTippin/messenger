@@ -23,7 +23,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @property Carbon|null $left_call
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
  * @property-read Call $call
  *
  * @method static Builder|CallParticipant whereKicked($value)

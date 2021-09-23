@@ -31,7 +31,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @property bool $enabled
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
  * @property-read Model|Bot $bot
  *
  * @method static Builder|BotAction enabled()

@@ -36,7 +36,6 @@ use RTippin\Messenger\Traits\Uuids;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
- *
  * @property-read Call|null $activeCall
  * @property-read Collection|Call[] $calls
  * @property-read int|null $calls_count
