@@ -35,7 +35,6 @@ use RTippin\Messenger\Traits\ScopesProvider;
  * @property int $valid_actions_count
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
- *
  * @property-read Thread $thread
  * @property-read BotAction[]|Collection $actions
  * @property-read BotAction[]|Collection $validActions
