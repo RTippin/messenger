@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\HasPresenceChannel;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\ThreadFactory;
@@ -19,6 +20,7 @@ use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
+ * @mixin Model|\Eloquent
  * @property string $id
  * @property int $type
  * @property string|null $subject
@@ -29,30 +31,28 @@ use RTippin\Messenger\Traits\Uuids;
  * @property bool $knocks
  * @property bool $chat_bots
  * @property bool $lockout
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \RTippin\Messenger\Models\Call|null $activeCall
- * @property-read Collection|\RTippin\Messenger\Models\Call[] $calls
+ * @property bool $invitations
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ * @property-read Call|null $activeCall
+ * @property-read Collection|Call[] $calls
  * @property-read int|null $calls_count
- * @property-read Collection|\RTippin\Messenger\Models\Invite[] $invites
+ * @property-read Collection|Invite[] $invites
  * @property-read int|null $invites_count
- * @property-read Collection|\RTippin\Messenger\Models\Message[] $messages
+ * @property-read Collection|Message[] $messages
  * @property-read int|null $messages_count
- * @property-read Collection|\RTippin\Messenger\Models\Participant[] $participants
+ * @property-read Collection|Participant[] $participants
  * @property-read int|null $participants_count
- * @property-read \RTippin\Messenger\Models\Message|null $latestMessage
- * @property-read \RTippin\Messenger\Models\Bot[] $bots
- *
+ * @property-read Message|null $latestMessage
+ * @property-read Bot[] $bots
  * @method static Builder|Thread group()
  * @method static Builder|Thread private()
  * @method static Builder|Thread hasProvider(MessengerProvider $provider)
  * @method static \Illuminate\Database\Query\Builder|Thread onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|Thread withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Thread withoutTrashed()
- * @mixin Model|\Eloquent
- *
- * @property bool $invitations
+ * @method static ThreadFactory factory(...$parameters)
  */
 class Thread extends Model implements HasPresenceChannel
 {

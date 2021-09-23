@@ -3,8 +3,12 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use RTippin\Messenger\Models\Bot;
 
+/**
+ * @method Bot create($attributes = [], ?Model $parent = null)
+ */
 class BotFactory extends Factory
 {
     /**
@@ -33,52 +37,51 @@ class BotFactory extends Factory
      * Owner relation to add.
      *
      * @param $owner
-     * @return Factory
+     * @return $this
      */
-    public function owner($owner): Factory
+    public function owner($owner): self
     {
         return $this->for($owner, 'owner');
     }
 
     /**
-     * Indicate thread is locked.
+     * Specify bot cooldown.
      *
-     * @return Factory
+     * @param  int  $cooldown
+     * @return $this
      */
-    public function disabled(): Factory
+    public function cooldown(int $cooldown): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'enabled' => false,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['cooldown' => $cooldown]);
     }
 
     /**
-     * Indicate thread is locked.
+     * Indicate bot is disabled.
      *
-     * @return Factory
+     * @return $this
      */
-    public function hideActions(): Factory
+    public function disabled(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'hide_actions' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['enabled' => false]);
     }
 
     /**
-     * Indicate thread is soft deleted.
+     * Indicate bot actions are hidden.
      *
-     * @return Factory
+     * @return $this
      */
-    public function trashed(): Factory
+    public function hideActions(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'deleted_at' => now(),
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['hide_actions' => true]);
+    }
+
+    /**
+     * Indicate bot is soft-deleted.
+     *
+     * @return $this
+     */
+    public function trashed(): self
+    {
+        return $this->state(fn (array $attributes) => ['deleted_at' => now()]);
     }
 }

@@ -45,7 +45,9 @@ class CallParticipantTest extends FeatureTestCase
     /** @test */
     public function it_has_relations()
     {
-        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $call = Call::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->create();
         $participant = CallParticipant::factory()->for($call)->owner($this->tippin)->create();
 
         $this->assertSame($call->id, $participant->call->id);

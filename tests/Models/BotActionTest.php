@@ -101,18 +101,17 @@ class BotActionTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        BotAction::factory()->for(
+        $action = BotAction::factory()->for(
             Bot::factory()->for(
                 Thread::factory()->group()->create()
             )->owner($this->tippin)->create()
         )->owner($this->tippin)->create();
-        $action = BotAction::first();
 
         $this->assertInstanceOf(Carbon::class, $action->created_at);
         $this->assertInstanceOf(Carbon::class, $action->updated_at);
         $this->assertFalse($action->admin_only);
         $this->assertTrue($action->enabled);
-        $this->assertSame(0, $action->cooldown);
+        $this->assertIsInt($action->cooldown);
     }
 
     /** @test */
@@ -137,7 +136,7 @@ class BotActionTest extends FeatureTestCase
             Bot::factory()->for(
                 Thread::factory()->group()->create()
             )->owner($this->tippin)->create()
-        )->owner($this->tippin)->create(['cooldown' => 5]);
+        )->owner($this->tippin)->cooldown(5)->create();
 
         $action->startCooldown();
         $this->assertTrue($action->isOnCooldown());
@@ -151,8 +150,10 @@ class BotActionTest extends FeatureTestCase
     /** @test */
     public function it_has_any_cooldown_when_bot_on_cooldown()
     {
-        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['cooldown' => 5]);
-        $action = BotAction::factory()->for($bot)->owner($this->tippin)->create(['cooldown' => 5]);
+        $bot = Bot::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->cooldown(5)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->cooldown(5)->create();
         $bot->startCooldown();
 
         $this->assertFalse($action->isOnCooldown());
@@ -166,7 +167,7 @@ class BotActionTest extends FeatureTestCase
             Bot::factory()->for(
                 Thread::factory()->group()->create()
             )->owner($this->tippin)->create()
-        )->owner($this->tippin)->create(['cooldown' => 5]);
+        )->owner($this->tippin)->cooldown(5)->create();
         $action->startCooldown();
 
         $this->assertFalse($action->bot->isOnCooldown());
@@ -176,8 +177,10 @@ class BotActionTest extends FeatureTestCase
     /** @test */
     public function it_has_any_cooldown_when_action_and_bot_on_cooldown()
     {
-        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['cooldown' => 5]);
-        $action = BotAction::factory()->for($bot)->owner($this->tippin)->create(['cooldown' => 5]);
+        $bot = Bot::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->cooldown(5)->create();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->cooldown(5)->create();
         $bot->startCooldown();
         $action->startCooldown();
 

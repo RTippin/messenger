@@ -3,8 +3,12 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use RTippin\Messenger\Models\BotAction;
 
+/**
+ * @method BotAction create($attributes = [], ?Model $parent = null)
+ */
 class BotActionFactory extends Factory
 {
     /**
@@ -36,102 +40,89 @@ class BotActionFactory extends Factory
      * Owner relation to add.
      *
      * @param $owner
-     * @return Factory
+     * @return $this
      */
-    public function owner($owner): Factory
+    public function owner($owner): self
     {
         return $this->for($owner, 'owner');
     }
 
     /**
-     * Indicate thread is locked.
+     * Specify bot action cooldown.
      *
-     * @return Factory
+     * @param  int  $cooldown
+     * @return $this
      */
-    public function disabled(): Factory
+    public function cooldown(int $cooldown): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'enabled' => false,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['cooldown' => $cooldown]);
     }
 
     /**
-     * Set the actions handler.
+     * Indicate bot action is disabled.
+     *
+     * @return $this
+     */
+    public function disabled(): self
+    {
+        return $this->state(fn (array $attributes) => ['enabled' => false]);
+    }
+
+    /**
+     * Set the action handler.
      *
      * @param  string  $handler
-     * @return Factory
+     * @return $this
      */
-    public function handler(string $handler): Factory
+    public function handler(string $handler): self
     {
-        return $this->state(function (array $attributes) use ($handler) {
-            return [
-                'handler' => $handler,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['handler' => $handler]);
     }
 
     /**
-     * Set the actions trigger.
+     * Set the action trigger.
      *
      * @param  string|null  $triggers
-     * @return Factory
+     * @return $this
      */
-    public function triggers(?string $triggers): Factory
+    public function triggers(?string $triggers): self
     {
-        return $this->state(function (array $attributes) use ($triggers) {
-            return [
-                'triggers' => $triggers,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['triggers' => $triggers]);
     }
 
     /**
-     * Set the actions payload.
+     * Set the action payload.
      *
      * @param  string|array|null  $payload
-     * @return Factory
+     * @return $this
      */
-    public function payload($payload = null): Factory
+    public function payload($payload = null): self
     {
         if (is_array($payload)) {
             $payload = json_encode($payload);
         }
 
-        return $this->state(function (array $attributes) use ($payload) {
-            return [
-                'payload' => $payload,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['payload' => $payload]);
     }
 
     /**
      * Indicate the method used for matching trigger.
      *
      * @param  string  $match
-     * @return Factory
+     * @return self
      */
-    public function match(string $match): Factory
+    public function match(string $match): self
     {
-        return $this->state(function (array $attributes) use ($match) {
-            return [
-                'match' => $match,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['match' => $match]);
     }
 
     /**
      * Indicate the trigger can only respond to admins.
      *
-     * @return Factory
+     * @return self
      */
-    public function admin(): Factory
+    public function admin(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'admin_only' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['admin_only' => true]);
     }
 }

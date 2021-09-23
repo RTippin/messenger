@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 use RTippin\Messenger\Contracts\MessengerProvider;
@@ -22,6 +23,7 @@ use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\ScopesProvider;
 
 /**
+ * @mixin Model|\Eloquent
  * @property string|int $id
  * @property string $thread_id
  * @property string $name
@@ -30,13 +32,13 @@ use RTippin\Messenger\Traits\ScopesProvider;
  * @property bool $hide_actions
  * @property int $cooldown
  * @property int $valid_actions_count
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \RTippin\Messenger\Models\Thread $thread
- * @property-read \RTippin\Messenger\Models\BotAction[]|Collection $actions
- * @property-read \RTippin\Messenger\Models\BotAction[]|Collection $validActions
- * @property-read \RTippin\Messenger\Models\BotAction[]|Collection $validUniqueActions
- * @mixin Model|\Eloquent
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property-read Thread $thread
+ * @property-read BotAction[]|Collection $actions
+ * @property-read BotAction[]|Collection $validActions
+ * @property-read BotAction[]|Collection $validUniqueActions
+ * @method static BotFactory factory(...$parameters)
  */
 class Bot extends Model implements MessengerProvider, Ownerable
 {

@@ -18,7 +18,9 @@ class CallTest extends FeatureTestCase
     /** @test */
     public function it_exists()
     {
-        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
+        $call = Call::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->setup()->create();
 
         $this->assertDatabaseCount('calls', 1);
         $this->assertDatabaseHas('calls', [
@@ -32,8 +34,9 @@ class CallTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->ended()->create();
-        $call = Call::first();
+        $call = Call::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->ended()->create();
 
         $this->assertInstanceOf(Carbon::class, $call->created_at);
         $this->assertInstanceOf(Carbon::class, $call->updated_at);
@@ -75,7 +78,9 @@ class CallTest extends FeatureTestCase
     /** @test */
     public function owner_returns_ghost_if_not_found()
     {
-        $call = Call::factory()->for(Thread::factory()->create())->create([
+        $call = Call::factory()->for(
+            Thread::factory()->create()
+        )->create([
             'owner_id' => 404,
             'owner_type' => $this->tippin->getMorphClass(),
         ]);
@@ -87,7 +92,9 @@ class CallTest extends FeatureTestCase
     public function it_is_owned_by_current_provider()
     {
         Messenger::setProvider($this->tippin);
-        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $call = Call::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertTrue($call->isOwnedByCurrentProvider());
     }
@@ -96,7 +103,9 @@ class CallTest extends FeatureTestCase
     public function it_is_not_owned_by_current_provider()
     {
         Messenger::setProvider($this->doe);
-        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $call = Call::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertFalse($call->isOwnedByCurrentProvider());
     }
@@ -104,7 +113,9 @@ class CallTest extends FeatureTestCase
     /** @test */
     public function it_has_private_owner_channel()
     {
-        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $call = Call::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertSame('user.'.$this->tippin->getKey(), $call->getOwnerPrivateChannel());
     }
@@ -112,7 +123,9 @@ class CallTest extends FeatureTestCase
     /** @test */
     public function call_type_verbose()
     {
-        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $call = Call::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertSame('VIDEO', $call->getTypeVerbose());
     }
@@ -272,7 +285,9 @@ class CallTest extends FeatureTestCase
     public function has_joined_false_if_not_joined()
     {
         Messenger::setProvider($this->doe);
-        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->setup()->create();
+        $call = Call::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->setup()->create();
 
         $this->assertFalse($call->hasJoinedCall());
     }
@@ -304,7 +319,9 @@ class CallTest extends FeatureTestCase
     public function not_in_call_when_call_ended()
     {
         Messenger::setProvider($this->tippin);
-        $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->ended()->create();
+        $call = Call::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->ended()->create();
         CallParticipant::factory()->for($call)->owner($this->tippin)->create();
 
         $this->assertFalse($call->isInCall());

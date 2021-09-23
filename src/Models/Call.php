@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\HasPresenceChannel;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Ownerable;
@@ -19,6 +20,7 @@ use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
+ * @mixin Model|\Eloquent
  * @property string $id
  * @property string $thread_id
  * @property int $type
@@ -26,20 +28,18 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string|null $room_pin
  * @property string|null $room_secret
  * @property string|null $call_ended
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\RTippin\Messenger\Models\CallParticipant[] $participants
- * @property-read int|null $participants_count
- * @property-read \RTippin\Messenger\Models\Thread $thread
- * @mixin Model|\Eloquent
- *
- * @method static Builder|Call videoCall()
- * @method static Builder|Call active()
- * @method static Builder|Call hasProvider(MessengerProvider $provider)
- *
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property string|null $payload
  * @property bool $setup_complete
  * @property bool $teardown_complete
+ * @property-read Collection|CallParticipant[] $participants
+ * @property-read int|null $participants_count
+ * @property-read Thread $thread
+ * @method static Builder|Call videoCall()
+ * @method static Builder|Call active()
+ * @method static Builder|Call hasProvider(MessengerProvider $provider)
+ * @method static CallFactory factory(...$parameters)
  */
 class Call extends Model implements HasPresenceChannel, Ownerable
 {

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Actions\Bots\BotActionHandler;
 use RTippin\Messenger\Contracts\ActionHandler;
@@ -17,6 +18,7 @@ use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
+ * @mixin Model|\Eloquent
  * @property string $id
  * @property string $bot_id
  * @property string|ActionHandler|BotActionHandler $handler
@@ -26,16 +28,14 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string $match
  * @property int $cooldown
  * @property bool $enabled
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @mixin Model|\Eloquent
- *
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property-read Model|Bot $bot
- *
  * @method static Builder|BotAction enabled()
  * @method static Builder|BotAction validHandler()
  * @method static Builder|BotAction handler(string $handler)
  * @method static Builder|BotAction validFromThread(string $threadId)
+ * @method static BotActionFactory factory(...$parameters)
  */
 class BotAction extends Model implements Ownerable
 {

@@ -3,8 +3,12 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use RTippin\Messenger\Models\CallParticipant;
 
+/**
+ * @method CallParticipant create($attributes = [], ?Model $parent = null)
+ */
 class CallParticipantFactory extends Factory
 {
     /**
@@ -31,9 +35,9 @@ class CallParticipantFactory extends Factory
      * Owner relation to add.
      *
      * @param $owner
-     * @return Factory
+     * @return $this
      */
-    public function owner($owner): Factory
+    public function owner($owner): self
     {
         return $this->for($owner, 'owner');
     }
@@ -41,28 +45,20 @@ class CallParticipantFactory extends Factory
     /**
      * Indicate participant has left.
      *
-     * @return Factory
+     * @return $this
      */
-    public function left(): Factory
+    public function left(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'left_call' => now(),
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['left_call' => now()]);
     }
 
     /**
      * Indicate participant was kicked.
      *
-     * @return Factory
+     * @return $this
      */
-    public function kicked(): Factory
+    public function kicked(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'kicked' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['kicked' => true]);
     }
 }

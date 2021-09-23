@@ -17,7 +17,9 @@ class BotTest extends FeatureTestCase
     /** @test */
     public function it_exists()
     {
-        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+        $bot = Bot::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertDatabaseCount('bots', 1);
         $this->assertDatabaseHas('bots', [
@@ -30,12 +32,10 @@ class BotTest extends FeatureTestCase
     /** @test */
     public function it_has_relations()
     {
-        BotAction::factory()->for(
-            Bot::factory()->for(
-                Thread::factory()->group()->create()
-            )->owner($this->tippin)->create()
+        $bot = Bot::factory()->for(
+            Thread::factory()->group()->create()
         )->owner($this->tippin)->create();
-        $bot = Bot::first();
+        $action = BotAction::factory()->for($bot)->owner($this->tippin)->create();
 
         $this->assertSame($bot->thread_id, $bot->thread->id);
         $this->assertSame($this->tippin->getKey(), $bot->owner->getKey());
@@ -44,13 +44,15 @@ class BotTest extends FeatureTestCase
         $this->assertInstanceOf(Collection::class, $bot->actions);
         $this->assertInstanceOf(Collection::class, $bot->validActions);
         $this->assertInstanceOf(Collection::class, $bot->validUniqueActions);
-        $this->assertSame(BotAction::first()->id, $bot->actions->first()->id);
+        $this->assertSame($action->id, $bot->actions->first()->id);
     }
 
     /** @test */
     public function owner_returns_ghost_if_not_found()
     {
-        $bot = Bot::factory()->for(Thread::factory()->group()->create())->create([
+        $bot = Bot::factory()->for(
+            Thread::factory()->group()->create()
+        )->create([
             'owner_id' => 404,
             'owner_type' => $this->tippin->getMorphClass(),
         ]);
@@ -62,7 +64,9 @@ class BotTest extends FeatureTestCase
     public function it_is_owned_by_current_provider()
     {
         Messenger::setProvider($this->tippin);
-        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+        $bot = Bot::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertTrue($bot->isOwnedByCurrentProvider());
     }
@@ -71,7 +75,9 @@ class BotTest extends FeatureTestCase
     public function it_is_not_owned_by_current_provider()
     {
         Messenger::setProvider($this->doe);
-        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+        $bot = Bot::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertFalse($bot->isOwnedByCurrentProvider());
     }
@@ -79,7 +85,9 @@ class BotTest extends FeatureTestCase
     /** @test */
     public function it_has_private_owner_channel()
     {
-        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+        $bot = Bot::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertSame('user.'.$this->tippin->getKey(), $bot->getOwnerPrivateChannel());
     }
@@ -87,8 +95,9 @@ class BotTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
-        $bot = Bot::first();
+        $bot = Bot::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertInstanceOf(Carbon::class, $bot->created_at);
         $this->assertInstanceOf(Carbon::class, $bot->updated_at);
@@ -108,7 +117,7 @@ class BotTest extends FeatureTestCase
             'lg' => "/messenger/assets/threads/$thread->id/bots/$bot->id/avatar/lg/test.png",
         ];
 
-        $this->assertSame($avatar['sm'], $bot->getProviderAvatarRoute('sm'));
+        $this->assertSame($avatar['sm'], $bot->getProviderAvatarRoute());
         $this->assertSame($avatar['md'], $bot->getProviderAvatarRoute('md'));
         $this->assertSame($avatar['lg'], $bot->getProviderAvatarRoute('lg'));
     }
@@ -116,7 +125,9 @@ class BotTest extends FeatureTestCase
     /** @test */
     public function it_can_set_cooldown()
     {
-        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['cooldown' => 5]);
+        $bot = Bot::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->cooldown(5)->create();
 
         $bot->startCooldown();
 
@@ -127,7 +138,9 @@ class BotTest extends FeatureTestCase
     /** @test */
     public function it_can_release_cooldown()
     {
-        $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['cooldown' => 5]);
+        $bot = Bot::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->cooldown(5)->create();
 
         $bot->startCooldown();
         $this->assertTrue($bot->isOnCooldown());

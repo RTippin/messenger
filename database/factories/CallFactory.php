@@ -3,8 +3,12 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use RTippin\Messenger\Models\Call;
 
+/**
+ * @method Call create($attributes = [], ?Model $parent = null)
+ */
 class CallFactory extends Factory
 {
     /**
@@ -37,40 +41,38 @@ class CallFactory extends Factory
      * Owner relation to add.
      *
      * @param $owner
-     * @return Factory
+     * @return $this
      */
-    public function owner($owner): Factory
+    public function owner($owner): self
     {
         return $this->for($owner, 'owner');
     }
 
     /**
-     * Indicate call is setup.
+     * Indicate the call is setup.
      *
-     * @return Factory
+     * @return $this
      */
-    public function setup(): Factory
+    public function setup(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
+        return $this->state(fn (array $attributes) => [
                 'setup_complete' => true,
                 'room_id' => '123456789',
                 'room_pin' => 'PIN',
                 'room_secret' => 'SECRET',
                 'payload' => 'PAYLOAD',
-            ];
-        });
+            ]
+        );
     }
 
     /**
      * Indicate call has ended.
      *
-     * @return Factory
+     * @return $this
      */
-    public function ended(): Factory
+    public function ended(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
+        return $this->state(fn (array $attributes) => [
                 'setup_complete' => true,
                 'teardown_complete' => true,
                 'call_ended' => now(),
@@ -78,7 +80,7 @@ class CallFactory extends Factory
                 'room_pin' => 'PIN',
                 'room_secret' => 'SECRET',
                 'payload' => 'PAYLOAD',
-            ];
-        });
+            ]
+        );
     }
 }

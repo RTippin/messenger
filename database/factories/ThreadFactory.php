@@ -3,8 +3,12 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use RTippin\Messenger\Models\Thread;
 
+/**
+ * @method Thread create($attributes = [], ?Model $parent = null)
+ */
 class ThreadFactory extends Factory
 {
     /**
@@ -27,47 +31,38 @@ class ThreadFactory extends Factory
     /**
      * Indicate thread is a group.
      *
-     * @return Factory
+     * @return $this
      */
-    public function group(): Factory
+    public function group(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
+        return $this->state(fn (array $attributes) => [
                 'type' => Thread::GROUP,
                 'subject' => $this->faker->company,
                 'image' => null,
                 'add_participants' => true,
                 'invitations' => true,
                 'chat_bots' => true,
-            ];
-        });
+            ]
+        );
     }
 
     /**
      * Indicate thread is locked.
      *
-     * @return Factory
+     * @return $this
      */
-    public function locked(): Factory
+    public function locked(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'lockout' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['lockout' => true]);
     }
 
     /**
-     * Indicate thread is soft deleted.
+     * Indicate thread is soft-deleted.
      *
-     * @return Factory
+     * @return $this
      */
-    public function trashed(): Factory
+    public function trashed(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'deleted_at' => now(),
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['deleted_at' => now()]);
     }
 }
