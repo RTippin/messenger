@@ -205,7 +205,7 @@ class BotAction extends Model implements Ownerable
     }
 
     /**
-     * Does the action or the actions bot have an active cooldown?
+     * Does the action or the action's bot have an active cooldown?
      *
      * @return bool
      */

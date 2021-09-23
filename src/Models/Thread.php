@@ -154,11 +154,7 @@ class Thread extends Model implements HasPresenceChannel
      */
     public function participants(): HasMany
     {
-        return $this->hasMany(
-            Participant::class,
-            'thread_id',
-            'id'
-        );
+        return $this->hasMany(Participant::class);
     }
 
     /**
@@ -166,11 +162,7 @@ class Thread extends Model implements HasPresenceChannel
      */
     public function messages(): HasMany
     {
-        return $this->hasMany(
-            Message::class,
-            'thread_id',
-            'id'
-        );
+        return $this->hasMany(Message::class);
     }
 
     /**
@@ -178,11 +170,7 @@ class Thread extends Model implements HasPresenceChannel
      */
     public function calls(): HasMany
     {
-        return $this->hasMany(
-            Call::class,
-            'thread_id',
-            'id'
-        );
+        return $this->hasMany(Call::class);
     }
 
     /**
@@ -198,13 +186,10 @@ class Thread extends Model implements HasPresenceChannel
      */
     public function activeCall(): HasOne
     {
-        return $this->hasOne(
-            Call::class,
-            'thread_id',
-            'id'
-        )->ofMany(['id' => 'MAX'], function (Builder $query) {
-            return $query->whereNull('call_ended');
-        });
+        return $this->hasOne(Call::class)->ofMany(
+            ['id' => 'MAX'],
+            fn (Builder $query) => $query->whereNull('call_ended')
+        );
     }
 
     /**
@@ -212,11 +197,7 @@ class Thread extends Model implements HasPresenceChannel
      */
     public function latestMessage(): HasOne
     {
-        return $this->hasOne(
-            Message::class,
-            'thread_id',
-            'id'
-        )->latestOfMany();
+        return $this->hasOne(Message::class)->latestOfMany();
     }
 
     /**
@@ -224,11 +205,7 @@ class Thread extends Model implements HasPresenceChannel
      */
     public function bots(): HasMany
     {
-        return $this->hasMany(
-            Bot::class,
-            'thread_id',
-            'id'
-        );
+        return $this->hasMany(Bot::class);
     }
 
     /**
@@ -480,14 +457,14 @@ class Thread extends Model implements HasPresenceChannel
     {
         if ($this->isPrivate()) {
             return [
-                'sm' => $this->recipient()->owner->getProviderAvatarRoute('sm'),
+                'sm' => $this->recipient()->owner->getProviderAvatarRoute(),
                 'md' => $this->recipient()->owner->getProviderAvatarRoute('md'),
                 'lg' => $this->recipient()->owner->getProviderAvatarRoute('lg'),
             ];
         }
 
         return [
-            'sm' => $this->getThreadAvatarRoute('sm'),
+            'sm' => $this->getThreadAvatarRoute(),
             'md' => $this->getThreadAvatarRoute('md'),
             'lg' => $this->getThreadAvatarRoute('lg'),
         ];

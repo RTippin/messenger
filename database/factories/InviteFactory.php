@@ -3,9 +3,13 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 use RTippin\Messenger\Models\Invite;
 
+/**
+ * @method Invite create($attributes = [], ?Model $parent = null)
+ */
 class InviteFactory extends Factory
 {
     /**
@@ -34,9 +38,9 @@ class InviteFactory extends Factory
      * Owner relation to add.
      *
      * @param $owner
-     * @return Factory
+     * @return $this
      */
-    public function owner($owner): Factory
+    public function owner($owner): self
     {
         return $this->for($owner, 'owner');
     }
@@ -45,58 +49,44 @@ class InviteFactory extends Factory
      * Indicate thread is a group.
      *
      * @param $expires
-     * @return Factory
+     * @return $this
      */
-    public function expires($expires): Factory
+    public function expires($expires): self
     {
-        return $this->state(function (array $attributes) use ($expires) {
-            return [
-                'expires_at' => $expires,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['expires_at' => $expires]);
     }
 
     /**
      * Set code to TEST1234.
      *
-     * @return Factory
+     * @return $this
      */
-    public function testing(): Factory
+    public function testing(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'code' => 'TEST1234',
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['code' => 'TEST1234']);
     }
 
     /**
      * Set invite to all possible invalid states.
      *
-     * @return Factory
+     * @return $this
      */
-    public function invalid(): Factory
+    public function invalid(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'max_use' => 5,
-                'uses' => 5,
-                'expires_at' => now()->subHour(),
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'max_use' => 5,
+            'uses' => 5,
+            'expires_at' => now()->subHour(),
+        ]);
     }
 
     /**
-     * Indicate invite is soft deleted.
+     * Indicate invite is soft-deleted.
      *
-     * @return Factory
+     * @return $this
      */
-    public function trashed(): Factory
+    public function trashed(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'deleted_at' => now(),
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['deleted_at' => now()]);
     }
 }

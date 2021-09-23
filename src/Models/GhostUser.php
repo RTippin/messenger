@@ -57,29 +57,6 @@ class GhostUser extends Model
     }
 
     /**
-     * Overwrite save method to do nothing.
-     *
-     * @param  array  $options
-     * @return bool
-     */
-    public function save(array $options = []): bool
-    {
-        return true;
-    }
-
-    /**
-     * Overwrite update method to do nothing.
-     *
-     * @param  array  $attributes
-     * @param  array  $options
-     * @return bool
-     */
-    public function update(array $attributes = [], array $options = []): bool
-    {
-        return true;
-    }
-
-    /**
      * Use the GhostUser as a Ghost Bot.
      */
     public function ghostBot(): self

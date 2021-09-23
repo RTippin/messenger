@@ -3,8 +3,12 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use RTippin\Messenger\Models\Friend;
 
+/**
+ * @method Friend create($attributes = [], ?Model $parent = null)
+ */
 class FriendFactory extends Factory
 {
     /**
@@ -29,9 +33,9 @@ class FriendFactory extends Factory
      *
      * @param $owner
      * @param $party
-     * @return Factory
+     * @return $this
      */
-    public function providers($owner, $party): Factory
+    public function providers($owner, $party): self
     {
         return $this->for($owner, 'owner')
             ->for($party, 'party');

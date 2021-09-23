@@ -26,8 +26,7 @@ class FriendTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        Friend::factory()->providers($this->tippin, $this->doe)->create();
-        $friend = Friend::first();
+        $friend = Friend::factory()->providers($this->tippin, $this->doe)->create();
 
         $this->assertInstanceOf(Carbon::class, $friend->created_at);
         $this->assertInstanceOf(Carbon::class, $friend->updated_at);

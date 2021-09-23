@@ -108,10 +108,7 @@ class Call extends Model implements HasPresenceChannel, Ownerable
      */
     public function participants(): HasMany
     {
-        return $this->hasMany(
-            CallParticipant::class,
-            'call_id'
-        );
+        return $this->hasMany(CallParticipant::class);
     }
 
     /**

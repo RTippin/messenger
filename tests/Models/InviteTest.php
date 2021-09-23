@@ -15,7 +15,9 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function it_exists()
     {
-        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+        $invite = Invite::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertDatabaseCount('thread_invites', 1);
         $this->assertDatabaseHas('thread_invites', [
@@ -27,19 +29,20 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->trashed()->create([
+        $invite = Invite::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->trashed()->create([
             'expires_at' => now(),
             'max_use' => 10,
             'uses' => 1,
         ]);
-        $invite = Invite::withTrashed()->first();
 
         $this->assertInstanceOf(Carbon::class, $invite->created_at);
         $this->assertInstanceOf(Carbon::class, $invite->updated_at);
         $this->assertInstanceOf(Carbon::class, $invite->expires_at);
         $this->assertInstanceOf(Carbon::class, $invite->deleted_at);
-        $this->assertSame(10, $invite->max_use);
-        $this->assertSame(1, $invite->uses);
+        $this->assertIsInt($invite->max_use);
+        $this->assertIsInt($invite->uses);
     }
 
     /** @test */
@@ -56,7 +59,9 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function owner_returns_ghost_if_not_found()
     {
-        $invite = Invite::factory()->for(Thread::factory()->group()->create())->create([
+        $invite = Invite::factory()->for(
+            Thread::factory()->group()->create()
+        )->create([
             'owner_id' => 404,
             'owner_type' => $this->tippin->getMorphClass(),
         ]);
@@ -68,7 +73,9 @@ class InviteTest extends FeatureTestCase
     public function it_is_owned_by_current_provider()
     {
         Messenger::setProvider($this->tippin);
-        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+        $invite = Invite::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertTrue($invite->isOwnedByCurrentProvider());
     }
@@ -77,7 +84,9 @@ class InviteTest extends FeatureTestCase
     public function it_is_not_owned_by_current_provider()
     {
         Messenger::setProvider($this->doe);
-        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+        $invite = Invite::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertFalse($invite->isOwnedByCurrentProvider());
     }
@@ -85,7 +94,9 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function it_has_private_owner_channel()
     {
-        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+        $invite = Invite::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertSame('user.'.$this->tippin->getKey(), $invite->getOwnerPrivateChannel());
     }
@@ -93,7 +104,9 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function it_does_not_have_route()
     {
-        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->testing()->create();
+        $invite = Invite::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->testing()->create();
 
         $this->assertNull($invite->getInvitationRoute());
     }
@@ -116,7 +129,9 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function it_is_valid()
     {
-        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+        $invite = Invite::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertTrue($invite->isValid());
         $this->assertSame(1, Invite::valid()->count());
@@ -125,7 +140,9 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function it_is_valid_if_uses_unlimited()
     {
-        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create([
+        $invite = Invite::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->create([
             'uses' => 10000,
             'max_use' => 0,
         ]);
@@ -138,7 +155,9 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function it_is_valid_if_never_expired()
     {
-        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+        $invite = Invite::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->create();
         $this->travel(5)->years();
 
         $this->assertTrue($invite->isValid());
@@ -192,7 +211,9 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function it_is_invalid_if_uses_equal_max_use()
     {
-        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create([
+        $invite = Invite::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->create([
             'uses' => 10,
             'max_use' => 10,
         ]);
@@ -205,7 +226,9 @@ class InviteTest extends FeatureTestCase
     /** @test */
     public function it_is_invalid_if_uses_greater_than_max_use()
     {
-        $invite = Invite::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create([
+        $invite = Invite::factory()->for(
+            Thread::factory()->group()->create()
+        )->owner($this->tippin)->create([
             'uses' => 15,
             'max_use' => 10,
         ]);

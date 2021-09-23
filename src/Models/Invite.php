@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\InviteFactory;
 use RTippin\Messenger\Support\Helpers;
@@ -16,24 +17,26 @@ use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
+ * @mixin Model|\Eloquent
+ *
  * @property string $id
  * @property string $thread_id
  * @property string $code
  * @property int $max_use
  * @property int $uses
- * @property \Illuminate\Support\Carbon|null $expires_at
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \RTippin\Messenger\Models\Thread $thread
+ * @property Carbon|null $expires_at
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ * @property-read Thread $thread
  *
- * @method static \Illuminate\Database\Query\Builder|\RTippin\Messenger\Models\Invite onlyTrashed()
- * @method static \Illuminate\Database\Query\Builder|\RTippin\Messenger\Models\Invite withTrashed()
- * @method static \Illuminate\Database\Query\Builder|\RTippin\Messenger\Models\Invite withoutTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Invite onlyTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Invite withTrashed()
+ * @method static \Illuminate\Database\Query\Builder|Invite withoutTrashed()
  * @method static Builder|Message valid()
  * @method static Builder|Message invalid()
+ * @method static InviteFactory factory(...$parameters)
  * @method increment($column, $amount = 1, array $extra = [])
- * @mixin Model|\Eloquent
  */
 class Invite extends Model implements Ownerable
 {
@@ -79,11 +82,7 @@ class Invite extends Model implements Ownerable
      */
     public function thread(): BelongsTo
     {
-        return $this->belongsTo(
-            Thread::class,
-            'thread_id',
-            'id'
-        );
+        return $this->belongsTo(Thread::class);
     }
 
     /**
@@ -94,13 +93,14 @@ class Invite extends Model implements Ownerable
      */
     public function scopeValid(Builder $query): Builder
     {
-        return $query->where(function (Builder $q) {
-            return $q->where('max_use', '=', 0)
-                ->orWhere('thread_invites.uses', '<', $q->raw('thread_invites.max_use'));
-        })
-            ->where(function (Builder $q) {
-                return $q->whereNull('expires_at')->orWhere('expires_at', '>', now());
-            });
+        return $query->where(
+            fn (Builder $q) => $q->where('max_use', '=', 0)
+                ->orWhere('thread_invites.uses', '<', $q->raw('thread_invites.max_use'))
+        )
+            ->where(
+                fn (Builder $q) => $q->whereNull('expires_at')
+                    ->orWhere('expires_at', '>', now())
+            );
     }
 
     /**
@@ -112,10 +112,10 @@ class Invite extends Model implements Ownerable
     public function scopeInvalid(Builder $query): Builder
     {
         return $query->where('expires_at', '<=', now())
-            ->orWhere(function (Builder $q) {
-                return $q->where('max_use', '!=', 0)
-                    ->where('thread_invites.uses', '>=', $q->raw('thread_invites.max_use'));
-            });
+            ->orWhere(
+                fn (Builder $q) => $q->where('max_use', '!=', 0)
+                    ->where('thread_invites.uses', '>=', $q->raw('thread_invites.max_use'))
+            );
     }
 
     /**
@@ -172,7 +172,7 @@ class Invite extends Model implements Ownerable
     public function inviteAvatar(): array
     {
         return [
-            'sm' => $this->getInvitationAvatarRoute('sm'),
+            'sm' => $this->getInvitationAvatarRoute(),
             'md' => $this->getInvitationAvatarRoute('md'),
             'lg' => $this->getInvitationAvatarRoute('lg'),
         ];
