@@ -21,6 +21,7 @@ use RTippin\Messenger\Traits\Uuids;
 
 /**
  * @mixin Model|\Eloquent
+ *
  * @property string $id
  * @property string $thread_id
  * @property int $type
@@ -33,9 +34,11 @@ use RTippin\Messenger\Traits\Uuids;
  * @property string|null $payload
  * @property bool $setup_complete
  * @property bool $teardown_complete
+ *
  * @property-read Collection|CallParticipant[] $participants
  * @property-read int|null $participants_count
  * @property-read Thread $thread
+ *
  * @method static Builder|Call videoCall()
  * @method static Builder|Call active()
  * @method static Builder|Call hasProvider(MessengerProvider $provider)

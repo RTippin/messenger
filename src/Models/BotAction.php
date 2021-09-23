@@ -19,6 +19,7 @@ use RTippin\Messenger\Traits\Uuids;
 
 /**
  * @mixin Model|\Eloquent
+ *
  * @property string $id
  * @property string $bot_id
  * @property string|ActionHandler|BotActionHandler $handler
@@ -30,7 +31,9 @@ use RTippin\Messenger\Traits\Uuids;
  * @property bool $enabled
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @property-read Model|Bot $bot
+ *
  * @method static Builder|BotAction enabled()
  * @method static Builder|BotAction validHandler()
  * @method static Builder|BotAction handler(string $handler)

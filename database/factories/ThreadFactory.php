@@ -36,14 +36,13 @@ class ThreadFactory extends Factory
     public function group(): self
     {
         return $this->state(fn (array $attributes) => [
-                'type' => Thread::GROUP,
-                'subject' => $this->faker->company,
-                'image' => null,
-                'add_participants' => true,
-                'invitations' => true,
-                'chat_bots' => true,
-            ]
-        );
+            'type' => Thread::GROUP,
+            'subject' => $this->faker->company,
+            'image' => null,
+            'add_participants' => true,
+            'invitations' => true,
+            'chat_bots' => true,
+        ]);
     }
 
     /**

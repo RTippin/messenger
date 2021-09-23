@@ -24,6 +24,7 @@ use RTippin\Messenger\Traits\ScopesProvider;
 
 /**
  * @mixin Model|\Eloquent
+ *
  * @property string|int $id
  * @property string $thread_id
  * @property string $name
@@ -34,10 +35,12 @@ use RTippin\Messenger\Traits\ScopesProvider;
  * @property int $valid_actions_count
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @property-read Thread $thread
  * @property-read BotAction[]|Collection $actions
  * @property-read BotAction[]|Collection $validActions
  * @property-read BotAction[]|Collection $validUniqueActions
+ *
  * @method static BotFactory factory(...$parameters)
  */
 class Bot extends Model implements MessengerProvider, Ownerable

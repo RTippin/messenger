@@ -21,6 +21,7 @@ use RTippin\Messenger\Traits\Uuids;
 
 /**
  * @mixin Model|\Eloquent
+ *
  * @property string $id
  * @property int $type
  * @property string|null $subject
@@ -35,6 +36,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
  * @property Carbon|null $deleted_at
+ *
  * @property-read Call|null $activeCall
  * @property-read Collection|Call[] $calls
  * @property-read int|null $calls_count
@@ -46,6 +48,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read int|null $participants_count
  * @property-read Message|null $latestMessage
  * @property-read Bot[] $bots
+ *
  * @method static Builder|Thread group()
  * @method static Builder|Thread private()
  * @method static Builder|Thread hasProvider(MessengerProvider $provider)

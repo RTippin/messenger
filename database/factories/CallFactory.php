@@ -56,13 +56,12 @@ class CallFactory extends Factory
     public function setup(): self
     {
         return $this->state(fn (array $attributes) => [
-                'setup_complete' => true,
-                'room_id' => '123456789',
-                'room_pin' => 'PIN',
-                'room_secret' => 'SECRET',
-                'payload' => 'PAYLOAD',
-            ]
-        );
+            'setup_complete' => true,
+            'room_id' => '123456789',
+            'room_pin' => 'PIN',
+            'room_secret' => 'SECRET',
+            'payload' => 'PAYLOAD',
+        ]);
     }
 
     /**
@@ -73,14 +72,13 @@ class CallFactory extends Factory
     public function ended(): self
     {
         return $this->state(fn (array $attributes) => [
-                'setup_complete' => true,
-                'teardown_complete' => true,
-                'call_ended' => now(),
-                'room_id' => '123456789',
-                'room_pin' => 'PIN',
-                'room_secret' => 'SECRET',
-                'payload' => 'PAYLOAD',
-            ]
-        );
+            'setup_complete' => true,
+            'teardown_complete' => true,
+            'call_ended' => now(),
+            'room_id' => '123456789',
+            'room_pin' => 'PIN',
+            'room_secret' => 'SECRET',
+            'payload' => 'PAYLOAD',
+        ]);
     }
 }
