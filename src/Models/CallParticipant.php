@@ -16,13 +16,16 @@ use RTippin\Messenger\Traits\Uuids;
 
 /**
  * @mixin Model|\Eloquent
+ *
  * @property string $id
  * @property string $call_id
  * @property bool $kicked
  * @property Carbon|null $left_call
  * @property Carbon|null $created_at
  * @property Carbon|null $updated_at
+ *
  * @property-read Call $call
+ *
  * @method static Builder|CallParticipant whereKicked($value)
  * @method static Builder|CallParticipant inCall()
  * @method static CallParticipantFactory factory(...$parameters)
