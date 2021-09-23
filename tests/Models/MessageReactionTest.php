@@ -33,12 +33,11 @@ class MessageReactionTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        MessageReaction::factory()->for(
+        $reaction = MessageReaction::factory()->for(
             Message::factory()->for(
                 Thread::factory()->create()
             )->owner($this->tippin)->create()
         )->owner($this->tippin)->create();
-        $reaction = MessageReaction::first();
 
         $this->assertInstanceOf(Carbon::class, $reaction->created_at);
     }
@@ -46,7 +45,9 @@ class MessageReactionTest extends FeatureTestCase
     /** @test */
     public function it_has_relations()
     {
-        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $message = Message::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->create();
         $reaction = MessageReaction::factory()->for($message)->owner($this->tippin)->create();
 
         $this->assertInstanceOf(Message::class, $reaction->message);

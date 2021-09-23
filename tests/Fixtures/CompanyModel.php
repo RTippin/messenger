@@ -12,10 +12,15 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Traits\Messageable;
 
+/**
+ * @mixin Model|\Eloquent
+ *
+ * @method static CompanyModelFactory factory(...$parameters)
+ */
 class CompanyModel extends User implements MessengerProvider
 {
-    use Messageable;
-    use HasFactory;
+    use HasFactory,
+        Messageable;
 
     public static string $alias = 'company';
     public static bool $searchable = true;

@@ -3,8 +3,12 @@
 namespace RTippin\Messenger\Tests\Fixtures;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use RTippin\Messenger\Models\Messenger;
 
+/**
+ * @method UserModel create($attributes = [], ?Model $parent = null)
+ */
 class UserModelFactory extends Factory
 {
     /**

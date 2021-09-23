@@ -3,8 +3,12 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use RTippin\Messenger\Models\Messenger;
 
+/**
+ * @method Messenger create($attributes = [], ?Model $parent = null)
+ */
 class MessengerFactory extends Factory
 {
     /**
@@ -21,16 +25,25 @@ class MessengerFactory extends Factory
      */
     public function definition(): array
     {
-        return [];
+        return [
+            'message_popups' => true,
+            'message_sound' => true,
+            'call_ringtone_sound' => true,
+            'notify_sound' => true,
+            'online_status' => 1,
+            'dark_mode' => true,
+            'ip' => null,
+            'timezone' => null,
+        ];
     }
 
     /**
      * Owner relation to add.
      *
      * @param $owner
-     * @return Factory
+     * @return $this
      */
-    public function owner($owner): Factory
+    public function owner($owner): self
     {
         return $this->for($owner, 'owner');
     }

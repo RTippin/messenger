@@ -12,11 +12,16 @@ use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Traits\Messageable;
 use RTippin\Messenger\Traits\Search;
 
+/**
+ * @mixin Model|\Eloquent
+ *
+ * @method static UserModelFactory factory(...$parameters)
+ */
 class UserModel extends User implements MessengerProvider
 {
-    use Messageable;
-    use Search;
-    use HasFactory;
+    use HasFactory,
+        Messageable,
+        Search;
 
     public static string $alias = 'user';
     public static bool $searchable = true;

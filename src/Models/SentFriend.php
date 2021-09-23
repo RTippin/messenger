@@ -9,6 +9,8 @@ use RTippin\Messenger\Facades\Messenger;
 /**
  * Duplicate of PendingFriend. Used for ease of separation
  * between the type of "pending friend".
+ *
+ * @method static SentFriendFactory factory(...$parameters)
  */
 class SentFriend extends PendingFriend
 {

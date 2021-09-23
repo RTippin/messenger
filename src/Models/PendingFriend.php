@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\PendingFriendFactory;
 use RTippin\Messenger\Facades\Messenger;
@@ -13,17 +14,19 @@ use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
+ * @mixin Model|\Eloquent
+ *
  * @property string $id
  * @property string|int $sender_id
  * @property string $sender_type
  * @property string|int $recipient_id
  * @property string $recipient_type
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @mixin Model|\Eloquent
- *
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
  * @property-read MessengerProvider $recipient
  * @property-read MessengerProvider $sender
+ *
+ * @method static PendingFriendFactory factory(...$parameters)
  */
 class PendingFriend extends Model
 {
@@ -56,9 +59,7 @@ class PendingFriend extends Model
      */
     public function sender(): MorphTo
     {
-        return $this->morphTo()->withDefault(function () {
-            return Messenger::getGhostProvider();
-        });
+        return $this->morphTo()->withDefault(fn () => Messenger::getGhostProvider());
     }
 
     /**
@@ -66,9 +67,7 @@ class PendingFriend extends Model
      */
     public function recipient(): MorphTo
     {
-        return $this->morphTo()->withDefault(function () {
-            return Messenger::getGhostProvider();
-        });
+        return $this->morphTo()->withDefault(fn () => Messenger::getGhostProvider());
     }
 
     /**

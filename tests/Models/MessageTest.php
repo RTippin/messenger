@@ -18,7 +18,9 @@ class MessageTest extends FeatureTestCase
     /** @test */
     public function it_exists()
     {
-        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $message = Message::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertDatabaseCount('messages', 1);
         $this->assertDatabaseHas('messages', [
@@ -46,8 +48,9 @@ class MessageTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->trashed()->create();
-        $message = Message::withTrashed()->first();
+        $message = Message::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->trashed()->create();
 
         $this->assertInstanceOf(Carbon::class, $message->created_at);
         $this->assertInstanceOf(Carbon::class, $message->updated_at);
@@ -61,7 +64,9 @@ class MessageTest extends FeatureTestCase
     /** @test */
     public function it_sets_temporary_id()
     {
-        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $message = Message::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->create();
         $message->setTemporaryId('1234');
 
         $this->assertTrue($message->hasTemporaryId());
@@ -86,7 +91,9 @@ class MessageTest extends FeatureTestCase
     public function it_is_owned_by_current_provider()
     {
         Messenger::setProvider($this->tippin);
-        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $message = Message::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertTrue($message->isOwnedByCurrentProvider());
     }
@@ -95,7 +102,9 @@ class MessageTest extends FeatureTestCase
     public function it_is_not_owned_by_current_provider()
     {
         Messenger::setProvider($this->doe);
-        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $message = Message::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertFalse($message->isOwnedByCurrentProvider());
     }
@@ -103,7 +112,9 @@ class MessageTest extends FeatureTestCase
     /** @test */
     public function it_has_private_owner_channel()
     {
-        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $message = Message::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertSame('user.'.$this->tippin->getKey(), $message->getOwnerPrivateChannel());
     }
@@ -111,7 +122,9 @@ class MessageTest extends FeatureTestCase
     /** @test */
     public function owner_returns_ghost_if_not_found()
     {
-        $message = Message::factory()->for(Thread::factory()->create())->create([
+        $message = Message::factory()->for(
+            Thread::factory()->create()
+        )->create([
             'owner_id' => 404,
             'owner_type' => $this->tippin->getMorphClass(),
         ]);
@@ -122,7 +135,9 @@ class MessageTest extends FeatureTestCase
     /** @test */
     public function it_has_storage_disk()
     {
-        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $message = Message::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertSame('messenger', $message->getStorageDisk());
     }
@@ -139,7 +154,9 @@ class MessageTest extends FeatureTestCase
     /** @test */
     public function it_is_not_from_bot()
     {
-        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $message = Message::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertFalse($message->isFromBot());
     }
@@ -193,7 +210,9 @@ class MessageTest extends FeatureTestCase
     /** @test */
     public function it_has_reactions()
     {
-        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->reacted()->create();
+        $message = Message::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->reacted()->create();
         MessageReaction::factory()->for($message)->owner($this->tippin)->create();
 
         $this->assertCount(1, $message->reactions()->get());
@@ -279,7 +298,9 @@ class MessageTest extends FeatureTestCase
     /** @test */
     public function system_message()
     {
-        $message = Message::factory()->for(Thread::factory()->create())->owner($this->tippin)->system(93)->create();
+        $message = Message::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->system(Message::GROUP_CREATED)->create();
 
         $this->assertTrue($message->isSystemMessage());
         $this->assertFalse($message->notSystemMessage());

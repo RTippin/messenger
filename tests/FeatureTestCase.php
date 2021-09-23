@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests;
 
 use Illuminate\Contracts\Auth\Authenticatable;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\BaseMessengerAction;
@@ -59,7 +60,7 @@ class FeatureTestCase extends MessengerTestCase
     }
 
     /**
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param  Application  $app
      */
     protected function getEnvironmentSetUp($app): void
     {

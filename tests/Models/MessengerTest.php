@@ -7,13 +7,16 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger as MessengerFacade;
 use RTippin\Messenger\Models\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class MessengerTest extends FeatureTestCase
 {
     /** @test */
     public function it_exists()
     {
-        $messenger = MessengerFacade::getProviderMessenger($this->tippin);
+        $messenger = Messenger::factory()->owner(
+            UserModel::factory()->create()
+        )->create();
 
         $this->assertDatabaseHas('messengers', [
             'id' => $messenger->id,
@@ -24,7 +27,9 @@ class MessengerTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        $messenger = MessengerFacade::getProviderMessenger($this->tippin);
+        $messenger = Messenger::factory()->owner(
+            UserModel::factory()->create()
+        )->create();
 
         $this->assertInstanceOf(Carbon::class, $messenger->created_at);
         $this->assertInstanceOf(Carbon::class, $messenger->updated_at);
@@ -39,17 +44,19 @@ class MessengerTest extends FeatureTestCase
     /** @test */
     public function it_has_relation()
     {
-        $messenger = MessengerFacade::getProviderMessenger($this->tippin);
+        $user = UserModel::factory()->create();
+        $messenger = Messenger::factory()->owner($user)->create();
 
-        $this->assertSame($this->tippin->getKey(), $messenger->owner->getKey());
+        $this->assertSame($user->getKey(), $messenger->owner->getKey());
         $this->assertInstanceOf(MessengerProvider::class, $messenger->owner);
     }
 
     /** @test */
     public function it_is_owned_by_current_provider()
     {
-        MessengerFacade::setProvider($this->tippin);
-        $messenger = MessengerFacade::getProviderMessenger($this->tippin);
+        $user = UserModel::factory()->create();
+        $messenger = Messenger::factory()->owner($user)->create();
+        MessengerFacade::setProvider($user);
 
         $this->assertTrue($messenger->isOwnedByCurrentProvider());
     }
@@ -58,7 +65,9 @@ class MessengerTest extends FeatureTestCase
     public function it_is_not_owned_by_current_provider()
     {
         MessengerFacade::setProvider($this->doe);
-        $messenger = MessengerFacade::getProviderMessenger($this->tippin);
+        $messenger = Messenger::factory()->owner(
+            UserModel::factory()->create()
+        )->create();
 
         $this->assertFalse($messenger->isOwnedByCurrentProvider());
     }
@@ -66,8 +75,9 @@ class MessengerTest extends FeatureTestCase
     /** @test */
     public function it_has_private_owner_channel()
     {
-        $messenger = MessengerFacade::getProviderMessenger($this->tippin);
+        $user = UserModel::factory()->create();
+        $messenger = Messenger::factory()->owner($user)->create();
 
-        $this->assertSame('user.'.$this->tippin->getKey(), $messenger->getOwnerPrivateChannel());
+        $this->assertSame('user.'.$user->getKey(), $messenger->getOwnerPrivateChannel());
     }
 }

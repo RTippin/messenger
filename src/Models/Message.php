@@ -10,9 +10,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use RTippin\Messenger\Contracts\MessengerProvider;
+use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\MessageFactory;
 use RTippin\Messenger\Facades\Messenger;
@@ -22,6 +21,8 @@ use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
+ * @mixin Model|\Eloquent
+ *
  * @property string $id
  * @property string $thread_id
  * @property int $type
@@ -31,19 +32,17 @@ use RTippin\Messenger\Traits\Uuids;
  * @property bool $reacted
  * @property bool $embeds
  * @property string|array|null $extra
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \RTippin\Messenger\Models\Thread $thread
- * @property-read \RTippin\Messenger\Models\MessageEdit $edits
- * @property-read \RTippin\Messenger\Models\MessageReaction $reactions
- * @property-read \RTippin\Messenger\Models\Message $replyTo
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ * @property-read Thread $thread
+ * @property-read MessageEdit $edits
+ * @property-read MessageReaction $reactions
+ * @property-read Message $replyTo
  *
  * @method static \Illuminate\Database\Query\Builder|Message onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|Message withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Message withoutTrashed()
- * @mixin Model|\Eloquent
- *
  * @method static Builder|Message text()
  * @method static Builder|Message document()
  * @method static Builder|Message image()
@@ -51,6 +50,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static Builder|Message video()
  * @method static Builder|Message system()
  * @method static Builder|Message nonSystem()
+ * @method static MessageFactory factory(...$parameters)
  */
 class Message extends Model implements Ownerable
 {
@@ -162,23 +162,7 @@ class Message extends Model implements Ownerable
      */
     public function thread(): BelongsTo
     {
-        return $this->belongsTo(
-            Thread::class,
-            'thread_id',
-            'id'
-        );
-    }
-
-    /**
-     * @return MorphTo|MessengerProvider
-     */
-    public function owner(): MorphTo
-    {
-        return $this->morphTo()->withDefault(function (Model $owner) {
-            return $owner instanceof Bot
-                ? Messenger::getGhostBot()
-                : Messenger::getGhostProvider();
-        });
+        return $this->belongsTo(Thread::class);
     }
 
     /**

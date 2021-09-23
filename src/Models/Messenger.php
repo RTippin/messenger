@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
+use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\MessengerFactory;
@@ -14,6 +15,8 @@ use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
+ * @mixin Model|\Eloquent
+ *
  * @property string $id
  * @property bool $message_popups
  * @property bool $message_sound
@@ -23,9 +26,10 @@ use RTippin\Messenger\Traits\Uuids;
  * @property int $online_status
  * @property string|null $ip
  * @property string|null $timezone
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @mixin Model|\Eloquent
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ *
+ * @method static MessengerFactory factory(...$parameters)
  */
 class Messenger extends Model implements Ownerable
 {

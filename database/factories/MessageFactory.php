@@ -3,8 +3,12 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use RTippin\Messenger\Models\Message;
 
+/**
+ * @method Message create($attributes = [], ?Model $parent = null)
+ */
 class MessageFactory extends Factory
 {
     /**
@@ -34,9 +38,9 @@ class MessageFactory extends Factory
      * Owner relation to add.
      *
      * @param $owner
-     * @return Factory
+     * @return $this
      */
-    public function owner($owner): Factory
+    public function owner($owner): self
     {
         return $this->for($owner, 'owner');
     }
@@ -44,9 +48,9 @@ class MessageFactory extends Factory
     /**
      * Indicate message is soft deleted.
      *
-     * @return Factory
+     * @return $this
      */
-    public function trashed(): Factory
+    public function trashed(): self
     {
         return $this->state(function (array $attributes) {
             return [
@@ -58,9 +62,9 @@ class MessageFactory extends Factory
     /**
      * Indicate message is an image.
      *
-     * @return Factory
+     * @return $this
      */
-    public function image(): Factory
+    public function image(): self
     {
         return $this->state(function (array $attributes) {
             return [
@@ -73,9 +77,9 @@ class MessageFactory extends Factory
     /**
      * Indicate message is a document.
      *
-     * @return Factory
+     * @return $this
      */
-    public function document(): Factory
+    public function document(): self
     {
         return $this->state(function (array $attributes) {
             return [
@@ -88,9 +92,9 @@ class MessageFactory extends Factory
     /**
      * Indicate message is audio.
      *
-     * @return Factory
+     * @return $this
      */
-    public function audio(): Factory
+    public function audio(): self
     {
         return $this->state(function (array $attributes) {
             return [
@@ -103,9 +107,9 @@ class MessageFactory extends Factory
     /**
      * Indicate message is audio.
      *
-     * @return Factory
+     * @return $this
      */
-    public function video(): Factory
+    public function video(): self
     {
         return $this->state(function (array $attributes) {
             return [
@@ -119,9 +123,9 @@ class MessageFactory extends Factory
      * Indicate message is a system message.
      *
      * @param  int|null  $type
-     * @return Factory
+     * @return $this
      */
-    public function system(?int $type = null): Factory
+    public function system(?int $type = null): self
     {
         return $this->state(function (array $attributes) use ($type) {
             return [
@@ -134,9 +138,9 @@ class MessageFactory extends Factory
     /**
      * Indicate message is edited.
      *
-     * @return Factory
+     * @return $this
      */
-    public function edited(): Factory
+    public function edited(): self
     {
         return $this->state(function (array $attributes) {
             return [
@@ -148,9 +152,9 @@ class MessageFactory extends Factory
     /**
      * Indicate message is an image.
      *
-     * @return Factory
+     * @return $this
      */
-    public function reacted(): Factory
+    public function reacted(): self
     {
         return $this->state(function (array $attributes) {
             return [
@@ -163,9 +167,9 @@ class MessageFactory extends Factory
      * Set the messages reply to ID.
      *
      * @param  string  $messageId
-     * @return Factory
+     * @return $this
      */
-    public function reply(string $messageId): Factory
+    public function reply(string $messageId): self
     {
         return $this->state(function (array $attributes) use ($messageId) {
             return [

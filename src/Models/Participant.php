@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\ParticipantFactory;
 use RTippin\Messenger\Facades\Messenger;
@@ -19,6 +20,8 @@ use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
+ * @mixin Model|\Eloquent
+ *
  * @property string $id
  * @property string $thread_id
  * @property bool $admin
@@ -30,23 +33,22 @@ use RTippin\Messenger\Traits\Uuids;
  * @property bool $add_participants
  * @property bool $manage_invites
  * @property bool $manage_bots
- * @property \Illuminate\Support\Carbon|null $last_read
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property \Illuminate\Support\Carbon|null $updated_at
- * @property \Illuminate\Support\Carbon|null $deleted_at
- * @property-read \Illuminate\Database\Eloquent\Collection|\RTippin\Messenger\Models\Message[] $messages
+ * @property Carbon|null $last_read
+ * @property Carbon|null $created_at
+ * @property Carbon|null $updated_at
+ * @property Carbon|null $deleted_at
+ * @property-read Collection|Message[] $messages
  * @property-read int|null $messages_count
- * @property-read \RTippin\Messenger\Models\Thread $thread
+ * @property-read Thread $thread
  *
  * @method static \Illuminate\Database\Query\Builder|Participant onlyTrashed()
  * @method static \Illuminate\Database\Query\Builder|Participant withTrashed()
  * @method static \Illuminate\Database\Query\Builder|Participant withoutTrashed()
- * @mixin Model|\Eloquent
- *
  * @method static Builder|Participant admins()
  * @method static Builder|Participant validProviders()
  * @method static Builder|Participant notMuted()
  * @method static Builder|Participant notPending()
+ * @method static ParticipantFactory factory(...$parameters)
  */
 class Participant extends Model implements Ownerable
 {
@@ -133,11 +135,7 @@ class Participant extends Model implements Ownerable
      */
     public function thread(): BelongsTo
     {
-        return $this->belongsTo(
-            Thread::class,
-            'thread_id',
-            'id'
-        );
+        return $this->belongsTo(Thread::class);
     }
 
     /**
@@ -210,10 +208,7 @@ class Participant extends Model implements Ownerable
      */
     public function scopeValidProviders(Builder $query): Builder
     {
-        return $query->whereIn(
-            'owner_type',
-            Messenger::getAllProviders()
-        );
+        return $query->whereIn('owner_type', Messenger::getAllProviders());
     }
 
     /**

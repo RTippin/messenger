@@ -3,8 +3,12 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use RTippin\Messenger\Models\Participant;
 
+/**
+ * @method Participant create($attributes = [], ?Model $parent = null)
+ */
 class ParticipantFactory extends Factory
 {
     /**
@@ -30,9 +34,9 @@ class ParticipantFactory extends Factory
      * Owner relation to add.
      *
      * @param $owner
-     * @return Factory
+     * @return $this
      */
-    public function owner($owner): Factory
+    public function owner($owner): self
     {
         return $this->for($owner, 'owner');
     }
@@ -40,68 +44,50 @@ class ParticipantFactory extends Factory
     /**
      * Indicate participant is admin.
      *
-     * @return Factory
+     * @return $this
      */
-    public function admin(): Factory
+    public function admin(): self
     {
-        return $this->state(function (array $attributes) {
-            return Participant::AdminPermissions;
-        });
+        return $this->state(fn (array $attributes) => Participant::AdminPermissions);
     }
 
     /**
      * Indicate participant is pending.
      *
-     * @return Factory
+     * @return $this
      */
-    public function pending(): Factory
+    public function pending(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'pending' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['pending' => true]);
     }
 
     /**
      * Indicate participant is muted.
      *
-     * @return Factory
+     * @return $this
      */
-    public function muted(): Factory
+    public function muted(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'muted' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['muted' => true]);
     }
 
     /**
      * Indicate participant is read.
      *
-     * @return Factory
+     * @return $this
      */
-    public function read(): Factory
+    public function read(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'last_read' => now(),
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['last_read' => now()]);
     }
 
     /**
      * Indicate participant is soft deleted.
      *
-     * @return Factory
+     * @return $this
      */
-    public function trashed(): Factory
+    public function trashed(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'deleted_at' => now(),
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['deleted_at' => now()]);
     }
 }

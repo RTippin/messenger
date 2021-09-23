@@ -6,16 +6,20 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 use RTippin\Messenger\Database\Factories\MessageEditFactory;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
+ * @mixin Model|\Eloquent
+ *
  * @property string $id
  * @property string $message_id
  * @property string|null $body
- * @property \Illuminate\Support\Carbon|null $edited_at
- * @property-read \RTippin\Messenger\Models\Message $message
- * @mixin Model|\Eloquent
+ * @property Carbon|null $edited_at
+ * @property-read Message $message
+ *
+ * @method static MessageEditFactory factory(...$parameters)
  */
 class MessageEdit extends Model
 {
@@ -70,11 +74,7 @@ class MessageEdit extends Model
      */
     public function message(): BelongsTo
     {
-        return $this->belongsTo(
-            Message::class,
-            'message_id',
-            'id'
-        );
+        return $this->belongsTo(Message::class);
     }
 
     /**

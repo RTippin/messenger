@@ -3,9 +3,13 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use RTippin\Messenger\Contracts\EmojiInterface;
 use RTippin\Messenger\Models\MessageReaction;
 
+/**
+ * @method MessageReaction create($attributes = [], ?Model $parent = null)
+ */
 class MessageReactionFactory extends Factory
 {
     /**
@@ -32,9 +36,9 @@ class MessageReactionFactory extends Factory
      * Owner relation to add.
      *
      * @param $owner
-     * @return Factory
+     * @return $this
      */
-    public function owner($owner): Factory
+    public function owner($owner): self
     {
         return $this->for($owner, 'owner');
     }
@@ -43,14 +47,10 @@ class MessageReactionFactory extends Factory
      * Set the message reaction.
      *
      * @param  string  $reaction
-     * @return Factory
+     * @return $this
      */
-    public function reaction(string $reaction): Factory
+    public function reaction(string $reaction): self
     {
-        return $this->state(function (array $attributes) use ($reaction) {
-            return [
-                'reaction' => $reaction,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['reaction' => $reaction]);
     }
 }

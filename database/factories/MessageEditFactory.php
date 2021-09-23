@@ -3,8 +3,12 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use RTippin\Messenger\Models\MessageEdit;
 
+/**
+ * @method MessageEdit create($attributes = [], ?Model $parent = null)
+ */
 class MessageEditFactory extends Factory
 {
     /**

@@ -7,25 +7,25 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\MorphTo;
-use RTippin\Messenger\Contracts\MessengerProvider;
+use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\MessageReactionFactory;
-use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
 
 /**
+ * @mixin Model|\Eloquent
+ *
  * @property string $id
  * @property string $message_id
  * @property string $reaction
- * @property \Illuminate\Support\Carbon|null $created_at
- * @property-read \RTippin\Messenger\Models\Message $message
- * @mixin Model|\Eloquent
+ * @property Carbon|null $created_at
+ * @property-read Message $message
  *
  * @method static Builder|MessageReaction whereReaction(string $reaction)
  * @method static Builder|MessageReaction notReaction(string $reaction)
+ * @method static MessageReactionFactory factory(...$parameters)
  */
 class MessageReaction extends Model implements Ownerable
 {
@@ -82,23 +82,7 @@ class MessageReaction extends Model implements Ownerable
      */
     public function message(): BelongsTo
     {
-        return $this->belongsTo(
-            Message::class,
-            'message_id',
-            'id'
-        );
-    }
-
-    /**
-     * @return MorphTo|MessengerProvider
-     */
-    public function owner(): MorphTo
-    {
-        return $this->morphTo()->withDefault(function (Model $owner) {
-            return $owner instanceof Bot
-                ? Messenger::getGhostBot()
-                : Messenger::getGhostProvider();
-        });
+        return $this->belongsTo(Message::class);
     }
 
     /**

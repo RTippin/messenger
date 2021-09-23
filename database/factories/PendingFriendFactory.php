@@ -3,8 +3,12 @@
 namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Database\Eloquent\Model;
 use RTippin\Messenger\Models\PendingFriend;
 
+/**
+ * @method PendingFriend create($attributes = [], ?Model $parent = null)
+ */
 class PendingFriendFactory extends Factory
 {
     /**
@@ -29,9 +33,9 @@ class PendingFriendFactory extends Factory
      *
      * @param $sender
      * @param $recipient
-     * @return Factory
+     * @return $this
      */
-    public function providers($sender, $recipient): Factory
+    public function providers($sender, $recipient): self
     {
         return $this->for($sender, 'sender')
             ->for($recipient, 'recipient');

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Models\Bot;
 
 /**
  * @property string|int $owner_id
@@ -20,9 +21,11 @@ trait HasOwner
      */
     public function owner(): MorphTo
     {
-        return $this->morphTo()->withDefault(function () {
-            return Messenger::getGhostProvider();
-        });
+        return $this->morphTo()->withDefault(
+            fn (Model $owner) => $owner instanceof Bot
+                ? Messenger::getGhostBot()
+                : Messenger::getGhostProvider()
+        );
     }
 
     /**

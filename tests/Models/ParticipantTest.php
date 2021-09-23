@@ -72,7 +72,9 @@ class ParticipantTest extends FeatureTestCase
     /** @test */
     public function owner_returns_ghost_if_not_found()
     {
-        $participant = Participant::factory()->for(Thread::factory()->create())->create([
+        $participant = Participant::factory()->for(
+            Thread::factory()->create()
+        )->create([
             'owner_id' => 404,
             'owner_type' => $this->tippin->getMorphClass(),
         ]);
@@ -84,7 +86,9 @@ class ParticipantTest extends FeatureTestCase
     public function it_is_owned_by_current_provider()
     {
         Messenger::setProvider($this->tippin);
-        $participant = Participant::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $participant = Participant::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertTrue($participant->isOwnedByCurrentProvider());
     }
@@ -93,7 +97,9 @@ class ParticipantTest extends FeatureTestCase
     public function it_is_not_owned_by_current_provider()
     {
         Messenger::setProvider($this->doe);
-        $participant = Participant::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $participant = Participant::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertFalse($participant->isOwnedByCurrentProvider());
     }
@@ -101,7 +107,9 @@ class ParticipantTest extends FeatureTestCase
     /** @test */
     public function it_has_private_owner_channel()
     {
-        $participant = Participant::factory()->for(Thread::factory()->create())->owner($this->tippin)->create();
+        $participant = Participant::factory()->for(
+            Thread::factory()->create()
+        )->owner($this->tippin)->create();
 
         $this->assertSame('user.'.$this->tippin->getKey(), $participant->getOwnerPrivateChannel());
     }
