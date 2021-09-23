@@ -42,7 +42,7 @@ class PurgeThreadsCommandTest extends FeatureTestCase
     /** @test */
     public function it_dispatches_job()
     {
-        Thread::factory()->create(['deleted_at' => now()->subMonths(2)]);
+        Thread::factory()->trashed(now()->subMonths(2))->create();
 
         $this->artisan('messenger:purge:threads')
             ->expectsOutput('1 threads archived 30 days or greater found. Purging dispatched!')
@@ -54,7 +54,7 @@ class PurgeThreadsCommandTest extends FeatureTestCase
     /** @test */
     public function it_runs_job_now()
     {
-        Thread::factory()->create(['deleted_at' => now()->subMonths(2)]);
+        Thread::factory()->trashed(now()->subMonths(2))->create();
 
         $this->artisan('messenger:purge:threads', [
             '--now' => true,
@@ -90,9 +90,8 @@ class PurgeThreadsCommandTest extends FeatureTestCase
     {
         Thread::factory()
             ->count(200)
-            ->create([
-                'deleted_at' => now()->subYear(),
-            ]);
+            ->trashed(now()->subYear())
+            ->create();
 
         $this->artisan('messenger:purge:threads')
             ->expectsOutput('200 threads archived 30 days or greater found. Purging dispatched!')

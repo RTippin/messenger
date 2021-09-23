@@ -47,7 +47,8 @@ class PurgeVideosCommandTest extends FeatureTestCase
             ->for(Thread::factory()->create())
             ->owner($this->tippin)
             ->video()
-            ->create(['deleted_at' => now()->subMonths(2)]);
+            ->trashed(now()->subMonths(2))
+            ->create();
 
         $this->artisan('messenger:purge:videos')
             ->expectsOutput('1 video messages archived 30 days or greater found. Purging dispatched!')
@@ -63,7 +64,8 @@ class PurgeVideosCommandTest extends FeatureTestCase
             ->for(Thread::factory()->create())
             ->owner($this->tippin)
             ->video()
-            ->create(['deleted_at' => now()->subMonths(2)]);
+            ->trashed(now()->subMonths(2))
+            ->create();
 
         $this->artisan('messenger:purge:videos', [
             '--now' => true,
@@ -106,9 +108,8 @@ class PurgeVideosCommandTest extends FeatureTestCase
             ->owner($this->tippin)
             ->video()
             ->count(200)
-            ->create([
-                'deleted_at' => now()->subYear(),
-            ]);
+            ->trashed(now()->subYear())
+            ->create();
 
         $this->artisan('messenger:purge:videos')
             ->expectsOutput('200 video messages archived 30 days or greater found. Purging dispatched!')

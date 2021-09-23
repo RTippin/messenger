@@ -11,6 +11,8 @@ use RTippin\Messenger\Models\Participant;
  */
 class ParticipantFactory extends Factory
 {
+    use FactoryHelper;
+
     /**
      * The name of the factory's corresponding model.
      *
@@ -28,17 +30,6 @@ class ParticipantFactory extends Factory
         return array_merge(Participant::DefaultPermissions, [
             'muted' => false,
         ]);
-    }
-
-    /**
-     * Owner relation to add.
-     *
-     * @param $owner
-     * @return $this
-     */
-    public function owner($owner): self
-    {
-        return $this->for($owner, 'owner');
     }
 
     /**
@@ -79,15 +70,5 @@ class ParticipantFactory extends Factory
     public function read(): self
     {
         return $this->state(fn (array $attributes) => ['last_read' => now()]);
-    }
-
-    /**
-     * Indicate participant is soft deleted.
-     *
-     * @return $this
-     */
-    public function trashed(): self
-    {
-        return $this->state(fn (array $attributes) => ['deleted_at' => now()]);
     }
 }

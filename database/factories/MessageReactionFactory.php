@@ -12,6 +12,8 @@ use RTippin\Messenger\Models\MessageReaction;
  */
 class MessageReactionFactory extends Factory
 {
+    use FactoryHelper;
+
     /**
      * The name of the factory's corresponding model.
      *
@@ -30,17 +32,6 @@ class MessageReactionFactory extends Factory
             'reaction' => app(EmojiInterface::class)->toShort($this->faker->emoji),
             'created_at' => now(),
         ];
-    }
-
-    /**
-     * Owner relation to add.
-     *
-     * @param $owner
-     * @return $this
-     */
-    public function owner($owner): self
-    {
-        return $this->for($owner, 'owner');
     }
 
     /**

@@ -12,6 +12,8 @@ use RTippin\Messenger\Models\Invite;
  */
 class InviteFactory extends Factory
 {
+    use FactoryHelper;
+
     /**
      * The name of the factory's corresponding model.
      *
@@ -32,17 +34,6 @@ class InviteFactory extends Factory
             'uses' => 0,
             'expires_at' => null,
         ];
-    }
-
-    /**
-     * Owner relation to add.
-     *
-     * @param $owner
-     * @return $this
-     */
-    public function owner($owner): self
-    {
-        return $this->for($owner, 'owner');
     }
 
     /**
@@ -78,15 +69,5 @@ class InviteFactory extends Factory
             'uses' => 5,
             'expires_at' => now()->subHour(),
         ]);
-    }
-
-    /**
-     * Indicate invite is soft-deleted.
-     *
-     * @return $this
-     */
-    public function trashed(): self
-    {
-        return $this->state(fn (array $attributes) => ['deleted_at' => now()]);
     }
 }

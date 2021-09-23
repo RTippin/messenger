@@ -47,7 +47,8 @@ class PurgeAudioCommandTest extends FeatureTestCase
             ->for(Thread::factory()->create())
             ->owner($this->tippin)
             ->audio()
-            ->create(['deleted_at' => now()->subMonths(2)]);
+            ->trashed(now()->subMonths(2))
+            ->create();
 
         $this->artisan('messenger:purge:audio')
             ->expectsOutput('1 audio messages archived 30 days or greater found. Purging dispatched!')
@@ -63,7 +64,8 @@ class PurgeAudioCommandTest extends FeatureTestCase
             ->for(Thread::factory()->create())
             ->owner($this->tippin)
             ->audio()
-            ->create(['deleted_at' => now()->subMonths(2)]);
+            ->trashed(now()->subMonths(2))
+            ->create();
 
         $this->artisan('messenger:purge:audio', [
             '--now' => true,
@@ -106,9 +108,8 @@ class PurgeAudioCommandTest extends FeatureTestCase
             ->owner($this->tippin)
             ->audio()
             ->count(200)
-            ->create([
-                'deleted_at' => now()->subYear(),
-            ]);
+            ->trashed(now()->subYear())
+            ->create();
 
         $this->artisan('messenger:purge:audio')
             ->expectsOutput('200 audio messages archived 30 days or greater found. Purging dispatched!')

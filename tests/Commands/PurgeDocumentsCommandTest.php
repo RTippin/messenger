@@ -47,7 +47,8 @@ class PurgeDocumentsCommandTest extends FeatureTestCase
             ->for(Thread::factory()->create())
             ->owner($this->tippin)
             ->document()
-            ->create(['deleted_at' => now()->subMonths(2)]);
+            ->trashed(now()->subMonths(2))
+            ->create();
 
         $this->artisan('messenger:purge:documents')
             ->expectsOutput('1 document messages archived 30 days or greater found. Purging dispatched!')
@@ -63,7 +64,8 @@ class PurgeDocumentsCommandTest extends FeatureTestCase
             ->for(Thread::factory()->create())
             ->owner($this->tippin)
             ->document()
-            ->create(['deleted_at' => now()->subMonths(2)]);
+            ->trashed(now()->subMonths(2))
+            ->create();
 
         $this->artisan('messenger:purge:documents', [
             '--now' => true,
@@ -106,9 +108,8 @@ class PurgeDocumentsCommandTest extends FeatureTestCase
             ->owner($this->tippin)
             ->document()
             ->count(200)
-            ->create([
-                'deleted_at' => now()->subYear(),
-            ]);
+            ->trashed(now()->subYear())
+            ->create();
 
         $this->artisan('messenger:purge:documents')
             ->expectsOutput('200 document messages archived 30 days or greater found. Purging dispatched!')

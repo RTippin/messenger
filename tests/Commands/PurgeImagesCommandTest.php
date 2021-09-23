@@ -47,7 +47,8 @@ class PurgeImagesCommandTest extends FeatureTestCase
             ->for(Thread::factory()->create())
             ->owner($this->tippin)
             ->image()
-            ->create(['deleted_at' => now()->subMonths(2)]);
+            ->trashed(now()->subMonths(2))
+            ->create();
 
         $this->artisan('messenger:purge:images')
             ->expectsOutput('1 image messages archived 30 days or greater found. Purging dispatched!')
@@ -63,7 +64,8 @@ class PurgeImagesCommandTest extends FeatureTestCase
             ->for(Thread::factory()->create())
             ->owner($this->tippin)
             ->image()
-            ->create(['deleted_at' => now()->subMonths(2)]);
+            ->trashed(now()->subMonths(2))
+            ->create();
 
         $this->artisan('messenger:purge:images', [
             '--now' => true,
@@ -106,9 +108,8 @@ class PurgeImagesCommandTest extends FeatureTestCase
             ->owner($this->tippin)
             ->image()
             ->count(200)
-            ->create([
-                'deleted_at' => now()->subYear(),
-            ]);
+            ->trashed(now()->subYear())
+            ->create();
 
         $this->artisan('messenger:purge:images')
             ->expectsOutput('200 image messages archived 30 days or greater found. Purging dispatched!')

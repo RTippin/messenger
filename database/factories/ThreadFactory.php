@@ -11,6 +11,8 @@ use RTippin\Messenger\Models\Thread;
  */
 class ThreadFactory extends Factory
 {
+    use FactoryHelper;
+
     /**
      * The name of the factory's corresponding model.
      *
@@ -53,15 +55,5 @@ class ThreadFactory extends Factory
     public function locked(): self
     {
         return $this->state(fn (array $attributes) => ['lockout' => true]);
-    }
-
-    /**
-     * Indicate thread is soft-deleted.
-     *
-     * @return $this
-     */
-    public function trashed(): self
-    {
-        return $this->state(fn (array $attributes) => ['deleted_at' => now()]);
     }
 }

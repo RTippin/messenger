@@ -11,6 +11,8 @@ use RTippin\Messenger\Models\Bot;
  */
 class BotFactory extends Factory
 {
+    use FactoryHelper;
+
     /**
      * The name of the factory's corresponding model.
      *
@@ -31,17 +33,6 @@ class BotFactory extends Factory
             'cooldown' => 0,
             'hide_actions' => false,
         ];
-    }
-
-    /**
-     * Owner relation to add.
-     *
-     * @param $owner
-     * @return $this
-     */
-    public function owner($owner): self
-    {
-        return $this->for($owner, 'owner');
     }
 
     /**
@@ -73,15 +64,5 @@ class BotFactory extends Factory
     public function hideActions(): self
     {
         return $this->state(fn (array $attributes) => ['hide_actions' => true]);
-    }
-
-    /**
-     * Indicate bot is soft-deleted.
-     *
-     * @return $this
-     */
-    public function trashed(): self
-    {
-        return $this->state(fn (array $attributes) => ['deleted_at' => now()]);
     }
 }

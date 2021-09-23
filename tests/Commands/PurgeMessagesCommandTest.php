@@ -33,7 +33,8 @@ class PurgeMessagesCommandTest extends FeatureTestCase
         $message = Message::factory()
             ->for(Thread::factory()->create())
             ->owner($this->tippin)
-            ->create(['deleted_at' => now()->subMonths(2)]);
+            ->trashed(now()->subMonths(2))
+            ->create();
 
         $this->artisan('messenger:purge:messages')
             ->expectsOutput('1 messages archived 30 days or greater have been purged!')

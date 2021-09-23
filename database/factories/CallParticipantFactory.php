@@ -11,6 +11,8 @@ use RTippin\Messenger\Models\CallParticipant;
  */
 class CallParticipantFactory extends Factory
 {
+    use FactoryHelper;
+
     /**
      * The name of the factory's corresponding model.
      *
@@ -29,17 +31,6 @@ class CallParticipantFactory extends Factory
             'kicked' => false,
             'left_call' => null,
         ];
-    }
-
-    /**
-     * Owner relation to add.
-     *
-     * @param $owner
-     * @return $this
-     */
-    public function owner($owner): self
-    {
-        return $this->for($owner, 'owner');
     }
 
     /**

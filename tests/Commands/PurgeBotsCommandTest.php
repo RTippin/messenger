@@ -45,7 +45,7 @@ class PurgeBotsCommandTest extends FeatureTestCase
     {
         Bot::factory()->for(
             Thread::factory()->group()->create()
-        )->owner($this->tippin)->create(['deleted_at' => now()->subMonths(2)]);
+        )->owner($this->tippin)->trashed(now()->subMonths(2))->create();
 
         $this->artisan('messenger:purge:bots')
             ->expectsOutput('1 bots archived 30 days or greater found. Purging dispatched!')
@@ -59,7 +59,7 @@ class PurgeBotsCommandTest extends FeatureTestCase
     {
         Bot::factory()->for(
             Thread::factory()->group()->create()
-        )->owner($this->tippin)->create(['deleted_at' => now()->subMonths(2)]);
+        )->owner($this->tippin)->trashed(now()->subMonths(2))->create();
 
         $this->artisan('messenger:purge:bots', [
             '--now' => true,
@@ -101,9 +101,8 @@ class PurgeBotsCommandTest extends FeatureTestCase
             ->for($thread)
             ->owner($this->tippin)
             ->count(200)
-            ->create([
-                'deleted_at' => now()->subYear(),
-            ]);
+            ->trashed(now()->subYear())
+            ->create();
 
         $this->artisan('messenger:purge:bots')
             ->expectsOutput('200 bots archived 30 days or greater found. Purging dispatched!')

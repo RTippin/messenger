@@ -11,6 +11,8 @@ use RTippin\Messenger\Models\Call;
  */
 class CallFactory extends Factory
 {
+    use FactoryHelper;
+
     /**
      * The name of the factory's corresponding model.
      *
@@ -35,17 +37,6 @@ class CallFactory extends Factory
             'room_secret' => null,
             'payload' => null,
         ];
-    }
-
-    /**
-     * Owner relation to add.
-     *
-     * @param $owner
-     * @return $this
-     */
-    public function owner($owner): self
-    {
-        return $this->for($owner, 'owner');
     }
 
     /**

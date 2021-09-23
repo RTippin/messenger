@@ -11,6 +11,8 @@ use RTippin\Messenger\Models\BotAction;
  */
 class BotActionFactory extends Factory
 {
+    use FactoryHelper;
+
     /**
      * The name of the factory's corresponding model.
      *
@@ -34,17 +36,6 @@ class BotActionFactory extends Factory
             'cooldown' => 0,
             'admin_only' => false,
         ];
-    }
-
-    /**
-     * Owner relation to add.
-     *
-     * @param $owner
-     * @return $this
-     */
-    public function owner($owner): self
-    {
-        return $this->for($owner, 'owner');
     }
 
     /**

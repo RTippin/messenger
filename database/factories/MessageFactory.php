@@ -11,6 +11,8 @@ use RTippin\Messenger\Models\Message;
  */
 class MessageFactory extends Factory
 {
+    use FactoryHelper;
+
     /**
      * The name of the factory's corresponding model.
      *
@@ -35,43 +37,16 @@ class MessageFactory extends Factory
     }
 
     /**
-     * Owner relation to add.
-     *
-     * @param $owner
-     * @return $this
-     */
-    public function owner($owner): self
-    {
-        return $this->for($owner, 'owner');
-    }
-
-    /**
-     * Indicate message is soft deleted.
-     *
-     * @return $this
-     */
-    public function trashed(): self
-    {
-        return $this->state(function (array $attributes) {
-            return [
-                'deleted_at' => now(),
-            ];
-        });
-    }
-
-    /**
      * Indicate message is an image.
      *
      * @return $this
      */
     public function image(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'type' => Message::IMAGE_MESSAGE,
-                'body' => 'picture.jpg',
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'type' => Message::IMAGE_MESSAGE,
+            'body' => 'picture.jpg',
+        ]);
     }
 
     /**
@@ -81,12 +56,10 @@ class MessageFactory extends Factory
      */
     public function document(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'type' => Message::DOCUMENT_MESSAGE,
-                'body' => 'document.pdf',
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'type' => Message::DOCUMENT_MESSAGE,
+            'body' => 'document.pdf',
+        ]);
     }
 
     /**
@@ -96,12 +69,10 @@ class MessageFactory extends Factory
      */
     public function audio(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'type' => Message::AUDIO_MESSAGE,
-                'body' => 'sound.mp3',
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'type' => Message::AUDIO_MESSAGE,
+            'body' => 'sound.mp3',
+        ]);
     }
 
     /**
@@ -111,12 +82,10 @@ class MessageFactory extends Factory
      */
     public function video(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'type' => Message::VIDEO_MESSAGE,
-                'body' => 'video.mov',
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'type' => Message::VIDEO_MESSAGE,
+            'body' => 'video.mov',
+        ]);
     }
 
     /**
@@ -127,12 +96,10 @@ class MessageFactory extends Factory
      */
     public function system(?int $type = null): self
     {
-        return $this->state(function (array $attributes) use ($type) {
-            return [
-                'type' => $type ?: rand(90, 103),
-                'body' => 'This is a system message.',
-            ];
-        });
+        return $this->state(fn (array $attributes) => [
+            'type' => $type ?: rand(90, 103),
+            'body' => 'This is a system message.',
+        ]);
     }
 
     /**
@@ -142,11 +109,7 @@ class MessageFactory extends Factory
      */
     public function edited(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'edited' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['edited' => true]);
     }
 
     /**
@@ -156,11 +119,7 @@ class MessageFactory extends Factory
      */
     public function reacted(): self
     {
-        return $this->state(function (array $attributes) {
-            return [
-                'reacted' => true,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['reacted' => true]);
     }
 
     /**
@@ -171,10 +130,6 @@ class MessageFactory extends Factory
      */
     public function reply(string $messageId): self
     {
-        return $this->state(function (array $attributes) use ($messageId) {
-            return [
-                'reply_to_id' => $messageId,
-            ];
-        });
+        return $this->state(fn (array $attributes) => ['reply_to_id' => $messageId]);
     }
 }

@@ -11,6 +11,8 @@ use RTippin\Messenger\Models\Messenger;
  */
 class MessengerFactory extends Factory
 {
+    use FactoryHelper;
+
     /**
      * The name of the factory's corresponding model.
      *
@@ -35,16 +37,5 @@ class MessengerFactory extends Factory
             'ip' => null,
             'timezone' => null,
         ];
-    }
-
-    /**
-     * Owner relation to add.
-     *
-     * @param $owner
-     * @return $this
-     */
-    public function owner($owner): self
-    {
-        return $this->for($owner, 'owner');
     }
 }
