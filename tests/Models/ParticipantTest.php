@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Models;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\GhostUser;
@@ -120,9 +121,30 @@ class ParticipantTest extends FeatureTestCase
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->doe)->create();
         $participant = Participant::factory()->for($thread)->owner($this->tippin)->read()->create();
+        $cache = Cache::spy();
 
-        $this->assertInstanceOf(Message::class, $participant->getLastSeenMessage());
-        $this->assertSame($message->id, $participant->getLastSeenMessage()->id);
+        $lastSeen = $participant->getLastSeenMessage();
+
+        $this->assertInstanceOf(Message::class, $lastSeen);
+        $this->assertSame($message->id, $lastSeen->id);
+        $cache->shouldHaveReceived('forget')->with('participant:'.$participant->id.':last:read:message');
+    }
+
+    /** @test */
+    public function it_caches_last_seen_message_if_longer_than_30_minutes_ago()
+    {
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()->for($thread)->owner($this->doe)->create();
+        $participant = Participant::factory()->for($thread)->owner($this->tippin)->read()->create();
+        $cache = Cache::spy();
+        $cache->shouldReceive('remember')->andReturn($message);
+
+        $this->travel(31)->minutes();
+        $lastSeen = $participant->getLastSeenMessage();
+
+        $this->assertInstanceOf(Message::class, $lastSeen);
+        $this->assertSame($message->id, $lastSeen->id);
+        $cache->shouldHaveReceived('remember');
     }
 
     /** @test */

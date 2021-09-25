@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\ParticipantFactory;
 use RTippin\Messenger\Facades\Messenger;
@@ -161,10 +162,19 @@ class Participant extends Model implements Ownerable
             return null;
         }
 
-        return Message::where('thread_id', '=', $this->thread_id)
+        $key = 'participant:'.$this->id.':last:read:message';
+        $message = fn () => Message::where('thread_id', '=', $this->thread_id)
             ->where('created_at', '<=', Helpers::PrecisionTime($this->last_read))
             ->latest()
             ->first();
+
+        if (now()->subMinutes(30)->greaterThan($this->last_read)) {
+            return Cache::remember($key, now()->addWeek(), $message);
+        }
+
+        Cache::forget($key);
+
+        return $message();
     }
 
     /**
