@@ -25,10 +25,8 @@ class SetMessengerProvider
     }
 
     /**
-     * Handle an incoming request.
-     * Perform your logic here to determine which model you
-     * want to be used throughout the application,
-     * as this messenger supports multiple models.
+     * Attempt to set the current MessengerProvider for
+     * this request cycle as the authenticated user.
      *
      * @param  Request  $request
      * @param  Closure  $next
@@ -49,8 +47,9 @@ class SetMessengerProvider
     }
 
     /**
-     * Set the provider! You may override this however
-     * you need to grab the model that is authed.
+     * Set the provider! You may override this method if you plan
+     * to set your provider using different authentication
+     * methods or guards.
      *
      * @param  Request  $request
      *

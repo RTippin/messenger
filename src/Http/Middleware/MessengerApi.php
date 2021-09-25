@@ -17,12 +17,12 @@ class MessengerApi
      */
     public function handle(Request $request, Closure $next)
     {
-        // Disable the outer most 'data' key wrap
+        // Disable the outer-most 'data' key wrap
         // for our json resources / collections
         JsonResource::withoutWrapping();
 
         // We want to force the headers to JSON for our API as some
-        // controllers return arrays and we expect laravel's
+        // controllers return arrays, and we expect laravel's
         // response factory to transform to json
         if (! $request->headers->has('Accept')) {
             $request->headers->set('Accept', 'application/json');
