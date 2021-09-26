@@ -168,7 +168,6 @@ class RemoveReaction extends BaseMessengerAction
         if ($this->getThread()
             ->participants()
             ->forProviderWithModel($this->getMessage())
-            ->notMuted()
             ->exists()) {
             $this->broadcaster
                 ->to($this->getMessage()->owner)

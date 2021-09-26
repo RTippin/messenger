@@ -13,6 +13,8 @@ use RTippin\Messenger\Exceptions\ReactionException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
+use RTippin\Messenger\Models\Participant;
+use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\BroadcastLogger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -255,6 +257,27 @@ class AddReactionTest extends FeatureTestCase
             ReactionAddedEvent::class,
         ]);
         $thread = $this->createGroupThread($this->tippin);
+        $message = Message::factory()->for($thread)->owner($this->doe)->create();
+
+        app(AddReaction::class)->execute($thread, $message, ':joy:');
+
+        Event::assertDispatchedTimes(ReactionAddedBroadcast::class, 1);
+        Event::assertDispatched(function (ReactionAddedEvent $event) use ($message) {
+            return $message->id === $event->reaction->message_id;
+        });
+    }
+
+    /** @test */
+    public function it_doesnt_fire_multiple_events_if_message_owner_muted()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            ReactionAddedBroadcast::class,
+            ReactionAddedEvent::class,
+        ]);
+        $thread = Thread::factory()->create();
+        Participant::factory()->for($thread)->owner($this->tippin)->create();
+        Participant::factory()->for($thread)->owner($this->doe)->muted()->create();
         $message = Message::factory()->for($thread)->owner($this->doe)->create();
 
         app(AddReaction::class)->execute($thread, $message, ':joy:');
