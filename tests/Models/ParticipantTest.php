@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Models;
 
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\MessengerProvider;
