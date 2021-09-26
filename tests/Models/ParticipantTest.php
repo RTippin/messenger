@@ -67,7 +67,6 @@ class ParticipantTest extends FeatureTestCase
         $this->assertSame($thread->id, $participant->thread->id);
         $this->assertInstanceOf(Thread::class, $participant->thread);
         $this->assertInstanceOf(MessengerProvider::class, $participant->owner);
-        $this->assertInstanceOf(Collection::class, $participant->messages);
     }
 
     /** @test */

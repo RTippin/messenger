@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
@@ -137,20 +136,6 @@ class Participant extends Model implements Ownerable
     public function thread(): BelongsTo
     {
         return $this->belongsTo(Thread::class);
-    }
-
-    /**
-     * @return HasMany|Message|Collection
-     */
-    public function messages(): HasMany
-    {
-        return $this->hasMany(
-            Message::class,
-            'thread_id',
-            'thread_id'
-        )
-            ->forProviderWithModel($this)
-            ->latest();
     }
 
     /**
