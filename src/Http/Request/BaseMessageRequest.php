@@ -95,7 +95,7 @@ abstract class BaseMessageRequest extends FormRequest
      */
     private function generateReplyToIdRule(): void
     {
-        $this->generatedRuleset['reply_to_id'] = ['nullable', 'string'];
+        $this->generatedRuleset['reply_to_id'] = ['nullable', 'uuid'];
     }
 
     /**

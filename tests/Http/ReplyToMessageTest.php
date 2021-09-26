@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Str;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Tests\HttpTestCase;
 
@@ -158,6 +159,7 @@ class ReplyToMessageTest extends HttpTestCase
     /** @test */
     public function message_reply_ignored_if_message_not_found()
     {
+        $uuid = Str::uuid()->toString();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
@@ -166,11 +168,29 @@ class ReplyToMessageTest extends HttpTestCase
         ]), [
             'message' => 'Hello!',
             'temporary_id' => '123-456-789',
-            'reply_to_id' => '404',
+            'reply_to_id' => $uuid,
         ])
             ->assertSuccessful()
             ->assertJsonMissing([
-                'reply_to_id' => '404',
+                'reply_to_id' => $uuid,
             ]);
+    }
+
+    /** @test */
+    public function message_reply_must_be_uuid()
+    {
+        $this->logCurrentRequest();
+        $thread = $this->createGroupThread($this->tippin);
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.messages.store', [
+            'thread' => $thread->id,
+        ]), [
+            'message' => 'Hello!',
+            'temporary_id' => '123-456-789',
+            'reply_to_id' => '1234',
+        ])
+            ->assertStatus(422)
+            ->assertJsonValidationErrors('reply_to_id');
     }
 }
