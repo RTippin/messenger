@@ -26,7 +26,7 @@
 - Permissions per participant within a group thread.
 - Send image, document, audio, and video messages.
 - Message reactions, replies, edits, and deletion.
-- Group thread chat-bots. [Bot addon][link-messenger-bots]
+- Group thread chat-bots. [Ready-made bots][link-messenger-bots]
 - Friends, Search, and Online status systems.
 - Provider avatars, group thread avatars, and bot avatars.
 - Underlying calling system you can extend.
@@ -46,6 +46,7 @@
 - Possible extraction of friends system.
 - Better image manipulation / saving of multiple sizes.
 - Encryption of messages (E2E is the long term goal).
+- Translations for internal messages.
 
 ### Notes
 - Read through our [`messenger.php`][link-config] config file before migrating!
