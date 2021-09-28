@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Actions\Threads;
 
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\ParticipantReadBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
@@ -67,7 +68,8 @@ class MarkParticipantRead extends BaseMessengerAction
     }
 
     /**
-     * Update participant last_read. If changed, dispatch events.
+     * Update participant last_read. If changed, dispatch
+     * events and clear the cached last read message.
      */
     private function markParticipantRead(): void
     {
@@ -76,6 +78,8 @@ class MarkParticipantRead extends BaseMessengerAction
         ]);
 
         if ($this->getParticipant()->wasChanged()) {
+            Cache::forget($this->getParticipant()->getLastSeenMessageCacheKey());
+
             $this->fireBroadcast()->fireEvents();
         }
     }

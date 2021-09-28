@@ -114,22 +114,16 @@ class ParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_has_last_seen_message()
+    public function it_has_last_seen_message_cache_get()
     {
         $thread = Thread::factory()->group()->create();
-        $message = Message::factory()->for($thread)->owner($this->doe)->create();
         $participant = Participant::factory()->for($thread)->owner($this->tippin)->read()->create();
-        $cache = Cache::spy();
 
-        $lastSeen = $participant->getLastSeenMessage();
-
-        $this->assertInstanceOf(Message::class, $lastSeen);
-        $this->assertSame($message->id, $lastSeen->id);
-        $cache->shouldHaveReceived('forget')->with('participant:'.$participant->id.':last:read:message');
+        $this->assertSame("participant:$participant->id:last:read:message", $participant->getLastSeenMessageCacheKey());
     }
 
     /** @test */
-    public function it_caches_last_seen_message_if_longer_than_30_minutes_ago()
+    public function it_caches_last_seen_message()
     {
         $thread = Thread::factory()->group()->create();
         $message = Message::factory()->for($thread)->owner($this->doe)->create();
@@ -137,7 +131,6 @@ class ParticipantTest extends FeatureTestCase
         $cache = Cache::spy();
         $cache->shouldReceive('remember')->andReturn($message);
 
-        $this->travel(31)->minutes();
         $lastSeen = $participant->getLastSeenMessage();
 
         $this->assertInstanceOf(Message::class, $lastSeen);

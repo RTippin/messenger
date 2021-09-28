@@ -147,19 +147,22 @@ class Participant extends Model implements Ownerable
             return null;
         }
 
-        $key = 'participant:'.$this->id.':last:read:message';
-        $message = fn () => Message::where('thread_id', '=', $this->thread_id)
-            ->where('created_at', '<=', Helpers::PrecisionTime($this->last_read))
-            ->latest()
-            ->first();
+        return Cache::remember(
+            $this->getLastSeenMessageCacheKey(),
+            now()->addWeek(),
+            fn () => Message::where('thread_id', '=', $this->thread_id)
+                ->where('created_at', '<=', Helpers::PrecisionTime($this->last_read))
+                ->latest()
+                ->first()
+        );
+    }
 
-        if (now()->subMinutes(30)->greaterThan($this->last_read)) {
-            return Cache::remember($key, now()->addWeek(), $message);
-        }
-
-        Cache::forget($key);
-
-        return $message();
+    /**
+     * @return string
+     */
+    public function getLastSeenMessageCacheKey(): string
+    {
+        return "participant:$this->id:last:read:message";
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\MarkParticipantRead;
@@ -18,15 +19,17 @@ class MarkParticipantReadTest extends FeatureTestCase
     use BroadcastLogger;
 
     /** @test */
-    public function it_updates_participant()
+    public function it_updates_participant_and_clears_last_seen_cache_key()
     {
         $thread = Thread::factory()->create();
         $participant = Participant::factory()->for($thread)->owner($this->tippin)->create();
         $read = now()->addMinutes(5)->format('Y-m-d H:i:s.u');
+        $cache = Cache::spy();
         Carbon::setTestNow($read);
 
         app(MarkParticipantRead::class)->execute($participant, $thread);
 
+        $cache->shouldHaveReceived('forget')->with('participant:'.$participant->id.':last:read:message');
         $this->assertDatabaseHas('participants', [
             'id' => $participant->id,
             'last_read' => $read,
