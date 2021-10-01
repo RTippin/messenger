@@ -53,9 +53,7 @@ class StoreSystemMessage extends NewMessageAction
                 ->setMessageBody($body)
                 ->setMessageOwner($provider)
                 ->handleTransactions()
-                ->generateResource()
-                ->fireBroadcast()
-                ->fireEvents();
+                ->finalize();
         }
 
         return $this;

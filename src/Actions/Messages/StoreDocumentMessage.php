@@ -84,9 +84,7 @@ class StoreDocumentMessage extends NewMessageAction
 
         $this->attemptTransactionOrRollbackFile($document);
 
-        $this->generateResource()
-            ->fireBroadcast()
-            ->fireEvents();
+        $this->finalize();
 
         return $this;
     }

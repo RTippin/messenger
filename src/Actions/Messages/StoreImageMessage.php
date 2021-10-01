@@ -84,9 +84,7 @@ class StoreImageMessage extends NewMessageAction
 
         $this->attemptTransactionOrRollbackFile($image);
 
-        $this->generateResource()
-            ->fireBroadcast()
-            ->fireEvents();
+        $this->finalize();
 
         return $this;
     }

@@ -84,9 +84,7 @@ class StoreAudioMessage extends NewMessageAction
 
         $this->attemptTransactionOrRollbackFile($audio);
 
-        $this->generateResource()
-            ->fireBroadcast()
-            ->fireEvents();
+        $this->finalize();
 
         return $this;
     }

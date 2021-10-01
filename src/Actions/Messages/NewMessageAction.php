@@ -162,11 +162,21 @@ abstract class NewMessageAction extends BaseMessengerAction
     }
 
     /**
+     * Complete the cycle.
+     */
+    protected function finalize(): void
+    {
+        $this->generateResource()
+            ->fireBroadcast()
+            ->fireEvents();
+    }
+
+    /**
      * Generate the message resource.
      *
      * @return $this
      */
-    protected function generateResource(): self
+    private function generateResource(): self
     {
         $this->setJsonResource(new MessageResource(
                 $this->getMessage(),
@@ -181,7 +191,7 @@ abstract class NewMessageAction extends BaseMessengerAction
     /**
      * @return $this
      */
-    protected function fireBroadcast(): self
+    private function fireBroadcast(): self
     {
         if ($this->shouldFireBroadcast()) {
             $this->broadcaster
@@ -194,9 +204,9 @@ abstract class NewMessageAction extends BaseMessengerAction
     }
 
     /**
-     * @return $this
+     * @return void
      */
-    protected function fireEvents(): self
+    private function fireEvents(): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new NewMessageEvent(
@@ -206,8 +216,6 @@ abstract class NewMessageAction extends BaseMessengerAction
                 $this->senderIp
             ));
         }
-
-        return $this;
     }
 
     /**

@@ -73,9 +73,7 @@ class StoreMessage extends NewMessageAction
             ->setMessageOwner($this->messenger->getProvider())
             ->setSenderIp($senderIp)
             ->handleTransactions()
-            ->generateResource()
-            ->fireBroadcast()
-            ->fireEvents();
+            ->finalize();
 
         return $this;
     }

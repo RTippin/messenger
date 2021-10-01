@@ -84,9 +84,7 @@ class StoreVideoMessage extends NewMessageAction
 
         $this->attemptTransactionOrRollbackFile($video);
 
-        $this->generateResource()
-            ->fireBroadcast()
-            ->fireEvents();
+        $this->finalize();
 
         return $this;
     }
