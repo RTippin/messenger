@@ -244,6 +244,22 @@
 
 ---
 
+### Thread Verifications | Friendship Checks
+
+***Default:***
+
+```php
+'thread_verifications' => [
+    'private_thread_friendship' => env('MESSENGER_VERIFY_PRIVATE_THREAD_FRIENDSHIP', true),
+    'group_thread_friendship' => env('MESSENGER_VERIFY_GROUP_THREAD_FRIENDSHIP', true),
+],
+```
+
+- `private_thread_friendship` If enabled, the private thread will be marked as pending upon creation if the two participants are not friends. The recipient will then have the option to accept or deny the new private thread request.
+- `group_thread_friendship` If enabled, only friends of the active participant may be added to the group thread, otherwise any valid messenger provider may be added as a participant.
+
+---
+
 ### Editable Messages
 
 ***Default:***

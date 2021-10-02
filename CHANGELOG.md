@@ -3,6 +3,24 @@
 
 ---
 
+### [v1.8.0 (10-02-2021)](https://github.com/RTippin/messenger/compare/v1.7.0...v1.8.0)
+
+#### Added
+- Caching for a participants last seen message.
+- `thread_verifications` config section which defines whether friendship checks are enabled when creating a private thread or adding participants to a group thread.
+
+```php
+'thread_verifications' => [
+    'private_thread_friendship' => env('MESSENGER_VERIFY_PRIVATE_THREAD_FRIENDSHIP', true),
+    'group_thread_friendship' => env('MESSENGER_VERIFY_GROUP_THREAD_FRIENDSHIP', true),
+],
+```
+
+#### Changed
+- Various code improvements and bug fixes.
+
+---
+
 ### [v1.7.0 (09-15-2021)](https://github.com/RTippin/messenger/compare/v1.6.0...v1.7.0)
 
 #### Added
