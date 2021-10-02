@@ -23,6 +23,8 @@
 - RESTful API, allowing you to create your own UI or connect to your mobile app.
 - Support for morph maps on your provider models. See: [Morph Maps][link-morph-maps]
 - Private and group threads.
+- Private thread approval when the two participants are not friends.
+- Add participants in a group thread from your friends list.
 - Permissions per participant within a group thread.
 - Send image, document, audio, and video messages.
 - Message reactions, replies, edits, and deletion.
