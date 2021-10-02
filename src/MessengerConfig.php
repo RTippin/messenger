@@ -99,6 +99,16 @@ trait MessengerConfig
     /**
      * @var bool
      */
+    private bool $verifyPrivateThreadFriendship;
+
+    /**
+     * @var bool
+     */
+    private bool $verifyGroupThreadFriendship;
+
+    /**
+     * @var bool
+     */
     private bool $messageEdits;
 
     /**
@@ -592,6 +602,44 @@ trait MessengerConfig
     public function setBots(bool $bots): self
     {
         $this->bots = $bots;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function shouldVerifyPrivateThreadFriendship(): bool
+    {
+        return $this->verifyPrivateThreadFriendship;
+    }
+
+    /**
+     * @param  bool  $verifyPrivateThreadFriendship
+     * @return $this
+     */
+    public function setVerifyPrivateThreadFriendship(bool $verifyPrivateThreadFriendship): self
+    {
+        $this->verifyPrivateThreadFriendship = $verifyPrivateThreadFriendship;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function shouldVerifyGroupThreadFriendship(): bool
+    {
+        return $this->verifyPrivateThreadFriendship;
+    }
+
+    /**
+     * @param  bool  $verifyGroupThreadFriendship
+     * @return $this
+     */
+    public function setVerifyGroupThreadFriendship(bool $verifyGroupThreadFriendship): self
+    {
+        $this->verifyGroupThreadFriendship = $verifyGroupThreadFriendship;
 
         return $this;
     }
@@ -1476,6 +1524,8 @@ trait MessengerConfig
         $this->onlineCacheLifetime = config('messenger.online_status.lifetime');
         $this->calling = config('messenger.calling.enabled');
         $this->bots = config('messenger.bots.enabled');
+        $this->verifyPrivateThreadFriendship = config('messenger.thread_verifications.private_thread_friendship');
+        $this->verifyGroupThreadFriendship = config('messenger.thread_verifications.group_thread_friendship');
         $this->systemMessages = config('messenger.system_messages.enabled');
         $this->providerAvatars = config('messenger.files.avatars.providers');
         $this->threadAvatars = config('messenger.files.avatars.threads');
