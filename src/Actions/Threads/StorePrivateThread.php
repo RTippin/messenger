@@ -239,9 +239,10 @@ class StorePrivateThread extends NewThreadAction
      */
     private function determineIfPending(): self
     {
-        if ($this->messenger->providerHasFriends()
-            && $this->messenger->isProviderFriendable($this->recipient)
-            && $this->friends->friendStatus($this->recipient) === FriendDriver::FRIEND) {
+        if (! $this->messenger->shouldVerifyPrivateThreadFriendship()
+            || ($this->messenger->providerHasFriends()
+                && $this->messenger->isProviderFriendable($this->recipient)
+                && $this->friends->friendStatus($this->recipient) === FriendDriver::FRIEND)) {
             $this->pending = false;
         } else {
             $this->pending = true;

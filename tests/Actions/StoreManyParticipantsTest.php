@@ -13,6 +13,7 @@ use RTippin\Messenger\Jobs\ParticipantsAddedMessage;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class StoreManyParticipantsTest extends FeatureTestCase
 {
@@ -36,6 +37,41 @@ class StoreManyParticipantsTest extends FeatureTestCase
         ]);
 
         $this->assertDatabaseCount('participants', 1);
+    }
+
+    /** @test */
+    public function it_ignores_adding_participants_if_set_provider_not_friendable()
+    {
+        UserModel::$friendable = false;
+        Messenger::registerProviders([UserModel::class]);
+        Messenger::setProvider($this->tippin);
+        $thread = $this->createGroupThread($this->tippin);
+        $this->createFriends($this->tippin, $this->doe);
+
+        app(StoreManyParticipants::class)->execute($thread, [
+            [
+                'id' => $this->doe->getKey(),
+                'alias' => 'user',
+            ],
+        ]);
+
+        $this->assertDatabaseCount('participants', 1);
+    }
+
+    /** @test */
+    public function it_adds_non_friend_if_friendship_verification_disabled()
+    {
+        Messenger::setVerifyGroupThreadFriendship(false);
+        $thread = $this->createGroupThread($this->tippin);
+
+        app(StoreManyParticipants::class)->execute($thread, [
+            [
+                'id' => $this->doe->getKey(),
+                'alias' => 'user',
+            ],
+        ]);
+
+        $this->assertDatabaseCount('participants', 2);
     }
 
     /** @test */

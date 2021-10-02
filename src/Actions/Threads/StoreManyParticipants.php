@@ -138,8 +138,9 @@ class StoreManyParticipants extends ThreadParticipantAction
     }
 
     /**
-     * Locate valid providers given alias/id key value pairs, if any. Remove null
-     * results and providers who are not friends with the master set provider.
+     * Locate valid providers given alias/id key value pairs, if any.
+     * Remove providers who are not friends with the current provider
+     * when group friendship verification is required.
      *
      * @param  array|null  $providers
      * @param  bool  $isNewGroup
@@ -147,18 +148,34 @@ class StoreManyParticipants extends ThreadParticipantAction
      */
     private function locateValidProviders(array $providers, bool $isNewGroup): Collection
     {
-        if ($this->messenger->providerHasFriends() && count($providers)) {
-            $providers = (new Collection($providers))
-                ->transform(fn (array $provider) => $this->getProvider($provider['alias'], $provider['id']))
-                ->filter()
-                ->reject(fn (MessengerProvider $provider) => $this->friends->friendStatus($provider) !== FriendDriver::FRIEND);
-
-            return $isNewGroup
-                ? $providers
-                : $this->rejectExistingParticipants($providers);
+        if (! count($providers)
+            || ($this->messenger->shouldVerifyGroupThreadFriendship()
+                && ! $this->messenger->providerHasFriends())) {
+            return new Collection;
         }
 
-        return new Collection;
+        return (new Collection($providers))
+            ->transform(fn (array $provider) => $this->getProvider($provider['alias'], $provider['id']))
+            ->filter()
+            ->when(
+                $this->shouldVerifyFriendships(),
+                fn (Collection $collection) => $collection->reject(
+                    fn (MessengerProvider $provider) => $this->friends->friendStatus($provider) !== FriendDriver::FRIEND
+                )
+            )
+            ->when(
+                ! $isNewGroup,
+                fn (Collection $collection) => $this->rejectExistingParticipants($collection)
+            );
+    }
+
+    /**
+     * @return bool
+     */
+    private function shouldVerifyFriendships(): bool
+    {
+        return $this->messenger->shouldVerifyGroupThreadFriendship()
+            && $this->messenger->providerHasFriends();
     }
 
     /**

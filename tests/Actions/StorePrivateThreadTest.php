@@ -89,21 +89,6 @@ class StorePrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_throws_exception_if_provider_interactions_denies_messaging_first_with_recipient_override()
-    {
-        UserModel::$cantMessage = [CompanyModel::class];
-        Messenger::registerProviders([UserModel::class, CompanyModel::class]);
-        Messenger::setProvider($this->tippin);
-
-        $this->expectException(NewThreadException::class);
-        $this->expectExceptionMessage('Not authorized to start conversations with Developers.');
-
-        app(StorePrivateThread::class)->execute([
-            'message' => 'Hello World!',
-        ], $this->developers);
-    }
-
-    /** @test */
     public function it_stores_thread_with_participants_and_message()
     {
         app(StorePrivateThread::class)->execute([
@@ -135,29 +120,6 @@ class StorePrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_stores_thread_with_participants_and_no_message_using_recipient_override()
-    {
-        app(StorePrivateThread::class)->execute([], $this->doe);
-
-        $this->assertDatabaseCount('threads', 1);
-        $this->assertDatabaseCount('participants', 2);
-        $this->assertDatabaseCount('messages', 0);
-    }
-
-    /** @test */
-    public function it_stores_thread_with_participants_and_message_using_recipient_override()
-    {
-        app(StorePrivateThread::class)->execute([
-            'message' => 'Hello World!',
-        ], $this->doe);
-
-        $this->assertDatabaseCount('threads', 1);
-        $this->assertDatabaseCount('participants', 2);
-        $this->assertDatabaseCount('messages', 1);
-        $this->assertDatabaseCount('messages', 1);
-    }
-
-    /** @test */
     public function it_marks_recipient_pending_if_not_friends()
     {
         app(StorePrivateThread::class)->execute([
@@ -179,11 +141,18 @@ class StorePrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_marks_recipient_pending_if_not_friends_using_recipient_override()
+    public function it_marks_recipient_pending_if_provider_not_friendable()
     {
+        UserModel::$friendable = false;
+        Messenger::registerProviders([UserModel::class]);
+        Messenger::setProvider($this->tippin);
+        $this->createFriends($this->tippin, $this->doe);
+
         app(StorePrivateThread::class)->execute([
             'message' => 'Hello World!',
-        ], $this->doe);
+            'recipient_alias' => 'user',
+            'recipient_id' => $this->doe->getKey(),
+        ]);
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->tippin->getKey(),
@@ -198,9 +167,9 @@ class StorePrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_is_not_pending_if_providers_are_friends()
+    public function it_doesnt_mark_recipient_pending_if_verify_friendships_disabled()
     {
-        $this->createFriends($this->tippin, $this->doe);
+        Messenger::setVerifyPrivateThreadFriendship(false);
 
         app(StorePrivateThread::class)->execute([
             'message' => 'Hello World!',
@@ -221,13 +190,15 @@ class StorePrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_is_not_pending_if_providers_are_friends_using_recipient_override()
+    public function it_is_not_pending_if_providers_are_friends()
     {
         $this->createFriends($this->tippin, $this->doe);
 
         app(StorePrivateThread::class)->execute([
             'message' => 'Hello World!',
-        ], $this->doe);
+            'recipient_alias' => 'user',
+            'recipient_id' => $this->doe->getKey(),
+        ]);
 
         $this->assertDatabaseHas('participants', [
             'owner_id' => $this->tippin->getKey(),
@@ -329,19 +300,6 @@ class StorePrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_stores_image_message_with_recipient_override()
-    {
-        app(StorePrivateThread::class)->execute([
-            'image' => UploadedFile::fake()->image('picture.jpg'),
-        ], $this->doe);
-
-        $this->assertDatabaseHas('messages', [
-            'type' => 1,
-        ]);
-        Storage::disk('messenger')->assertExists(Message::image()->first()->getImagePath());
-    }
-
-    /** @test */
     public function it_stores_document_message()
     {
         app(StorePrivateThread::class)->execute([
@@ -349,19 +307,6 @@ class StorePrivateThreadTest extends FeatureTestCase
             'recipient_alias' => 'user',
             'recipient_id' => $this->doe->getKey(),
         ]);
-
-        $this->assertDatabaseHas('messages', [
-            'type' => 2,
-        ]);
-        Storage::disk('messenger')->assertExists(Message::document()->first()->getDocumentPath());
-    }
-
-    /** @test */
-    public function it_stores_document_message_with_recipient_override()
-    {
-        app(StorePrivateThread::class)->execute([
-            'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
-        ], $this->doe);
 
         $this->assertDatabaseHas('messages', [
             'type' => 2,
@@ -385,19 +330,6 @@ class StorePrivateThreadTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_stores_audio_message_with_recipient_override()
-    {
-        app(StorePrivateThread::class)->execute([
-            'audio' => UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg'),
-        ], $this->doe);
-
-        $this->assertDatabaseHas('messages', [
-            'type' => 3,
-        ]);
-        Storage::disk('messenger')->assertExists(Message::audio()->first()->getAudioPath());
-    }
-
-    /** @test */
     public function it_stores_video_message()
     {
         app(StorePrivateThread::class)->execute([
@@ -405,19 +337,6 @@ class StorePrivateThreadTest extends FeatureTestCase
             'recipient_alias' => 'user',
             'recipient_id' => $this->doe->getKey(),
         ]);
-
-        $this->assertDatabaseHas('messages', [
-            'type' => Message::VIDEO_MESSAGE,
-        ]);
-        Storage::disk('messenger')->assertExists(Message::video()->first()->getVideoPath());
-    }
-
-    /** @test */
-    public function it_stores_video_message_with_recipient_override()
-    {
-        app(StorePrivateThread::class)->execute([
-            'video' => UploadedFile::fake()->create('test.mov', 500, 'video/quicktime'),
-        ], $this->doe);
 
         $this->assertDatabaseHas('messages', [
             'type' => Message::VIDEO_MESSAGE,

@@ -630,7 +630,7 @@ trait MessengerConfig
      */
     public function shouldVerifyGroupThreadFriendship(): bool
     {
-        return $this->verifyPrivateThreadFriendship;
+        return $this->verifyGroupThreadFriendship;
     }
 
     /**
