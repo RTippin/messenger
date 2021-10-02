@@ -38,22 +38,12 @@ class GhostUser extends Model
         $this->setIncrementing(! Messenger::shouldUseUuids());
 
         parent::__construct($attributes);
-    }
 
-    /**
-     * On creating, set primary key as UUID if enabled.
-     */
-    public static function boot()
-    {
-        parent::boot();
-
-        static::creating(function (Model $model) {
-            if (Messenger::shouldUseUuids()) {
-                $model->{$model->getKeyName()} = Str::orderedUuid()->toString();
-            } else {
-                $model->{$model->getKeyName()} = 1234;
-            }
-        });
+        if (Messenger::shouldUseUuids()) {
+            $this->{$this->getKeyName()} = Str::orderedUuid()->toString();
+        } else {
+            $this->{$this->getKeyName()} = 1234;
+        }
     }
 
     /**
