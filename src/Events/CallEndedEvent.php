@@ -9,6 +9,7 @@ use RTippin\Messenger\Models\Call;
 class CallEndedEvent
 {
     use SerializesModels;
+
     /**
      * @var null|MessengerProvider
      */
