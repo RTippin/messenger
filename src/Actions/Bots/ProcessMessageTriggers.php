@@ -114,7 +114,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
     {
         foreach ($action->getTriggers() as $trigger) {
             if ($this->matcher->matches(
-                $action->match,
+                $action->getMatchMethod(),
                 $trigger,
                 $this->getMessage()->body
             )) {

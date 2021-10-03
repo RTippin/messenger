@@ -108,12 +108,32 @@ class ProcessMessageTriggersTest extends FeatureTestCase
     {
         MessengerBots::registerHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create();
-        $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => '!test']);
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => '!unknown']);
         BotAction::factory()
             ->for(Bot::factory()->for($thread)->owner($this->tippin)->create())
             ->owner($this->tippin)
             ->handler(FunBotHandler::class)
-            ->triggers('!nope')
+            ->triggers('!test|!more')
+            ->create();
+
+        app(ProcessMessageTriggers::class)->execute($thread, $message, true);
+
+        $this->assertDatabaseMissing('messages', [
+            'body' => 'Testing Fun.',
+        ]);
+    }
+
+    /** @test */
+    public function it_does_nothing_if_no_match_found_while_using_handler_overrides()
+    {
+        MessengerBots::registerHandlers([FunBotHandler::class]);
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => '!unknown']);
+        BotAction::factory()
+            ->for(Bot::factory()->for($thread)->owner($this->tippin)->create())
+            ->owner($this->tippin)
+            ->handler(FunBotHandler::class)
+            ->triggers('!unknown')
             ->create();
 
         app(ProcessMessageTriggers::class)->execute($thread, $message, true);

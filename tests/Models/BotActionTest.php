@@ -5,11 +5,14 @@ namespace RTippin\Messenger\Tests\Models;
 use Illuminate\Support\Carbon;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\Fixtures\FunBotHandler;
+use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;
 
 class BotActionTest extends FeatureTestCase
 {
@@ -187,5 +190,42 @@ class BotActionTest extends FeatureTestCase
         $this->assertTrue($action->bot->isOnCooldown());
         $this->assertTrue($action->isOnCooldown());
         $this->assertTrue($action->isOnAnyCooldown());
+    }
+
+    /** @test */
+    public function it_has_triggers_and_match()
+    {
+        $action = BotAction::factory()->for(
+            Bot::factory()->for(
+                Thread::factory()->group()->create()
+            )->owner($this->tippin)->create()
+        )
+            ->owner($this->tippin)
+            ->handler(SillyBotHandler::class)
+            ->triggers('!testing|!is|!fun')
+            ->match('starts:with:caseless')
+            ->create();
+
+        $this->assertSame(['!testing', '!is', '!fun'], $action->getTriggers());
+        $this->assertSame('starts:with:caseless', $action->getMatchMethod());
+    }
+
+    /** @test */
+    public function it_uses_trigger_and_match_overrides_over_saved_values()
+    {
+        MessengerBots::registerHandlers([FunBotHandler::class]);
+        $action = BotAction::factory()->for(
+            Bot::factory()->for(
+                Thread::factory()->group()->create()
+            )->owner($this->tippin)->create()
+        )
+            ->owner($this->tippin)
+            ->handler(FunBotHandler::class)
+            ->triggers('!testing|!is|!fun')
+            ->match('starts:with:caseless')
+            ->create();
+
+        $this->assertSame(['!test', '!more'], $action->getTriggers());
+        $this->assertSame('exact:caseless', $action->getMatchMethod());
     }
 }
