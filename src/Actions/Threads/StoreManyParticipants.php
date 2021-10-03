@@ -159,9 +159,7 @@ class StoreManyParticipants extends ThreadParticipantAction
             ->filter()
             ->when(
                 $this->shouldVerifyFriendships(),
-                fn (Collection $collection) => $collection->reject(
-                    fn (MessengerProvider $provider) => $this->friends->friendStatus($provider) !== FriendDriver::FRIEND
-                )
+                fn (Collection $collection) => $this->rejectNonFriends($collection)
             )
             ->when(
                 ! $isNewGroup,
@@ -182,11 +180,24 @@ class StoreManyParticipants extends ThreadParticipantAction
      * @param  Collection  $providers
      * @return Collection
      */
+    private function rejectNonFriends(Collection $providers): Collection
+    {
+        return $providers->reject(
+            fn (MessengerProvider $provider) => $this->friends->friendStatus($provider) !== FriendDriver::FRIEND
+        );
+    }
+
+    /**
+     * @param  Collection  $providers
+     * @return Collection
+     */
     private function rejectExistingParticipants(Collection $providers): Collection
     {
         $existing = $this->getThread()->participants()->get();
 
-        return $providers->reject(fn (MessengerProvider $provider) => $existing->forProvider($provider)->first());
+        return $providers->reject(
+            fn (MessengerProvider $provider) => $existing->forProvider($provider)->count()
+        );
     }
 
     /**
@@ -207,14 +218,16 @@ class StoreManyParticipants extends ThreadParticipantAction
     private function storeManyParticipants(Collection $providers, bool $isNewGroup): Collection
     {
         if ($isNewGroup) {
-            return $providers->transform(function (MessengerProvider $provider) {
-                return $this->storeParticipant($provider, Participant::DefaultPermissions)->getParticipant(true);
-            });
+            return $providers->transform(
+                fn (MessengerProvider $provider) => $this->storeParticipant($provider, Participant::DefaultPermissions)
+                    ->getParticipant(true)
+            );
         }
 
-        return $providers->transform(function (MessengerProvider $provider) {
-            return $this->storeOrRestoreParticipant($provider)->getParticipant(true);
-        });
+        return $providers->transform(
+            fn (MessengerProvider $provider) => $this->storeOrRestoreParticipant($provider)
+                ->getParticipant(true)
+        );
     }
 
     /**

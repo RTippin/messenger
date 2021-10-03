@@ -90,38 +90,25 @@ class StoreManyParticipantsTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_fires_no_events_if_no_valid_providers()
-    {
-        BaseMessengerAction::enableEvents();
-        Event::fake([
-            NewThreadBroadcast::class,
-            ParticipantsAddedEvent::class,
-        ]);
-        $thread = $this->createGroupThread($this->tippin);
-
-        app(StoreManyParticipants::class)->execute($thread, []);
-
-        $this->assertDatabaseCount('participants', 1);
-        Event::assertNotDispatched(NewThreadBroadcast::class);
-        Event::assertNotDispatched(ParticipantsAddedEvent::class);
-    }
-
-    /** @test */
     public function it_ignores_existing_participant()
     {
-        BaseMessengerAction::enableEvents();
-        $thread = $this->createGroupThread($this->tippin);
-        Participant::factory()->for($thread)->owner($this->doe)->create();
-        $this->createFriends($this->tippin, $this->doe);
+        Messenger::setVerifyGroupThreadFriendship(false);
+        $thread = $this->createGroupThread($this->tippin, $this->doe);
+
+        $this->assertDatabaseCount('participants', 2);
 
         app(StoreManyParticipants::class)->execute($thread, [
             [
                 'id' => $this->doe->getKey(),
                 'alias' => 'user',
             ],
+            [
+                'id' => $this->developers->getKey(),
+                'alias' => 'company',
+            ],
         ]);
 
-        $this->assertDatabaseCount('participants', 2);
+        $this->assertDatabaseCount('participants', 3);
     }
 
     /** @test */
@@ -174,6 +161,23 @@ class StoreManyParticipantsTest extends FeatureTestCase
             'owner_type' => $this->developers->getMorphClass(),
             'admin' => false,
         ]);
+    }
+
+    /** @test */
+    public function it_fires_no_events_if_no_valid_providers()
+    {
+        BaseMessengerAction::enableEvents();
+        Event::fake([
+            NewThreadBroadcast::class,
+            ParticipantsAddedEvent::class,
+        ]);
+        $thread = $this->createGroupThread($this->tippin);
+
+        app(StoreManyParticipants::class)->execute($thread, []);
+
+        $this->assertDatabaseCount('participants', 1);
+        Event::assertNotDispatched(NewThreadBroadcast::class);
+        Event::assertNotDispatched(ParticipantsAddedEvent::class);
     }
 
     /** @test */
