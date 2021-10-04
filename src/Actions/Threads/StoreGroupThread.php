@@ -96,7 +96,7 @@ class StoreGroupThread extends NewThreadAction
 
     /**
      * Execute all actions that must occur for
-     * a successful private thread creation.
+     * a successful group thread creation.
      *
      * @param  string  $subject
      * @param  array  $providers
