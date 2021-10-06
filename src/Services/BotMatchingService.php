@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Services;
 
 use Illuminate\Support\Str;
+use RTippin\Messenger\MessengerBots;
 
 class BotMatchingService
 {
@@ -15,14 +16,14 @@ class BotMatchingService
     public function matches(string $method, string $trigger, ?string $message): bool
     {
         switch ($method) {
-            case 'contains': return $this->matchContains($trigger, $message);
-            case 'contains:caseless': return $this->matchContains($trigger, $message, true);
-            case 'contains:any': return $this->matchContainsAny($trigger, $message);
-            case 'contains:any:caseless': return $this->matchContainsAny($trigger, $message, true);
-            case 'exact': return $this->matchExact($trigger, $message);
-            case 'exact:caseless': return $this->matchExact($trigger, $message, true);
-            case 'starts:with': return $this->matchStartsWith($trigger, $message);
-            case 'starts:with:caseless': return $this->matchStartsWith($trigger, $message, true);
+            case MessengerBots::MATCH_CONTAINS: return $this->matchContains($trigger, $message);
+            case MessengerBots::MATCH_CONTAINS_CASELESS: return $this->matchContains($trigger, $message, true);
+            case MessengerBots::MATCH_CONTAINS_ANY: return $this->matchContainsAny($trigger, $message);
+            case MessengerBots::MATCH_CONTAINS_ANY_CASELESS: return $this->matchContainsAny($trigger, $message, true);
+            case MessengerBots::MATCH_EXACT: return $this->matchExact($trigger, $message);
+            case MessengerBots::MATCH_EXACT_CASELESS: return $this->matchExact($trigger, $message, true);
+            case MessengerBots::MATCH_STARTS_WITH: return $this->matchStartsWith($trigger, $message);
+            case MessengerBots::MATCH_STARTS_WITH_CASELESS: return $this->matchStartsWith($trigger, $message, true);
             default: return false;
         }
     }

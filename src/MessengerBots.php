@@ -16,15 +16,23 @@ final class MessengerBots
     /**
      * Methods we may use to match a trigger from within a message.
      */
+    const MATCH_CONTAINS = 'contains';
+    const MATCH_CONTAINS_CASELESS = 'contains:caseless';
+    const MATCH_CONTAINS_ANY = 'contains:any';
+    const MATCH_CONTAINS_ANY_CASELESS = 'contains:any:caseless';
+    const MATCH_EXACT = 'exact';
+    const MATCH_EXACT_CASELESS = 'exact:caseless';
+    const MATCH_STARTS_WITH = 'starts:with';
+    const MATCH_STARTS_WITH_CASELESS = 'starts:with:caseless';
     const BotActionMatchMethods = [
-        'contains' => 'The trigger can be anywhere within a message. Cannot be part of or inside another word.',
-        'contains:caseless' => 'Same as "contains", but is case insensitive.',
-        'contains:any' => 'The trigger can be anywhere within a message, including inside another word.',
-        'contains:any:caseless' => 'Same as "contains any", but is case insensitive.',
-        'exact' => 'The trigger must match the message exactly.',
-        'exact:caseless' => 'Same as "exact", but is case insensitive.',
-        'starts:with' => 'The trigger must be the lead phrase within the message. Cannot be part of or inside another word.',
-        'starts:with:caseless' => 'Same as "starts with", but is case insensitive.',
+        self::MATCH_CONTAINS => 'The trigger can be anywhere within a message. Cannot be part of or inside another word.',
+        self::MATCH_CONTAINS_CASELESS => 'Same as "contains", but is case insensitive.',
+        self::MATCH_CONTAINS_ANY => 'The trigger can be anywhere within a message, including inside another word.',
+        self::MATCH_CONTAINS_ANY_CASELESS => 'Same as "contains any", but is case insensitive.',
+        self::MATCH_EXACT => 'The trigger must match the message exactly.',
+        self::MATCH_EXACT_CASELESS => 'Same as "exact", but is case insensitive.',
+        self::MATCH_STARTS_WITH => 'The trigger must be the lead phrase within the message. Cannot be part of or inside another word.',
+        self::MATCH_STARTS_WITH_CASELESS => 'Same as "starts with", but is case insensitive.',
     ];
 
     /**
@@ -115,11 +123,9 @@ final class MessengerBots
                 ->toArray();
         }
 
-        $handler = $this->findHandler($handlerOrAlias);
-
-        return $handler
-            ? $this->handlers->get($handler)
-            : null;
+        return $this->handlers->get(
+            $this->findHandler($handlerOrAlias)
+        );
     }
 
     /**
@@ -347,7 +353,10 @@ final class MessengerBots
      */
     private function generateRules(): array
     {
-        $mergedRuleset = array_merge($this->baseRuleset(), $this->getActiveHandler()->rules());
+        $mergedRuleset = array_merge(
+            $this->baseRuleset(),
+            $this->getActiveHandler()->rules()
+        );
 
         $overrides = $this->getHandlerSettings($this->activeHandlerClass);
 

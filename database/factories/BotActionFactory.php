@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
+use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\BotAction;
 
 /**
@@ -29,7 +30,7 @@ class BotActionFactory extends Factory
     {
         return [
             'handler' => 'ReplyBot',
-            'match' => 'exact',
+            'match' => MessengerBots::MATCH_EXACT,
             'triggers' => '!hello',
             'enabled' => true,
             'payload' => null,
