@@ -628,7 +628,7 @@ class MessengerBotsTest extends MessengerTestCase
     {
         $user = UserModel::factory()->make();
         $thread = Thread::factory()->group()->make();
-        $message = Message::factory()->for($thread)->make(['body' => '!command Do Something Fun']);
+        $message = Message::factory()->for($thread)->body('!command Do Something Fun')->make();
         $bot = Bot::factory()->for($thread)->owner($user)->make();
         $action = BotAction::factory()->for($bot)->owner($user)->make();
 

@@ -38,6 +38,16 @@ class MessageFactory extends Factory
     }
 
     /**
+     * Set the messages body.
+     *
+     * @return $this
+     */
+    public function body(?string $body): self
+    {
+        return $this->state(fn (array $attributes) => ['body' => $body]);
+    }
+
+    /**
      * Indicate message is an image.
      *
      * @return $this
