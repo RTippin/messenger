@@ -27,18 +27,7 @@ interface ActionHandler
      * ( contains | contains:caseless | contains:any | contains:any:caseless ).
      * ( exact | exact:caseless | starts:with | starts:with:caseless ).
      *
-     * <code>
-     * return [
-     *     'alias' => 'bot_alias',
-     *     'description' => 'Bot description.',
-     *     'name' => 'Bot Name',
-     *     'unique' => true, //optional
-     *     'triggers' => '!h|!help', //optional
-     *     'match' => 'exact' //optional
-     * ];
-     * </code>
-     *
-     * @return array
+     * @return array{alias: string, description: string, name: string, unique: bool|null, triggers: array|string|null, match: string|null}
      */
     public static function getSettings(): array;
 
@@ -92,7 +81,7 @@ interface ActionHandler
 
     /**
      * Return the validation rules used when adding the action to a bot. Any rules
-     * you define will have their keys/values stored in the actions payload. Return
+     * you define will have their keys/values stored in the action's payload. Return
      * an empty array if you have no extra data to validate or store.
      *
      * @return array
@@ -116,12 +105,26 @@ interface ActionHandler
     public function serializePayload(?array $payload): ?string;
 
     /**
-     * Decode the actions payload.
+     * Decode the action's payload.
      *
      * @param  string|null  $key
      * @return array|string|null
      */
     public function getPayload(?string $key = null);
+
+    /**
+     * Returns the message with the trigger removed.
+     *
+     * @param  bool  $toLower
+     * @return string|null
+     */
+    public function getParsedMessage(bool $toLower = false): ?string;
+
+    /**
+     * @param  bool  $toLower
+     * @return array|null
+     */
+    public function getParsedWords(bool $toLower = false): ?array;
 
     /**
      * Helper method to globally set testing for action handlers. Allows

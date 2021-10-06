@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Actions\Bots;
 
+use Illuminate\Support\Str;
 use RTippin\Messenger\Contracts\ActionHandler;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
@@ -68,6 +69,18 @@ abstract class BotActionHandler implements ActionHandler
     /**
      * @inheritDoc
      */
+    public static function isTesting(?bool $testing = null): bool
+    {
+        if (! is_null($testing)) {
+            self::$isTesting = $testing;
+        }
+
+        return self::$isTesting;
+    }
+
+    /**
+     * @inheritDoc
+     */
     abstract public static function getSettings(): array;
 
     /**
@@ -107,6 +120,36 @@ abstract class BotActionHandler implements ActionHandler
     public function getPayload(?string $key = null)
     {
         return $this->action->getPayload($key);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getParsedMessage(bool $toLower = false): ?string
+    {
+        $parsed = trim(
+            Str::remove($this->matchingTrigger, $this->message->body, false)
+        );
+
+        if ($toLower) {
+            $parsed = Str::lower($parsed);
+        }
+
+        return ! empty($parsed)
+            ? $parsed
+            : null;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getParsedWords(bool $toLower = false): ?array
+    {
+        $parsed = $this->getParsedMessage($toLower);
+
+        return ! empty($parsed)
+            ? explode(' ', $parsed)
+            : null;
     }
 
     /**
@@ -154,17 +197,5 @@ abstract class BotActionHandler implements ActionHandler
     public function shouldReleaseCooldown(): bool
     {
         return $this->shouldReleaseCooldown;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public static function isTesting(?bool $testing = null): bool
-    {
-        if (! is_null($testing)) {
-            self::$isTesting = $testing;
-        }
-
-        return self::$isTesting;
     }
 }

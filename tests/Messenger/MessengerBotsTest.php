@@ -8,8 +8,13 @@ use RTippin\Messenger\Actions\Bots\BotActionHandler;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Facades\MessengerBots as BotsFacade;
 use RTippin\Messenger\MessengerBots;
+use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Models\BotAction;
+use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\Fixtures\FunBotHandler;
 use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;
+use RTippin\Messenger\Tests\Fixtures\UserModel;
 use RTippin\Messenger\Tests\MessengerTestCase;
 
 class MessengerBotsTest extends MessengerTestCase
@@ -582,6 +587,62 @@ class MessengerBotsTest extends MessengerTestCase
         ]);
 
         $this->assertSame($expects, $results['payload']);
+    }
+
+    /** @test */
+    public function it_can_get_actions_payload()
+    {
+        $user = UserModel::factory()->make();
+        $thread = Thread::factory()->group()->make();
+        $message = Message::factory()->for($thread)->make();
+        $bot = Bot::factory()->for($thread)->owner($user)->make();
+        $action = BotAction::factory()
+            ->for($bot)
+            ->owner($user)
+            ->payload('{"test":{"test":"fun","more":"yes","ok":"dokie"},"special":true}')
+            ->make();
+        $emptyAction = BotAction::factory()
+            ->for($bot)
+            ->owner($user)
+            ->make();
+
+        $emptyHandler = (new FunBotHandler)->setDataForMessage($thread, $emptyAction, $message);
+        $handler = (new FunBotHandler)->setDataForMessage($thread, $action, $message);
+
+        $this->assertNull($emptyHandler->getPayload());
+        $this->assertNull($emptyHandler->getPayload('unknown'));
+        $this->assertTrue($handler->getPayload('special'));
+        $this->assertSame('fun', $handler->getPayload('test')['test']);
+        $this->assertSame([
+            'test' => [
+                'test' => 'fun',
+                'more' => 'yes',
+                'ok' => 'dokie',
+            ],
+            'special' => true,
+        ], $handler->getPayload());
+    }
+
+    /** @test */
+    public function it_can_get_actions_parsed_message()
+    {
+        $user = UserModel::factory()->make();
+        $thread = Thread::factory()->group()->make();
+        $message = Message::factory()->for($thread)->make(['body' => '!command Do Something Fun']);
+        $bot = Bot::factory()->for($thread)->owner($user)->make();
+        $action = BotAction::factory()->for($bot)->owner($user)->make();
+
+        $handler = (new FunBotHandler)->setDataForMessage($thread, $action, $message, '!command');
+        $emptyHandler = (new FunBotHandler)->setDataForMessage($thread, $action, $message, '!command Do Something Fun');
+
+        $this->assertSame('Do Something Fun', $handler->getParsedMessage());
+        $this->assertSame('do something fun', $handler->getParsedMessage(true));
+        $this->assertSame(['Do', 'Something', 'Fun'], $handler->getParsedWords());
+        $this->assertSame(['do', 'something', 'fun'], $handler->getParsedWords(true));
+        $this->assertNull($emptyHandler->getParsedMessage());
+        $this->assertNull($emptyHandler->getParsedMessage(true));
+        $this->assertNull($emptyHandler->getParsedWords());
+        $this->assertNull($emptyHandler->getParsedWords(true));
     }
 
     /**
