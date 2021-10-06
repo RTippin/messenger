@@ -155,6 +155,12 @@ class TestBot extends BotActionHandler
 - If your handler stores extra data as a `payload`, it will be stored as JSON.
 - getPayload will return the decoded array, with an optional `$key` to return a specific value.
 
+### `getParsedMessage(bool $toLower = false)`
+- Returns the message with the trigger removed.
+
+### `getParsedWords(bool $toLower = false)`
+- Returns an array of all words in the message with the trigger removed.
+
 ### `releaseCooldown()`
 - Calling this will remove any cooldown set on the `BotAction` model after your handle method is executed.
 - Cooldowns are optional and are set by the end user, per action. A cooldown will be started right before your handle method is executed.

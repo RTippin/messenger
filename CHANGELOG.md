@@ -3,6 +3,14 @@
 
 ---
 
+### [v1.9.0 (xx-xx-2021)]
+
+#### Added
+- Constants on `MessengerBots` class for all bot matching methods.
+- `getParsedMessage` and `getParsedWords` helpers on `BotActionHandler`|`ActionHandler`
+
+---
+
 ### [v1.8.0 (10-02-2021)](https://github.com/RTippin/messenger/compare/v1.7.0...v1.8.0)
 
 #### Added

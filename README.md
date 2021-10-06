@@ -40,6 +40,8 @@
 - `MessengerComposer` facade allows you to have easy access to our core actions anywhere within your own app, such as sending messages, images, reactions, and more.
 - You can implement or extend your own `BroadcastDriver`, `VideoDriver`, and `FriendDriver`, simply by binding your classes into the container.
 - Optional extra payload when sending messages to allow custom json to be stored with the message.
+- Owner relationships returns a `Ghost Profile` when not found (null-object pattern).
+- Private threads auto-lock when the recipient is not found (deleted).
 
 ### Upcoming for v2
 - Temporary Ephemeral conversations.

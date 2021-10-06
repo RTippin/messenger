@@ -121,6 +121,8 @@ interface ActionHandler
     public function getParsedMessage(bool $toLower = false): ?string;
 
     /**
+     * Returns an array of all words in the message with the trigger removed.
+     *
      * @param  bool  $toLower
      * @return array|null
      */
