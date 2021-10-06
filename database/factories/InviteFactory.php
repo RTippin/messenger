@@ -9,6 +9,7 @@ use RTippin\Messenger\Models\Invite;
 
 /**
  * @method Invite create($attributes = [], ?Model $parent = null)
+ * @method Invite make($attributes = [], ?Model $parent = null)
  */
 class InviteFactory extends Factory
 {

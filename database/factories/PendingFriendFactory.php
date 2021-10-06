@@ -8,6 +8,7 @@ use RTippin\Messenger\Models\PendingFriend;
 
 /**
  * @method PendingFriend create($attributes = [], ?Model $parent = null)
+ * @method PendingFriend make($attributes = [], ?Model $parent = null)
  */
 class PendingFriendFactory extends Factory
 {

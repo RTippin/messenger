@@ -8,6 +8,7 @@ use RTippin\Messenger\Models\Message;
 
 /**
  * @method Message create($attributes = [], ?Model $parent = null)
+ * @method Message make($attributes = [], ?Model $parent = null)
  */
 class MessageFactory extends Factory
 {

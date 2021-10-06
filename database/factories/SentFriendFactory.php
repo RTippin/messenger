@@ -8,6 +8,7 @@ use RTippin\Messenger\Models\SentFriend;
 
 /**
  * @method SentFriend create($attributes = [], ?Model $parent = null)
+ * @method SentFriend make($attributes = [], ?Model $parent = null)
  */
 class SentFriendFactory extends Factory
 {

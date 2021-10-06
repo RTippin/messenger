@@ -8,6 +8,7 @@ use RTippin\Messenger\Models\MessageEdit;
 
 /**
  * @method MessageEdit create($attributes = [], ?Model $parent = null)
+ * @method MessageEdit make($attributes = [], ?Model $parent = null)
  */
 class MessageEditFactory extends Factory
 {

@@ -8,6 +8,7 @@ use RTippin\Messenger\Models\Participant;
 
 /**
  * @method Participant create($attributes = [], ?Model $parent = null)
+ * @method Participant make($attributes = [], ?Model $parent = null)
  */
 class ParticipantFactory extends Factory
 {

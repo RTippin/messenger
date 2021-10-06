@@ -8,6 +8,7 @@ use RTippin\Messenger\Models\Bot;
 
 /**
  * @method Bot create($attributes = [], ?Model $parent = null)
+ * @method Bot make($attributes = [], ?Model $parent = null)
  */
 class BotFactory extends Factory
 {

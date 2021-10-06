@@ -9,6 +9,7 @@ use RTippin\Messenger\Models\MessageReaction;
 
 /**
  * @method MessageReaction create($attributes = [], ?Model $parent = null)
+ * @method MessageReaction make($attributes = [], ?Model $parent = null)
  */
 class MessageReactionFactory extends Factory
 {

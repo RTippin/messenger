@@ -9,6 +9,7 @@ use RTippin\Messenger\Models\BotAction;
 
 /**
  * @method BotAction create($attributes = [], ?Model $parent = null)
+ * @method BotAction make($attributes = [], ?Model $parent = null)
  */
 class BotActionFactory extends Factory
 {

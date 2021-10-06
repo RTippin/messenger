@@ -8,6 +8,7 @@ use RTippin\Messenger\Models\Call;
 
 /**
  * @method Call create($attributes = [], ?Model $parent = null)
+ * @method Call make($attributes = [], ?Model $parent = null)
  */
 class CallFactory extends Factory
 {

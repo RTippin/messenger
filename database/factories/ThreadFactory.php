@@ -8,6 +8,7 @@ use RTippin\Messenger\Models\Thread;
 
 /**
  * @method Thread create($attributes = [], ?Model $parent = null)
+ * @method Thread make($attributes = [], ?Model $parent = null)
  */
 class ThreadFactory extends Factory
 {

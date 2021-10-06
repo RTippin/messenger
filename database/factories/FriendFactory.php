@@ -8,6 +8,7 @@ use RTippin\Messenger\Models\Friend;
 
 /**
  * @method Friend create($attributes = [], ?Model $parent = null)
+ * @method Friend make($attributes = [], ?Model $parent = null)
  */
 class FriendFactory extends Factory
 {
