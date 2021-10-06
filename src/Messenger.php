@@ -71,7 +71,7 @@ final class Messenger
 
         foreach ($providers as $provider) {
             if (! is_subclass_of($provider, MessengerProvider::class)) {
-                throw new InvalidArgumentException("The given provider { $provider } must implement our contract ".MessengerProvider::class);
+                throw new InvalidArgumentException("The given provider { $provider } must implement our interface ".MessengerProvider::class);
             }
 
             $this->providers[$provider] = $this->makeProviderSettings($provider);

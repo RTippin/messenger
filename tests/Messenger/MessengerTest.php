@@ -60,7 +60,7 @@ class MessengerTest extends MessengerTestCase
     {
         $invalid = OtherModel::class;
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("The given provider { $invalid } must implement our contract ".MessengerProvider::class);
+        $this->expectExceptionMessage("The given provider { $invalid } must implement our interface ".MessengerProvider::class);
 
         $this->messenger->registerProviders([$invalid]);
     }

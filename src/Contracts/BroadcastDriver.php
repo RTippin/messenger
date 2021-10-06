@@ -73,7 +73,7 @@ interface BroadcastDriver
     public function with(array $with): self;
 
     /**
-     * Check the abstract event class implements our contract so that we may
+     * Check the abstract event class implements our interface so that we may
      * inject the channels and resource, then broadcast the resource!
      *
      * @param  string|BroadcastEvent  $abstract

@@ -72,7 +72,7 @@ class MessengerServiceProvider extends ServiceProvider
 }
 ```
 
-### Implement our `MessengerProvider` contract for each provider registered
+### Implement our `MessengerProvider` interface for each provider registered
 
 - Each provider you define will need to implement our [`MessengerProvider`][link-messenger-contract] contract. We include a [`Messageable`][link-messageable] trait you can use on your providers that will usually suffice for your needs. This trait has all the methods needed to satisfy the contract.
 - You should override our `getProviderSettings()` method on each provider model you register.

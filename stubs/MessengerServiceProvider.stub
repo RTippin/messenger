@@ -25,7 +25,7 @@ class MessengerServiceProvider extends ServiceProvider
     public function boot()
     {
         // Register all provider models you wish to use in the messenger system.
-        // Ensure they implement our MessengerProvider contract first.
+        // Ensure they implement our MessengerProvider interface first.
         Messenger::registerProviders([
             // User::class,
         ]);
