@@ -1,0 +1,48 @@
+<?php
+
+namespace {{ namespace }};
+
+use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use Throwable;
+
+class {{ class }} extends BotActionHandler
+{
+    /**
+     * @inheritDoc
+     */
+    public static function getSettings(): array
+    {
+        return [
+            'alias' => 'bot_alias',
+            'description' => 'The bots description.',
+            'name' => 'Bot Name',
+            'unique' => false,
+            'match' => null,
+            'triggers' => null,
+        ];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function rules(): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function errorMessages(): array
+    {
+        return [];
+    }
+
+    /**
+     * @throws Throwable
+     */
+    public function handle(): void
+    {
+        $this->composer()->message('Create something magical!');
+    }
+}

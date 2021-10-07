@@ -16,6 +16,7 @@ use RTippin\Messenger\Commands\CallsDownCommand;
 use RTippin\Messenger\Commands\CallsUpCommand;
 use RTippin\Messenger\Commands\InstallCommand;
 use RTippin\Messenger\Commands\InvitesCheckCommand;
+use RTippin\Messenger\Commands\MakeBotCommand;
 use RTippin\Messenger\Commands\PurgeAudioCommand;
 use RTippin\Messenger\Commands\PurgeBotsCommand;
 use RTippin\Messenger\Commands\PurgeDocumentsCommand;
@@ -108,6 +109,7 @@ class MessengerServiceProvider extends ServiceProvider
             CallsUpCommand::class,
             InstallCommand::class,
             InvitesCheckCommand::class,
+            MakeBotCommand::class,
             PurgeAudioCommand::class,
             PurgeBotsCommand::class,
             PurgeDocumentsCommand::class,
