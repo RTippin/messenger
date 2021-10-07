@@ -144,7 +144,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
         try {
             $this->bots
                 ->initializeHandler($action->handler)
-                ->setDataForMessage(
+                ->setDataForHandler(
                     $this->getThread(),
                     $action,
                     $this->getMessage(),

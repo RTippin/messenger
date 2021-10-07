@@ -155,7 +155,7 @@ abstract class BotActionHandler implements ActionHandler
     /**
      * @inheritDoc
      */
-    public function setDataForMessage(Thread $thread,
+    public function setDataForHandler(Thread $thread,
                                       BotAction $action,
                                       Message $message,
                                       ?string $matchingTrigger = null,

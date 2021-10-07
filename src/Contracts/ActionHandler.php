@@ -58,7 +58,7 @@ interface ActionHandler
      * @param  string|null  $senderIp
      * @return $this
      */
-    public function setDataForMessage(Thread $thread,
+    public function setDataForHandler(Thread $thread,
                                       BotAction $action,
                                       Message $message,
                                       ?string $matchingTrigger = null,

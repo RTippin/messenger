@@ -606,8 +606,8 @@ class MessengerBotsTest extends MessengerTestCase
             ->owner($user)
             ->make();
 
-        $emptyHandler = (new FunBotHandler)->setDataForMessage($thread, $emptyAction, $message);
-        $handler = (new FunBotHandler)->setDataForMessage($thread, $action, $message);
+        $emptyHandler = (new FunBotHandler)->setDataForHandler($thread, $emptyAction, $message);
+        $handler = (new FunBotHandler)->setDataForHandler($thread, $action, $message);
 
         $this->assertNull($emptyHandler->getPayload());
         $this->assertNull($emptyHandler->getPayload('unknown'));
@@ -632,8 +632,8 @@ class MessengerBotsTest extends MessengerTestCase
         $bot = Bot::factory()->for($thread)->owner($user)->make();
         $action = BotAction::factory()->for($bot)->owner($user)->make();
 
-        $handler = (new FunBotHandler)->setDataForMessage($thread, $action, $message, '!command');
-        $emptyHandler = (new FunBotHandler)->setDataForMessage($thread, $action, $message, '!command Do Something Fun');
+        $handler = (new FunBotHandler)->setDataForHandler($thread, $action, $message, '!command');
+        $emptyHandler = (new FunBotHandler)->setDataForHandler($thread, $action, $message, '!command Do Something Fun');
 
         $this->assertSame('Do Something Fun', $handler->getParsedMessage());
         $this->assertSame('do something fun', $handler->getParsedMessage(true));
