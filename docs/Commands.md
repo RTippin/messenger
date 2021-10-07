@@ -91,6 +91,12 @@
 
 ---
 
+### `php artisan messenger:make:bot {name}`
+- Generates a new bot handler class. The class will be placed in your default `App` namespace, under the `Bots` directory. eg: `App\Bots`
+- `name` The name of the generated bot handler class.
+
+---
+
 ## Example Kernel Scheduler using our commands
 ```php
 <?php

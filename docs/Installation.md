@@ -4,8 +4,8 @@
 
 ### Composer
 
-``` bash
-$ composer require rtippin/messenger
+```bash
+composer require rtippin/messenger
 ```
 
 ### Install Command
@@ -13,18 +13,18 @@ $ composer require rtippin/messenger
 - This will also register our published service provider in your `app.php` config file under the providers array.
 - You will be asked to confirm running this command, as well as an option to migrate our tables before completion.
 ```bash
-$ php artisan messenger:install
+php artisan messenger:install
 ```
 
 - If your provider models use UUIDs instead of auto-incrementing integers as their primary keys, use the `--uuids` flag when installing.
 ```bash
-$ php artisan messenger:install --uuids
+php artisan messenger:install --uuids
 ```
 
 ### Migrate
 - If you opted to not migrate while using the `messenger:install` command above, be sure you run it yourself before using our system.
 ```bash
-$ php artisan migrate
+php artisan migrate
 ````
 
 ### Follow the instructions below for setting up your providers

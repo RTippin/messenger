@@ -3,11 +3,17 @@
 
 ---
 
-### [v1.9.0 (xx-xx-2021)]
+### [v1.9.0 (10-07-2021)](https://github.com/RTippin/messenger/compare/v1.8.0...v1.9.0)
 
 #### Added
 - Constants on `MessengerBots` class for all bot matching methods.
-- `getParsedMessage` and `getParsedWords` helpers on `BotActionHandler`|`ActionHandler`
+- `getParsedMessage` and `getParsedWords` helpers on `BotActionHandler`|`ActionHandler`.
+- `php artisan messenger:make:bot {name}` command.
+- `body` state helper on `MessageFactory`.
+
+#### Changed
+- Renamed `setDataForMessage` to `setDataForHandler` on `BotActionHandler`|`ActionHandler`.
+- Implemented helpers on the `BotAction.php` model for triggers and match method that take into account a handler classes overrides before using what is stored in the database.
 
 ---
 

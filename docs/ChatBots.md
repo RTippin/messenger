@@ -70,6 +70,12 @@ class Kernel extends ConsoleKernel
 
 **Create your handler class and extend our [BotActionHandler][link-action-handler] abstract class.**
 
+**You can use the included command to generate the bot handler class:**
+
+```bash
+php artisan messenger:make:bot TestBot
+```
+
 - At the very minimum, your bots class must define a public `handle()` method and a public static `getSettings()` method.
 - Should you need to inject dependencies, you may add your own constructor and type hint any dependencies. Your handler class will be instantiated using laravel's container.
 

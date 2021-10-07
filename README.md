@@ -13,8 +13,8 @@
 ---
 
 ### Prerequisites
-- PHP >= 7.4 | 8.0
-- Laravel >= 8.42
+- PHP `^7.4 || ^8.0`
+- Laravel `^8.42`
 - `SubstituteBindings::class` route model binding enabled in your API / WEB middleware groups.
 - Configure your laravel apps broadcast driver, and set up your own websocket implementation, should you choose to listen in on our realtime broadcast.
 
@@ -63,8 +63,8 @@
 
 ### Composer
 
-``` bash
-$ composer require rtippin/messenger
+```bash
+composer require rtippin/messenger
 ```
 
 ### To complete our setup, please refer to the installation documentation listed below:
