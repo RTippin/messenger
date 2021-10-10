@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Messages\ArchiveMessage;
@@ -25,13 +26,15 @@ class ArchiveMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_soft_deletes_message()
+    public function it_soft_deletes_message_and_removes_from_reply_cache()
     {
         $thread = Thread::factory()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        $cache = Cache::spy();
 
         app(ArchiveMessage::class)->execute($thread, $message);
 
+        $cache->shouldHaveReceived('forget')->with('reply:message:'.$message->id);
         $this->assertSoftDeleted('messages', [
             'id' => $message->id,
         ]);

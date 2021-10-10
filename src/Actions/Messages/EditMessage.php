@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Actions\Messages;
 
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\MessageEditedBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
@@ -92,6 +93,8 @@ class EditMessage extends BaseMessengerAction
             ->generateResource();
 
         if ($this->getMessage()->wasChanged()) {
+            Cache::forget(Message::getReplyMessageCacheKey($this->getMessage()->id));
+
             $this->fireBroadcast()->fireEvents();
         }
 
@@ -131,7 +134,9 @@ class EditMessage extends BaseMessengerAction
      */
     private function executeTransactions(string $body): self
     {
-        if ($this->getMessage()->body !== $newBody = $this->emoji->toShort($body)) {
+        $newBody = $this->emoji->toShort($body);
+
+        if ($this->getMessage()->body !== $newBody) {
             $this->originalBody = $this->getMessage()->body;
 
             $this->getMessage()->update([

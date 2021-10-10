@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\MessageFactory;
 use RTippin\Messenger\Facades\Messenger;
@@ -158,6 +159,15 @@ class Message extends Model implements Ownerable
     ];
 
     /**
+     * @param  string  $messageId
+     * @return string
+     */
+    public static function getReplyMessageCacheKey(string $messageId): string
+    {
+        return "reply:message:$messageId";
+    }
+
+    /**
      * @return BelongsTo|Thread
      */
     public function thread(): BelongsTo
@@ -268,6 +278,22 @@ class Message extends Model implements Ownerable
     public function scopeVideo(Builder $query): Builder
     {
         return $query->where('type', '=', self::VIDEO_MESSAGE);
+    }
+
+    /**
+     * @return Message|null
+     */
+    public function getReplyMessage(): ?Message
+    {
+        if (is_null($this->reply_to_id)) {
+            return null;
+        }
+
+        return Cache::remember(
+            self::getReplyMessageCacheKey($this->reply_to_id),
+            now()->addWeek(),
+            fn () => optional($this->replyTo)->load('owner')
+        );
     }
 
     /**

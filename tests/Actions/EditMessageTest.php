@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Messages\EditMessage;
@@ -33,15 +34,17 @@ class EditMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_updates_message_and_stores_edit()
+    public function it_updates_message_and_stores_edit_while_resetting_message_reply_cache()
     {
         $thread = Thread::factory()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => 'Original']);
         $editedAt = now()->addMinutes(5)->format('Y-m-d H:i:s.u');
+        $cache = Cache::spy();
         Carbon::setTestNow($editedAt);
 
         app(EditMessage::class)->execute($thread, $message, 'Edited');
 
+        $cache->shouldHaveReceived('forget')->with('reply:message:'.$message->id);
         $this->assertDatabaseHas('messages', [
             'id' => $message->id,
             'body' => 'Edited',
@@ -88,7 +91,7 @@ class EditMessageTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_doesnt_fire_events_if_message_does_not_change()
+    public function it_doesnt_fire_events_or_reset_cache_key_if_message_does_not_change()
     {
         BaseMessengerAction::enableEvents();
         Event::fake([
@@ -97,9 +100,11 @@ class EditMessageTest extends FeatureTestCase
         ]);
         $thread = Thread::factory()->create();
         $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => 'Unchanged']);
+        $cache = Cache::spy();
 
         app(EditMessage::class)->execute($thread, $message, 'Unchanged');
 
+        $cache->shouldNotHaveReceived('forget');
         $this->assertDatabaseCount('message_edits', 0);
         Event::assertNotDispatched(MessageEditedBroadcast::class);
         Event::assertNotDispatched(MessageEditedEvent::class);

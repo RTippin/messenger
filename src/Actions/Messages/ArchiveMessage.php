@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Actions\Messages;
 
 use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\MessageArchivedBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
@@ -73,6 +74,8 @@ class ArchiveMessage extends BaseMessengerAction
     private function archiveMessage(): self
     {
         $this->getMessage()->delete();
+
+        Cache::forget(Message::getReplyMessageCacheKey($this->getMessage()->id));
 
         return $this;
     }

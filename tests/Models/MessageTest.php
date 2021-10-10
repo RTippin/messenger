@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Models;
 
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Bot;
@@ -77,7 +78,8 @@ class MessageTest extends FeatureTestCase
     public function it_has_relations()
     {
         $thread = Thread::factory()->create();
-        $message = Message::factory()->for($thread)->owner($this->tippin)->create();
+        $reply = Message::factory()->for($thread)->owner($this->tippin)->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->reply($reply->id)->create();
 
         $this->assertSame($this->tippin->getKey(), $message->owner->getKey());
         $this->assertSame($thread->id, $message->thread->id);
@@ -85,6 +87,7 @@ class MessageTest extends FeatureTestCase
         $this->assertInstanceOf(MessengerProvider::class, $message->owner);
         $this->assertInstanceOf(Collection::class, $message->edits);
         $this->assertInstanceOf(Collection::class, $message->reactions);
+        $this->assertInstanceOf(Message::class, $message->replyTo);
     }
 
     /** @test */
@@ -117,6 +120,34 @@ class MessageTest extends FeatureTestCase
         )->owner($this->tippin)->create();
 
         $this->assertSame('user.'.$this->tippin->getKey(), $message->getOwnerPrivateChannel());
+    }
+
+    /** @test */
+    public function it_has_reply_message_cache_key()
+    {
+        $thread = Thread::factory()->create();
+        $reply = Message::factory()->for($thread)->owner($this->tippin)->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->reply($reply->id)->create();
+
+        $this->assertSame(Message::getReplyMessageCacheKey($message->reply_to_id), "reply:message:$reply->id");
+        $this->assertSame(Message::getReplyMessageCacheKey('1234'), 'reply:message:1234');
+    }
+
+    /** @test */
+    public function it_caches_reply_message()
+    {
+        $thread = Thread::factory()->create();
+        $reply = Message::factory()->for($thread)->owner($this->tippin)->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->reply($reply->id)->create();
+        $cache = Cache::spy();
+        $cache->shouldReceive('remember')->andReturn($reply);
+
+        $replyMessage = $message->getReplyMessage();
+
+        $this->assertInstanceOf(Message::class, $replyMessage);
+        $this->assertSame($reply->id, $replyMessage->id);
+        $cache->shouldHaveReceived('remember');
+        $this->assertNull($reply->getReplyMessage());
     }
 
     /** @test */

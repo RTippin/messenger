@@ -102,7 +102,7 @@ class MessageResource extends JsonResource
             $this->mergeWhen($this->message->isImage(),
                 fn () => $this->linksForImage()
             ),
-            $this->mergeWhen($this->addRelatedItems && ! is_null($this->message->reply_to_id),
+            $this->mergeWhen($this->addRelatedItems,
                 fn () => $this->addReplyToMessage()
             ),
         ];
@@ -113,11 +113,17 @@ class MessageResource extends JsonResource
      */
     public function addReplyToMessage(): array
     {
+        if (is_null($this->message->reply_to_id)) {
+            return [];
+        }
+
+        $reply = $this->message->getReplyMessage();
+
         return [
             'reply_to_id' => $this->message->reply_to_id,
-            'reply_to' => ! is_null($this->message->replyTo)
+            'reply_to' => ! is_null($reply)
                 ? (new MessageResource(
-                    $this->message->replyTo,
+                    $reply,
                     $this->thread
                 ))->resolve()
                 : null,
