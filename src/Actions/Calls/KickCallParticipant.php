@@ -62,6 +62,10 @@ class KickCallParticipant extends CallParticipantAction
             );
 
         if ($this->getCallParticipant()->wasChanged()) {
+            if ($kicked) {
+                $this->removeParticipantInCallCache($participant);
+            }
+
             $this->fireBroadcast()->fireEvents();
         }
 

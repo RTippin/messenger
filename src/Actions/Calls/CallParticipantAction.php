@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Actions\Calls;
 
-use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Models\CallParticipant;
@@ -53,7 +52,7 @@ abstract class CallParticipantAction extends BaseMessengerAction
      */
     protected function setParticipantInCallCache(CallParticipant $participant): self
     {
-        Cache::put("call:{$this->getCall()->id}:$participant->id", true, 60);
+        $participant->setParticipantInCallCache();
 
         return $this;
     }
@@ -66,7 +65,7 @@ abstract class CallParticipantAction extends BaseMessengerAction
      */
     protected function removeParticipantInCallCache(CallParticipant $participant): self
     {
-        Cache::forget("call:{$this->getCall()->id}:$participant->id");
+        $participant->removeParticipantInCallCache();
 
         return $this;
     }

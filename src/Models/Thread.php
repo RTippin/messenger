@@ -349,26 +349,21 @@ class Thread extends Model implements HasPresenceChannel
             return $this->recipientCache;
         }
 
-        if (! $this->hasCurrentProvider()) {
+        if ($this->isGroup() || ! $this->hasCurrentProvider()) {
             return $this->recipientCache = Messenger::getGhostParticipant($this->id);
         }
 
-        /** @var Participant $recipient */
-        $recipient = null;
-
-        if ($this->isPrivate()) {
-            if ($this->relationLoaded('participants')) {
-                $recipient = $this->participants
-                    ->where('id', '!=', $this->currentParticipant()->id)
-                    ->first();
-            } else {
-                $recipient = $this->participants()
-                    ->notProvider(Messenger::getProvider())
-                    ->first();
-            }
+        if ($this->relationLoaded('participants')) {
+            $recipient = $this->participants
+                ->where('id', '!=', $this->currentParticipant()->id)
+                ->first();
+        } else {
+            $recipient = $this->participants()
+                ->notProvider(Messenger::getProvider())
+                ->first();
         }
 
-        return $this->recipientCache = ($recipient
+        return $this->recipientCache = (! is_null($recipient)
             && Messenger::isValidMessengerProvider($recipient->owner))
             ? $recipient
             : Messenger::getGhostParticipant($this->id);
@@ -414,17 +409,13 @@ class Thread extends Model implements HasPresenceChannel
             return $this->nameCache;
         }
 
-        $name = 'Conversation';
-
-        if ($this->isPrivate()) {
-            $name = $this->recipient()->owner->getProviderName();
-        } elseif ($this->isGroup()) {
-            $name = $this->subject;
+        if ($this->isGroup()) {
+            $name = $this->subject ?: 'Group';
+        } else {
+            $name = $this->recipient()->owner->getProviderName() ?: 'Conversation';
         }
 
-        $this->nameCache = htmlspecialchars($name);
-
-        return $this->nameCache;
+        return $this->nameCache = htmlspecialchars($name);
     }
 
     /**

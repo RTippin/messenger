@@ -118,6 +118,18 @@ class BotActionTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_has_cooldown_cache_key()
+    {
+        $action = BotAction::factory()->for(
+            Bot::factory()->for(
+                Thread::factory()->group()->create()
+            )->owner($this->tippin)->create()
+        )->owner($this->tippin)->create();
+
+        $this->assertSame("bot:$action->bot_id:$action->id:cooldown", $action->getCooldownCacheKey());
+    }
+
+    /** @test */
     public function it_can_set_cooldown()
     {
         $action = BotAction::factory()->for(

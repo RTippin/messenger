@@ -193,13 +193,21 @@ class BotAction extends Model implements Ownerable
     }
 
     /**
+     * @return string
+     */
+    public function getCooldownCacheKey(): string
+    {
+        return "bot:$this->bot_id:$this->id:cooldown";
+    }
+
+    /**
      * Does the action have an active cooldown?
      *
      * @return bool
      */
     public function isOnCooldown(): bool
     {
-        return Cache::has("bot:$this->bot_id:$this->id:cooldown");
+        return Cache::has($this->getCooldownCacheKey());
     }
 
     /**
@@ -238,7 +246,7 @@ class BotAction extends Model implements Ownerable
     public function startCooldown(): void
     {
         if ($this->cooldown > 0) {
-            Cache::put("bot:$this->bot_id:$this->id:cooldown", true, now()->addSeconds($this->cooldown));
+            Cache::put($this->getCooldownCacheKey(), true, now()->addSeconds($this->cooldown));
         }
     }
 
@@ -247,7 +255,7 @@ class BotAction extends Model implements Ownerable
      */
     public function releaseCooldown(): void
     {
-        Cache::forget("bot:$this->bot_id:$this->id:cooldown");
+        Cache::forget($this->getCooldownCacheKey());
     }
 
     /**

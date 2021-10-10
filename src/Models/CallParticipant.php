@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\CallParticipantFactory;
 use RTippin\Messenger\Traits\HasOwner;
@@ -83,6 +84,40 @@ class CallParticipant extends Model implements Ownerable
     public function scopeInCall(Builder $query): Builder
     {
         return $query->whereNull('left_call');
+    }
+
+    /**
+     * @return string
+     */
+    public function getParticipantInCallCacheKey(): string
+    {
+        return "call:$this->call_id:$this->id";
+    }
+
+    /**
+     * @return bool
+     */
+    public function isParticipantInCallCache(): bool
+    {
+        return Cache::has($this->getParticipantInCallCacheKey());
+    }
+
+    /**
+     * Put the participant's key in cache so that we may tell if they
+     * left the call or became inactive without a proper post to the
+     * backend (left_call null).
+     */
+    public function setParticipantInCallCache(): void
+    {
+        Cache::put($this->getParticipantInCallCacheKey(), true, 60);
+    }
+
+    /**
+     * Remove the participant's key from cache.
+     */
+    public function removeParticipantInCallCache(): void
+    {
+        Cache::forget($this->getParticipantInCallCacheKey());
     }
 
     /**

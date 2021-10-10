@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Actions\Calls;
 
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\CallParticipant;
@@ -95,7 +94,7 @@ class CallActivityChecker extends BaseMessengerAction
      */
     private function removeIfNotInCache(Call $call, CallParticipant $participant): void
     {
-        if (! Cache::has("call:$call->id:$participant->id")) {
+        if (! $participant->isParticipantInCallCache()) {
             $this->leaveCall->execute($call, $participant);
         }
     }

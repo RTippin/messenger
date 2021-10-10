@@ -27,14 +27,18 @@ class KickCallParticipantTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_updates_participant_kicked_true()
+    public function it_updates_participant_kicked_true_and_removes_participant_cache_key()
     {
         $call = Call::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->setup()->create();
         $participant = CallParticipant::factory()->for($call)->owner($this->doe)->create();
         Carbon::setTestNow($left = now()->addMinutes(5));
+        $participant->setParticipantInCallCache();
+
+        $this->assertTrue($participant->isParticipantInCallCache());
 
         app(KickCallParticipant::class)->execute($call, $participant, true);
 
+        $this->assertFalse($participant->isParticipantInCallCache());
         $this->assertDatabaseHas('call_participants', [
             'id' => $participant->id,
             'kicked' => true,

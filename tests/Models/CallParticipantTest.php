@@ -112,17 +112,60 @@ class CallParticipantTest extends FeatureTestCase
     /** @test */
     public function it_cast_attributes()
     {
-        CallParticipant::factory()->for(
+        $participant = CallParticipant::factory()->for(
             Call::factory()->for(
                 Thread::factory()->create()
             )->owner($this->tippin)->create()
         )->owner($this->tippin)->left()->create();
 
-        $participant = CallParticipant::first();
-
         $this->assertInstanceOf(Carbon::class, $participant->created_at);
         $this->assertInstanceOf(Carbon::class, $participant->updated_at);
         $this->assertInstanceOf(Carbon::class, $participant->left_call);
         $this->assertFalse($participant->kicked);
+    }
+
+    /** @test */
+    public function it_has_call_participant_cache_key()
+    {
+        $participant = CallParticipant::factory()->for(
+            Call::factory()->for(
+                Thread::factory()->create()
+            )->owner($this->tippin)->create()
+        )->owner($this->tippin)->left()->create();
+
+        $this->assertSame("call:$participant->call_id:$participant->id", $participant->getParticipantInCallCacheKey());
+    }
+
+    /** @test */
+    public function it_sets_call_participant_in_cache()
+    {
+        $participant = CallParticipant::factory()->for(
+            Call::factory()->for(
+                Thread::factory()->create()
+            )->owner($this->tippin)->create()
+        )->owner($this->tippin)->left()->create();
+
+        $this->assertFalse($participant->isParticipantInCallCache());
+
+        $participant->setParticipantInCallCache();
+
+        $this->assertTrue($participant->isParticipantInCallCache());
+    }
+
+    /** @test */
+    public function it_removes_call_participant_in_cache()
+    {
+        $participant = CallParticipant::factory()->for(
+            Call::factory()->for(
+                Thread::factory()->create()
+            )->owner($this->tippin)->create()
+        )->owner($this->tippin)->left()->create();
+
+        $participant->setParticipantInCallCache();
+        $this->assertTrue($participant->isParticipantInCallCache());
+
+        $participant->removeParticipantInCallCache();
+        $this->assertFalse($participant->isParticipantInCallCache());
+
     }
 }

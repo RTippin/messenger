@@ -158,7 +158,7 @@ class Bot extends Model implements MessengerProvider, Ownerable
      */
     public function getProviderName(): string
     {
-        return strip_tags($this->name);
+        return htmlspecialchars($this->name);
     }
 
     /**
@@ -249,13 +249,21 @@ class Bot extends Model implements MessengerProvider, Ownerable
     }
 
     /**
+     * @return string
+     */
+    public function getCooldownCacheKey(): string
+    {
+        return "bot:$this->id:cooldown";
+    }
+
+    /**
      * Does the bot have an active cooldown?
      *
      * @return bool
      */
     public function isOnCooldown(): bool
     {
-        return Cache::has("bot:$this->id:cooldown");
+        return Cache::has($this->getCooldownCacheKey());
     }
 
     /**
@@ -274,7 +282,7 @@ class Bot extends Model implements MessengerProvider, Ownerable
     public function startCooldown(): void
     {
         if ($this->cooldown > 0) {
-            Cache::put("bot:$this->id:cooldown", true, now()->addSeconds($this->cooldown));
+            Cache::put($this->getCooldownCacheKey(), true, now()->addSeconds($this->cooldown));
         }
     }
 
@@ -283,7 +291,7 @@ class Bot extends Model implements MessengerProvider, Ownerable
      */
     public function releaseCooldown(): void
     {
-        Cache::forget("bot:$this->id:cooldown");
+        Cache::forget($this->getCooldownCacheKey());
     }
 
     /**
