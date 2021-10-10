@@ -166,6 +166,5 @@ class CallParticipantTest extends FeatureTestCase
 
         $participant->removeParticipantInCallCache();
         $this->assertFalse($participant->isParticipantInCallCache());
-
     }
 }
