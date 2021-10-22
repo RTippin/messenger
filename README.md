@@ -51,6 +51,7 @@
 - Better image manipulation / saving of multiple sizes.
 - Encryption of messages (E2E is the long term goal).
 - Translations for internal messages.
+- Pinned messages.
 
 ### Notes
 - Read through our [`messenger.php`][link-config] config file before migrating!

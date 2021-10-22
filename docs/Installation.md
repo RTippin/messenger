@@ -179,12 +179,26 @@ class User extends Authenticatable implements MessengerProvider
 ```php
 //User
 return [
+    'alias' => 'user',
+    'searchable' => true,
+    'friendable' => true,
+    'devices' => true,
+    'default_avatar' => public_path('vendor/messenger/images/users.png'),
     'cant_message_first' => [Company::class],
+    'cant_search' => [],
+    'cant_friend' => [],
 ];
 
 //Company
 return [
+    'alias' => 'company',
+    'searchable' => true,
+    'friendable' => true,
+    'devices' => false,
+    'default_avatar' => public_path('vendor/messenger/images/company.png'),
     'cant_message_first' => [], //no restrictions
+    'cant_search' => [],
+    'cant_friend' => [],
 ];
 ```
 
@@ -195,12 +209,26 @@ return [
 ```php
 //User
 return [
+    'alias' => 'user',
+    'searchable' => true,
+    'friendable' => true,
+    'devices' => true,
+    'default_avatar' => public_path('vendor/messenger/images/users.png'),
+    'cant_message_first' => [],
     'cant_search' => [Company::class],
+    'cant_friend' => [],
 ];
 
 //Company
 return [
+    'alias' => 'company',
+    'searchable' => true,
+    'friendable' => true,
+    'devices' => false,
+    'default_avatar' => public_path('vendor/messenger/images/company.png'),
+    'cant_message_first' => [],
     'cant_search' => [], //no restrictions
+    'cant_friend' => [],
 ];
 ```
 
@@ -211,11 +239,25 @@ return [
 ```php
 //User
 return [
+    'alias' => 'user',
+    'searchable' => true,
+    'friendable' => true,
+    'devices' => true,
+    'default_avatar' => public_path('vendor/messenger/images/users.png'),
+    'cant_message_first' => [],
+    'cant_search' => [],
     'cant_friend' => [Company::class],
 ];
 
 //Company
 return [
+    'alias' => 'company',
+    'searchable' => true,
+    'friendable' => true,
+    'devices' => false,
+    'default_avatar' => public_path('vendor/messenger/images/company.png'),
+    'cant_message_first' => [],
+    'cant_search' => [],
     'cant_friend' => [], //no restrictions
 ];
 ```
@@ -289,7 +331,8 @@ public function getProviderAvatarColumn(): string
 ## Messenger Model
 - Our [Messenger.php][link-messenger-model] model allows your providers to have individual "settings", such as online status and notification sound toggles.
 - We also use a `whereHasMorph` query through our `messengers` table, letting your providers search for others through our API.
-- By default, the `Messenger` model will be created if it does not exist for a provider using our API. However, you should attach this model yourself anytime one of your providers is created.
+- By default, the `Messenger` model will be created if it does not exist for a provider when accessing the `messenger/heartbeat` or `messenger/settings` API.
+- To ensure your providers are kept in sync, it is best that you attach the messenger model yourself anytime one of your providers is created.
 
 ---
 
@@ -333,7 +376,7 @@ $user = User::create([
 Messenger::factory()->owner($user)->create();
 ```
 
-#### For your model factories, you can implement the `configure` `afterCreating` method to attach the messenger model
+#### For your model factories, you can implement the `afterCreating` hook in the `configure` method to attach the messenger model
 ***Example using a User model factory***
 ```php
 <?php
