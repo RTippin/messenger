@@ -3,6 +3,21 @@
 
 ---
 
+### [v1.10.0 (10-22-2021)](https://github.com/RTippin/messenger/compare/v1.9.0...v1.10.0)
+
+#### Added
+- Caching to a `Messages`'s `replyTo` relation.
+- Updating or archiving a message will reset the `replyTo` cache key.
+
+#### Changed
+- Moved cache methods and keys to model helpers.
+- `Bot` name method now uses `htmlspecialchars`.
+
+#### Removed
+- `CallHeartbeat.php` action class. 
+
+---
+
 ### [v1.9.0 (10-07-2021)](https://github.com/RTippin/messenger/compare/v1.8.0...v1.9.0)
 
 #### Added
