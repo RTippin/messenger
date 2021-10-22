@@ -124,7 +124,7 @@ class MessageResource extends JsonResource
             'reply_to' => ! is_null($reply)
                 ? (new MessageResource(
                     $reply,
-                    $this->thread
+                    $this->thread->withoutRelations()
                 ))->resolve()
                 : null,
         ];
