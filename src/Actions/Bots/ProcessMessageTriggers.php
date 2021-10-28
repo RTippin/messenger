@@ -98,7 +98,9 @@ class ProcessMessageTriggers extends BaseMessengerAction
 
         $this->setThread($thread)->setMessage($message);
 
-        $this->getBotActions()->each(fn (BotAction $action) => $this->matchActionTriggers($action));
+        BotAction::getValidWithBotFromThread($this->getThread()->id)->each(
+            fn (BotAction $action) => $this->matchActionTriggers($action)
+        );
 
         $this->startTriggeredBotCooldowns();
 
@@ -170,14 +172,6 @@ class ProcessMessageTriggers extends BaseMessengerAction
         if (! $this->messenger->isBotsEnabled()) {
             throw new FeatureDisabledException('Bots are currently disabled.');
         }
-    }
-
-    /**
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    private function getBotActions(): \Illuminate\Database\Eloquent\Collection
-    {
-        return BotAction::validFromThread($this->getThread()->id)->with('bot')->get();
     }
 
     /**

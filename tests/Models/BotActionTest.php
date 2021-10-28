@@ -2,7 +2,9 @@
 
 namespace RTippin\Messenger\Tests\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Facades\MessengerBots;
@@ -239,5 +241,48 @@ class BotActionTest extends FeatureTestCase
 
         $this->assertSame(['!test', '!more'], $action->getTriggers());
         $this->assertSame('exact:caseless', $action->getMatchMethod());
+    }
+
+    /** @test */
+    public function it_has_actions_for_thread_cache_key()
+    {
+        $this->assertSame('thread:1234-5678:bots:with:actions', BotAction::getActionsForThreadCacheKey('1234-5678'));
+    }
+
+    /** @test */
+    public function it_caches_valid_actions_for_thread()
+    {
+        $thread = Thread::factory()->group()->create();
+        $actions = BotAction::factory()->for(
+            Bot::factory()->for($thread)->owner($this->tippin)->create()
+        )
+            ->owner($this->tippin)
+            ->count(3)
+            ->create();
+        $cache = Cache::spy();
+        $cache->shouldReceive('remember')->andReturn($actions);
+
+        $getActions = BotAction::getValidWithBotFromThread($thread->id);
+
+        $this->assertInstanceOf(Collection::class, $getActions);
+        $this->assertSame(3, $getActions->count());
+        $cache->shouldHaveReceived('remember');
+    }
+
+    /** @test */
+    public function it_clears_valid_actions_for_thread_cache()
+    {
+        $thread = Thread::factory()->group()->create();
+        BotAction::factory()->for(
+            Bot::factory()->for($thread)->owner($this->tippin)->create()
+        )
+            ->owner($this->tippin)
+            ->create();
+
+        BotAction::getValidWithBotFromThread($thread->id);
+        $this->assertTrue(Cache::has(BotAction::getActionsForThreadCacheKey($thread->id)));
+
+        BotAction::clearValidCacheForThread($thread->id);
+        $this->assertFalse(Cache::has(BotAction::getActionsForThreadCacheKey($thread->id)));
     }
 }

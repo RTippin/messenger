@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Models;
 
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -77,6 +78,36 @@ class BotAction extends Model implements Ownerable
         'enabled' => 'boolean',
         'cooldown' => 'integer',
     ];
+
+    /**
+     * @param  string  $threadId
+     * @return string
+     */
+    public static function getActionsForThreadCacheKey(string $threadId): string
+    {
+        return "thread:$threadId:bots:with:actions";
+    }
+
+    /**
+     * @param  string  $threadId
+     */
+    public static function clearValidCacheForThread(string $threadId): void
+    {
+        Cache::forget(self::getActionsForThreadCacheKey($threadId));
+    }
+
+    /**
+     * @param  string  $threadId
+     * @return Collection
+     */
+    public static function getValidWithBotFromThread(string $threadId): Collection
+    {
+        return Cache::remember(
+            self::getActionsForThreadCacheKey($threadId),
+            now()->addDay(),
+            fn () => self::validFromThread($threadId)->with('bot')->get()
+        );
+    }
 
     /**
      * @return BelongsTo|Bot
