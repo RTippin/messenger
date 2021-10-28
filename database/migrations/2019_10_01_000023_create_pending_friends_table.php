@@ -16,8 +16,8 @@ class CreatePendingFriendsTable extends Migration
     {
         Schema::create('pending_friends', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            Helpers::SchemaMorphType('sender', $table);
-            Helpers::SchemaMorphType('recipient', $table);
+            Helpers::schemaMorphType('sender', $table);
+            Helpers::schemaMorphType('recipient', $table);
             $table->timestamps();
         });
     }

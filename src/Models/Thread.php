@@ -432,7 +432,7 @@ class Thread extends Model implements HasPresenceChannel
      */
     public function getThreadAvatarRoute(string $size = 'sm'): ?string
     {
-        return Helpers::Route('assets.messenger.threads.avatar.render',
+        return Helpers::route('assets.messenger.threads.avatar.render',
             [
                 'thread' => $this->id,
                 'size' => $size,
@@ -639,7 +639,7 @@ class Thread extends Model implements HasPresenceChannel
     {
         return $this->hasCurrentProvider()
             && (is_null($this->currentParticipant()->last_read)
-                || Helpers::PrecisionTime($this->updated_at) > Helpers::PrecisionTime($this->currentParticipant()->last_read));
+                || Helpers::precisionTime($this->updated_at) > Helpers::precisionTime($this->currentParticipant()->last_read));
     }
 
     /**
@@ -656,7 +656,7 @@ class Thread extends Model implements HasPresenceChannel
         $this->unreadCountCache = is_null($this->currentParticipant()->last_read)
             ? $this->messages()->count()
             : $this->messages()
-                ->where('created_at', '>', Helpers::PrecisionTime($this->currentParticipant()->last_read))
+                ->where('created_at', '>', Helpers::precisionTime($this->currentParticipant()->last_read))
                 ->count();
 
         return $this->unreadCountCache;

@@ -17,7 +17,7 @@ class CreateCallsTable extends Migration
         Schema::create('calls', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('thread_id');
-            Helpers::SchemaMorphType('owner', $table);
+            Helpers::schemaMorphType('owner', $table);
             $table->integer('type')->default(1);
             $table->boolean('setup_complete')->default(false);
             $table->boolean('teardown_complete')->default(false);

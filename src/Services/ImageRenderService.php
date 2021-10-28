@@ -20,44 +20,29 @@ class ImageRenderService
     /**
      * Extensions we do not want to send through to intervention.
      */
-    const IGNORED_EXTENSIONS = [
+    public const IGNORED_EXTENSIONS = [
         'gif',
         'svg',
         'webp',
     ];
 
-    /**
-     * @var Messenger
-     */
     private Messenger $messenger;
 
-    /**
-     * @var FilesystemManager
-     */
     private FilesystemManager $filesystemManager;
 
-    /**
-     * @var ResponseFactory
-     */
     private ResponseFactory $responseFactory;
 
-    /**
-     * @var ImageManager
-     */
     private ImageManager $imageManager;
 
     /**
      * ImageRenderService constructor.
-     *
-     * @param  Messenger  $messenger
-     * @param  FilesystemManager  $filesystemManager
-     * @param  ResponseFactory  $responseFactory
-     * @param  ImageManager  $imageManager
      */
-    public function __construct(Messenger $messenger,
-                                FilesystemManager $filesystemManager,
-                                ResponseFactory $responseFactory,
-                                ImageManager $imageManager)
+    public function __construct(
+        Messenger $messenger,
+        FilesystemManager $filesystemManager,
+        ResponseFactory $responseFactory,
+        ImageManager $imageManager
+    )
     {
         $this->messenger = $messenger;
         $this->filesystemManager = $filesystemManager;
@@ -66,30 +51,28 @@ class ImageRenderService
     }
 
     /**
-     * @param  string  $alias
-     * @param  string  $id
-     * @param  string  $size
-     * @param  string  $image
-     * @return StreamedResponse|BinaryFileResponse
-     *
      * @throws FileNotFoundException
+     *
+     * @return BinaryFileResponse|StreamedResponse
      */
-    public function renderProviderAvatar(string $alias,
-                                         string $id,
-                                         string $size,
-                                         string $image)
+    public function renderProviderAvatar(
+        string $alias,
+        string $id,
+        string $size,
+        string $image
+    )
     {
-        $avatar = "{$this->messenger->getAvatarStorage('directory')}/$alias/$id/$image";
+        $avatar = "{$this->messenger->getAvatarStorage('directory')}/{$alias}/{$id}/{$image}";
 
         $disk = $this->messenger->getAvatarStorage('disk');
 
-        if (! $this->filesystemManager->disk($disk)->exists($avatar)) {
+        if (!$this->filesystemManager->disk($disk)->exists($avatar)) {
             return $this->renderDefaultImage($alias);
         }
 
         $extension = pathinfo($this->filesystemManager->disk($disk)->path($avatar), PATHINFO_EXTENSION);
 
-        if ($this->shouldResize($extension) && $size !== 'lg') {
+        if ($this->shouldResize($extension) && 'lg' !== $size) {
             return $this->renderImageSize(
                 $this->filesystemManager->disk($disk)->get($avatar),
                 $size
@@ -102,20 +85,19 @@ class ImageRenderService
     }
 
     /**
-     * @param  Message  $message
-     * @param  string  $size
-     * @param  string  $fileNameChallenge
-     * @return BinaryFileResponse|StreamedResponse
-     *
      * @throws FileNotFoundException
+     *
+     * @return BinaryFileResponse|StreamedResponse
      */
-    public function renderMessageImage(Message $message,
-                                       string $size,
-                                       string $fileNameChallenge)
+    public function renderMessageImage(
+        Message $message,
+        string $size,
+        string $fileNameChallenge
+    )
     {
-        if (! $message->isImage()
+        if (!$message->isImage()
             || $fileNameChallenge !== $message->body
-            || ! $this->filesystemManager
+            || !$this->filesystemManager
                 ->disk($message->getStorageDisk())
                 ->exists($message->getImagePath())) {
             return $this->renderDefaultImage();
@@ -123,7 +105,7 @@ class ImageRenderService
 
         $extension = pathinfo($this->filesystemManager->disk($message->getStorageDisk())->path($message->getImagePath()), PATHINFO_EXTENSION);
 
-        if ($this->shouldResize($extension) && $size !== 'lg') {
+        if ($this->shouldResize($extension) && 'lg' !== $size) {
             return $this->renderImageSize(
                 $this->filesystemManager
                     ->disk($message->getStorageDisk())
@@ -138,24 +120,23 @@ class ImageRenderService
     }
 
     /**
-     * @param  Thread  $thread
-     * @param  string  $size
-     * @param  string  $fileNameChallenge
-     * @return StreamedResponse|BinaryFileResponse
-     *
      * @throws FileNotFoundException
+     *
+     * @return BinaryFileResponse|StreamedResponse
      */
-    public function renderGroupAvatar(Thread $thread,
-                                      string $size,
-                                      string $fileNameChallenge)
+    public function renderGroupAvatar(
+        Thread $thread,
+        string $size,
+        string $fileNameChallenge
+    )
     {
-        if (! $thread->isGroup()
+        if (!$thread->isGroup()
             || is_null($thread->image)
             || $fileNameChallenge !== $thread->image) {
             return $this->renderDefaultImage('thread');
         }
 
-        if (! $this->filesystemManager
+        if (!$this->filesystemManager
             ->disk($thread->getStorageDisk())
             ->exists($thread->getAvatarPath())) {
             return $this->renderDefaultImage();
@@ -163,7 +144,7 @@ class ImageRenderService
 
         $extension = pathinfo($this->filesystemManager->disk($thread->getStorageDisk())->path($thread->getAvatarPath()), PATHINFO_EXTENSION);
 
-        if ($this->shouldResize($extension) && $size !== 'lg') {
+        if ($this->shouldResize($extension) && 'lg' !== $size) {
             return $this->renderImageSize(
                 $this->filesystemManager
                     ->disk($thread->getStorageDisk())
@@ -178,22 +159,21 @@ class ImageRenderService
     }
 
     /**
-     * @param  Bot  $bot
-     * @param  string  $size
-     * @param  string  $fileNameChallenge
-     * @return StreamedResponse|BinaryFileResponse
-     *
      * @throws FileNotFoundException
+     *
+     * @return BinaryFileResponse|StreamedResponse
      */
-    public function renderBotAvatar(Bot $bot,
-                                    string $size,
-                                    string $fileNameChallenge)
+    public function renderBotAvatar(
+        Bot $bot,
+        string $size,
+        string $fileNameChallenge
+    )
     {
         if ($fileNameChallenge !== $bot->avatar) {
             return $this->renderDefaultImage('bot');
         }
 
-        if (! $this->filesystemManager
+        if (!$this->filesystemManager
             ->disk($bot->getStorageDisk())
             ->exists($bot->getAvatarPath())) {
             return $this->renderDefaultImage('bot');
@@ -201,7 +181,7 @@ class ImageRenderService
 
         $extension = pathinfo($this->filesystemManager->disk($bot->getStorageDisk())->path($bot->getAvatarPath()), PATHINFO_EXTENSION);
 
-        if ($this->shouldResize($extension) && $size !== 'lg') {
+        if ($this->shouldResize($extension) && 'lg' !== $size) {
             return $this->renderImageSize(
                 $this->filesystemManager
                     ->disk($bot->getStorageDisk())
@@ -215,28 +195,30 @@ class ImageRenderService
             ->response($bot->getAvatarPath());
     }
 
-    /**
-     * @param  string|null  $alias
-     * @return BinaryFileResponse
-     */
     private function renderDefaultImage(?string $alias = null): BinaryFileResponse
     {
         switch ($alias) {
             case 'ghost':
                 $default = $this->messenger->getDefaultGhostAvatar();
+
             break;
+
             case 'bot':
                 $default = $this->messenger->getDefaultBotAvatar();
+
             break;
+
             case 'thread':
                 $default = $this->messenger->getDefaultThreadAvatar();
+
             break;
+
             default: $default = is_null($alias)
                 ? null
                 : $this->messenger->getProviderDefaultAvatarPath($alias);
         }
 
-        if (! is_null($default) && file_exists($default)) {
+        if (!is_null($default) && file_exists($default)) {
             return $this->responseFactory->file($default);
         }
 
@@ -244,8 +226,6 @@ class ImageRenderService
     }
 
     /**
-     * @param  string  $file
-     * @param  string  $size
      * @return BinaryFileResponse|Response
      */
     private function renderImageSize(string $file, string $size)
@@ -254,7 +234,7 @@ class ImageRenderService
             $width = 150;
             $height = 150;
 
-            if ($size === 'md') {
+            if ('md' === $size) {
                 $width = 300;
                 $height = 300;
             }
@@ -277,12 +257,8 @@ class ImageRenderService
         return $this->renderDefaultImage();
     }
 
-    /**
-     * @param  string  $extension
-     * @return bool
-     */
     private function shouldResize(string $extension): bool
     {
-        return ! in_array($extension, self::IGNORED_EXTENSIONS);
+        return !in_array($extension, self::IGNORED_EXTENSIONS);
     }
 }

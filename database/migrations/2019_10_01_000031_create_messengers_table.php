@@ -16,7 +16,7 @@ class CreateMessengersTable extends Migration
     {
         Schema::create('messengers', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            Helpers::SchemaMorphType('owner', $table);
+            Helpers::schemaMorphType('owner', $table);
             $table->boolean('message_popups')->default(true);
             $table->boolean('message_sound')->default(true);
             $table->boolean('call_ringtone_sound')->default(true);
