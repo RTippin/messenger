@@ -80,7 +80,7 @@ class ArchiveBot extends BaseMessengerAction
      */
     private function clearActionsCache(): self
     {
-        BotAction::clearValidCacheForThread($this->getBot()->thread_id);
+        BotAction::clearActionsCacheForThread($this->getBot()->thread_id);
 
         return $this;
     }

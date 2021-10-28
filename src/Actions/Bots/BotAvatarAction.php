@@ -87,7 +87,7 @@ abstract class BotAvatarAction extends BaseMessengerAction
      */
     protected function clearActionsCache(): self
     {
-        BotAction::clearValidCacheForThread($this->getBot()->thread_id);
+        BotAction::clearActionsCacheForThread($this->getBot()->thread_id);
 
         return $this;
     }

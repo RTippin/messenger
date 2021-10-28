@@ -246,7 +246,7 @@ class BotActionTest extends FeatureTestCase
     /** @test */
     public function it_has_actions_for_thread_cache_key()
     {
-        $this->assertSame('thread:1234-5678:bots:with:actions', BotAction::getActionsForThreadCacheKey('1234-5678'));
+        $this->assertSame('thread:1234-5678:bot:actions', BotAction::getActionsForThreadCacheKey('1234-5678'));
     }
 
     /** @test */
@@ -262,7 +262,7 @@ class BotActionTest extends FeatureTestCase
         $cache = Cache::spy();
         $cache->shouldReceive('remember')->andReturn($actions);
 
-        $getActions = BotAction::getValidWithBotFromThread($thread->id);
+        $getActions = BotAction::getActionsWithBotFromThread($thread->id);
 
         $this->assertInstanceOf(Collection::class, $getActions);
         $this->assertSame(3, $getActions->count());
@@ -279,10 +279,10 @@ class BotActionTest extends FeatureTestCase
             ->owner($this->tippin)
             ->create();
 
-        BotAction::getValidWithBotFromThread($thread->id);
+        BotAction::getActionsWithBotFromThread($thread->id);
         $this->assertTrue(Cache::has(BotAction::getActionsForThreadCacheKey($thread->id)));
 
-        BotAction::clearValidCacheForThread($thread->id);
+        BotAction::clearActionsCacheForThread($thread->id);
         $this->assertFalse(Cache::has(BotAction::getActionsForThreadCacheKey($thread->id)));
     }
 }

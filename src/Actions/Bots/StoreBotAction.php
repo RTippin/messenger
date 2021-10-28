@@ -146,7 +146,7 @@ class StoreBotAction extends BaseMessengerAction
      */
     private function clearActionsCache(): self
     {
-        BotAction::clearValidCacheForThread($this->getThread()->id);
+        BotAction::clearActionsCacheForThread($this->getThread()->id);
 
         return $this;
     }

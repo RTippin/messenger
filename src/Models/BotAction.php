@@ -85,13 +85,13 @@ class BotAction extends Model implements Ownerable
      */
     public static function getActionsForThreadCacheKey(string $threadId): string
     {
-        return "thread:$threadId:bots:with:actions";
+        return "thread:$threadId:bot:actions";
     }
 
     /**
      * @param  string  $threadId
      */
-    public static function clearValidCacheForThread(string $threadId): void
+    public static function clearActionsCacheForThread(string $threadId): void
     {
         Cache::forget(self::getActionsForThreadCacheKey($threadId));
     }
@@ -100,7 +100,7 @@ class BotAction extends Model implements Ownerable
      * @param  string  $threadId
      * @return Collection
      */
-    public static function getValidWithBotFromThread(string $threadId): Collection
+    public static function getActionsWithBotFromThread(string $threadId): Collection
     {
         return Cache::remember(
             self::getActionsForThreadCacheKey($threadId),

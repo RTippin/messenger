@@ -79,7 +79,7 @@ class RemoveBotAction extends BaseMessengerAction
      */
     private function clearActionsCache(): self
     {
-        BotAction::clearValidCacheForThread($this->getBotAction()->bot->thread_id);
+        BotAction::clearActionsCacheForThread($this->getBotAction()->bot->thread_id);
 
         return $this;
     }

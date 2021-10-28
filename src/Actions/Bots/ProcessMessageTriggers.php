@@ -98,7 +98,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
 
         $this->setThread($thread)->setMessage($message);
 
-        BotAction::getValidWithBotFromThread($this->getThread()->id)->each(
+        BotAction::getActionsWithBotFromThread($this->getThread()->id)->each(
             fn (BotAction $action) => $this->matchActionTriggers($action)
         );
 
