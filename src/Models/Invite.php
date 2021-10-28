@@ -143,7 +143,7 @@ class Invite extends Model implements Ownerable
      */
     public function getInvitationRoute(): ?string
     {
-        return Helpers::Route('messenger.invites.join',
+        return Helpers::route('messenger.invites.join',
             [
                 'invite' => $this->code,
             ],
@@ -157,7 +157,7 @@ class Invite extends Model implements Ownerable
      */
     public function getInvitationAvatarRoute(string $size = 'sm'): ?string
     {
-        return Helpers::Route('assets.messenger.invites.avatar.render',
+        return Helpers::route('assets.messenger.invites.avatar.render',
             [
                 'invite' => $this->code,
                 'size' => $size,

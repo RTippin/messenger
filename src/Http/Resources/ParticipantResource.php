@@ -70,7 +70,7 @@ class ParticipantResource extends JsonResource
      */
     private function lastSeenMessageId(): ?string
     {
-        if (Helpers::PrecisionTime($this->thread->updated_at) <= Helpers::PrecisionTime($this->participant->last_read)) {
+        if (Helpers::precisionTime($this->thread->updated_at) <= Helpers::precisionTime($this->participant->last_read)) {
             return optional($this->thread->latestMessage)->id;
         }
 

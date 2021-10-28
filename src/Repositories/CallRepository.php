@@ -73,7 +73,7 @@ class CallRepository
             ->videoCall()
             ->with('owner')
             ->latest()
-            ->where('created_at', '<=', Helpers::PrecisionTime($call->created_at))
+            ->where('created_at', '<=', Helpers::precisionTime($call->created_at))
             ->where('id', '!=', $call->id)
             ->limit($this->messenger->getCallsPageCount())
             ->get();
