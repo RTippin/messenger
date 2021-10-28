@@ -18,8 +18,8 @@ class Helpers
      * @return string|null
      */
     public static function route(string $name,
-                                        $parameters = null,
-                                 bool   $absolute = false): ?string
+                                 $parameters = null,
+                                 bool $absolute = false): ?string
     {
         if (app('router')->has($name)) {
             try {
