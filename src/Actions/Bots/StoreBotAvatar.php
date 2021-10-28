@@ -27,7 +27,9 @@ class StoreBotAvatar extends BotAvatarAction
 
         $this->attemptTransactionOrRollbackFile($this->upload($image));
 
-        $this->generateResource()->fireEvents();
+        $this->clearActionsCache()
+            ->generateResource()
+            ->fireEvents();
 
         return $this;
     }

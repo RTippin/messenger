@@ -46,6 +46,7 @@ class RemoveBotAction extends BaseMessengerAction
 
         $this->setBotAction($action)
             ->destroyBotAction()
+            ->clearActionsCache()
             ->fireEvents();
 
         return $this;
@@ -69,6 +70,16 @@ class RemoveBotAction extends BaseMessengerAction
     private function destroyBotAction(): self
     {
         $this->getBotAction()->delete();
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function clearActionsCache(): self
+    {
+        BotAction::clearValidCacheForThread($this->getBotAction()->bot->thread_id);
 
         return $this;
     }

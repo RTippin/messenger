@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\BaseMessengerAction;
@@ -69,34 +70,38 @@ class DestroyBotAvatarTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_fires_events()
+    public function it_fires_events_and_clears_actions_cache()
     {
         BaseMessengerAction::enableEvents();
         Messenger::setProvider($this->tippin);
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['avatar' => 'avatar.jpg']);
+        $cache = Cache::spy();
         Event::fake([
             BotAvatarEvent::class,
         ]);
 
         app(DestroyBotAvatar::class)->execute($bot);
 
+        $cache->shouldHaveReceived('forget');
         Event::assertDispatched(function (BotAvatarEvent $event) use ($bot) {
             return $bot->id === $event->bot->id;
         });
     }
 
     /** @test */
-    public function it_doesnt_fires_events_if_no_avatar_to_remove()
+    public function it_doesnt_fires_events_or_clear_actions_cache_if_no_avatar_to_remove()
     {
         BaseMessengerAction::enableEvents();
         Messenger::setProvider($this->tippin);
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create(['avatar' => null]);
+        $cache = Cache::spy();
         Event::fake([
             BotAvatarEvent::class,
         ]);
 
         app(DestroyBotAvatar::class)->execute($bot);
 
+        $cache->shouldNotHaveReceived('forget');
         Event::assertNotDispatched(BotAvatarEvent::class);
     }
 

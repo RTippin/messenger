@@ -11,6 +11,7 @@ use RTippin\Messenger\Http\Resources\BotActionResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Thread;
 
 class StoreBotAction extends BaseMessengerAction
@@ -65,6 +66,7 @@ class StoreBotAction extends BaseMessengerAction
         $this->bailIfCanAddBotActionFails($params);
 
         $this->storeBotAction($params)
+            ->clearActionsCache()
             ->generateResource()
             ->fireEvents();
 
@@ -135,6 +137,16 @@ class StoreBotAction extends BaseMessengerAction
                     'bot' => $this->getBot(),
                 ])
         );
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function clearActionsCache(): self
+    {
+        BotAction::clearValidCacheForThread($this->getThread()->id);
 
         return $this;
     }

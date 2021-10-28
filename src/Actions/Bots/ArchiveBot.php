@@ -9,6 +9,7 @@ use RTippin\Messenger\Events\BotArchivedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Models\BotAction;
 
 class ArchiveBot extends BaseMessengerAction
 {
@@ -46,6 +47,7 @@ class ArchiveBot extends BaseMessengerAction
 
         $this->setBot($bot)
             ->archiveBot()
+            ->clearActionsCache()
             ->fireEvents();
 
         return $this;
@@ -69,6 +71,16 @@ class ArchiveBot extends BaseMessengerAction
     private function archiveBot(): self
     {
         $this->getBot()->delete();
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function clearActionsCache(): self
+    {
+        BotAction::clearValidCacheForThread($this->getBot()->thread_id);
 
         return $this;
     }

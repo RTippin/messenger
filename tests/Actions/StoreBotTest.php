@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Bots\StoreBot;
@@ -40,9 +41,10 @@ class StoreBotTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_stores_bot()
+    public function it_stores_bot_and_clears_actions_cache()
     {
         $thread = Thread::factory()->group()->create();
+        $cache = Cache::spy();
 
         app(StoreBot::class)->execute($thread, [
             'name' => 'Test Bot',
@@ -51,6 +53,7 @@ class StoreBotTest extends FeatureTestCase
             'cooldown' => 0,
         ]);
 
+        $cache->shouldHaveReceived('forget');
         $this->assertDatabaseHas('bots', [
             'thread_id' => $thread->id,
             'owner_id' => $this->tippin->getKey(),

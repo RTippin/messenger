@@ -23,7 +23,7 @@ class DestroyBotAvatar extends BotAvatarAction
             ->generateResource();
 
         if ($this->getBot()->wasChanged()) {
-            $this->fireEvents();
+            $this->clearActionsCache()->fireEvents();
         }
 
         return $this;

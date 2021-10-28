@@ -9,6 +9,7 @@ use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Request\BotRequest;
 use RTippin\Messenger\Http\Resources\BotResource;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Thread;
 
 class StoreBot extends BaseMessengerAction
@@ -52,6 +53,7 @@ class StoreBot extends BaseMessengerAction
 
         $this->setThread($thread)
             ->storeBot($params)
+            ->clearActionsCache()
             ->generateResource()
             ->fireEvents();
 
@@ -89,6 +91,16 @@ class StoreBot extends BaseMessengerAction
                     'thread' => $this->getThread(),
                 ])
         );
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function clearActionsCache(): self
+    {
+        BotAction::clearValidCacheForThread($this->getThread()->id);
 
         return $this;
     }

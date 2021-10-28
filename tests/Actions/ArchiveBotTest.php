@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Bots\ArchiveBot;
@@ -45,6 +46,18 @@ class ArchiveBotTest extends FeatureTestCase
         $this->assertSoftDeleted('bots', [
             'id' => $bot->id,
         ]);
+    }
+
+    /** @test */
+    public function it_clears_actions_cache()
+    {
+        $thread = Thread::factory()->group()->create();
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $cache = Cache::spy();
+
+        app(ArchiveBot::class)->execute($bot);
+
+        $cache->shouldHaveReceived('forget');
     }
 
     /** @test */

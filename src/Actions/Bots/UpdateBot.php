@@ -10,6 +10,7 @@ use RTippin\Messenger\Http\Request\BotRequest;
 use RTippin\Messenger\Http\Resources\BotResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Models\BotAction;
 
 class UpdateBot extends BaseMessengerAction
 {
@@ -60,7 +61,7 @@ class UpdateBot extends BaseMessengerAction
         $this->updateBot($params)->generateResource();
 
         if ($this->getBot()->wasChanged()) {
-            $this->fireEvents();
+            $this->clearActionsCache()->fireEvents();
         }
 
         return $this;
@@ -83,6 +84,16 @@ class UpdateBot extends BaseMessengerAction
     private function updateBot(array $params): self
     {
         $this->getBot()->update($params);
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function clearActionsCache(): self
+    {
+        BotAction::clearValidCacheForThread($this->getBot()->thread_id);
 
         return $this;
     }

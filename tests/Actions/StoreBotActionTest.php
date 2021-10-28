@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Bots\StoreBotAction;
@@ -89,11 +90,12 @@ class StoreBotActionTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_stores_bot_action()
+    public function it_stores_bot_action_and_clears_actions_cache()
     {
         MessengerBots::registerHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $cache = Cache::spy();
 
         app(StoreBotAction::class)->execute($thread, $bot, [
             'handler' => FunBotHandler::class,
@@ -108,6 +110,7 @@ class StoreBotActionTest extends FeatureTestCase
             'payload' => null,
         ]);
 
+        $cache->shouldHaveReceived('forget');
         $this->assertDatabaseHas('bot_actions', [
             'bot_id' => $bot->id,
             'owner_id' => $this->tippin->getKey(),

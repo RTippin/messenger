@@ -49,8 +49,11 @@ class UpdateBotAction extends BaseMessengerAction
 
         $this->setBotAction($action)
             ->updateBotAction($params)
-            ->generateResource()
-            ->fireEvents();
+            ->generateResource();
+
+        if ($this->getBotAction()->wasChanged()) {
+            $this->clearActionsCache()->fireEvents();
+        }
 
         return $this;
     }
@@ -86,13 +89,21 @@ class UpdateBotAction extends BaseMessengerAction
     /**
      * @return $this
      */
-    private function generateResource(): self
+    private function clearActionsCache(): self
+    {
+        BotAction::clearValidCacheForThread($this->getBotAction()->bot->thread_id);
+
+        return $this;
+    }
+
+    /**
+     * @return void
+     */
+    private function generateResource(): void
     {
         $this->setJsonResource(new BotActionResource(
             $this->getBotAction()
         ));
-
-        return $this;
     }
 
     /**

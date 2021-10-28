@@ -8,6 +8,7 @@ use RTippin\Messenger\Events\BotAvatarEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Resources\BotResource;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Services\FileService;
 
 abstract class BotAvatarAction extends BaseMessengerAction
@@ -77,6 +78,16 @@ abstract class BotAvatarAction extends BaseMessengerAction
         $this->getBot()->update([
             'avatar' => $avatar,
         ]);
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    protected function clearActionsCache(): self
+    {
+        BotAction::clearValidCacheForThread($this->getBot()->thread_id);
 
         return $this;
     }

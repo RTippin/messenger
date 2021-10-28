@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Bots\UpdateBot;
@@ -41,9 +42,10 @@ class UpdateBotTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_updates_bot()
+    public function it_updates_bot_and_clears_actions_cache()
     {
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+        $cache = Cache::spy();
 
         app(UpdateBot::class)->execute($bot, [
             'name' => 'Renamed',
@@ -52,6 +54,7 @@ class UpdateBotTest extends FeatureTestCase
             'cooldown' => 99,
         ]);
 
+        $cache->shouldHaveReceived('forget');
         $this->assertDatabaseHas('bots', [
             'id' => $bot->id,
             'name' => 'Renamed',
@@ -83,7 +86,7 @@ class UpdateBotTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_doesnt_fire_events_if_not_updated()
+    public function it_doesnt_fire_events_or_clear_actions_cache_if_not_updated()
     {
         BaseMessengerAction::enableEvents();
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create([
@@ -92,6 +95,7 @@ class UpdateBotTest extends FeatureTestCase
             'cooldown' => 0,
             'hide_actions' => false,
         ]);
+        $cache = Cache::spy();
         Event::fake([
             BotUpdatedEvent::class,
         ]);
@@ -103,6 +107,7 @@ class UpdateBotTest extends FeatureTestCase
             'hide_actions' => false,
         ]);
 
+        $cache->shouldNotHaveReceived('forget');
         Event::assertNotDispatched(BotUpdatedEvent::class);
     }
 

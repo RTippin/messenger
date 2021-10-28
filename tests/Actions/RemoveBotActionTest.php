@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Bots\RemoveBotAction;
@@ -32,16 +33,18 @@ class RemoveBotActionTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_removes_action()
+    public function it_removes_action_and_clears_actions_cache()
     {
         $action = BotAction::factory()->for(
             Bot::factory()->for(
                 Thread::factory()->group()->create()
             )->owner($this->tippin)->create()
         )->owner($this->tippin)->create();
+        $cache = Cache::spy();
 
         app(RemoveBotAction::class)->execute($action);
 
+        $cache->shouldHaveReceived('forget');
         $this->assertDatabaseMissing('bot_actions', [
             'id' => $action->id,
         ]);

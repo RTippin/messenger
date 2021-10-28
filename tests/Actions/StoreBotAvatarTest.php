@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use Mockery;
@@ -81,12 +82,14 @@ class StoreBotAvatarTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_stores_bot_avatar()
+    public function it_stores_bot_avatar_and_clears_actions_cache()
     {
         $bot = Bot::factory()->for(Thread::factory()->group()->create())->owner($this->tippin)->create();
+        $cache = Cache::spy();
 
         app(StoreBotAvatar::class)->execute($bot, UploadedFile::fake()->image('avatar.jpg'));
 
+        $cache->shouldHaveReceived('forget');
         Storage::disk('messenger')->assertExists($bot->getAvatarPath());
     }
 
