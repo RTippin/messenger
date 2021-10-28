@@ -17,7 +17,7 @@ class CreateMessageReactionsTable extends Migration
         Schema::create('message_reactions', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('message_id');
-            Helpers::SchemaMorphType('owner', $table);
+            Helpers::schemaMorphType('owner', $table);
             $table->string('reaction');
             $table->timestamp('created_at', 6);
             $table->foreign('message_id')

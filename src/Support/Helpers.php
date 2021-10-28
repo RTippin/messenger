@@ -17,9 +17,9 @@ class Helpers
      * @param  bool  $absolute
      * @return string|null
      */
-    public static function Route(string $name,
-                                 $parameters = null,
-                                 bool $absolute = false): ?string
+    public static function route(string $name,
+                                        $parameters = null,
+                                 bool   $absolute = false): ?string
     {
         if (app('router')->has($name)) {
             try {
@@ -40,7 +40,7 @@ class Helpers
      * @param  Carbon|null  $timestamp
      * @return string|null
      */
-    public static function PrecisionTime(?Carbon $timestamp = null): ?string
+    public static function precisionTime(?Carbon $timestamp = null): ?string
     {
         return is_null($timestamp)
             ? null
@@ -54,7 +54,7 @@ class Helpers
      * @param  Blueprint  $table
      * @return void
      */
-    public static function SchemaMorphType(string $column, Blueprint $table): void
+    public static function schemaMorphType(string $column, Blueprint $table): void
     {
         if (Messenger::shouldUseUuids()) {
             $table->uuidMorphs($column);

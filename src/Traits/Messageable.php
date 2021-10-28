@@ -104,7 +104,7 @@ trait Messageable
      */
     public function getProviderAvatarRoute(string $size = 'sm'): ?string
     {
-        return Helpers::Route('assets.messenger.provider.avatar.render',
+        return Helpers::route('assets.messenger.provider.avatar.render',
             [
                 'alias' => Messenger::findProviderAlias($this),
                 'id' => $this->getKey(),

@@ -68,7 +68,7 @@ class ParticipantRepository
         return $thread->participants()
             ->with('owner')
             ->oldest()
-            ->where('created_at', '>=', Helpers::PrecisionTime($participant->created_at))
+            ->where('created_at', '>=', Helpers::precisionTime($participant->created_at))
             ->where('id', '!=', $participant->id)
             ->limit($this->messenger->getParticipantsPageCount())
             ->get();

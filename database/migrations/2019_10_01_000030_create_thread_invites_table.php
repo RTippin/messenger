@@ -17,7 +17,7 @@ class CreateThreadInvitesTable extends Migration
         Schema::create('thread_invites', function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->uuid('thread_id');
-            Helpers::SchemaMorphType('owner', $table);
+            Helpers::schemaMorphType('owner', $table);
             $table->string('code')->unique();
             $table->integer('max_use')->default(0);
             $table->integer('uses')->default(0);
