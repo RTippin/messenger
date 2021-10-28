@@ -63,8 +63,8 @@ class AudioMessageController extends Controller
                              Thread $thread,
                              Message $audio): AudioMessageCollection
     {
-        $this->authorize('viewAny', [
-            Message::class,
+        $this->authorize('view', [
+            $audio,
             $thread,
         ]);
 

@@ -69,8 +69,8 @@ class MessageController extends Controller
                              Thread $thread,
                              Message $message): MessageCollection
     {
-        $this->authorize('viewAny', [
-            Message::class,
+        $this->authorize('view', [
+            $message,
             $thread,
         ]);
 
@@ -120,7 +120,7 @@ class MessageController extends Controller
     public function show(Thread $thread, Message $message): MessageResource
     {
         $this->authorize('view', [
-            Message::class,
+            $message,
             $thread,
         ]);
 

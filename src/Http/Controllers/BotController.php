@@ -57,7 +57,7 @@ class BotController
     public function show(Thread $thread, Bot $bot): BotResource
     {
         $this->authorize('view', [
-            Bot::class,
+            $bot,
             $thread,
         ]);
 
@@ -109,7 +109,7 @@ class BotController
                            Bot $bot): BotResource
     {
         $this->authorize('update', [
-            Bot::class,
+            $bot,
             $thread,
         ]);
 
@@ -136,7 +136,7 @@ class BotController
                                 Bot $bot): BotResource
     {
         $this->authorize('update', [
-            Bot::class,
+            $bot,
             $thread,
         ]);
 
@@ -161,7 +161,7 @@ class BotController
                                   Bot $bot): BotResource
     {
         $this->authorize('update', [
-            Bot::class,
+            $bot,
             $thread,
         ]);
 
@@ -183,7 +183,7 @@ class BotController
                             Bot $bot): JsonResponse
     {
         $this->authorize('delete', [
-            Bot::class,
+            $bot,
             $thread,
         ]);
 

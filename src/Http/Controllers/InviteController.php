@@ -122,7 +122,7 @@ class InviteController
                             Invite $invite): JsonResponse
     {
         $this->authorize('delete', [
-            Invite::class,
+            $invite,
             $thread,
         ]);
 

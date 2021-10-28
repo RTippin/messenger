@@ -63,8 +63,8 @@ class ImageMessageController extends Controller
                              Thread $thread,
                              Message $image): ImageMessageCollection
     {
-        $this->authorize('viewAny', [
-            Message::class,
+        $this->authorize('view', [
+            $image,
             $thread,
         ]);
 

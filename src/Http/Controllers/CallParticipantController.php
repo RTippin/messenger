@@ -31,6 +31,7 @@ class CallParticipantController
         $this->authorize('viewAny', [
             CallParticipant::class,
             $thread,
+            $call,
         ]);
 
         return new CallParticipantCollection(
@@ -53,8 +54,9 @@ class CallParticipantController
                          CallParticipant $participant): CallParticipantResource
     {
         $this->authorize('view', [
-            CallParticipant::class,
+            $participant,
             $thread,
+            $call,
         ]);
 
         return new CallParticipantResource(
@@ -81,7 +83,7 @@ class CallParticipantController
                            CallParticipant $participant): JsonResponse
     {
         $this->authorize('update', [
-            CallParticipant::class,
+            $participant,
             $thread,
             $call,
         ]);

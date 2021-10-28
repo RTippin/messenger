@@ -62,8 +62,8 @@ class VideoMessageController extends Controller
                              Thread $thread,
                              Message $video): VideoMessageCollection
     {
-        $this->authorize('viewAny', [
-            Message::class,
+        $this->authorize('view', [
+            $video,
             $thread,
         ]);
 

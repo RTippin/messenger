@@ -32,12 +32,14 @@ class MessageReactionPolicy
      * Determine whether the provider can view message reactions.
      *
      * @param $user
+     * @param  Message  $message
      * @param  Thread  $thread
      * @return Response
      */
-    public function viewAny($user, Thread $thread): Response
+    public function viewAny($user, Message $message, Thread $thread): Response
     {
-        return $thread->hasCurrentProvider()
+        return $thread->id === $message->thread_id
+        && $thread->hasCurrentProvider()
             ? $this->allow()
             : $this->deny('Not authorized to view message reactions.');
     }
@@ -52,7 +54,8 @@ class MessageReactionPolicy
      */
     public function create($user, Thread $thread, Message $message): Response
     {
-        return $message->notSystemMessage()
+        return $thread->id === $message->thread_id
+        && $message->notSystemMessage()
         && ! $thread->isLocked()
         && ! $thread->isAwaitingMyApproval()
             ? $this->allow()
@@ -65,11 +68,17 @@ class MessageReactionPolicy
      * @param $user
      * @param  MessageReaction  $reaction
      * @param  Thread  $thread
+     * @param  Message  $message
      * @return Response
      */
-    public function delete($user, MessageReaction $reaction, Thread $thread): Response
+    public function delete($user,
+                           MessageReaction $reaction,
+                           Thread $thread,
+                           Message $message): Response
     {
-        return ! $thread->isLocked()
+        return $thread->id === $message->thread_id
+        && $message->id === $reaction->message_id
+        && ! $thread->isLocked()
         && ($reaction->isOwnedByCurrentProvider()
             || $thread->isAdmin())
             ? $this->allow()

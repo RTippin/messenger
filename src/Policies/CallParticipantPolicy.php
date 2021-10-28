@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Policies;
 use Illuminate\Auth\Access\HandlesAuthorization;
 use Illuminate\Auth\Access\Response;
 use RTippin\Messenger\Models\Call;
+use RTippin\Messenger\Models\CallParticipant;
 use RTippin\Messenger\Models\Thread;
 
 class CallParticipantPolicy
@@ -16,11 +17,13 @@ class CallParticipantPolicy
      *
      * @param $user
      * @param  Thread  $thread
+     * @param  Call  $call
      * @return Response
      */
-    public function viewAny($user, Thread $thread): Response
+    public function viewAny($user, Thread $thread, Call $call): Response
     {
-        return $thread->hasCurrentProvider()
+        return $thread->id === $call->thread_id
+        && $thread->hasCurrentProvider()
             ? $this->allow()
             : $this->deny('Not authorized to view call participants.');
     }
@@ -29,12 +32,19 @@ class CallParticipantPolicy
      * Determine whether the provider can view the call participant.
      *
      * @param $user
+     * @param  CallParticipant  $participant
      * @param  Thread  $thread
+     * @param  Call  $call
      * @return Response
      */
-    public function view($user, Thread $thread): Response
+    public function view($user,
+                         CallParticipant $participant,
+                         Thread $thread,
+                         Call $call): Response
     {
-        return $thread->hasCurrentProvider()
+        return $thread->id === $call->thread_id
+        && $call->id === $participant->call_id
+        && $thread->hasCurrentProvider()
             ? $this->allow()
             : $this->deny('Not authorized to view call participant.');
     }
@@ -43,13 +53,19 @@ class CallParticipantPolicy
      * Determine whether the provider can update the call participant.
      *
      * @param $user
+     * @param  CallParticipant  $participant
      * @param  Thread  $thread
      * @param  Call  $call
      * @return Response
      */
-    public function update($user, Thread $thread, Call $call): Response
+    public function update($user,
+                           CallParticipant $participant,
+                           Thread $thread,
+                           Call $call): Response
     {
-        return $thread->hasCurrentProvider()
+        return $thread->id === $call->thread_id
+        && $call->id === $participant->call_id
+        && $thread->hasCurrentProvider()
         && $thread->isGroup()
         && $call->isActive()
         && $call->isCallAdmin($thread)

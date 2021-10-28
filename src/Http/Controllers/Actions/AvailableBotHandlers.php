@@ -43,6 +43,7 @@ class AvailableBotHandlers
         $this->authorize('create', [
             BotAction::class,
             $thread,
+            $bot,
         ]);
 
         return $this->generateAvailableHandlers($bot);

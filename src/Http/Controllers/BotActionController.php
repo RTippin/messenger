@@ -62,7 +62,7 @@ class BotActionController
                          BotAction $action): BotActionResource
     {
         $this->authorize('view', [
-            BotAction::class,
+            $action,
             $thread,
             $bot,
         ]);
@@ -92,6 +92,7 @@ class BotActionController
         $this->authorize('create', [
             BotAction::class,
             $thread,
+            $bot,
         ]);
 
         $resolved = $bots->resolveHandlerData($request->all());
@@ -123,8 +124,9 @@ class BotActionController
                            BotAction $action): BotActionResource
     {
         $this->authorize('update', [
-            BotAction::class,
+            $action,
             $thread,
+            $bot,
         ]);
 
         $resolved = $bots->resolveHandlerData($request->all(), $action->handler);
@@ -152,8 +154,9 @@ class BotActionController
                             BotAction $action): JsonResponse
     {
         $this->authorize('delete', [
-            BotAction::class,
+            $action,
             $thread,
+            $bot,
         ]);
 
         return $removeBotAction->execute($action)->getMessageResponse();

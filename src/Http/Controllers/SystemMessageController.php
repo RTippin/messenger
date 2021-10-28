@@ -49,8 +49,8 @@ class SystemMessageController
                              Thread $thread,
                              Message $log): SystemMessageCollection
     {
-        $this->authorize('viewAny', [
-            Message::class,
+        $this->authorize('view', [
+            $log,
             $thread,
         ]);
 

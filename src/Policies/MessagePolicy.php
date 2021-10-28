@@ -45,12 +45,14 @@ class MessagePolicy
      * Determine whether the provider can view the message.
      *
      * @param $user
+     * @param  Message  $message
      * @param  Thread  $thread
      * @return Response
      */
-    public function view($user, Thread $thread): Response
+    public function view($user, Message $message, Thread $thread): Response
     {
-        return $thread->hasCurrentProvider()
+        return $thread->id === $message->thread_id
+        && $thread->hasCurrentProvider()
             ? $this->allow()
             : $this->deny('Not authorized to view message.');
     }
@@ -65,7 +67,8 @@ class MessagePolicy
      */
     public function viewEdits($user, Message $message, Thread $thread): Response
     {
-        return $thread->hasCurrentProvider()
+        return $thread->id === $message->thread_id
+        && $thread->hasCurrentProvider()
         && $this->messenger->isMessageEditsEnabled()
         && $this->messenger->isMessageEditsViewEnabled()
         && $message->isEdited()
@@ -153,7 +156,8 @@ class MessagePolicy
      */
     public function update($user, Message $message, Thread $thread): Response
     {
-        return ! $thread->isLocked()
+        return $thread->id === $message->thread_id
+        && ! $thread->isLocked()
         && $message->isText()
         && $message->isOwnedByCurrentProvider()
             ? $this->allow()
@@ -170,7 +174,8 @@ class MessagePolicy
      */
     public function removeEmbeds($user, Message $message, Thread $thread): Response
     {
-        return ! $thread->isLocked()
+        return $thread->id === $message->thread_id
+        && ! $thread->isLocked()
         && $message->showEmbeds()
         && ($message->isOwnedByCurrentProvider()
             || $thread->isAdmin())
@@ -188,7 +193,8 @@ class MessagePolicy
      */
     public function delete($user, Message $message, Thread $thread): Response
     {
-        return ! $thread->isLocked()
+        return $thread->id === $message->thread_id
+        && ! $thread->isLocked()
         && $message->notSystemMessage()
         && ($message->isOwnedByCurrentProvider()
             || $thread->isAdmin())

@@ -63,7 +63,8 @@ class ParticipantPolicy
      */
     public function update($user, Participant $participant, Thread $thread): Response
     {
-        return $thread->isGroup()
+        return $thread->id === $participant->thread_id
+        && $thread->isGroup()
         && ! $thread->isLocked()
         && $thread->isAdmin()
         && $participant->id !== $thread->currentParticipant()->id
@@ -82,7 +83,8 @@ class ParticipantPolicy
      */
     public function promote($user, Participant $participant, Thread $thread): Response
     {
-        return $thread->isGroup()
+        return $thread->id === $participant->thread_id
+        && $thread->isGroup()
         && ! $thread->isLocked()
         && $thread->isAdmin()
         && $participant->id !== $thread->currentParticipant()->id
@@ -101,7 +103,8 @@ class ParticipantPolicy
      */
     public function demote($user, Participant $participant, Thread $thread): Response
     {
-        return $thread->isGroup()
+        return $thread->id === $participant->thread_id
+        && $thread->isGroup()
         && ! $thread->isLocked()
         && $thread->isAdmin()
         && $participant->id !== $thread->currentParticipant()->id
@@ -120,7 +123,8 @@ class ParticipantPolicy
      */
     public function delete($user, Participant $participant, Thread $thread): Response
     {
-        return $thread->isGroup()
+        return $thread->id === $participant->thread_id
+        && $thread->isGroup()
         && ! $thread->isLocked()
         && $thread->isAdmin()
         && $participant->id !== $thread->currentParticipant()->id

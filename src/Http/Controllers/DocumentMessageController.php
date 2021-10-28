@@ -62,8 +62,8 @@ class DocumentMessageController extends Controller
                              Thread $thread,
                              Message $document): DocumentMessageCollection
     {
-        $this->authorize('viewAny', [
-            Message::class,
+        $this->authorize('view', [
+            $document,
             $thread,
         ]);
 

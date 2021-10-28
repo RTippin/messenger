@@ -35,7 +35,8 @@ class CallPolicy
      */
     public function view($user, Call $call, Thread $thread): Response
     {
-        return $thread->hasCurrentProvider()
+        return $thread->id === $call->thread_id
+        && $thread->hasCurrentProvider()
             ? $this->allow()
             : $this->deny('Not authorized to view call.');
     }
@@ -50,7 +51,8 @@ class CallPolicy
      */
     public function socket($user, Call $call, Thread $thread): Response
     {
-        return $thread->hasCurrentProvider()
+        return $thread->id === $call->thread_id
+        && $thread->hasCurrentProvider()
         && $call->isActive()
         && $call->hasJoinedCall()
         && ! $call->wasKicked()
@@ -84,7 +86,8 @@ class CallPolicy
      */
     public function join($user, Call $call, Thread $thread): Response
     {
-        return $thread->hasCurrentProvider()
+        return $thread->id === $call->thread_id
+        && $thread->hasCurrentProvider()
         && $call->isActive()
         && ! $call->wasKicked()
             ? $this->allow()
@@ -101,7 +104,8 @@ class CallPolicy
      */
     public function leave($user, Call $call, Thread $thread): Response
     {
-        return $thread->hasCurrentProvider()
+        return $thread->id === $call->thread_id
+        && $thread->hasCurrentProvider()
         && $call->isActive()
         && $call->isInCall()
         && ! $call->wasKicked()
@@ -119,7 +123,8 @@ class CallPolicy
      */
     public function end($user, Call $call, Thread $thread): Response
     {
-        return $thread->hasCurrentProvider()
+        return $thread->id === $call->thread_id
+        && $thread->hasCurrentProvider()
         && $call->isActive()
         && $call->isInCall()
         && ! $call->wasKicked()
@@ -139,7 +144,8 @@ class CallPolicy
      */
     public function ignore($user, Call $call, Thread $thread): Response
     {
-        return $thread->hasCurrentProvider()
+        return $thread->id === $call->thread_id
+        && $thread->hasCurrentProvider()
         && $call->isActive()
         && ! $call->hasJoinedCall()
             ? $this->allow()
@@ -156,7 +162,8 @@ class CallPolicy
      */
     public function heartbeat($user, Call $call, Thread $thread): Response
     {
-        return $thread->hasCurrentProvider()
+        return $thread->id === $call->thread_id
+        && $thread->hasCurrentProvider()
         && $call->isActive()
         && $call->isInCall()
         && ! $call->wasKicked()

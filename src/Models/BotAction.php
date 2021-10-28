@@ -22,7 +22,7 @@ use RTippin\Messenger\Traits\Uuids;
  * @mixin Model|\Eloquent
  *
  * @property string $id
- * @property string $bot_id
+ * @property string|int $bot_id
  * @property string|ActionHandler|BotActionHandler $handler
  * @property string $triggers
  * @property string|null $payload

@@ -64,12 +64,14 @@ class InvitePolicy
      * Determine whether the provider can delete the invite.
      *
      * @param $user
+     * @param  Invite  $invite
      * @param  Thread  $thread
      * @return Response
      */
-    public function delete($user, Thread $thread): Response
+    public function delete($user, Invite $invite, Thread $thread): Response
     {
-        return $thread->canInviteParticipants()
+        return $thread->id === $invite->thread_id
+        && $thread->canInviteParticipants()
             ? $this->allow()
             : $this->deny('Not authorized to destroy thread invite.');
     }

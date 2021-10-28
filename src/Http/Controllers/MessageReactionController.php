@@ -34,6 +34,7 @@ class MessageReactionController
     {
         $this->authorize('viewAny', [
             MessageReaction::class,
+            $message,
             $thread,
         ]);
 
@@ -51,7 +52,8 @@ class MessageReactionController
      * @param  Message  $message
      * @return MessageReactionResource
      *
-     * @throws Throwable|ReactionException|FeatureDisabledException|AuthorizationException
+     * @throws Throwable|ReactionException
+     * @throws FeatureDisabledException|AuthorizationException
      */
     public function store(MessageReactionRequest $request,
                           AddReaction $addReaction,
@@ -91,6 +93,7 @@ class MessageReactionController
             MessageReaction::class,
             $reaction,
             $thread,
+            $message,
         ]);
 
         return $removeReaction->execute(
