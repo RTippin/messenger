@@ -12,7 +12,7 @@ class BotRemovedMessage extends BaseMessengerJob
     /**
      * @var BotArchivedEvent
      */
-    private BotArchivedEvent $event;
+    public BotArchivedEvent $event;
 
     /**
      * Create a new job instance.

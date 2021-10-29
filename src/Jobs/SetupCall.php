@@ -11,7 +11,7 @@ class SetupCall extends BaseMessengerJob
     /**
      * @var CallStartedEvent
      */
-    private CallStartedEvent $event;
+    public CallStartedEvent $event;
 
     /**
      * Create a new job instance.

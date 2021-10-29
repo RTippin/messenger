@@ -11,7 +11,7 @@ class BotActionMessageHandler extends BaseMessengerJob
     /**
      * @var NewMessageEvent
      */
-    private NewMessageEvent $event;
+    public NewMessageEvent $event;
 
     /**
      * Create a new job instance.

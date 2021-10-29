@@ -12,7 +12,7 @@ class DemotedAdminMessage extends BaseMessengerJob
     /**
      * @var DemotedAdminEvent
      */
-    private DemotedAdminEvent $event;
+    public DemotedAdminEvent $event;
 
     /**
      * Create a new job instance.

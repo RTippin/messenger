@@ -11,7 +11,7 @@ class EndCallIfEmpty extends BaseMessengerJob
     /**
      * @var CallLeftEvent
      */
-    private CallLeftEvent $event;
+    public CallLeftEvent $event;
 
     /**
      * Create a new job instance.

@@ -12,7 +12,7 @@ class PromotedAdminMessage extends BaseMessengerJob
     /**
      * @var PromotedAdminEvent
      */
-    private PromotedAdminEvent $event;
+    public PromotedAdminEvent $event;
 
     /**
      * Create a new job instance.

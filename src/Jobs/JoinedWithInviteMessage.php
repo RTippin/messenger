@@ -12,7 +12,7 @@ class JoinedWithInviteMessage extends BaseMessengerJob
     /**
      * @var InviteUsedEvent
      */
-    private InviteUsedEvent $event;
+    public InviteUsedEvent $event;
 
     /**
      * Create a new job instance.

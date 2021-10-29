@@ -10,7 +10,7 @@ class PurgeBots extends BaseMessengerJob
     /**
      * @var Collection
      */
-    private Collection $bots;
+    public Collection $bots;
 
     /**
      * Create a new job instance.

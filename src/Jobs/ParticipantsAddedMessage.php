@@ -12,7 +12,7 @@ class ParticipantsAddedMessage extends BaseMessengerJob
     /**
      * @var ParticipantsAddedEvent
      */
-    private ParticipantsAddedEvent $event;
+    public ParticipantsAddedEvent $event;
 
     /**
      * Create a new job instance.

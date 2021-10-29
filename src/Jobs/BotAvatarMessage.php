@@ -12,7 +12,7 @@ class BotAvatarMessage extends BaseMessengerJob
     /**
      * @var BotAvatarEvent
      */
-    private BotAvatarEvent $event;
+    public BotAvatarEvent $event;
 
     /**
      * Create a new job instance.

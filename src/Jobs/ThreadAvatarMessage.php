@@ -12,7 +12,7 @@ class ThreadAvatarMessage extends BaseMessengerJob
     /**
      * @var ThreadAvatarEvent
      */
-    private ThreadAvatarEvent $event;
+    public ThreadAvatarEvent $event;
 
     /**
      * Create a new job instance.

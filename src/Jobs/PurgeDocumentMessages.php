@@ -10,7 +10,7 @@ class PurgeDocumentMessages extends BaseMessengerJob
     /**
      * @var Collection
      */
-    private Collection $documents;
+    public Collection $documents;
 
     /**
      * Create a new job instance.

@@ -10,7 +10,7 @@ class PurgeVideoMessages extends BaseMessengerJob
     /**
      * @var Collection
      */
-    private Collection $videoFiles;
+    public Collection $videoFiles;
 
     /**
      * Create a new job instance.

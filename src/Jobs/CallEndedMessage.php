@@ -12,7 +12,7 @@ class CallEndedMessage extends BaseMessengerJob
     /**
      * @var CallEndedEvent
      */
-    private CallEndedEvent $event;
+    public CallEndedEvent $event;
 
     /**
      * Create a new job instance.

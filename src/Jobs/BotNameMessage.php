@@ -12,7 +12,7 @@ class BotNameMessage extends BaseMessengerJob
     /**
      * @var BotUpdatedEvent
      */
-    private BotUpdatedEvent $event;
+    public BotUpdatedEvent $event;
 
     /**
      * Create a new job instance.

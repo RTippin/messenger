@@ -12,7 +12,7 @@ class ThreadNameMessage extends BaseMessengerJob
     /**
      * @var ThreadSettingsEvent
      */
-    private ThreadSettingsEvent $event;
+    public ThreadSettingsEvent $event;
 
     /**
      * Create a new job instance.

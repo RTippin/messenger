@@ -12,7 +12,7 @@ class ThreadLeftMessage extends BaseMessengerJob
     /**
      * @var ThreadLeftEvent
      */
-    private ThreadLeftEvent $event;
+    public ThreadLeftEvent $event;
 
     /**
      * Create a new job instance.

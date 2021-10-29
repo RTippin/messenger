@@ -13,7 +13,7 @@ class ArchiveInvalidInvites extends BaseMessengerJob
     /**
      * @var Collection
      */
-    private Collection $invites;
+    public Collection $invites;
 
     /**
      * Create a new job instance.

@@ -12,7 +12,7 @@ class RemovedFromThreadMessage extends BaseMessengerJob
     /**
      * @var RemovedFromThreadEvent
      */
-    private RemovedFromThreadEvent $event;
+    public RemovedFromThreadEvent $event;
 
     /**
      * Create a new job instance.

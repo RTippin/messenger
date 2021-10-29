@@ -10,7 +10,7 @@ class PurgeAudioMessages extends BaseMessengerJob
     /**
      * @var Collection
      */
-    private Collection $audioFiles;
+    public Collection $audioFiles;
 
     /**
      * Create a new job instance.

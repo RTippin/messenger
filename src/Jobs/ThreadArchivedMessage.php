@@ -12,7 +12,7 @@ class ThreadArchivedMessage extends BaseMessengerJob
     /**
      * @var ThreadArchivedEvent
      */
-    private ThreadArchivedEvent $event;
+    public ThreadArchivedEvent $event;
 
     /**
      * Create a new job instance.

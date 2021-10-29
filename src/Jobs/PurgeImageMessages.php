@@ -10,7 +10,7 @@ class PurgeImageMessages extends BaseMessengerJob
     /**
      * @var Collection
      */
-    private Collection $images;
+    public Collection $images;
 
     /**
      * Create a new job instance.

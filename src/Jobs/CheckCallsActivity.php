@@ -11,7 +11,7 @@ class CheckCallsActivity extends BaseMessengerJob
     /**
      * @var Collection
      */
-    private Collection $calls;
+    public Collection $calls;
 
     /**
      * Create a new job instance.

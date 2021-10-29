@@ -10,7 +10,7 @@ class PurgeThreads extends BaseMessengerJob
     /**
      * @var Collection
      */
-    private Collection $threads;
+    public Collection $threads;
 
     /**
      * Create a new job instance.
