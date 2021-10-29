@@ -246,7 +246,7 @@ class Thread extends Model implements HasPresenceChannel
     public function logs(): HasMany
     {
         return $this->hasMany(Message::class)
-            ->whereNotIn('type',Message::NonSystemTypes);
+            ->whereNotIn('type', Message::NonSystemTypes);
     }
 
     /**
