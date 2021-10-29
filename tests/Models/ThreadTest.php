@@ -936,4 +936,72 @@ class ThreadTest extends FeatureTestCase
 
         $this->assertSame(0, $thread->unreadCount());
     }
+
+    /** @test */
+    public function it_gets_knock_lockout_cache_key()
+    {
+        $private = Thread::factory()->create();
+        $group = Thread::factory()->group()->create();
+
+        $private->getKnockCacheKey($this->tippin);
+        $group->getKnockCacheKey();
+
+        $this->assertSame("knock.knock.$group->id", $group->getKnockCacheKey());
+        $this->assertSame("knock.knock.$private->id.", $private->getKnockCacheKey());
+        $this->assertSame(
+            "knock.knock.$private->id.{$this->tippin->getKey()}",
+            $private->getKnockCacheKey($this->tippin)
+        );
+    }
+
+    /** @test */
+    public function it_has_private_knock_lockout()
+    {
+        $thread = Thread::factory()->create();
+
+        $thread->setKnockCacheLockout($this->tippin);
+
+        $this->assertTrue($thread->hasKnockTimeout($this->tippin));
+        $this->assertFalse($thread->hasKnockTimeout($this->doe));
+        $this->assertFalse($thread->hasKnockTimeout());
+    }
+
+    /** @test */
+    public function it_has_group_knock_lockout()
+    {
+        $thread = Thread::factory()->group()->create();
+
+        $thread->setKnockCacheLockout();
+
+        $this->assertTrue($thread->hasKnockTimeout());
+        $this->assertTrue($thread->hasKnockTimeout($this->tippin));
+    }
+
+    /** @test */
+    public function it_doesnt_store_knock_lockout_if_timeout_zero()
+    {
+        Messenger::setKnockTimeout(0);
+        $private = Thread::factory()->create();
+        $group = Thread::factory()->group()->create();
+
+        $private->setKnockCacheLockout($this->tippin);
+        $group->setKnockCacheLockout();
+
+        $this->assertFalse($private->hasKnockTimeout($this->tippin));
+        $this->assertFalse($group->hasKnockTimeout());
+    }
+
+    /** @test */
+    public function it_doesnt_store_knock_lockout_if_disabled()
+    {
+        Messenger::setKnockKnock(false);
+        $private = Thread::factory()->create();
+        $group = Thread::factory()->group()->create();
+
+        $private->setKnockCacheLockout($this->tippin);
+        $group->setKnockCacheLockout();
+
+        $this->assertFalse($private->hasKnockTimeout($this->tippin));
+        $this->assertFalse($group->hasKnockTimeout());
+    }
 }

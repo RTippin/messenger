@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Actions\Threads;
 
 use Illuminate\Contracts\Events\Dispatcher;
-use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\KnockBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
@@ -54,17 +53,18 @@ class SendKnock extends BaseMessengerAction
      * @return $this
      *
      * @throws FeatureDisabledException|KnockException
-     *
-     * @TODO Move knock cache methods to thread model.
      */
     public function execute(Thread $thread): self
     {
         $this->setThread($thread)
             ->bailIfCannotKnockAtThread()
-            ->generateResource()
-            ->storeCacheTimeout()
-            ->fireBroadcast()
-            ->fireEvents();
+            ->generateResource();
+
+        $this->getThread()->setKnockCacheLockout(
+            $this->messenger->getProvider()
+        );
+
+        $this->fireBroadcast()->fireEvents();
 
         return $this;
     }
@@ -80,9 +80,9 @@ class SendKnock extends BaseMessengerAction
             throw new FeatureDisabledException('Knocking is currently disabled.');
         }
 
-        if ($this->messenger->getKnockTimeout() !== 0
-            && ($this->hasGroupThreadLockout()
-                || $this->hasPrivateThreadLockout())) {
+        if ($this->getThread()->hasKnockTimeout(
+            $this->messenger->getProvider()
+        )) {
             throw new KnockException("You may only knock at {$this->getThread()->name()} once every {$this->messenger->getKnockTimeout()} minutes.");
         }
 
@@ -90,34 +90,14 @@ class SendKnock extends BaseMessengerAction
     }
 
     /**
-     * @return bool
+     * @return void
      */
-    private function hasPrivateThreadLockout(): bool
-    {
-        return $this->getThread()->isPrivate()
-            && Cache::has("knock.knock.{$this->getThread()->id}.{$this->messenger->getProvider()->getKey()}");
-    }
-
-    /**
-     * @return bool
-     */
-    private function hasGroupThreadLockout(): bool
-    {
-        return $this->getThread()->isGroup()
-            && Cache::has("knock.knock.{$this->getThread()->id}");
-    }
-
-    /**
-     * @return $this
-     */
-    private function generateResource(): self
+    private function generateResource(): void
     {
         $this->setJsonResource(new KnockBroadcastResource(
             $this->messenger->getProvider(),
             $this->getThread()
         ));
-
-        return $this;
     }
 
     /**
@@ -146,31 +126,5 @@ class SendKnock extends BaseMessengerAction
                 $this->getThread(true)
             ));
         }
-    }
-
-    /**
-     * @return $this
-     */
-    private function storeCacheTimeout(): self
-    {
-        if ($this->messenger->getKnockTimeout() !== 0) {
-            Cache::put(
-                $this->generateCacheKey(),
-                true,
-                now()->addMinutes($this->messenger->getKnockTimeout())
-            );
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return string
-     */
-    private function generateCacheKey(): string
-    {
-        return $this->getThread()->isGroup()
-            ? "knock.knock.{$this->getThread()->id}"
-            : "knock.knock.{$this->getThread()->id}.{$this->messenger->getProvider()->getKey()}";
     }
 }
