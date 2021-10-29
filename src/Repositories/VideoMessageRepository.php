@@ -31,8 +31,7 @@ class VideoMessageRepository
      */
     public function getThreadVideosIndex(Thread $thread): Collection
     {
-        return $thread->messages()
-            ->video()
+        return $thread->videos()
             ->latest()
             ->with('owner')
             ->limit($this->messenger->getMessagesIndexCount())
@@ -46,8 +45,7 @@ class VideoMessageRepository
      */
     public function getThreadVideosPage(Thread $thread, Message $message): Collection
     {
-        return $thread->messages()
-            ->video()
+        return $thread->videos()
             ->latest()
             ->with('owner')
             ->where('created_at', '<=', Helpers::PrecisionTime($message->created_at))

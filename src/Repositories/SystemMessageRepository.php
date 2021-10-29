@@ -31,8 +31,7 @@ class SystemMessageRepository
      */
     public function getThreadSystemMessagesIndex(Thread $thread): Collection
     {
-        return $thread->messages()
-            ->system()
+        return $thread->logs()
             ->latest()
             ->with('owner')
             ->limit($this->messenger->getMessagesIndexCount())
@@ -46,8 +45,7 @@ class SystemMessageRepository
      */
     public function getThreadSystemMessagesPage(Thread $thread, Message $message): Collection
     {
-        return $thread->messages()
-            ->system()
+        return $thread->logs()
             ->latest()
             ->with('owner')
             ->where('created_at', '<=', Helpers::PrecisionTime($message->created_at))

@@ -31,8 +31,7 @@ class DocumentMessageRepository
      */
     public function getThreadDocumentsIndex(Thread $thread): Collection
     {
-        return $thread->messages()
-            ->document()
+        return $thread->documents()
             ->latest()
             ->with('owner')
             ->limit($this->messenger->getMessagesIndexCount())
@@ -46,8 +45,7 @@ class DocumentMessageRepository
      */
     public function getThreadDocumentsPage(Thread $thread, Message $message): Collection
     {
-        return $thread->messages()
-            ->document()
+        return $thread->documents()
             ->latest()
             ->with('owner')
             ->where('created_at', '<=', Helpers::PrecisionTime($message->created_at))

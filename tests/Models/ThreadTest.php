@@ -59,6 +59,11 @@ class ThreadTest extends FeatureTestCase
 
         $this->assertInstanceOf(Collection::class, $thread->participants);
         $this->assertInstanceOf(Collection::class, $thread->messages);
+        $this->assertInstanceOf(Collection::class, $thread->audio);
+        $this->assertInstanceOf(Collection::class, $thread->documents);
+        $this->assertInstanceOf(Collection::class, $thread->images);
+        $this->assertInstanceOf(Collection::class, $thread->logs);
+        $this->assertInstanceOf(Collection::class, $thread->videos);
         $this->assertInstanceOf(Collection::class, $thread->calls);
         $this->assertInstanceOf(Collection::class, $thread->invites);
         $this->assertInstanceOf(Collection::class, $thread->bots);

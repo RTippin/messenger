@@ -31,8 +31,7 @@ class AudioMessageRepository
      */
     public function getThreadAudioIndex(Thread $thread): Collection
     {
-        return $thread->messages()
-            ->audio()
+        return $thread->audio()
             ->latest()
             ->with('owner')
             ->limit($this->messenger->getMessagesIndexCount())
@@ -46,8 +45,7 @@ class AudioMessageRepository
      */
     public function getThreadAudioPage(Thread $thread, Message $message): Collection
     {
-        return $thread->messages()
-            ->audio()
+        return $thread->audio()
             ->latest()
             ->with('owner')
             ->where('created_at', '<=', Helpers::PrecisionTime($message->created_at))

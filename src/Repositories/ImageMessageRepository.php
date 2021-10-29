@@ -31,8 +31,7 @@ class ImageMessageRepository
      */
     public function getThreadImagesIndex(Thread $thread): Collection
     {
-        return $thread->messages()
-            ->image()
+        return $thread->images()
             ->latest()
             ->with('owner')
             ->limit($this->messenger->getMessagesIndexCount())
@@ -46,8 +45,7 @@ class ImageMessageRepository
      */
     public function getThreadImagesPage(Thread $thread, Message $message): Collection
     {
-        return $thread->messages()
-            ->image()
+        return $thread->images()
             ->latest()
             ->with('owner')
             ->where('created_at', '<=', Helpers::PrecisionTime($message->created_at))

@@ -34,7 +34,7 @@ class DocumentMessageTest extends HttpTestCase
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
         Message::factory()->for($thread)->owner($this->tippin)->document()->count(2)->create();
-        $document = Message::factory()->for($thread)->owner($this->tippin)->audio()->create();
+        $document = Message::factory()->for($thread)->owner($this->tippin)->document()->create();
         Message::factory()->for($thread)->owner($this->tippin)->document()->count(2)->create();
         $this->actingAs($this->tippin);
 

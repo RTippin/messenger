@@ -42,6 +42,11 @@ use RTippin\Messenger\Traits\Uuids;
  * @property-read Collection|Invite[] $invites
  * @property-read int|null $invites_count
  * @property-read Collection|Message[] $messages
+ * @property-read Collection|Message[] $audio
+ * @property-read Collection|Message[] $documents
+ * @property-read Collection|Message[] $images
+ * @property-read Collection|Message[] $logs
+ * @property-read Collection|Message[] $videos
  * @property-read int|null $messages_count
  * @property-read Collection|Participant[] $participants
  * @property-read int|null $participants_count
@@ -206,6 +211,51 @@ class Thread extends Model implements HasPresenceChannel
     public function bots(): HasMany
     {
         return $this->hasMany(Bot::class);
+    }
+
+    /**
+     * @return HasMany|Message|Collection
+     */
+    public function audio(): HasMany
+    {
+        return $this->hasMany(Message::class)
+            ->where('type', '=', Message::AUDIO_MESSAGE);
+    }
+
+    /**
+     * @return HasMany|Message|Collection
+     */
+    public function documents(): HasMany
+    {
+        return $this->hasMany(Message::class)
+            ->where('type', '=', Message::DOCUMENT_MESSAGE);
+    }
+
+    /**
+     * @return HasMany|Message|Collection
+     */
+    public function images(): HasMany
+    {
+        return $this->hasMany(Message::class)
+            ->where('type', '=', Message::IMAGE_MESSAGE);
+    }
+
+    /**
+     * @return HasMany|Message|Collection
+     */
+    public function logs(): HasMany
+    {
+        return $this->hasMany(Message::class)
+            ->whereNotIn('type',Message::NonSystemTypes);
+    }
+
+    /**
+     * @return HasMany|Message|Collection
+     */
+    public function videos(): HasMany
+    {
+        return $this->hasMany(Message::class)
+            ->where('type', '=', Message::VIDEO_MESSAGE);
     }
 
     /**
