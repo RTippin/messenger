@@ -108,7 +108,8 @@ class ProcessMessageTriggers extends BaseMessengerAction
     }
 
     /**
-     * Loop through the triggers, and attempt to handle ones that match.
+     * Loop through the triggers, executing the
+     * handle method upon a successful match.
      *
      * @param  BotAction  $action
      */

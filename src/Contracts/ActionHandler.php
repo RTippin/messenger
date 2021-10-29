@@ -12,7 +12,7 @@ use RTippin\Messenger\Support\MessengerComposer;
 interface ActionHandler
 {
     /**
-     * Return an array containing the handlers settings and overrides we will use.
+     * Return an array containing the handlers settings and overrides to use.
      * REQUIRED
      * - 'alias' will be used to locate and attach your handler to a bot.
      * - 'description' displayed to the frontend.

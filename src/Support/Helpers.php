@@ -4,6 +4,8 @@ namespace RTippin\Messenger\Support;
 
 use Exception;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Routing\Router;
+use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Carbon;
 use RTippin\Messenger\Messenger;
 
@@ -21,9 +23,9 @@ class Helpers
                                  $parameters = null,
                                  bool $absolute = false): ?string
     {
-        if (app('router')->has($name)) {
+        if (app(Router::class)->has($name)) {
             try {
-                return app('url')->route(
+                return app(UrlGenerator::class)->route(
                     $name,
                     $parameters ?: [],
                     $absolute

@@ -12,10 +12,11 @@ use RTippin\Messenger\Support\MessengerComposer;
 
 /**
  * To authorize the end user add the action handler to a bot, you must define the
- * 'authorize()' method and return bool. If unauthorized, it will also hide the
- * handler from appearing in the available handlers list when adding actions to
- * a bot. Return true if no authorization is needed. This does NOT authorize
- * being triggered once added to a bot action.
+ * 'authorize()' method and return true|false. If unauthorized, it will also hide
+ * the handler from appearing in the available handlers list when adding actions
+ * to a bot. This does NOT authorize being triggered once added to a bot action.
+ * This method will be called during a normal http request cycle, giving you
+ * access to auth/sessions/etc.
  *
  * @method bool authorize()
  */

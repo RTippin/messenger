@@ -76,7 +76,7 @@ class MessengerComposer
     }
 
     /**
-     * Set the thread or provider we want to compose to. If a provider is supplied,
+     * Set the thread or provider you want to compose to. If a provider is supplied,
      * we will attempt to locate an existing private thread between the "TO" and
      * "FROM" providers. If no private thread is found, one will be created. If
      * the two providers are not friends, the new thread will be marked as
@@ -404,9 +404,7 @@ class MessengerComposer
 
     /**
      * If TO is not a thread, resolve or create a private
-     * thread between the TO and FROM providers. Set the
-     * TO using the thread to avoid further queries when
-     * reusing composer methods.
+     * thread between the TO and FROM providers.
      *
      * @return Thread
      *
