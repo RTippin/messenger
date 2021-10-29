@@ -60,11 +60,8 @@ class CallBrokerTeardown extends BaseMessengerAction
      */
     private function updateCall(): void
     {
-        $this->setData(
-            $this->getCall()
-                ->update([
-                    'teardown_complete' => true,
-                ])
-        );
+        $this->getCall()->update([
+            'teardown_complete' => true,
+        ]);
     }
 }

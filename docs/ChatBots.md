@@ -409,7 +409,7 @@ class MessengerServiceProvider extends ServiceProvider
 
 ## API Flow
 - With bots now enabled, and your bot handler's registered, you may use the API to manage a group threads bots.
-- In order to create a new Bot in your group thread, the group settings must have `chat_botss` enabled, and the user creating the bot must be a group admin, or a participant with permissions to `manage_bots`.
+- In order to create a new Bot in your group thread, the group settings must have `chat_bots` enabled, and the user creating the bot must be a group admin, or a participant with permissions to `manage_bots`.
 
 #### Example storing a new bot
 

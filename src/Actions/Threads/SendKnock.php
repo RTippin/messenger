@@ -48,12 +48,14 @@ class SendKnock extends BaseMessengerAction
     }
 
     /**
-     * Send a nice KNOCK to the thread!
+     * Send a KNOCK 👊✊ to the thread!
      *
      * @param  Thread  $thread
      * @return $this
      *
      * @throws FeatureDisabledException|KnockException
+     *
+     * @TODO Move knock cache methods to thread model.
      */
     public function execute(Thread $thread): self
     {

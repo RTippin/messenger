@@ -7,23 +7,11 @@ use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\FileServiceException;
 use RTippin\Messenger\Http\Request\MessengerAvatarRequest;
-use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Services\FileService;
 use Throwable;
 
 class StoreMessengerAvatar extends MessengerAvatarAction
 {
-    /**
-     * StoreMessengerAvatar constructor.
-     *
-     * @param  Messenger  $messenger
-     * @param  FileService  $fileService
-     */
-    public function __construct(Messenger $messenger, FileService $fileService)
-    {
-        parent::__construct($messenger, $fileService);
-    }
-
     /**
      * @param  UploadedFile  $image
      * @return $this

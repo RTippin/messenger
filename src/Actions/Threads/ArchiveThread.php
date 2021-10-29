@@ -45,7 +45,7 @@ class ArchiveThread extends BaseMessengerAction
     }
 
     /**
-     * Archive the thread :(.
+     * Archive the thread.
      *
      * @param  Thread  $thread
      * @return $this
