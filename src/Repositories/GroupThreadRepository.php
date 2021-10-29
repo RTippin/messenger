@@ -55,7 +55,7 @@ class GroupThreadRepository
                 'latestMessage.owner',
                 'activeCall.participants.owner',
             ])
-            ->where('threads.updated_at', '<=', Helpers::PrecisionTime($thread->updated_at))
+            ->where('threads.updated_at', '<=', Helpers::precisionTime($thread->updated_at))
             ->where('threads.id', '!=', $thread->id)
             ->limit($this->messenger->getThreadsPageCount())
             ->get();

@@ -48,7 +48,7 @@ class AudioMessageRepository
         return $thread->audio()
             ->latest()
             ->with('owner')
-            ->where('created_at', '<=', Helpers::PrecisionTime($message->created_at))
+            ->where('created_at', '<=', Helpers::precisionTime($message->created_at))
             ->where('id', '!=', $message->id)
             ->limit($this->messenger->getMessagesPageCount())
             ->get();

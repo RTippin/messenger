@@ -151,7 +151,7 @@ class Participant extends Model implements Ownerable
             $this->getLastSeenMessageCacheKey(),
             now()->addWeek(),
             fn () => Message::where('thread_id', '=', $this->thread_id)
-                ->where('created_at', '<=', Helpers::PrecisionTime($this->last_read))
+                ->where('created_at', '<=', Helpers::precisionTime($this->last_read))
                 ->latest()
                 ->first()
         );

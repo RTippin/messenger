@@ -362,7 +362,7 @@ class Message extends Model implements Ownerable
             return null;
         }
 
-        return Helpers::Route('assets.messenger.threads.gallery.render',
+        return Helpers::route('assets.messenger.threads.gallery.render',
             [
                 'thread' => $this->thread_id,
                 'message' => $this->id,
@@ -381,7 +381,7 @@ class Message extends Model implements Ownerable
             return null;
         }
 
-        return Helpers::Route('assets.messenger.threads.files.download',
+        return Helpers::route('assets.messenger.threads.files.download',
             [
                 'thread' => $this->thread_id,
                 'message' => $this->id,
@@ -399,7 +399,7 @@ class Message extends Model implements Ownerable
             return null;
         }
 
-        return Helpers::Route('assets.messenger.threads.audio.download',
+        return Helpers::route('assets.messenger.threads.audio.download',
             [
                 'thread' => $this->thread_id,
                 'message' => $this->id,
@@ -417,7 +417,7 @@ class Message extends Model implements Ownerable
             return null;
         }
 
-        return Helpers::Route('assets.messenger.threads.videos.download',
+        return Helpers::route('assets.messenger.threads.videos.download',
             [
                 'thread' => $this->thread_id,
                 'message' => $this->id,
@@ -435,7 +435,7 @@ class Message extends Model implements Ownerable
             return null;
         }
 
-        return Helpers::Route('api.messenger.threads.messages.history',
+        return Helpers::route('api.messenger.threads.messages.history',
             [
                 'thread' => $this->thread_id,
                 'message' => $this->id,

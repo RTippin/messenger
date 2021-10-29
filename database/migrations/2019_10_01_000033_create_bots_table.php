@@ -22,7 +22,7 @@ class CreateBotsTable extends Migration
                 $table->id();
             }
             $table->uuid('thread_id');
-            Helpers::SchemaMorphType('owner', $table);
+            Helpers::schemaMorphType('owner', $table);
             $table->string('name', 255);
             $table->string('avatar')->nullable();
             $table->boolean('enabled')->default(true);

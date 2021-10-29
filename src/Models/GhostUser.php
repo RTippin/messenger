@@ -106,7 +106,7 @@ class GhostUser extends Model
      */
     public function getProviderAvatarRoute(string $size = 'sm'): ?string
     {
-        return Helpers::Route('assets.messenger.provider.avatar.render',
+        return Helpers::route('assets.messenger.provider.avatar.render',
             [
                 'alias' => $this->ghostBot ? 'bot' : 'ghost',
                 'id' => $this->getKey(),

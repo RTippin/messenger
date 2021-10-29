@@ -64,7 +64,7 @@ class MarkParticipantRead extends BaseMessengerAction
             && ! $this->getParticipant()->pending
             && (is_null($thread)
                 || is_null($this->getParticipant()->last_read)
-                || Helpers::PrecisionTime($thread->updated_at) > Helpers::PrecisionTime($this->getParticipant()->last_read));
+                || Helpers::precisionTime($thread->updated_at) > Helpers::precisionTime($this->getParticipant()->last_read));
     }
 
     /**
