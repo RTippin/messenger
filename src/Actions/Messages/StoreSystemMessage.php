@@ -37,7 +37,7 @@ class StoreSystemMessage extends NewMessageAction
      * @param  Thread  $thread
      * @param  MessengerProvider  $provider
      * @param  string  $body
-     * @param  string  $type
+     * @param  int  $type
      * @return $this
      *
      * @throws Throwable
@@ -45,7 +45,7 @@ class StoreSystemMessage extends NewMessageAction
     public function execute(Thread $thread,
                             MessengerProvider $provider,
                             string $body,
-                            string $type): self
+                            int $type): self
     {
         if ($this->messenger->isSystemMessagesEnabled()) {
             $this->setThread($thread)
