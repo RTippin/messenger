@@ -3,6 +3,19 @@
 
 ---
 
+### [v1.11.0 (10-28-2021)](https://github.com/RTippin/messenger/compare/v1.10.0...v1.11.0)
+
+#### Added
+- Caching on `BotAction` collection for a group thread when jobs process matching bot triggers against messages sent.
+
+#### Changed
+- All bot action classes will clear the `BotAction` cache.
+- Enforce checking child to parent relation keys in policies.
+- All route model bindings are now scoped.
+- Job class properties now have `public` visibility.
+
+---
+
 ### [v1.10.0 (10-22-2021)](https://github.com/RTippin/messenger/compare/v1.9.0...v1.10.0)
 
 #### Added

@@ -15,10 +15,10 @@
 ],
 ```
 
-- Video calling is disabled by default. If enabled, you must set the driver implementation within our published `MessengerServiceProvider` (or any service providers boot method).
-  - Our [NullVideoBroker][link-video-broker] will be set as the default [VideoDriver][link-video-driver].
-- You must create your own [VideoDriver][link-video-driver] implementation if you wish to interact with your chosen 3rd party service.
-- We provide an event subscriber ([CallSubscriber][link-call-subscriber]) to listen and react to calling events. You may choose to enable it, whether it puts jobs on the queue or not, and which queue channel its jobs are dispatched on.
+- Video calling is disabled by default. If enabled, you must set the driver implementation within the published `MessengerServiceProvider` (or any service providers boot method).
+  - The [NullVideoBroker][link-video-broker] will be set as the default [VideoDriver][link-video-driver].
+- You must create your own [VideoDriver][link-video-driver] implementation if you wish to interact with your 3rd party video provider of choice.
+- Provided is an event subscriber ([CallSubscriber][link-call-subscriber]) to listen and react to calling events. You may choose to enable it, whether it puts jobs on the queue or not, and which queue channel its jobs are dispatched on.
 
 ---
 
@@ -30,7 +30,7 @@
 ```bash
 php artisan queue:work --queue=messenger
 ```
-**To automate ending active calls with no active participants, you may schedule our command once per minute within your `Kernel`**
+**To automate ending active calls with no active participants, you should schedule the call activity checker command once per minute within your applications `App\Console\Kernel`**
 ```php
 <?php
 
@@ -56,16 +56,16 @@ class Kernel extends ConsoleKernel
 
 ### Flow
 
-- You will bind your own video implementation to our interface (more on that below).
-- A call will be created for a given thread, adding the call model into the database, and firing our `CallStartedEvent`.
-  - Once a call has been created, it usually still requires setup with a 3rd party video service.
-- Our [CallSubscriber][link-call-subscriber] will listen for the `CallStartedEvent`, and dispatch the `SetupCall` job.
+- You will bind your own video implementation to the [VideoDriver][link-video-driver] interface (more on that below).
+- A call will be created for a given thread, adding the call model into the database, and firing the `CallStartedEvent`.
+  - Once a call has been created, it usually still requires setup with your 3rd party video provider.
+- The [CallSubscriber][link-call-subscriber] will listen for the `CallStartedEvent`, and dispatch the `SetupCall` job.
 - `SetupCall` will handle the [VideoDriver][link-video-driver] `create` method, then updating the call models room ID/PIN/SECRET/PAYLOAD in the database.
   - This also marks the calls `setup_complete` as true. Your frontend can now have full access to the updated room details.
-- While in a call, each participant must hit our call heartbeat endpoint, which puts them as active in cache for one minute. It is best to hit this endpoint every 30 seconds. This also ensures our scheduled command ends active calls with no active participants.
+- While in a call, each participant must hit our call heartbeat endpoint, which puts them as active in cache for one minute. It is best to hit this endpoint every 30 seconds. This also ensures the scheduled call activity checker command ends active calls with no active participants.
   - `GET api/messenger/threads/{thread}/calls/{call}/heartbeat`
 - When a call is ended, the `call_ended` column will be filled with the current timestamp, and the call will no longer be considered active.
-- Our [CallSubscriber][link-call-subscriber] will listen for the `CallEndedEvent`, and dispatch the `TeardownCall` job.
+- The [CallSubscriber][link-call-subscriber] will listen for the `CallEndedEvent`, and dispatch the `TeardownCall` job.
 - `TeardownCall` will handle the [VideoDriver][link-video-driver] `destroy` method, then updating the call's `teardown_complete` to true.
 
 ---

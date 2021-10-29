@@ -54,9 +54,9 @@
 - Pinned messages.
 
 ### Notes
-- Read through our [`messenger.php`][link-config] config file before migrating!
+- Read through the [`messenger.php`][link-config] config file before migrating!
 - This is a pure backend driven package providing an API to interact with, thus no web UI or websocket implementation will be setup for you.
-- Calling is disabled by default. You are responsible for implementing your own media server or connecting to a 3rd party service.
+- Calling is disabled by default. You are responsible for implementing your own media server or connecting to a 3rd party provider.
 
 ---
 
@@ -68,7 +68,7 @@
 composer require rtippin/messenger
 ```
 
-### To complete our setup, please refer to the installation documentation listed below:
+### To complete the setup, please refer to the installation documentation listed below:
 
 ---
 
@@ -89,16 +89,18 @@ composer require rtippin/messenger
 
 ## Addons / Demo
 
-- [Messenger Bots][link-messenger-bots] - Pre-made bots you can register within our core.
+- [Messenger Bots][link-messenger-bots] - Pre-made bots you can register within this package.
 - [Messenger Faker][link-messenger-faker] - Adds commands useful in development environments to mock/seed realtime events and messages.
 - [Messenger Web UI][link-messenger-ui] - Ready-made web routes and publishable views / assets, including default images.
-- [Demo App][link-demo-source] - Our demo laravel app with this core package installed, including a [Live Demo][link-live-demo].
+- [Demo App][link-demo-source] - A demo laravel app with this core package installed, including a [Live Demo][link-live-demo].
 
 ---
 
 ## Credits - [Richard Tippin][link-author]
 
-### [LICENSE][link-license] | [CHANGELOG][link-changelog]
+### [LICENSE][link-license]
+
+### [CHANGELOG][link-changelog]
 
 ## Security
 

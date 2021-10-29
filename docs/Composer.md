@@ -2,7 +2,7 @@
 
 ---
 
-### This support class allows you to easily send many of our core actions, such as messages, reactions, images, and more.
+### This support class allows you to easily send many of the core actions, such as messages, reactions, images, and more.
 
 ```php
 use RTippin\Messenger\Facades\MessengerComposer;
@@ -16,7 +16,7 @@ MessengerComposer::to($receiver)
 ---
 
 ### General Flow
-- Set the `Thread` or `MessengerProvider` we want to compose an action `TO`.
+- Set the `Thread` or `MessengerProvider` you want to compose an action `TO`.
 - Set the `FROM` `MessengerProvider` who is composing the action.
 - Decide if you want to silence the action or let it emit realtime broadcast.
 - Call the action, such as `message()` to complete the cycle. 
@@ -25,7 +25,7 @@ MessengerComposer::to($receiver)
 ---
 
 ### `to($entity)`
-- Set the `Thread` or `MessengerProvider` we want to compose `TO`. If a provider is supplied, we will attempt to locate an existing private thread between the `TO` and `FROM` providers. If no private thread is found, one will be created.
+- Set the `Thread` or `MessengerProvider` you want to compose `TO`. If a provider is supplied, we will attempt to locate an existing private thread between the `TO` and `FROM` providers. If no private thread is found, one will be created.
   - If the two providers are not friends, the new thread will be marked as pending for the `TO` recipient.
 
 ### `from(MessengerProvider $provider)`
@@ -326,7 +326,7 @@ MessengerComposer::to($thread)->from($user)->emitTyping();
 ```
 ***Thread presence channel***
 ```js
-Echo.join('messenger.thread.1234-5678').listenForWhisper('typing', handleTyping)
+Echo.join('messenger.thread.1234-5678').listenForWhisper('typing', (e) => console.log(e))
 ```
 ***Typing broadcast data***
 ```json
@@ -344,7 +344,7 @@ MessengerComposer::to($thread)->from($user)->emitStopTyping();
 ```
 ***Thread presence channel***
 ```js
-Echo.join('messenger.thread.1234-5678').listenForWhisper('stop-typing', handleStoppedTyping)
+Echo.join('messenger.thread.1234-5678').listenForWhisper('stop-typing', (e) => console.log(e))
 ```
 ***Stopped typing broadcast data***
 ```json
@@ -362,7 +362,7 @@ MessengerComposer::to($thread)->from($user)->emitRead($message);
 ```
 ***Thread presence channel***
 ```js
-Echo.join('messenger.thread.1234-5678').listenForWhisper('read', handleMessageSeen)
+Echo.join('messenger.thread.1234-5678').listenForWhisper('read', (e) => console.log(e))
 ```
 ***Read broadcast data***
 ```json
@@ -378,9 +378,9 @@ Echo.join('messenger.thread.1234-5678').listenForWhisper('read', handleMessageSe
 ---
 
 ## Overwriting Presence Event classes and data
-- You will need to create a simple class that extends our abstract [MessengerBroadcast][link-messenger-broadcast] class.
+- You will need to create a simple class that extends the [MessengerBroadcast][link-messenger-broadcast] class.
 - Set the name for the event, usually prefixed with `client-` to emulate a client event that your frontend will `listenForWhisper`.
-- Once created, you will register it with our [PresenceEvents][link-presence-events] support class.
+- Once created, you will register it with the [PresenceEvents][link-presence-events] support class.
 - Overwriting the data only requires you to set a new closure for each client event you choose.
 
 #### New Classes

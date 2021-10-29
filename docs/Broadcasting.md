@@ -2,9 +2,9 @@
 
 ---
 
-- Our broadcast driver implementation ([BroadcastBroker][link-broadcast-broker]) will already be bound into the container by default.
-- This driver is responsible for extracting private/presence channel names and dispatching the broadcast event that any action in our system calls for.
-    - If push notifications are enabled, this broker will also forward its data to our [PushNotificationService][link-push-notify]. The service will then fire a [PushNotificationEvent][link-push-event] that you can attach a listener to handle your own FCM / other service.
+- The broadcast driver implementation ([BroadcastBroker][link-broadcast-broker]) will already be bound into the container by default.
+- This driver is responsible for extracting private/presence channel names and dispatching the broadcast event that any action in messenger calls for.
+    - If push notifications are enabled, this broker will also forward its data to the [PushNotificationService][link-push-notify]. The service will then fire a [PushNotificationEvent][link-push-event] that you can attach a listener to handle your own FCM / other service.
 - ALL events we broadcast implement laravel's `ShouldBroadcastNow` interface, and will not be queued, but broadcasted immediately.
 
 ---
@@ -20,12 +20,12 @@
 ## Channel Routes
 
 ```php
-$broadcaster->channel('messenger.call.{call}.thread.{thread}', CallChannel::class); // Presence
-$broadcaster->channel('messenger.thread.{thread}', ThreadChannel::class); // Presence
-$broadcaster->channel('messenger.{alias}.{id}', ProviderChannel::class); // Private
+Broadcast::channel('messenger.call.{call}.thread.{thread}', CallChannel::class); // Presence
+Broadcast::channel('messenger.thread.{thread}', ThreadChannel::class); // Presence
+Broadcast::channel('messenger.{alias}.{id}', ProviderChannel::class); // Private
 ```
 
-### View our [API Explorer][link-api-explorer] for a list of each broadcast and example payloads.
+### View the [API Explorer][link-api-explorer] for a list of each broadcast and example payloads.
 
 ---
 
@@ -63,33 +63,33 @@ ThreadLeftBroadcast::class => 'thread.left',
 
 ```js
 Echo.private('messenger.user.1')
-  .listen('.new.message', incomingMessage)
-  .listen('.thread.archived', threadLeft)
-  .listen('.message.archived', messagePurged)
-  .listen('.knock.knock', incomingKnok)
-  .listen('.new.thread', newThread)
-  .listen('.thread.approval', threadApproval)
-  .listen('.thread.left', threadLeft)
-  .listen('.incoming.call', incomingCall)
-  .listen('.joined.call', callJoined)
-  .listen('.ignored.call', callIgnored)
-  .listen('.left.call', callLeft)
-  .listen('.call.ended', callEnded)
-  .listen('.friend.request', friendRequest)
-  .listen('.friend.approved', friendApproved)
-  .listen('.friend.cancelled', friendCancelled)
-  .listen('.friend.removed', friendRemoved)
-  .listen('.promoted.admin', promotedAdmin)
-  .listen('.demoted.admin', demotedAdmin)
-  .listen('.permissions.updated', permissionsUpdated)
-  .listen('.friend.denied', friendDenied)
-  .listen('.call.kicked', callKicked)
-  .listen('.thread.read', threadRead)
-  .listen('.reaction.added', reactionAdded)
-  .listen('.reaction.removed', reactionRemoved)
+  .listen('.new.message', (e) => console.log(e))
+  .listen('.thread.archived', (e) => console.log(e))
+  .listen('.message.archived', (e) => console.log(e))
+  .listen('.knock.knock', (e) => console.log(e))
+  .listen('.new.thread', (e) => console.log(e))
+  .listen('.thread.approval', (e) => console.log(e))
+  .listen('.thread.left', (e) => console.log(e))
+  .listen('.incoming.call', (e) => console.log(e))
+  .listen('.joined.call', (e) => console.log(e))
+  .listen('.ignored.call', (e) => console.log(e))
+  .listen('.left.call', (e) => console.log(e))
+  .listen('.call.ended', (e) => console.log(e))
+  .listen('.friend.request', (e) => console.log(e))
+  .listen('.friend.approved', (e) => console.log(e))
+  .listen('.friend.cancelled', (e) => console.log(e))
+  .listen('.friend.removed', (e) => console.log(e))
+  .listen('.promoted.admin', (e) => console.log(e))
+  .listen('.demoted.admin', (e) => console.log(e))
+  .listen('.permissions.updated', (e) => console.log(e))
+  .listen('.friend.denied', (e) => console.log(e))
+  .listen('.call.kicked', (e) => console.log(e))
+  .listen('.thread.read', (e) => console.log(e))
+  .listen('.reaction.added', (e) => console.log(e))
+  .listen('.reaction.removed', (e) => console.log(e))
 ```
 
-- Most data your client side will receive will be done through the user/providers private channel. Broadcast such as messages, calls, friend request, knocks, and more will be transmitted over the `ProviderChannel`. To subscribe to this channel, follow the below example using the `alias` of the provider you set in your providers settings:
+- `ProviderChannel` Most data your client side will receive will be transmitted through this channel. To subscribe to this channel, follow the below example using the `alias` of the provider you set in your providers settings along with their `ID`:
     - `private-messenger.user.1` | User model with ID of `1`
     - `private-messenger.company.1234-5678` | Company model with ID of `1234-5678`
 
@@ -112,35 +112,35 @@ ThreadSettingsBroadcast::class => 'thread.settings',
 ```js
 //Presence
 Echo.join('messenger.thread.1234-5678')
-  .listen('.thread.settings', groupSettingsState)
-  .listen('.thread.avatar', groupAvatarState)
-  .listen('.message.edited', renderUpdatedMessage)
-  .listen('.reaction.added', reactionAdded)
-  .listen('.reaction.removed', reactionRemoved)
-  .listen('.embeds.removed', embedsRemoved)
+  .listen('.thread.settings', (e) => console.log(e))
+  .listen('.thread.avatar', (e) => console.log(e))
+  .listen('.message.edited', (e) => console.log(e))
+  .listen('.reaction.added', (e) => console.log(e))
+  .listen('.reaction.removed', (e) => console.log(e))
+  .listen('.embeds.removed', (e) => console.log(e))
 ```
 
-- While inside a thread, you will want to subscribe to the `ThreadChannel` presence channel. This is where realtime client to client events are broadcast. Typing, seen message, online status are all client to client and this is a great channel to utilize for this. The backend will broadcast a select few events over presence, such as when the groups settings are updated, or group avatar changed, or a user edited their message. This lets anyone currently in the thread know to update their UI! See example below for channel format to subscribe on:
+- `ThreadChannel` While inside a thread, you should subscribe to this presence channel. This is where realtime client to client events are broadcast. Typing, seen message, online status are all client to client and this is a great channel to utilize for this. The backend will broadcast a select few events over presence, such as when the groups settings are updated, or group avatar changed, or a user edited their message. This lets anyone currently in the thread know to update their UI! See example below for channel format to subscribe on:
     - `presence-messenger.thread.1234-5678` | Thread presence channel for Thread model with ID of `1234-5678`
 
 ---
 
 ## Call Presence Channel
 
-- There are currently no broadcast from the backend to a call's presence channel. This channel exists for you to have a short-lived channel to connect to while in a call.
+- `CallChannel` There are currently no broadcast from the backend to a call's presence channel. This channel exists for you to have a short-lived channel to connect to while in a call.
   - `presence-messenger.call.4321.thread.1234-5678` | Call presence channel for Call model with ID of `1234` and Thread model with ID of `1234-5678`
 
 ***Laravel Echo presence channel example:***
 
 ```js
-Echo.join('messenger.call.4321.thread.1234-5678').listen('.my.event', handleMyEvent)
+Echo.join('messenger.call.4321.thread.1234-5678').listen('.my.event', (e) => console.log(e))
 ```
 
 ---
 
 ## Interacting with the broadcaster
-- It is very simple to reuse our included broadcast events, or to create your own, while being able to broadcast them yourself!
-- The `BroadcastDriver` will be bound in the container, so you can call to it anytime using our helper, or dependency injection.
+- It is very simple to reuse the included broadcast events, or to create your own, while being able to broadcast them yourself!
+- The `BroadcastDriver` will be bound in the container, so you can call to it anytime using the helper, or dependency injection.
 
 ```php
 use RTippin\Messenger\Contracts\BroadcastDriver;
@@ -148,7 +148,7 @@ use RTippin\Messenger\Contracts\BroadcastDriver;
 //Using the container / dependency injection.
 $broadcaster = app(BroadcastDriver::class);
 
-//Using our helper.
+//Using the helper.
 $broadcaster = broadcaster();
 ```
 
@@ -162,11 +162,11 @@ broadcaster()->to($receiver)->with([
 ])->broadcast(NewMessageBroadcast::class);
 ```
 ```js
-Echo.private('messenger.user.1').listen('.new.message', incomingMessage)
+Echo.private('messenger.user.1').listen('.new.message', (e) => console.log(e))
 ```
 
 ### Creating and broadcasting custom events
-- Your custom broadcast event will need to extend our abstract [MessengerBroadcast][link-messenger-broadcast] class.
+- Your custom broadcast event will need to extend the abstract [MessengerBroadcast][link-messenger-broadcast] class.
 - All you need to declare is the `broadcastAs` method. Everything else is set for you on demand!
 
 #### Example custom broadcast event
@@ -196,15 +196,15 @@ broadcaster()->to($receiver)->with([
 ])->broadcast(CustomBroadcast::class);
 ```
 ```js
-Echo.private('messenger.user.1').listen('.custom.broadcast', handleCustom)
+Echo.private('messenger.user.1').listen('.custom.broadcast', (e) => console.log(e))
 ```
 
 ---
 
 ## Setting up your custom BroadcastDriver
 
-- If you want to create your own broadcast driver implementation, your class must implement our [BroadcastDriver][link-broadcast-driver] interface.
-- Once created, register your custom driver implementation in your `MessengerServiceProvider` boot method
+- If you want to create your own broadcast driver implementation, your class must implement the [BroadcastDriver][link-broadcast-driver] interface.
+- Once created, register your custom driver implementation in your `MessengerServiceProvider` boot method.
 
 ```php
 <?php

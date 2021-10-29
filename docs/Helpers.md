@@ -4,7 +4,7 @@
 
 ## [Messenger][link-messenger]
 
-- This is our core class, and holds most of the configuration getters and setters.
+- The core class of messenger, and holds most of the configuration getters and setters.
 - This is a `singleton` and will only be loaded once into the container per request cycle.
 
 ```php
@@ -22,7 +22,7 @@ $config = messenger()->getConfig();
 
 ## [MessengerBots][link-bots]
 
-- This is our core Bots class that manages registered bot handlers and bot validations.
+- The core Bots class that manages registered bot handlers and bot validations.
 - This is a `singleton` and will only be loaded once into the container per request cycle.
 
 ```php

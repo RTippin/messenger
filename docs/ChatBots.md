@@ -17,7 +17,7 @@
 
 - Bots are disabled by default. When enabled, bots may be created within group threads that explicitly enable the bots feature. A bot may contain many actions, and each action may contain many triggers. Upon a trigger matching a message, the action's handler class will process and respond to the message.
 - We provide an event subscriber ([BotSubscriber][link-bot-subscriber]) to listen and react to events that may trigger a bot response. You may choose to enable it, whether it puts jobs on the queue or not, and which queue channel its jobs are dispatched on.
-- To use our pre-made bot handlers, please install our [Messenger Bots][link-messenger-bots] package.
+- Ready-made bot handlers can be used with the optional [Messenger Bots][link-messenger-bots] package.
 
 ---
 
@@ -29,7 +29,7 @@
 ```bash
 php artisan queue:work --queue=messenger-bots
 ```
-**To automate purging archived bots and their files from storage, you may schedule our command at whichever interval matches your needs within your `Kernel`**
+**To automate purging archived bots and their files from storage, you should schedule the bot purge command at a sensible interval within your applications `App\Console\Kernel`**
 ```php
 <?php
 
@@ -55,11 +55,11 @@ class Kernel extends ConsoleKernel
 
 ### General Flow
 
-- You will register your custom bot handlers (more on that below).
-- A bot can be created on a group thread with bots enabled.
-- The bot can then have actions attached, where the actions have triggers and a handler that will be resolved when a match is found.
+- Register your custom bot handlers (more on that below).
+- A bot can be created in a group thread with bots enabled.
+- The bot will have actions attached, where the actions have triggers and a handler that will be resolved when a match is found against message sent.
 - When a message is sent, we fire our `NewMessageEvent`.
-- Our [BotSubscriber][link-bot-subscriber] will listen for the `NewMessageEvent`, and dispatch the `BotActionMessageHandler` job.
+- The [BotSubscriber][link-bot-subscriber] will listen for the `NewMessageEvent`, and dispatch the `BotActionMessageHandler` job.
   - This job will only be dispatched if the message sent is from a group thread, not a system message, not from a bot, is a text based message, and its thread has bots enabled.
 - `BotActionMessageHandler` will process each active bot on the messages thread, loading all attached actions on the bots, and looping through them to match any triggers against the message sent.
 - When a trigger is matched against the message, we will instantiate that actions [BotActionHandler][link-action-handler] and execute its `handle` method.
@@ -68,7 +68,7 @@ class Kernel extends ConsoleKernel
 
 ## Creating Bot Handlers
 
-**Create your handler class and extend our [BotActionHandler][link-action-handler] abstract class.**
+**Create your handler class and extend the [BotActionHandler][link-action-handler] abstract class.**
 
 **You can use the included command to generate the bot handler class:**
 
@@ -76,16 +76,18 @@ class Kernel extends ConsoleKernel
 php artisan messenger:make:bot TestBot
 ```
 
-- At the very minimum, your bots class must define a public `handle()` method and a public static `getSettings()` method.
+- At the very minimum, your bots class must define a `public handle()` method and a `public static getSettings()` method.
 - Should you need to inject dependencies, you may add your own constructor and type hint any dependencies. Your handler class will be instantiated using laravel's container.
 
 **Example**
+
 ```php
 <?php
 
 namespace App\Bots;
 
 use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\MessengerBots;
 use Throwable;
 
 class TestBot extends BotActionHandler
@@ -102,7 +104,7 @@ class TestBot extends BotActionHandler
             'description' => 'I am a test bot handler.',
             'name' => 'McTesting!',
             'unique' => true,
-            'match' => 'exact',
+            'match' => MessengerBots::MATCH_EXACT,
             'triggers' => ['!test', '!trigger'],
         ];
     }
@@ -143,6 +145,9 @@ class TestBot extends BotActionHandler
 - `exact:caseless` - Same as "exact", but is case-insensitive.
 - `starts:with` - The trigger must be the lead phrase within the message. Cannot be part of or inside another word.
 - `starts:with:caseless` - Same as "starts with", but is case-insensitive.
+
+##### Match method constants
+- You may use the match constants located on the [MessengerBots][link-bots-service] core class.
 
 ---
 
@@ -212,12 +217,14 @@ class TestBot extends BotActionHandler
 ---
 
 **Example handler using preset triggers and match method, that sends a welcome message and adds a reaction when triggered.**
+
 ```php
 <?php
 
 namespace App\Bots;
 
 use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\MessengerBots;
 use Throwable;
 
 class HelloBot extends BotActionHandler
@@ -234,7 +241,7 @@ class HelloBot extends BotActionHandler
             'description' => 'Say hello when someone says hi!',
             'name' => 'Hello Response',
             'triggers' => ['hello', 'hi', 'hey'],
-            'match' => 'contains:caseless',
+            'match' => MessengerBots::MATCH_CONTAINS_CASELESS,
         ];
     }
 
@@ -314,14 +321,18 @@ class ReplyBot extends BotActionHandler
 ---
 
 ### Authorization
-- To authorize the end user add your handler to a bot, you must define the 'authorize()' method and return true or false. 
-  - If the end user is unauthorized, the handler will be hidden from appearing in the available handlers list while adding actions to a bot. This does NOT authorize being triggered once added to a bot action.
+- To authorize the end user add your handler to a bot, you should define the `authorize()` method and return boolean.
+- This method will be called during the http request cycle, giving you access to the current auth/session/etc.
+  - If the end user is unauthorized, the handler will be hidden from appearing in the available handlers list while adding actions to a bot. 
+  - This does NOT authorize being triggered once added to a bot action.
+
 ```php
 <?php
 
 namespace App\Bots;
 
 use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\MessengerBots;
 use Throwable;
 
 class TestBot extends BotActionHandler
@@ -338,7 +349,7 @@ class TestBot extends BotActionHandler
             'description' => 'I am a test bot handler.',
             'name' => 'McTesting!',
             'unique' => true,
-            'match' => 'exact',
+            'match' => MessengerBots::MATCH_EXACT,
             'triggers' => ['!test', '!trigger'],
         ];
     }
@@ -364,7 +375,7 @@ class TestBot extends BotActionHandler
 ---
 
 ## Register your Handlers
-- Once you are ready to make your handler available for use, head to your `MessengerServiceProvider` and add your handler classes using the `MessengerBots::registerHandlers([])` method.
+- Once you are ready to make your handler available for use, head to your `MessengerServiceProvider` and add your handler classes using the facade `MessengerBots::registerHandlers()` method.
 ```php
 <?php
 
@@ -424,7 +435,7 @@ axios.post('/api/messenger/threads/{thread}/bots', {
 - Any additional fields required will be those you defined on your handler's `rules()`, if any.
 
 #### Example adding our `HelloBot` we made above
-- Our match and triggers are already overridden, and we defined no extra rules on the handler. Only the base rules are required.
+- The match and triggers are already overridden, and we defined no extra rules on the handler. Only the base rules are required.
 ```js
 axios.post('/api/messenger/threads/{thread}/bots/{bot}/actions', {
   "handler": "hello",
@@ -454,7 +465,7 @@ axios.post('/api/messenger/threads/{thread}/bots/{bot}/actions', {
 });
 ```
 
-- Now that our bot has been created and is enabled, as well as having both our custom handler's attached, we can trigger them!
+- Now that the bot has been created and is enabled, as well as having both the custom handler's attached, we can trigger them!
 - For `HelloBot`, sending a message that contains any of the triggers `hello|hi|hey` will cause the handler to send our message and reaction!
 - For `ReplyBot`, sending a message that contains our triggers `help|support` will cause the handler to reply with the two messages `Why are you asking me?` and `I say google it!`,
 
@@ -463,3 +474,4 @@ axios.post('/api/messenger/threads/{thread}/bots/{bot}/actions', {
 [link-action-handler]: https://github.com/RTippin/messenger/blob/1.x/src/Actions/Bots/BotActionHandler.php
 [link-action-interface]: https://github.com/RTippin/messenger/blob/1.x/src/Contracts/ActionHandler.php
 [link-messenger-composer]: https://github.com/RTippin/messenger/blob/1.x/src/Support/MessengerComposer.php
+[link-bots-service]: https://github.com/RTippin/messenger/blob/1.x/src/MessengerBots.php

@@ -3,7 +3,7 @@
 ---
 
 - The majority of the core actions in this package will dispatch event(s). This gives you the flexibility to attach your own event listeners as needed.
-- By default, specific events have already been subscribed to internally through our event subscribers. Depending on your config settings, these subscribers can be enabled or disabled.
+- By default, specific events have already been subscribed to internally through the event subscribers. Depending on your config settings, these subscribers can be enabled or disabled.
   - [BotSubscriber][link-bot-subscriber]
   - [CallSubscriber][link-call-subscriber]
   - [SystemMessageSubscriber][link-system-message-subscriber]
