@@ -455,12 +455,12 @@ class MessengerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //Setting our custom classes
+        //Setting the custom event classes
         PresenceEvents::setTypingClass(Typing::class);
         PresenceEvents::setTypingClass(StopTyping::class);
         PresenceEvents::setTypingClass(Read::class);
         
-        //Setting our own closures for data that will be broadcast.
+        //Setting the custom closures for data that will be broadcasted.
         PresenceEvents::setTypingClosure(function (MessengerProvider $provider) {
             return [
                 'id' => $provider->getKey(),

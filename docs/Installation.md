@@ -11,7 +11,7 @@ composer require rtippin/messenger
 ### Install Command
 - Installs the base messenger files, publishing the [`messenger.php`][link-config] config and service provider.
 - This will also register the published service provider in your `app.php` config file inside the providers array.
-- You will be asked to confirm running this command, as well as an option to migrate our tables before completion.
+- You will be asked to confirm running this command, as well as an option to run the migrations before completion.
 ```bash
 php artisan messenger:install
 ```
@@ -33,9 +33,9 @@ php artisan migrate
 
 ## Messenger Providers
 
-- Providers are the model's from your application that you want to incorporate into `Messenger`, giving each model their own "inbox" and allowing participation within messenger.
+- Providers are the model's from your application you incorporate into `Messenger`.
 - For most applications, you will only register your `User` model. However, if you had a `User` and a `Teacher` model, you can register both models with `Messenger`, allowing teachers to have their own inbox, and being able to message users as a teacher.
-- By default, the `Bot` model is a registered internally as a provider, allowing it to participate in group threads.
+- The `Bot` model is a registered internally as a provider, allowing it to participate in group threads.
 - Your provider models will also use the internal [Messenger.php][link-messenger-model] model, which acts as a settings model, as well as allowing reverse search. More on this below, after registering providers.
 
 ---
@@ -97,7 +97,7 @@ class User extends Authenticatable implements MessengerProvider
     public static function getProviderSettings(): array
     {
         return [
-            'alias' => null, // Auto-generated unless defined
+            'alias' => 'user',
             'searchable' => true,
             'friendable' => true,
             'devices' => true,
@@ -114,9 +114,9 @@ class User extends Authenticatable implements MessengerProvider
 
 ### Searchable
 
-- You must implement the `getProviderSearchableBuilder` on providers you want to be searchable. Included is a [`Search`][link-search] trait that works out of the box with the default laravel User model.
-  - You must also ensure `searchable` in the providers `getProviderSettings` method is true (default).
-- If you have different columns used to search for your provider, you can skip using the included `Search` trait, and define the public static method yourself.
+- You must implement the `getProviderSearchableBuilder()` method on providers you want to be searchable. Included is a [`Search`][link-search] trait that works out of the box with the default laravel User model.
+  - You must also ensure `searchable` in the providers `getProviderSettings()` method is true (default).
+- If you have different columns used to search for your provider, you can skip using the included [`Search`][link-search] trait, and define the `public static getProviderSearchableBuilder()` method yourself.
   - We inject the query builder, along with the original full string search term, and an array of the search term exploded via spaces and commas.
 
 ***Example:***
@@ -132,20 +132,18 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Traits\Messageable;
 
 class User extends Authenticatable implements MessengerProvider
-{
-    use Messageable;
-        
-  public static function getProviderSearchableBuilder(Builder $query,
-                                                      string $search,
-                                                      array $searchItems)
-  {
-      $query->where(function (Builder $query) use ($searchItems) {
-          foreach ($searchItems as $item) {
-              $query->orWhere('first_name', 'LIKE', "%{$item}%")
-              ->orWhere('last_name', 'LIKE', "%{$item}%");
-          }
-      })->orWhere('email', '=', $search);
-  }
+{        
+    public static function getProviderSearchableBuilder(Builder $query,
+                                                        string $search,
+                                                        array $searchItems)
+    {
+        $query->where(function (Builder $query) use ($searchItems) {
+            foreach ($searchItems as $item) {
+                $query->orWhere('first_name', 'LIKE', "%{$item}%")
+                ->orWhere('last_name', 'LIKE', "%{$item}%");
+            }
+        })->orWhere('email', '=', $search);
+    }
 }
 ```
 
@@ -153,112 +151,99 @@ class User extends Authenticatable implements MessengerProvider
 
 ### Friendable
 
-- Allows your provider to be friended / have friends. We currently include a friends system and migrations (this will be extracted out of this package in a future release).
-- Set `friendable` in the providers `getProviderSettings` method to true (default).
+- Allows your provider to be friended / have friends.
+- Set `friendable` in the providers `getProviderSettings()` method to true (default).
 
 ---
 
 ### Devices
 
-- Devices are a helpful way for you to attach a listener onto our [PushNotificationEvent][link-push-event]. When any broadcast over a private channel occurs, we forward a stripped down list of all recipients/providers and their types/IDs, along with the original data broadcasted over websockets, and the event name.
-  - To use this default event, you must be using our `default` broadcast driver, and have `push_notifications` enabled. How you use the data from our event to send push notifications (FCM, APN, etc.) is up to you!
+- Devices are a helpful way for you to attach a listener onto the [PushNotificationEvent][link-push-event]. When any broadcast over a private channel occurs, we forward a stripped down list of all recipients/providers and their types/IDs, along with the original data broadcasted over websockets, and the event name.
+  - To use this event, you must be using the `default` broadcast driver set by this package, `BroadcastBroker`, and have `push_notifications` enabled. How you use the data from the event to send push notifications (FCM, APN, etc.) is up to you!
 
 ---
 
 ### Provider Interactions `cant_message_first` `cant_search` `cant_friend`
 
-- Provider interactions give fine grain control over how your provider can interact with other providers, should you have multiple.
+- Provider interactions, defined in each providers `getProviderSettings()` method, give fine grain control over how they can interact with other providers, should you have multiple.
 - For each interaction, list the provider classes you want to deny that action from the parent provider.
 
+```php
+public static function getProviderSettings(): array
+{
+    return [
+        //.....
+        'cant_message_first' => [],
+        'cant_search' => [],
+        'cant_friend' => [],
+    ];
+}
+```
 
-`cant_message_first` revokes permissions to initiate a private conversation with the given providers. This does not stop or alter private threads already created, nor does it impact group threads. Initiating a private thread is defined as "messaging first".
+`cant_message_first` revokes permissions to initiate a private conversation with the given providers. This does not stop or alter private threads already created, nor does it impact group threads. Creating a new private thread is referred to as "messaging first".
 
-***Example: A user may not be able to start a conversation with a company, but a company may be allowed to start the conversation with the user. Once a private thread is created, it is business as usual!***
+***Example: A user may not start the conversation with a company, but a company may start the conversation with the user. Once the private thread is created, it is business as usual!***
 
 ```php
 //User
-return [
-    'alias' => 'user',
-    'searchable' => true,
-    'friendable' => true,
-    'devices' => true,
-    'default_avatar' => public_path('vendor/messenger/images/users.png'),
-    'cant_message_first' => [Company::class],
-    'cant_search' => [],
-    'cant_friend' => [],
-];
+public static function getProviderSettings(): array
+{
+    return [
+        'cant_message_first' => [Company::class],
+    ];
+}
 
 //Company
-return [
-    'alias' => 'company',
-    'searchable' => true,
-    'friendable' => true,
-    'devices' => false,
-    'default_avatar' => public_path('vendor/messenger/images/company.png'),
-    'cant_message_first' => [], //no restrictions
-    'cant_search' => [],
-    'cant_friend' => [],
-];
+public static function getProviderSettings(): array
+{
+    return [
+        'cant_message_first' => [],
+    ];
+}
 ```
 
 `cant_search` Filters search results, omitting the listed providers.
 
-***Example: A user may not be allowed to search for companies, but a company can search for users.***
+***Example: A user may not search for companies, but a company can search for users.***
 
 ```php
 //User
-return [
-    'alias' => 'user',
-    'searchable' => true,
-    'friendable' => true,
-    'devices' => true,
-    'default_avatar' => public_path('vendor/messenger/images/users.png'),
-    'cant_message_first' => [],
-    'cant_search' => [Company::class],
-    'cant_friend' => [],
-];
+public static function getProviderSettings(): array
+{
+    return [
+        'cant_search' => [Company::class],
+    ];
+}
 
 //Company
-return [
-    'alias' => 'company',
-    'searchable' => true,
-    'friendable' => true,
-    'devices' => false,
-    'default_avatar' => public_path('vendor/messenger/images/company.png'),
-    'cant_message_first' => [],
-    'cant_search' => [], //no restrictions
-    'cant_friend' => [],
-];
+public static function getProviderSettings(): array
+{
+    return [
+        'cant_search' => [],
+    ];
+}
 ```
 
 `cant_friend` Revokes permission to initiate a friend request with the listed providers. This permission only impacts when one provider sends another a friend request. Cancelling / Accepting / Denying a friend request, or your list of actual friends, is not impacted by this permission.
 
-***Example: A user may not be allowed to send a friend request to a company, but a company can send a friend request to a user.***
+***Example: A user may not send a friend request to a company, but a company can send a friend request to a user.***
 
 ```php
 //User
-return [
-    'alias' => 'user',
-    'searchable' => true,
-    'friendable' => true,
-    'devices' => true,
-    'default_avatar' => public_path('vendor/messenger/images/users.png'),
-    'cant_message_first' => [],
-    'cant_search' => [],
-    'cant_friend' => [Company::class],
-];
+public static function getProviderSettings(): array
+{
+    return [
+        'cant_friend' => [Company::class],
+    ];
+}
 
 //Company
-return [
-    'alias' => 'company',
-    'searchable' => true,
-    'friendable' => true,
-    'devices' => false,
-    'default_avatar' => public_path('vendor/messenger/images/company.png'),
-    'cant_message_first' => [],
-    'cant_search' => [],
-    'cant_friend' => [], //no restrictions
-];
+public static function getProviderSettings(): array
+{
+    return [
+        'cant_friend' => [],
+    ];
+}
 ```
 
 ---
@@ -267,7 +252,7 @@ return [
 
 - To grab your providers name, the default method returns the `name` column from your model, stripping tags and making words uppercase. You may overwrite the way the name on your model is returned using the below method.
 
-***Example:***
+***Example: Combining two columns `first` and `last` for the name***
 
 ```php
 public function getProviderName(): string
@@ -280,8 +265,8 @@ public function getProviderName(): string
 
 ### Providers avatar column
 
-- When provider avatar upload/removal is enabled, we use the default `string/nullable` : `picture` column on that provider models table.
-  - You may overwrite the column name on your model using the below method, should your column be named differently.
+- When provider avatars are enabled, the default column used on each provider models table for the avatar is of type `string/nullable` named `picture`.
+  - You may overwrite the column name on your provider model using the below method, should your column be named differently.
 
 ***Example:***
 
@@ -313,8 +298,9 @@ public function getProviderAvatarColumn(): string
 
 ### Providers last active column
 
-- When online status is enabled, we use the default `timestamp` : `updated_at` column on that provider models table. This is used to show when a provider was last active, and is the column we will update when you use the messenger status heartbeat.
-  - You may overwrite the column name on your model using the below method, should your column be named differently.
+- When online status is enabled, the default column used on each provider models table is of type `timestamp` named `updated_at`. 
+- This is used to show when a provider was last active, and will be updated to the current timestamp when you use the messenger status heartbeat.
+  - You may overwrite the column name on your provider model using the below method, should your column be named differently.
 
 ***Example:***
 
@@ -342,7 +328,7 @@ public function getProviderAvatarColumn(): string
 php artisan messenger:attach:messengers
 ```
 
-#### See our [Command's][link-commands-docs] documentation for more information.
+#### See the [Command's][link-commands-docs] documentation for more information.
 
 ---
 

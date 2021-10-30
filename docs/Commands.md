@@ -44,48 +44,48 @@
 ---
 
 ### `php artisan messenger:purge:documents` | `--now` | `--days=30`
-- Purge all soft deleted document messages that were archived past the set days (30 default). We run it through our action to remove the document file from storage and message from the database.
+- Purge all soft deleted document messages that were archived past the set days (30 default). The document files will be removed from storage and message models pruned from the database.
 - `--days=X` flag to set how many days in the past to start at.
 - `--now` flag to run immediately without dispatching jobs to queue.
 
 ---
 
 ### `php artisan messenger:purge:audio` | `--now` | `--days=30`
-- Purge all soft deleted audio messages that were archived past the set days (30 default). We run it through our action to remove the audio file from storage and message from the database.
+- Purge all soft deleted audio messages that were archived past the set days (30 default). The audio files will be removed from storage and message models pruned from the database.
 - `--days=X` flag to set how many days in the past to start at.
 - `--now` flag to run immediately without dispatching jobs to queue.
 
 ---
 
 ### `php artisan messenger:purge:videos` | `--now` | `--days=30`
-- Purge all soft deleted video messages that were archived past the set days (30 default). We run it through our action to remove the video file from storage and message from the database.
+- Purge all soft deleted video messages that were archived past the set days (30 default). The video files will be removed from storage and message models pruned from the database.
 - `--days=X` flag to set how many days in the past to start at.
 - `--now` flag to run immediately without dispatching jobs to queue.
 
 ---
 
 ### `php artisan messenger:purge:images` | `--now` | `--days=30`
-- Purge all soft deleted image messages that were archived past the set days (30 default). We run it through our action to remove the image from storage and message from the database.
+- Purge all soft deleted image messages that were archived past the set days (30 default). The image files will be removed from storage and message models pruned from the database.
 - `--days=X` flag to set how many days in the past to start at.
 - `--now` flag to run immediately without dispatching jobs to queue.
 
 ---
 
 ### `php artisan messenger:purge:messages` | `--days=30`
-- Purge all soft deleted messages that were archived past the set days (30 default). We do not need to fire any additional events or load models into memory, just remove from the table, as this is not messages that are documents or images.
+- Purge all soft deleted messages that were archived past the set days (30 default).
 - `--days=X` flag to set how many days in the past to start at.
 
 ---
 
 ### `php artisan messenger:purge:threads` | `--now` | `--days=30`
-- Purge all soft deleted threads that were archived past the set days (30 default). We run it through our action to remove the entire thread directory and sub files from storage and the thread from the database.
+- Purge all soft deleted threads that were archived past the set days (30 default). The thread directories and sub files will be removed from storage and the thread models pruned from the database.
 - `--days=X` flag to set how many days in the past to start at.
 - `--now` flag to run immediately without dispatching jobs to queue.
 
 ---
 
 ### `php artisan messenger:purge:bots` | `--now` | `--days=30`
-- Purge all soft deleted bots that were archived past the set days (30 default). We run it through our action to remove the entire bot directory and sub files from storage and the bot from the database.
+- Purge all soft deleted bots that were archived past the set days (30 default). The bot directories and sub files will be removed from storage and the bot models pruned from the database.
 - `--days=X` flag to set how many days in the past to start at.
 - `--now` flag to run immediately without dispatching jobs to queue.
 

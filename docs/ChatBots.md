@@ -147,7 +147,20 @@ class TestBot extends BotActionHandler
 - `starts:with:caseless` - Same as "starts with", but is case-insensitive.
 
 ##### Match method constants
-- You may use the match constants located on the [MessengerBots][link-bots-service] core class.
+- It is recommended to use the match method constants located on the [MessengerBots][link-bots-service] core class.
+
+```php
+use RTippin\Messenger\MessengerBots;
+
+MessengerBots::MATCH_CONTAINS;
+MessengerBots::MATCH_CONTAINS_CASELESS;
+MessengerBots::MATCH_CONTAINS_ANY;
+MessengerBots::MATCH_CONTAINS_ANY_CASELESS;
+MessengerBots::MATCH_EXACT;
+MessengerBots::MATCH_EXACT_CASELESS;
+MessengerBots::MATCH_STARTS_WITH;
+MessengerBots::MATCH_STARTS_WITH_CASELESS;
+```
 
 ---
 
@@ -359,7 +372,7 @@ class TestBot extends BotActionHandler
      */
     public function authorize(): bool
     {
-        return auth()->user()->isAdmin();
+        return auth()->user()->admin === true;
     }
 
     /**

@@ -8,8 +8,11 @@
 - This is a `singleton` and will only be loaded once into the container per request cycle.
 
 ```php
-//Using the container / dependency injection.
+//Using the container.
 $config = app(\RTippin\Messenger\Messenger::class)->setProvider();
+
+//Using the alias.
+$config = app('messenger')->setProvider();
 
 //Using the facade.
 $config = \RTippin\Messenger\Facades\Messenger::getConfig();
@@ -26,8 +29,11 @@ $config = messenger()->getConfig();
 - This is a `singleton` and will only be loaded once into the container per request cycle.
 
 ```php
-//Using the container / dependency injection.
+//Using the container.
 $handlers = app(\RTippin\Messenger\MessengerBots::class)->getHandlerClasses();
+
+//Using the alias.
+$handlers = app('messenger-bots')->getHandlerClasses();
 
 //Using the facade.
 $handlers = \RTippin\Messenger\Facades\MessengerBots::getHandlerClasses();
@@ -44,8 +50,14 @@ $handlers = bots()->getHandlerClasses();
 - This is not a `singleton`, and you will be given a new class instance each time you call to one of our helpers.
 
 ```php
-//Using the container / dependency injection.
+//Using the container.
 app(\RTippin\Messenger\Support\MessengerComposer::class)->to($receiver)
+    ->from($sender)
+    ->emitTyping()
+    ->message('Hello!');
+
+//Using the alias.
+app('messenger-composer')->to($receiver)
     ->from($sender)
     ->emitTyping()
     ->message('Hello!');

@@ -4,8 +4,8 @@
 
 - The broadcast driver implementation ([BroadcastBroker][link-broadcast-broker]) will already be bound into the container by default.
 - This driver is responsible for extracting private/presence channel names and dispatching the broadcast event that any action in messenger calls for.
-    - If push notifications are enabled, this broker will also forward its data to the [PushNotificationService][link-push-notify]. The service will then fire a [PushNotificationEvent][link-push-event] that you can attach a listener to handle your own FCM / other service.
-- ALL events we broadcast implement laravel's `ShouldBroadcastNow` interface, and will not be queued, but broadcasted immediately.
+    - If push notifications are enabled, this broker will also forward its data to the [PushNotificationService][link-push-notify]. The service will then fire a [PushNotificationEvent][link-push-event] that you can attach a listener to and handle your own FCM / other push service.
+- ALL events broadcasted implement laravel's `ShouldBroadcastNow` interface, and will not be queued, but broadcasted immediately.
 
 ---
 
@@ -90,8 +90,8 @@ Echo.private('messenger.user.1')
 ```
 
 - `ProviderChannel` Most data your client side will receive will be transmitted through this channel. To subscribe to this channel, follow the below example using the `alias` of the provider you set in your providers settings along with their `ID`:
-    - `private-messenger.user.1` | User model with ID of `1`
-    - `private-messenger.company.1234-5678` | Company model with ID of `1234-5678`
+    - `messenger.user.1` | User model with ID of `1`
+    - `messenger.company.1234-5678` | Company model with ID of `1234-5678`
 
 ---
 
@@ -121,14 +121,14 @@ Echo.join('messenger.thread.1234-5678')
 ```
 
 - `ThreadChannel` While inside a thread, you should subscribe to this presence channel. This is where realtime client to client events are broadcast. Typing, seen message, online status are all client to client and this is a great channel to utilize for this. The backend will broadcast a select few events over presence, such as when the groups settings are updated, or group avatar changed, or a user edited their message. This lets anyone currently in the thread know to update their UI! See example below for channel format to subscribe on:
-    - `presence-messenger.thread.1234-5678` | Thread presence channel for Thread model with ID of `1234-5678`
+    - `messenger.thread.1234-5678` | Thread presence channel for Thread model with ID of `1234-5678`
 
 ---
 
 ## Call Presence Channel
 
 - `CallChannel` There are currently no broadcast from the backend to a call's presence channel. This channel exists for you to have a short-lived channel to connect to while in a call.
-  - `presence-messenger.call.4321.thread.1234-5678` | Call presence channel for Call model with ID of `1234` and Thread model with ID of `1234-5678`
+  - `messenger.call.4321.thread.1234-5678` | Call presence channel for Call model with ID of `1234` and Thread model with ID of `1234-5678`
 
 ***Laravel Echo presence channel example:***
 
