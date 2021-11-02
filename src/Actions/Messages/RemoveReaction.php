@@ -170,7 +170,7 @@ class RemoveReaction extends BaseMessengerAction
             ->forProviderWithModel($this->getMessage())
             ->exists()) {
             $this->broadcaster
-                ->to($this->getMessage()->owner)
+                ->to($this->getMessage())
                 ->with($this->generateBroadcastResource())
                 ->broadcast(ReactionRemovedBroadcast::class);
         }
