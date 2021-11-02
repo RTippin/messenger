@@ -12,6 +12,9 @@ use Throwable;
 
 class StoreSystemMessage extends NewMessageAction
 {
+    /**
+     * @var Messenger
+     */
     private Messenger $messenger;
 
     /**
