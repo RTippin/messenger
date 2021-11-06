@@ -2,11 +2,14 @@
 
 namespace RTippin\Messenger\Tests\Messenger;
 
+use Exception;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\MessengerBroadcast;
 use RTippin\Messenger\Brokers\BroadcastBroker;
 use RTippin\Messenger\Contracts\BroadcastDriver;
+use RTippin\Messenger\Events\BroadcastFailedEvent;
 use RTippin\Messenger\Events\PushNotificationEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Call;
@@ -17,14 +20,14 @@ use RTippin\Messenger\Tests\Fixtures\CompanyModel;
 use RTippin\Messenger\Tests\Fixtures\OtherModel;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
 
-class BroadcastDriverTest extends FeatureTestCase
+class BroadcastBrokerTest extends FeatureTestCase
 {
     const WITH = [
         'data' => 1234,
     ];
 
     /** @test */
-    public function it_uses_default_broadcast_broker()
+    public function container_uses_default_broadcast_broker()
     {
         $this->assertInstanceOf(BroadcastBroker::class, app(BroadcastDriver::class));
     }
@@ -42,12 +45,37 @@ class BroadcastDriverTest extends FeatureTestCase
             InvalidBroadcastEvent::class,
         ]);
 
-        app(BroadcastDriver::class)
+        app(BroadcastBroker::class)
             ->to($this->tippin)
             ->with(self::WITH)
             ->broadcast(InvalidBroadcastEvent::class);
 
         Event::assertNotDispatched(InvalidBroadcastEvent::class);
+    }
+
+    /** @test */
+    public function it_fires_failed_broadcast_event_when_exception_thrown()
+    {
+        Event::fake([
+            BroadcastFailedEvent::class,
+            FakeBroadcastEvent::class,
+        ]);
+        Broadcast::shouldReceive('event')->andThrow(new Exception('Pusher Failed.'));
+
+        app(BroadcastBroker::class)
+            ->to($this->tippin)
+            ->with(self::WITH)
+            ->broadcast(FakeBroadcastEvent::class);
+
+        Event::assertNotDispatched(FakeBroadcastEvent::class);
+        Event::assertDispatched(function (BroadcastFailedEvent $event) {
+            $this->assertSame(FakeBroadcastEvent::class, $event->abstractBroadcast);
+            $this->assertContains('private-messenger.user.'.$this->tippin->getKey(), $event->channels);
+            $this->assertSame(self::WITH, $event->with);
+            $this->assertSame('Pusher Failed.', $event->exception->getMessage());
+
+            return true;
+        });
     }
 
     /** @test */
@@ -57,7 +85,7 @@ class BroadcastDriverTest extends FeatureTestCase
             FakeBroadcastEvent::class,
         ]);
 
-        app(BroadcastDriver::class)
+        app(BroadcastBroker::class)
             ->to(null)
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
@@ -74,7 +102,7 @@ class BroadcastDriverTest extends FeatureTestCase
             PushNotificationEvent::class,
         ]);
 
-        app(BroadcastDriver::class)
+        app(BroadcastBroker::class)
             ->to($this->tippin)
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
@@ -90,7 +118,7 @@ class BroadcastDriverTest extends FeatureTestCase
             FakeBroadcastEvent::class,
         ]);
 
-        app(BroadcastDriver::class)
+        app(BroadcastBroker::class)
             ->toSelected(collect([
                 $this->tippin,
                 new OtherModel,
@@ -109,7 +137,7 @@ class BroadcastDriverTest extends FeatureTestCase
             FakeBroadcastEvent::class,
         ]);
 
-        app(BroadcastDriver::class)
+        app(BroadcastBroker::class)
             ->toAllInThread($group)
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
@@ -149,7 +177,7 @@ class BroadcastDriverTest extends FeatureTestCase
                 ->create();
         }
 
-        app(BroadcastDriver::class)
+        app(BroadcastBroker::class)
             ->toAllInThread($group)
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
@@ -167,7 +195,7 @@ class BroadcastDriverTest extends FeatureTestCase
         //Generate 301 threads.
         Thread::factory()->count(301)->create();
 
-        app(BroadcastDriver::class)
+        app(BroadcastBroker::class)
             ->toManyPresence(Thread::all())
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
@@ -185,7 +213,7 @@ class BroadcastDriverTest extends FeatureTestCase
             FakeBroadcastEvent::class,
         ]);
 
-        app(BroadcastDriver::class)
+        app(BroadcastBroker::class)
             ->toOthersInThread($group)
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
@@ -207,7 +235,7 @@ class BroadcastDriverTest extends FeatureTestCase
             FakeBroadcastEvent::class,
         ]);
 
-        app(BroadcastDriver::class)
+        app(BroadcastBroker::class)
             ->to($this->tippin)
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
@@ -222,7 +250,7 @@ class BroadcastDriverTest extends FeatureTestCase
             FakeBroadcastEvent::class,
         ]);
 
-        app(BroadcastDriver::class)
+        app(BroadcastBroker::class)
             ->to($this->developers)
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
@@ -243,7 +271,7 @@ class BroadcastDriverTest extends FeatureTestCase
             FakeBroadcastEvent::class,
         ]);
 
-        app(BroadcastDriver::class)
+        app(BroadcastBroker::class)
             ->toSelected(collect([
                 $this->tippin,
                 $this->developers,
@@ -269,7 +297,7 @@ class BroadcastDriverTest extends FeatureTestCase
             FakeBroadcastEvent::class,
         ]);
 
-        app(BroadcastDriver::class)
+        app(BroadcastBroker::class)
             ->toPresence($thread)
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
@@ -292,7 +320,7 @@ class BroadcastDriverTest extends FeatureTestCase
             FakeBroadcastEvent::class,
         ]);
 
-        app(BroadcastDriver::class)
+        app(BroadcastBroker::class)
             ->toPresence($call)
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);
@@ -315,7 +343,7 @@ class BroadcastDriverTest extends FeatureTestCase
             FakeBroadcastEvent::class,
         ]);
 
-        app(BroadcastDriver::class)
+        app(BroadcastBroker::class)
             ->toManyPresence(collect([
                 $call,
                 $thread,
@@ -340,7 +368,7 @@ class BroadcastDriverTest extends FeatureTestCase
             FakeBroadcastEvent::class,
         ]);
 
-        app(BroadcastDriver::class)
+        app(BroadcastBroker::class)
             ->toSelected(collect([
                 $this->tippin,
                 $this->developers,
@@ -370,7 +398,7 @@ class BroadcastDriverTest extends FeatureTestCase
             FakeBroadcastEvent::class,
         ]);
 
-        app(BroadcastDriver::class)
+        app(BroadcastBroker::class)
             ->toManyPresence(collect([
                 $call,
                 $thread,
@@ -401,7 +429,7 @@ class BroadcastDriverTest extends FeatureTestCase
             FakeBroadcastEvent::class,
         ]);
 
-        app(BroadcastDriver::class)
+        app(BroadcastBroker::class)
             ->to($model($this->tippin))
             ->with(self::WITH)
             ->broadcast(FakeBroadcastEvent::class);

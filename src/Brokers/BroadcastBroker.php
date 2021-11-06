@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Brokers;
 
 use Illuminate\Contracts\Broadcasting\Factory;
+use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
 use RTippin\Messenger\Broadcasting\Channels\MessengerPresenceChannel;
 use RTippin\Messenger\Broadcasting\Channels\MessengerPrivateChannel;
@@ -11,6 +12,7 @@ use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\HasPresenceChannel;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Ownerable;
+use RTippin\Messenger\Events\BroadcastFailedEvent;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\ParticipantRepository;
@@ -22,42 +24,47 @@ class BroadcastBroker implements BroadcastDriver
     /**
      * @var Messenger
      */
-    protected Messenger $messenger;
+    private Messenger $messenger;
 
     /**
      * @var ParticipantRepository
      */
-    protected ParticipantRepository $participantRepository;
+    private ParticipantRepository $participantRepository;
 
     /**
      * @var Factory
      */
-    protected Factory $broadcast;
+    private Factory $broadcast;
 
     /**
      * @var bool
      */
-    protected bool $usingPresence = false;
+    private bool $usingPresence = false;
 
     /**
      * @var Thread|null
      */
-    protected ?Thread $thread = null;
+    private ?Thread $thread = null;
 
     /**
      * @var array
      */
-    protected array $with = [];
+    private array $with = [];
 
     /**
      * @var Collection|null
      */
-    protected ?Collection $recipients = null;
+    private ?Collection $recipients = null;
 
     /**
      * @var PushNotificationService
      */
-    protected PushNotificationService $pushNotification;
+    private PushNotificationService $pushNotification;
+
+    /**
+     * @var Dispatcher
+     */
+    private Dispatcher $dispatcher;
 
     /**
      * BroadcastBroker constructor.
@@ -66,16 +73,19 @@ class BroadcastBroker implements BroadcastDriver
      * @param  ParticipantRepository  $participantRepository
      * @param  PushNotificationService  $pushNotification
      * @param  Factory  $broadcast
+     * @param  Dispatcher  $dispatcher
      */
     public function __construct(Messenger $messenger,
                                 ParticipantRepository $participantRepository,
                                 PushNotificationService $pushNotification,
-                                Factory $broadcast)
+                                Factory $broadcast,
+                                Dispatcher $dispatcher)
     {
         $this->messenger = $messenger;
         $this->participantRepository = $participantRepository;
         $this->broadcast = $broadcast;
         $this->pushNotification = $pushNotification;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
@@ -166,9 +176,13 @@ class BroadcastBroker implements BroadcastDriver
             && $this->recipients->count()
             && is_subclass_of($abstract, MessengerBroadcast::class)) {
             if ($this->usingPresence) {
-                $this->generatePresenceChannels()->each(fn (Collection $channels) => $this->executeBroadcast($abstract, $channels));
+                $this->generatePresenceChannels()->each(
+                    fn (Collection $channels) => $this->executeBroadcast($abstract, $channels)
+                );
             } else {
-                $this->generatePrivateChannels()->each(fn (Collection $channels) => $this->executeBroadcast($abstract, $channels));
+                $this->generatePrivateChannels()->each(
+                    fn (Collection $channels) => $this->executeBroadcast($abstract, $channels)
+                );
 
                 $this->executePushNotify($abstract);
             }
@@ -180,7 +194,7 @@ class BroadcastBroker implements BroadcastDriver
     /**
      * @return Collection
      */
-    protected function generatePrivateChannels(): Collection
+    private function generatePrivateChannels(): Collection
     {
         return $this->recipients
             ->map(fn ($recipient) => $this->generatePrivateChannel($recipient))
@@ -193,7 +207,7 @@ class BroadcastBroker implements BroadcastDriver
      * @param  Ownerable|MessengerProvider|mixed  $recipient
      * @return string|null
      */
-    protected function generatePrivateChannel($recipient): ?string
+    private function generatePrivateChannel($recipient): ?string
     {
         if ($recipient instanceof Ownerable
             || $recipient instanceof MessengerProvider) {
@@ -206,7 +220,7 @@ class BroadcastBroker implements BroadcastDriver
     /**
      * @return Collection
      */
-    protected function generatePresenceChannels(): Collection
+    private function generatePresenceChannels(): Collection
     {
         return $this->recipients
             ->map(fn ($recipient) => $this->generatePresenceChannel($recipient))
@@ -219,7 +233,7 @@ class BroadcastBroker implements BroadcastDriver
      * @param  HasPresenceChannel|mixed  $entity
      * @return string|null
      */
-    protected function generatePresenceChannel($entity): ?string
+    private function generatePresenceChannel($entity): ?string
     {
         if ($entity instanceof HasPresenceChannel) {
             return new MessengerPresenceChannel($entity);
@@ -232,7 +246,7 @@ class BroadcastBroker implements BroadcastDriver
      * @param  string|MessengerBroadcast  $abstractBroadcast
      * @param  Collection  $channels
      */
-    protected function executeBroadcast(string $abstractBroadcast, Collection $channels): void
+    private function executeBroadcast(string $abstractBroadcast, Collection $channels): void
     {
         try {
             $this->broadcast->event(
@@ -241,15 +255,21 @@ class BroadcastBroker implements BroadcastDriver
                     ->setChannels($channels->values()->toArray())
             );
         } catch (Throwable $e) {
-            // Should a broadcast fail, we do not want to
-            // halt further code execution. Continue on!
+            // Should a broadcast fail, code execution should not be
+            // halted. Dispatch our failed event and continue on!
+            $this->dispatcher->dispatch(new BroadcastFailedEvent(
+                $abstractBroadcast,
+                $channels->values()->toArray(),
+                $this->with,
+                $e
+            ));
         }
     }
 
     /**
      * @param  string  $abstractBroadcast
      */
-    protected function executePushNotify(string $abstractBroadcast): void
+    private function executePushNotify(string $abstractBroadcast): void
     {
         if ($this->messenger->isPushNotificationsEnabled()) {
             $this->pushNotification
@@ -262,7 +282,7 @@ class BroadcastBroker implements BroadcastDriver
     /**
      * Reset our state.
      */
-    protected function flush(): void
+    private function flush(): void
     {
         $this->usingPresence = false;
         $this->thread = null;
