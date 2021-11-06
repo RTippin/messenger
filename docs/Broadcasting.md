@@ -17,6 +17,14 @@
 
 ---
 
+### Failed Broadcast
+
+- When a broadcast fails and throws an exception, it will be caught and dispatched in the [BroadcastFailedEvent][link-broadcast-failed-event].
+  - You must attach your own event listener if you would like to report the exception thrown and have access to the failed broadcast data.
+  - Please see the [Events Documentation][link-events-docs] for more information.
+
+---
+
 ## Channel Routes
 
 ```php
@@ -24,6 +32,8 @@ Broadcast::channel('messenger.call.{call}.thread.{thread}', CallChannel::class);
 Broadcast::channel('messenger.thread.{thread}', ThreadChannel::class); // Presence
 Broadcast::channel('messenger.{alias}.{id}', ProviderChannel::class); // Private
 ```
+
+---
 
 ### View the [API Explorer][link-api-explorer] for a list of each broadcast and example payloads.
 
@@ -235,3 +245,5 @@ class MessengerServiceProvider extends ServiceProvider
 [link-push-event]: https://github.com/RTippin/messenger/blob/1.x/src/Events/PushNotificationEvent.php
 [link-messenger-broadcast]: https://github.com/RTippin/messenger/blob/1.x/src/Broadcasting/MessengerBroadcast.php
 [link-api-explorer]: https://tippindev.com/api-explorer
+[link-broadcast-failed-event]: https://github.com/RTippin/messenger/blob/1.x/src/Events/BroadcastFailedEvent.php
+[link-events-docs]: Events.md

@@ -62,6 +62,15 @@
 
 ---
 
+### `BroadcastFailedEvent`
+- Dispatched when a broadcast fails and throws an exception. The exception will be caught and forwarded into this event.
+  - `$event->abstractBroadcast` : Abstract `MessengerBroadcast` class `string` being broadcasted.
+  - `$event->channels` : `array` of channels for the broadcast.
+  - `$event->with` : `array` of data to be broadcasted.
+  - `$event->exception` : `Throwable` exception thrown.
+
+---
+
 ### `CallEndedEvent`
 - Dispatched when a `Call` is ended.
   - `$event->provider` : `?MessengerProvider` nullable provider that ended the `Call`.

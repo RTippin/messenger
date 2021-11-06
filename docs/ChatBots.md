@@ -16,7 +16,7 @@
 ```
 
 - Bots are disabled by default. When enabled, bots may be created within group threads that explicitly enable the bots feature. A bot may contain many actions, and each action may contain many triggers. Upon a trigger matching a message, the action's handler class will process and respond to the message.
-- We provide an event subscriber ([BotSubscriber][link-bot-subscriber]) to listen and react to events that may trigger a bot response. You may choose to enable it, whether it puts jobs on the queue or not, and which queue channel its jobs are dispatched on.
+- The included event subscriber ([BotSubscriber][link-bot-subscriber]) will listen and react to events that may trigger a bot response. You may choose to enable it, whether it puts jobs on the queue or not, and which queue channel its jobs are dispatched on.
 - Ready-made bot handlers can be used with the optional [Messenger Bots][link-messenger-bots] package.
 
 ---
@@ -53,6 +53,8 @@ class Kernel extends ConsoleKernel
 }
 ```
 
+---
+
 ### General Flow
 
 - Register your custom bot handlers (more on that below).
@@ -63,6 +65,15 @@ class Kernel extends ConsoleKernel
   - This job will only be dispatched if the message sent is from a group thread, not a system message, not from a bot, is a text based message, and its thread has bots enabled.
 - `BotActionMessageHandler` will process each active bot on the messages thread, loading all attached actions on the bots, and looping through them to match any triggers against the message sent.
 - When a trigger is matched against the message, we will instantiate that actions [BotActionHandler][link-action-handler] and execute its `handle` method.
+
+---
+
+### Success and Failure Events
+
+- If a [BotActionHandler][link-action-handler] throws an exception while being handled, it will be caught and dispatched in the [BotActionFailedEvent][link-action-failed-event].
+- Upon a [BotActionHandler][link-action-handler] being handled successfully, the [BotActionHandledEvent][link-action-handled-event] will be dispatched.
+  - You must attach your own event listeners to these events if you plan do utilize them.
+  - Please see the [Events Documentation][link-events-docs] for more information.
 
 ---
 
@@ -488,3 +499,6 @@ axios.post('/api/messenger/threads/{thread}/bots/{bot}/actions', {
 [link-action-interface]: https://github.com/RTippin/messenger/blob/1.x/src/Contracts/ActionHandler.php
 [link-messenger-composer]: https://github.com/RTippin/messenger/blob/1.x/src/Support/MessengerComposer.php
 [link-bots-service]: https://github.com/RTippin/messenger/blob/1.x/src/MessengerBots.php
+[link-action-failed-event]: https://github.com/RTippin/messenger/blob/1.x/src/Events/BotActionFailedEvent.php
+[link-action-handled-event]: https://github.com/RTippin/messenger/blob/1.x/src/Events/BotActionHandledEvent.php
+[link-events-docs]: Events.md

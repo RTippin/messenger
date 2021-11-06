@@ -12,12 +12,12 @@ composer require rtippin/messenger
 - Installs the base messenger files, publishing the [`messenger.php`][link-config] config and service provider.
 - This will also register the published service provider in your `app.php` config file inside the providers array.
 - You will be asked to confirm running this command, as well as an option to run the migrations before completion.
+  - If your `Provider|User` models you are registering in `Messenger` use UUIDs instead of auto-incrementing integers as their primary keys, add the `--uuids` flag when installing.
 ```bash
 php artisan messenger:install
 ```
-
-- If your provider models use UUIDs instead of auto-incrementing integers as their primary keys, use the `--uuids` flag when installing.
 ```bash
+#If your providers use UUIDs
 php artisan messenger:install --uuids
 ```
 
@@ -33,8 +33,9 @@ php artisan migrate
 
 ## Messenger Providers
 
-- Providers are the model's from your application you incorporate into `Messenger`.
-- For most applications, you will only register your `User` model. However, if you had a `User` and a `Teacher` model, you can register both models with `Messenger`, allowing teachers to have their own inbox, and being able to message users as a teacher.
+- Providers are the model's from your application you register into `Messenger`.
+- For most applications, you will only register your `User` model. 
+  - If you had a `User` and a `Teacher` model, you can register both models with `Messenger`, allowing teachers to have their own inbox, and able to message users as a teacher.
 - The `Bot` model is a registered internally as a provider, allowing it to participate in group threads.
 - Your provider models will also use the internal [Messenger.php][link-messenger-model] model, which acts as a settings model, as well as allowing reverse search. More on this below, after registering providers.
 
@@ -43,7 +44,7 @@ php artisan migrate
 ### Registering Providers
 
 - Head over to your new `App\Providers\MessengerServiceProvider`
-- Using the `Messenger` facade, set all provider models you want to register into `Messenger`. The default `App\Models\User` is already preset, you just need to un-comment it.
+- Using the `Messenger` facade, add all provider models you want to register into `Messenger`. The default `App\Models\User` is already preset, you just need to un-comment it.
 
 **Default:**
 
@@ -74,9 +75,9 @@ class MessengerServiceProvider extends ServiceProvider
 
 ### Implement the `MessengerProvider` interface for each provider registered
 
-- Each provider you define will need to implement the [`MessengerProvider`][link-messenger-contract] contract. 
-- You should use the included [`Messageable`][link-messageable] trait on your providers to satisfy the [`MessengerProvider`][link-messenger-contract] contract.
-- You should override the `getProviderSettings()` method on each provider model you register.
+- Each provider you register must implement the [`MessengerProvider`][link-messenger-contract] interface. 
+- You should use the included [`Messageable`][link-messageable] trait on your providers to satisfy the [`MessengerProvider`][link-messenger-contract] interface.
+- Override the `getProviderSettings()` method on each provider model you register.
 - The `alias` will be auto-generated if null or not set. When auto-generating, the lower-snake case of the model's name will be used.
 
 ***Example:***
@@ -114,10 +115,10 @@ class User extends Authenticatable implements MessengerProvider
 
 ### Searchable
 
-- You must implement the `getProviderSearchableBuilder()` method on providers you want to be searchable. Included is a [`Search`][link-search] trait that works out of the box with the default laravel User model.
+- You must implement the `getProviderSearchableBuilder()` method on providers you want to be searchable. Included is a [`Search`][link-search] trait that works out of the box with the default laravel `User` model.
   - You must also ensure `searchable` in the providers `getProviderSettings()` method is true (default).
 - If you have different columns used to search for your provider, you can skip using the included [`Search`][link-search] trait, and define the `public static getProviderSearchableBuilder()` method yourself.
-  - We inject the query builder, along with the original full string search term, and an array of the search term exploded via spaces and commas.
+  - The query builder will be passed, along with the original full string search term, and an array of the search term exploded via spaces and commas.
 
 ***Example:***
 
@@ -158,7 +159,7 @@ class User extends Authenticatable implements MessengerProvider
 
 ### Devices
 
-- Devices are a helpful way for you to attach a listener onto the [PushNotificationEvent][link-push-event]. When any broadcast over a private channel occurs, we forward a stripped down list of all recipients/providers and their types/IDs, along with the original data broadcasted over websockets, and the event name.
+- Devices are a helpful way for you to attach a listener onto the [PushNotificationEvent][link-push-event]. When any broadcast over a private channel occurs, we forward a stripped down list of all recipients/providers and their types/IDs, along with the original data broadcasted, and the event name.
   - To use this event, you must be using the `default` broadcast driver set by this package, `BroadcastBroker`, and have `push_notifications` enabled. How you use the data from the event to send push notifications (FCM, APN, etc.) is up to you!
 
 ---
@@ -315,7 +316,7 @@ public function getProviderAvatarColumn(): string
 
 ## Messenger Model
 - The [Messenger.php][link-messenger-model] model allows your providers to have individual "settings", such as online status and notification sound toggles.
-- Messenger will use a `whereHasMorph` query through the `messengers` table, letting your providers search for others through the API.
+- A `whereHasMorph` query will be used through the `messengers` table, enabling your providers search for others through the API.
 - By default, the `Messenger` model will be created if it does not exist for a provider when accessing the `messenger/heartbeat` or `messenger/settings` API.
 - To ensure your providers are kept in sync, it is best that you attach the messenger model yourself anytime one of your providers is created.
 

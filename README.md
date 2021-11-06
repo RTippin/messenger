@@ -16,19 +16,18 @@
 - PHP `^7.4 || ^8.0`
 - Laravel `^8.42`
 - `SubstituteBindings::class` route model binding enabled in your API / WEB middleware groups.
-- Configure your laravel apps broadcast driver, and set up your own websocket implementation, should you choose to listen in on our realtime broadcast.
+- Configure your laravel applications broadcast driver and set up your websocket implementation to utilize the real-time broadcast emitted.
 
 ### Features
 - Realtime messaging between multiple models, such as a User, Admin, and a Teacher model.
 - RESTful API, allowing you to create your own UI or connect to your mobile app.
-- Support for morph maps on your provider models. See: [Morph Maps][link-morph-maps]
 - Private and group threads.
+- Message reactions, replies, edits, and deletion.
+- Send image, document, audio, and video messages.
+- Group thread chat-bots. [Ready-made bots][link-messenger-bots]
 - Private thread approval when the two participants are not friends.
 - Add participants in a group thread from your friends list.
 - Permissions per participant within a group thread.
-- Send image, document, audio, and video messages.
-- Message reactions, replies, edits, and deletion.
-- Group thread chat-bots. [Ready-made bots][link-messenger-bots]
 - Friends, Search, and Online status systems.
 - Provider avatars, group thread avatars, and bot avatars.
 - Underlying calling system you can extend.
@@ -39,6 +38,7 @@
 - Most features can be toggled at runtime using our `Messenger` facade.
 - `MessengerComposer` facade allows you to have easy access to our core actions anywhere within your own app, such as sending messages, images, reactions, and more.
 - You can implement or extend your own `BroadcastDriver`, `VideoDriver`, and `FriendDriver`, simply by binding your classes into the container.
+- Support for morph maps on your provider models. See: [Morph Maps][link-morph-maps]
 - Optional extra payload when sending messages to allow custom json to be stored with the message.
 - Owner relationships returns a `Ghost Profile` when not found (null-object pattern).
 - Private threads auto-lock when the recipient is not found (deleted).
@@ -48,7 +48,7 @@
 - Improved API pagination / filters.
 - Condense attachment routes.
 - Possible extraction of friends system.
-- Better image manipulation / saving of multiple sizes.
+- Improved image manipulation / saving of multiple sizes.
 - Encryption of messages (E2E is the long term goal).
 - Translations for internal messages.
 - Pinned messages.
