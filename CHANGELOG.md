@@ -3,6 +3,17 @@
 
 ---
 
+### [v1.12.0 (11-06-2021)](https://github.com/RTippin/messenger/compare/v1.11.0...v1.12.0)
+
+#### Added
+- `BroadcastFailedEvent` will be dispatched when a broadcast fails and throws an exception.
+
+#### Changed
+- Relocated knock cache methods to the `Thread` model from `SendKnock` action class.
+- Various code improvements.
+
+---
+
 ### [v1.11.0 (10-28-2021)](https://github.com/RTippin/messenger/compare/v1.10.0...v1.11.0)
 
 #### Added
