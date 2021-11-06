@@ -105,11 +105,15 @@ class MessengerComposer
      * @param  MessengerProvider  $provider
      * @return $this
      *
-     * @throws InvalidProviderException
+     * @throws MessengerComposerException
      */
     public function from(MessengerProvider $provider): self
     {
-        $this->messenger->setScopedProvider($provider);
+        try {
+            $this->messenger->setScopedProvider($provider);
+        } catch (InvalidProviderException $e) {
+            throw new MessengerComposerException('Invalid "FROM" entity. Messenger provider must be supplied.');
+        }
 
         return $this;
     }

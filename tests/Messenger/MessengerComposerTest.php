@@ -72,6 +72,16 @@ class MessengerComposerTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_throws_exception_when_from_invalid()
+    {
+        Messenger::registerProviders([], true);
+        $this->expectException(MessengerComposerException::class);
+        $this->expectExceptionMessage('Invalid "FROM" entity. Messenger provider must be supplied.');
+
+        $this->composer->from($this->tippin);
+    }
+
+    /** @test */
     public function it_throws_exception_when_composing_without_to_set()
     {
         $this->expectException(MessengerComposerException::class);
