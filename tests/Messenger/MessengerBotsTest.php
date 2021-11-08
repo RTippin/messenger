@@ -114,14 +114,15 @@ class MessengerBotsTest extends MessengerTestCase
     public function it_can_get_bot_match_methods()
     {
         $expected = [
-            'contains',
-            'contains:caseless',
-            'contains:any',
-            'contains:any:caseless',
-            'exact',
-            'exact:caseless',
-            'starts:with',
-            'starts:with:caseless',
+            MessengerBots::MATCH_ANY,
+            MessengerBots::MATCH_CONTAINS,
+            MessengerBots::MATCH_CONTAINS_CASELESS,
+            MessengerBots::MATCH_CONTAINS_ANY,
+            MessengerBots::MATCH_CONTAINS_ANY_CASELESS,
+            MessengerBots::MATCH_EXACT,
+            MessengerBots::MATCH_EXACT_CASELESS,
+            MessengerBots::MATCH_STARTS_WITH,
+            MessengerBots::MATCH_STARTS_WITH_CASELESS,
         ];
 
         $this->assertSame($expected, $this->bots->getMatchMethods());
@@ -130,7 +131,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_can_get_bot_match_description()
     {
-        $this->assertSame('The trigger must match the message exactly.', $this->bots->getMatchDescription('exact'));
+        $this->assertSame('The trigger must match the message exactly.', $this->bots->getMatchDescription(MessengerBots::MATCH_EXACT));
     }
 
     /** @test */
@@ -155,7 +156,7 @@ class MessengerBotsTest extends MessengerTestCase
                 'unique' => false,
                 'authorize' => false,
                 'triggers' => ['!test', '!more'],
-                'match' => 'exact:caseless',
+                'match' => MessengerBots::MATCH_EXACT_CASELESS,
             ],
             [
                 'alias' => 'silly_bot',
@@ -195,6 +196,26 @@ class MessengerBotsTest extends MessengerTestCase
         $this->assertSame($settings, $this->bots->getHandlerSettings('silly_bot'));
         $this->assertSame($settings, $this->bots->getHandlerSettings(SillyBotHandler::class));
         $this->assertNull($this->bots->getHandlerSettings('unknown'));
+    }
+
+    /** @test */
+    public function it_removes_trigger_overrides_if_match_override_is_match_any()
+    {
+        SillyBotHandler::$triggers = ['one', 'two'];
+        SillyBotHandler::$match = MessengerBots::MATCH_ANY;
+        $settings = [
+            'alias' => 'silly_bot',
+            'description' => 'This is a silly bot.',
+            'name' => 'Silly Bot',
+            'unique' => true,
+            'authorize' => true,
+            'triggers' => null,
+            'match' => MessengerBots::MATCH_ANY,
+        ];
+
+        $this->bots->registerHandlers([SillyBotHandler::class]);
+
+        $this->assertSame($settings, $this->bots->getHandlerSettings(SillyBotHandler::class));
     }
 
     /** @test */
@@ -438,7 +459,7 @@ class MessengerBotsTest extends MessengerTestCase
             'unique' => true,
             'authorize' => true,
             'name' => 'Silly Bot',
-            'match' => 'exact',
+            'match' => MessengerBots::MATCH_EXACT,
             'triggers' => 'test',
             'admin_only' => true,
             'cooldown' => 0,
@@ -447,7 +468,7 @@ class MessengerBotsTest extends MessengerTestCase
         ];
         $results = $this->bots->resolveHandlerData([
             'handler' => 'silly_bot',
-            'match' => 'exact',
+            'match' => MessengerBots::MATCH_EXACT,
             'cooldown' => 0,
             'admin_only' => true,
             'enabled' => true,
@@ -466,7 +487,7 @@ class MessengerBotsTest extends MessengerTestCase
             'unique' => true,
             'authorize' => true,
             'name' => 'Silly Bot',
-            'match' => 'exact',
+            'match' => MessengerBots::MATCH_EXACT,
             'triggers' => 'test',
             'admin_only' => true,
             'cooldown' => 0,
@@ -474,7 +495,7 @@ class MessengerBotsTest extends MessengerTestCase
             'payload' => null,
         ];
         $results = $this->bots->resolveHandlerData([
-            'match' => 'exact',
+            'match' => MessengerBots::MATCH_EXACT,
             'cooldown' => 0,
             'admin_only' => true,
             'enabled' => true,
@@ -493,7 +514,7 @@ class MessengerBotsTest extends MessengerTestCase
             'unique' => true,
             'authorize' => true,
             'name' => 'Silly Bot',
-            'match' => 'exact',
+            'match' => MessengerBots::MATCH_EXACT,
             'triggers' => 'test',
             'admin_only' => true,
             'cooldown' => 0,
@@ -501,7 +522,7 @@ class MessengerBotsTest extends MessengerTestCase
             'payload' => null,
         ];
         $results = $this->bots->resolveHandlerData([
-            'match' => 'exact',
+            'match' => MessengerBots::MATCH_EXACT,
             'cooldown' => 0,
             'admin_only' => true,
             'enabled' => true,
@@ -520,7 +541,7 @@ class MessengerBotsTest extends MessengerTestCase
             'unique' => false,
             'authorize' => false,
             'name' => 'Fun Bot',
-            'match' => 'exact:caseless', //overwritten
+            'match' => MessengerBots::MATCH_EXACT_CASELESS, //overwritten
             'triggers' => '!test|!more', //overwritten
             'admin_only' => true,
             'cooldown' => 0,
@@ -530,12 +551,71 @@ class MessengerBotsTest extends MessengerTestCase
 
         $results = $this->bots->resolveHandlerData([
             'handler' => 'fun_bot',
-            'match' => 'contains',
+            'match' => MessengerBots::MATCH_CONTAINS,
             'cooldown' => 0,
             'admin_only' => true,
             'enabled' => true,
             'triggers' => ['!some', '!more'],
             'test' => ['test'],
+        ]);
+
+        $this->assertSame($expects, $results);
+    }
+
+    /** @test */
+    public function it_ignores_triggers_if_using_match_any()
+    {
+        $this->bots->registerHandlers([SillyBotHandler::class]);
+        $expects = [
+            'handler' => SillyBotHandler::class,
+            'unique' => true,
+            'authorize' => true,
+            'name' => 'Silly Bot',
+            'match' => MessengerBots::MATCH_ANY,
+            'triggers' => null,
+            'admin_only' => false,
+            'cooldown' => 0,
+            'enabled' => true,
+            'payload' => null,
+        ];
+
+        $results = $this->bots->resolveHandlerData([
+            'handler' => 'silly_bot',
+            'match' => MessengerBots::MATCH_ANY,
+            'cooldown' => 0,
+            'admin_only' => false,
+            'enabled' => true,
+            'triggers' => ['!some', '!more'],
+        ]);
+
+        $this->assertSame($expects, $results);
+    }
+
+    /** @test */
+    public function triggers_can_be_omitted_when_match_override_is_match_any()
+    {
+        SillyBotHandler::$match = MessengerBots::MATCH_ANY;
+        $this->bots->registerHandlers([SillyBotHandler::class]);
+        $expects = [
+            'handler' => SillyBotHandler::class,
+            'unique' => true,
+            'authorize' => true,
+            'name' => 'Silly Bot',
+            'match' => MessengerBots::MATCH_ANY,
+            'triggers' => null,
+            'admin_only' => false,
+            'cooldown' => 0,
+            'enabled' => true,
+            'payload' => null,
+        ];
+
+        $results = $this->bots->resolveHandlerData([
+            'handler' => 'silly_bot',
+//            'match' => MessengerBots::MATCH_ANY,
+            'cooldown' => 0,
+            'admin_only' => false,
+            'enabled' => true,
+//            'triggers' => ['!some', '!more'],
         ]);
 
         $this->assertSame($expects, $results);
@@ -550,7 +630,7 @@ class MessengerBotsTest extends MessengerTestCase
             'unique' => false,
             'authorize' => false,
             'name' => 'Fun Bot',
-            'match' => 'exact:caseless', //overwritten
+            'match' => MessengerBots::MATCH_EXACT_CASELESS, //overwritten
             'triggers' => '!test|!more', //overwritten
             'admin_only' => true,
             'cooldown' => 0,
@@ -691,7 +771,7 @@ class MessengerBotsTest extends MessengerTestCase
         try {
             $this->bots->resolveHandlerData([
                 'handler' => 'silly_bot',
-                'match' => 'exact',
+                'match' => MessengerBots::MATCH_EXACT,
                 'cooldown' => 0,
                 'admin_only' => false,
                 'enabled' => true,
@@ -736,7 +816,7 @@ class MessengerBotsTest extends MessengerTestCase
         $this->bots->registerHandlers([SillyBotHandler::class]);
         $this->bots->resolveHandlerData([
             'handler' => 'silly_bot',
-            'match' => 'exact',
+            'match' => MessengerBots::MATCH_EXACT,
             'cooldown' => $cooldown,
             'admin_only' => false,
             'enabled' => true,
@@ -784,7 +864,7 @@ class MessengerBotsTest extends MessengerTestCase
         $this->bots->registerHandlers([SillyBotHandler::class]);
         $results = $this->bots->resolveHandlerData([
             'handler' => 'silly_bot',
-            'match' => 'exact',
+            'match' => MessengerBots::MATCH_EXACT,
             'cooldown' => 0,
             'admin_only' => false,
             'enabled' => true,
@@ -823,14 +903,15 @@ class MessengerBotsTest extends MessengerTestCase
     public function passesValidatingMatches(): array
     {
         return [
-            'contains' => ['contains'],
-            'contains caseless' => ['contains:caseless'],
-            'contains any' => ['contains:any'],
-            'contains any caseless' => ['contains:any:caseless'],
-            'exact' => ['exact'],
-            'exact caseless' => ['exact:caseless'],
-            'starts with' => ['starts:with'],
-            'starts with caseless' => ['starts:with:caseless'],
+            'any' => [MessengerBots::MATCH_ANY],
+            'contains' => [MessengerBots::MATCH_CONTAINS],
+            'contains caseless' => [MessengerBots::MATCH_CONTAINS_CASELESS],
+            'contains any' => [MessengerBots::MATCH_CONTAINS_ANY],
+            'contains any caseless' => [MessengerBots::MATCH_CONTAINS_ANY_CASELESS],
+            'exact' => [MessengerBots::MATCH_EXACT],
+            'exact caseless' => [MessengerBots::MATCH_EXACT_CASELESS],
+            'starts with' => [MessengerBots::MATCH_STARTS_WITH],
+            'starts with caseless' => [MessengerBots::MATCH_STARTS_WITH_CASELESS],
         ];
     }
 

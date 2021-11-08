@@ -7,6 +7,8 @@ use RTippin\Messenger\Actions\Bots\BotActionHandler;
 class SillyBotHandler extends BotActionHandler
 {
     public static bool $authorized = false;
+    public static ?string $match = null;
+    public static ?array $triggers = null;
 
     public static function getSettings(): array
     {
@@ -15,6 +17,8 @@ class SillyBotHandler extends BotActionHandler
             'description' => 'This is a silly bot.',
             'name' => 'Silly Bot',
             'unique' => true,
+            'match' => self::$match,
+            'triggers' => self::$triggers,
         ];
     }
 
@@ -33,5 +37,7 @@ class SillyBotHandler extends BotActionHandler
     public static function reset(): void
     {
         self::$authorized = false;
+        self::$match = null;
+        self::$triggers = null;
     }
 }

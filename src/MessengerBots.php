@@ -16,6 +16,7 @@ final class MessengerBots
     /**
      * Methods we may use to match a trigger from within a message.
      */
+    const MATCH_ANY = 'any';
     const MATCH_CONTAINS = 'contains';
     const MATCH_CONTAINS_CASELESS = 'contains:caseless';
     const MATCH_CONTAINS_ANY = 'contains:any';
@@ -25,6 +26,7 @@ final class MessengerBots
     const MATCH_STARTS_WITH = 'starts:with';
     const MATCH_STARTS_WITH_CASELESS = 'starts:with:caseless';
     const BotActionMatchMethods = [
+        self::MATCH_ANY => 'The action will be triggered for any message sent.',
         self::MATCH_CONTAINS => 'The trigger can be anywhere within a message. Cannot be part of or inside another word.',
         self::MATCH_CONTAINS_CASELESS => 'Same as "contains", but is case insensitive.',
         self::MATCH_CONTAINS_ANY => 'The trigger can be anywhere within a message, including inside another word.',
@@ -298,8 +300,11 @@ final class MessengerBots
             $this->validateHandlerSettings($data)
         );
 
-        // Validate the final formatted triggers to ensure it is not empty
-        $this->validateFormattedTriggers($generated);
+        // Validate the final formatted triggers to ensure it is
+        // not empty if our match method was not "MATCH_ANY".
+        if (! is_null($generated['triggers'])) {
+            $this->validateFormattedTriggers($generated);
+        }
 
         return $generated;
     }
@@ -327,7 +332,7 @@ final class MessengerBots
     {
         return Validator::make(
             $data,
-            $this->generateRules(),
+            $this->generateRules($data),
             $this->generateErrorMessages()
         )->validate();
     }
@@ -349,9 +354,10 @@ final class MessengerBots
      * Merge our base ruleset with the handlers defined rules. Remove and set
      * any overrides before validation.
      *
+     * @param  array  $data
      * @return array
      */
-    private function generateRules(): array
+    private function generateRules(array $data): array
     {
         $mergedRuleset = array_merge(
             $this->baseRuleset(),
@@ -365,7 +371,8 @@ final class MessengerBots
             $this->handlerOverrides['match'] = $overrides['match'];
         }
 
-        if (! is_null($overrides['triggers'])) {
+        if (! is_null($overrides['triggers'])
+            || $overrides['match'] === self::MATCH_ANY) {
             Arr::forget($mergedRuleset, 'triggers');
             Arr::forget($mergedRuleset, 'triggers.*');
             $this->handlerOverrides['triggers'] = $this->formatTriggers($overrides['triggers']);
@@ -397,13 +404,15 @@ final class MessengerBots
     {
         $settings = $this->getHandlerSettings($this->activeHandlerClass);
 
+        $match = $this->handlerOverrides['match'] ?? $data['match'];
+
         return [
             'handler' => $this->activeHandlerClass,
             'unique' => $settings['unique'],
             'authorize' => $settings['authorize'],
             'name' => $settings['name'],
-            'match' => $this->handlerOverrides['match'] ?? $data['match'],
-            'triggers' => $this->handlerOverrides['triggers'] ?? $this->formatTriggers($data['triggers']),
+            'match' => $match,
+            'triggers' => $this->generateTriggers($data, $match),
             'admin_only' => $data['admin_only'],
             'cooldown' => $data['cooldown'],
             'enabled' => $data['enabled'],
@@ -429,6 +438,20 @@ final class MessengerBots
         }
 
         return null;
+    }
+
+    /**
+     * @param  array  $data
+     * @param  string  $match
+     * @return string|null
+     */
+    private function generateTriggers(array $data, string $match): ?string
+    {
+        if ($match === self::MATCH_ANY) {
+            return null;
+        }
+
+        return $this->handlerOverrides['triggers'] ?? $this->formatTriggers($data['triggers']);
     }
 
     /**
@@ -510,7 +533,11 @@ final class MessengerBots
         /** @var BotActionHandler $handler */
         $settings = $handler::getSettings();
 
-        if (array_key_exists('triggers', $settings)) {
+        $match = $settings['match'] ?? null;
+
+        if (array_key_exists('triggers', $settings)
+            && ! is_null($settings['triggers'])
+            && $match !== self::MATCH_ANY) {
             $settings['triggers'] = explode('|', $this->formatTriggers($settings['triggers']));
         }
 
@@ -520,8 +547,8 @@ final class MessengerBots
             'name' => $settings['name'],
             'unique' => $settings['unique'] ?? false,
             'authorize' => method_exists($handler, 'authorize'),
-            'triggers' => $settings['triggers'] ?? null,
-            'match' => $settings['match'] ?? null,
+            'triggers' => $match === self::MATCH_ANY ? null : ($settings['triggers'] ?? null),
+            'match' => $match,
         ];
     }
 }
