@@ -235,6 +235,29 @@ class BotActionsTest extends HttpTestCase
     }
 
     /** @test */
+    public function user_can_store_action_when_handler_auth_passes()
+    {
+        SillyBotHandler::$authorized = true;
+        MessengerBots::registerHandlers([SillyBotHandler::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.bots.actions.store', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]), [
+            'handler' => 'silly_bot',
+            'match' => 'exact',
+            'cooldown' => 0,
+            'admin_only' => false,
+            'enabled' => true,
+            'triggers' => ['test'],
+        ])
+            ->assertSuccessful();
+    }
+
+    /** @test */
     public function forbidden_to_store_action_when_handler_auth_fails()
     {
         MessengerBots::registerHandlers([SillyBotHandler::class]);
@@ -254,6 +277,31 @@ class BotActionsTest extends HttpTestCase
             'triggers' => ['test'],
         ])
             ->assertForbidden();
+    }
+
+    /** @test */
+    public function user_can_store_action_without_triggers_using_match_any()
+    {
+        SillyBotHandler::$authorized = true;
+        MessengerBots::registerHandlers([SillyBotHandler::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.bots.actions.store', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]), [
+            'handler' => 'silly_bot',
+            'match' => 'any',
+            'cooldown' => 0,
+            'admin_only' => false,
+            'enabled' => true,
+        ])
+            ->assertSuccessful()
+            ->assertJson([
+                'triggers' => [],
+            ]);
     }
 
     /** @test */

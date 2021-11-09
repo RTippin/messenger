@@ -34,7 +34,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Bots are currently disabled.');
 
-        app(ProcessMessageTriggers::class)->execute($thread, $message, true);
+        app(ProcessMessageTriggers::class)->execute($thread, $message);
     }
 
     /** @test */
@@ -50,11 +50,30 @@ class ProcessMessageTriggersTest extends FeatureTestCase
             ->triggers('!test')
             ->create();
 
-        app(ProcessMessageTriggers::class)->execute($thread, $message, true);
+        app(ProcessMessageTriggers::class)->execute($thread, $message);
 
         $this->assertDatabaseHas('messages', [
             'body' => 'Testing Fun.',
         ]);
+    }
+
+    /** @test */
+    public function it_executes_handle_ignoring_message_text_if_match_any()
+    {
+        MessengerBots::registerHandlers([SillyBotHandler::class]);
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()->for($thread)->owner($this->tippin)->create(['body' => 'this will not match a trigger but matches any']);
+        BotAction::factory()
+            ->for(Bot::factory()->for($thread)->owner($this->tippin)->create())
+            ->owner($this->tippin)
+            ->handler(SillyBotHandler::class)
+            ->triggers('test')
+            ->match('any')
+            ->create();
+
+        app(ProcessMessageTriggers::class)->execute($thread, $message);
+
+        $this->assertDatabaseCount('messages', 2);
     }
 
     /** @test */
@@ -71,7 +90,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
             ->match('contains:caseless')
             ->create();
 
-        app(ProcessMessageTriggers::class)->execute($thread, $message, true);
+        app(ProcessMessageTriggers::class)->execute($thread, $message);
 
         $this->assertDatabaseCount('messages', 2);
     }
@@ -95,7 +114,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
 
         $this->assertTrue(MessengerBots::isActiveHandlerSet());
 
-        app(ProcessMessageTriggers::class)->execute($thread, $message, true);
+        app(ProcessMessageTriggers::class)->execute($thread, $message);
 
         $this->assertDatabaseHas('messages', [
             'body' => 'Testing Fun.',
@@ -116,7 +135,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
             ->triggers('!test|!more')
             ->create();
 
-        app(ProcessMessageTriggers::class)->execute($thread, $message, true);
+        app(ProcessMessageTriggers::class)->execute($thread, $message);
 
         $this->assertDatabaseMissing('messages', [
             'body' => 'Testing Fun.',
@@ -136,7 +155,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
             ->triggers('!unknown')
             ->create();
 
-        app(ProcessMessageTriggers::class)->execute($thread, $message, true);
+        app(ProcessMessageTriggers::class)->execute($thread, $message);
 
         $this->assertDatabaseMissing('messages', [
             'body' => 'Testing Fun.',
@@ -178,7 +197,7 @@ class ProcessMessageTriggersTest extends FeatureTestCase
             ->admin()
             ->create();
 
-        app(ProcessMessageTriggers::class)->execute($thread, $message, false);
+        app(ProcessMessageTriggers::class)->execute($thread, $message);
 
         $this->assertDatabaseMissing('messages', [
             'body' => 'Testing Fun.',

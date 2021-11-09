@@ -176,7 +176,13 @@ class BotAction extends Model implements Ownerable
      */
     public function getTriggers(): array
     {
-        return MessengerBots::getHandlerSettings($this->handler)['triggers'] ?? explode('|', $this->triggers);
+        if (MessengerBots::getHandlerSettings($this->handler)['triggers'] ?? false) {
+            return MessengerBots::getHandlerSettings($this->handler)['triggers'];
+        }
+
+        return ! is_null($this->triggers)
+            ? explode('|', $this->triggers)
+            : [];
     }
 
     /**

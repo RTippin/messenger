@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Fixtures;
 
 use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\MessengerBots;
 
 class FunBotHandler extends BotActionHandler
 {
@@ -13,7 +14,7 @@ class FunBotHandler extends BotActionHandler
             'description' => 'This is a fun bot.',
             'name' => 'Fun Bot',
             'triggers' => '!test|!more',
-            'match' => 'exact:caseless',
+            'match' => MessengerBots::MATCH_EXACT_CASELESS,
         ];
     }
 

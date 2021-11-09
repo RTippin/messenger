@@ -780,6 +780,23 @@ class MessengerBotsTest extends MessengerTestCase
         $this->assertNull($emptyHandler->getParsedWords(true));
     }
 
+    /** @test */
+    public function it_can_get_actions_parsed_message_when_no_trigger()
+    {
+        $user = UserModel::factory()->make();
+        $thread = Thread::factory()->group()->make();
+        $message = Message::factory()->for($thread)->body('!command Do Something Fun')->make();
+        $bot = Bot::factory()->for($thread)->owner($user)->make();
+        $action = BotAction::factory()->for($bot)->owner($user)->make();
+
+        $handler = (new FunBotHandler)->setDataForHandler($thread, $action, $message);
+
+        $this->assertSame('!command Do Something Fun', $handler->getParsedMessage());
+        $this->assertSame('!command do something fun', $handler->getParsedMessage(true));
+        $this->assertSame(['!command', 'Do', 'Something', 'Fun'], $handler->getParsedWords());
+        $this->assertSame(['!command', 'do', 'something', 'fun'], $handler->getParsedWords(true));
+    }
+
     /**
      * @test
      *

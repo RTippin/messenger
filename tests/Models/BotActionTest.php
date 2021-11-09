@@ -225,6 +225,22 @@ class BotActionTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_returns_empty_triggers_array_when_null()
+    {
+        $action = BotAction::factory()->for(
+            Bot::factory()->for(
+                Thread::factory()->group()->create()
+            )->owner($this->tippin)->create()
+        )
+            ->owner($this->tippin)
+            ->handler(SillyBotHandler::class)
+            ->triggers(null)
+            ->create();
+
+        $this->assertSame([], $action->getTriggers());
+    }
+
+    /** @test */
     public function it_uses_trigger_and_match_overrides_over_saved_values()
     {
         MessengerBots::registerHandlers([FunBotHandler::class]);

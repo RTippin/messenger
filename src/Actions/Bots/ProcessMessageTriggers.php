@@ -87,7 +87,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
      */
     public function execute(Thread $thread,
                             Message $message,
-                            bool $isGroupAdmin,
+                            bool $isGroupAdmin = false,
                             ?string $senderIp = null): self
     {
         $this->bailWhenFeatureDisabled();
@@ -99,7 +99,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
         $this->setThread($thread)->setMessage($message);
 
         BotAction::getActionsWithBotFromThread($this->getThread()->id)->each(
-            fn (BotAction $action) => $this->matchActionTriggers($action)
+            fn (BotAction $action) => $this->matchAndHandleAction($action)
         );
 
         $this->startTriggeredBotCooldowns();
@@ -108,13 +108,19 @@ class ProcessMessageTriggers extends BaseMessengerAction
     }
 
     /**
-     * Loop through the triggers, executing the
-     * handle method upon a successful match.
+     * If using MATCH_ANY, handle the action immediately, otherwise loop
+     * through the actions triggers, executing the handle method upon
+     * a successful match.
      *
      * @param  BotAction  $action
      */
-    private function matchActionTriggers(BotAction $action): void
+    private function matchAndHandleAction(BotAction $action): void
     {
+        if ($action->getMatchMethod() === MessengerBots::MATCH_ANY) {
+            $this->handleAction($action);
+            return;
+        }
+
         foreach ($action->getTriggers() as $trigger) {
             if ($this->matcher->matches(
                 $action->getMatchMethod(),
@@ -134,9 +140,9 @@ class ProcessMessageTriggers extends BaseMessengerAction
      * or failed.
      *
      * @param  BotAction  $action
-     * @param  string  $trigger
+     * @param  string|null  $trigger
      */
-    private function handleAction(BotAction $action, string $trigger): void
+    private function handleAction(BotAction $action, ?string $trigger = null): void
     {
         if (! $this->shouldExecute($action)) {
             return;
@@ -243,9 +249,9 @@ class ProcessMessageTriggers extends BaseMessengerAction
 
     /**
      * @param  BotAction  $action
-     * @param  string  $trigger
+     * @param  string|null  $trigger
      */
-    private function fireHandledEvent(BotAction $action, string $trigger): void
+    private function fireHandledEvent(BotAction $action, ?string $trigger): void
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new BotActionHandledEvent(

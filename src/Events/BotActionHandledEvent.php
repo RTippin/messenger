@@ -21,20 +21,20 @@ class BotActionHandledEvent
     public Message $message;
 
     /**
-     * @var string
+     * @var string|null
      */
-    public string $trigger;
+    public ?string $trigger;
 
     /**
      * Create a new event instance.
      *
      * @param  BotAction  $action
      * @param  Message  $message
-     * @param  string  $trigger
+     * @param  string|null  $trigger
      */
     public function __construct(BotAction $action,
                                 Message $message,
-                                string $trigger)
+                                ?string $trigger)
     {
         $this->action = $action;
         $this->message = $message;
