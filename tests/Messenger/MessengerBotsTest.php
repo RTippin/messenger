@@ -585,16 +585,15 @@ class MessengerBotsTest extends MessengerTestCase
             'cooldown' => 0,
             'admin_only' => false,
             'enabled' => true,
-            'triggers' => ['!some', '!more'],
+            'triggers' => ['!some', '!more'], //ignored
         ]);
 
         $this->assertSame($expects, $results);
     }
 
     /** @test */
-    public function triggers_can_be_omitted_when_match_override_is_match_any()
+    public function triggers_can_be_omitted_if_using_match_any()
     {
-        SillyBotHandler::$match = MessengerBots::MATCH_ANY;
         $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
             'handler' => SillyBotHandler::class,
@@ -602,7 +601,7 @@ class MessengerBotsTest extends MessengerTestCase
             'authorize' => true,
             'name' => 'Silly Bot',
             'match' => MessengerBots::MATCH_ANY,
-            'triggers' => null,
+            'triggers' => null, //omitted
             'admin_only' => false,
             'cooldown' => 0,
             'enabled' => true,
@@ -611,11 +610,67 @@ class MessengerBotsTest extends MessengerTestCase
 
         $results = $this->bots->resolveHandlerData([
             'handler' => 'silly_bot',
-//            'match' => MessengerBots::MATCH_ANY,
+            'match' => MessengerBots::MATCH_ANY,
             'cooldown' => 0,
             'admin_only' => false,
             'enabled' => true,
-//            'triggers' => ['!some', '!more'],
+        ]);
+
+        $this->assertSame($expects, $results);
+    }
+
+    /** @test */
+    public function triggers_and_match_can_be_omitted_when_match_override_is_match_any()
+    {
+        SillyBotHandler::$match = MessengerBots::MATCH_ANY;
+        $this->bots->registerHandlers([SillyBotHandler::class]);
+        $expects = [
+            'handler' => SillyBotHandler::class,
+            'unique' => true,
+            'authorize' => true,
+            'name' => 'Silly Bot',
+            'match' => MessengerBots::MATCH_ANY, //overwritten
+            'triggers' => null, //omitted
+            'admin_only' => false,
+            'cooldown' => 0,
+            'enabled' => true,
+            'payload' => null,
+        ];
+
+        $results = $this->bots->resolveHandlerData([
+            'handler' => 'silly_bot',
+            'cooldown' => 0,
+            'admin_only' => false,
+            'enabled' => true,
+        ]);
+
+        $this->assertSame($expects, $results);
+    }
+
+    /** @test */
+    public function it_removes_trigger_overwrites_when_match_any_selected()
+    {
+        SillyBotHandler::$triggers = ['one', 'two'];
+        $this->bots->registerHandlers([SillyBotHandler::class]);
+        $expects = [
+            'handler' => SillyBotHandler::class,
+            'unique' => true,
+            'authorize' => true,
+            'name' => 'Silly Bot',
+            'match' => MessengerBots::MATCH_ANY,
+            'triggers' => null, //omitted
+            'admin_only' => false,
+            'cooldown' => 0,
+            'enabled' => true,
+            'payload' => null,
+        ];
+
+        $results = $this->bots->resolveHandlerData([
+            'handler' => 'silly_bot',
+            'match' => MessengerBots::MATCH_ANY,
+            'cooldown' => 0,
+            'admin_only' => false,
+            'enabled' => true,
         ]);
 
         $this->assertSame($expects, $results);

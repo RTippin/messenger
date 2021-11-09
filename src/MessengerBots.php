@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Fluent;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
@@ -53,9 +53,9 @@ final class MessengerBots
     private ?string $activeHandlerClass = null;
 
     /**
-     * @var array
+     * @var array|null
      */
-    private array $handlerOverrides = [];
+    private ?array $activeHandlerSettings = null;
 
     /**
      * MessengerBots constructor.
@@ -232,8 +232,45 @@ final class MessengerBots
 
         $this->activeHandler = app($handler);
         $this->activeHandlerClass = $handler;
+        $this->activeHandlerSettings = $this->getHandlerSettings($handler);
 
         return $this->activeHandler;
+    }
+
+    /**
+     * Resolve a bot handler using the data parameters. Validate against our base
+     * ruleset and any custom rules or overrides on the handler class itself.
+     * Return the final data array we will use to store the BotAction model.
+     * The handler validator can be overwritten if an action's handler class
+     * or alias is supplied. We will then attempt to initialize it directly.
+     *
+     * @param  array  $data
+     * @param  string|null  $handlerOrAlias
+     * @return array
+     *
+     * @throws ValidationException|BotException
+     */
+    public function resolveHandlerData(array $data, ?string $handlerOrAlias = null): array
+    {
+        // Validate and initialize the handler / alias
+        $this->initializeHandler(
+            $handlerOrAlias ?: $this->validateHandlerAlias($data)
+        );
+
+        // Generate the overrides for the handler.
+        $overrides = $this->getHandlerOverrides();
+
+        // Validate against the handler settings, omitting overrides
+        $validated = $this->validateHandlerSettings($data, $overrides);
+
+        // Gather the generated data array from our validated and merged properties
+        $generated = $this->generateHandlerDataForStoring($validated, $overrides);
+
+        // Validate the final formatted triggers to ensure it is
+        // not empty if our match method was not "MATCH_ANY"
+        $this->validateFormattedTriggers($generated);
+
+        return $generated;
     }
 
     /**
@@ -269,239 +306,7 @@ final class MessengerBots
     {
         $this->activeHandler = null;
         $this->activeHandlerClass = null;
-        $this->handlerOverrides = [];
-    }
-
-    /**
-     * Resolve a bot handler using the data parameters. Validate against our base
-     * ruleset and any custom rules or overrides on the handler class itself.
-     * Return the final data array we will use to store the BotAction model.
-     * The handler validator can be overwritten if an action's handler class
-     * or alias is supplied. We will then attempt to initialize it directly.
-     *
-     * @param  array  $data
-     * @param  string|null  $handlerOrAlias
-     * @return array
-     *
-     * @throws ValidationException|BotException
-     */
-    public function resolveHandlerData(array $data, ?string $handlerOrAlias = null): array
-    {
-        // Reset the overrides array
-        $this->handlerOverrides = [];
-
-        // Validate and initialize the handler / alias
-        $this->initializeHandler(
-            $handlerOrAlias ?: $this->validateHandlerAlias($data)
-        );
-
-        // Gather the generated data array from our validated and merged properties
-        $generated = $this->generateHandlerData(
-            $this->validateHandlerSettings($data)
-        );
-
-        // Validate the final formatted triggers to ensure it is
-        // not empty if our match method was not "MATCH_ANY".
-        if (! is_null($generated['triggers'])) {
-            $this->validateFormattedTriggers($generated);
-        }
-
-        return $generated;
-    }
-
-    /**
-     * @param  array  $data
-     * @return string
-     *
-     * @throws ValidationException
-     */
-    private function validateHandlerAlias(array $data): string
-    {
-        return Validator::make($data, [
-            'handler' => ['required', Rule::in($this->getAliases())],
-        ])->validate()['handler'];
-    }
-
-    /**
-     * @param  array  $data
-     * @return array
-     *
-     * @throws ValidationException
-     */
-    private function validateHandlerSettings(array $data): array
-    {
-        return Validator::make(
-            $data,
-            $this->generateRules($data),
-            $this->generateErrorMessages()
-        )->validate();
-    }
-
-    /**
-     * @param  array  $data
-     * @return void
-     *
-     * @throws ValidationException
-     */
-    private function validateFormattedTriggers(array $data): void
-    {
-        Validator::make($data, [
-            'triggers' => ['required', 'string'],
-        ])->validate();
-    }
-
-    /**
-     * Merge our base ruleset with the handlers defined rules. Remove and set
-     * any overrides before validation.
-     *
-     * @param  array  $data
-     * @return array
-     */
-    private function generateRules(array $data): array
-    {
-        $mergedRuleset = array_merge(
-            $this->baseRuleset(),
-            $this->getActiveHandler()->rules()
-        );
-
-        $overrides = $this->getHandlerSettings($this->activeHandlerClass);
-
-        if (! is_null($overrides['match'])) {
-            Arr::forget($mergedRuleset, 'match');
-            $this->handlerOverrides['match'] = $overrides['match'];
-        }
-
-        if (! is_null($overrides['triggers'])
-            || $overrides['match'] === self::MATCH_ANY) {
-            Arr::forget($mergedRuleset, 'triggers');
-            Arr::forget($mergedRuleset, 'triggers.*');
-            $this->handlerOverrides['triggers'] = $this->formatTriggers($overrides['triggers']);
-        }
-
-        return $mergedRuleset;
-    }
-
-    /**
-     * Merge our error messages with any custom messages defined on the handler.
-     *
-     * @return array
-     */
-    private function generateErrorMessages(): array
-    {
-        return array_merge(
-            $this->baseErrorMessages(),
-            $this->getActiveHandler()->errorMessages()
-        );
-    }
-
-    /**
-     * Make the final data array we will pass to create a new BotAction.
-     *
-     * @param  array  $data
-     * @return array
-     */
-    private function generateHandlerData(array $data): array
-    {
-        $settings = $this->getHandlerSettings($this->activeHandlerClass);
-
-        $match = $this->handlerOverrides['match'] ?? $data['match'];
-
-        return [
-            'handler' => $this->activeHandlerClass,
-            'unique' => $settings['unique'],
-            'authorize' => $settings['authorize'],
-            'name' => $settings['name'],
-            'match' => $match,
-            'triggers' => $this->generateTriggers($data, $match),
-            'admin_only' => $data['admin_only'],
-            'cooldown' => $data['cooldown'],
-            'enabled' => $data['enabled'],
-            'payload' => $this->generatePayload($data),
-        ];
-    }
-
-    /**
-     * Strip any non-base rules from the array, then call to the handlers
-     * serialize to json encode our payload.
-     *
-     * @param  array  $data
-     * @return string|null
-     */
-    private function generatePayload(array $data): ?string
-    {
-        $payload = (new Collection($data))
-            ->reject(fn ($value, $key) => in_array($key, array_keys($this->baseRuleset())))
-            ->toArray();
-
-        if (count($payload)) {
-            return $this->getActiveHandler()->serializePayload($payload);
-        }
-
-        return null;
-    }
-
-    /**
-     * @param  array  $data
-     * @param  string  $match
-     * @return string|null
-     */
-    private function generateTriggers(array $data, string $match): ?string
-    {
-        if ($match === self::MATCH_ANY) {
-            return null;
-        }
-
-        return $this->handlerOverrides['triggers'] ?? $this->formatTriggers($data['triggers']);
-    }
-
-    /**
-     * Combine the final triggers to be a single string, separated by the
-     * pipe (|), and removing duplicates.
-     *
-     * @param  string|array  $triggers
-     * @return string
-     */
-    private function formatTriggers($triggers): string
-    {
-        $triggers = is_array($triggers)
-            ? implode('|', $triggers)
-            : $triggers;
-
-        return (new Collection(preg_split('/[|,]/', $triggers)))
-            ->transform(fn ($item) => trim($item))
-            ->unique()
-            ->filter()
-            ->implode('|');
-    }
-
-    /**
-     * The default ruleset we will validate against.
-     *
-     * @return array
-     */
-    private function baseRuleset(): array
-    {
-        return [
-            'match' => ['required', 'string', Rule::in($this->getMatchMethods())],
-            'cooldown' => ['required', 'integer', 'between:0,900'],
-            'admin_only' => ['required', 'boolean'],
-            'enabled' => ['required', 'boolean'],
-            'triggers' => ['required', 'array', 'min:1'],
-            'triggers.*' => ['required', 'string'],
-        ];
-    }
-
-    /**
-     * The default error messages should validation fail.
-     *
-     * @return array
-     */
-    private function baseErrorMessages(): array
-    {
-        return [
-            'triggers.*.required' => 'Trigger field is required.',
-            'triggers.*.string' => 'A trigger must be a string.',
-        ];
+        $this->activeHandlerSettings = null;
     }
 
     /**
@@ -550,5 +355,247 @@ final class MessengerBots
             'triggers' => $match === self::MATCH_ANY ? null : ($settings['triggers'] ?? null),
             'match' => $match,
         ];
+    }
+
+    /**
+     * @param  array  $data
+     * @return string
+     *
+     * @throws ValidationException
+     */
+    private function validateHandlerAlias(array $data): string
+    {
+        return Validator::make($data, [
+            'handler' => ['required', Rule::in($this->getAliases())],
+        ])->validate()['handler'];
+    }
+
+    /**
+     * @return array
+     */
+    private function getHandlerOverrides(): array
+    {
+        $overrides = [];
+
+        if (! is_null($this->activeHandlerSettings['match'])) {
+            $overrides['match'] = $this->activeHandlerSettings['match'];
+        }
+
+        if (! is_null($this->activeHandlerSettings['triggers'])
+            && $this->activeHandlerSettings['match'] !== self::MATCH_ANY) {
+            $overrides['triggers'] = $this->formatTriggers($this->activeHandlerSettings['triggers']);
+        }
+
+        return $overrides;
+    }
+
+    /**
+     * @param  array  $data
+     * @param  array  $overrides
+     * @return array
+     *
+     * @throws ValidationException
+     */
+    private function validateHandlerSettings(array $data, array $overrides): array
+    {
+        $mergedRuleset = array_merge([
+            'cooldown' => ['required', 'integer', 'between:0,900'],
+            'admin_only' => ['required', 'boolean'],
+            'enabled' => ['required', 'boolean'],
+        ], $this->getActiveHandler()->rules());
+
+        $validator = Validator::make(
+            $data,
+            $mergedRuleset,
+            $this->generateErrorMessages()
+        );
+
+        $this->addConditionalHandlerValidations($validator, $overrides);
+
+        return $validator->validate();
+    }
+
+    /**
+     * @param  \Illuminate\Validation\Validator  $validator
+     * @param  array  $overrides
+     */
+    private function addConditionalHandlerValidations(\Illuminate\Validation\Validator $validator, array $overrides): void
+    {
+        $validator->sometimes('match', [
+            'required',
+            'string',
+            Rule::in($this->getMatchMethods()),
+        ], fn () => ! array_key_exists('match', $overrides));
+
+        $validator->sometimes('triggers', [
+            'required',
+            'array',
+            'min:1',
+        ], fn (Fluent $input) => $this->shouldValidateTriggers($input, $overrides));
+
+        $validator->sometimes('triggers.*', [
+            'required',
+            'string',
+        ], fn (Fluent $input) => $this->shouldValidateTriggers($input, $overrides));
+    }
+
+    /**
+     * @param  Fluent  $input
+     * @param  array  $overrides
+     * @return bool
+     */
+    private function shouldValidateTriggers(Fluent $input, array $overrides): bool
+    {
+        return $this->triggersNotInOverrides($overrides)
+            && $this->matchMethodIsNotMatchAny($input)
+            && $this->matchMethodOverrideIsNotMatchAny($overrides);
+    }
+
+    /**
+     * @param  array  $overrides
+     * @return bool
+     */
+    private function triggersNotInOverrides(array $overrides): bool
+    {
+        return ! array_key_exists('triggers', $overrides);
+    }
+
+    /**
+     * @param  Fluent  $input
+     * @return bool
+     */
+    private function matchMethodIsNotMatchAny(Fluent $input): bool
+    {
+        return $input->get('match') !== self::MATCH_ANY;
+    }
+
+    /**
+     * @param  array  $overrides
+     * @return bool
+     */
+    private function matchMethodOverrideIsNotMatchAny(array $overrides): bool
+    {
+        return ! (array_key_exists('match', $overrides)
+            && $overrides['match'] === self::MATCH_ANY);
+    }
+
+    /**
+     * @param  array  $data
+     * @return void
+     *
+     * @throws ValidationException
+     */
+    private function validateFormattedTriggers(array $data): void
+    {
+        if (! is_null($data['triggers'])) {
+            Validator::make($data, [
+                'triggers' => ['required', 'string'],
+            ])->validate();
+        }
+    }
+
+    /**
+     * Merge our error messages with any custom messages defined on the handler.
+     *
+     * @return array
+     */
+    private function generateErrorMessages(): array
+    {
+        return array_merge([
+            'triggers.*.required' => 'Trigger field is required.',
+            'triggers.*.string' => 'A trigger must be a string.',
+        ], $this->getActiveHandler()->errorMessages());
+    }
+
+    /**
+     * Make the final data array we will pass to create a new BotAction.
+     *
+     * @param  array  $data
+     * @param  array  $overrides
+     * @return array
+     */
+    private function generateHandlerDataForStoring(array $data, array $overrides): array
+    {
+        return [
+            'handler' => $this->activeHandlerClass,
+            'unique' => $this->activeHandlerSettings['unique'],
+            'authorize' => $this->activeHandlerSettings['authorize'],
+            'name' => $this->activeHandlerSettings['name'],
+            'match' => $overrides['match'] ?? $data['match'],
+            'triggers' => $this->generateTriggers($data, $overrides),
+            'admin_only' => $data['admin_only'],
+            'cooldown' => $data['cooldown'],
+            'enabled' => $data['enabled'],
+            'payload' => $this->generatePayload($data),
+        ];
+    }
+
+    /**
+     * Strip any non-base rules from the array, then call to the handlers
+     * serialize to json encode our payload.
+     *
+     * @param  array  $data
+     * @return string|null
+     */
+    private function generatePayload(array $data): ?string
+    {
+        $ruleKeys = [
+            'match',
+            'cooldown',
+            'admin_only',
+            'enabled',
+            'triggers',
+            'triggers.*',
+        ];
+
+        $payload = (new Collection($data))
+            ->reject(fn ($value, $key) => in_array($key, $ruleKeys))
+            ->toArray();
+
+        if (count($payload)) {
+            return $this->getActiveHandler()->serializePayload($payload);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param  array  $data
+     * @param  array  $overrides
+     * @return string|null
+     */
+    private function generateTriggers(array $data, array $overrides): ?string
+    {
+        $match = $overrides['match'] ?? $data['match'];
+
+        if ($match === self::MATCH_ANY) {
+            return null;
+        }
+
+        return $overrides['triggers'] ?? $this->formatTriggers($data['triggers']);
+    }
+
+    /**
+     * Combine the final triggers to be a single string, separated by the
+     * pipe (|), and removing duplicates.
+     *
+     * @param  null|string|array  $triggers
+     * @return string|null
+     */
+    private function formatTriggers($triggers): ?string
+    {
+        if (is_null($triggers)) {
+            return null;
+        }
+
+        $triggers = is_array($triggers)
+            ? implode('|', $triggers)
+            : $triggers;
+
+        return (new Collection(preg_split('/[|,]/', $triggers)))
+            ->transform(fn ($item) => trim($item))
+            ->unique()
+            ->filter()
+            ->implode('|');
     }
 }
