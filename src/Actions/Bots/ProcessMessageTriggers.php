@@ -118,6 +118,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
     {
         if ($action->getMatchMethod() === MessengerBots::MATCH_ANY) {
             $this->handleAction($action);
+
             return;
         }
 
