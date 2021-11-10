@@ -10,10 +10,13 @@
   - When using `MATCH_ANY`, triggers are ignored and a handler will be handled for any message sent.
 - `BotHandlerResolverService` to handle resolving / validating `BotAction` data for storing/updating.
 - `BotAction::formatTriggers()` helper, logic relocated from `MessengerBots`.
+- `BotActionHandlerDTO` and `MessengerProviderDTO` to structure internal data arrays.
 
 #### Changed
 - `BotActionHandledEvent` `trigger` property can now be `string|null`.
 - `MessengerBots::resolveHandlerData()` deprecated.
+- `MessengerBots::getHandlerSettings()` now returns a single or collection of `BotActionHandlerDTO`.
+- `MessengerBots::getAuthorizedHandlers()` now returns a collection of `BotActionHandlerDTO`.
 
 ---
 
