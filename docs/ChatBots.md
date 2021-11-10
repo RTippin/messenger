@@ -148,6 +148,7 @@ class TestBot extends BotActionHandler
 ---
 
 #### Available match methods
+- `any` - The action will be triggered for any message sent.
 - `contains` - The trigger can be anywhere within a message. Cannot be part of or inside another word.
 - `contains:caseless` - Same as "contains", but is case-insensitive.
 - `contains:any` - The trigger can be anywhere within a message, including inside another word.
@@ -163,6 +164,7 @@ class TestBot extends BotActionHandler
 ```php
 use RTippin\Messenger\MessengerBots;
 
+MessengerBots::MATCH_ANY;
 MessengerBots::MATCH_CONTAINS;
 MessengerBots::MATCH_CONTAINS_CASELESS;
 MessengerBots::MATCH_CONTAINS_ANY;
@@ -220,12 +222,10 @@ MessengerBots::MATCH_STARTS_WITH_CASELESS;
 
 ---
 
-#### Custom payloads
+### Custom payloads
 - To allow your handler to store user generated data for later use, you must define the validation rules we will use when the end user is attaching your handler to a bot.
 - All fields you define in your rules will be serialized and stored as json on the `BotAction` model your handler gets attached to.
-- The rules and optional error message overrides use laravel's validator under the hood, just how a form request class implements them.
-
----
+- The rules and optional error message overrides use laravel's validator under the hood.
 
 ### `rules()`
 - Return the validation rules used when adding the action to a bot. Any rules you define will have their keys/values stored in the action's payload. Return an empty array if you have no extra data to validate or store.

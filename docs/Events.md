@@ -22,7 +22,7 @@
 - Dispatched when a `BotActionHandler` is successfully handled.
   - `$event->action` : `BotAction` model that was triggered.
   - `$event->message` : `Message` model that triggered the `BotAction`.
-  - `$event->trigger` : `string` trigger that was matched on the `BotAction`.
+  - `$event->trigger` : `string|null` trigger that was matched on the `BotAction`.
 
 ---
 
