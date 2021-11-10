@@ -14,10 +14,10 @@ use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Collections\BotActionCollection;
 use RTippin\Messenger\Http\Resources\BotActionResource;
-use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Services\BotHandlerResolverService;
 
 class BotActionController
 {
@@ -74,7 +74,7 @@ class BotActionController
 
     /**
      * @param  Request  $request
-     * @param  MessengerBots  $bots
+     * @param  BotHandlerResolverService  $resolver
      * @param  StoreBotAction  $storeBotAction
      * @param  Thread  $thread
      * @param  Bot  $bot
@@ -84,7 +84,7 @@ class BotActionController
      * @throws BotException|AuthorizationException
      */
     public function store(Request $request,
-                          MessengerBots $bots,
+                          BotHandlerResolverService $resolver,
                           StoreBotAction $storeBotAction,
                           Thread $thread,
                           Bot $bot): BotActionResource
@@ -95,7 +95,7 @@ class BotActionController
             $bot,
         ]);
 
-        $resolved = $bots->resolveHandlerData($request->all());
+        $resolved = $resolver->resolve($request->all());
 
         return $storeBotAction->execute(
             $thread,
@@ -106,7 +106,7 @@ class BotActionController
 
     /**
      * @param  Request  $request
-     * @param  MessengerBots  $bots
+     * @param  BotHandlerResolverService  $resolver
      * @param  UpdateBotAction  $updateBotAction
      * @param  Thread  $thread
      * @param  Bot  $bot
@@ -117,7 +117,7 @@ class BotActionController
      * @throws BotException|AuthorizationException
      */
     public function update(Request $request,
-                           MessengerBots $bots,
+                           BotHandlerResolverService $resolver,
                            UpdateBotAction $updateBotAction,
                            Thread $thread,
                            Bot $bot,
@@ -129,7 +129,7 @@ class BotActionController
             $bot,
         ]);
 
-        $resolved = $bots->resolveHandlerData($request->all(), $action->handler);
+        $resolved = $resolver->resolve($request->all(), $action->handler);
 
         return $updateBotAction->execute(
             $action,

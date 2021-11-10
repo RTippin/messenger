@@ -301,4 +301,40 @@ class BotActionTest extends FeatureTestCase
         BotAction::clearActionsCacheForThread($thread->id);
         $this->assertFalse(Cache::has(BotAction::getActionsForThreadCacheKey($thread->id)));
     }
+
+    /**
+     * @test
+     *
+     * @param $triggers
+     * @param $result
+     * @dataProvider triggersGetFormatted
+     */
+    public function it_formats_triggers($triggers, $result)
+    {
+        $results = BotAction::formatTriggers($triggers);
+
+        $this->assertSame($result, $results);
+    }
+
+    public function triggersGetFormatted(): array
+    {
+        return [
+            'Single trigger' => ['test', 'test'],
+            'Single trigger array' => [['test'], 'test'],
+            'Multiple triggers' => ['test|another', 'test|another'],
+            'Multiple triggers array' => [['test', 'another'], 'test|another'],
+            'Omits duplicates' => ['test|1|2|test|3|1', 'test|1|2|3'],
+            'Omits duplicates in array' => [['test', '1', '2', 'test', '3', '1'], 'test|1|2|3'],
+            'Can separate via commas' => ['test,1,2,3,4', 'test|1|2|3|4'],
+            'Can separate via commas array' => [['test, 1,2, 3', '4'], 'test|1|2|3|4'],
+            'Can separate via pipe' => ['test| 1|2| 3|4', 'test|1|2|3|4'],
+            'Can separate via pipe in array' => [['test| 1|2| 3', '4'], 'test|1|2|3|4'],
+            'Can separate via comma and pipe' => ['test, 1|2| 3|4,5', 'test|1|2|3|4|5'],
+            'Can separate via comma and pipe in array' => [['test, 1|2| 3', '4,5'], 'test|1|2|3|4|5'],
+            'Multiple filters combined' => ['test, 1|2| 3,4,5,1|2,|6', 'test|1|2|3|4|5|6'],
+            'Multiple filters combined in array' => [['test, 1|2| 3', '4,5', '1|2', ',|', '6'], 'test|1|2|3|4|5|6'],
+            'Removes empty values' => ['test,1,2,||3|3,||test|1|2|3', 'test|1|2|3'],
+            'Removes empty values in array' => [['test', '1', '2', ',', '|', '|3|3,||'], 'test|1|2|3'],
+        ];
+    }
 }

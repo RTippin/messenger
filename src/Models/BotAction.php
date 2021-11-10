@@ -110,6 +110,30 @@ class BotAction extends Model implements Ownerable
     }
 
     /**
+     * Combine the final triggers to be a single string, separated by the
+     * pipe (|), and removing duplicates.
+     *
+     * @param  null|string|array  $triggers
+     * @return string|null
+     */
+    public static function formatTriggers($triggers): ?string
+    {
+        if (is_null($triggers)) {
+            return null;
+        }
+
+        $triggers = is_array($triggers)
+            ? implode('|', $triggers)
+            : $triggers;
+
+        return (new \Illuminate\Support\Collection(preg_split('/[|,]/', $triggers)))
+            ->transform(fn ($item) => trim($item))
+            ->unique()
+            ->filter()
+            ->implode('|');
+    }
+
+    /**
      * @return BelongsTo|Bot
      */
     public function bot(): BelongsTo
