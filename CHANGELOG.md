@@ -8,7 +8,6 @@
 #### Added
 - `MessengerBots::MATCH_ANY` match method.
   - When using `MATCH_ANY`, triggers are ignored and a handler will be handled for any message sent.
-- `MessengerBots::getActiveHandlerSettings()` method.
 - `BotHandlerResolverService` to handle resolving / validating `BotAction` data for storing/updating.
 - `BotAction::formatTriggers()` helper, logic relocated from `MessengerBots`.
 

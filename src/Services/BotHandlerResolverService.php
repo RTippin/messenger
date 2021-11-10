@@ -8,6 +8,7 @@ use Illuminate\Support\Fluent;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\BotAction;
@@ -25,9 +26,9 @@ class BotHandlerResolverService
     private BotActionHandler $handler;
 
     /**
-     * @var array
+     * @var BotActionHandlerDTO
      */
-    private array $handlerSettings;
+    private BotActionHandlerDTO $handlerDTO;
 
     /**
      * @param  MessengerBots  $bots
@@ -57,7 +58,9 @@ class BotHandlerResolverService
         );
 
         // Set the settings the handler defined
-        $this->handlerSettings = $this->bots->getActiveHandlerSettings();
+        $this->handlerDTO = $this->bots->getHandlerSettings(
+            get_class($this->handler)
+        );
 
         // Generate the overrides for the handler.
         $overrides = $this->getHandlerOverrides();
@@ -95,13 +98,13 @@ class BotHandlerResolverService
     {
         $overrides = [];
 
-        if (! is_null($this->handlerSettings['match'])) {
-            $overrides['match'] = $this->handlerSettings['match'];
+        if (! is_null($this->handlerDTO->matchMethod)) {
+            $overrides['match'] = $this->handlerDTO->matchMethod;
         }
 
-        if (! is_null($this->handlerSettings['triggers'])
-            && $this->handlerSettings['match'] !== MessengerBots::MATCH_ANY) {
-            $overrides['triggers'] = BotAction::formatTriggers($this->handlerSettings['triggers']);
+        if (! is_null($this->handlerDTO->triggers)
+            && $this->handlerDTO->matchMethod !== MessengerBots::MATCH_ANY) {
+            $overrides['triggers'] = BotAction::formatTriggers($this->handlerDTO->triggers);
         }
 
         return $overrides;
@@ -235,10 +238,10 @@ class BotHandlerResolverService
     private function generateHandlerDataForStoring(array $data, array $overrides): array
     {
         return [
-            'handler' => get_class($this->handler),
-            'unique' => $this->handlerSettings['unique'],
-            'authorize' => $this->handlerSettings['authorize'],
-            'name' => $this->handlerSettings['name'],
+            'handler' => $this->handlerDTO->class,
+            'unique' => $this->handlerDTO->unique,
+            'authorize' => $this->handlerDTO->shouldAuthorize,
+            'name' => $this->handlerDTO->name,
             'match' => $overrides['match'] ?? $data['match'],
             'triggers' => $this->generateTriggers($data, $overrides),
             'admin_only' => $data['admin_only'],

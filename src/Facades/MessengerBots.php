@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static array getHandlerClasses()
  * @method static array getUniqueHandlerClasses()
- * @method static array|null getHandlerSettings(?string $handlerOrAlias = null)
- * @method static array getAuthorizedHandlers()
+ * @method static \RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO|\Illuminate\Support\Collection getHandlerSettings(?string $handlerOrAlias = null)
+ * @method static \Illuminate\Support\Collection getAuthorizedHandlers()
  * @method static array getAliases()
  * @method static array getMatchMethods()
  * @method static string|null getMatchDescription(?string $match = null)
@@ -20,7 +20,6 @@ use Illuminate\Support\Facades\Facade;
  * @method static \RTippin\Messenger\Actions\Bots\BotActionHandler initializeHandler(string $handlerOrAlias)
  * @method static bool isActiveHandlerSet()
  * @method static \RTippin\Messenger\Actions\Bots\BotActionHandler|null getActiveHandler()
- * @method static array|null getActiveHandlerSettings()
  *
  * @mixin \RTippin\Messenger\MessengerBots
  *

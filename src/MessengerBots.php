@@ -6,8 +6,8 @@ use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
 use RTippin\Messenger\Exceptions\BotException;
-use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Services\BotHandlerResolverService;
 
 final class MessengerBots
@@ -37,7 +37,7 @@ final class MessengerBots
     ];
 
     /**
-     * @var Collection
+     * @var Collection|BotActionHandlerDTO[]
      */
     private Collection $handlers;
 
@@ -50,11 +50,6 @@ final class MessengerBots
      * @var string|null
      */
     private ?string $activeHandlerClass = null;
-
-    /**
-     * @var array|null
-     */
-    private ?array $activeHandlerSettings = null;
 
     /**
      * MessengerBots constructor.
@@ -82,7 +77,7 @@ final class MessengerBots
                 throw new InvalidArgumentException("The given handler { $handler } must extend our base handler ".BotActionHandler::class);
             }
 
-            $this->handlers[$handler] = $this->makeHandlerSettings($handler);
+            $this->handlers[$handler] = new BotActionHandlerDTO($handler);
         }
     }
 
@@ -104,7 +99,7 @@ final class MessengerBots
     public function getUniqueHandlerClasses(): array
     {
         return $this->handlers
-            ->filter(fn ($settings) => $settings['unique'] === true)
+            ->filter(fn (BotActionHandlerDTO $handler) => $handler->unique)
             ->keys()
             ->toArray();
     }
@@ -113,15 +108,14 @@ final class MessengerBots
      * Get all or an individual bot handlers settings.
      *
      * @param  string|null  $handlerOrAlias
-     * @return array|null
+     * @return BotActionHandlerDTO|Collection|null
      */
-    public function getHandlerSettings(?string $handlerOrAlias = null): ?array
+    public function getHandlerSettings(?string $handlerOrAlias = null)
     {
         if (is_null($handlerOrAlias)) {
             return $this->handlers
                 ->sortBy('name')
-                ->values()
-                ->toArray();
+                ->values();
         }
 
         return $this->handlers->get(
@@ -130,17 +124,16 @@ final class MessengerBots
     }
 
     /**
-     * Returns the handler settings the end user is authorized to view/add.
+     * Returns the handlers the end user is authorized to view/add.
      *
-     * @return array
+     * @return Collection
      */
-    public function getAuthorizedHandlers(): array
+    public function getAuthorizedHandlers(): Collection
     {
         return $this->handlers
             ->sortBy('name')
-            ->filter(fn ($settings) => $this->authorizesHandler($settings))
-            ->values()
-            ->toArray();
+            ->filter(fn (BotActionHandlerDTO $handler) => $this->authorizesHandler($handler))
+            ->values();
     }
 
     /**
@@ -152,7 +145,7 @@ final class MessengerBots
     {
         return $this->handlers
             ->sortBy('alias')
-            ->map(fn ($settings) => $settings['alias'])
+            ->map(fn (BotActionHandlerDTO $handler) => $handler->alias)
             ->flatten()
             ->toArray();
     }
@@ -191,7 +184,7 @@ final class MessengerBots
         }
 
         return $this->handlers->search(
-            fn ($settings) =>  $settings['alias'] === $handlerOrAlias
+            fn (BotActionHandlerDTO $handler) =>  $handler->alias === $handlerOrAlias
         ) ?: null;
     }
 
@@ -231,7 +224,6 @@ final class MessengerBots
 
         $this->activeHandler = app($handler);
         $this->activeHandlerClass = $handler;
-        $this->activeHandlerSettings = $this->getHandlerSettings($handler);
 
         return $this->activeHandler;
     }
@@ -270,16 +262,6 @@ final class MessengerBots
     }
 
     /**
-     * Return the current active handler's settings.
-     *
-     * @return array|null
-     */
-    public function getActiveHandlerSettings(): ?array
-    {
-        return $this->activeHandlerSettings;
-    }
-
-    /**
      * @return $this
      */
     public function getInstance(): self
@@ -294,78 +276,23 @@ final class MessengerBots
     {
         $this->activeHandler = null;
         $this->activeHandlerClass = null;
-        $this->activeHandlerSettings = null;
     }
 
     /**
      * If authorize is set and true, initialize the handler to
      * pass its authorize method, otherwise returning true.
      *
-     * @param $settings
+     * @param  BotActionHandlerDTO  $handler
      * @return bool
      *
      * @throws BotException
      */
-    private function authorizesHandler($settings): bool
+    private function authorizesHandler(BotActionHandlerDTO $handler): bool
     {
-        if ($settings['authorize'] ?? false) {
-            return $this->initializeHandler($settings['alias'])->authorize();
+        if ($handler->shouldAuthorize) {
+            return $this->initializeHandler($handler->class)->authorize();
         }
 
         return true;
-    }
-
-    /**
-     * Generate the handler settings resource array.
-     *
-     * @param  string  $handler
-     * @return array
-     */
-    private function makeHandlerSettings(string $handler): array
-    {
-        /** @var BotActionHandler $handler */
-        $settings = $handler::getSettings();
-
-        $match = $settings['match'] ?? null;
-
-        if ($this->shouldOverwriteTriggers($settings, $match)) {
-            $settings['triggers'] = explode('|', BotAction::formatTriggers($settings['triggers']));
-        }
-
-        return [
-            'alias' => $settings['alias'],
-            'description' => $settings['description'],
-            'name' => $settings['name'],
-            'unique' => $settings['unique'] ?? false,
-            'authorize' => method_exists($handler, 'authorize'),
-            'triggers' => $this->getFinalizedTriggers($settings, $match),
-            'match' => $match,
-        ];
-    }
-
-    /**
-     * @param  array  $settings
-     * @param  string|null  $match
-     * @return bool
-     */
-    private function shouldOverwriteTriggers(array $settings, ?string $match): bool
-    {
-        return array_key_exists('triggers', $settings)
-            && ! is_null($settings['triggers'])
-            && $match !== self::MATCH_ANY;
-    }
-
-    /**
-     * @param  array  $settings
-     * @param  string|null  $match
-     * @return array|null
-     */
-    private function getFinalizedTriggers(array $settings, ?string $match): ?array
-    {
-        if ($match === self::MATCH_ANY) {
-            return null;
-        }
-
-        return $settings['triggers'] ?? null;
     }
 }

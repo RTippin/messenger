@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Http\Controllers\Actions;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
+use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
 use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
@@ -34,11 +35,11 @@ class AvailableBotHandlers
      *
      * @param  Thread  $thread
      * @param  Bot  $bot
-     * @return array
+     * @return Collection
      *
      * @throws AuthorizationException
      */
-    public function __invoke(Thread $thread, Bot $bot): array
+    public function __invoke(Thread $thread, Bot $bot): Collection
     {
         $this->authorize('create', [
             BotAction::class,
@@ -51,19 +52,18 @@ class AvailableBotHandlers
 
     /**
      * @param  Bot  $bot
-     * @return array
+     * @return Collection
      */
-    private function generateAvailableHandlers(Bot $bot): array
+    private function generateAvailableHandlers(Bot $bot): Collection
     {
         $unique = $bot->validUniqueActions()
             ->get()
-            ->transform(fn (BotAction $action) => $action->getHandlerSettings()['alias'] ?? null)
+            ->transform(fn (BotAction $action) => $action->getHandlerSettings()->alias)
             ->filter()
             ->toArray();
 
         return (new Collection($this->bots->getAuthorizedHandlers()))
-            ->reject(fn ($handler) => in_array($handler['alias'], $unique))
-            ->values()
-            ->toArray();
+            ->reject(fn (BotActionHandlerDTO $handler) => in_array($handler->alias, $unique))
+            ->values();
     }
 }

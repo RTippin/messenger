@@ -11,6 +11,7 @@ use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\Fixtures\BrokenBotHandler;
 use RTippin\Messenger\Tests\Fixtures\FunBotHandler;
 use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
@@ -98,8 +99,10 @@ class MessengerBotsTest extends MessengerTestCase
         $handlers = [
             SillyBotHandler::class,
             FunBotHandler::class,
+            BrokenBotHandler::class,
         ];
         $aliases = [
+            'broken_bot',
             'fun_bot',
             'silly_bot',
         ];
@@ -145,10 +148,22 @@ class MessengerBotsTest extends MessengerTestCase
     {
         $handlers = [
             SillyBotHandler::class,
+            BrokenBotHandler::class,
             FunBotHandler::class,
         ];
         $settings = [
             [
+                'class' => BrokenBotHandler::class,
+                'alias' => 'broken_bot',
+                'description' => 'This is a broken bot.',
+                'name' => 'Broken Bot',
+                'unique' => true,
+                'authorize' => false,
+                'triggers' => null,
+                'match' => null,
+            ],
+            [
+                'class' => FunBotHandler::class,
                 'alias' => 'fun_bot',
                 'description' => 'This is a fun bot.',
                 'name' => 'Fun Bot',
@@ -158,6 +173,7 @@ class MessengerBotsTest extends MessengerTestCase
                 'match' => MessengerBots::MATCH_EXACT_CASELESS,
             ],
             [
+                'class' => SillyBotHandler::class,
                 'alias' => 'silly_bot',
                 'description' => 'This is a silly bot.',
                 'name' => 'Silly Bot',
@@ -170,7 +186,7 @@ class MessengerBotsTest extends MessengerTestCase
 
         $this->bots->registerHandlers($handlers);
 
-        $this->assertSame($settings, $this->bots->getHandlerSettings());
+        $this->assertSame($settings, $this->bots->getHandlerSettings()->toArray());
     }
 
     /** @test */
@@ -181,6 +197,7 @@ class MessengerBotsTest extends MessengerTestCase
             SillyBotHandler::class,
         ];
         $settings = [
+            'class' => SillyBotHandler::class,
             'alias' => 'silly_bot',
             'description' => 'This is a silly bot.',
             'name' => 'Silly Bot',
@@ -192,8 +209,8 @@ class MessengerBotsTest extends MessengerTestCase
 
         $this->bots->registerHandlers($handlers);
 
-        $this->assertSame($settings, $this->bots->getHandlerSettings('silly_bot'));
-        $this->assertSame($settings, $this->bots->getHandlerSettings(SillyBotHandler::class));
+        $this->assertSame($settings, $this->bots->getHandlerSettings('silly_bot')->toArray());
+        $this->assertSame($settings, $this->bots->getHandlerSettings(SillyBotHandler::class)->toArray());
         $this->assertNull($this->bots->getHandlerSettings('unknown'));
     }
 
@@ -203,6 +220,7 @@ class MessengerBotsTest extends MessengerTestCase
         SillyBotHandler::$triggers = ['one', 'two'];
         SillyBotHandler::$match = MessengerBots::MATCH_ANY;
         $settings = [
+            'class' => SillyBotHandler::class,
             'alias' => 'silly_bot',
             'description' => 'This is a silly bot.',
             'name' => 'Silly Bot',
@@ -214,7 +232,7 @@ class MessengerBotsTest extends MessengerTestCase
 
         $this->bots->registerHandlers([SillyBotHandler::class]);
 
-        $this->assertSame($settings, $this->bots->getHandlerSettings(SillyBotHandler::class));
+        $this->assertSame($settings, $this->bots->getHandlerSettings(SillyBotHandler::class)->toArray());
     }
 
     /** @test */

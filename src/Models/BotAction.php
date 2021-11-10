@@ -14,6 +14,7 @@ use RTippin\Messenger\Actions\Bots\BotActionHandler;
 use RTippin\Messenger\Contracts\ActionHandler;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\BotActionFactory;
+use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
 use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\Uuids;
@@ -200,8 +201,8 @@ class BotAction extends Model implements Ownerable
      */
     public function getTriggers(): array
     {
-        if (MessengerBots::getHandlerSettings($this->handler)['triggers'] ?? false) {
-            return MessengerBots::getHandlerSettings($this->handler)['triggers'];
+        if (optional($this->getHandlerSettings())->triggers) {
+            return $this->getHandlerSettings()->triggers;
         }
 
         return ! is_null($this->triggers)
@@ -214,15 +215,15 @@ class BotAction extends Model implements Ownerable
      */
     public function getMatchMethod(): string
     {
-        return MessengerBots::getHandlerSettings($this->handler)['match'] ?? $this->match;
+        return optional($this->getHandlerSettings())->matchMethod ?: $this->match;
     }
 
     /**
      * Get the handler settings.
      *
-     * @return array|null
+     * @return BotActionHandlerDTO|null
      */
-    public function getHandlerSettings(): ?array
+    public function getHandlerSettings(): ?BotActionHandlerDTO
     {
         return MessengerBots::getHandlerSettings($this->handler);
     }
