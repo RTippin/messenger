@@ -51,6 +51,7 @@ class BotActionHandlerDTO implements Arrayable
 
     /**
      * @param  string  $handler
+     *
      * @see BotActionHandler
      */
     public function __construct(string $handler)
