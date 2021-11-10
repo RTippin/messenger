@@ -532,4 +532,3 @@ class BotHandlerResolverTest extends MessengerTestCase
         ];
     }
 }
-

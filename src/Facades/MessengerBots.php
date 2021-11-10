@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use RTippin\Messenger\Models\BotAction;
 
 /**
  * @method static array getHandlerClasses()
