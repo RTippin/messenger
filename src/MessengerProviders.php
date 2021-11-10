@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\DataTransferObjects\MessengerProviderDTO;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Messenger as MessengerModel;
@@ -98,13 +99,13 @@ trait MessengerProviders
             $this->provider = $provider;
         }
 
-        $providerSettings = $this->providers->get(get_class($provider));
-        $this->alias = $providerSettings['alias'];
-        $this->providerHasFriends = $providerSettings['friendable'];
-        $this->providerHasDevices = $providerSettings['devices'];
-        $this->providerCanMessageFirst = $this->getCanMessageFirstClasses($providerSettings['cant_message_first']);
-        $this->providerCanFriend = $this->getCanFriendClasses($providerSettings['cant_friend']);
-        $this->providerCanSearch = $this->getCanSearchClasses($providerSettings['cant_search']);
+        $providerDTO = $this->getProviderDTO(get_class($provider));
+        $this->alias = $providerDTO->alias;
+        $this->providerHasFriends = $providerDTO->friendable;
+        $this->providerHasDevices = $providerDTO->hasDevices;
+        $this->providerCanMessageFirst = $this->getCanMessageFirstClasses($providerDTO->cantMessageFirst);
+        $this->providerCanFriend = $this->getCanFriendClasses($providerDTO->cantFriend);
+        $this->providerCanSearch = $this->getCanSearchClasses($providerDTO->cantSearch);
         $this->flushFriendDriverInstance();
         app()->instance(MessengerProvider::class, $provider);
 
@@ -382,10 +383,10 @@ trait MessengerProviders
     public function getSearchableForCurrentProvider(): array
     {
         return $this->providers->filter(
-            fn ($settings, $class) => $settings['searchable'] === true
-                && in_array($class, $this->providerCanSearch)
+            fn (MessengerProviderDTO $provider) => in_array($provider->class, $this->providerCanSearch)
+                && $provider->searchable
         )
-            ->map(fn ($provider) => $provider['morph_class'])
+            ->map(fn (MessengerProviderDTO $provider) => $provider->morphClass)
             ->flatten()
             ->toArray();
     }

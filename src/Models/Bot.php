@@ -102,6 +102,25 @@ class Bot extends Model implements MessengerProvider, Ownerable
     }
 
     /**
+     * Get the provider settings.
+     *
+     * @return array
+     */
+    public static function getProviderSettings(): array
+    {
+        return [
+            'alias' => 'bot',
+            'searchable' => false,
+            'friendable' => false,
+            'devices' => false,
+            'default_avatar' => config('messenger.files.default_bot_avatar'),
+            'cant_message_first' => [],
+            'cant_search' => [],
+            'cant_friend' => [],
+        ];
+    }
+
+    /**
      * @return BelongsTo|Thread
      */
     public function thread(): BelongsTo
@@ -133,16 +152,6 @@ class Bot extends Model implements MessengerProvider, Ownerable
     {
         return $this->hasMany(BotAction::class)
             ->whereIn('handler', MessengerBots::getUniqueHandlerClasses());
-    }
-
-    /**
-     * Get the provider settings and alias override, if set.
-     *
-     * @return array
-     */
-    public static function getProviderSettings(): array
-    {
-        return [];
     }
 
     /**
