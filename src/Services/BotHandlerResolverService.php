@@ -59,7 +59,7 @@ class BotHandlerResolverService
         );
 
         // Set the settings the handler defined
-        $this->handlerDTO = $this->bots->getHandlerSettings(
+        $this->handlerDTO = $this->bots->getHandlersDTO(
             get_class($this->handler)
         );
 

@@ -103,12 +103,12 @@ final class MessengerBots
     }
 
     /**
-     * Get all or an individual bot handlers settings.
+     * Get all or an individual bot handlers DTO.
      *
      * @param  string|null  $handlerOrAlias
      * @return BotActionHandlerDTO|Collection|null
      */
-    public function getHandlerSettings(?string $handlerOrAlias = null)
+    public function getHandlersDTO(?string $handlerOrAlias = null)
     {
         if (is_null($handlerOrAlias)) {
             return $this->handlers
@@ -119,6 +119,17 @@ final class MessengerBots
         return $this->handlers->get(
             $this->findHandler($handlerOrAlias)
         );
+    }
+
+    /**
+     * @param  string|null  $handlerOrAlias
+     * @return BotActionHandlerDTO|Collection|null
+     *
+     * @deprecated Use getHandlersDTO.
+     */
+    public function getHandlerSettings(?string $handlerOrAlias = null)
+    {
+        return $this->getHandlersDTO($handlerOrAlias);
     }
 
     /**

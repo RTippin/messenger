@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Facade;
 /**
  * @method static array getHandlerClasses()
  * @method static array getUniqueHandlerClasses()
- * @method static \RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO|\Illuminate\Support\Collection getHandlerSettings(?string $handlerOrAlias = null)
+ * @method static \RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO|\Illuminate\Support\Collection getHandlersDTO(?string $handlerOrAlias = null)
  * @method static \Illuminate\Support\Collection getAuthorizedHandlers()
  * @method static array getAliases()
  * @method static array getMatchMethods()

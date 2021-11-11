@@ -58,7 +58,7 @@ class AvailableBotHandlers
     {
         $unique = $bot->validUniqueActions()
             ->get()
-            ->transform(fn (BotAction $action) => $action->getHandlerSettings()->alias)
+            ->transform(fn (BotAction $action) => $action->getHandlersDTO()->alias)
             ->filter()
             ->toArray();
 

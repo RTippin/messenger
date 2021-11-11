@@ -144,14 +144,14 @@ class MessengerBotsTest extends MessengerTestCase
     }
 
     /** @test */
-    public function it_can_get_all_bot_settings_sorting_by_name()
+    public function it_can_get_all_handler_dtos_sorting_by_name()
     {
         $handlers = [
             SillyBotHandler::class,
             BrokenBotHandler::class,
             FunBotHandler::class,
         ];
-        $settings = [
+        $dtos = [
             [
                 'class' => BrokenBotHandler::class,
                 'alias' => 'broken_bot',
@@ -186,17 +186,17 @@ class MessengerBotsTest extends MessengerTestCase
 
         $this->bots->registerHandlers($handlers);
 
-        $this->assertSame($settings, $this->bots->getHandlerSettings()->toArray());
+        $this->assertSame($dtos, $this->bots->getHandlersDTO()->toArray());
     }
 
     /** @test */
-    public function it_can_get_single_bot_settings()
+    public function it_can_get_single_handler_dto()
     {
         $handlers = [
             FunBotHandler::class,
             SillyBotHandler::class,
         ];
-        $settings = [
+        $dto = [
             'class' => SillyBotHandler::class,
             'alias' => 'silly_bot',
             'description' => 'This is a silly bot.',
@@ -209,9 +209,9 @@ class MessengerBotsTest extends MessengerTestCase
 
         $this->bots->registerHandlers($handlers);
 
-        $this->assertSame($settings, $this->bots->getHandlerSettings('silly_bot')->toArray());
-        $this->assertSame($settings, $this->bots->getHandlerSettings(SillyBotHandler::class)->toArray());
-        $this->assertNull($this->bots->getHandlerSettings('unknown'));
+        $this->assertSame($dto, $this->bots->getHandlersDTO('silly_bot')->toArray());
+        $this->assertSame($dto, $this->bots->getHandlersDTO(SillyBotHandler::class)->toArray());
+        $this->assertNull($this->bots->getHandlersDTO('unknown'));
     }
 
     /** @test */
@@ -219,7 +219,7 @@ class MessengerBotsTest extends MessengerTestCase
     {
         SillyBotHandler::$triggers = ['one', 'two'];
         SillyBotHandler::$match = MessengerBots::MATCH_ANY;
-        $settings = [
+        $dto = [
             'class' => SillyBotHandler::class,
             'alias' => 'silly_bot',
             'description' => 'This is a silly bot.',
@@ -232,18 +232,18 @@ class MessengerBotsTest extends MessengerTestCase
 
         $this->bots->registerHandlers([SillyBotHandler::class]);
 
-        $this->assertSame($settings, $this->bots->getHandlerSettings(SillyBotHandler::class)->toArray());
+        $this->assertSame($dto, $this->bots->getHandlersDTO(SillyBotHandler::class)->toArray());
     }
 
     /** @test */
-    public function it_can_get_authorized_handler_settings()
+    public function it_can_get_authorized_handlers_dto()
     {
         $this->bots->registerHandlers([
             FunBotHandler::class,
             SillyBotHandler::class,
         ]);
 
-        $this->assertCount(2, $this->bots->getHandlerSettings());
+        $this->assertCount(2, $this->bots->getHandlersDTO());
         $this->assertCount(1, $this->bots->getAuthorizedHandlers());
     }
 

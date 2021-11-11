@@ -201,8 +201,8 @@ class BotAction extends Model implements Ownerable
      */
     public function getTriggers(): array
     {
-        if (optional($this->getHandlerSettings())->triggers) {
-            return $this->getHandlerSettings()->triggers;
+        if (optional($this->getHandlersDTO())->triggers) {
+            return $this->getHandlersDTO()->triggers;
         }
 
         return ! is_null($this->triggers)
@@ -215,7 +215,7 @@ class BotAction extends Model implements Ownerable
      */
     public function getMatchMethod(): string
     {
-        return optional($this->getHandlerSettings())->matchMethod ?: $this->match;
+        return optional($this->getHandlersDTO())->matchMethod ?: $this->match;
     }
 
     /**
@@ -223,9 +223,9 @@ class BotAction extends Model implements Ownerable
      *
      * @return BotActionHandlerDTO|null
      */
-    public function getHandlerSettings(): ?BotActionHandlerDTO
+    public function getHandlersDTO(): ?BotActionHandlerDTO
     {
-        return MessengerBots::getHandlerSettings($this->handler);
+        return MessengerBots::getHandlersDTO($this->handler);
     }
 
     /**
