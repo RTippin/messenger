@@ -74,8 +74,8 @@ class StoreBotAction extends BaseMessengerAction
 
     /**
      * @param  ResolvedBotHandlerDTO  $resolved
-     * @throws BotException
-     * @throws FeatureDisabledException
+     *
+     * @throws BotException|FeatureDisabledException
      */
     private function bailIfCanAddBotActionFails(ResolvedBotHandlerDTO $resolved): void
     {
