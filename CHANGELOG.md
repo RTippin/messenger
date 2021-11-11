@@ -14,9 +14,11 @@
 
 #### Changed
 - `BotActionHandledEvent` `trigger` property can now be `string|null`.
-- `MessengerBots::resolveHandlerData()` deprecated.
 - `MessengerBots::getHandlerSettings()` now returns a single or collection of `BotActionHandlerDTO`.
 - `MessengerBots::getAuthorizedHandlers()` now returns a collection of `BotActionHandlerDTO`.
+
+#### Removed
+- `MessengerBots::resolveHandlerData()` method.
 
 ---
 

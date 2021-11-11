@@ -3,12 +3,10 @@
 namespace RTippin\Messenger;
 
 use Illuminate\Support\Collection;
-use Illuminate\Validation\ValidationException;
 use InvalidArgumentException;
 use RTippin\Messenger\Actions\Bots\BotActionHandler;
 use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
 use RTippin\Messenger\Exceptions\BotException;
-use RTippin\Messenger\Services\BotHandlerResolverService;
 
 final class MessengerBots
 {
@@ -226,21 +224,6 @@ final class MessengerBots
         $this->activeHandlerClass = $handler;
 
         return $this->activeHandler;
-    }
-
-    /**
-     * @param  array  $data
-     * @param  string|null  $handlerOrAlias
-     *
-     * @deprecated Moved to BotHandlerResolverService.
-     *
-     * @return array
-     *
-     * @throws ValidationException|BotException
-     */
-    public function resolveHandlerData(array $data, ?string $handlerOrAlias = null): array
-    {
-        return app(BotHandlerResolverService::class)->resolve($data, $handlerOrAlias);
     }
 
     /**
