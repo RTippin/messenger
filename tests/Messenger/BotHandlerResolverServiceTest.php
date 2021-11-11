@@ -11,7 +11,7 @@ use RTippin\Messenger\Tests\Fixtures\FunBotHandler;
 use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;
 use RTippin\Messenger\Tests\MessengerTestCase;
 
-class BotHandlerResolverTest extends MessengerTestCase
+class BotHandlerResolverServiceTest extends MessengerTestCase
 {
     private MessengerBots $bots;
     private BotHandlerResolverService $resolver;
@@ -70,14 +70,11 @@ class BotHandlerResolverTest extends MessengerTestCase
     }
 
     /** @test */
-    public function it_returns_final_resolved_data_using_alias_in_data()
+    public function it_returns_final_resolved_dto_using_alias_in_data()
     {
         $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
-            'handler' => SillyBotHandler::class,
-            'unique' => true,
-            'authorize' => true,
-            'name' => 'Silly Bot',
+            'handler' => $this->bots->getHandlerSettings(SillyBotHandler::class)->toArray(),
             'match' => MessengerBots::MATCH_EXACT,
             'triggers' => 'test',
             'admin_only' => true,
@@ -94,18 +91,15 @@ class BotHandlerResolverTest extends MessengerTestCase
             'triggers' => ['test'],
         ]);
 
-        $this->assertSame($expects, $results);
+        $this->assertSame($expects, $results->toArray());
     }
 
     /** @test */
-    public function it_returns_final_resolved_data_using_handler_class()
+    public function it_returns_final_resolved_dto_using_handler_class_override()
     {
         $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
-            'handler' => SillyBotHandler::class,
-            'unique' => true,
-            'authorize' => true,
-            'name' => 'Silly Bot',
+            'handler' => $this->bots->getHandlerSettings(SillyBotHandler::class)->toArray(),
             'match' => MessengerBots::MATCH_EXACT,
             'triggers' => 'test',
             'admin_only' => true,
@@ -121,18 +115,15 @@ class BotHandlerResolverTest extends MessengerTestCase
             'triggers' => ['test'],
         ], SillyBotHandler::class);
 
-        $this->assertSame($expects, $results);
+        $this->assertSame($expects, $results->toArray());
     }
 
     /** @test */
-    public function it_returns_final_resolved_data_using_handler_alias()
+    public function it_returns_final_resolved_dto_using_handler_alias_override()
     {
         $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
-            'handler' => SillyBotHandler::class,
-            'unique' => true,
-            'authorize' => true,
-            'name' => 'Silly Bot',
+            'handler' => $this->bots->getHandlerSettings(SillyBotHandler::class)->toArray(),
             'match' => MessengerBots::MATCH_EXACT,
             'triggers' => 'test',
             'admin_only' => true,
@@ -148,7 +139,7 @@ class BotHandlerResolverTest extends MessengerTestCase
             'triggers' => ['test'],
         ], 'silly_bot');
 
-        $this->assertSame($expects, $results);
+        $this->assertSame($expects, $results->toArray());
     }
 
     /** @test */
@@ -156,10 +147,7 @@ class BotHandlerResolverTest extends MessengerTestCase
     {
         $this->bots->registerHandlers([FunBotHandler::class]);
         $expects = [
-            'handler' => FunBotHandler::class,
-            'unique' => false,
-            'authorize' => false,
-            'name' => 'Fun Bot',
+            'handler' => $this->bots->getHandlerSettings(FunBotHandler::class)->toArray(),
             'match' => MessengerBots::MATCH_EXACT_CASELESS, //overwritten
             'triggers' => '!test|!more', //overwritten
             'admin_only' => true,
@@ -178,7 +166,7 @@ class BotHandlerResolverTest extends MessengerTestCase
             'test' => ['test'],
         ]);
 
-        $this->assertSame($expects, $results);
+        $this->assertSame($expects, $results->toArray());
     }
 
     /** @test */
@@ -186,10 +174,7 @@ class BotHandlerResolverTest extends MessengerTestCase
     {
         $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
-            'handler' => SillyBotHandler::class,
-            'unique' => true,
-            'authorize' => true,
-            'name' => 'Silly Bot',
+            'handler' => $this->bots->getHandlerSettings(SillyBotHandler::class)->toArray(),
             'match' => MessengerBots::MATCH_ANY,
             'triggers' => null,
             'admin_only' => false,
@@ -207,7 +192,7 @@ class BotHandlerResolverTest extends MessengerTestCase
             'triggers' => ['!some', '!more'], //ignored
         ]);
 
-        $this->assertSame($expects, $results);
+        $this->assertSame($expects, $results->toArray());
     }
 
     /** @test */
@@ -215,10 +200,7 @@ class BotHandlerResolverTest extends MessengerTestCase
     {
         $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
-            'handler' => SillyBotHandler::class,
-            'unique' => true,
-            'authorize' => true,
-            'name' => 'Silly Bot',
+            'handler' => $this->bots->getHandlerSettings(SillyBotHandler::class)->toArray(),
             'match' => MessengerBots::MATCH_ANY,
             'triggers' => null, //omitted
             'admin_only' => false,
@@ -235,7 +217,7 @@ class BotHandlerResolverTest extends MessengerTestCase
             'enabled' => true,
         ]);
 
-        $this->assertSame($expects, $results);
+        $this->assertSame($expects, $results->toArray());
     }
 
     /** @test */
@@ -244,10 +226,7 @@ class BotHandlerResolverTest extends MessengerTestCase
         SillyBotHandler::$match = MessengerBots::MATCH_ANY;
         $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
-            'handler' => SillyBotHandler::class,
-            'unique' => true,
-            'authorize' => true,
-            'name' => 'Silly Bot',
+            'handler' => $this->bots->getHandlerSettings(SillyBotHandler::class)->toArray(),
             'match' => MessengerBots::MATCH_ANY, //overwritten
             'triggers' => null, //omitted
             'admin_only' => false,
@@ -263,7 +242,7 @@ class BotHandlerResolverTest extends MessengerTestCase
             'enabled' => true,
         ]);
 
-        $this->assertSame($expects, $results);
+        $this->assertSame($expects, $results->toArray());
     }
 
     /** @test */
@@ -272,10 +251,7 @@ class BotHandlerResolverTest extends MessengerTestCase
         SillyBotHandler::$triggers = ['one', 'two'];
         $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
-            'handler' => SillyBotHandler::class,
-            'unique' => true,
-            'authorize' => true,
-            'name' => 'Silly Bot',
+            'handler' => $this->bots->getHandlerSettings(SillyBotHandler::class)->toArray(),
             'match' => MessengerBots::MATCH_ANY,
             'triggers' => null, //omitted
             'admin_only' => false,
@@ -292,7 +268,7 @@ class BotHandlerResolverTest extends MessengerTestCase
             'enabled' => true,
         ]);
 
-        $this->assertSame($expects, $results);
+        $this->assertSame($expects, $results->toArray());
     }
 
     /** @test */
@@ -300,10 +276,7 @@ class BotHandlerResolverTest extends MessengerTestCase
     {
         $this->bots->registerHandlers([FunBotHandler::class]);
         $expects = [
-            'handler' => FunBotHandler::class,
-            'unique' => false,
-            'authorize' => false,
-            'name' => 'Fun Bot',
+            'handler' => $this->bots->getHandlerSettings(FunBotHandler::class)->toArray(),
             'match' => MessengerBots::MATCH_EXACT_CASELESS, //overwritten
             'triggers' => '!test|!more', //overwritten
             'admin_only' => true,
@@ -319,7 +292,7 @@ class BotHandlerResolverTest extends MessengerTestCase
             'test' => ['test'],
         ]);
 
-        $this->assertSame($expects, $results);
+        $this->assertSame($expects, $results->toArray());
     }
 
     /** @test */
@@ -340,7 +313,7 @@ class BotHandlerResolverTest extends MessengerTestCase
             'special' => true,
         ]);
 
-        $this->assertSame($expects, $results['payload']);
+        $this->assertSame($expects, $results->payload);
     }
 
     /**

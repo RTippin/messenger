@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Actions\Bots;
 
 use Illuminate\Contracts\Events\Dispatcher;
 use RTippin\Messenger\Actions\BaseMessengerAction;
+use RTippin\Messenger\DataTransferObjects\ResolvedBotHandlerDTO;
 use RTippin\Messenger\Events\NewBotActionEvent;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
@@ -50,22 +51,20 @@ class StoreBotAction extends BaseMessengerAction
     /**
      * @param  Thread  $thread
      * @param  Bot  $bot
-     * @param  array  $params
+     * @param  ResolvedBotHandlerDTO  $resolved
      * @return $this
-     *
-     * @see MessengerBots::generateHandlerData()
      *
      * @throws FeatureDisabledException|BotException
      */
     public function execute(Thread $thread,
                             Bot $bot,
-                            array $params): self
+                            ResolvedBotHandlerDTO $resolved): self
     {
         $this->setThread($thread)->setBot($bot);
 
-        $this->bailIfCanAddBotActionFails($params);
+        $this->bailIfCanAddBotActionFails($resolved);
 
-        $this->storeBotAction($params)
+        $this->storeBotAction($resolved)
             ->clearActionsCache()
             ->generateResource()
             ->fireEvents();
@@ -74,20 +73,24 @@ class StoreBotAction extends BaseMessengerAction
     }
 
     /**
-     * @throws FeatureDisabledException|BotException
+     * @param  ResolvedBotHandlerDTO  $resolved
+     * @throws BotException
+     * @throws FeatureDisabledException
      */
-    private function bailIfCanAddBotActionFails(array $params): void
+    private function bailIfCanAddBotActionFails(ResolvedBotHandlerDTO $resolved): void
     {
         if (! $this->messenger->isBotsEnabled()) {
             throw new FeatureDisabledException('Bots are currently disabled.');
         }
 
-        if ($params['unique'] && $this->botHasHandler($params['handler'])) {
-            throw new BotException("You may only have one ({$params['name']}) on {$this->getBot()->name} at a time.");
+        if ($resolved->handlerDTO->unique
+            && $this->botHasHandler($resolved->handlerDTO->class)) {
+            throw new BotException("You may only have one ({$resolved->handlerDTO->name}) on {$this->getBot()->name} at a time.");
         }
 
-        if ($params['authorize'] && ! $this->authorizeHandler($params['handler'])) {
-            throw new BotException("Not authorized to add ({$params['name']}) to {$this->getThread()->name()}.");
+        if ($resolved->handlerDTO->shouldAuthorize
+            && ! $this->authorizeHandler($resolved->handlerDTO->class)) {
+            throw new BotException("Not authorized to add ({$resolved->handlerDTO->name}) to {$this->getBot()->name}.");
         }
     }
 
@@ -115,22 +118,22 @@ class StoreBotAction extends BaseMessengerAction
     }
 
     /**
-     * @param  array  $params
+     * @param  ResolvedBotHandlerDTO  $resolved
      * @return $this
      */
-    private function storeBotAction(array $params): self
+    private function storeBotAction(ResolvedBotHandlerDTO $resolved): self
     {
         $this->setBotAction(
             $this->getBot()->actions()->create([
                 'owner_id' => $this->messenger->getProvider()->getKey(),
                 'owner_type' => $this->messenger->getProvider()->getMorphClass(),
-                'handler' => $params['handler'],
-                'enabled' => $params['enabled'],
-                'cooldown' => $params['cooldown'],
-                'triggers' => $params['triggers'],
-                'admin_only' => $params['admin_only'],
-                'match' => $params['match'],
-                'payload' => $params['payload'],
+                'handler' => $resolved->handlerDTO->class,
+                'enabled' => $resolved->enabled,
+                'cooldown' => $resolved->cooldown,
+                'triggers' => $resolved->triggers,
+                'admin_only' => $resolved->adminOnly,
+                'match' => $resolved->matchMethod,
+                'payload' => $resolved->payload,
             ])
                 ->setRelations([
                     'owner' => $this->messenger->getProvider(),

@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Actions\Bots;
 
 use Illuminate\Contracts\Events\Dispatcher;
 use RTippin\Messenger\Actions\BaseMessengerAction;
+use RTippin\Messenger\DataTransferObjects\ResolvedBotHandlerDTO;
 use RTippin\Messenger\Events\BotActionUpdatedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Resources\BotActionResource;
@@ -36,19 +37,17 @@ class UpdateBotAction extends BaseMessengerAction
 
     /**
      * @param  BotAction  $action
-     * @param  array  $params
+     * @param  ResolvedBotHandlerDTO  $resolved
      * @return $this
-     *
-     * @see MessengerBots::generateHandlerData()
      *
      * @throws FeatureDisabledException
      */
-    public function execute(BotAction $action, array $params): self
+    public function execute(BotAction $action, ResolvedBotHandlerDTO $resolved): self
     {
         $this->bailWhenFeatureDisabled();
 
         $this->setBotAction($action)
-            ->updateBotAction($params)
+            ->updateBotAction($resolved)
             ->generateResource();
 
         if ($this->getBotAction()->wasChanged()) {
@@ -69,18 +68,18 @@ class UpdateBotAction extends BaseMessengerAction
     }
 
     /**
-     * @param  array  $params
+     * @param  ResolvedBotHandlerDTO  $resolved
      * @return $this
      */
-    private function updateBotAction(array $params): self
+    private function updateBotAction(ResolvedBotHandlerDTO $resolved): self
     {
         $this->getBotAction()->update([
-            'enabled' => $params['enabled'],
-            'cooldown' => $params['cooldown'],
-            'triggers' => $params['triggers'],
-            'admin_only' => $params['admin_only'],
-            'match' => $params['match'],
-            'payload' => $params['payload'],
+            'enabled' => $resolved->enabled,
+            'cooldown' => $resolved->cooldown,
+            'triggers' => $resolved->triggers,
+            'admin_only' => $resolved->adminOnly,
+            'match' => $resolved->matchMethod,
+            'payload' => $resolved->payload,
         ]);
 
         return $this;

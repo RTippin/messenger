@@ -3,6 +3,8 @@
 namespace RTippin\Messenger\Tests;
 
 use RTippin\Messenger\Contracts\MessengerProvider;
+use RTippin\Messenger\DataTransferObjects\ResolvedBotHandlerDTO;
+use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Call;
@@ -120,6 +122,25 @@ trait HelperTrait
         }
 
         return $call;
+    }
+
+    protected function makeResolvedBotHandlerDTO(string $handler,
+                                                 string $match,
+                                                 bool $enabled,
+                                                 bool $adminOnly,
+                                                 int $cooldown,
+                                                 ?string $triggers = null,
+                                                 ?string $payload = null): ResolvedBotHandlerDTO
+    {
+        return new ResolvedBotHandlerDTO(
+            MessengerBots::getHandlerSettings($handler),
+            $match,
+            $enabled,
+            $adminOnly,
+            $cooldown,
+            $triggers,
+            $payload
+        );
     }
 
     public function modelsWithOwner(): array

@@ -9,6 +9,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
 use RTippin\Messenger\Actions\Bots\BotActionHandler;
 use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
+use RTippin\Messenger\DataTransferObjects\ResolvedBotHandlerDTO;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\BotAction;
@@ -46,11 +47,11 @@ class BotHandlerResolverService
      *
      * @param  array  $data
      * @param  string|null  $handlerOrAlias
-     * @return array
+     * @return ResolvedBotHandlerDTO
      *
      * @throws ValidationException|BotException
      */
-    public function resolve(array $data, ?string $handlerOrAlias = null): array
+    public function resolve(array $data, ?string $handlerOrAlias = null): ResolvedBotHandlerDTO
     {
         // Validate and initialize the handler / alias
         $this->handler = $this->bots->initializeHandler(
@@ -68,14 +69,14 @@ class BotHandlerResolverService
         // Validate against the handler settings, omitting overrides
         $validated = $this->validateHandlerSettings($data, $overrides);
 
-        // Gather the generated data array from our validated and merged properties
-        $generated = $this->generateHandlerDataForStoring($validated, $overrides);
+        // Construct the resolved handler DTO from our validated and merged properties
+        $resolvedHandlerDTO = $this->generateResolvedHandlerDTO($validated, $overrides);
 
         // Validate the final formatted triggers to ensure it is
         // not empty if our match method was not "MATCH_ANY"
-        $this->validateFormattedTriggers($generated);
+        $this->validateFormattedTriggers($resolvedHandlerDTO->triggers);
 
-        return $generated;
+        return $resolvedHandlerDTO;
     }
 
     /**
@@ -201,15 +202,15 @@ class BotHandlerResolverService
     }
 
     /**
-     * @param  array  $data
+     * @param  string|null  $triggers
      * @return void
      *
      * @throws ValidationException
      */
-    private function validateFormattedTriggers(array $data): void
+    private function validateFormattedTriggers(?string $triggers): void
     {
-        if (! is_null($data['triggers'])) {
-            Validator::make($data, [
+        if (! is_null($triggers)) {
+            Validator::make(['triggers' => $triggers], [
                 'triggers' => ['required', 'string'],
             ])->validate();
         }
@@ -233,22 +234,19 @@ class BotHandlerResolverService
      *
      * @param  array  $data
      * @param  array  $overrides
-     * @return array
+     * @return ResolvedBotHandlerDTO
      */
-    private function generateHandlerDataForStoring(array $data, array $overrides): array
+    private function generateResolvedHandlerDTO(array $data, array $overrides): ResolvedBotHandlerDTO
     {
-        return [
-            'handler' => $this->handlerDTO->class,
-            'unique' => $this->handlerDTO->unique,
-            'authorize' => $this->handlerDTO->shouldAuthorize,
-            'name' => $this->handlerDTO->name,
-            'match' => $overrides['match'] ?? $data['match'],
-            'triggers' => $this->generateTriggers($data, $overrides),
-            'admin_only' => $data['admin_only'],
-            'cooldown' => $data['cooldown'],
-            'enabled' => $data['enabled'],
-            'payload' => $this->generatePayload($data),
-        ];
+        return new ResolvedBotHandlerDTO(
+            $this->handlerDTO,
+            $overrides['match'] ?? $data['match'],
+            $data['enabled'],
+            $data['admin_only'],
+            $data['cooldown'],
+            $this->generateTriggers($data, $overrides),
+            $this->generatePayload($data)
+        );
     }
 
     /**

@@ -30,63 +30,85 @@ class StoreBotActionTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_bots_disabled()
     {
+        MessengerBots::registerHandlers([FunBotHandler::class]);
         Messenger::setBots(false);
         $thread = Thread::factory()->group()->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $dto = $this->makeResolvedBotHandlerDTO(
+            FunBotHandler::class,
+            'exact',
+            true,
+            false,
+            0
+        );
 
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Bots are currently disabled.');
 
-        app(StoreBotAction::class)->execute($thread, $bot, []);
+        app(StoreBotAction::class)->execute($thread, $bot, $dto);
     }
 
     /** @test */
     public function it_throws_exception_if_handler_unique_and_already_exists_on_bot()
     {
-        MessengerBots::registerHandlers([FunBotHandler::class]);
+        SillyBotHandler::$authorized = true;
+        MessengerBots::registerHandlers([SillyBotHandler::class]);
         $thread = Thread::factory()->group()->create(['subject' => 'Test']);
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create(['name' => 'Mr. Bot']);
-        BotAction::factory()->for($bot)->owner($this->tippin)->handler(FunBotHandler::class)->create();
+        BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
+        $dto = $this->makeResolvedBotHandlerDTO(
+            SillyBotHandler::class,
+            'exact',
+            true,
+            false,
+            0
+        );
 
         $this->expectException(BotException::class);
-        $this->expectExceptionMessage('You may only have one (Fun Bot) on Mr. Bot at a time.');
+        $this->expectExceptionMessage('You may only have one (Silly Bot) on Mr. Bot at a time.');
 
-        app(StoreBotAction::class)->execute($thread, $bot, [
-            'handler' => FunBotHandler::class,
-            'unique' => true,
-            'authorize' => false,
-            'name' => 'Fun Bot',
-            'match' => 'exact',
-            'triggers' => 'test',
-            'admin_only' => false,
-            'cooldown' => 0,
-            'enabled' => true,
-            'payload' => null,
-        ]);
+        app(StoreBotAction::class)->execute($thread, $bot, $dto);
     }
 
     /** @test */
     public function it_throws_exception_if_handler_fails_authorization()
     {
         MessengerBots::registerHandlers([SillyBotHandler::class]);
-        $thread = Thread::factory()->group()->create(['subject' => 'Test']);
-        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $thread = Thread::factory()->group()->create();
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create(['name' => 'Mr. Bot']);
+        $dto = $this->makeResolvedBotHandlerDTO(
+            SillyBotHandler::class,
+            'exact',
+            true,
+            false,
+            0
+        );
 
         $this->expectException(BotException::class);
-        $this->expectExceptionMessage('Not authorized to add (Bot Name) to Test.');
+        $this->expectExceptionMessage('Not authorized to add (Silly Bot) to Mr. Bot.');
 
-        app(StoreBotAction::class)->execute($thread, $bot, [
-            'handler' => SillyBotHandler::class,
-            'unique' => true,
-            'authorize' => true,
-            'name' => 'Bot Name',
-            'match' => 'exact',
-            'triggers' => 'test',
-            'admin_only' => false,
-            'cooldown' => 0,
-            'enabled' => true,
-            'payload' => null,
-        ]);
+        app(StoreBotAction::class)->execute($thread, $bot, $dto);
+    }
+
+    /** @test */
+    public function it_stores_bot_action_that_passes_authorization()
+    {
+        SillyBotHandler::$authorized = true;
+        MessengerBots::registerHandlers([SillyBotHandler::class]);
+        $thread = Thread::factory()->group()->create();
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $dto = $this->makeResolvedBotHandlerDTO(
+            SillyBotHandler::class,
+            'exact',
+            true,
+            false,
+            0,
+            'test'
+        );
+
+        app(StoreBotAction::class)->execute($thread, $bot, $dto);
+
+        $this->assertDatabaseCount('bot_actions', 1);
     }
 
     /** @test */
@@ -95,20 +117,17 @@ class StoreBotActionTest extends FeatureTestCase
         MessengerBots::registerHandlers([FunBotHandler::class]);
         $thread = Thread::factory()->group()->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $dto = $this->makeResolvedBotHandlerDTO(
+            FunBotHandler::class,
+            'exact',
+            true,
+            false,
+            0,
+            'test'
+        );
         $cache = Cache::spy();
 
-        app(StoreBotAction::class)->execute($thread, $bot, [
-            'handler' => FunBotHandler::class,
-            'unique' => false,
-            'authorize' => false,
-            'name' => 'Bot Name',
-            'match' => 'exact',
-            'triggers' => 'test',
-            'admin_only' => false,
-            'cooldown' => 0,
-            'enabled' => true,
-            'payload' => null,
-        ]);
+        app(StoreBotAction::class)->execute($thread, $bot, $dto);
 
         $cache->shouldHaveReceived('forget');
         $this->assertDatabaseHas('bot_actions', [
@@ -132,19 +151,16 @@ class StoreBotActionTest extends FeatureTestCase
         $thread = Thread::factory()->group()->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         BotAction::factory()->for($bot)->owner($this->tippin)->handler(FunBotHandler::class)->create();
+        $dto = $this->makeResolvedBotHandlerDTO(
+            FunBotHandler::class,
+            'exact',
+            true,
+            false,
+            0,
+            'test'
+        );
 
-        app(StoreBotAction::class)->execute($thread, $bot, [
-            'handler' => FunBotHandler::class,
-            'unique' => false,
-            'authorize' => false,
-            'name' => 'Bot Name',
-            'match' => 'exact',
-            'triggers' => 'test',
-            'admin_only' => false,
-            'cooldown' => 0,
-            'enabled' => true,
-            'payload' => null,
-        ]);
+        app(StoreBotAction::class)->execute($thread, $bot, $dto);
 
         $this->assertDatabaseCount('bot_actions', 2);
     }
@@ -156,22 +172,19 @@ class StoreBotActionTest extends FeatureTestCase
         BaseMessengerAction::enableEvents();
         $thread = Thread::factory()->group()->create();
         $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $dto = $this->makeResolvedBotHandlerDTO(
+            FunBotHandler::class,
+            'exact',
+            true,
+            false,
+            0,
+            'test'
+        );
         Event::fake([
             NewBotActionEvent::class,
         ]);
 
-        app(StoreBotAction::class)->execute($thread, $bot, [
-            'handler' => FunBotHandler::class,
-            'unique' => false,
-            'authorize' => false,
-            'name' => 'Bot Name',
-            'match' => 'exact',
-            'triggers' => 'test',
-            'admin_only' => false,
-            'cooldown' => 0,
-            'enabled' => true,
-            'payload' => null,
-        ]);
+        app(StoreBotAction::class)->execute($thread, $bot, $dto);
 
         Event::assertDispatched(function (NewBotActionEvent $event) use ($bot) {
             return $bot->id === $event->botAction->bot_id;
