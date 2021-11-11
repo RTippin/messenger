@@ -3,19 +3,20 @@
 
 ---
 
-### [v1.13.0 (11-XX-2021)]
+### [v1.13.0 (11-11-2021)](https://github.com/RTippin/messenger/compare/v1.12.0...v1.13.0)
 
 #### Added
 - `MessengerBots::MATCH_ANY` match method.
   - When using `MATCH_ANY`, triggers are ignored and a handler will be handled for any message sent.
 - `BotHandlerResolverService` to handle resolving / validating `BotAction` data for storing/updating.
 - `BotAction::formatTriggers()` helper, logic relocated from `MessengerBots`.
-- `BotActionHandlerDTO` and `MessengerProviderDTO` to structure internal data arrays.
+- `BotActionHandlerDTO`, `ResolvedBotHandlerDTO`, and `MessengerProviderDTO` to structure internal data arrays.
+- `MessengerBots::getHandlersDTO()` returns a collection or single instance of `BotActionHandlerDTO`.
 
 #### Changed
 - `BotActionHandledEvent` `trigger` property can now be `string|null`.
-- `MessengerBots::getHandlerSettings()` now returns a single or collection of `BotActionHandlerDTO`.
-- `MessengerBots::getAuthorizedHandlers()` now returns a collection of `BotActionHandlerDTO`.
+- `MessengerBots::getHandlerSettings()` deprecated. Use `getHandlersDTO`.
+- `MessengerBots::getAuthorizedHandlers()` now returns a collection of `BotActionHandlerDTO` instances.
 
 #### Removed
 - `MessengerBots::resolveHandlerData()` method.
