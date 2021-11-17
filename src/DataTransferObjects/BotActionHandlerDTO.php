@@ -76,6 +76,22 @@ class BotActionHandlerDTO implements Arrayable
     }
 
     /**
+     * @return array
+     */
+    public function toArray(): array
+    {
+        return [
+            'alias' => $this->alias,
+            'description' => $this->description,
+            'name' => $this->name,
+            'unique' => $this->unique,
+            'authorize' => $this->shouldAuthorize,
+            'triggers' => $this->triggers,
+            'match' => $this->matchMethod,
+        ];
+    }
+
+    /**
      * @param  array  $settings
      * @param  string|null  $match
      * @return bool
@@ -99,22 +115,5 @@ class BotActionHandlerDTO implements Arrayable
         }
 
         return $settings['triggers'] ?? null;
-    }
-
-    /**
-     * @return array
-     */
-    public function toArray(): array
-    {
-        return [
-            'class' => $this->class,
-            'alias' => $this->alias,
-            'description' => $this->description,
-            'name' => $this->name,
-            'unique' => $this->unique,
-            'authorize' => $this->shouldAuthorize,
-            'triggers' => $this->triggers,
-            'match' => $this->matchMethod,
-        ];
     }
 }

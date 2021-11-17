@@ -153,7 +153,6 @@ class MessengerBotsTest extends MessengerTestCase
         ];
         $dtos = [
             [
-                'class' => BrokenBotHandler::class,
                 'alias' => 'broken_bot',
                 'description' => 'This is a broken bot.',
                 'name' => 'Broken Bot',
@@ -163,7 +162,6 @@ class MessengerBotsTest extends MessengerTestCase
                 'match' => null,
             ],
             [
-                'class' => FunBotHandler::class,
                 'alias' => 'fun_bot',
                 'description' => 'This is a fun bot.',
                 'name' => 'Fun Bot',
@@ -173,7 +171,6 @@ class MessengerBotsTest extends MessengerTestCase
                 'match' => MessengerBots::MATCH_EXACT_CASELESS,
             ],
             [
-                'class' => SillyBotHandler::class,
                 'alias' => 'silly_bot',
                 'description' => 'This is a silly bot.',
                 'name' => 'Silly Bot',
@@ -197,7 +194,6 @@ class MessengerBotsTest extends MessengerTestCase
             SillyBotHandler::class,
         ];
         $dto = [
-            'class' => SillyBotHandler::class,
             'alias' => 'silly_bot',
             'description' => 'This is a silly bot.',
             'name' => 'Silly Bot',
@@ -220,7 +216,6 @@ class MessengerBotsTest extends MessengerTestCase
         SillyBotHandler::$triggers = ['one', 'two'];
         SillyBotHandler::$match = MessengerBots::MATCH_ANY;
         $dto = [
-            'class' => SillyBotHandler::class,
             'alias' => 'silly_bot',
             'description' => 'This is a silly bot.',
             'name' => 'Silly Bot',

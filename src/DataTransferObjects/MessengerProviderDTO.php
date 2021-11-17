@@ -88,7 +88,6 @@ class MessengerProviderDTO implements Arrayable
     public function toArray(): array
     {
         return [
-            'class' => $this->class,
             'alias' => $this->alias,
             'morph_class' => $this->morphClass,
             'searchable' => $this->searchable,
