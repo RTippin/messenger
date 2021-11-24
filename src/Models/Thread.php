@@ -470,9 +470,10 @@ class Thread extends Model implements HasPresenceChannel
         }
 
         if ($this->relationLoaded('participants')) {
-            $this->currentParticipantCache = $this->participants
-                ->forProvider(Messenger::getProvider())
-                ->first();
+            $this->currentParticipantCache = Helpers::forProviderInCollection(
+                $this->participants,
+                Messenger::getProvider()
+            )->first();
         } else {
             $this->currentParticipantCache = $this->participants()
                 ->forProvider(Messenger::getProvider())

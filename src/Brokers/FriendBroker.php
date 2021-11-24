@@ -10,6 +10,7 @@ use RTippin\Messenger\Models\Friend;
 use RTippin\Messenger\Models\PendingFriend;
 use RTippin\Messenger\Models\SentFriend;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\Helpers;
 
 class FriendBroker implements FriendDriver
 {
@@ -99,7 +100,11 @@ class FriendBroker implements FriendDriver
     public function isFriend($provider = null): bool
     {
         return $this->messenger->isValidMessengerProvider($provider)
-            && $this->getProviderFriends()->forProvider($provider, 'party')->first();
+            && Helpers::forProviderInCollection(
+                $this->getProviderFriends(),
+                $provider,
+                'party'
+            )->first();
     }
 
     /**
@@ -108,7 +113,11 @@ class FriendBroker implements FriendDriver
     public function isSentFriendRequest($provider = null): bool
     {
         return $this->messenger->isValidMessengerProvider($provider)
-            && $this->getProviderSentFriends()->forProvider($provider, 'recipient')->first();
+            && Helpers::forProviderInCollection(
+                $this->getProviderSentFriends(),
+                $provider,
+                'recipient'
+            )->first();
     }
 
     /**
@@ -117,7 +126,11 @@ class FriendBroker implements FriendDriver
     public function isPendingFriendRequest($provider = null): bool
     {
         return $this->messenger->isValidMessengerProvider($provider)
-            && $this->getProviderPendingFriends()->forProvider($provider, 'sender')->first();
+            && Helpers::forProviderInCollection(
+                $this->getProviderPendingFriends(),
+                $provider,
+                'sender'
+            )->first();
     }
 
     /**
@@ -211,7 +224,11 @@ class FriendBroker implements FriendDriver
      */
     private function getFriend($model): ?Friend
     {
-        return $this->getProviderFriends()->forProvider($model, 'party')->first();
+        return Helpers::forProviderInCollection(
+            $this->getProviderFriends(),
+            $model,
+            'party'
+        )->first();
     }
 
     /**
@@ -220,7 +237,11 @@ class FriendBroker implements FriendDriver
      */
     private function getSentFriend($model): ?SentFriend
     {
-        return $this->getProviderSentFriends()->forProvider($model, 'recipient')->first();
+        return Helpers::forProviderInCollection(
+            $this->getProviderSentFriends(),
+            $model,
+            'recipient'
+        )->first();
     }
 
     /**
@@ -229,7 +250,11 @@ class FriendBroker implements FriendDriver
      */
     private function getPendingFriend($model): ?PendingFriend
     {
-        return $this->getProviderPendingFriends()->forProvider($model, 'sender')->first();
+        return Helpers::forProviderInCollection(
+            $this->getProviderPendingFriends(),
+            $model,
+            'sender'
+        )->first();
     }
 
     /**

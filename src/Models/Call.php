@@ -15,6 +15,7 @@ use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\CallFactory;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
@@ -234,7 +235,10 @@ class Call extends Model implements HasPresenceChannel, Ownerable
             return $this->currentParticipantCache;
         }
 
-        return $this->currentParticipantCache = $this->participants->forProvider(Messenger::getProvider())->first();
+        return $this->currentParticipantCache = Helpers::forProviderInCollection(
+            $this->participants,
+            Messenger::getProvider()
+        )->first();
     }
 
     /**

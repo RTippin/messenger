@@ -15,6 +15,7 @@ use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\ProvidersRepository;
+use RTippin\Messenger\Support\Helpers;
 use Throwable;
 
 class StoreManyParticipants extends ThreadParticipantAction
@@ -196,7 +197,7 @@ class StoreManyParticipants extends ThreadParticipantAction
         $existing = $this->getThread()->participants()->get();
 
         return $providers->reject(
-            fn (MessengerProvider $provider) => $existing->forProvider($provider)->count()
+            fn (MessengerProvider $provider) => Helpers::forProviderInCollection($existing, $provider)->first()
         );
     }
 

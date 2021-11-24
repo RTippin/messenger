@@ -7,6 +7,8 @@ use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Routing\Router;
 use Illuminate\Routing\UrlGenerator;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Messenger;
 
 class Helpers
@@ -36,6 +38,20 @@ class Helpers
         }
 
         return null;
+    }
+
+    /**
+     * @param  Collection  $collection
+     * @param  MessengerProvider  $provider
+     * @param  string  $morph
+     * @return Collection
+     */
+    public static function forProviderInCollection(Collection $collection,
+                                                   MessengerProvider $provider,
+                                                   string $morph = 'owner'): Collection
+    {
+        return $collection->where("{$morph}_id", '=', $provider->getKey())
+            ->where("{$morph}_type", '=', $provider->getMorphClass());
     }
 
     /**
