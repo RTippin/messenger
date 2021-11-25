@@ -5,9 +5,8 @@ namespace RTippin\Messenger\Broadcasting;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;
 use Illuminate\Queue\SerializesModels;
-use RTippin\Messenger\Contracts\BroadcastEvent;
 
-abstract class MessengerBroadcast implements BroadcastEvent, ShouldBroadcastNow
+abstract class MessengerBroadcast implements ShouldBroadcastNow
 {
     use InteractsWithSockets,
         SerializesModels;
@@ -23,12 +22,16 @@ abstract class MessengerBroadcast implements BroadcastEvent, ShouldBroadcastNow
     protected array $channels;
 
     /**
-     * @inheritDoc
+     * The event's broadcast name.
+     *
+     * @return string
      */
     abstract public function broadcastAs(): string;
 
     /**
-     * @inheritDoc
+     * Get the channels the event should broadcast on.
+     *
+     * @return array
      */
     public function broadcastOn(): array
     {
@@ -36,7 +39,9 @@ abstract class MessengerBroadcast implements BroadcastEvent, ShouldBroadcastNow
     }
 
     /**
-     * @inheritDoc
+     * Get the data to broadcast.
+     *
+     * @return array
      */
     public function broadcastWith(): array
     {
@@ -44,7 +49,10 @@ abstract class MessengerBroadcast implements BroadcastEvent, ShouldBroadcastNow
     }
 
     /**
-     * @inheritDoc
+     * Set the data we will use to broadcast out.
+     *
+     * @param  array  $resource
+     * @return self
      */
     public function setResource(array $resource): self
     {
@@ -54,7 +62,10 @@ abstract class MessengerBroadcast implements BroadcastEvent, ShouldBroadcastNow
     }
 
     /**
-     * @inheritDoc
+     * Set the channels we will use to broadcast on.
+     *
+     * @param  array  $channels
+     * @return self
      */
     public function setChannels(array $channels): self
     {

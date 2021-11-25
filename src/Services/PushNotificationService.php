@@ -4,7 +4,7 @@ namespace RTippin\Messenger\Services;
 
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Collection;
-use RTippin\Messenger\Contracts\BroadcastEvent;
+use RTippin\Messenger\Broadcasting\MessengerBroadcast;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Events\PushNotificationEvent;
@@ -79,7 +79,7 @@ class PushNotificationService
      * that do not have devices enabled, then fire the event with the formatted data
      * for our listener to handle on the queue.
      *
-     * @param  string|BroadcastEvent  $abstract
+     * @param  string|MessengerBroadcast  $abstract
      */
     public function notify(string $abstract): void
     {
