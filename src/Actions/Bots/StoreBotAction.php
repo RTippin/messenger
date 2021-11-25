@@ -85,12 +85,12 @@ class StoreBotAction extends BaseMessengerAction
 
         if ($resolved->handlerDTO->unique
             && $this->botHasHandler($resolved->handlerDTO->class)) {
-            throw new BotException("You may only have one ({$resolved->handlerDTO->name}) on {$this->getBot()->name} at a time.");
+            throw new BotException("You may only have one ({$resolved->handlerDTO->name}) on {$this->getBot()->getProviderName()} at a time.");
         }
 
         if ($resolved->handlerDTO->shouldAuthorize
             && ! $this->authorizeHandler($resolved->handlerDTO->class)) {
-            throw new BotException("Not authorized to add ({$resolved->handlerDTO->name}) to {$this->getBot()->name}.");
+            throw new BotException("Not authorized to add ({$resolved->handlerDTO->name}) to {$this->getBot()->getProviderName()}.");
         }
     }
 

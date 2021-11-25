@@ -207,7 +207,7 @@ class MessageTransformerTest extends FeatureTestCase
         $this->assertSame([
             $thread,
             $this->tippin,
-            'added Test Bot BOT',
+            'added the BOT - Test Bot',
             Message::BOT_ADDED,
         ], MessageTransformer::makeBotAdded($thread, $this->tippin, 'Test Bot'));
     }
@@ -233,7 +233,7 @@ class MessageTransformerTest extends FeatureTestCase
         $this->assertSame([
             $thread,
             $this->tippin,
-            'updated the avatar for Test Bot BOT',
+            'updated the avatar for the BOT - Test Bot',
             Message::BOT_AVATAR_CHANGED,
         ], MessageTransformer::makeBotAvatarChanged($thread, $this->tippin, 'Test Bot'));
     }
@@ -246,7 +246,7 @@ class MessageTransformerTest extends FeatureTestCase
         $this->assertSame([
             $thread,
             $this->tippin,
-            'removed Test Bot BOT',
+            'removed the BOT - Test Bot',
             Message::BOT_REMOVED,
         ], MessageTransformer::makeBotRemoved($thread, $this->tippin, 'Test Bot'));
     }
@@ -856,7 +856,7 @@ class MessageTransformerTest extends FeatureTestCase
                 'body' => MessageTransformer::makeBotAdded($thread, $this->tippin, 'Test Bot')[2],
             ]);
 
-        $this->assertSame('added Test Bot BOT', MessageTransformer::transform($message));
+        $this->assertSame('added the BOT - Test Bot', MessageTransformer::transform($message));
     }
 
     /** @test */
@@ -886,7 +886,7 @@ class MessageTransformerTest extends FeatureTestCase
                 'body' => MessageTransformer::makeBotAvatarChanged($thread, $this->tippin, 'Test Bot')[2],
             ]);
 
-        $this->assertSame('updated the avatar for Test Bot BOT', MessageTransformer::transform($message));
+        $this->assertSame('updated the avatar for the BOT - Test Bot', MessageTransformer::transform($message));
     }
 
     /** @test */
@@ -901,7 +901,7 @@ class MessageTransformerTest extends FeatureTestCase
                 'body' => MessageTransformer::makeBotRemoved($thread, $this->tippin, 'Test Bot')[2],
             ]);
 
-        $this->assertSame('removed Test Bot BOT', MessageTransformer::transform($message));
+        $this->assertSame('removed the BOT - Test Bot', MessageTransformer::transform($message));
     }
 
     /** @test */

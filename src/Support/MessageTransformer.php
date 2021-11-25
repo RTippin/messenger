@@ -264,7 +264,7 @@ class MessageTransformer
         return [
             $thread,
             $provider,
-            "added $botName BOT",
+            "added the BOT - $botName",
             Message::BOT_ADDED,
         ];
     }
@@ -302,7 +302,7 @@ class MessageTransformer
         return [
             $thread,
             $provider,
-            "updated the avatar for $botName BOT",
+            "updated the avatar for the BOT - $botName",
             Message::BOT_AVATAR_CHANGED,
         ];
     }
@@ -320,7 +320,7 @@ class MessageTransformer
         return [
             $thread,
             $provider,
-            "removed $botName BOT",
+            "removed the BOT - $botName",
             Message::BOT_REMOVED,
         ];
     }
