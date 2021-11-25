@@ -41,7 +41,7 @@ class PresenceEventsTest extends FeatureTestCase
     public function it_throws_exception_if_typing_class_doesnt_extend_ours()
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage(InvalidEvent::class.' must extend our base '.MessengerBroadcast::class);
+        $this->expectExceptionMessage(InvalidEvent::class.' must extend '.MessengerBroadcast::class);
 
         PresenceEvents::setTypingClass(InvalidEvent::class);
     }

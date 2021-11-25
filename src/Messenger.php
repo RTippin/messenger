@@ -70,7 +70,7 @@ final class Messenger
 
         foreach ($providers as $provider) {
             if (! is_subclass_of($provider, MessengerProvider::class)) {
-                throw new InvalidArgumentException("The given provider { $provider } must implement our interface ".MessengerProvider::class);
+                throw new InvalidArgumentException("The given provider { $provider } must implement the interface ".MessengerProvider::class);
             }
 
             $this->providers[$provider] = new MessengerProviderDTO($provider);

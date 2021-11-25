@@ -60,7 +60,7 @@ class PresenceEvents
     public static function setTypingClass(string $abstractTyping): void
     {
         if (! is_subclass_of($abstractTyping, MessengerBroadcast::class)) {
-            throw new InvalidArgumentException("$abstractTyping must extend our base ".MessengerBroadcast::class);
+            throw new InvalidArgumentException("$abstractTyping must extend ".MessengerBroadcast::class);
         }
 
         self::$typingClass = $abstractTyping;
