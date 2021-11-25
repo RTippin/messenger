@@ -3,9 +3,9 @@
 namespace RTippin\Messenger\DataTransferObjects;
 
 use Illuminate\Contracts\Support\Arrayable;
-use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\BotAction;
+use RTippin\Messenger\Support\BotActionHandler;
 
 class BotActionHandlerDTO implements Arrayable
 {

@@ -4,9 +4,9 @@ namespace RTippin\Messenger;
 
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
-use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
 use RTippin\Messenger\Exceptions\BotException;
+use RTippin\Messenger\Support\BotActionHandler;
 
 final class MessengerBots
 {

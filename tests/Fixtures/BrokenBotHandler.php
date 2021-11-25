@@ -2,8 +2,8 @@
 
 namespace RTippin\Messenger\Tests\Fixtures;
 
-use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\Exceptions\BotException;
+use RTippin\Messenger\Support\BotActionHandler;
 
 class BrokenBotHandler extends BotActionHandler
 {

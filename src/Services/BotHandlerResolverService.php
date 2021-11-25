@@ -7,12 +7,12 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Fluent;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\ValidationException;
-use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
 use RTippin\Messenger\DataTransferObjects\ResolvedBotHandlerDTO;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\BotAction;
+use RTippin\Messenger\Support\BotActionHandler;
 
 class BotHandlerResolverService
 {
