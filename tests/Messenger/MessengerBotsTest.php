@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests\Messenger;
 
 use InvalidArgumentException;
-use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Facades\MessengerBots as BotsFacade;
 use RTippin\Messenger\MessengerBots;
@@ -11,6 +10,7 @@ use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\Tests\Fixtures\BrokenBotHandler;
 use RTippin\Messenger\Tests\Fixtures\FunBotHandler;
 use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;

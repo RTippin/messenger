@@ -10,11 +10,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
-use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\BotActionFactory;
 use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
 use RTippin\Messenger\Facades\MessengerBots;
+use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\Uuids;
 

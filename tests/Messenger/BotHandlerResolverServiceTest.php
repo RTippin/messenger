@@ -3,10 +3,10 @@
 namespace RTippin\Messenger\Tests\Messenger;
 
 use Illuminate\Validation\ValidationException;
-use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Services\BotHandlerResolverService;
+use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\Tests\Fixtures\FunBotHandler;
 use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;
 use RTippin\Messenger\Tests\MessengerTestCase;
