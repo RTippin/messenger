@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
 use LogicException;
-use RTippin\Messenger\Contracts\Action;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Call;
@@ -16,7 +15,10 @@ use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 
-abstract class BaseMessengerAction implements Action
+/**
+ * @method BaseMessengerAction execute()
+ */
+abstract class BaseMessengerAction
 {
     /**
      * @var bool
@@ -94,7 +96,8 @@ abstract class BaseMessengerAction implements Action
     private bool $isChained = false;
 
     /**
-     * @inheritDoc
+     * Disables all events and broadcast globally
+     * for any actions during the request cycle.
      */
     public static function disableEvents(): void
     {
@@ -102,7 +105,8 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Enables default events and broadcast globally
+     * for any actions during the request cycle.
      */
     public static function enableEvents(): void
     {
@@ -110,7 +114,7 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Is the current action part of a chain?
      */
     public function isChained(): bool
     {
@@ -118,7 +122,9 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Shall we process the chains?
+     *
+     * @return bool
      */
     public function shouldExecuteChains(): bool
     {
@@ -126,7 +132,7 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Should the current action fire its events?
      */
     public function shouldFireEvents(): bool
     {
@@ -134,7 +140,7 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Should the current action fire its broadcast?
      */
     public function shouldFireBroadcast(): bool
     {
@@ -142,9 +148,15 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Chain many actions together! Defaults to disabling DB
+     * transactions and added events per Action class.
+     *
+     * @param  string|BaseMessengerAction  $abstractAction
+     * @return BaseMessengerAction
+     *
+     * @throws LogicException
      */
-    public function chain(string $abstractAction): Action
+    public function chain(string $abstractAction): BaseMessengerAction
     {
         if (! is_subclass_of($abstractAction, self::class)
             || ! method_exists($abstractAction, 'execute')) {
@@ -155,7 +167,9 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Let action know it is being chained.
+     *
+     * @return $this
      */
     public function continuesChain(): self
     {
@@ -166,7 +180,9 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Returns a json resource the action may be holding, if any.
+     *
+     * @return JsonResource|JsonResponse|mixed
      */
     public function getJsonResource()
     {
@@ -176,7 +192,8 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * @param $resource
+     * @return $this
      */
     public function setJsonResource($resource): self
     {
@@ -186,7 +203,7 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * @return JsonResponse|mixed|null
      */
     public function getMessageResponse()
     {
@@ -200,7 +217,8 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * @param $messageResponse
+     * @return $this
      */
     public function setMessageResponse($messageResponse): self
     {
@@ -210,7 +228,10 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Get the raw data response from what the action is working with.
+     *
+     * @param  bool  $withoutRelations
+     * @return Model|mixed
      */
     public function getData(bool $withoutRelations = false)
     {
@@ -222,7 +243,8 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * @param $data
+     * @return $this
      */
     public function setData($data): self
     {
@@ -232,7 +254,10 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Get the thread model the action may be holding.
+     *
+     * @param  bool  $withoutRelations
+     * @return Thread|null
      */
     public function getThread(bool $withoutRelations = false): ?Thread
     {
@@ -244,7 +269,8 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * @param  ?Thread  $thread
+     * @return $this
      */
     public function setThread(?Thread $thread = null): self
     {
@@ -256,7 +282,10 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Get the participant model the action may be holding.
+     *
+     * @param  false  $withoutRelations
+     * @return Participant|null
      */
     public function getParticipant(bool $withoutRelations = false): ?Participant
     {
@@ -268,7 +297,8 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * @param  Participant|null  $participant
+     * @return $this
      */
     public function setParticipant(?Participant $participant = null): self
     {
@@ -280,7 +310,10 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Get the call participant model the action may be holding.
+     *
+     * @param  false  $withoutRelations
+     * @return CallParticipant|null
      */
     public function getCallParticipant(bool $withoutRelations = false): ?CallParticipant
     {
@@ -292,7 +325,8 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * @param  CallParticipant|null  $participant
+     * @return $this
      */
     public function setCallParticipant(?CallParticipant $participant = null): self
     {
@@ -304,7 +338,10 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Get the message model the action may be holding.
+     *
+     * @param  false  $withoutRelations
+     * @return Message|null
      */
     public function getMessage(bool $withoutRelations = false): ?Message
     {
@@ -316,7 +353,8 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * @param  Message|null  $message
+     * @return $this
      */
     public function setMessage(?Message $message = null): self
     {
@@ -328,7 +366,10 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Get the call model the action may be holding.
+     *
+     * @param  bool  $withoutRelations
+     * @return Call|null
      */
     public function getCall(bool $withoutRelations = false): ?Call
     {
@@ -340,7 +381,8 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * @param  ?Call  $call
+     * @return $this
      */
     public function setCall(?Call $call = null): self
     {
@@ -352,7 +394,10 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Get the bot model the action may be holding.
+     *
+     * @param  bool  $withoutRelations
+     * @return Bot|null
      */
     public function getBot(bool $withoutRelations = false): ?Bot
     {
@@ -364,7 +409,8 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * @param  ?Bot  $bot
+     * @return $this
      */
     public function setBot(?Bot $bot = null): self
     {
@@ -376,7 +422,10 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Get the bot action model the action may be holding.
+     *
+     * @param  bool  $withoutRelations
+     * @return BotAction|null
      */
     public function getBotAction(bool $withoutRelations = false): ?BotAction
     {
@@ -388,7 +437,8 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * @param  BotAction|null  $botAction
+     * @return mixed
      */
     public function setBotAction(?BotAction $botAction = null): self
     {
@@ -400,7 +450,9 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Disable any event dispatches that the action may hold.
+     *
+     * @return $this
      */
     public function withoutEvents(): self
     {
@@ -410,7 +462,9 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Enable any events dispatches that the action may hold (default).
+     *
+     * @return $this
      */
     public function withEvents(): self
     {
@@ -420,7 +474,9 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Disable any broadcast dispatches that the action may hold.
+     *
+     * @return $this
      */
     public function withoutBroadcast(): self
     {
@@ -430,7 +486,9 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Enable any broadcast dispatches that the action may hold (default).
+     *
+     * @return $this
      */
     public function withBroadcast(): self
     {
@@ -440,7 +498,9 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Disable all event/broadcast dispatches that the action may hold.
+     *
+     * @return $this
      */
     public function withoutDispatches(): self
     {
@@ -451,7 +511,9 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Enable any event/broadcast dispatches that the action may hold.
+     *
+     * @return $this
      */
     public function withDispatches(): self
     {
@@ -462,7 +524,9 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Disable any chained actions from executing in current action.
+     *
+     * @return $this
      */
     public function withoutChains(): self
     {
@@ -472,7 +536,9 @@ abstract class BaseMessengerAction implements Action
     }
 
     /**
-     * @inheritDoc
+     * Enable all chained actions, if any (default).
+     *
+     * @return $this
      */
     public function withChains(): self
     {
