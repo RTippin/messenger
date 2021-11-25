@@ -97,7 +97,7 @@ php artisan messenger:make:bot TestBot
 
 namespace App\Bots;
 
-use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\MessengerBots;
 use Throwable;
 
@@ -247,7 +247,7 @@ MessengerBots::MATCH_STARTS_WITH_CASELESS;
 
 namespace App\Bots;
 
-use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\MessengerBots;
 use Throwable;
 
@@ -287,7 +287,7 @@ class HelloBot extends BotActionHandler
 
 namespace App\Bots;
 
-use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\Support\BotActionHandler;
 use Throwable;
 
 class ReplyBot extends BotActionHandler
@@ -355,7 +355,7 @@ class ReplyBot extends BotActionHandler
 
 namespace App\Bots;
 
-use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\MessengerBots;
 use Throwable;
 
@@ -495,7 +495,7 @@ axios.post('/api/messenger/threads/{thread}/bots/{bot}/actions', {
 
 [link-messenger-bots]: https://github.com/RTippin/messenger-bots
 [link-bot-subscriber]: https://github.com/RTippin/messenger/blob/1.x/src/Listeners/BotSubscriber.php
-[link-action-handler]: https://github.com/RTippin/messenger/blob/1.x/src/Actions/Bots/BotActionHandler.php
+[link-action-handler]: https://github.com/RTippin/messenger/blob/1.x/src/Support/BotActionHandler.php
 [link-messenger-composer]: https://github.com/RTippin/messenger/blob/1.x/src/Support/MessengerComposer.php
 [link-bots-service]: https://github.com/RTippin/messenger/blob/1.x/src/MessengerBots.php
 [link-action-failed-event]: https://github.com/RTippin/messenger/blob/1.x/src/Events/BotActionFailedEvent.php

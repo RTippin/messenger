@@ -3,7 +3,7 @@
 namespace RTippin\Messenger\Tests\Messenger;
 
 use Illuminate\Validation\ValidationException;
-use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Services\BotHandlerResolverService;

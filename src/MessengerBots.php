@@ -4,7 +4,7 @@ namespace RTippin\Messenger;
 
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
-use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
 use RTippin\Messenger\Exceptions\BotException;
 
@@ -72,7 +72,7 @@ final class MessengerBots
 
         foreach ($handlers as $handler) {
             if (! is_subclass_of($handler, BotActionHandler::class)) {
-                throw new InvalidArgumentException("The given handler { $handler } must extend our base handler ".BotActionHandler::class);
+                throw new InvalidArgumentException("The given handler { $handler } must extend ".BotActionHandler::class);
             }
 
             $this->handlers[$handler] = new BotActionHandlerDTO($handler);

@@ -3,7 +3,7 @@
 namespace RTippin\Messenger\Tests\Messenger;
 
 use InvalidArgumentException;
-use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Facades\MessengerBots as BotsFacade;
 use RTippin\Messenger\MessengerBots;
@@ -251,7 +251,7 @@ class MessengerBotsTest extends MessengerTestCase
         ];
 
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The given handler { RTippin\Messenger\Tests\Messenger\InvalidBotHandler } must extend our base handler RTippin\Messenger\Actions\Bots\BotActionHandler');
+        $this->expectExceptionMessage('The given handler { RTippin\Messenger\Tests\Messenger\InvalidBotHandler } must extend RTippin\Messenger\Support\BotActionHandler');
 
         $this->bots->registerHandlers($actions);
     }

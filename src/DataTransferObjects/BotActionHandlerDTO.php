@@ -3,7 +3,7 @@
 namespace RTippin\Messenger\DataTransferObjects;
 
 use Illuminate\Contracts\Support\Arrayable;
-use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\BotAction;
 

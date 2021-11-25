@@ -2,7 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Fixtures;
 
-use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\MessengerBots;
 
 class FunBotHandler extends BotActionHandler

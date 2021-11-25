@@ -17,9 +17,9 @@ use Illuminate\Support\Facades\Facade;
  * @method static void registerHandlers(array $handlers, bool $overwrite = false)
  * @method static \RTippin\Messenger\MessengerBots getInstance()
  * @method static void flush()
- * @method static \RTippin\Messenger\Actions\Bots\BotActionHandler initializeHandler(string $handlerOrAlias)
+ * @method static \RTippin\Messenger\Support\BotActionHandler initializeHandler(string $handlerOrAlias)
  * @method static bool isActiveHandlerSet()
- * @method static \RTippin\Messenger\Actions\Bots\BotActionHandler|null getActiveHandler()
+ * @method static \RTippin\Messenger\Support\BotActionHandler|null getActiveHandler()
  *
  * @mixin \RTippin\Messenger\MessengerBots
  *

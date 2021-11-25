@@ -2,7 +2,7 @@
 
 namespace {{ namespace }};
 
-use RTippin\Messenger\Actions\Bots\BotActionHandler;
+use RTippin\Messenger\Support\BotActionHandler;
 use Throwable;
 
 class {{ class }} extends BotActionHandler
