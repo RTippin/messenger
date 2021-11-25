@@ -141,7 +141,7 @@ class TestBot extends BotActionHandler
 - `alias` Used to locate and attach your handler to a bot.
 - `description` The description of your bot handler, typically what it does.
 - `name` The name of your bot handler.
-- `unique (optional)` When set and true, the handler may only be used once per bot.
+- `unique (optional)` When set and true, the handler may only be used once across all bots in a thread.
 - `triggers (optional)` Overrides allowing the end user to set the triggers. Only the given trigger(s) will be used. Separate multiple via the pipe (|) or use an array.
 - `match (optional)` Overrides allowing end user to select matching method.
 
@@ -496,7 +496,6 @@ axios.post('/api/messenger/threads/{thread}/bots/{bot}/actions', {
 [link-messenger-bots]: https://github.com/RTippin/messenger-bots
 [link-bot-subscriber]: https://github.com/RTippin/messenger/blob/1.x/src/Listeners/BotSubscriber.php
 [link-action-handler]: https://github.com/RTippin/messenger/blob/1.x/src/Actions/Bots/BotActionHandler.php
-[link-action-interface]: https://github.com/RTippin/messenger/blob/1.x/src/Contracts/ActionHandler.php
 [link-messenger-composer]: https://github.com/RTippin/messenger/blob/1.x/src/Support/MessengerComposer.php
 [link-bots-service]: https://github.com/RTippin/messenger/blob/1.x/src/MessengerBots.php
 [link-action-failed-event]: https://github.com/RTippin/messenger/blob/1.x/src/Events/BotActionFailedEvent.php

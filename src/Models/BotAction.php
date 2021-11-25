@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Actions\Bots\BotActionHandler;
-use RTippin\Messenger\Contracts\ActionHandler;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\BotActionFactory;
 use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
@@ -24,7 +23,7 @@ use RTippin\Messenger\Traits\Uuids;
  *
  * @property string $id
  * @property string|int $bot_id
- * @property string|ActionHandler|BotActionHandler $handler
+ * @property string|BotActionHandler $handler
  * @property string $triggers
  * @property string|null $payload
  * @property bool $admin_only
@@ -39,6 +38,8 @@ use RTippin\Messenger\Traits\Uuids;
  * @method static Builder|BotAction validHandler()
  * @method static Builder|BotAction handler(string $handler)
  * @method static Builder|BotAction validFromThread(string $threadId)
+ * @method static Builder|BotAction fromThread(string $threadId, bool $unique = false)
+ * @method static Builder|BotAction uniqueFromThread(string $threadId)
  * @method static BotActionFactory factory(...$parameters)
  */
 class BotAction extends Model implements Ownerable
@@ -177,7 +178,7 @@ class BotAction extends Model implements Ownerable
     }
 
     /**
-     * Scope actions that belong to a bot using thread id, and is enabled.
+     * Scope actions that belong to an enabled bot from inside the provided thread.
      *
      * @param  Builder  $query
      * @param  string  $threadId
@@ -192,6 +193,42 @@ class BotAction extends Model implements Ownerable
             ->where('bots.enabled', '=', true)
             ->whereNull('bots.deleted_at')
             ->whereIn('bot_actions.handler', MessengerBots::getHandlerClasses());
+    }
+
+    /**
+     * Scope actions that belong inside the provided thread.
+     *
+     * @param  Builder  $query
+     * @param  string  $threadId
+     * @param  bool  $unique
+     * @return Builder
+     */
+    public function scopeFromThread(Builder $query,
+                                    string $threadId,
+                                    bool $unique = false): Builder
+    {
+        return $query->select('bot_actions.*')
+            ->join('bots', 'bot_actions.bot_id', '=', 'bots.id')
+            ->where('bots.thread_id', '=', $threadId)
+            ->whereNull('bots.deleted_at')
+            ->whereIn(
+                'bot_actions.handler',
+                $unique
+                    ? MessengerBots::getUniqueHandlerClasses()
+                    : MessengerBots::getHandlerClasses()
+            );
+    }
+
+    /**
+     * Scope actions flagged as unique that belong inside the provided thread.
+     *
+     * @param  Builder  $query
+     * @param  string  $threadId
+     * @return Builder
+     */
+    public function scopeUniqueFromThread(Builder $query, string $threadId): Builder
+    {
+        return $this->fromThread($threadId, true);
     }
 
     /**

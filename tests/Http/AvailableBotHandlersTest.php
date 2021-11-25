@@ -70,6 +70,34 @@ class AvailableBotHandlersTest extends HttpTestCase
     }
 
     /** @test */
+    public function unique_handlers_that_are_already_attached_to_another_bot_are_omitted()
+    {
+        SillyBotHandler::$authorized = true;
+        MessengerBots::registerHandlers([
+            FunBotHandler::class,
+            SillyBotHandler::class,
+        ]);
+        $thread = $this->createGroupThread($this->tippin);
+        $bot1 = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        BotAction::factory()->for($bot1)->owner($this->tippin)->handler(FunBotHandler::class)->create();
+        BotAction::factory()->for($bot1)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
+        $bot2 = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.bots.handlers', [
+            'thread' => $thread->id,
+            'bot' => $bot2->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJsonCount(1)
+            ->assertJson([
+                [
+                    'alias' => 'fun_bot',
+                ],
+            ]);
+    }
+
+    /** @test */
     public function handlers_failing_authorization_are_omitted()
     {
         MessengerBots::registerHandlers([

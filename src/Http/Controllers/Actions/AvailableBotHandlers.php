@@ -31,7 +31,7 @@ class AvailableBotHandlers
     /**
      * Get all authorized handlers the current provider is allowed to
      * choose from, rejecting any handlers that are marked as unique
-     * and have already attached to the bot provided.
+     * and have already attached inside the thread.
      *
      * @param  Thread  $thread
      * @param  Bot  $bot
@@ -47,19 +47,19 @@ class AvailableBotHandlers
             $bot,
         ]);
 
-        return $this->generateAvailableHandlers($bot);
+        return $this->generateAvailableHandlers($thread);
     }
 
     /**
-     * @param  Bot  $bot
+     * @param  Thread  $thread
      * @return Collection
      */
-    private function generateAvailableHandlers(Bot $bot): Collection
+    private function generateAvailableHandlers(Thread $thread): Collection
     {
-        $unique = $bot->validUniqueActions()
+        $unique = BotAction::uniqueFromThread($thread->id)
+            ->select(['handler'])
             ->get()
             ->transform(fn (BotAction $action) => $action->getHandlersDTO()->alias)
-            ->filter()
             ->toArray();
 
         return (new Collection($this->bots->getAuthorizedHandlers()))

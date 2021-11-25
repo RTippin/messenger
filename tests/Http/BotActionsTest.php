@@ -280,6 +280,29 @@ class BotActionsTest extends HttpTestCase
     }
 
     /** @test */
+    public function forbidden_to_store_action_when_handler_unique_and_exists_in_thread()
+    {
+        MessengerBots::registerHandlers([SillyBotHandler::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.bots.actions.store', [
+            'thread' => $thread->id,
+            'bot' => $bot->id,
+        ]), [
+            'handler' => 'silly_bot',
+            'match' => 'exact',
+            'cooldown' => 0,
+            'admin_only' => false,
+            'enabled' => true,
+            'triggers' => ['test'],
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function user_can_store_action_without_triggers_using_match_any()
     {
         SillyBotHandler::$authorized = true;

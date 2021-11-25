@@ -54,7 +54,7 @@ class StoreBotActionTest extends FeatureTestCase
         SillyBotHandler::$authorized = true;
         MessengerBots::registerHandlers([SillyBotHandler::class]);
         $thread = Thread::factory()->group()->create(['subject' => 'Test']);
-        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create(['name' => 'Mr. Bot']);
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create();
         BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
         $dto = $this->makeResolvedBotHandlerDTO(
             SillyBotHandler::class,
@@ -65,9 +65,32 @@ class StoreBotActionTest extends FeatureTestCase
         );
 
         $this->expectException(BotException::class);
-        $this->expectExceptionMessage('You may only have one (Silly Bot) on Mr. Bot at a time.');
+        $this->expectExceptionMessage('You may only have one ( Silly Bot ) in Test at a time.');
 
         app(StoreBotAction::class)->execute($thread, $bot, $dto);
+    }
+
+    /** @test */
+    public function it_throws_exception_if_handler_unique_and_already_exists_in_thread()
+    {
+        SillyBotHandler::$authorized = true;
+        MessengerBots::registerHandlers([SillyBotHandler::class]);
+        $thread = Thread::factory()->group()->create(['subject' => 'Test']);
+        $bot1 = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        $bot2 = Bot::factory()->for($thread)->owner($this->tippin)->create();
+        BotAction::factory()->for($bot1)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
+        $dto = $this->makeResolvedBotHandlerDTO(
+            SillyBotHandler::class,
+            'exact',
+            true,
+            false,
+            0
+        );
+
+        $this->expectException(BotException::class);
+        $this->expectExceptionMessage('You may only have one ( Silly Bot ) in Test at a time.');
+
+        app(StoreBotAction::class)->execute($thread, $bot2, $dto);
     }
 
     /** @test */
@@ -85,7 +108,7 @@ class StoreBotActionTest extends FeatureTestCase
         );
 
         $this->expectException(BotException::class);
-        $this->expectExceptionMessage('Not authorized to add (Silly Bot) to Mr. Bot.');
+        $this->expectExceptionMessage('Not authorized to add ( Silly Bot ) to Mr. Bot.');
 
         app(StoreBotAction::class)->execute($thread, $bot, $dto);
     }

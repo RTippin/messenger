@@ -84,13 +84,13 @@ class StoreBotAction extends BaseMessengerAction
         }
 
         if ($resolved->handlerDTO->unique
-            && $this->botHasHandler($resolved->handlerDTO->class)) {
-            throw new BotException("You may only have one ({$resolved->handlerDTO->name}) on {$this->getBot()->getProviderName()} at a time.");
+            && $this->threadHasHandler($resolved->handlerDTO->class)) {
+            throw new BotException("You may only have one ( {$resolved->handlerDTO->name} ) in {$this->getThread()->name()} at a time.");
         }
 
         if ($resolved->handlerDTO->shouldAuthorize
             && ! $this->authorizeHandler($resolved->handlerDTO->class)) {
-            throw new BotException("Not authorized to add ({$resolved->handlerDTO->name}) to {$this->getBot()->getProviderName()}.");
+            throw new BotException("Not authorized to add ( {$resolved->handlerDTO->name} ) to {$this->getBot()->getProviderName()}.");
         }
     }
 
@@ -109,10 +109,9 @@ class StoreBotAction extends BaseMessengerAction
      * @param  string  $handler
      * @return bool
      */
-    private function botHasHandler(string $handler): bool
+    private function threadHasHandler(string $handler): bool
     {
-        return $this->getBot()
-            ->validActions()
+        return BotAction::fromThread($this->getThread()->id)
             ->handler($handler)
             ->exists();
     }
