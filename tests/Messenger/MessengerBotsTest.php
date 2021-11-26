@@ -13,7 +13,9 @@ use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\Tests\Fixtures\BrokenBotHandler;
 use RTippin\Messenger\Tests\Fixtures\FunBotHandler;
+use RTippin\Messenger\Tests\Fixtures\FunBotPackage;
 use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;
+use RTippin\Messenger\Tests\Fixtures\SillyBotPackage;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
 use RTippin\Messenger\Tests\MessengerTestCase;
 
@@ -80,6 +82,19 @@ class MessengerBotsTest extends MessengerTestCase
         $this->bots->registerHandlers($handlers);
 
         $this->assertSame($handlers, $this->bots->getHandlerClasses());
+    }
+
+    /** @test */
+    public function it_can_set_packaged_bots()
+    {
+        $packages = [
+            FunBotPackage::class,
+            SillyBotPackage::class,
+        ];
+
+        $this->bots->registerPackagedBots($packages);
+
+        $this->assertSame($packages, $this->bots->getPackagedBotClasses());
     }
 
     /** @test */

@@ -50,12 +50,4 @@ abstract class PackagedBot
     {
         return false;
     }
-
-    /**
-     * @todo
-     */
-    public function install(): void
-    {
-        //
-    }
 }

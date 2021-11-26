@@ -5,8 +5,10 @@ namespace RTippin\Messenger;
 use Illuminate\Support\Collection;
 use InvalidArgumentException;
 use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
+use RTippin\Messenger\DataTransferObjects\PackagedBotDTO;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Support\BotActionHandler;
+use RTippin\Messenger\Support\PackagedBot;
 
 final class MessengerBots
 {
@@ -40,6 +42,11 @@ final class MessengerBots
     private Collection $handlers;
 
     /**
+     * @var Collection
+     */
+    private Collection $packagedBots;
+
+    /**
      * @var BotActionHandler|null
      */
     private ?BotActionHandler $activeHandler = null;
@@ -55,6 +62,7 @@ final class MessengerBots
     public function __construct()
     {
         $this->handlers = new Collection;
+        $this->packagedBots = new Collection;
     }
 
     /**
@@ -80,6 +88,25 @@ final class MessengerBots
     }
 
     /**
+     * @param  array  $packagedBots
+     * @param  bool  $overwrite
+     */
+    public function registerPackagedBots(array $packagedBots, bool $overwrite = false): void
+    {
+        if ($overwrite) {
+            $this->packagedBots = new Collection;
+        }
+
+        foreach ($packagedBots as $package) {
+            if (! is_subclass_of($package, PackagedBot::class)) {
+                throw new InvalidArgumentException("The given package { $package } must extend ".PackagedBot::class);
+            }
+
+            $this->packagedBots[$package] = new PackagedBotDTO($package);
+        }
+    }
+
+    /**
      * Get all bot handler classes.
      *
      * @return array
@@ -87,6 +114,24 @@ final class MessengerBots
     public function getHandlerClasses(): array
     {
         return $this->handlers->keys()->toArray();
+    }
+
+    /**
+     * Get all packaged bot classes.
+     *
+     * @return array
+     */
+    public function getPackagedBotClasses(): array
+    {
+        return $this->packagedBots->keys()->toArray();
+    }
+
+    /**
+     * @return Collection|PackagedBot[]
+     */
+    public function getPackagedBots(): Collection
+    {
+        return $this->packagedBots->values();
     }
 
     /**
