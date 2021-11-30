@@ -13,7 +13,6 @@ class FunBotPackage extends PackagedBot
             'alias' => 'fun_bot_package',
             'name' => 'Mr. Fun Package',
             'description' => 'Fun package description.',
-            'avatar' => null,
         ];
     }
 

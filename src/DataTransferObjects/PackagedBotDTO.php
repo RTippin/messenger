@@ -17,6 +17,11 @@ class PackagedBotDTO implements Arrayable
     /**
      * @var string
      */
+    public string $alias;
+
+    /**
+     * @var string
+     */
     public string $name;
 
     /**
@@ -30,6 +35,21 @@ class PackagedBotDTO implements Arrayable
     public ?string $avatar;
 
     /**
+     * @var int
+     */
+    public int $cooldown;
+
+    /**
+     * @var bool
+     */
+    public bool $isEnabled;
+
+    /**
+     * @var bool
+     */
+    public bool $shouldHideActions;
+
+    /**
      * @var string
      */
     public string $previewAvatarRoute;
@@ -38,6 +58,11 @@ class PackagedBotDTO implements Arrayable
      * @var bool
      */
     public bool $shouldInstallAvatar;
+
+    /**
+     * @var bool
+     */
+    public bool $shouldAuthorize;
 
     /**
      * @var Collection
@@ -55,10 +80,15 @@ class PackagedBotDTO implements Arrayable
         $settings = $packagedBot::getSettings();
 
         $this->class = $packagedBot;
+        $this->alias = $settings['alias'];
         $this->name = $settings['name'];
         $this->description = $settings['description'];
         $this->avatar = $settings['avatar'] ?? null;
+        $this->cooldown = $settings['cooldown'] ?? 0;
+        $this->isEnabled = $settings['enabled'] ?? true;
+        $this->shouldHideActions = $settings['hide_actions'] ?? false;
         $this->shouldInstallAvatar = ! is_null($this->avatar);
+        $this->shouldAuthorize = method_exists($packagedBot, 'authorize');
 //        $this->previewAvatarRoute = Helpers::route('assets.messenger.packaged-bot.avatar.render', [
 //
 //        ]);
@@ -75,6 +105,7 @@ class PackagedBotDTO implements Arrayable
     public function toArray(): array
     {
         return [
+            'alias' => $this->alias,
             'name' => $this->name,
             'description' => $this->description,
             'avatar' => $this->previewAvatarRoute,

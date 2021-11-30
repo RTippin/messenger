@@ -101,12 +101,12 @@ class MessengerBotsTest extends MessengerTestCase
     public function it_tests_bot_package()
     {
         $packages = [
-            SillyBotPackage::class,
+            FunBotPackage::class,
         ];
 
         $this->bots->registerPackagedBots($packages);
 
-//        dump($this->bots->getPackagedBots()->first()->toArray());
+        dump($this->bots->getPackagedBots()->first());
 
         $this->assertSame($packages, $this->bots->getPackagedBotClasses());
     }

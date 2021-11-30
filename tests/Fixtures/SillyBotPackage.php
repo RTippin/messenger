@@ -13,7 +13,6 @@ class SillyBotPackage extends PackagedBot
             'alias' => 'silly_bot_package',
             'name' => 'Mr. Silly Package',
             'description' => 'Silly package description.',
-            'avatar' => null,
         ];
     }
 
