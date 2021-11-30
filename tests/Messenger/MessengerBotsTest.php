@@ -98,6 +98,20 @@ class MessengerBotsTest extends MessengerTestCase
     }
 
     /** @test */
+    public function it_tests_bot_package()
+    {
+        $packages = [
+            SillyBotPackage::class,
+        ];
+
+        $this->bots->registerPackagedBots($packages);
+
+//        dump($this->bots->getPackagedBots()->first()->toArray());
+
+        $this->assertSame($packages, $this->bots->getPackagedBotClasses());
+    }
+
+    /** @test */
     public function it_can_get_unique_bot_handlers()
     {
         $this->bots->registerHandlers([

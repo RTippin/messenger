@@ -5,27 +5,14 @@ namespace RTippin\Messenger\Support;
 abstract class PackagedBot
 {
     /**
-     * @return string
+     * @return array
      */
-    abstract public static function name(): string;
-
-    /**
-     * @return string
-     */
-    abstract public static function description(): string;
+    abstract public static function getSettings(): array;
 
     /**
      * @return array
      */
     abstract public static function installs(): array;
-
-    /**
-     * @return string|null
-     */
-    public static function avatar(): ?string
-    {
-        return null;
-    }
 
     /**
      * @return int

@@ -7,14 +7,14 @@ use RTippin\Messenger\Support\PackagedBot;
 
 class SillyBotPackage extends PackagedBot
 {
-    public static function name(): string
+    public static function getSettings(): array
     {
-        return 'Mr. Silly';
-    }
-
-    public static function description(): string
-    {
-        return 'Silly description.';
+        return [
+            'alias' => 'silly_bot_package',
+            'name' => 'Mr. Silly Package',
+            'description' => 'Silly package description.',
+            'avatar' => null,
+        ];
     }
 
     public static function installs(): array
