@@ -107,16 +107,6 @@ final class MessengerBots
     }
 
     /**
-     * Get all bot handler classes.
-     *
-     * @return array
-     */
-    public function getHandlerClasses(): array
-    {
-        return $this->handlers->keys()->toArray();
-    }
-
-    /**
      * Get all packaged bot classes.
      *
      * @return array
@@ -127,11 +117,21 @@ final class MessengerBots
     }
 
     /**
-     * @return Collection|PackagedBot[]
+     * @return Collection|PackagedBotDTO[]
      */
-    public function getPackagedBots(): Collection
+    public function getPackagedBotsDTO(): Collection
     {
         return $this->packagedBots->values();
+    }
+
+    /**
+     * Get all bot handler classes.
+     *
+     * @return array
+     */
+    public function getHandlerClasses(): array
+    {
+        return $this->handlers->keys()->toArray();
     }
 
     /**

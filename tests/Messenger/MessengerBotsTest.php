@@ -106,7 +106,7 @@ class MessengerBotsTest extends MessengerTestCase
 
         $this->bots->registerPackagedBots($packages);
 
-        dump($this->bots->getPackagedBots()->first());
+        dump($this->bots->getPackagedBotsDTO()->first());
 
         $this->assertSame($packages, $this->bots->getPackagedBotClasses());
     }

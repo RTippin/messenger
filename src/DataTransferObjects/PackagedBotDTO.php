@@ -94,7 +94,7 @@ class PackagedBotDTO implements Arrayable
 //        ]);
         $this->previewAvatarRoute = '';
 
-        $this->registerHandlers(array_keys($packagedBot::installs()));
+        $this->registerHandlers($packagedBot::installs());
 
         $this->installs = $this->generateInstalls($packagedBot::installs());
     }
@@ -116,17 +116,22 @@ class PackagedBotDTO implements Arrayable
     }
 
     /**
-     * @param  array  $handlers
+     * @param  array  $installs
      */
-    private function registerHandlers(array $handlers): void
+    private function registerHandlers(array $installs): void
     {
         $registeredHandlers = MessengerBots::getHandlerClasses();
+        $register = [];
 
-        $registers = (new Collection($handlers))->reject(
-            fn (string $handler) => in_array($handler, $registeredHandlers)
-        )->toArray();
+        foreach ($installs as $key => $value) {
+            $handler = is_string($key) ? $key : $value;
 
-        MessengerBots::registerHandlers($registers);
+            if (! in_array($installs, $registeredHandlers)) {
+                $register[] = $handler;
+            }
+        }
+
+        MessengerBots::registerHandlers($register);
     }
 
     /**
@@ -135,9 +140,9 @@ class PackagedBotDTO implements Arrayable
      */
     private function generateInstalls(array $installs): Collection
     {
-        return (new Collection($installs))->transform(fn (array $data, string $handler) => [
-                'handler' => MessengerBots::getHandlersDTO($handler),
-                'data' => $data,
+        return Collection::make($installs)->map(fn ($value, $key) => [
+                'handler' => MessengerBots::getHandlersDTO(is_string($key) ? $key : $value),
+                'data' => is_string($key) ? $value : null,
         ])->values();
     }
 }
