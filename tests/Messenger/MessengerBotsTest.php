@@ -231,7 +231,11 @@ class MessengerBotsTest extends MessengerTestCase
                 'alias' => 'fun_package',
                 'name' => 'Fun Package',
                 'description' => 'Fun package description.',
-                'avatar' => '',
+                'avatar' => [
+                    'sm' => '/messenger/assets/bot-package/sm/fun_package',
+                    'md' => '/messenger/assets/bot-package/md/fun_package',
+                    'lg' => '/messenger/assets/bot-package/lg/fun_package',
+                ],
                 'installs' => [
                     $broken,
                     $fun,
@@ -242,7 +246,11 @@ class MessengerBotsTest extends MessengerTestCase
                 'alias' => 'silly_package',
                 'name' => 'Silly Package',
                 'description' => 'Silly package description.',
-                'avatar' => '',
+                'avatar' => [
+                    'sm' => '/messenger/assets/bot-package/sm/silly_package',
+                    'md' => '/messenger/assets/bot-package/md/silly_package',
+                    'lg' => '/messenger/assets/bot-package/lg/silly_package',
+                ],
                 'installs' => [
                     $fun,
                     $silly,
@@ -300,7 +308,11 @@ class MessengerBotsTest extends MessengerTestCase
             'alias' => 'fun_package',
             'name' => 'Fun Package',
             'description' => 'Fun package description.',
-            'avatar' => '',
+            'avatar' => [
+                'sm' => '/messenger/assets/bot-package/sm/fun_package',
+                'md' => '/messenger/assets/bot-package/md/fun_package',
+                'lg' => '/messenger/assets/bot-package/lg/fun_package',
+            ],
             'installs' => [
                 $broken,
                 $fun,
@@ -311,7 +323,11 @@ class MessengerBotsTest extends MessengerTestCase
             'alias' => 'silly_package',
             'name' => 'Silly Package',
             'description' => 'Silly package description.',
-            'avatar' => '',
+            'avatar' => [
+                'sm' => '/messenger/assets/bot-package/sm/silly_package',
+                'md' => '/messenger/assets/bot-package/md/silly_package',
+                'lg' => '/messenger/assets/bot-package/lg/silly_package',
+            ],
             'installs' => [
                 $fun,
                 $silly,

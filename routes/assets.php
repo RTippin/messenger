@@ -7,6 +7,7 @@ use RTippin\Messenger\Http\Controllers\Actions\DownloadMessageVideo;
 use RTippin\Messenger\Http\Controllers\Actions\RenderBotAvatar;
 use RTippin\Messenger\Http\Controllers\Actions\RenderGroupAvatar;
 use RTippin\Messenger\Http\Controllers\Actions\RenderMessageImage;
+use RTippin\Messenger\Http\Controllers\Actions\RenderPackagedBotAvatar;
 use RTippin\Messenger\Http\Controllers\Actions\RenderProviderAvatar;
 use RTippin\Messenger\Http\Controllers\InviteController;
 
@@ -27,4 +28,5 @@ Route::name('assets.messenger.')->group(function () {
     });
     Route::get('invites/{invite:code}/avatar/{size}/{image}', [InviteController::class, 'renderAvatar'])->name('invites.avatar.render');
     Route::get('provider/{alias}/{id}/{size}/{image}', RenderProviderAvatar::class)->name('provider.avatar.render');
+    Route::get('bot-package/{size}/{alias}', RenderPackagedBotAvatar::class)->name('bot-package.avatar.render');
 });

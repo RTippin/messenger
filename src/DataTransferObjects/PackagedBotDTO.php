@@ -5,6 +5,7 @@ namespace RTippin\Messenger\DataTransferObjects;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 use RTippin\Messenger\Facades\MessengerBots;
+use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Support\PackagedBot;
 
 class PackagedBotDTO implements Arrayable
@@ -50,11 +51,6 @@ class PackagedBotDTO implements Arrayable
     public bool $shouldHideActions;
 
     /**
-     * @var string
-     */
-    public string $previewAvatarRoute;
-
-    /**
      * @var bool
      */
     public bool $shouldInstallAvatar;
@@ -89,10 +85,6 @@ class PackagedBotDTO implements Arrayable
         $this->shouldHideActions = $settings['hide_actions'] ?? false;
         $this->shouldInstallAvatar = ! is_null($this->avatar);
         $this->shouldAuthorize = method_exists($packagedBot, 'authorize');
-//        $this->previewAvatarRoute = Helpers::route('assets.messenger.packaged-bot.avatar.render', [
-//
-//        ]);
-        $this->previewAvatarRoute = '';
 
         $this->registerHandlers($packagedBot::installs());
 
@@ -108,7 +100,7 @@ class PackagedBotDTO implements Arrayable
             'alias' => $this->alias,
             'name' => $this->name,
             'description' => $this->description,
-            'avatar' => $this->previewAvatarRoute,
+            'avatar' => $this->generateAvatarPreviewRoutes(),
             'installs' => $this->formatInstallsToArray(),
         ];
     }
@@ -154,5 +146,26 @@ class PackagedBotDTO implements Arrayable
             ->sortBy('name')
             ->values()
             ->toArray();
+    }
+
+    /**
+     * @return array
+     */
+    private function generateAvatarPreviewRoutes(): array
+    {
+        return [
+            'sm' => Helpers::route('assets.messenger.bot-package.avatar.render', [
+                'size' => 'sm',
+                'alias' => $this->alias,
+            ]),
+            'md' => Helpers::route('assets.messenger.bot-package.avatar.render', [
+                'size' => 'md',
+                'alias' => $this->alias,
+            ]),
+            'lg' => Helpers::route('assets.messenger.bot-package.avatar.render', [
+                'size' => 'lg',
+                'alias' => $this->alias,
+            ]),
+        ];
     }
 }

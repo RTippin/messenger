@@ -4,10 +4,12 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\Fixtures\SillyBotPackage;
 use RTippin\Messenger\Tests\HttpTestCase;
 
 class AssetsTest extends HttpTestCase
@@ -529,6 +531,36 @@ class AssetsTest extends HttpTestCase
             'invite' => $invite->code,
             'size' => 'lg',
             'image' => 'default.png',
+        ]))
+            ->assertSuccessful()
+            ->assertHeader('content-type', 'image/png')
+            ->assertHeaderMissing('content-disposition')
+            ->assertHeader('content-length', 95);
+    }
+
+    /** @test */
+    public function it_renders_packaged_bot_avatar()
+    {
+        $this->logCurrentRequest();
+        SillyBotPackage::$avatar = __DIR__.'/../Fixtures/404.png';
+        MessengerBots::registerPackagedBots([SillyBotPackage::class]);
+
+        $this->getJson(route('assets.messenger.bot-package.avatar.render', [
+            'size' => 'lg',
+            'alias' => 'silly_package',
+        ]))
+            ->assertSuccessful()
+            ->assertHeader('content-type', 'image/png')
+            ->assertHeaderMissing('content-disposition')
+            ->assertHeader('content-length', 95);
+    }
+
+    /** @test */
+    public function it_renders_default_packaged_bot_avatar()
+    {
+        $this->getJson(route('assets.messenger.bot-package.avatar.render', [
+            'size' => 'lg',
+            'alias' => 'unknown',
         ]))
             ->assertSuccessful()
             ->assertHeader('content-type', 'image/png')

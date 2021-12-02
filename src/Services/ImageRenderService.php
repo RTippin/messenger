@@ -9,6 +9,7 @@ use Illuminate\Http\Response;
 use Illuminate\Routing\ResponseFactory;
 use Intervention\Image\ImageManager;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
@@ -32,6 +33,11 @@ class ImageRenderService
     private Messenger $messenger;
 
     /**
+     * @var MessengerBots
+     */
+    private MessengerBots $bots;
+
+    /**
      * @var FilesystemManager
      */
     private FilesystemManager $filesystemManager;
@@ -50,16 +56,19 @@ class ImageRenderService
      * ImageRenderService constructor.
      *
      * @param  Messenger  $messenger
+     * @param  MessengerBots  $bots
      * @param  FilesystemManager  $filesystemManager
      * @param  ResponseFactory  $responseFactory
      * @param  ImageManager  $imageManager
      */
     public function __construct(Messenger $messenger,
+                                MessengerBots $bots,
                                 FilesystemManager $filesystemManager,
                                 ResponseFactory $responseFactory,
                                 ImageManager $imageManager)
     {
         $this->messenger = $messenger;
+        $this->bots = $bots;
         $this->filesystemManager = $filesystemManager;
         $this->responseFactory = $responseFactory;
         $this->imageManager = $imageManager;
@@ -213,6 +222,35 @@ class ImageRenderService
         return $this->filesystemManager
             ->disk($bot->getStorageDisk())
             ->response($bot->getAvatarPath());
+    }
+
+    /**
+     * @param  string  $alias
+     * @param  string  $size
+     * @return BinaryFileResponse|Response
+     */
+    public function renderPackagedBotAvatar(string $alias, string $size)
+    {
+        if (! $this->bots->isValidPackagedBot($alias)) {
+            return $this->renderDefaultImage('bot');
+        }
+
+        $package = $this->bots->getPackagedBots($alias);
+
+        if (! $package->shouldInstallAvatar) {
+            return $this->renderDefaultImage('bot');
+        }
+
+        $extension = pathinfo($package->avatar, PATHINFO_EXTENSION);
+
+        if ($this->shouldResize($extension) && $size !== 'lg') {
+            return $this->renderImageSize(
+                file_get_contents($package->avatar),
+                $size
+            );
+        }
+
+        return $this->responseFactory->file($package->avatar);
     }
 
     /**
