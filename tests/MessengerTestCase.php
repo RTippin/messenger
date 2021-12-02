@@ -9,6 +9,7 @@ use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\MessengerServiceProvider;
 use RTippin\Messenger\Tests\Fixtures\CompanyModel;
 use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;
+use RTippin\Messenger\Tests\Fixtures\SillyBotPackage;
 use RTippin\Messenger\Tests\Fixtures\UserModel;
 
 class MessengerTestCase extends TestCase
@@ -110,6 +111,7 @@ class MessengerTestCase extends TestCase
         UserModel::reset();
         CompanyModel::reset();
         SillyBotHandler::reset();
+        SillyBotPackage::reset();
 
         parent::tearDown();
     }

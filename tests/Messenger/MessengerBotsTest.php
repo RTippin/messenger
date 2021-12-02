@@ -98,20 +98,6 @@ class MessengerBotsTest extends MessengerTestCase
     }
 
     /** @test */
-    public function it_tests_bot_package()
-    {
-        $packages = [
-            FunBotPackage::class,
-        ];
-
-        $this->bots->registerPackagedBots($packages);
-
-        dump($this->bots->getPackagedBotsDTO()->first());
-
-        $this->assertSame($packages, $this->bots->getPackagedBotClasses());
-    }
-
-    /** @test */
     public function it_can_get_unique_bot_handlers()
     {
         $this->bots->registerHandlers([
@@ -139,6 +125,23 @@ class MessengerBotsTest extends MessengerTestCase
         $this->bots->registerHandlers($handlers);
 
         $this->assertSame($aliases, $this->bots->getAliases());
+    }
+
+    /** @test */
+    public function it_can_get_packaged_bot_aliases_sorting_by_alias()
+    {
+        $packages = [
+            SillyBotPackage::class,
+            FunBotPackage::class,
+        ];
+        $aliases = [
+            'fun_package',
+            'silly_package',
+        ];
+
+        $this->bots->registerPackagedBots($packages);
+
+        $this->assertSame($aliases, $this->bots->getPackagedBotAliases());
     }
 
     /** @test */

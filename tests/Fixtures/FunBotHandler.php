@@ -13,7 +13,7 @@ class FunBotHandler extends BotActionHandler
             'alias' => 'fun_bot',
             'description' => 'This is a fun bot.',
             'name' => 'Fun Bot',
-            'triggers' => '!test|!more',
+            'triggers' => ['!test', '!more'],
             'match' => MessengerBots::MATCH_EXACT_CASELESS,
         ];
     }

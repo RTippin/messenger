@@ -107,24 +107,6 @@ final class MessengerBots
     }
 
     /**
-     * Get all packaged bot classes.
-     *
-     * @return array
-     */
-    public function getPackagedBotClasses(): array
-    {
-        return $this->packagedBots->keys()->toArray();
-    }
-
-    /**
-     * @return Collection|PackagedBotDTO[]
-     */
-    public function getPackagedBotsDTO(): Collection
-    {
-        return $this->packagedBots->values();
-    }
-
-    /**
      * Get all bot handler classes.
      *
      * @return array
@@ -318,8 +300,100 @@ final class MessengerBots
     }
 
     /**
-     * If authorize is set and true, initialize the handler to
-     * pass its authorize method, otherwise returning true.
+     * Get all packaged bot classes.
+     *
+     * @return array
+     */
+    public function getPackagedBotClasses(): array
+    {
+        return $this->packagedBots->keys()->toArray();
+    }
+
+    /**
+     * Get all packaged bot aliases.
+     *
+     * @return array
+     */
+    public function getPackagedBotAliases(): array
+    {
+        return $this->packagedBots
+            ->sortBy('alias')
+            ->map(fn (PackagedBotDTO $package) => $package->alias)
+            ->flatten()
+            ->toArray();
+    }
+
+    /**
+     * Returns the packaged bots the end user is authorized to view/add.
+     *
+     * @return Collection|PackagedBotDTO[]
+     */
+    public function getAuthorizedPackagedBots(): Collection
+    {
+        return $this->packagedBots
+            ->sortBy('name')
+            ->filter(fn (PackagedBotDTO $package) => $this->authorizesPackagedBot($package))
+            ->values();
+    }
+
+    /**
+     * @return Collection|PackagedBotDTO[]
+     */
+    public function getPackagedBotsDTO(): Collection
+    {
+        return $this->packagedBots->values();
+    }
+
+    /**
+     * Locate a valid packaged bot class using the class itself, or an alias.
+     *
+     * @param  string|null  $packageOrAlias
+     * @return string|null
+     */
+    public function findPackagedBot(?string $packageOrAlias = null): ?string
+    {
+        if ($this->packagedBots->has($packageOrAlias)) {
+            return $packageOrAlias;
+        }
+
+        return $this->packagedBots->search(
+            fn (PackagedBotDTO $package) =>  $package->alias === $packageOrAlias
+        ) ?: null;
+    }
+
+    /**
+     * Check if the given packaged bot or alias is valid.
+     *
+     * @param  string|null  $packageOrAlias
+     * @return bool
+     */
+    public function isValidPackagedBot(?string $packageOrAlias = null): bool
+    {
+        return (bool) $this->findPackagedBot($packageOrAlias);
+    }
+
+    /**
+     * Instantiate the concrete packaged bot class using the class or alias provided.
+     *
+     * @param  string|null  $packageOrAlias
+     * @return PackagedBot
+     *
+     * @throws BotException
+     */
+    public function initializePackagedBot(?string $packageOrAlias = null): PackagedBot
+    {
+        $package = $this->findPackagedBot($packageOrAlias);
+
+        if (is_null($package)) {
+            throw new BotException('Invalid bot package.');
+        }
+
+        return app($package);
+    }
+
+    /**
+     * If the handler requires authorization, initialize the handler
+     * and execute its authorize method, otherwise return true.
      *
      * @param  BotActionHandlerDTO  $handler
      * @return bool
@@ -330,6 +404,24 @@ final class MessengerBots
     {
         if ($handler->shouldAuthorize) {
             return $this->initializeHandler($handler->class)->authorize();
+        }
+
+        return true;
+    }
+
+    /**
+     * If the package requires authorization, initialize the package
+     * and execute its authorize method, otherwise return true.
+     *
+     * @param  PackagedBotDTO  $package
+     * @return bool
+     *
+     * @throws BotException
+     */
+    private function authorizesPackagedBot(PackagedBotDTO $package): bool
+    {
+        if ($package->shouldAuthorize) {
+            return $this->initializePackagedBot($package->class)->authorize();
         }
 
         return true;

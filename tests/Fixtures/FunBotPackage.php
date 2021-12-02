@@ -10,8 +10,8 @@ class FunBotPackage extends PackagedBot
     public static function getSettings(): array
     {
         return [
-            'alias' => 'fun_bot_package',
-            'name' => 'Mr. Fun Package',
+            'alias' => 'fun_package',
+            'name' => 'Fun Package',
             'description' => 'Fun package description.',
         ];
     }

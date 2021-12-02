@@ -7,32 +7,56 @@ use RTippin\Messenger\Support\PackagedBot;
 
 class SillyBotPackage extends PackagedBot
 {
+    const DEFAULT_INSTALLS = [
+        FunBotHandler::class => [
+            [
+                'test' => ['one', 'two'],
+                'special' => true,
+            ],
+            [
+                'test' => ['three', 'four'],
+                'special' => false,
+            ],
+        ],
+        SillyBotHandler::class => [
+            'triggers' => ['dumb'],
+            'match' => MessengerBots::MATCH_EXACT,
+        ],
+    ];
+    public static bool $authorized = true;
+    public static ?string $avatar = null;
+    public static ?int $cooldown = null;
+    public static ?bool $hideActions = null;
+    public static array $installs = self::DEFAULT_INSTALLS;
+
     public static function getSettings(): array
     {
         return [
-            'alias' => 'silly_bot_package',
-            'name' => 'Mr. Silly Package',
+            'alias' => 'silly_package',
+            'name' => 'Silly Package',
             'description' => 'Silly package description.',
+            'avatar' => self::$avatar,
+            'cooldown' => self::$cooldown,
+            'hide_actions' => self::$hideActions,
         ];
     }
 
     public static function installs(): array
     {
-        return [
-            FunBotHandler::class => [
-                [
-                    'test' => ['one', 'two'],
-                    'special' => true,
-                ],
-                [
-                    'test' => ['three', 'four'],
-                    'special' => false,
-                ],
-            ],
-            SillyBotHandler::class => [
-                'triggers' => ['dumb'],
-                'match' => MessengerBots::MATCH_EXACT,
-            ],
-        ];
+        return self::$installs;
+    }
+
+    public function authorize(): bool
+    {
+        return self::$authorized;
+    }
+
+    public static function reset(): void
+    {
+        self::$authorized = true;
+        self::$avatar = null;
+        self::$cooldown = null;
+        self::$hideActions = null;
+        self::$installs = self::DEFAULT_INSTALLS;
     }
 }
