@@ -77,6 +77,7 @@ class InstallBotPackage
 
     /**
      * @param  PackagedBotDTO  $package
+     *
      * @throws AuthorizationException|BotException
      */
     private function authorizePackagedBot(PackagedBotDTO $package): void
