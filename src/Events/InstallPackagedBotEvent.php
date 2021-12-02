@@ -37,7 +37,6 @@ class InstallPackagedBotEvent
                                 MessengerProvider $provider,
                                 PackagedBotDTO $package)
     {
-
         $this->thread = $thread;
         $this->provider = $provider;
         $this->package = $package;
