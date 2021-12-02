@@ -66,8 +66,7 @@ final class MessengerBots
     }
 
     /**
-     * Set the handlers we want to register. These can then be attached to
-     * a bots action, and executed when a match is found.
+     * Register the bot handler classes you want to utilize.
      *
      * @param  array  $handlers
      * @param  bool  $overwrite
@@ -88,6 +87,8 @@ final class MessengerBots
     }
 
     /**
+     * Register the packaged bot classes you want to utilize.
+     *
      * @param  array  $packagedBots
      * @param  bool  $overwrite
      */
@@ -117,7 +118,7 @@ final class MessengerBots
     }
 
     /**
-     * Get all bot handler classes marked as unique.
+     * Get all bot handler classes flagged as unique.
      *
      * @return array
      */
@@ -130,12 +131,12 @@ final class MessengerBots
     }
 
     /**
-     * Get all or an individual bot handlers DTO.
+     * Get a collection of handlers, or an individual handler.
      *
      * @param  string|null  $handlerOrAlias
      * @return BotActionHandlerDTO|Collection|null
      */
-    public function getHandlersDTO(?string $handlerOrAlias = null)
+    public function getHandlers(?string $handlerOrAlias = null)
     {
         if (is_null($handlerOrAlias)) {
             return $this->handlers
@@ -146,17 +147,6 @@ final class MessengerBots
         return $this->handlers->get(
             $this->findHandler($handlerOrAlias)
         );
-    }
-
-    /**
-     * @param  string|null  $handlerOrAlias
-     * @return BotActionHandlerDTO|Collection|null
-     *
-     * @deprecated Use getHandlersDTO.
-     */
-    public function getHandlerSettings(?string $handlerOrAlias = null)
-    {
-        return $this->getHandlersDTO($handlerOrAlias);
     }
 
     /**
@@ -177,7 +167,7 @@ final class MessengerBots
      *
      * @return array
      */
-    public function getAliases(): array
+    public function getHandlerAliases(): array
     {
         return $this->handlers
             ->sortBy('alias')

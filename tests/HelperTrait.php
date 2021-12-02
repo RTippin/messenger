@@ -133,7 +133,7 @@ trait HelperTrait
                                                  ?string $payload = null): ResolvedBotHandlerDTO
     {
         return new ResolvedBotHandlerDTO(
-            MessengerBots::getHandlersDTO($handler),
+            MessengerBots::getHandlers($handler),
             $match,
             $enabled,
             $adminOnly,

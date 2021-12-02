@@ -59,7 +59,7 @@ class AvailableBotHandlers
         $unique = BotAction::uniqueFromThread($thread->id)
             ->select(['handler'])
             ->get()
-            ->transform(fn (BotAction $action) => $action->getHandlersDTO()->alias)
+            ->transform(fn (BotAction $action) => $action->getHandler()->alias)
             ->toArray();
 
         return (new Collection($this->bots->getAuthorizedHandlers()))

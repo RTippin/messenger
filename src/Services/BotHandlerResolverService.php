@@ -59,7 +59,7 @@ class BotHandlerResolverService
         );
 
         // Set the settings the handler defined
-        $this->handlerDTO = $this->bots->getHandlersDTO(
+        $this->handlerDTO = $this->bots->getHandlers(
             get_class($this->handler)
         );
 
@@ -88,7 +88,7 @@ class BotHandlerResolverService
     private function validateHandlerAlias(array $data): string
     {
         return Validator::make($data, [
-            'handler' => ['required', Rule::in($this->bots->getAliases())],
+            'handler' => ['required', Rule::in($this->bots->getHandlerAliases())],
         ])->validate()['handler'];
     }
 

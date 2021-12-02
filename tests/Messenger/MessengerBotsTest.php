@@ -124,7 +124,7 @@ class MessengerBotsTest extends MessengerTestCase
 
         $this->bots->registerHandlers($handlers);
 
-        $this->assertSame($aliases, $this->bots->getAliases());
+        $this->assertSame($aliases, $this->bots->getHandlerAliases());
     }
 
     /** @test */
@@ -215,7 +215,7 @@ class MessengerBotsTest extends MessengerTestCase
 
         $this->bots->registerHandlers($handlers);
 
-        $this->assertSame($dtos, $this->bots->getHandlersDTO()->toArray());
+        $this->assertSame($dtos, $this->bots->getHandlers()->toArray());
     }
 
     /** @test */
@@ -237,9 +237,9 @@ class MessengerBotsTest extends MessengerTestCase
 
         $this->bots->registerHandlers($handlers);
 
-        $this->assertSame($dto, $this->bots->getHandlersDTO('silly_bot')->toArray());
-        $this->assertSame($dto, $this->bots->getHandlersDTO(SillyBotHandler::class)->toArray());
-        $this->assertNull($this->bots->getHandlersDTO('unknown'));
+        $this->assertSame($dto, $this->bots->getHandlers('silly_bot')->toArray());
+        $this->assertSame($dto, $this->bots->getHandlers(SillyBotHandler::class)->toArray());
+        $this->assertNull($this->bots->getHandlers('unknown'));
     }
 
     /** @test */
@@ -259,7 +259,7 @@ class MessengerBotsTest extends MessengerTestCase
 
         $this->bots->registerHandlers([SillyBotHandler::class]);
 
-        $this->assertSame($dto, $this->bots->getHandlersDTO(SillyBotHandler::class)->toArray());
+        $this->assertSame($dto, $this->bots->getHandlers(SillyBotHandler::class)->toArray());
     }
 
     /** @test */
@@ -270,7 +270,7 @@ class MessengerBotsTest extends MessengerTestCase
             SillyBotHandler::class,
         ]);
 
-        $this->assertCount(2, $this->bots->getHandlersDTO());
+        $this->assertCount(2, $this->bots->getHandlers());
         $this->assertCount(1, $this->bots->getAuthorizedHandlers());
     }
 
