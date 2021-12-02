@@ -141,8 +141,8 @@ class PackagedBotDTO implements Arrayable
     private function generateInstalls(array $installs): Collection
     {
         return Collection::make($installs)->map(fn ($value, $key) => [
-                'handler' => MessengerBots::getHandlers(is_string($key) ? $key : $value),
-                'data' => is_string($key) ? $value : null,
+            'handler' => MessengerBots::getHandlers(is_string($key) ? $key : $value),
+            'data' => is_string($key) ? $value : null,
         ])->values();
     }
 }
