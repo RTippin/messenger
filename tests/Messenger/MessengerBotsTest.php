@@ -232,9 +232,9 @@ class MessengerBotsTest extends MessengerTestCase
                 'name' => 'Fun Package',
                 'description' => 'Fun package description.',
                 'avatar' => [
-                    'sm' => '/messenger/assets/bot-package/sm/fun_package',
-                    'md' => '/messenger/assets/bot-package/md/fun_package',
-                    'lg' => '/messenger/assets/bot-package/lg/fun_package',
+                    'sm' => '/messenger/assets/bot-package/sm/fun_package/avatar.png',
+                    'md' => '/messenger/assets/bot-package/md/fun_package/avatar.png',
+                    'lg' => '/messenger/assets/bot-package/lg/fun_package/avatar.png',
                 ],
                 'installs' => [
                     $broken,
@@ -247,9 +247,9 @@ class MessengerBotsTest extends MessengerTestCase
                 'name' => 'Silly Package',
                 'description' => 'Silly package description.',
                 'avatar' => [
-                    'sm' => '/messenger/assets/bot-package/sm/silly_package',
-                    'md' => '/messenger/assets/bot-package/md/silly_package',
-                    'lg' => '/messenger/assets/bot-package/lg/silly_package',
+                    'sm' => '/messenger/assets/bot-package/sm/silly_package/avatar.png',
+                    'md' => '/messenger/assets/bot-package/md/silly_package/avatar.png',
+                    'lg' => '/messenger/assets/bot-package/lg/silly_package/avatar.png',
                 ],
                 'installs' => [
                     $fun,
@@ -309,9 +309,9 @@ class MessengerBotsTest extends MessengerTestCase
             'name' => 'Fun Package',
             'description' => 'Fun package description.',
             'avatar' => [
-                'sm' => '/messenger/assets/bot-package/sm/fun_package',
-                'md' => '/messenger/assets/bot-package/md/fun_package',
-                'lg' => '/messenger/assets/bot-package/lg/fun_package',
+                'sm' => '/messenger/assets/bot-package/sm/fun_package/avatar.png',
+                'md' => '/messenger/assets/bot-package/md/fun_package/avatar.png',
+                'lg' => '/messenger/assets/bot-package/lg/fun_package/avatar.png',
             ],
             'installs' => [
                 $broken,
@@ -324,9 +324,9 @@ class MessengerBotsTest extends MessengerTestCase
             'name' => 'Silly Package',
             'description' => 'Silly package description.',
             'avatar' => [
-                'sm' => '/messenger/assets/bot-package/sm/silly_package',
-                'md' => '/messenger/assets/bot-package/md/silly_package',
-                'lg' => '/messenger/assets/bot-package/lg/silly_package',
+                'sm' => '/messenger/assets/bot-package/sm/silly_package/avatar.png',
+                'md' => '/messenger/assets/bot-package/md/silly_package/avatar.png',
+                'lg' => '/messenger/assets/bot-package/lg/silly_package/avatar.png',
             ],
             'installs' => [
                 $fun,

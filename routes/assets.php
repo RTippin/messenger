@@ -28,5 +28,5 @@ Route::name('assets.messenger.')->group(function () {
     });
     Route::get('invites/{invite:code}/avatar/{size}/{image}', [InviteController::class, 'renderAvatar'])->name('invites.avatar.render');
     Route::get('provider/{alias}/{id}/{size}/{image}', RenderProviderAvatar::class)->name('provider.avatar.render');
-    Route::get('bot-package/{size}/{alias}', RenderPackagedBotAvatar::class)->name('bot-package.avatar.render');
+    Route::get('bot-package/{size}/{alias}/{image?}', RenderPackagedBotAvatar::class)->name('bot-package.avatar.render');
 });

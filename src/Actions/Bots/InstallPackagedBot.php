@@ -13,6 +13,7 @@ use RTippin\Messenger\Messenger;
 use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\BotHandlerResolverService;
+use Throwable;
 
 class InstallPackagedBot extends BaseMessengerAction
 {
@@ -100,6 +101,8 @@ class InstallPackagedBot extends BaseMessengerAction
         $this->setThread($thread)->silenceActions();
         $this->package = $package;
 
+        $this->process();
+
         return $this;
     }
 
@@ -110,7 +113,18 @@ class InstallPackagedBot extends BaseMessengerAction
         $this->storeBotAction->withoutDispatches();
     }
 
-    private function storeBot()
+    private function process()
+    {
+        try {
+            $this->database->transaction(function () {
+                $this->storeBot();
+            });
+        } catch (Throwable $e) {
+
+        }
+    }
+
+    private function storeBot(): void
     {
         $this->setBot(
             $this->storeBot->execute($this->getThread(), [

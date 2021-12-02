@@ -548,6 +548,7 @@ class AssetsTest extends HttpTestCase
         $this->getJson(route('assets.messenger.bot-package.avatar.render', [
             'size' => 'lg',
             'alias' => 'silly_package',
+            'image' => 'avatar.png',
         ]))
             ->assertSuccessful()
             ->assertHeader('content-type', 'image/png')
@@ -561,6 +562,7 @@ class AssetsTest extends HttpTestCase
         $this->getJson(route('assets.messenger.bot-package.avatar.render', [
             'size' => 'lg',
             'alias' => 'unknown',
+            'image' => 'avatar.png',
         ]))
             ->assertSuccessful()
             ->assertHeader('content-type', 'image/png')
