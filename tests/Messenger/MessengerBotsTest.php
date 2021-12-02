@@ -279,8 +279,6 @@ class MessengerBotsTest extends MessengerTestCase
             'match' => null,
         ];
 
-
-
         $this->assertSame($silly, $this->bots->getHandlers('silly_bot')->toArray());
         $this->assertSame($silly, $this->bots->getHandlers(SillyBotHandler::class)->toArray());
         $this->assertSame($fun, $this->bots->getHandlers('fun_bot')->toArray());
