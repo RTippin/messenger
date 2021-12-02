@@ -8,6 +8,7 @@ use RTippin\Messenger\Http\Controllers\Actions\EndCall;
 use RTippin\Messenger\Http\Controllers\Actions\FilterAddParticipants;
 use RTippin\Messenger\Http\Controllers\Actions\FindRecipientThread;
 use RTippin\Messenger\Http\Controllers\Actions\IgnoreCall;
+use RTippin\Messenger\Http\Controllers\Actions\InstallBotPackage;
 use RTippin\Messenger\Http\Controllers\Actions\IsThreadUnread;
 use RTippin\Messenger\Http\Controllers\Actions\JoinCall;
 use RTippin\Messenger\Http\Controllers\Actions\JoinGroupInvite;
@@ -119,6 +120,9 @@ Route::name('api.messenger.')->group(function () {
     });
     Route::apiResource('threads.bots', BotController::class)->scoped();
     Route::apiResource('threads.bots.actions', BotActionController::class)->scoped();
+    Route::prefix('threads/{thread}/bots/packages')->name('threads.bots.packages.')->group(function () {
+        Route::post('install', InstallBotPackage::class)->name('install');
+    });
     Route::prefix('threads/{thread}/bots/{bot:id}')->name('threads.bots.')->group(function () {
         Route::get('add-handlers', AvailableBotHandlers::class)->name('handlers');
         Route::post('avatar', [BotController::class, 'storeAvatar'])->name('avatar.store');
