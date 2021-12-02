@@ -9,6 +9,7 @@ use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Invite;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Tests\Fixtures\FunBotPackage;
 use RTippin\Messenger\Tests\Fixtures\SillyBotPackage;
 use RTippin\Messenger\Tests\HttpTestCase;
 
@@ -542,26 +543,27 @@ class AssetsTest extends HttpTestCase
     public function it_renders_packaged_bot_avatar()
     {
         $this->logCurrentRequest();
-        SillyBotPackage::$avatar = __DIR__.'/../Fixtures/404.png';
+        SillyBotPackage::$avatar = __DIR__.'/../Fixtures/avatar.jpg';
         MessengerBots::registerPackagedBots([SillyBotPackage::class]);
 
         $this->getJson(route('assets.messenger.bot-package.avatar.render', [
             'size' => 'lg',
             'alias' => 'silly_package',
-            'image' => 'avatar.png',
+            'image' => 'avatar.jpg',
         ]))
             ->assertSuccessful()
-            ->assertHeader('content-type', 'image/png')
+            ->assertHeader('content-type', 'image/jpeg')
             ->assertHeaderMissing('content-disposition')
-            ->assertHeader('content-length', 95);
+            ->assertHeader('content-length', 7503);
     }
 
     /** @test */
     public function it_renders_default_packaged_bot_avatar()
     {
+        MessengerBots::registerPackagedBots([FunBotPackage::class]);
         $this->getJson(route('assets.messenger.bot-package.avatar.render', [
             'size' => 'lg',
-            'alias' => 'unknown',
+            'alias' => 'fun_package',
             'image' => 'avatar.png',
         ]))
             ->assertSuccessful()
