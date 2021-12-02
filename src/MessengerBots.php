@@ -66,6 +66,23 @@ final class MessengerBots
     }
 
     /**
+     * @return $this
+     */
+    public function getInstance(): self
+    {
+        return $this;
+    }
+
+    /**
+     * Flush any active handler and overrides set.
+     */
+    public function flush(): void
+    {
+        $this->activeHandler = null;
+        $this->activeHandlerClass = null;
+    }
+
+    /**
      * Register the bot handler classes you want to utilize.
      *
      * @param  array  $handlers
@@ -83,27 +100,6 @@ final class MessengerBots
             }
 
             $this->handlers[$handler] = new BotActionHandlerDTO($handler);
-        }
-    }
-
-    /**
-     * Register the packaged bot classes you want to utilize.
-     *
-     * @param  array  $packagedBots
-     * @param  bool  $overwrite
-     */
-    public function registerPackagedBots(array $packagedBots, bool $overwrite = false): void
-    {
-        if ($overwrite) {
-            $this->packagedBots = new Collection;
-        }
-
-        foreach ($packagedBots as $package) {
-            if (! is_subclass_of($package, PackagedBot::class)) {
-                throw new InvalidArgumentException("The given package { $package } must extend ".PackagedBot::class);
-            }
-
-            $this->packagedBots[$package] = new PackagedBotDTO($package);
         }
     }
 
@@ -273,20 +269,24 @@ final class MessengerBots
     }
 
     /**
-     * @return $this
+     * Register the packaged bot classes you want to utilize.
+     *
+     * @param  array  $packagedBots
+     * @param  bool  $overwrite
      */
-    public function getInstance(): self
+    public function registerPackagedBots(array $packagedBots, bool $overwrite = false): void
     {
-        return $this;
-    }
+        if ($overwrite) {
+            $this->packagedBots = new Collection;
+        }
 
-    /**
-     * Flush any active handler and overrides set.
-     */
-    public function flush(): void
-    {
-        $this->activeHandler = null;
-        $this->activeHandlerClass = null;
+        foreach ($packagedBots as $package) {
+            if (! is_subclass_of($package, PackagedBot::class)) {
+                throw new InvalidArgumentException("The given package { $package } must extend ".PackagedBot::class);
+            }
+
+            $this->packagedBots[$package] = new PackagedBotDTO($package);
+        }
     }
 
     /**
@@ -297,6 +297,25 @@ final class MessengerBots
     public function getPackagedBotClasses(): array
     {
         return $this->packagedBots->keys()->toArray();
+    }
+
+    /**
+     * Get a collection of packaged bots, or an individual packaged bot.
+     *
+     * @param  string|null  $packageOrAlias
+     * @return PackagedBotDTO|Collection|null
+     */
+    public function getPackagedBots(?string $packageOrAlias = null)
+    {
+        if (is_null($packageOrAlias)) {
+            return $this->packagedBots
+                ->sortBy('name')
+                ->values();
+        }
+
+        return $this->packagedBots->get(
+            $this->findPackagedBot($packageOrAlias)
+        );
     }
 
     /**
@@ -324,14 +343,6 @@ final class MessengerBots
             ->sortBy('name')
             ->filter(fn (PackagedBotDTO $package) => $this->authorizesPackagedBot($package))
             ->values();
-    }
-
-    /**
-     * @return Collection|PackagedBotDTO[]
-     */
-    public function getPackagedBotsDTO(): Collection
-    {
-        return $this->packagedBots->values();
     }
 
     /**

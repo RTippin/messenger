@@ -109,9 +109,7 @@ class PackagedBotDTO implements Arrayable
             'name' => $this->name,
             'description' => $this->description,
             'avatar' => $this->previewAvatarRoute,
-            'installs' => $this->installs->map(
-                fn (array $install) => $install['handler']
-            )->toArray(),
+            'installs' => $this->formatInstallsToArray(),
         ];
     }
 
@@ -144,5 +142,17 @@ class PackagedBotDTO implements Arrayable
             'handler' => MessengerBots::getHandlers(is_string($key) ? $key : $value),
             'data' => is_string($key) ? $value : null,
         ])->values();
+    }
+
+    /**
+     * @return array
+     */
+    private function formatInstallsToArray(): array
+    {
+        return $this->installs
+            ->map(fn (array $install) => $install['handler'])
+            ->sortBy('name')
+            ->values()
+            ->toArray();
     }
 }
