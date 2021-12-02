@@ -15,7 +15,6 @@ class RenderPackagedBotAvatar
      * @param  string  $size
      * @param  string  $alias
      * @return BinaryFileResponse|Response
-     *
      */
     public function __invoke(ImageRenderService $service,
                              string $size,
