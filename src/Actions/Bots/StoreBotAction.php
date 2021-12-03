@@ -52,17 +52,19 @@ class StoreBotAction extends BaseMessengerAction
      * @param  Thread  $thread
      * @param  Bot  $bot
      * @param  ResolvedBotHandlerDTO  $resolved
+     * @param  bool  $withoutChecks
      * @return $this
      *
-     * @throws FeatureDisabledException|BotException
+     * @throws BotException|FeatureDisabledException
      */
     public function execute(Thread $thread,
                             Bot $bot,
-                            ResolvedBotHandlerDTO $resolved): self
+                            ResolvedBotHandlerDTO $resolved,
+                            bool $withoutChecks = false): self
     {
         $this->setThread($thread)->setBot($bot);
 
-        $this->bailIfCanAddBotActionFails($resolved);
+        $this->bailIfCanAddBotActionFails($resolved, $withoutChecks);
 
         $this->storeBotAction($resolved)
             ->clearActionsCache()
@@ -74,11 +76,16 @@ class StoreBotAction extends BaseMessengerAction
 
     /**
      * @param  ResolvedBotHandlerDTO  $resolved
+     * @param  bool  $withoutChecks
      *
-     * @throws BotException|FeatureDisabledException
+     * @throws FeatureDisabledException|BotException
      */
-    private function bailIfCanAddBotActionFails(ResolvedBotHandlerDTO $resolved): void
+    private function bailIfCanAddBotActionFails(ResolvedBotHandlerDTO $resolved, bool $withoutChecks): void
     {
+        if ($withoutChecks) {
+            return;
+        }
+
         if (! $this->messenger->isBotsEnabled()) {
             throw new FeatureDisabledException('Bots are currently disabled.');
         }

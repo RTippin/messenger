@@ -67,7 +67,7 @@ class PackagedBotDTO implements Arrayable
     public bool $shouldAuthorize;
 
     /**
-     * @var Collection
+     * @var Collection|PackagedBotInstallDTO[]
      */
     public Collection $installs;
 
@@ -137,10 +137,12 @@ class PackagedBotDTO implements Arrayable
      */
     private function generateInstalls(array $installs): Collection
     {
-        return Collection::make($installs)->map(fn ($value, $key) => [
-            'handler' => MessengerBots::getHandlers(is_string($key) ? $key : $value),
-            'data' => is_string($key) ? $value : null,
-        ])->values();
+        return Collection::make($installs)->map(
+            fn ($value, $key) => new PackagedBotInstallDTO(
+                is_string($key) ? $key : $value,
+                is_string($key) ? $value : []
+            )
+        )->values();
     }
 
     /**
@@ -148,9 +150,9 @@ class PackagedBotDTO implements Arrayable
      */
     private function formatInstallsToArray(): array
     {
-        return $this->installs
-            ->map(fn (array $install) => $install['handler'])
-            ->sortBy('name')
+        return $this->installs->sortBy(
+            fn (PackagedBotInstallDTO $install) => $install->handler->name
+        )
             ->values()
             ->toArray();
     }

@@ -21,5 +21,6 @@ class InstallPackagedBotTest extends FeatureTestCase
         $this->assertDatabaseHas('bots', [
             'name' => 'Fun Package',
         ]);
+        $this->assertDatabaseCount('bot_actions', 3);
     }
 }

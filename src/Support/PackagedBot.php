@@ -25,7 +25,7 @@ abstract class PackagedBot
      * - 'enabled' Whether the bot starts out as enabled or disabled. Default is true.
      * - 'hide_actions' Whether the bots' actions start out as hidden. Default is false.
      *
-     * @return array{alias: string, name: string, description: string, avatar: string, cooldown: int, enabled: bool, hide_actions: bool}
+     * @return array{alias: string, name: string, description: string, avatar: string|null, cooldown: int, enabled: bool, hide_actions: bool}
      */
     abstract public static function getSettings(): array;
 
@@ -41,8 +41,8 @@ abstract class PackagedBot
      * BotAction handler keys include:
      * - 'enabled' Default of true.
      * - 'cooldown' : Default of 30.
-     * - 'triggers' : No default.
      * - 'admin_only' : Default of false.
+     * - 'triggers' : No default.
      * - 'match' : No Default.
      *
      * Any parameters that are already defined in the bot handler class cannot be overridden.

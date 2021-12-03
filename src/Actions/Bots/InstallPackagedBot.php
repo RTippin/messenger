@@ -144,6 +144,7 @@ class InstallPackagedBot extends BaseMessengerAction
                 : $this->database->transaction(fn () => $this->performActions());
 
         } catch (Throwable $e) {
+            dump($e->getMessage());
             //Fire events.
         }
     }
@@ -214,7 +215,8 @@ class InstallPackagedBot extends BaseMessengerAction
         $this->storeBotAction->execute(
             $this->getThread(),
             $this->getBot(),
-            $handler
+            $handler,
+            true
         );
     }
 
