@@ -174,21 +174,22 @@ class PackagedBotDTO implements Arrayable
     private function generateAvatarPreviewRoutes(): array
     {
         return [
-            'sm' => Helpers::route('assets.messenger.bot-package.avatar.render', [
-                'size' => 'sm',
-                'alias' => $this->alias,
-                'image' => 'avatar.'.$this->avatarExtension,
-            ]),
-            'md' => Helpers::route('assets.messenger.bot-package.avatar.render', [
-                'size' => 'md',
-                'alias' => $this->alias,
-                'image' => 'avatar.'.$this->avatarExtension,
-            ]),
-            'lg' => Helpers::route('assets.messenger.bot-package.avatar.render', [
-                'size' => 'lg',
-                'alias' => $this->alias,
-                'image' => 'avatar.'.$this->avatarExtension,
-            ]),
+            'sm' => $this->makeAvatarPreviewRoute('sm'),
+            'md' => $this->makeAvatarPreviewRoute('md'),
+            'lg' => $this->makeAvatarPreviewRoute('lg'),
         ];
+    }
+
+    /**
+     * @param  string  $size
+     * @return string
+     */
+    private function makeAvatarPreviewRoute(string $size): string
+    {
+        return Helpers::route('assets.messenger.bot-package.avatar.render', [
+            'size' => $size,
+            'alias' => $this->alias,
+            'image' => 'avatar.'.$this->avatarExtension,
+        ]);
     }
 }

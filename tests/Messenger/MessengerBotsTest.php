@@ -72,7 +72,7 @@ class MessengerBotsTest extends MessengerTestCase
     }
 
     /** @test */
-    public function it_can_set_bot_handlers()
+    public function it_can_register_bot_handlers()
     {
         $handlers = [
             FunBotHandler::class,
@@ -85,7 +85,7 @@ class MessengerBotsTest extends MessengerTestCase
     }
 
     /** @test */
-    public function it_can_set_packaged_bots()
+    public function it_can_register_packaged_bots()
     {
         $packages = [
             FunBotPackage::class,
@@ -95,6 +95,20 @@ class MessengerBotsTest extends MessengerTestCase
         $this->bots->registerPackagedBots($packages);
 
         $this->assertSame($packages, $this->bots->getPackagedBotClasses());
+    }
+
+    /** @test */
+    public function it_registers_bot_handlers_defined_in_a_packaged_bot()
+    {
+        $this->assertFalse($this->bots->isValidHandler(FunBotHandler::class));
+        $this->assertFalse($this->bots->isValidHandler(SillyBotHandler::class));
+        $this->assertFalse($this->bots->isValidHandler(BrokenBotHandler::class));
+
+        $this->bots->registerPackagedBots([FunBotPackage::class]);
+
+        $this->assertTrue($this->bots->isValidHandler(FunBotHandler::class));
+        $this->assertTrue($this->bots->isValidHandler(SillyBotHandler::class));
+        $this->assertTrue($this->bots->isValidHandler(BrokenBotHandler::class));
     }
 
     /** @test */
