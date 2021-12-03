@@ -31,7 +31,7 @@ class PackagedBotResolverService
     {
         $filtered = $this->rejectExistingUniqueHandlers($thread, $package);
 
-        return $package->installs;
+        return new Collection;
     }
 
     /**
@@ -49,6 +49,5 @@ class PackagedBotResolverService
         return $package->installs->reject(
             fn (array $install) => in_array($install['handler']->class, $unique)
         );
-        
     }
 }

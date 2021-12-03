@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger\Tests\Messenger;
+namespace RTippin\Messenger\Tests\Services;
 
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Broadcasting\MessengerBroadcast;

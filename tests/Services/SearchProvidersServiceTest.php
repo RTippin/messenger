@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger\Tests\Messenger;
+namespace RTippin\Messenger\Tests\Services;
 
 use Illuminate\Pagination\LengthAwarePaginator;
 use RTippin\Messenger\Facades\Messenger;
