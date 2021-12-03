@@ -142,15 +142,14 @@ class InstallPackagedBot extends BaseMessengerAction
             $this->isChained()
                 ? $this->performActions()
                 : $this->database->transaction(fn () => $this->performActions());
-
         } catch (Throwable $e) {
-            dump($e->getMessage());
             //Fire events.
         }
     }
 
     /**
      * @return void
+     *
      * @throws FeatureDisabledException|BotException
      */
     private function performActions(): void
