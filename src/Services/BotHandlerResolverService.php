@@ -40,8 +40,8 @@ class BotHandlerResolverService
     }
 
     /**
-     * Resolve a bot handler's data used for storing/updating the BotAction model.
-     * Validate against our base ruleset and any custom rules or overrides on the
+     * Transform the data supplied into a valid ResolvedBotHandlerDTO. We will
+     * validate against our base ruleset and any custom rules or overrides on the
      * handler class itself. The handler alias validation can be bypassed if an
      * action's handler class or alias is supplied.
      *

@@ -29,17 +29,24 @@ class PackagedBotResolverService
     public function __construct(BotHandlerResolverService $resolver)
     {
         $this->resolver = $resolver;
-        $this->resolvedHandlers = new Collection;
     }
 
     /**
+     * Transform a packaged bots install array into a collection of
+     * ResolvedBotHandlerDTO's that may be used to attach each
+     * handler to the package's bot.
+     *
      * @param  Thread  $thread
      * @param  PackagedBotDTO  $package
      * @return Collection
      */
     public function resolve(Thread $thread, PackagedBotDTO $package): Collection
     {
-        $filtered = $this->rejectExistingUniqueHandlers($thread, $package);
+        $this->resolvedHandlers = new Collection;
+
+        $uniqueFromThread = $this->getThreadUniqueHandlers($thread);
+
+        $filtered = $this->rejectExistingUniqueHandlers($uniqueFromThread, $package);
 
         $filtered->each(
             fn (PackagedBotInstallDTO $install) => $this->resolveHandlers($install)
@@ -50,22 +57,35 @@ class PackagedBotResolverService
 
     /**
      * @param  Thread  $thread
-     * @param  PackagedBotDTO  $package
-     * @return Collection
+     * @return array
      */
-    private function rejectExistingUniqueHandlers(Thread $thread, PackagedBotDTO $package): Collection
+    private function getThreadUniqueHandlers(Thread $thread): array
     {
-        $unique = BotAction::uniqueFromThread($thread->id)
+        return BotAction::uniqueFromThread($thread->id)
             ->select(['handler'])
             ->get()
             ->toArray();
+    }
 
+    /**
+     * Remove any defined bot handler flagged as unique
+     * that is already present in the thread.
+     *
+     * @param  array  $unique
+     * @param  PackagedBotDTO  $package
+     * @return Collection|PackagedBotInstallDTO
+     */
+    private function rejectExistingUniqueHandlers(array $unique, PackagedBotDTO $package): Collection
+    {
         return $package->installs->reject(
             fn (PackagedBotInstallDTO $install) => in_array($install->handler->class, $unique)
         );
     }
 
     /**
+     * Loop through the individual install data collection
+     * and attempt to resolve into a ResolvedBotHandlerDTO.
+     *
      * @param  PackagedBotInstallDTO  $install
      * @return void
      */
@@ -81,7 +101,7 @@ class PackagedBotResolverService
      * @param  string  $handler
      * @return void
      */
-    private function resolveOrDiscardHandler(array $data, string $handler)
+    private function resolveOrDiscardHandler(array $data, string $handler): void
     {
         try {
             $this->resolvedHandlers->push(

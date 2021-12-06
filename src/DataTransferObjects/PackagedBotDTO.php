@@ -113,6 +113,8 @@ class PackagedBotDTO implements Arrayable
     }
 
     /**
+     * Register any defined bot handlers that are not already registered.
+     *
      * @param  array  $installs
      */
     private function registerHandlers(array $installs): void
@@ -132,6 +134,8 @@ class PackagedBotDTO implements Arrayable
     }
 
     /**
+     * Transform the install's array to a collection of PackagedBotInstallDTO's.
+     *
      * @param  array  $installs
      * @return Collection
      */
