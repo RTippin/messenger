@@ -6,7 +6,6 @@ use Illuminate\Support\Collection;
 use Illuminate\Validation\ValidationException;
 use RTippin\Messenger\DataTransferObjects\PackagedBotDTO;
 use RTippin\Messenger\DataTransferObjects\PackagedBotInstallDTO;
-use RTippin\Messenger\DataTransferObjects\ResolvedBotHandlerDTO;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Thread;
@@ -19,11 +18,6 @@ class PackagedBotResolverService
     private BotHandlerResolverService $resolver;
 
     /**
-     * @var Collection|ResolvedBotHandlerDTO[]
-     */
-    private Collection $resolvedHandlers;
-
-    /**
      * @param  BotHandlerResolverService  $resolver
      */
     public function __construct(BotHandlerResolverService $resolver)
@@ -33,8 +27,9 @@ class PackagedBotResolverService
 
     /**
      * Transform a packaged bots install array into a collection of
-     * ResolvedBotHandlerDTO's that may be used to attach each
-     * handler to the package's bot.
+     * ResolvedBotHandlerDTO's. Remove any defined bot handler
+     * flagged as unique that is already present in the thread.
+     * Handlers failing validation will be ignored.
      *
      * @param  Thread  $thread
      * @param  PackagedBotDTO  $package
@@ -42,17 +37,20 @@ class PackagedBotResolverService
      */
     public function resolve(Thread $thread, PackagedBotDTO $package): Collection
     {
-        $this->resolvedHandlers = new Collection;
+        $resolved = new Collection;
 
-        $uniqueFromThread = $this->getThreadUniqueHandlers($thread);
+        $unique = $this->getThreadUniqueHandlers($thread);
 
-        $filtered = $this->rejectExistingUniqueHandlers($uniqueFromThread, $package);
+        $package
+            ->installs
+            ->reject(
+                fn (PackagedBotInstallDTO $install) => in_array($install->handler->class, $unique)
+            )
+            ->each(
+                fn (PackagedBotInstallDTO $install) => $this->resolveHandlers($install, $resolved)
+            );
 
-        $filtered->each(
-            fn (PackagedBotInstallDTO $install) => $this->resolveHandlers($install)
-        );
-
-        return $this->resolvedHandlers;
+        return $resolved;
     }
 
     /**
@@ -64,22 +62,8 @@ class PackagedBotResolverService
         return BotAction::uniqueFromThread($thread->id)
             ->select(['handler'])
             ->get()
+            ->transform(fn (BotAction $action) => $action->handler)
             ->toArray();
-    }
-
-    /**
-     * Remove any defined bot handler flagged as unique
-     * that is already present in the thread.
-     *
-     * @param  array  $unique
-     * @param  PackagedBotDTO  $package
-     * @return Collection|PackagedBotInstallDTO
-     */
-    private function rejectExistingUniqueHandlers(array $unique, PackagedBotDTO $package): Collection
-    {
-        return $package->installs->reject(
-            fn (PackagedBotInstallDTO $install) => in_array($install->handler->class, $unique)
-        );
     }
 
     /**
@@ -87,24 +71,30 @@ class PackagedBotResolverService
      * and attempt to resolve into a ResolvedBotHandlerDTO.
      *
      * @param  PackagedBotInstallDTO  $install
+     * @param  Collection  $resolved
      * @return void
      */
-    private function resolveHandlers(PackagedBotInstallDTO $install): void
+    private function resolveHandlers(PackagedBotInstallDTO $install, Collection $resolved): void
     {
         $install->data->each(
-            fn (array $data) => $this->resolveOrDiscardHandler($data, $install->handler->class)
+            fn (array $data) => $this->resolveOrDiscardHandler(
+                $data,
+                $install->handler->class,
+                $resolved
+            )
         );
     }
 
     /**
      * @param  array  $data
      * @param  string  $handler
+     * @param  Collection  $resolved
      * @return void
      */
-    private function resolveOrDiscardHandler(array $data, string $handler): void
+    private function resolveOrDiscardHandler(array $data, string $handler, Collection $resolved): void
     {
         try {
-            $this->resolvedHandlers->push(
+            $resolved->push(
                 $this->resolver->resolve($data, $handler)
             );
         } catch (ValidationException|BotException $e) {

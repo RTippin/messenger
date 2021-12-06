@@ -4,36 +4,82 @@ namespace RTippin\Messenger\Tests\Services;
 
 use RTippin\Messenger\DataTransferObjects\ResolvedBotHandlerDTO;
 use RTippin\Messenger\Facades\MessengerBots;
+use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Services\PackagedBotResolverService;
 use RTippin\Messenger\Tests\FeatureTestCase;
+use RTippin\Messenger\Tests\Fixtures\BrokenBotHandler;
+use RTippin\Messenger\Tests\Fixtures\FunBotHandler;
 use RTippin\Messenger\Tests\Fixtures\FunBotPackage;
+use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;
 use RTippin\Messenger\Tests\Fixtures\SillyBotPackage;
 
 class PackagedBotResolverServiceTest extends FeatureTestCase
 {
-    private PackagedBotResolverService $resolver;
-
-    protected function setUp(): void
-    {
-        parent::setUp();
-
-        $this->resolver = app(PackagedBotResolverService::class);
-    }
-
     /** @test */
-    public function it_returns_valid_resolved_handler_dtos()
+    public function it_returns_valid_resolved_handlers()
     {
         MessengerBots::registerPackagedBots([FunBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
         $package = MessengerBots::getPackagedBots(FunBotPackage::class);
+        $expects = [
+            [
+                'handler' => MessengerBots::getHandlers(FunBotHandler::class)->toArray(),
+                'match' => 'exact:caseless',
+                'triggers' => '!test|!more',
+                'admin_only' => false,
+                'cooldown' => 30,
+                'enabled' => true,
+                'payload' => '{"test":["one","two"],"special":true}',
+            ],
+            [
+                'handler' => MessengerBots::getHandlers(SillyBotHandler::class)->toArray(),
+                'match' => 'exact',
+                'triggers' => 'silly',
+                'admin_only' => false,
+                'cooldown' => 30,
+                'enabled' => true,
+                'payload' => null,
+            ],
+            [
+                'handler' => MessengerBots::getHandlers(BrokenBotHandler::class)->toArray(),
+                'match' => 'contains',
+                'triggers' => 'broken',
+                'admin_only' => false,
+                'cooldown' => 30,
+                'enabled' => true,
+                'payload' => null,
+            ],
+        ];
 
-        $results = $this->resolver->resolve($thread, $package);
+        $results = app(PackagedBotResolverService::class)->resolve($thread, $package);
 
-        $this->assertCount(3, $results);
+        $this->assertSame($expects, $results->toArray());
+    }
 
-        foreach ($results as $result) {
-            $this->assertInstanceOf(ResolvedBotHandlerDTO::class, $result);
-        }
+    /** @test */
+    public function it_ignores_unique_handlers_that_exists_in_the_thread()
+    {
+        MessengerBots::registerPackagedBots([FunBotPackage::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $package = MessengerBots::getPackagedBots(FunBotPackage::class);
+        BotAction::factory()->for(
+            Bot::factory()->for($thread)->owner($this->tippin)->create()
+        )
+            ->owner($this->tippin)
+            ->handler(SillyBotHandler::class)
+            ->triggers('!test')
+            ->match('any')
+            ->create();
+
+        $results = app(PackagedBotResolverService::class)->resolve($thread, $package);
+
+        $sillyExists = $results->search(
+            fn (ResolvedBotHandlerDTO $handler) => $handler->handlerDTO->class === SillyBotHandler::class
+        );
+
+        $this->assertCount(2, $results);
+        $this->assertFalse($sillyExists);
     }
 
     /** @test */
@@ -44,8 +90,131 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
         $thread = $this->createGroupThread($this->tippin);
         $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
 
-        $results = $this->resolver->resolve($thread, $package);
+        $results = app(PackagedBotResolverService::class)->resolve($thread, $package);
 
         $this->assertCount(0, $results);
+    }
+
+    /** @test */
+    public function it_ignores_handlers_that_fail_validation()
+    {
+        SillyBotPackage::$installs = [
+            FunBotHandler::class => [
+                'test' => null,
+                'special' => null,
+            ],
+        ];
+        MessengerBots::registerPackagedBots([SillyBotPackage::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
+
+        $results = app(PackagedBotResolverService::class)->resolve($thread, $package);
+
+        $this->assertCount(0, $results);
+    }
+
+    /** @test */
+    public function it_returns_multiple_of_the_same_handler_if_defined_using_multiple_data_arrays()
+    {
+        SillyBotPackage::$installs = [
+            FunBotHandler::class => [
+                [
+                    'test' => ['one', 'two'],
+                    'special' => true,
+                ],
+                [
+                    'test' => ['three', 'four'],
+                    'special' => false,
+                ],
+            ],
+        ];
+        MessengerBots::registerPackagedBots([SillyBotPackage::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
+        $expects = [
+            [
+                'handler' => MessengerBots::getHandlers(FunBotHandler::class)->toArray(),
+                'match' => 'exact:caseless',
+                'triggers' => '!test|!more',
+                'admin_only' => false,
+                'cooldown' => 30,
+                'enabled' => true,
+                'payload' => '{"test":["one","two"],"special":true}',
+            ],
+            [
+                'handler' => MessengerBots::getHandlers(FunBotHandler::class)->toArray(),
+                'match' => 'exact:caseless',
+                'triggers' => '!test|!more',
+                'admin_only' => false,
+                'cooldown' => 30,
+                'enabled' => true,
+                'payload' => '{"test":["three","four"],"special":false}',
+            ],
+        ];
+
+        $results = app(PackagedBotResolverService::class)->resolve($thread, $package);
+
+        $this->assertSame($expects, $results->toArray());
+    }
+
+    /** @test */
+    public function it_can_overwrite_default_parameters()
+    {
+        SillyBotPackage::$installs = [
+            SillyBotHandler::class => [
+                'match' => 'exact',
+                'triggers' => ['silly'],
+                'admin_only' => true,
+                'cooldown' => 0,
+                'enabled' => false,
+            ],
+        ];
+        MessengerBots::registerPackagedBots([SillyBotPackage::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
+        $expects = [
+            [
+                'handler' => MessengerBots::getHandlers(SillyBotHandler::class)->toArray(),
+                'match' => 'exact',
+                'triggers' => 'silly',
+                'admin_only' => true,
+                'cooldown' => 0,
+                'enabled' => false,
+                'payload' => null,
+            ],
+        ];
+
+        $results = app(PackagedBotResolverService::class)->resolve($thread, $package);
+
+        $this->assertSame($expects, $results->toArray());
+    }
+
+    /** @test */
+    public function it_uses_supplied_parameters_without_defaults()
+    {
+        SillyBotPackage::$installs = [
+            SillyBotHandler::class => [
+                'match' => 'exact',
+                'triggers' => ['silly'],
+            ],
+        ];
+        MessengerBots::registerPackagedBots([SillyBotPackage::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
+        $expects = [
+            [
+                'handler' => MessengerBots::getHandlers(SillyBotHandler::class)->toArray(),
+                'match' => 'exact',
+                'triggers' => 'silly',
+                'admin_only' => false,
+                'cooldown' => 30,
+                'enabled' => true,
+                'payload' => null,
+            ],
+        ];
+
+        $results = app(PackagedBotResolverService::class)->resolve($thread, $package);
+
+        $this->assertSame($expects, $results->toArray());
     }
 }

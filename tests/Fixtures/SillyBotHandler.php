@@ -6,6 +6,7 @@ use RTippin\Messenger\Support\BotActionHandler;
 
 class SillyBotHandler extends BotActionHandler
 {
+    public static bool $unique = true;
     public static bool $authorized = false;
     public static ?string $match = null;
     public static ?array $triggers = null;
@@ -16,7 +17,7 @@ class SillyBotHandler extends BotActionHandler
             'alias' => 'silly_bot',
             'description' => 'This is a silly bot.',
             'name' => 'Silly Bot',
-            'unique' => true,
+            'unique' => self::$unique,
             'match' => self::$match,
             'triggers' => self::$triggers,
         ];
@@ -36,6 +37,7 @@ class SillyBotHandler extends BotActionHandler
 
     public static function reset(): void
     {
+        self::$unique = true;
         self::$authorized = false;
         self::$match = null;
         self::$triggers = null;
