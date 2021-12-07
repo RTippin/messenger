@@ -41,8 +41,7 @@ class PackagedBotResolverService
 
         $unique = $this->getThreadUniqueHandlers($thread);
 
-        $package
-            ->installs
+        $package->installs
             ->reject(
                 fn (PackagedBotInstallDTO $install) => in_array($install->handler->class, $unique)
             )
