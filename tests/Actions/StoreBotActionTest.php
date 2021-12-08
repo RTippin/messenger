@@ -114,6 +114,27 @@ class StoreBotActionTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_can_skip_authorization_checks()
+    {
+        Messenger::setBots(false);
+        MessengerBots::registerHandlers([SillyBotHandler::class]);
+        $thread = Thread::factory()->group()->create();
+        $bot = Bot::factory()->for($thread)->owner($this->tippin)->create(['name' => 'Mr. Bot']);
+        BotAction::factory()->for($bot)->owner($this->tippin)->handler(SillyBotHandler::class)->create();
+        $dto = $this->makeResolvedBotHandlerDTO(
+            SillyBotHandler::class,
+            'exact',
+            true,
+            false,
+            0
+        );
+
+        app(StoreBotAction::class)->execute($thread, $bot, $dto, true);
+
+        $this->assertDatabaseCount('bot_actions', 2);
+    }
+
+    /** @test */
     public function it_stores_bot_action_that_passes_authorization()
     {
         SillyBotHandler::$authorized = true;
