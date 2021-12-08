@@ -58,6 +58,7 @@ class Kernel extends ConsoleKernel
 ### General Flow
 
 - Register your custom bot handlers (more on that below).
+- Register your custom packaged bot bundles (more on that below).
 - A bot can be created in a group thread with bots enabled.
 - The bot will have actions attached, where the actions have triggers and a handler that will be resolved when a match is found against message sent.
 - When a message is sent, we fire our `NewMessageEvent`.
@@ -77,7 +78,7 @@ class Kernel extends ConsoleKernel
 
 ---
 
-## Creating Bot Handlers
+# Creating Bot Handlers
 
 **Create your handler class and extend the [BotActionHandler][link-action-handler] abstract class.**
 
@@ -345,7 +346,7 @@ class ReplyBot extends BotActionHandler
 ---
 
 ### Authorization
-- To authorize the end user add your handler to a bot, you should define the `authorize()` method and return boolean.
+- To authorize the end user to add your handler to a bot, you should define the `authorize()` method and return boolean.
 - This method will be called during the http request cycle, giving you access to the current auth/session/etc.
   - If the end user is unauthorized, the handler will be hidden from appearing in the available handlers list while adding actions to a bot. 
   - This does NOT authorize being triggered once added to a bot action.
@@ -398,7 +399,7 @@ class TestBot extends BotActionHandler
 
 ---
 
-## Register your Handlers
+## Register Handlers
 - Once you are ready to make your handler available for use, head to your `MessengerServiceProvider` and add your handler classes using the facade `MessengerBots::registerHandlers()` method.
 ```php
 <?php
@@ -431,8 +432,312 @@ class MessengerServiceProvider extends ServiceProvider
 
 ---
 
+# Creating Packaged Bots
+
+- Packaged bots allow you to bundle a bot with many handlers the end user can install in one easy click. 
+- An installation will store the `Bot` model along with each `BotAction` model that gets attached to the bot for each of the `BotActionHandler`'s you define and their parameters.
+- The installation process will be triggered via an event listener and ran on the queue, depending on your configuration settings.
+- During an install, any `BotActionHandler`'s that do not pass validation will be ignored.
+
+**Create your packaged bot class and extend the [PackagedBot][link-packaged-bot] abstract class.**
+
+- Your packages class must define the `public static getSettings()` and a `public static installs()` methods.
+
+**Example**
+
+```php
+<?php
+
+namespace App\Bots;
+
+use App\Bots\HelloBot;
+use App\Bots\ReplyBot;
+use RTippin\Messenger\MessengerBots;
+use RTippin\Messenger\Support\PackagedBot;
+
+class TestBotPackage extends PackagedBot
+{
+    /**
+     * The packages settings.
+     *
+     * @return array
+     */
+    public static function getSettings(): array
+    {
+        return [
+            'alias' => 'test_package',
+            'description' => 'Test package description.',
+            'name' => 'Test Package',
+        ];
+    }
+
+    /**
+     * The handlers and their settings to install.
+     *
+     * @return array
+     */
+    public static function installs(): array
+    {
+        return [
+            HelloBot::class => [
+                'cooldown' => 300,
+            ],
+            ReplyBot::class => [
+                'cooldown' => 120,
+                'match' => MessengerBots::MATCH_CONTAINS_CASELESS,
+                'triggers' => ['help', 'support'],
+                'replies' => ['Why are you asking me?', 'I say google it!'],
+            ],
+        ];
+    }
+}
+```
+
+---
+
+## `getSettings()`
+
+**Must return an array defining the package's `alias`, `description`, and `name`.**
+
+**`avatar`, `cooldown`, `enabled`, and `hide_actions` are optional overrides.**
+
+- `alias` Used to locate and install your packaged bot.
+- `description` The description of your packaged bot.
+- `name` The name of your packaged bot. The name will be used as the original `Bot` model's `name` when stored.
+- `avatar (optional)` Define the path to a local image file that will be used to display the package's avatar to the frontend, as well as stored for the `Bot` models initial `avatar`.
+- `cooldown` Cooldown the `Bot` model stored has after each action is triggered. Default of `0`.
+- `enabled` Whether the `Bot` model is enabled or disabled. Default of `true`.
+- `hide_actions` Whether the `Bot` model's actions are hidden or visible to others. Default of `false`.
+
+**Example:**
+
+```php
+public static function getSettings(): array
+{
+    return [
+        'alias' => 'test_package',
+        'description' => 'Test package description.',
+        'name' => 'Test Package',
+        'avatar' => public_path('bots/test_bot.png'),
+        'cooldown' => 30,
+        'enabled' => false,
+        'hide_actions' => true,
+    ];
+}
+```
+
+---
+
+## `installs()`
+
+**Must return an array defining each `BotActionHandler` the package installs.**
+
+- Return the listing of `BotActionHandler` classes you want to be bundled with this install. 
+- The array keys must be the `BotActionHandler` class. 
+- For handlers that require you to set properties, or that you want to override certain defaults, you must define them as the value of the handler class key represented as an associative array. 
+- If you want the handler to be installed multiple times with different parameters, you can define an array of arrays as the value. The key/values of your parameters must match the default for a BotAction model, as well as include any parameters that are defined on the handlers rules for serializing a payload.
+
+
+- `BotAction | BotActionHandler` handler keys include:
+  - `enabled` Default of `true`.
+  - `cooldown` Default of `30`.
+  - `admin_only` Default of `false`.
+  - `triggers` No default. You must define them if the `BotActionHandler` does not override them.
+  - `match` No default. You must define them if the `BotActionHandler` does not override them.
+
+
+- Any parameters that are already defined in the bot handler class cannot be overridden. While installing, each `BotActionHandler` will pass through a validation process, and will be discarded if it fails validating.
+
+**`BotActionHandler` That doesn't need any parameters defined:**
+
+```php
+public static function installs(): array
+{
+    return [
+        HelloBot::class,
+    ];
+}
+```
+
+**`BotActionHandler` We want to use our own defaults:**
+
+```php
+public static function installs(): array
+{
+    return [
+        HelloBot::class => [
+            'cooldown' => 120,
+            'enabled' => false,
+            'admin_only' => true,
+        ],
+    ];
+}
+```
+
+**`BotActionHandler` Requiring match, triggers, and custom rules to be defined:**
+
+- Custom rules defined on the `BotActionHandler` must have the appropriate `key => value` specified as it passes through a validator and is used as the `BotAction` model's `payload`.
+
+```php
+public static function installs(): array
+{
+    return [
+        ReplyBot::class => [
+            'match' => MessengerBots::MATCH_CONTAINS_CASELESS,
+            'triggers' => ['help', 'support'],
+            'replies' => ['Why are you asking me?', 'I say google it!'],
+        ],
+    ];
+}
+```
+
+**`BotActionHandler` We want to be installed multiple times with different parameters:**
+
+- Handlers flagged as unique will only be installed once
+
+```php
+public static function installs(): array
+{
+    return [
+        ReplyBot::class => [
+            [
+                'cooldown' => 300,
+                'match' => MessengerBots::MATCH_CONTAINS_CASELESS,
+                'triggers' => ['help', 'support'],
+                'replies' => ['Why are you asking me?', 'I say google it!'],
+            ],
+            [
+                'cooldown' => 120,
+                'match' => MessengerBots::MATCH_EXACT,
+                'triggers' => ['42'],
+                'replies' => ['That is the answer to life.'],
+            ],
+        ],
+    ];
+}
+```
+
+**Installing multiple `BotActionHandler`'s with varying parameter requirements**
+
+```php
+public static function installs(): array
+{
+    return [
+        HelloBot::class,
+        ReplyBot::class => [
+            [
+                'cooldown' => 300,
+                'match' => MessengerBots::MATCH_CONTAINS_CASELESS,
+                'triggers' => ['help', 'support'],
+                'replies' => ['Why are you asking me?', 'I say google it!'],
+            ],
+            [
+                'cooldown' => 120,
+                'match' => MessengerBots::MATCH_EXACT,
+                'triggers' => ['42'],
+                'replies' => ['That is the answer to life.'],
+            ],
+        ],
+        TestBot::class => [
+            'cooldown' => 120,
+            'enabled' => false,
+            'admin_only' => true,
+        ],
+    ];
+}
+```
+
+---
+
+### Authorization
+- To authorize the end user to install your package in a thread, you must define the `authorize()` method and return boolean.
+- This method will be called during the http request cycle, giving you access to the current auth/session/etc.
+  - If the end user is unauthorized, the package will be hidden from appearing in the available packages list while viewing packages to install.
+
+**Example**
+
+```php
+<?php
+
+namespace App\Bots;
+
+use App\Bots\HelloBot;
+use RTippin\Messenger\Support\PackagedBot;
+
+class TestBotPackage extends PackagedBot
+{
+    /**
+     * The packages settings.
+     *
+     * @return array
+     */
+    public static function getSettings(): array
+    {
+        return [
+            'alias' => 'test_package',
+            'description' => 'Test package description.',
+            'name' => 'Test Package',
+        ];
+    }
+
+    /**
+     * The handlers and their settings to install.
+     *
+     * @return array
+     */
+    public static function installs(): array
+    {
+        return [
+            HelloBot::class,
+        ];
+    }
+    
+    /**
+     * @return bool
+     */
+    public function authorize(): bool
+    {
+        return auth()->user()->admin === true;
+    }
+}
+```
+
+---
+
+## Register Packaged Bots
+
+- Once you are ready to make your packaged bots available for use, head to your `MessengerServiceProvider` and add your packaged bot classes using the facade `MessengerBots::registerPackagedBots()` method.
+- Please note that when each `PackagedBot` is registered, any `BotActionHandler`'s defined to be installed will be registered automatically. 
+
+```php
+<?php
+
+namespace App\Providers;
+
+use App\Bots\TestBotPackage;
+use Illuminate\Support\ServiceProvider;
+use RTippin\Messenger\Facades\MessengerBots;
+
+class MessengerServiceProvider extends ServiceProvider
+{
+    /**
+     * Bootstrap any application services.
+     *
+     * @return void
+     */
+    public function boot()
+    {
+        MessengerBots::registerPackagedBots([
+            TestBotPackage::class,
+        ]);
+    }
+}
+```
+
+---
+
 ## API Flow
-- With bots now enabled, and your bot handler's registered, you may use the API to manage a group threads bots.
+- With bots now enabled, and your packaged bots and bot handler's registered, you may use the API to manage a group threads bots.
 - In order to create a new Bot in your group thread, the group settings must have `chat_bots` enabled, and the user creating the bot must be a group admin, or a participant with permissions to `manage_bots`.
 
 #### Example storing a new bot
@@ -447,8 +752,8 @@ axios.post('/api/messenger/threads/{thread}/bots', {
 ```
 
 - Once a bot is created, you can view available handler's you may attach to the bot.
-- When attaching a handler, our base rules that are always required are: 
-  - `handler : [string, your handler alias]` 
+- When attaching a handler, our base rules that are always required are:
+  - `handler : [string, your handler alias]`
   - `cooldown : [between:0,900]`
   - `admin_only ; [bool]`
   - `enabled : [bool]`
@@ -493,9 +798,20 @@ axios.post('/api/messenger/threads/{thread}/bots/{bot}/actions', {
 - For `HelloBot`, sending a message that contains any of the triggers `hello|hi|hey` will cause the handler to send our message and reaction!
 - For `ReplyBot`, sending a message that contains our triggers `help|support` will cause the handler to reply with the two messages `Why are you asking me?` and `I say google it!`,
 
+#### Example installing packaged bot
+
+```js
+axios.post('/api/messenger/threads/{thread}/bots/packaged', {
+  alias: "test_package",
+});
+```
+
+- The installation request will trigger an event that will process the installation process on the queue.
+
 [link-messenger-bots]: https://github.com/RTippin/messenger-bots
 [link-bot-subscriber]: https://github.com/RTippin/messenger/blob/1.x/src/Listeners/BotSubscriber.php
 [link-action-handler]: https://github.com/RTippin/messenger/blob/1.x/src/Support/BotActionHandler.php
+[link-packaged-bot]: https://github.com/RTippin/messenger/blob/1.x/src/Support/PackagedBot.php
 [link-messenger-composer]: https://github.com/RTippin/messenger/blob/1.x/src/Support/MessengerComposer.php
 [link-bots-service]: https://github.com/RTippin/messenger/blob/1.x/src/MessengerBots.php
 [link-action-failed-event]: https://github.com/RTippin/messenger/blob/1.x/src/Events/BotActionFailedEvent.php

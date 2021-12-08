@@ -153,6 +153,14 @@
 
 ---
 
+### `InstallPackagedBotEvent`
+- Dispatched when a provider posts to install a packaged bot.
+  - `$event->package` : `PackagedBotDTO` class.
+  - `$event->provider` : `MessengerProvider` provider who is installing the package.
+  - `$event->thread` : `Thread` model the package will be installed in.
+
+---
+
 ### `InviteArchivedEvent`
 - Dispatched when an `Invite` is archived.
   - `$event->provider` : `?MessengerProvider` nullable provider that archived the `Invite`.
@@ -228,6 +236,23 @@
 - Dispatched when a `Thread` is created.
   - `$event->provider` : `MessengerProvider` provider that created the `Thread`.
   - `$event->thread` : `Thread` model that was created.
+
+---
+
+### `PackagedBotInstalledEvent`
+- Dispatched after a packaged bot was successfully installed in a thead.
+  - `$event->packagedBot` : `PackagedBotDTO` class.
+  - `$event->thread` : `Thread` model the package was installed in.
+  - `$event->provider` : `MessengerProvider` provider who installed the package.
+
+---
+
+### `PackagedBotInstallFailedEvent`
+- Dispatched after a packaged bot installation failed.
+  - `$event->exception` : `Throwable` exception thrown.
+  - `$event->packagedBot` : `PackagedBotDTO` class.
+  - `$event->thread` : `Thread` model the package was installing in.
+  - `$event->provider` : `MessengerProvider` provider who tried installing the package.
 
 ---
 
