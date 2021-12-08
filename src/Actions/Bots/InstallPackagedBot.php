@@ -10,6 +10,8 @@ use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\DataTransferObjects\PackagedBotDTO;
 use RTippin\Messenger\DataTransferObjects\ResolvedBotHandlerDTO;
+use RTippin\Messenger\Events\PackagedBotInstalledEvent;
+use RTippin\Messenger\Events\PackagedBotInstallFailedEvent;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
@@ -106,19 +108,27 @@ class InstallPackagedBot extends BaseMessengerAction
                             PackagedBotDTO $package): self
     {
         $this->messenger->setScopedProvider($owner);
-
-        $this->setThread($thread);
-
-        $this->silenceActions();
-
         $this->package = $package;
-
         $this->resolvedHandlers = $this->resolver->resolve(
             $thread,
             $package
         );
 
-        $this->process();
+        $this->setThread($thread)
+            ->silenceActions()
+            ->process();
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
+    private function silenceActions(): self
+    {
+        $this->storeBot->withoutDispatches();
+        $this->storeBotAvatar->withoutDispatches();
+        $this->storeBotAction->withoutDispatches();
 
         return $this;
     }
@@ -126,24 +136,16 @@ class InstallPackagedBot extends BaseMessengerAction
     /**
      * @return void
      */
-    private function silenceActions(): void
-    {
-        $this->storeBot->withoutDispatches();
-        $this->storeBotAvatar->withoutDispatches();
-        $this->storeBotAction->withoutDispatches();
-    }
-
-    /**
-     * @return void
-     */
-    private function process()
+    private function process(): void
     {
         try {
             $this->isChained()
                 ? $this->performActions()
                 : $this->database->transaction(fn () => $this->performActions());
+
+            $this->fireInstalledEvent();
         } catch (Throwable $e) {
-            //Fire events.
+            $this->fireFailedEvent($e);
         }
     }
 
@@ -156,11 +158,11 @@ class InstallPackagedBot extends BaseMessengerAction
     {
         $this->storeBot();
 
-        $this->storeBotAvatar();
-
         $this->resolvedHandlers->each(
             fn (ResolvedBotHandlerDTO $handler) => $this->storeBotAction($handler)
         );
+
+        $this->storeBotAvatar();
     }
 
     /**
@@ -209,7 +211,7 @@ class InstallPackagedBot extends BaseMessengerAction
      *
      * @throws BotException|FeatureDisabledException
      */
-    private function storeBotAction(ResolvedBotHandlerDTO $handler)
+    private function storeBotAction(ResolvedBotHandlerDTO $handler): void
     {
         $this->storeBotAction->execute(
             $this->getThread(),
@@ -222,10 +224,30 @@ class InstallPackagedBot extends BaseMessengerAction
     /**
      * @return void
      */
-    private function fireEvents(): void
+    private function fireInstalledEvent(): void
     {
         if ($this->shouldFireEvents()) {
-//            $this->dispatcher->dispatch();
+            $this->dispatcher->dispatch(new PackagedBotInstalledEvent(
+                $this->package,
+                $this->getThread(true),
+                $this->messenger->getProvider(true)
+            ));
+        }
+    }
+
+    /**
+     * @param  Throwable  $e
+     * @return void
+     */
+    private function fireFailedEvent(Throwable $e): void
+    {
+        if ($this->shouldFireEvents()) {
+            $this->dispatcher->dispatch(new PackagedBotInstallFailedEvent(
+                $e,
+                $this->package,
+                $this->getThread(true),
+                $this->messenger->getProvider(true)
+            ));
         }
     }
 }

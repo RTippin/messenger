@@ -23,6 +23,7 @@ class SillyBotPackage extends PackagedBot
             'match' => MessengerBots::MATCH_EXACT,
         ],
     ];
+    public static bool $enabled = true;
     public static bool $authorized = true;
     public static ?string $avatar = null;
     public static ?int $cooldown = null;
@@ -35,6 +36,7 @@ class SillyBotPackage extends PackagedBot
             'alias' => 'silly_package',
             'name' => 'Silly Package',
             'description' => 'Silly package description.',
+            'enabled' => self::$enabled,
             'avatar' => self::$avatar,
             'cooldown' => self::$cooldown,
             'hide_actions' => self::$hideActions,
@@ -53,6 +55,7 @@ class SillyBotPackage extends PackagedBot
 
     public static function reset(): void
     {
+        self::$enabled = true;
         self::$authorized = true;
         self::$avatar = null;
         self::$cooldown = null;
