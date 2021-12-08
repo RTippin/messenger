@@ -122,6 +122,7 @@ class StoreSystemMessageTest extends FeatureTestCase
             [Message::BOT_RENAMED],
             [Message::BOT_AVATAR_CHANGED],
             [Message::BOT_REMOVED],
+            [Message::BOT_PACKAGE_INSTALLED],
         ];
     }
 }

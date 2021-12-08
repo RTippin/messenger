@@ -252,6 +252,19 @@ class MessageTransformerTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_makes_bot_package_installed()
+    {
+        $thread = Thread::factory()->group()->create();
+
+        $this->assertSame([
+            $thread,
+            $this->tippin,
+            'installed the BOT - Test Bot',
+            Message::BOT_PACKAGE_INSTALLED,
+        ], MessageTransformer::makeBotPackageInstalled($thread, $this->tippin, 'Test Bot'));
+    }
+
+    /** @test */
     public function it_locates_content_owner_with_current_participant()
     {
         $thread = Thread::factory()->group()->create();
@@ -902,6 +915,21 @@ class MessageTransformerTest extends FeatureTestCase
             ]);
 
         $this->assertSame('removed the BOT - Test Bot', MessageTransformer::transform($message));
+    }
+
+    /** @test */
+    public function it_transforms_bot_package_installed()
+    {
+        $thread = Thread::factory()->group()->create();
+        $message = Message::factory()
+            ->for($thread)
+            ->owner($this->tippin)
+            ->create([
+                'type' => Message::BOT_PACKAGE_INSTALLED,
+                'body' => MessageTransformer::makeBotPackageInstalled($thread, $this->tippin, 'Test Bot')[2],
+            ]);
+
+        $this->assertSame('installed the BOT - Test Bot', MessageTransformer::transform($message));
     }
 
     /** @test */

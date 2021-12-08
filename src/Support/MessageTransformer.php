@@ -326,6 +326,24 @@ class MessageTransformer
     }
 
     /**
+     * @param  Thread  $thread
+     * @param  MessengerProvider  $provider
+     * @param  string  $packageName
+     * @return array
+     */
+    public static function makeBotPackageInstalled(Thread $thread,
+                                                   MessengerProvider $provider,
+                                                   string $packageName): array
+    {
+        return [
+            $thread,
+            $provider,
+            "installed the BOT - $packageName",
+            Message::BOT_PACKAGE_INSTALLED,
+        ];
+    }
+
+    /**
      * @param  Message  $message
      * @param  array|null  $data
      * @return GhostUser|MessengerProvider

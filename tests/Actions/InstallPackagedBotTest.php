@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Exception;
+use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
@@ -13,6 +14,7 @@ use RTippin\Messenger\Events\PackagedBotInstalledEvent;
 use RTippin\Messenger\Events\PackagedBotInstallFailedEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Facades\MessengerBots;
+use RTippin\Messenger\Jobs\BotInstalledMessage;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\Fixtures\BrokenBotHandler;
@@ -194,5 +196,49 @@ class InstallPackagedBotTest extends FeatureTestCase
 
             return true;
         });
+    }
+
+    /** @test */
+    public function it_dispatches_subscriber_job()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        MessengerBots::registerPackagedBots([FunBotPackage::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $package = MessengerBots::getPackagedBots(FunBotPackage::class);
+
+        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
+
+        Bus::assertDispatched(BotInstalledMessage::class);
+    }
+
+    /** @test */
+    public function it_runs_subscriber_job_now()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        MessengerBots::registerPackagedBots([FunBotPackage::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $package = MessengerBots::getPackagedBots(FunBotPackage::class);
+        Messenger::setSystemMessageSubscriber('queued', false);
+
+        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
+
+        Bus::assertDispatchedSync(BotInstalledMessage::class);
+    }
+
+    /** @test */
+    public function it_doesnt_dispatch_subscriber_job_if_disabled()
+    {
+        BaseMessengerAction::enableEvents();
+        Bus::fake();
+        MessengerBots::registerPackagedBots([FunBotPackage::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $package = MessengerBots::getPackagedBots(FunBotPackage::class);
+        Messenger::setSystemMessageSubscriber('enabled', false);
+
+        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
+
+        Bus::assertNotDispatched(BotInstalledMessage::class);
     }
 }

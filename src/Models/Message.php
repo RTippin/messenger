@@ -81,6 +81,7 @@ class Message extends Model implements Ownerable
     const BOT_RENAMED = 101;
     const BOT_AVATAR_CHANGED = 102;
     const BOT_REMOVED = 103;
+    const BOT_PACKAGE_INSTALLED = 104;
     const NonSystemTypes = [
         self::MESSAGE,
         self::IMAGE_MESSAGE,
@@ -109,6 +110,7 @@ class Message extends Model implements Ownerable
         101 => 'BOT_RENAMED',
         102 => 'BOT_AVATAR_CHANGED',
         103 => 'BOT_REMOVED',
+        104 => 'BOT_PACKAGE_INSTALLED',
     ];
 
     /**

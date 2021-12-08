@@ -10,6 +10,7 @@ use RTippin\Messenger\Events\CallEndedEvent;
 use RTippin\Messenger\Events\DemotedAdminEvent;
 use RTippin\Messenger\Events\InviteUsedEvent;
 use RTippin\Messenger\Events\NewBotEvent;
+use RTippin\Messenger\Events\PackagedBotInstalledEvent;
 use RTippin\Messenger\Events\ParticipantsAddedEvent;
 use RTippin\Messenger\Events\PromotedAdminEvent;
 use RTippin\Messenger\Events\RemovedFromThreadEvent;
@@ -20,6 +21,7 @@ use RTippin\Messenger\Events\ThreadSettingsEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\BotAddedMessage;
 use RTippin\Messenger\Jobs\BotAvatarMessage;
+use RTippin\Messenger\Jobs\BotInstalledMessage;
 use RTippin\Messenger\Jobs\BotNameMessage;
 use RTippin\Messenger\Jobs\BotRemovedMessage;
 use RTippin\Messenger\Jobs\CallEndedMessage;
@@ -57,6 +59,7 @@ class SystemMessageSubscriber
         $events->listen(BotUpdatedEvent::class, [SystemMessageSubscriber::class, 'botNameMessage']);
         $events->listen(BotAvatarEvent::class, [SystemMessageSubscriber::class, 'botAvatarMessage']);
         $events->listen(BotArchivedEvent::class, [SystemMessageSubscriber::class, 'botRemovedMessage']);
+        $events->listen(PackagedBotInstalledEvent::class, [SystemMessageSubscriber::class, 'botInstalledMessage']);
     }
 
     /**
@@ -224,6 +227,18 @@ class SystemMessageSubscriber
             Messenger::getSystemMessageSubscriber('queued')
                 ? BotRemovedMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
                 : BotRemovedMessage::dispatchSync($event);
+        }
+    }
+
+    /**
+     * @param  PackagedBotInstalledEvent  $event
+     */
+    public function botInstalledMessage(PackagedBotInstalledEvent $event): void
+    {
+        if ($this->isEnabled()) {
+            Messenger::getSystemMessageSubscriber('queued')
+                ? BotInstalledMessage::dispatch($event)->onQueue(Messenger::getSystemMessageSubscriber('channel'))
+                : BotInstalledMessage::dispatchSync($event);
         }
     }
 
