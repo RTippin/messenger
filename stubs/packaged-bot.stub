@@ -1,0 +1,38 @@
+<?php
+
+namespace {{ namespace }};
+
+use RTippin\Messenger\Support\PackagedBot;
+
+class {{ class }} extends PackagedBot
+{
+    /**
+     * The packages settings.
+     *
+     * @return array
+     */
+    public static function getSettings(): array
+    {
+        return [
+            'alias' => 'package_alias',
+            'name' => 'Package Name',
+            'description' => 'Package description.',
+            'avatar' => null,
+            'cooldown' => 0,
+            'enabled' => true,
+            'hide_actions' => false,
+        ];
+    }
+
+    /**
+     * The handlers and their settings to install.
+     *
+     * @return array
+     */
+    public static function installs(): array
+    {
+        return [
+            //
+        ];
+    }
+}

@@ -97,6 +97,12 @@
 
 ---
 
+### `php artisan messenger:make:packaged-bot {name}`
+- Generates a new packaged bot class. The class will be placed in your default `App` namespace, under the `Bots` directory. eg: `App\Bots`
+- `name` The name of the generated packaged bot class.
+
+---
+
 ## Example Kernel Scheduler utilizing the commands
 ```php
 <?php

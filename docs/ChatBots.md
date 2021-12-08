@@ -441,6 +441,12 @@ class MessengerServiceProvider extends ServiceProvider
 
 **Create your packaged bot class and extend the [PackagedBot][link-packaged-bot] abstract class.**
 
+**You can use the included command to generate the packaged bot class:**
+
+```bash
+php artisan messenger:make:packaged-bot TestBotPackage
+```
+
 - Your packages class must define the `public static getSettings()` and a `public static installs()` methods.
 
 **Example**
