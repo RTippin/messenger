@@ -801,7 +801,7 @@ axios.post('/api/messenger/threads/{thread}/bots/{bot}/actions', {
 #### Example installing packaged bot
 
 ```js
-axios.post('/api/messenger/threads/{thread}/bots/packaged', {
+axios.post('/api/messenger/threads/{thread}/bots/packages', {
   alias: "test_package",
 });
 ```
