@@ -3,6 +3,26 @@
 
 ---
 
+### [v1.14.0]
+
+#### Added
+- Packaged Bots feature!
+- `Helpers::forProviderInCollection()` method.
+- `BOT_PACKAGE_INSTALLED` system message type.
+
+#### Changed
+- `BotActionHandler` class moved from `RTipppin\Messenger\Actions\Bots` to `RTippin\Messenger\Support`.
+  - The `BotActionHandler` original is now deprecated and extends the new class's location.
+- Renamed `MessengerBots::getHandlersDTO()` to `MessengerBots::getHandlers()`.
+- Renamed `MessengerBots::getAlises()` to `MessengerBots::getHandlerAliases()`.
+- Renamed `BotAction` method `getHandlersDTO` to `getHandler`.
+
+#### Removed
+- `forProvider` collection macro.
+- Redundant interfaces `Action`, `ActionHandler`, and `BroadcastEvent`.
+
+---
+
 ### [v1.13.0 (11-11-2021)](https://github.com/RTippin/messenger/compare/v1.12.0...v1.13.0)
 
 #### Added
