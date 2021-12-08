@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Exception;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
@@ -97,6 +98,20 @@ class InstallPackagedBotTest extends FeatureTestCase
             'avatar' => null,
         ]);
         $this->assertDatabaseCount('bot_actions', 0);
+    }
+
+    /** @test */
+    public function it_clears_bot_actions_cache()
+    {
+        SillyBotPackage::$installs = [];
+        MessengerBots::registerPackagedBots([SillyBotPackage::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
+        $cache = Cache::spy();
+
+        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
+
+        $cache->shouldHaveReceived('forget');
     }
 
     /** @test */

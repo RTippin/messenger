@@ -16,6 +16,7 @@ use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
 use RTippin\Messenger\Messenger;
+use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Services\PackagedBotResolverService;
 use Throwable;
@@ -115,20 +116,22 @@ class InstallPackagedBot extends BaseMessengerAction
         );
 
         $this->setThread($thread)
-            ->silenceActions()
+            ->setupActions()
             ->process();
 
         return $this;
     }
 
     /**
+     * Disable any chained calls or events from being fired by our actions.
+     *
      * @return $this
      */
-    private function silenceActions(): self
+    private function setupActions(): self
     {
-        $this->storeBot->withoutDispatches();
-        $this->storeBotAvatar->withoutDispatches();
-        $this->storeBotAction->withoutDispatches();
+        $this->storeBot->continuesChain()->withoutDispatches();
+        $this->storeBotAvatar->continuesChain()->withoutDispatches();
+        $this->storeBotAction->continuesChain()->withoutDispatches();
 
         return $this;
     }
@@ -143,7 +146,7 @@ class InstallPackagedBot extends BaseMessengerAction
                 ? $this->performActions()
                 : $this->database->transaction(fn () => $this->performActions());
 
-            $this->fireInstalledEvent();
+            $this->clearActionsCache()->fireInstalledEvent();
         } catch (Throwable $e) {
             $this->fireFailedEvent($e);
         }
@@ -219,6 +222,16 @@ class InstallPackagedBot extends BaseMessengerAction
             $handler,
             true
         );
+    }
+
+    /**
+     * @return $this
+     */
+    private function clearActionsCache(): self
+    {
+        BotAction::clearActionsCacheForThread($this->getThread()->id);
+
+        return $this;
     }
 
     /**
