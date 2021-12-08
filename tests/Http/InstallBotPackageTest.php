@@ -24,7 +24,7 @@ class InstallBotPackageTest extends HttpTestCase
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->doe);
 
-        $this->postJson(route('api.messenger.threads.bots.packages.install', [
+        $this->postJson(route('api.messenger.threads.bots.packages.store', [
             'thread' => $thread->id,
         ]), [
             'alias' => 'fun_package',
@@ -46,7 +46,7 @@ class InstallBotPackageTest extends HttpTestCase
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
-        $this->postJson(route('api.messenger.threads.bots.packages.install', [
+        $this->postJson(route('api.messenger.threads.bots.packages.store', [
             'thread' => $thread->id,
         ]), [
             'alias' => 'silly_package',
@@ -70,7 +70,7 @@ class InstallBotPackageTest extends HttpTestCase
         Participant::factory()->for($thread)->owner($this->doe)->create(['manage_bots' => true]);
         $this->actingAs($this->doe);
 
-        $this->postJson(route('api.messenger.threads.bots.packages.install', [
+        $this->postJson(route('api.messenger.threads.bots.packages.store', [
             'thread' => $thread->id,
         ]), [
             'alias' => 'fun_package',
@@ -91,7 +91,7 @@ class InstallBotPackageTest extends HttpTestCase
         $package = MessengerBots::getPackagedBots(FunBotPackage::class);
         $this->actingAs($this->tippin);
 
-        $this->postJson(route('api.messenger.threads.bots.packages.install', [
+        $this->postJson(route('api.messenger.threads.bots.packages.store', [
             'thread' => $thread->id,
         ]), [
             'alias' => 'fun_package',
@@ -117,7 +117,7 @@ class InstallBotPackageTest extends HttpTestCase
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
-        $this->postJson(route('api.messenger.threads.bots.packages.install', [
+        $this->postJson(route('api.messenger.threads.bots.packages.store', [
             'thread' => $thread->id,
         ]), [
             'alias' => 'fun_package',
@@ -137,7 +137,7 @@ class InstallBotPackageTest extends HttpTestCase
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
-        $this->postJson(route('api.messenger.threads.bots.packages.install', [
+        $this->postJson(route('api.messenger.threads.bots.packages.store', [
             'thread' => $thread->id,
         ]), [
             'alias' => 'fun_package',
@@ -157,7 +157,7 @@ class InstallBotPackageTest extends HttpTestCase
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
-        $this->postJson(route('api.messenger.threads.bots.packages.install', [
+        $this->postJson(route('api.messenger.threads.bots.packages.store', [
             'thread' => $thread->id,
         ]), [
             'alias' => 'fun_package',
@@ -181,7 +181,7 @@ class InstallBotPackageTest extends HttpTestCase
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
-        $this->postJson(route('api.messenger.threads.bots.packages.install', [
+        $this->postJson(route('api.messenger.threads.bots.packages.store', [
             'thread' => $thread->id,
         ]), [
             'alias' => $alias,

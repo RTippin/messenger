@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use RTippin\Messenger\Http\Controllers\Actions\AvailableBotHandlers;
+use RTippin\Messenger\Http\Controllers\Actions\AvailableBotPackages;
 use RTippin\Messenger\Http\Controllers\Actions\CallHeartbeat;
 use RTippin\Messenger\Http\Controllers\Actions\DemoteAdmin;
 use RTippin\Messenger\Http\Controllers\Actions\EndCall;
@@ -118,11 +119,12 @@ Route::name('api.messenger.')->group(function () {
         Route::post('promote', PromoteAdmin::class)->name('promote');
         Route::post('demote', DemoteAdmin::class)->name('demote');
     });
+    Route::prefix('threads/{thread}/bots/packages')->name('threads.bots.packages.')->group(function () {
+        Route::get('/', AvailableBotPackages::class)->name('index');
+        Route::post('/', InstallBotPackage::class)->name('store');
+    });
     Route::apiResource('threads.bots', BotController::class)->scoped();
     Route::apiResource('threads.bots.actions', BotActionController::class)->scoped();
-    Route::prefix('threads/{thread}/bots/packages')->name('threads.bots.packages.')->group(function () {
-        Route::post('install', InstallBotPackage::class)->name('install');
-    });
     Route::prefix('threads/{thread}/bots/{bot:id}')->name('threads.bots.')->group(function () {
         Route::get('add-handlers', AvailableBotHandlers::class)->name('handlers');
         Route::post('avatar', [BotController::class, 'storeAvatar'])->name('avatar.store');
