@@ -73,7 +73,7 @@ class InstallBotPackage
         $this->fireInstallEvent($thread, $package);
 
         return new JsonResponse([
-            'message' => 'success',
+            'message' => "The $package->name package is being installed and will be available for use shortly.",
         ]);
     }
 
