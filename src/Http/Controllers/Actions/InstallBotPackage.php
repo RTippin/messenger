@@ -66,7 +66,9 @@ class InstallBotPackage
             $request->validated()['alias']
         );
 
-        $this->authorizePackagedBot($package);
+        $this->bailIfAuthorizationFails($thread, $package);
+
+        $package->setAwaitingInstall($thread);
 
         $this->fireInstallEvent($thread, $package);
 
@@ -76,15 +78,21 @@ class InstallBotPackage
     }
 
     /**
+     * @param  Thread  $thread
      * @param  PackagedBotDTO  $package
      *
-     * @throws AuthorizationException|BotException
+     * @throws AuthorizationException
+     * @throws BotException
      */
-    private function authorizePackagedBot(PackagedBotDTO $package): void
+    private function bailIfAuthorizationFails(Thread $thread, PackagedBotDTO $package): void
     {
         if ($package->shouldAuthorize
             && ! $this->bots->initializePackagedBot($package->class)->authorize()) {
             throw new AuthorizationException('Not authorized to install that bot package.');
+        }
+
+        if ($package->isAwaitingInstall($thread)) {
+            throw new AuthorizationException("{$thread->name()} is currently waiting for $package->name to install.");
         }
     }
 

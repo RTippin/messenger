@@ -117,6 +117,20 @@ class InstallPackagedBotTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_clears_package_installing_cache()
+    {
+        SillyBotPackage::$installs = [];
+        MessengerBots::registerPackagedBots([SillyBotPackage::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
+        $cache = Cache::spy();
+
+        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
+
+        $cache->shouldHaveReceived('forget', ["packaged:bot:installing:$thread->id:$package->alias"]);
+    }
+
+    /** @test */
     public function it_installs_bot_avatar()
     {
         SillyBotPackage::$installs = [];

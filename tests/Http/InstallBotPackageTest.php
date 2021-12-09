@@ -18,9 +18,7 @@ class InstallBotPackageTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_install_packaged_bot()
     {
-        MessengerBots::registerPackagedBots([
-            FunBotPackage::class,
-        ]);
+        MessengerBots::registerPackagedBots([FunBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->doe);
 
@@ -37,9 +35,7 @@ class InstallBotPackageTest extends HttpTestCase
     {
         $this->logCurrentRequest();
         SillyBotPackage::$authorized = false;
-        MessengerBots::registerPackagedBots([
-            SillyBotPackage::class,
-        ]);
+        MessengerBots::registerPackagedBots([SillyBotPackage::class]);
         Event::fake([
             InstallPackagedBotEvent::class,
         ]);
@@ -57,12 +53,30 @@ class InstallBotPackageTest extends HttpTestCase
     }
 
     /** @test */
+    public function forbidden_to_install_packaged_bot_if_installing_cache_key_exists()
+    {
+        MessengerBots::registerPackagedBots([FunBotPackage::class]);
+        Event::fake([
+            InstallPackagedBotEvent::class,
+        ]);
+        $thread = $this->createGroupThread($this->tippin);
+        $package = MessengerBots::getPackagedBots(FunBotPackage::class);
+        $package->setAwaitingInstall($thread);
+        $this->actingAs($this->tippin);
+
+        $this->postJson(route('api.messenger.threads.bots.packages.store', [
+            'thread' => $thread->id,
+        ]), [
+            'alias' => 'fun_package',
+        ])
+            ->assertForbidden();
+    }
+
+    /** @test */
     public function participant_with_permission_can_install_packaged_bot()
     {
         $this->logCurrentRequest();
-        MessengerBots::registerPackagedBots([
-            FunBotPackage::class,
-        ]);
+        MessengerBots::registerPackagedBots([FunBotPackage::class]);
         Event::fake([
             InstallPackagedBotEvent::class,
         ]);
@@ -79,11 +93,9 @@ class InstallBotPackageTest extends HttpTestCase
     }
 
     /** @test */
-    public function install_packaged_bot_triggers_event()
+    public function install_packaged_bot_triggers_event_and_sets_install_cache_key()
     {
-        MessengerBots::registerPackagedBots([
-            FunBotPackage::class,
-        ]);
+        MessengerBots::registerPackagedBots([FunBotPackage::class]);
         Event::fake([
             InstallPackagedBotEvent::class,
         ]);
@@ -98,6 +110,7 @@ class InstallBotPackageTest extends HttpTestCase
         ])
             ->assertSuccessful();
 
+        $this->assertTrue($package->isAwaitingInstall($thread));
         Event::assertDispatched(function (InstallPackagedBotEvent $event) use ($thread, $package) {
             $this->assertSame($package, $event->package);
             $this->assertSame($thread->id, $event->thread->id);
@@ -110,9 +123,7 @@ class InstallBotPackageTest extends HttpTestCase
     /** @test */
     public function install_packaged_bot_dispatches_subscriber_job()
     {
-        MessengerBots::registerPackagedBots([
-            FunBotPackage::class,
-        ]);
+        MessengerBots::registerPackagedBots([FunBotPackage::class]);
         Bus::fake();
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
@@ -129,9 +140,7 @@ class InstallBotPackageTest extends HttpTestCase
     /** @test */
     public function install_packaged_bot_runs_subscriber_job_now()
     {
-        MessengerBots::registerPackagedBots([
-            FunBotPackage::class,
-        ]);
+        MessengerBots::registerPackagedBots([FunBotPackage::class]);
         Messenger::setBotSubscriber('queued', false);
         Bus::fake();
         $thread = $this->createGroupThread($this->tippin);
@@ -149,9 +158,7 @@ class InstallBotPackageTest extends HttpTestCase
     /** @test */
     public function install_packaged_bot_doesnt_dispatch_subscriber_job_if_disabled()
     {
-        MessengerBots::registerPackagedBots([
-            FunBotPackage::class,
-        ]);
+        MessengerBots::registerPackagedBots([FunBotPackage::class]);
         Messenger::setBotSubscriber('enabled', false);
         Bus::fake();
         $thread = $this->createGroupThread($this->tippin);
@@ -175,9 +182,7 @@ class InstallBotPackageTest extends HttpTestCase
     public function install_packaged_bot_fails_alias_validation($alias)
     {
         $this->logCurrentRequest();
-        MessengerBots::registerPackagedBots([
-            FunBotPackage::class,
-        ]);
+        MessengerBots::registerPackagedBots([FunBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 

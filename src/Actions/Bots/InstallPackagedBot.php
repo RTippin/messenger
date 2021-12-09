@@ -119,6 +119,8 @@ class InstallPackagedBot extends BaseMessengerAction
             ->setupActions()
             ->process();
 
+        $package->clearAwaitingInstall($thread);
+
         return $this;
     }
 
