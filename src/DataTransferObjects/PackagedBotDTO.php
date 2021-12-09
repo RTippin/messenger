@@ -125,7 +125,7 @@ class PackagedBotDTO implements Arrayable
         foreach ($installs as $key => $value) {
             $handler = is_string($key) ? $key : $value;
 
-            if (! in_array($installs, $registeredHandlers)) {
+            if (! in_array($handler, $registeredHandlers)) {
                 $register[] = $handler;
             }
         }
