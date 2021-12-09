@@ -102,12 +102,14 @@ class InstallPackagedBot extends BaseMessengerAction
      * @param  PackagedBotDTO  $package
      * @return $this
      *
-     * @throws InvalidProviderException
+     * @throws FeatureDisabledException|InvalidProviderException
      */
     public function execute(Thread $thread,
                             MessengerProvider $owner,
                             PackagedBotDTO $package): self
     {
+        $this->bailWhenFeatureDisabled();
+
         $this->messenger->setScopedProvider($owner);
         $this->package = $package;
         $this->resolvedHandlers = $this->resolver->resolve(
@@ -122,6 +124,16 @@ class InstallPackagedBot extends BaseMessengerAction
         $package->clearAwaitingInstall($thread);
 
         return $this;
+    }
+
+    /**
+     * @throws FeatureDisabledException
+     */
+    private function bailWhenFeatureDisabled(): void
+    {
+        if (! $this->messenger->isBotsEnabled()) {
+            throw new FeatureDisabledException('Bots are currently disabled.');
+        }
     }
 
     /**

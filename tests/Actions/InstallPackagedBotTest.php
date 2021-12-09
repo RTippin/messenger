@@ -12,6 +12,7 @@ use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Bots\InstallPackagedBot;
 use RTippin\Messenger\Events\PackagedBotInstalledEvent;
 use RTippin\Messenger\Events\PackagedBotInstallFailedEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Jobs\BotInstalledMessage;
@@ -25,6 +26,20 @@ use RTippin\Messenger\Tests\Fixtures\SillyBotPackage;
 
 class InstallPackagedBotTest extends FeatureTestCase
 {
+    /** @test */
+    public function it_throws_exception_if_bots_disabled()
+    {
+        Messenger::setBots(false);
+        MessengerBots::registerPackagedBots([FunBotPackage::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $package = MessengerBots::getPackagedBots(FunBotPackage::class);
+
+        $this->expectException(FeatureDisabledException::class);
+        $this->expectExceptionMessage('Bots are currently disabled.');
+
+        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
+    }
+
     /** @test */
     public function it_installs_bot()
     {

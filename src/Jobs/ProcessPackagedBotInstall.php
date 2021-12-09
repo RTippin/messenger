@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Jobs;
 
 use RTippin\Messenger\Actions\Bots\InstallPackagedBot;
 use RTippin\Messenger\Events\InstallPackagedBotEvent;
+use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\InvalidProviderException;
 
 class ProcessPackagedBotInstall extends BaseMessengerJob
@@ -27,7 +28,7 @@ class ProcessPackagedBotInstall extends BaseMessengerJob
      * @param  InstallPackagedBot  $installer
      * @return void
      *
-     * @throws InvalidProviderException
+     * @throws FeatureDisabledException|InvalidProviderException
      */
     public function handle(InstallPackagedBot $installer): void
     {
