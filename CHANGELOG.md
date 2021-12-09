@@ -6,9 +6,10 @@
 ### [v1.14.0]
 
 #### Added
-- Packaged Bots feature!
+- Packaged Bots feature! Please check the chat-bots documentation for more information.
 - `Helpers::forProviderInCollection()` method.
 - `BOT_PACKAGE_INSTALLED` system message type.
+- `php artisan messenger:make:packaged-bot {name}` command.
 
 #### Changed
 - `BotActionHandler` class moved from `RTipppin\Messenger\Actions\Bots` to `RTippin\Messenger\Support`.

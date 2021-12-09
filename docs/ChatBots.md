@@ -542,17 +542,15 @@ public static function getSettings(): array
 - The array keys must be the `BotActionHandler` class. 
 - For handlers that require you to set properties, or that you want to override certain defaults, you must define them as the value of the handler class key represented as an associative array. 
 - If you want the handler to be installed multiple times with different parameters, you can define an array of arrays as the value. The key/values of your parameters must match the default for a BotAction model, as well as include any parameters that are defined on the handlers rules for serializing a payload.
-
-
 - `BotAction | BotActionHandler` handler keys include:
   - `enabled` Default of `true`.
   - `cooldown` Default of `30`.
   - `admin_only` Default of `false`.
   - `triggers` No default. You must define them if the `BotActionHandler` does not override them.
   - `match` No default. You must define them if the `BotActionHandler` does not override them.
-
-
 - Any parameters that are already defined in the bot handler class cannot be overridden. While installing, each `BotActionHandler` will pass through a validation process, and will be discarded if it fails validating.
+
+---
 
 **`BotActionHandler` That doesn't need any parameters defined:**
 
@@ -564,6 +562,8 @@ public static function installs(): array
     ];
 }
 ```
+
+---
 
 **`BotActionHandler` We want to use our own defaults:**
 
@@ -579,6 +579,8 @@ public static function installs(): array
     ];
 }
 ```
+
+---
 
 **`BotActionHandler` Requiring match, triggers, and custom rules to be defined:**
 
@@ -596,6 +598,8 @@ public static function installs(): array
     ];
 }
 ```
+
+---
 
 **`BotActionHandler` We want to be installed multiple times with different parameters:**
 
@@ -622,6 +626,8 @@ public static function installs(): array
     ];
 }
 ```
+
+---
 
 **Installing multiple `BotActionHandler`'s with varying parameter requirements**
 
@@ -742,7 +748,7 @@ class MessengerServiceProvider extends ServiceProvider
 
 ---
 
-## API Flow
+## Chat Bots API Flow
 - With bots now enabled, and your packaged bots and bot handler's registered, you may use the API to manage a group threads bots.
 - In order to create a new Bot in your group thread, the group settings must have `chat_bots` enabled, and the user creating the bot must be a group admin, or a participant with permissions to `manage_bots`.
 
