@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        php: [7.4, 8.0]
+        php: [7.4, 8.0, 8.1]
         laravel: [^8.0]
         use-uuid: [false, true]
         morph-maps: [false, true]
