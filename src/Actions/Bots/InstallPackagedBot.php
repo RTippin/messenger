@@ -7,14 +7,12 @@ use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Collection;
 use RTippin\Messenger\Actions\BaseMessengerAction;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\DataTransferObjects\PackagedBotDTO;
 use RTippin\Messenger\DataTransferObjects\ResolvedBotHandlerDTO;
 use RTippin\Messenger\Events\PackagedBotInstalledEvent;
-use RTippin\Messenger\Events\PackagedBotInstallFailedEvent;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
-use RTippin\Messenger\Exceptions\InvalidProviderException;
+use RTippin\Messenger\Http\Resources\BotResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Thread;
@@ -98,19 +96,15 @@ class InstallPackagedBot extends BaseMessengerAction
 
     /**
      * @param  Thread  $thread
-     * @param  MessengerProvider  $owner
      * @param  PackagedBotDTO  $package
      * @return $this
      *
-     * @throws FeatureDisabledException|InvalidProviderException
+     * @throws BotException|FeatureDisabledException|Throwable
      */
-    public function execute(Thread $thread,
-                            MessengerProvider $owner,
-                            PackagedBotDTO $package): self
+    public function execute(Thread $thread, PackagedBotDTO $package): self
     {
         $this->bailWhenFeatureDisabled();
 
-        $this->messenger->setScopedProvider($owner);
         $this->package = $package;
         $this->resolvedHandlers = $this->resolver->resolve(
             $thread,
@@ -119,9 +113,10 @@ class InstallPackagedBot extends BaseMessengerAction
 
         $this->setThread($thread)
             ->setupActions()
-            ->process();
-
-        $package->clearAwaitingInstall($thread);
+            ->process()
+            ->generateResource()
+            ->clearActionsCache()
+            ->fireInstalledEvent();
 
         return $this;
     }
@@ -152,18 +147,16 @@ class InstallPackagedBot extends BaseMessengerAction
 
     /**
      * @return void
+     *
+     * @throws BotException|FeatureDisabledException|Throwable
      */
-    private function process(): void
+    private function process(): self
     {
-        try {
-            $this->isChained()
-                ? $this->performActions()
-                : $this->database->transaction(fn () => $this->performActions());
+        $this->isChained()
+            ? $this->performActions()
+            : $this->database->transaction(fn () => $this->performActions());
 
-            $this->clearActionsCache()->fireInstalledEvent();
-        } catch (Throwable $e) {
-            $this->fireFailedEvent($e);
-        }
+        return $this;
     }
 
     /**
@@ -241,6 +234,18 @@ class InstallPackagedBot extends BaseMessengerAction
     /**
      * @return $this
      */
+    private function generateResource(): self
+    {
+        $this->setJsonResource(new BotResource(
+            $this->getBot()
+        ));
+
+        return $this;
+    }
+
+    /**
+     * @return $this
+     */
     private function clearActionsCache(): self
     {
         BotAction::clearActionsCacheForThread($this->getThread()->id);
@@ -255,22 +260,6 @@ class InstallPackagedBot extends BaseMessengerAction
     {
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new PackagedBotInstalledEvent(
-                $this->package,
-                $this->getThread(true),
-                $this->messenger->getProvider(true)
-            ));
-        }
-    }
-
-    /**
-     * @param  Throwable  $e
-     * @return void
-     */
-    private function fireFailedEvent(Throwable $e): void
-    {
-        if ($this->shouldFireEvents()) {
-            $this->dispatcher->dispatch(new PackagedBotInstallFailedEvent(
-                $e,
                 $this->package,
                 $this->getThread(true),
                 $this->messenger->getProvider(true)

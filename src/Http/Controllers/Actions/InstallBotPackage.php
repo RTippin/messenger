@@ -3,17 +3,17 @@
 namespace RTippin\Messenger\Http\Controllers\Actions;
 
 use Illuminate\Auth\Access\AuthorizationException;
-use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Http\JsonResponse;
+use RTippin\Messenger\Actions\Bots\InstallPackagedBot;
 use RTippin\Messenger\DataTransferObjects\PackagedBotDTO;
-use RTippin\Messenger\Events\InstallPackagedBotEvent;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Http\Request\InstallBotRequest;
+use RTippin\Messenger\Http\Resources\BotResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Thread;
+use Throwable;
 
 class InstallBotPackage
 {
@@ -30,32 +30,32 @@ class InstallBotPackage
     private MessengerBots $bots;
 
     /**
-     * @var Dispatcher
+     * @var InstallPackagedBot
      */
-    private Dispatcher $dispatcher;
+    private InstallPackagedBot $installer;
 
     /**
      * @param  Messenger  $messenger
      * @param  MessengerBots  $bots
-     * @param  Dispatcher  $dispatcher
+     * @param  InstallPackagedBot  $installer
      */
     public function __construct(Messenger $messenger,
                                 MessengerBots $bots,
-                                Dispatcher $dispatcher)
+                                InstallPackagedBot $installer)
     {
         $this->messenger = $messenger;
         $this->bots = $bots;
-        $this->dispatcher = $dispatcher;
+        $this->installer = $installer;
     }
 
     /**
      * @param  InstallBotRequest  $request
      * @param  Thread  $thread
-     * @return JsonResponse
+     * @return BotResource
      *
-     * @throws AuthorizationException
+     * @throws AuthorizationException|Throwable
      */
-    public function __invoke(InstallBotRequest $request, Thread $thread): JsonResponse
+    public function __invoke(InstallBotRequest $request, Thread $thread): BotResource
     {
         $this->authorize('create', [
             Bot::class,
@@ -66,46 +66,25 @@ class InstallBotPackage
             $request->validated()['alias']
         );
 
-        $this->bailIfAuthorizationFails($thread, $package);
+        $this->bailIfAuthorizationFails($package);
 
-        $package->setAwaitingInstall($thread);
-
-        $this->fireInstallEvent($thread, $package);
-
-        return new JsonResponse([
-            'message' => "The $package->name package is being installed and will be available for use shortly.",
-        ]);
+        return $this->installer->execute(
+            $thread,
+            $package
+        )->getJsonResource();
     }
 
     /**
-     * @param  Thread  $thread
      * @param  PackagedBotDTO  $package
      *
      * @throws AuthorizationException
      * @throws BotException
      */
-    private function bailIfAuthorizationFails(Thread $thread, PackagedBotDTO $package): void
+    private function bailIfAuthorizationFails(PackagedBotDTO $package): void
     {
         if ($package->shouldAuthorize
             && ! $this->bots->initializePackagedBot($package->class)->authorize()) {
             throw new AuthorizationException('Not authorized to install that bot package.');
         }
-
-        if ($package->isAwaitingInstall($thread)) {
-            throw new AuthorizationException("{$thread->name()} is currently waiting for $package->name to install.");
-        }
-    }
-
-    /**
-     * @param  Thread  $thread
-     * @param  PackagedBotDTO  $package
-     */
-    private function fireInstallEvent(Thread $thread, PackagedBotDTO $package): void
-    {
-        $this->dispatcher->dispatch(new InstallPackagedBotEvent(
-            $thread,
-            $this->messenger->getProvider(true),
-            $package,
-        ));
     }
 }

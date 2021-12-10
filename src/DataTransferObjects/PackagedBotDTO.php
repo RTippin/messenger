@@ -4,10 +4,8 @@ namespace RTippin\Messenger\DataTransferObjects;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Facades\MessengerBots;
-use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Support\PackagedBot;
 
@@ -98,33 +96,6 @@ class PackagedBotDTO implements Arrayable
         $this->registerHandlers($packagedBot::installs());
 
         $this->installs = $this->generateInstalls($packagedBot::installs());
-    }
-
-    /**
-     * @param  Thread  $thread
-     * @return bool
-     */
-    public function isAwaitingInstall(Thread $thread): bool
-    {
-        return Cache::has($this->getInstallingCacheKey($thread));
-    }
-
-    /**
-     * @param  Thread  $thread
-     * @return void
-     */
-    public function setAwaitingInstall(Thread $thread): void
-    {
-        Cache::put($this->getInstallingCacheKey($thread), true, now()->addMinutes(15));
-    }
-
-    /**
-     * @param  Thread  $thread
-     * @return void
-     */
-    public function clearAwaitingInstall(Thread $thread): void
-    {
-        Cache::forget($this->getInstallingCacheKey($thread));
     }
 
     /**
@@ -226,14 +197,5 @@ class PackagedBotDTO implements Arrayable
             'alias' => $this->alias,
             'image' => 'avatar.'.$this->avatarExtension,
         ]);
-    }
-
-    /**
-     * @param  Thread  $thread
-     * @return string
-     */
-    private function getInstallingCacheKey(Thread $thread): string
-    {
-        return "packaged:bot:installing:$thread->id:$this->alias";
     }
 }

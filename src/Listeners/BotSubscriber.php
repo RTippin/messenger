@@ -3,11 +3,9 @@
 namespace RTippin\Messenger\Listeners;
 
 use Illuminate\Events\Dispatcher;
-use RTippin\Messenger\Events\InstallPackagedBotEvent;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Jobs\BotActionMessageHandler;
-use RTippin\Messenger\Jobs\ProcessPackagedBotInstall;
 
 class BotSubscriber
 {
@@ -20,7 +18,6 @@ class BotSubscriber
     public function subscribe(Dispatcher $events): void
     {
         $events->listen(NewMessageEvent::class, [BotSubscriber::class, 'newMessage']);
-        $events->listen(InstallPackagedBotEvent::class, [BotSubscriber::class, 'installBotPackage']);
     }
 
     /**
@@ -32,18 +29,6 @@ class BotSubscriber
             Messenger::getBotSubscriber('queued')
                 ? BotActionMessageHandler::dispatch($event)->onQueue(Messenger::getBotSubscriber('channel'))
                 : BotActionMessageHandler::dispatchSync($event);
-        }
-    }
-
-    /**
-     * @param  InstallPackagedBotEvent  $event
-     */
-    public function installBotPackage(InstallPackagedBotEvent $event): void
-    {
-        if (Messenger::getBotSubscriber('enabled')) {
-            Messenger::getBotSubscriber('queued')
-                ? ProcessPackagedBotInstall::dispatch($event)->onQueue(Messenger::getBotSubscriber('channel'))
-                : ProcessPackagedBotInstall::dispatchSync($event);
         }
     }
 

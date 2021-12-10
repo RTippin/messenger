@@ -2,21 +2,17 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Exception;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Bots\InstallPackagedBot;
 use RTippin\Messenger\Events\PackagedBotInstalledEvent;
-use RTippin\Messenger\Events\PackagedBotInstallFailedEvent;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Jobs\BotInstalledMessage;
-use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Tests\FeatureTestCase;
 use RTippin\Messenger\Tests\Fixtures\BrokenBotHandler;
 use RTippin\Messenger\Tests\Fixtures\FunBotHandler;
@@ -26,6 +22,13 @@ use RTippin\Messenger\Tests\Fixtures\SillyBotPackage;
 
 class InstallPackagedBotTest extends FeatureTestCase
 {
+    protected function setUp(): void
+    {
+        parent::setUp();
+
+        Messenger::setProvider($this->tippin);
+    }
+
     /** @test */
     public function it_throws_exception_if_bots_disabled()
     {
@@ -37,7 +40,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Bots are currently disabled.');
 
-        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
+        app(InstallPackagedBot::class)->execute($thread, $package);
     }
 
     /** @test */
@@ -47,7 +50,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         $thread = $this->createGroupThread($this->tippin);
         $package = MessengerBots::getPackagedBots(FunBotPackage::class);
 
-        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
+        app(InstallPackagedBot::class)->execute($thread, $package);
 
         $this->assertDatabaseHas('bots', [
             'name' => 'Fun Package',
@@ -68,7 +71,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         $thread = $this->createGroupThread($this->tippin);
         $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
 
-        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
+        app(InstallPackagedBot::class)->execute($thread, $package);
 
         $this->assertDatabaseHas('bots', [
             'name' => 'Silly Package',
@@ -86,7 +89,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         $thread = $this->createGroupThread($this->tippin);
         $package = MessengerBots::getPackagedBots(FunBotPackage::class);
 
-        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
+        app(InstallPackagedBot::class)->execute($thread, $package);
 
         $this->assertDatabaseCount('bot_actions', 3);
         $this->assertDatabaseHas('bot_actions', [
@@ -108,7 +111,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         $thread = $this->createGroupThread($this->tippin);
         $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
 
-        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
+        app(InstallPackagedBot::class)->execute($thread, $package);
 
         $this->assertDatabaseHas('bots', [
             'name' => 'Silly Package',
@@ -126,23 +129,9 @@ class InstallPackagedBotTest extends FeatureTestCase
         $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
         $cache = Cache::spy();
 
-        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
+        app(InstallPackagedBot::class)->execute($thread, $package);
 
         $cache->shouldHaveReceived('forget');
-    }
-
-    /** @test */
-    public function it_clears_package_installing_cache()
-    {
-        SillyBotPackage::$installs = [];
-        MessengerBots::registerPackagedBots([SillyBotPackage::class]);
-        $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
-        $cache = Cache::spy();
-
-        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
-
-        $cache->shouldHaveReceived('forget', ["packaged:bot:installing:$thread->id:$package->alias"]);
     }
 
     /** @test */
@@ -154,9 +143,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         $thread = $this->createGroupThread($this->tippin);
         $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
 
-        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
-
-        $bot = Bot::first();
+        $bot = app(InstallPackagedBot::class)->execute($thread, $package)->getBot();
 
         $this->assertNotNull($bot->avatar);
         Storage::disk('messenger')->assertExists($bot->getAvatarPath());
@@ -172,9 +159,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         $thread = $this->createGroupThread($this->tippin);
         $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
 
-        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
-
-        $bot = Bot::first();
+        $bot = app(InstallPackagedBot::class)->execute($thread, $package)->getBot();
 
         $this->assertNull($bot->avatar);
     }
@@ -191,34 +176,9 @@ class InstallPackagedBotTest extends FeatureTestCase
             PackagedBotInstalledEvent::class,
         ]);
 
-        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
+        app(InstallPackagedBot::class)->execute($thread, $package);
 
         Event::assertDispatched(function (PackagedBotInstalledEvent $event) use ($thread, $package) {
-            $this->assertSame($package, $event->packagedBot);
-            $this->assertSame($thread->id, $event->thread->id);
-            $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
-
-            return true;
-        });
-    }
-
-    /** @test */
-    public function it_fires_install_failed_event()
-    {
-        BaseMessengerAction::enableEvents();
-        SillyBotPackage::$installs = [];
-        MessengerBots::registerPackagedBots([SillyBotPackage::class]);
-        $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
-        Event::fake([
-            PackagedBotInstallFailedEvent::class,
-        ]);
-        DB::shouldReceive('transaction')->andThrow(new Exception('Install Failed.'));
-
-        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
-
-        Event::assertDispatched(function (PackagedBotInstallFailedEvent $event) use ($thread, $package) {
-            $this->assertSame('Install Failed.', $event->exception->getMessage());
             $this->assertSame($package, $event->packagedBot);
             $this->assertSame($thread->id, $event->thread->id);
             $this->assertSame($this->tippin->getKey(), $event->provider->getKey());
@@ -236,7 +196,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         $thread = $this->createGroupThread($this->tippin);
         $package = MessengerBots::getPackagedBots(FunBotPackage::class);
 
-        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
+        app(InstallPackagedBot::class)->execute($thread, $package);
 
         Bus::assertDispatched(BotInstalledMessage::class);
     }
@@ -251,7 +211,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         $package = MessengerBots::getPackagedBots(FunBotPackage::class);
         Messenger::setSystemMessageSubscriber('queued', false);
 
-        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
+        app(InstallPackagedBot::class)->execute($thread, $package);
 
         Bus::assertDispatchedSync(BotInstalledMessage::class);
     }
@@ -266,7 +226,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         $package = MessengerBots::getPackagedBots(FunBotPackage::class);
         Messenger::setSystemMessageSubscriber('enabled', false);
 
-        app(InstallPackagedBot::class)->execute($thread, $this->tippin, $package);
+        app(InstallPackagedBot::class)->execute($thread, $package);
 
         Bus::assertNotDispatched(BotInstalledMessage::class);
     }

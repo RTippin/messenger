@@ -436,7 +436,6 @@ class MessengerServiceProvider extends ServiceProvider
 
 - Packaged bots allow you to bundle a bot with many handlers the end user can install in one easy click. 
 - An installation will store the `Bot` model along with each `BotAction` model that gets attached to the bot for each of the `BotActionHandler`'s you define and their parameters.
-- The installation process will be triggered via an event listener and ran on the queue, depending on your configuration settings.
 - During an install, any `BotActionHandler`'s that do not pass validation will be ignored.
 
 **Create your packaged bot class and extend the [PackagedBot][link-packaged-bot] abstract class.**
@@ -817,8 +816,6 @@ axios.post('/api/messenger/threads/{thread}/bots/packages', {
   alias: "test_package",
 });
 ```
-
-- The installation request will trigger an event that will process the installation process on the queue.
 
 [link-messenger-bots]: https://github.com/RTippin/messenger-bots
 [link-bot-subscriber]: https://github.com/RTippin/messenger/blob/1.x/src/Listeners/BotSubscriber.php
