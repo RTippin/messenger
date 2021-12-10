@@ -3,7 +3,7 @@
 
 ---
 
-### [v1.14.0]
+### [v1.14.0 (12-10-2021)](https://github.com/RTippin/messenger/compare/v1.13.0...v1.14.0)
 
 #### Added
 - Packaged Bots feature! Please check the chat-bots documentation for more information.
@@ -17,6 +17,7 @@
 - Renamed `MessengerBots::getHandlersDTO()` to `MessengerBots::getHandlers()`.
 - Renamed `MessengerBots::getAlises()` to `MessengerBots::getHandlerAliases()`.
 - Renamed `BotAction` method `getHandlersDTO` to `getHandler`.
+- A bot handler flagged as unique may only be attached to a single bot in a group thread, not once per bot.
 
 #### Removed
 - `forProvider` collection macro.

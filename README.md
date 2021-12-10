@@ -13,7 +13,7 @@
 ---
 
 ### Prerequisites
-- PHP `^7.4 || ^8.0`
+- PHP `^7.4 | ^8.0 | ^8.1`
 - Laravel `^8.42`
 - `SubstituteBindings::class` route model binding enabled in your API / WEB middleware groups.
 - Configure your laravel applications broadcast driver and set up your websocket implementation to utilize the real-time broadcast emitted.
@@ -24,7 +24,7 @@
 - Private and group threads.
 - Message reactions, replies, edits, and deletion.
 - Send image, document, audio, and video messages.
-- Group thread chat-bots. [Ready-made bots][link-messenger-bots]
+- Group thread chat-bots and packaged bot installs. [Ready-made bots][link-messenger-bots]
 - Private thread approval when the two participants are not friends.
 - Add participants in a group thread from your friends list.
 - Permissions per participant within a group thread.

@@ -602,7 +602,7 @@ public static function installs(): array
 
 **`BotActionHandler` We want to be installed multiple times with different parameters:**
 
-- Handlers flagged as unique will only be installed once
+- Please note that `BotActionHandler`'s flagged as unique will only be installed once.
 
 ```php
 public static function installs(): array
