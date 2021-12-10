@@ -3,8 +3,10 @@
 namespace RTippin\Messenger\Http\Collections;
 
 use Illuminate\Http\Request;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use RTippin\Messenger\Http\Resources\PendingFriendResource;
+use RTippin\Messenger\Models\PendingFriend;
 use Throwable;
 
 class PendingFriendCollection extends MessengerCollection
@@ -25,8 +27,13 @@ class PendingFriendCollection extends MessengerCollection
      */
     protected function makeResource($resource): ?array
     {
+        /** @var PendingFriend $friend */
+        $friend = $resource;
+
         try {
-            return (new PendingFriendResource($resource))->resolve();
+            return $friend->sender instanceof MessengerProvider
+                ? (new PendingFriendResource($friend))->resolve()
+                : null;
         } catch (Throwable $t) {
             report($t);
         }

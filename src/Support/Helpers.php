@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Support;
 
 use Exception;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Routing\Router;
 use Illuminate\Routing\UrlGenerator;
@@ -42,12 +43,12 @@ class Helpers
 
     /**
      * @param  Collection  $collection
-     * @param  MessengerProvider  $provider
+     * @param  Model|MessengerProvider  $provider
      * @param  string  $morph
      * @return Collection
      */
     public static function forProviderInCollection(Collection $collection,
-                                                   MessengerProvider $provider,
+                                                   $provider,
                                                    string $morph = 'owner'): Collection
     {
         return $collection->where("{$morph}_id", '=', $provider->getKey())

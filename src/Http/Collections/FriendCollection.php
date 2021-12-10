@@ -3,8 +3,10 @@
 namespace RTippin\Messenger\Http\Collections;
 
 use Illuminate\Http\Request;
+use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use RTippin\Messenger\Http\Resources\FriendResource;
+use RTippin\Messenger\Models\Friend;
 use Throwable;
 
 class FriendCollection extends MessengerCollection
@@ -25,8 +27,13 @@ class FriendCollection extends MessengerCollection
      */
     protected function makeResource($resource): ?array
     {
+        /** @var Friend $friend */
+        $friend = $resource;
+
         try {
-            return (new FriendResource($resource))->resolve();
+            return $friend->party instanceof MessengerProvider
+                ? (new FriendResource($friend))->resolve()
+                : null;
         } catch (Throwable $t) {
             report($t);
         }
