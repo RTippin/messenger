@@ -108,7 +108,7 @@ class MessageFactory extends Factory
     public function system(?int $type = null): self
     {
         return $this->state(fn (array $attributes) => [
-            'type' => $type ?: rand(90, 103),
+            'type' => $type ?: rand(90, 104),
             'body' => 'This is a system message.',
         ]);
     }

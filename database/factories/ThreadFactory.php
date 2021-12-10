@@ -49,6 +49,16 @@ class ThreadFactory extends Factory
     }
 
     /**
+     * Set the threads subject.
+     *
+     * @return $this
+     */
+    public function subject(string $subject): self
+    {
+        return $this->state(fn (array $attributes) => ['subject' => $subject]);
+    }
+
+    /**
      * Indicate thread is locked.
      *
      * @return $this

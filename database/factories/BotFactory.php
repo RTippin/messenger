@@ -37,6 +37,16 @@ class BotFactory extends Factory
     }
 
     /**
+     * Set the bots name.
+     *
+     * @return $this
+     */
+    public function name(string $name): self
+    {
+        return $this->state(fn (array $attributes) => ['name' => $name]);
+    }
+
+    /**
      * Specify bot cooldown.
      *
      * @param  int  $cooldown
