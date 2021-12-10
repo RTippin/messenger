@@ -8,8 +8,7 @@ use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Facades\MessengerBots;
 
 /**
- * Laravel Messenger System.
- * Created by: Richard Tippin.
+ * Laravel Messenger System, Created by: Richard Tippin.
  * @link https://github.com/RTippin/messenger
  * @link https://github.com/RTippin/messenger-bots
  * @link https://github.com/RTippin/messenger-faker
@@ -24,13 +23,12 @@ class MessengerServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        // Register all provider models you wish to use in the messenger system.
-        // Ensure they implement our MessengerProvider interface first.
+        // Register all provider models you wish to use in messenger.
         Messenger::registerProviders([
             // User::class,
         ]);
 
-        // Set the video driver of your choosing.
+        // Set the video call driver of your choosing.
         // Messenger::setVideoDriver(MyVideoBroker::class);
 
         // Register bot handlers you wish to use. You can install the messenger-bots addon for ready-made handlers.
