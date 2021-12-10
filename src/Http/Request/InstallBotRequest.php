@@ -16,10 +16,7 @@ class InstallBotRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'alias' => [
-                'required',
-                Rule::in(MessengerBots::getPackagedBotAliases()),
-            ],
+            'alias' => ['required', Rule::in(MessengerBots::getPackagedBotAliases())],
         ];
     }
 }

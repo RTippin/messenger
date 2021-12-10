@@ -74,7 +74,7 @@ class InstallBotPackageTest extends HttpTestCase
         ])
             ->assertSuccessful()
             ->assertJson([
-                'name' => 'Fun Package'
+                'name' => 'Fun Package',
             ]);
     }
 
