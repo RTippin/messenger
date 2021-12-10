@@ -24,13 +24,14 @@
 - Private and group threads.
 - Message reactions, replies, edits, and deletion.
 - Send image, document, audio, and video messages.
-- Group thread chat-bots and packaged bot installs. [Ready-made bots][link-messenger-bots]
+- Group thread chat-bots. [Ready-made bots][link-messenger-bots]
+- Customize and create your own chat-bot handlers and bot packages. See the [Chat Bots][link-chat-bots] documentation.
 - Private thread approval when the two participants are not friends.
 - Add participants in a group thread from your friends list.
 - Permissions per participant within a group thread.
 - Friends, Search, and Online status systems.
 - Provider avatars, group thread avatars, and bot avatars.
-- Underlying calling system you can extend.
+- Underlying calling system you can extend. See the [Calling][link-calling] documentation.
 - Group thread invitation links (like discord).
 - All actions are protected behind policies.
 - Scheduled commands for automated cleanup and checks.
@@ -52,6 +53,7 @@
 - Encryption of messages (E2E is the long term goal).
 - Translations for internal messages.
 - Pinned messages.
+- Chat-bots able to trigger off of an event.
 
 ### Notes
 - Read through the [`messenger.php`][link-config] config file before migrating!

@@ -10,6 +10,7 @@
 - `Helpers::forProviderInCollection()` method.
 - `BOT_PACKAGE_INSTALLED` system message type.
 - `php artisan messenger:make:packaged-bot {name}` command.
+- More state helpers on model factories.
 
 #### Changed
 - `BotActionHandler` class moved from `RTipppin\Messenger\Actions\Bots` to `RTippin\Messenger\Support`.
