@@ -673,6 +673,7 @@ class MessengerTest extends MessengerTestCase
             ->setBots(false)
             ->setSystemMessages(false);
         $friends = app(FriendDriver::class);
+        Messenger::shouldUseAbsoluteRoutes(true);
 
         $this->assertSame($friends, app(FriendDriver::class));
         $this->assertTrue($this->messenger->isProviderSet());
@@ -680,6 +681,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertFalse($this->messenger->isCallingEnabled());
         $this->assertFalse($this->messenger->isBotsEnabled());
         $this->assertFalse($this->messenger->isSystemMessagesEnabled());
+        $this->assertTrue(Messenger::shouldUseAbsoluteRoutes());
 
         $this->messenger->flush();
 
@@ -689,6 +691,7 @@ class MessengerTest extends MessengerTestCase
         $this->assertTrue($this->messenger->isBotsEnabled());
         $this->assertTrue($this->messenger->isSystemMessagesEnabled());
         $this->assertNotSame($friends, app(FriendDriver::class));
+        $this->assertFalse(Messenger::shouldUseAbsoluteRoutes());
     }
 
     /** @test */

@@ -166,6 +166,8 @@ use RTippin\Messenger\Models\Participant;
  * @method static \RTippin\Messenger\Messenger setBotSubscriber(string $option, $value)
  * @method static \RTippin\Messenger\Messenger setCallSubscriber(string $option, $value)
  * @method static \RTippin\Messenger\Messenger setSystemMessageSubscriber(string $option, $value)
+ * @method static bool shouldUseUuids(?bool $shouldUseUuids = null)
+ * @method static bool shouldUseAbsoluteRoutes(bool $shouldUseAbsoluteRoutes = null)
  *
  * @mixin \RTippin\Messenger\Messenger
  *

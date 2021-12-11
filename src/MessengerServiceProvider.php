@@ -74,6 +74,8 @@ class MessengerServiceProvider extends ServiceProvider
     {
         Messenger::shouldUseUuids(config('messenger.provider_uuids'));
 
+        Messenger::shouldUseAbsoluteRoutes(config('messenger.use_absolute_routes'));
+
         Relation::morphMap([
             'bots' => Bot::class,
         ]);

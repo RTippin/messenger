@@ -31,6 +31,11 @@ final class Messenger
     private static bool $useUuid = false;
 
     /**
+     * @var bool
+     */
+    private static bool $useAbsoluteRoutes = false;
+
+    /**
      * Messenger constructor.
      */
     public function __construct()
@@ -53,6 +58,19 @@ final class Messenger
         }
 
         return self::$useUuid = $shouldUseUuids;
+    }
+
+    /**
+     * @param  bool|null  $shouldUseAbsoluteRoutes
+     * @return bool
+     */
+    public static function shouldUseAbsoluteRoutes(bool $shouldUseAbsoluteRoutes = null): bool
+    {
+        if (is_null($shouldUseAbsoluteRoutes)) {
+            return self::$useAbsoluteRoutes;
+        }
+
+        return self::$useAbsoluteRoutes = $shouldUseAbsoluteRoutes;
     }
 
     /**
@@ -284,6 +302,7 @@ final class Messenger
         $this->unsetProvider(false, true);
         $this->setMessengerConfig();
         $this->flushFriendDriverInstance();
+        self::shouldUseAbsoluteRoutes(config('messenger.use_absolute_routes'));
     }
 
     /**

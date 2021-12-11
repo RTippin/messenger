@@ -267,6 +267,10 @@ class MessageTest extends FeatureTestCase
         $this->assertSame('IMAGE_MESSAGE', $message->getTypeVerbose());
         $this->assertSame("threads/$thread->id/images/picture.jpg", $message->getImagePath());
         $this->assertSame("/messenger/assets/threads/$thread->id/gallery/$message->id/sm/picture.jpg", $message->getImageViewRoute());
+
+        Messenger::shouldUseAbsoluteRoutes(true);
+
+        $this->assertSame("http://messenger.test/messenger/assets/threads/$thread->id/gallery/$message->id/sm/picture.jpg", $message->getImageViewRoute());
     }
 
     /** @test */
@@ -286,6 +290,10 @@ class MessageTest extends FeatureTestCase
         $this->assertSame('DOCUMENT_MESSAGE', $message->getTypeVerbose());
         $this->assertSame("threads/$thread->id/documents/document.pdf", $message->getDocumentPath());
         $this->assertSame("/messenger/assets/threads/$thread->id/files/$message->id/document.pdf", $message->getDocumentDownloadRoute());
+
+        Messenger::shouldUseAbsoluteRoutes(true);
+
+        $this->assertSame("http://messenger.test/messenger/assets/threads/$thread->id/files/$message->id/document.pdf", $message->getDocumentDownloadRoute());
     }
 
     /** @test */
@@ -305,6 +313,10 @@ class MessageTest extends FeatureTestCase
         $this->assertSame('AUDIO_MESSAGE', $message->getTypeVerbose());
         $this->assertSame("threads/$thread->id/audio/sound.mp3", $message->getAudioPath());
         $this->assertSame("/messenger/assets/threads/$thread->id/audio/$message->id/sound.mp3", $message->getAudioDownloadRoute());
+
+        Messenger::shouldUseAbsoluteRoutes(true);
+
+        $this->assertSame("http://messenger.test/messenger/assets/threads/$thread->id/audio/$message->id/sound.mp3", $message->getAudioDownloadRoute());
     }
 
     /** @test */
@@ -324,6 +336,10 @@ class MessageTest extends FeatureTestCase
         $this->assertSame('VIDEO_MESSAGE', $message->getTypeVerbose());
         $this->assertSame("threads/$thread->id/videos/video.mov", $message->getVideoPath());
         $this->assertSame("/messenger/assets/threads/$thread->id/videos/$message->id/video.mov", $message->getVideoDownloadRoute());
+
+        Messenger::shouldUseAbsoluteRoutes(true);
+
+        $this->assertSame("http://messenger.test/messenger/assets/threads/$thread->id/videos/$message->id/video.mov", $message->getVideoDownloadRoute());
     }
 
     /** @test */

@@ -79,6 +79,17 @@
 
 ---
 
+### Use Absolute Route Paths
+
+***Default:***
+
+```php
+'use_absolute_routes' => env('MESSENGER_USE_ABSOLUTE_ROUTES', false),
+```
+- Whether routes generated from messenger use the absolute or shortened path.
+
+---
+
 ### Rate Limits
 
 ***Default:***

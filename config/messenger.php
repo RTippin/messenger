@@ -96,6 +96,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Use Absolute Route Paths
+    |--------------------------------------------------------------------------
+    |
+    | Whether routes generated from messenger use the absolute or shortened path.
+    |
+    */
+    'use_absolute_routes' => env('MESSENGER_USE_ABSOLUTE_ROUTES', false),
+
+    /*
+    |--------------------------------------------------------------------------
     | API rate limits / request per minute allowed. Use 0 for unlimited
     |--------------------------------------------------------------------------
     |

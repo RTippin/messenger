@@ -31,7 +31,7 @@ class Helpers
                 return app(UrlGenerator::class)->route(
                     $name,
                     $parameters ?: [],
-                    $absolute
+                    Messenger::shouldUseAbsoluteRoutes() ? true : $absolute
                 );
             } catch (Exception $e) {
                 report($e);
