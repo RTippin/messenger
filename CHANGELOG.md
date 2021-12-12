@@ -12,6 +12,7 @@
 
 #### Changed
 - `BotActionHandler`'s attached to a `PackagedBot` will now be authorized when viewing / installing a `PackagedBot`.
+- `FileService` now prefixes an image with its original file name during the renaming process.
 
 ---
 
