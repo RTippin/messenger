@@ -104,10 +104,6 @@ class FileService
     {
         $name = $this->nameFile($file);
 
-        if (is_null($name)) {
-            $this->throwFileServiceException('File name was not set.');
-        }
-
         if (! $this->storeFile($file, $name)) {
             $this->throwFileServiceException('File failed to upload.');
         }
@@ -170,14 +166,16 @@ class FileService
             return "$this->name.$extension";
         }
 
+        $originalName = $this->getOriginalName($file);
+
         switch ($this->type) {
             case self::TYPE_IMAGE:
-                return 'img_'.Str::uuid()->toString().".$extension";
+                return "{$originalName}_img_".Str::uuid()->toString().".$extension";
             case self::TYPE_DOCUMENT:
             case self::TYPE_AUDIO:
             case self::TYPE_VIDEO:
-                return $this->getOriginalName($file).'_'.now()->timestamp.".$extension";
-            default: return $this->getOriginalName($file).$extension;
+                return "{$originalName}_".now()->timestamp.".$extension";
+            default: return "$originalName.$extension";
         }
     }
 
