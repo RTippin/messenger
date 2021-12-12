@@ -233,6 +233,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_can_get_all_packaged_bots_sorting_by_name()
     {
+        SillyBotHandler::$authorized = true;
         $this->bots->registerPackagedBots([
             SillyBotPackage::class,
             FunBotPackage::class,
@@ -311,6 +312,7 @@ class MessengerBotsTest extends MessengerTestCase
     /** @test */
     public function it_can_get_single_packaged_bot()
     {
+        SillyBotHandler::$authorized = true;
         $this->bots->registerPackagedBots([
             SillyBotPackage::class,
             FunBotPackage::class,
@@ -398,6 +400,33 @@ class MessengerBotsTest extends MessengerTestCase
 
         $this->assertCount(2, $this->bots->getPackagedBots());
         $this->assertCount(1, $this->bots->getAuthorizedPackagedBots());
+    }
+
+    /** @test */
+    public function it_filters_authorized_handlers_when_calling_to_array_on_packaged_bot_collection()
+    {
+        SillyBotHandler::$authorized = false;
+        $this->bots->registerPackagedBots([
+            FunBotPackage::class,
+        ]);
+        $broken = $this->bots->getHandlers(BrokenBotHandler::class)->toArray();
+        $fun = $this->bots->getHandlers(FunBotHandler::class)->toArray();
+        $funPackage = [
+            'alias' => 'fun_package',
+            'name' => 'Fun Package',
+            'description' => 'Fun package description.',
+            'avatar' => [
+                'sm' => '/messenger/assets/bot-package/sm/fun_package/avatar.png',
+                'md' => '/messenger/assets/bot-package/md/fun_package/avatar.png',
+                'lg' => '/messenger/assets/bot-package/lg/fun_package/avatar.png',
+            ],
+            'installs' => [
+                $broken,
+                $fun,
+            ],
+        ];
+
+        $this->assertSame($funPackage, $this->bots->getPackagedBots(FunBotPackage::class)->toArray());
     }
 
     /** @test */

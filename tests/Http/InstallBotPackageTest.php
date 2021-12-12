@@ -6,6 +6,7 @@ use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Tests\Fixtures\FunBotPackage;
+use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;
 use RTippin\Messenger\Tests\Fixtures\SillyBotPackage;
 use RTippin\Messenger\Tests\HttpTestCase;
 
@@ -63,6 +64,7 @@ class InstallBotPackageTest extends HttpTestCase
     public function admin_can_install_packaged_bot()
     {
         $this->logCurrentRequest();
+        SillyBotHandler::$authorized = true;
         MessengerBots::registerPackagedBots([FunBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);

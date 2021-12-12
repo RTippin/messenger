@@ -7,29 +7,37 @@ use Illuminate\Validation\ValidationException;
 use RTippin\Messenger\DataTransferObjects\PackagedBotDTO;
 use RTippin\Messenger\DataTransferObjects\PackagedBotInstallDTO;
 use RTippin\Messenger\Exceptions\BotException;
+use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Thread;
 
 class PackagedBotResolverService
 {
     /**
+     * @var MessengerBots
+     */
+    private MessengerBots $bots;
+
+    /**
      * @var BotHandlerResolverService
      */
     private BotHandlerResolverService $resolver;
 
     /**
+     * @param  MessengerBots  $bots
      * @param  BotHandlerResolverService  $resolver
      */
-    public function __construct(BotHandlerResolverService $resolver)
+    public function __construct(MessengerBots $bots, BotHandlerResolverService $resolver)
     {
+        $this->bots = $bots;
         $this->resolver = $resolver;
     }
 
     /**
      * Transform a packaged bots install array into a collection of
-     * ResolvedBotHandlerDTO's. Remove any defined bot handler
-     * flagged as unique that is already present in the thread.
-     * Handlers failing validation will be ignored.
+     * ResolvedBotHandlerDTO's. Filter only authorized handlers, and
+     * remove any handlers flagged as unique that are already present
+     * in the thread. Handlers failing validation will be ignored.
      *
      * @param  Thread  $thread
      * @param  PackagedBotDTO  $package
@@ -41,13 +49,12 @@ class PackagedBotResolverService
 
         $unique = $this->getThreadUniqueHandlers($thread);
 
+        $authorized = $this->bots->getAuthorizedHandlers();
+
         $package->installs
-            ->reject(
-                fn (PackagedBotInstallDTO $install) => in_array($install->handler->class, $unique)
-            )
-            ->each(
-                fn (PackagedBotInstallDTO $install) => $this->resolveHandlers($install, $resolved)
-            );
+            ->filter(fn (PackagedBotInstallDTO $install) => $authorized->contains($install->handler))
+            ->reject(fn (PackagedBotInstallDTO $install) => in_array($install->handler->class, $unique))
+            ->each(fn (PackagedBotInstallDTO $install) => $this->resolveHandlers($install, $resolved));
 
         return $resolved;
     }

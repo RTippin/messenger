@@ -85,6 +85,7 @@ class InstallPackagedBotTest extends FeatureTestCase
     /** @test */
     public function it_installs_actions()
     {
+        SillyBotHandler::$authorized = true;
         MessengerBots::registerPackagedBots([FunBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
         $package = MessengerBots::getPackagedBots(FunBotPackage::class);
@@ -100,6 +101,22 @@ class InstallPackagedBotTest extends FeatureTestCase
         ]);
         $this->assertDatabaseHas('bot_actions', [
             'handler' => BrokenBotHandler::class,
+        ]);
+    }
+
+    /** @test */
+    public function it_ignores_unauthorized_handlers()
+    {
+        SillyBotHandler::$authorized = false;
+        MessengerBots::registerPackagedBots([FunBotPackage::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $package = MessengerBots::getPackagedBots(FunBotPackage::class);
+
+        app(InstallPackagedBot::class)->execute($thread, $package);
+
+        $this->assertDatabaseCount('bot_actions', 2);
+        $this->assertDatabaseMissing('bot_actions', [
+            'handler' => SillyBotHandler::class,
         ]);
     }
 

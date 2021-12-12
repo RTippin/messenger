@@ -19,6 +19,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
     /** @test */
     public function it_returns_valid_resolved_handlers()
     {
+        SillyBotHandler::$authorized = true;
         MessengerBots::registerPackagedBots([FunBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
         $package = MessengerBots::getPackagedBots(FunBotPackage::class);
@@ -40,6 +41,39 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
                 'cooldown' => 30,
                 'enabled' => true,
                 'payload' => null,
+            ],
+            [
+                'handler' => MessengerBots::getHandlers(BrokenBotHandler::class)->toArray(),
+                'match' => 'contains',
+                'triggers' => 'broken',
+                'admin_only' => false,
+                'cooldown' => 30,
+                'enabled' => true,
+                'payload' => null,
+            ],
+        ];
+
+        $results = app(PackagedBotResolverService::class)->resolve($thread, $package);
+
+        $this->assertSame($expects, $results->toArray());
+    }
+
+    /** @test */
+    public function it_ignores_unauthorized_handlers()
+    {
+        SillyBotHandler::$authorized = false;
+        MessengerBots::registerPackagedBots([FunBotPackage::class]);
+        $thread = $this->createGroupThread($this->tippin);
+        $package = MessengerBots::getPackagedBots(FunBotPackage::class);
+        $expects = [
+            [
+                'handler' => MessengerBots::getHandlers(FunBotHandler::class)->toArray(),
+                'match' => 'exact:caseless',
+                'triggers' => '!test|!more',
+                'admin_only' => false,
+                'cooldown' => 30,
+                'enabled' => true,
+                'payload' => '{"test":["one","two"],"special":true}',
             ],
             [
                 'handler' => MessengerBots::getHandlers(BrokenBotHandler::class)->toArray(),
@@ -160,6 +194,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
     /** @test */
     public function it_can_overwrite_default_parameters()
     {
+        SillyBotHandler::$authorized = true;
         SillyBotPackage::$installs = [
             SillyBotHandler::class => [
                 'match' => 'exact',
@@ -192,6 +227,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
     /** @test */
     public function it_uses_supplied_parameters_without_defaults()
     {
+        SillyBotHandler::$authorized = true;
         SillyBotPackage::$installs = [
             SillyBotHandler::class => [
                 'match' => 'exact',

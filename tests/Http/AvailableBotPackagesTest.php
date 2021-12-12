@@ -7,6 +7,7 @@ use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\Fixtures\FunBotPackage;
+use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;
 use RTippin\Messenger\Tests\Fixtures\SillyBotPackage;
 use RTippin\Messenger\Tests\HttpTestCase;
 
@@ -15,6 +16,7 @@ class AvailableBotPackagesTest extends HttpTestCase
     /** @test */
     public function admin_can_view_available_packages()
     {
+        SillyBotHandler::$authorized = true;
         $this->logCurrentRequest();
         MessengerBots::registerPackagedBots([
             FunBotPackage::class,
@@ -50,6 +52,44 @@ class AvailableBotPackagesTest extends HttpTestCase
                         ],
                         [
                             'alias' => 'silly_bot',
+                        ],
+                    ],
+                ],
+            ]);
+    }
+
+    /** @test */
+    public function unauthorized_handlers_within_a_packaged_bot_are_omitted()
+    {
+        SillyBotHandler::$authorized = false;
+        MessengerBots::registerPackagedBots([
+            FunBotPackage::class,
+            SillyBotPackage::class,
+        ]);
+        $thread = $this->createGroupThread($this->tippin);
+        $this->actingAs($this->tippin);
+
+        $this->getJson(route('api.messenger.threads.bots.packages.index', [
+            'thread' => $thread->id,
+        ]))
+            ->assertSuccessful()
+            ->assertJson([
+                [
+                    'alias' => 'fun_package',
+                    'installs' => [
+                        [
+                            'alias' => 'broken_bot',
+                        ],
+                        [
+                            'alias' => 'fun_bot',
+                        ],
+                    ],
+                ],
+                [
+                    'alias' => 'silly_package',
+                    'installs' => [
+                        [
+                            'alias' => 'fun_bot',
                         ],
                     ],
                 ],

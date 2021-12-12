@@ -154,9 +154,11 @@ class PackagedBotDTO implements Arrayable
      */
     private function formatInstallsToArray(): array
     {
-        return $this->installs->sortBy(
-            fn (PackagedBotInstallDTO $install) => $install->handler->name
-        )
+        $authorized = MessengerBots::getAuthorizedHandlers();
+
+        return $this->installs
+            ->filter(fn (PackagedBotInstallDTO $install) => $authorized->contains($install->handler))
+            ->sortBy(fn (PackagedBotInstallDTO $install) => $install->handler->name)
             ->values()
             ->toArray();
     }
