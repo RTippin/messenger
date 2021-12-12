@@ -3,6 +3,18 @@
 
 ---
 
+### [v1.15.0 (12-11-2021)](https://github.com/RTippin/messenger/compare/v1.14.0...v1.15.0)
+
+#### Added
+- `use_absolute_routes` config, default of false.
+- `Messenger::shouldUseAbsoluteRoutes()` method you can override on the fly.
+  - When `Messenger::flush()` is called, the absolute route flag will be reset to the initial config value.
+
+#### Changed
+- `BotActionHandler`'s attached to a `PackagedBot` will now be authorized when viewing / installing a `PackagedBot`.
+
+---
+
 ### [v1.14.0 (12-10-2021)](https://github.com/RTippin/messenger/compare/v1.13.0...v1.14.0)
 
 #### Added

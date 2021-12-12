@@ -13,9 +13,9 @@ use RTippin\Messenger\Models\Thread;
  * To authorize the end user add the action handler to a bot, you must define the
  * 'authorize()' method and return true|false. If unauthorized, it will also hide
  * the handler from appearing in the available handlers list when adding actions
- * to a bot. This does NOT authorize being triggered once added to a bot action.
- * This method will be called during a normal http request cycle, giving you
- * access to auth/sessions/etc.
+ * to a bot, as well as listed under a packaged bots install list. This does NOT
+ * authorize being triggered once added to a bot action. This method will trigger
+ * during a normal http request cycle, giving you access to auth/sessions/etc.
  *
  * @method bool authorize()
  */

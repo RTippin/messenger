@@ -345,11 +345,12 @@ class ReplyBot extends BotActionHandler
 
 ---
 
-### Authorization
-- To authorize the end user to add your handler to a bot, you should define the `authorize()` method and return boolean.
+### Handler Authorization
+- To authorize the end user to add your `BotActionHandler` to a bot, you should define the `public authorize()` method and return boolean.
 - This method will be called during the http request cycle, giving you access to the current auth/session/etc.
-  - If the end user is unauthorized, the handler will be hidden from appearing in the available handlers list while adding actions to a bot. 
-  - This does NOT authorize being triggered once added to a bot action.
+- If the end user is unauthorized, the handler will be hidden from appearing in the available handlers list while adding actions to a bot. 
+- The handler will also be authorized while being part of a `PackagedBot` bundle. If a handler is unauthorized, it will be omitted from appearing under a `PackagedBot`'s install list as well as ignored during the `PackagedBot`'s install.
+- This does NOT authorize being triggered once added to a bot action.
 
 ```php
 <?php
@@ -660,10 +661,11 @@ public static function installs(): array
 
 ---
 
-### Authorization
-- To authorize the end user to install your package in a thread, you must define the `authorize()` method and return boolean.
+### Bot Package Authorization
+- To authorize the end user to install your package in a thread, you must define the `public authorize()` method and return boolean.
 - This method will be called during the http request cycle, giving you access to the current auth/session/etc.
-  - If the end user is unauthorized, the package will be hidden from appearing in the available packages list while viewing packages to install.
+- If the end user is unauthorized, the package will be hidden from appearing in the available packages list while viewing packages to install.
+- `BotActionHandler`'s listed to install that are flagged to authorize, and fail authorization for the end user, will be ignored.
 
 **Example**
 

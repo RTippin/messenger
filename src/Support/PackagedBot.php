@@ -6,8 +6,8 @@ namespace RTippin\Messenger\Support;
  * To authorize the end user to view and install the packaged bot, you must define the
  * 'authorize()' method and return true|false. If unauthorized, it will also hide the
  * package from appearing in the available packages list when viewing packages to
- * install. This method will be called during a normal http request cycle, giving
- * you access to auth/sessions/etc.
+ * install. This method will trigger during a normal http request cycle, giving you
+ * access to auth/sessions/etc.
  *
  * @method bool authorize()
  */
