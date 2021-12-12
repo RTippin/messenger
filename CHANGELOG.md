@@ -3,7 +3,7 @@
 
 ---
 
-### [v1.15.0 (12-11-2021)](https://github.com/RTippin/messenger/compare/v1.14.0...v1.15.0)
+### [v1.15.0 (12-12-2021)](https://github.com/RTippin/messenger/compare/v1.14.0...v1.15.0)
 
 #### Added
 - `use_absolute_routes` config, default of false.
