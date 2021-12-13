@@ -73,7 +73,7 @@ class Kernel extends ConsoleKernel
 
 - If a [BotActionHandler][link-action-handler] throws an exception while being handled, it will be caught and dispatched in the [BotActionFailedEvent][link-action-failed-event].
 - Upon a [BotActionHandler][link-action-handler] being handled successfully, the [BotActionHandledEvent][link-action-handled-event] will be dispatched.
-  - You must attach your own event listeners to these events if you plan do utilize them.
+  - You must attach your own event listeners to these events if you plan to utilize them.
   - Please see the [Events Documentation][link-events-docs] for more information.
 
 ---
@@ -139,12 +139,12 @@ class TestBot extends BotActionHandler
 
 **`unique`, `match`, and `triggers` are optional overrides.**
 
-- `alias` Used to locate and attach your handler to a bot.
-- `description` The description of your bot handler, typically what it does.
-- `name` The name of your bot handler.
-- `unique (optional)` When set and true, the handler may only be used once across all bots in a thread.
-- `triggers (optional)` Overrides allowing the end user to set the triggers. Only the given trigger(s) will be used. Separate multiple via the pipe (|) or use an array.
-- `match (optional)` Overrides allowing end user to select matching method.
+- `alias [string]` Used to locate and attach your handler to a bot.
+- `description [string]` The description of your bot handler, typically what it does.
+- `name [string]` The name of your bot handler.
+- `unique (optional) [bool]` When set and true, the handler may only be used once across all bots in a thread.
+- `triggers (optional)  [array]` Overrides allowing the end user to set the triggers. Only the given trigger(s) will be used. Use a single array of all trigger words.
+- `match (optional) [string]` Overrides allowing end user to select matching method.
 
 ---
 
@@ -507,13 +507,13 @@ class TestBotPackage extends PackagedBot
 
 **`avatar`, `cooldown`, `enabled`, and `hide_actions` are optional overrides.**
 
-- `alias` Used to locate and install your packaged bot.
-- `description` The description of your packaged bot.
-- `name` The name of your packaged bot. The name will be used as the original `Bot` model's `name` when stored.
-- `avatar (optional)` Define the path to a local image file that will be used to display the package's avatar to the frontend, as well as stored for the `Bot` models initial `avatar`.
-- `cooldown` Cooldown the `Bot` model stored has after each action is triggered. Default of `0`.
-- `enabled` Whether the `Bot` model is enabled or disabled. Default of `true`.
-- `hide_actions` Whether the `Bot` model's actions are hidden or visible to others. Default of `false`.
+- `alias [string]` Used to locate and install your packaged bot.
+- `description [string]` The description of your packaged bot.
+- `name [string]` The name of your packaged bot. The name will be used as the original `Bot` model's `name` when stored.
+- `avatar (optional) [string]` Define the path to a local image file that will be used to display the package's avatar to the frontend, as well as stored for the `Bot` models initial `avatar`.
+- `cooldown (optional) [int]` Cooldown the `Bot` model stored has after each action is triggered. Default of `0`.
+- `enabled (optional) [bool]` Whether the `Bot` model is enabled or disabled. Default of `true`.
+- `hide_actions (optional) [bool]` Whether the `Bot` model's actions are hidden or visible to others. Default of `false`.
 
 **Example:**
 
@@ -541,13 +541,14 @@ public static function getSettings(): array
 - Return the listing of `BotActionHandler` classes you want to be bundled with this install. 
 - The array keys must be the `BotActionHandler` class. 
 - For handlers that require you to set properties, or that you want to override certain defaults, you must define them as the value of the handler class key represented as an associative array. 
-- If you want the handler to be installed multiple times with different parameters, you can define an array of arrays as the value. The key/values of your parameters must match the default for a BotAction model, as well as include any parameters that are defined on the handlers rules for serializing a payload.
-- `BotAction | BotActionHandler` handler keys include:
-  - `enabled` Default of `true`.
-  - `cooldown` Default of `30`.
-  - `admin_only` Default of `false`.
-  - `triggers` No default. You must define them if the `BotActionHandler` does not override them.
-  - `match` No default. You must define them if the `BotActionHandler` does not override them.
+- If you want the handler to be installed multiple times with different parameters, you can define an array of arrays as the value. 
+- The key/values of your parameters must match the default for a BotAction model, as well as include any parameters that are defined on the handlers rules for serializing a payload.
+- `BotAction | BotActionHandler` keys include:
+  - `enabled [bool]` Default of `true`.
+  - `cooldown [int]` Default of `30`.
+  - `admin_only [bool]` Default of `false`.
+  - `triggers (optional) [array]` No default. You must define them if the `BotActionHandler` does not override them.
+  - `match (optional) [string]` No default. You must define them if the `BotActionHandler` does not override them.
 - Any parameters that are already defined in the bot handler class cannot be overridden. While installing, each `BotActionHandler` will pass through a validation process, and will be discarded if it fails validating.
 
 ---

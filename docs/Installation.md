@@ -9,8 +9,8 @@ composer require rtippin/messenger
 ```
 
 ### Install Command
-- Installs the base messenger files, publishing the [`messenger.php`][link-config] config and service provider.
-- This will also register the published service provider in your `app.php` config file inside the providers array.
+- Installs the base messenger files, publishing the [`messenger.php`][link-config] configuration file and `MessengerServiceProvider`.
+- This will also register the published service provider in your `app.php` configuration file inside the `providers` array.
 - You will be asked to confirm running this command, as well as an option to run the migrations before completion.
   - If your `Provider|User` models you are registering in `Messenger` use UUIDs instead of auto-incrementing integers as their primary keys, add the `--uuids` flag when installing.
 ```bash
@@ -36,8 +36,7 @@ php artisan migrate
 - Providers are the model's from your application you register into `Messenger`.
 - For most applications, you will only register your `User` model. 
   - If you had a `User` and a `Teacher` model, you can register both models with `Messenger`, allowing teachers to have their own inbox, and able to message users as a teacher.
-- The `Bot` model is a registered internally as a provider, allowing it to participate in group threads.
-- Your provider models will also use the internal [Messenger.php][link-messenger-model] model, which acts as a settings model, as well as allowing reverse search. More on this below, after registering providers.
+- Your provider models will also use the internal [Messenger.php][link-messenger-model] model, which acts as a settings model, as well as allowing reverse searching. More on this below, after registering providers.
 
 ---
 
