@@ -111,10 +111,10 @@ class StorePrivateThread extends NewThreadAction
             );
         }
 
-        $this->bailIfCannotCreateThread();
+        $this->bailIfChecksFail();
 
         $this->determineIfPending()
-            ->handleTransactions($params)
+            ->process($params)
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();
@@ -128,13 +128,11 @@ class StorePrivateThread extends NewThreadAction
      *
      * @throws Throwable
      */
-    private function handleTransactions(array $params): self
+    private function process(array $params): self
     {
-        if ($this->isChained()) {
-            $this->executeTransactions($params);
-        } else {
-            $this->database->transaction(fn () => $this->executeTransactions($params));
-        }
+        $this->isChained()
+            ? $this->handle($params)
+            : $this->database->transaction(fn () => $this->handle($params));
 
         return $this;
     }
@@ -144,8 +142,9 @@ class StorePrivateThread extends NewThreadAction
      * a successful private thread creation.
      *
      * @param  array  $params
+     * @return void
      */
-    private function executeTransactions(array $params): void
+    private function handle(array $params): void
     {
         $this->storeThread()
             ->chain(StoreParticipant::class)
@@ -254,6 +253,7 @@ class StorePrivateThread extends NewThreadAction
     /**
      * @param  string  $alias
      * @param  string  $id
+     * @return void
      */
     private function setRecipientAndExistingThread(string $alias, string $id): void
     {
@@ -299,7 +299,7 @@ class StorePrivateThread extends NewThreadAction
     /**
      * @throws NewThreadException|ProviderNotFoundException
      */
-    private function bailIfCannotCreateThread(): void
+    private function bailIfChecksFail(): void
     {
         if (is_null($this->recipient)) {
             $this->locator->throwNotFoundError();

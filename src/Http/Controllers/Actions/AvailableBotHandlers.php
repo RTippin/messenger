@@ -47,23 +47,23 @@ class AvailableBotHandlers
             $bot,
         ]);
 
-        return $this->generateAvailableHandlers($thread);
+        $unique = $this->getThreadUniqueHandlers($thread);
+
+        return $this->bots->getAuthorizedHandlers()
+            ->reject(fn (BotActionHandlerDTO $handler) => in_array($handler->class, $unique))
+            ->values();
     }
 
     /**
      * @param  Thread  $thread
-     * @return Collection
+     * @return array
      */
-    private function generateAvailableHandlers(Thread $thread): Collection
+    private function getThreadUniqueHandlers(Thread $thread): array
     {
-        $unique = BotAction::uniqueFromThread($thread->id)
+        return BotAction::uniqueFromThread($thread->id)
             ->select(['handler'])
             ->get()
-            ->transform(fn (BotAction $action) => $action->getHandler()->alias)
+            ->transform(fn (BotAction $action) => $action->handler)
             ->toArray();
-
-        return (new Collection($this->bots->getAuthorizedHandlers()))
-            ->reject(fn (BotActionHandlerDTO $handler) => in_array($handler->alias, $unique))
-            ->values();
     }
 }

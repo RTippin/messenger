@@ -72,7 +72,7 @@ class StoreMessage extends NewMessageAction
             ->setMessageOptionalParameters($params)
             ->setMessageOwner($this->messenger->getProvider())
             ->setSenderIp($senderIp)
-            ->handleTransactions()
+            ->process()
             ->finalize();
 
         return $this;

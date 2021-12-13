@@ -54,6 +54,7 @@ class PresenceEvents
 
     /**
      * @param  string  $abstractTyping
+     * @return void
      *
      * @throws InvalidArgumentException
      */
@@ -76,6 +77,7 @@ class PresenceEvents
 
     /**
      * @param  Closure  $stopTyping
+     * @return void
      */
     public static function setStopTypingClosure(Closure $stopTyping): void
     {
@@ -84,6 +86,7 @@ class PresenceEvents
 
     /**
      * @param  string  $abstractStopTyping
+     * @return void
      *
      * @throws InvalidArgumentException
      */
@@ -106,6 +109,7 @@ class PresenceEvents
 
     /**
      * @param  Closure  $read
+     * @return void
      */
     public static function setReadClosure(Closure $read): void
     {
@@ -114,6 +118,7 @@ class PresenceEvents
 
     /**
      * @param  string  $abstractRead
+     * @return void
      *
      * @throws InvalidArgumentException
      */
@@ -192,6 +197,8 @@ class PresenceEvents
 
     /**
      * Reset to all defaults.
+     *
+     * @return void
      */
     public static function reset(): void
     {

@@ -85,6 +85,8 @@ class CallBrokerSetup extends BaseMessengerAction
 
     /**
      * Update the call with the information we received from our video provider.
+     *
+     * @return void
      */
     private function updateCall(): void
     {

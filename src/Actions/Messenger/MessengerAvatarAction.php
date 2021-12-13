@@ -54,6 +54,7 @@ abstract class MessengerAvatarAction extends BaseMessengerAction
 
     /**
      * @param  string|null  $file
+     * @return void
      */
     protected function updateProviderAvatar(?string $file): void
     {

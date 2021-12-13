@@ -68,7 +68,7 @@ class LeaveThread extends BaseMessengerAction
      */
     public function execute(Thread $thread): self
     {
-        $this->setThread($thread)->handleTransactions();
+        $this->setThread($thread)->process();
 
         if (! $this->threadArchived) {
             $this->fireBroadcast()->fireEvents();
@@ -80,20 +80,20 @@ class LeaveThread extends BaseMessengerAction
     /**
      * @throws Throwable
      */
-    private function handleTransactions(): void
+    private function process(): void
     {
-        if ($this->isChained()) {
-            $this->executeTransactions();
-        } else {
-            $this->database->transaction(fn () => $this->executeTransactions());
-        }
+        $this->isChained()
+            ? $this->handle()
+            : $this->database->transaction(fn () => $this->handle());
     }
 
     /**
      * Archive the current participant. If no participants
      * are left, archive the thread.
+     *
+     * @return void
      */
-    private function executeTransactions(): void
+    private function handle(): void
     {
         $this->getThread()->currentParticipant()->delete();
 

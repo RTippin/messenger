@@ -245,6 +245,7 @@ class BroadcastBroker implements BroadcastDriver
     /**
      * @param  string|MessengerBroadcast  $abstractBroadcast
      * @param  Collection  $channels
+     * @return void
      */
     private function executeBroadcast(string $abstractBroadcast, Collection $channels): void
     {
@@ -268,6 +269,7 @@ class BroadcastBroker implements BroadcastDriver
 
     /**
      * @param  string  $abstractBroadcast
+     * @return void
      */
     private function executePushNotify(string $abstractBroadcast): void
     {
@@ -281,6 +283,8 @@ class BroadcastBroker implements BroadcastDriver
 
     /**
      * Reset our state.
+     *
+     * @return void
      */
     private function flush(): void
     {

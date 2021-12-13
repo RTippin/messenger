@@ -47,7 +47,7 @@ abstract class BotAvatarAction extends BaseMessengerAction
     /**
      * @throws FeatureDisabledException
      */
-    protected function bailWhenFeatureDisabled(): void
+    protected function bailIfDisabled(): void
     {
         if (! $this->messenger->isBotsEnabled()
             || ! $this->messenger->isBotAvatarEnabled()) {

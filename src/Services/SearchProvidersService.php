@@ -77,9 +77,9 @@ class SearchProvidersService
     /**
      * Execute query using paginator.
      *
-     * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator|LengthAwarePaginator
+     * @return LengthAwarePaginator
      */
-    public function paginate()
+    public function paginate(): LengthAwarePaginator
     {
         if (! $this->passesQueryLength() || is_null($this->messengerQuery)) {
             return $this->sendEmptyPaginator();

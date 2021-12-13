@@ -55,7 +55,7 @@ class StoreSystemMessage extends NewMessageAction
                 ->setMessageType($type)
                 ->setMessageBody($body)
                 ->setMessageOwner($provider)
-                ->handleTransactions()
+                ->process()
                 ->finalize();
         }
 

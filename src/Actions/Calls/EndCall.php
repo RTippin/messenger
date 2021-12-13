@@ -72,7 +72,7 @@ class EndCall extends BaseMessengerAction
             $this->setEndingLockout();
 
             if ($this->getCall()->isActive()) {
-                $this->handleTransactions()
+                $this->process()
                     ->fireBroadcast()
                     ->fireEvents();
             }
@@ -102,12 +102,12 @@ class EndCall extends BaseMessengerAction
      *
      * @throws Throwable
      */
-    private function handleTransactions(): self
+    private function process(): self
     {
         if ($this->isChained()) {
-            $this->endCall();
+            $this->handle();
         } else {
-            $this->database->transaction(fn () => $this->endCall());
+            $this->database->transaction(fn () => $this->handle());
         }
 
         return $this;
@@ -115,8 +115,10 @@ class EndCall extends BaseMessengerAction
 
     /**
      * Mark the call as ended and all active participants as left.
+     *
+     * @return void
      */
-    private function endCall(): void
+    private function handle(): void
     {
         $this->getCall()->update([
             'call_ended' => now(),

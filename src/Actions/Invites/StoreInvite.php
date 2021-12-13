@@ -51,7 +51,7 @@ class StoreInvite extends InviteAction
      */
     public function execute(Thread $thread, array $params): self
     {
-        $this->bailWhenFeatureDisabled();
+        $this->bailIfDisabled();
 
         $this->setThread($thread)
             ->storeInvite($params)

@@ -395,6 +395,7 @@ trait MessengerProviders
      * Put the given or loaded model into cache as online.
      *
      * @param  null|string|MessengerProvider  $provider
+     * @return void
      */
     public function setProviderToOnline($provider = null): void
     {
@@ -413,6 +414,7 @@ trait MessengerProviders
      * Remove the given or loaded model from online cache.
      *
      * @param  null|string|MessengerProvider  $provider
+     * @return void
      */
     public function setProviderToOffline($provider = null): void
     {
@@ -428,6 +430,7 @@ trait MessengerProviders
      * Put the given or loaded model into cache as away.
      *
      * @param  null|string|MessengerProvider  $provider
+     * @return void
      */
     public function setProviderToAway($provider = null): void
     {
@@ -566,6 +569,8 @@ trait MessengerProviders
 
     /**
      * Set the ghost user.
+     *
+     * @return void
      */
     private function setGhostProvider(): void
     {
@@ -574,6 +579,8 @@ trait MessengerProviders
 
     /**
      * Set the ghost bot.
+     *
+     * @return void
      */
     private function setGhostBot(): void
     {
@@ -591,6 +598,7 @@ trait MessengerProviders
 
     /**
      * @param  MessengerProvider  $provider
+     * @return void
      */
     private function setToOnline(MessengerProvider $provider): void
     {
@@ -603,6 +611,7 @@ trait MessengerProviders
 
     /**
      * @param  MessengerProvider  $provider
+     * @return void
      */
     private function setToAway(MessengerProvider $provider): void
     {
@@ -615,6 +624,7 @@ trait MessengerProviders
 
     /**
      * @param  MessengerProvider  $provider
+     * @return void
      */
     private function setToOffline(MessengerProvider $provider): void
     {

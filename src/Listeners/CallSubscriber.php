@@ -28,11 +28,12 @@ class CallSubscriber
 
     /**
      * @param  CallEndedEvent  $event
+     * @return void
      */
     public function teardownCall(CallEndedEvent $event): void
     {
         if ($this->isEnabled()) {
-            Messenger::getCallSubscriber('queued')
+            $this->shouldQueue()
                 ? TeardownCall::dispatch($event)->onQueue(Messenger::getCallSubscriber('channel'))
                 : TeardownCall::dispatchSync($event);
         }
@@ -40,11 +41,12 @@ class CallSubscriber
 
     /**
      * @param  CallLeftEvent  $event
+     * @return void
      */
     public function endCallIfEmpty(CallLeftEvent $event): void
     {
         if ($this->isEnabled()) {
-            Messenger::getCallSubscriber('queued')
+            $this->shouldQueue()
                 ? EndCallIfEmpty::dispatch($event)->onQueue(Messenger::getCallSubscriber('channel'))
                 : EndCallIfEmpty::dispatchSync($event);
         }
@@ -52,11 +54,12 @@ class CallSubscriber
 
     /**
      * @param  CallStartedEvent  $event
+     * @return void
      */
     public function setupCall(CallStartedEvent $event): void
     {
         if ($this->isEnabled() && ! $event->call->setup_complete) {
-            Messenger::getCallSubscriber('queued')
+            $this->shouldQueue()
                 ? SetupCall::dispatch($event)->onQueue(Messenger::getCallSubscriber('channel'))
                 : SetupCall::dispatchSync($event);
         }
@@ -68,5 +71,13 @@ class CallSubscriber
     private function isEnabled(): bool
     {
         return Messenger::getCallSubscriber('enabled');
+    }
+
+    /**
+     * @return bool
+     */
+    private function shouldQueue(): bool
+    {
+        return Messenger::getCallSubscriber('queued');
     }
 }

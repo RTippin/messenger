@@ -80,6 +80,7 @@ class CallActivityChecker extends BaseMessengerAction
 
     /**
      * @param  Call  $call
+     * @return void
      */
     private function removeInactiveParticipants(Call $call): void
     {
@@ -91,6 +92,7 @@ class CallActivityChecker extends BaseMessengerAction
     /**
      * @param  Call  $call
      * @param  CallParticipant  $participant
+     * @return void
      */
     private function removeIfNotInCache(Call $call, CallParticipant $participant): void
     {

@@ -21,11 +21,11 @@ class StoreBotAvatar extends BotAvatarAction
      */
     public function execute(Bot $bot, UploadedFile $image): self
     {
-        $this->bailWhenFeatureDisabled();
+        $this->bailIfDisabled();
 
         $this->setBot($bot);
 
-        $this->attemptTransactionOrRollbackFile($this->upload($image));
+        $this->handleOrRollback($this->upload($image));
 
         $this->clearActionsCache()
             ->generateResource()
@@ -43,7 +43,7 @@ class StoreBotAvatar extends BotAvatarAction
      *
      * @throws Exception
      */
-    private function attemptTransactionOrRollbackFile(string $fileName): void
+    private function handleOrRollback(string $fileName): void
     {
         try {
             $this->removeOldIfExist()->updateBotAvatar($fileName);

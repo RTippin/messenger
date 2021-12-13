@@ -25,7 +25,7 @@ class PurgeBots extends BaseMessengerAction
     }
 
     /**
-     * Loop through the collection of bots and remove the bots
+     * Loop through the collection of bots and remove their
      * storage directory files, then force delete the bot
      * itself from database.
      *
@@ -41,6 +41,7 @@ class PurgeBots extends BaseMessengerAction
 
     /**
      * @param  Bot  $bot
+     * @return void
      */
     private function purge(Bot $bot): void
     {
@@ -51,6 +52,7 @@ class PurgeBots extends BaseMessengerAction
 
     /**
      * @param  Bot  $bot
+     * @return void
      */
     private function destroyBotDirectory(Bot $bot): void
     {
@@ -62,6 +64,7 @@ class PurgeBots extends BaseMessengerAction
 
     /**
      * @param  Bot  $bot
+     * @return void
      */
     private function destroyBot(Bot $bot): void
     {

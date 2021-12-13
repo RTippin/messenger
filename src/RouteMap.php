@@ -22,6 +22,8 @@ trait RouteMap
     /**
      * Register our middleware.
      *
+     * @return void
+     *
      * @throws BindingResolutionException
      */
     private function registerRouterServices(): void
@@ -38,6 +40,10 @@ trait RouteMap
 
     /**
      * Register our middleware.
+     *
+     * @param  Kernel  $kernel
+     * @param  Router  $router
+     * @return void
      */
     private function registerMiddleware(Kernel $kernel, Router $router): void
     {
@@ -51,6 +57,9 @@ trait RouteMap
 
     /**
      * Register all routes used by messenger.
+     *
+     * @param  Router  $router
+     * @return void
      */
     private function registerRoutes(Router $router): void
     {
@@ -69,6 +78,8 @@ trait RouteMap
 
     /**
      * Configure the rate limiters for Messenger.
+     *
+     * @return void
      */
     private function configureRateLimiting(): void
     {

@@ -70,7 +70,7 @@ class RemoveFriend extends BaseMessengerAction
         $this->friend = $friend;
 
         $this->setInverseFriend()
-            ->handleTransactions()
+            ->process()
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();
@@ -83,13 +83,11 @@ class RemoveFriend extends BaseMessengerAction
      *
      * @throws Throwable
      */
-    private function handleTransactions(): self
+    private function process(): self
     {
-        if ($this->isChained()) {
-            $this->executeTransactions();
-        } else {
-            $this->database->transaction(fn () => $this->executeTransactions());
-        }
+        $this->isChained()
+            ? $this->handle()
+            : $this->database->transaction(fn () => $this->handle());
 
         return $this;
     }
@@ -107,9 +105,11 @@ class RemoveFriend extends BaseMessengerAction
     }
 
     /**
+     * @return void
+     *
      * @throws Exception
      */
-    private function executeTransactions(): void
+    private function handle(): void
     {
         if (! is_null($this->inverseFriend)) {
             $this->inverseFriend->delete();

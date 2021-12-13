@@ -13,13 +13,11 @@ class DestroyGroupAvatar extends GroupAvatarAction
      * @param  Thread  $thread
      * @return $this
      *
-     * @var Thread[0]
-     *
      * @throws FeatureDisabledException|FileServiceException|Exception
      */
     public function execute(Thread $thread): self
     {
-        $this->bailWhenFeatureDisabled();
+        $this->bailIfDisabled();
 
         $this->setThread($thread)
             ->removeOldIfExist()

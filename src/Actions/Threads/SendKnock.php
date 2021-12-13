@@ -56,11 +56,13 @@ class SendKnock extends BaseMessengerAction
      */
     public function execute(Thread $thread): self
     {
-        $this->setThread($thread)
-            ->bailIfCannotKnockAtThread()
-            ->generateResource();
+        $this->setThread($thread);
 
-        $this->getThread()->setKnockCacheLockout(
+        $this->bailIfChecksFail();
+
+        $this->generateResource();
+
+        $thread->setKnockCacheLockout(
             $this->messenger->getProvider()
         );
 
@@ -70,11 +72,9 @@ class SendKnock extends BaseMessengerAction
     }
 
     /**
-     * @return $this
-     *
      * @throws FeatureDisabledException|KnockException
      */
-    private function bailIfCannotKnockAtThread(): self
+    private function bailIfChecksFail(): void
     {
         if (! $this->messenger->isKnockKnockEnabled()) {
             throw new FeatureDisabledException('Knocking is currently disabled.');
@@ -85,8 +85,6 @@ class SendKnock extends BaseMessengerAction
         )) {
             throw new KnockException("You may only knock at {$this->getThread()->name()} once every {$this->messenger->getKnockTimeout()} minutes.");
         }
-
-        return $this;
     }
 
     /**

@@ -87,6 +87,7 @@ class OnlineStatus extends BaseMessengerAction
 
     /**
      * @param  bool  $away
+     * @return void
      */
     private function fireEvents(bool $away): void
     {

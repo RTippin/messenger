@@ -41,6 +41,7 @@ class PurgeVideoMessages extends BaseMessengerAction
 
     /**
      * @param  Message  $audio
+     * @return void
      */
     private function purge(Message $audio): void
     {
@@ -51,6 +52,7 @@ class PurgeVideoMessages extends BaseMessengerAction
 
     /**
      * @param  Message  $video
+     * @return void
      */
     private function destroyVideo(Message $video): void
     {
@@ -61,6 +63,7 @@ class PurgeVideoMessages extends BaseMessengerAction
 
     /**
      * @param  Message  $video
+     * @return void
      */
     private function destroyMessage(Message $video): void
     {

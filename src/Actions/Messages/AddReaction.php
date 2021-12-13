@@ -95,9 +95,9 @@ class AddReaction extends BaseMessengerAction
             ->setMessage($message)
             ->prepareReaction($reaction);
 
-        $this->bailIfAddReactionChecksFail();
+        $this->bailIfChecksFail();
 
-        $this->handleTransactions()
+        $this->process()
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();
@@ -110,13 +110,11 @@ class AddReaction extends BaseMessengerAction
      *
      * @throws Throwable
      */
-    private function handleTransactions(): self
+    private function process(): self
     {
-        if ($this->isChained()) {
-            $this->storeReaction();
-        } else {
-            $this->database->transaction(fn () => $this->storeReaction());
-        }
+        $this->isChained()
+            ? $this->handle()
+            : $this->database->transaction(fn () => $this->handle());
 
         return $this;
     }
@@ -125,6 +123,7 @@ class AddReaction extends BaseMessengerAction
      * Set our reaction to the first valid emoji, or null if none found.
      *
      * @param  string  $reaction
+     * @return void
      */
     private function prepareReaction(string $reaction): void
     {
@@ -134,7 +133,7 @@ class AddReaction extends BaseMessengerAction
     /**
      * @throws FeatureDisabledException|ReactionException
      */
-    private function bailIfAddReactionChecksFail(): void
+    private function bailIfChecksFail(): void
     {
         if (! $this->messenger->isMessageReactionsEnabled()) {
             throw new FeatureDisabledException('Message reactions are currently disabled.');
@@ -264,7 +263,23 @@ class AddReaction extends BaseMessengerAction
     }
 
     /**
-     * Store reaction. Mark the message as reacted to.
+     * Store reaction. Mark the message as reacted.
+     *
+     * @return void
+     */
+    private function handle(): void
+    {
+        $this->storeReaction();
+
+        if (! $this->getMessage()->reacted) {
+            $this->getMessage()->update([
+                'reacted' => true,
+            ]);
+        }
+    }
+
+    /**
+     * @return void
      */
     private function storeReaction(): void
     {
@@ -274,15 +289,9 @@ class AddReaction extends BaseMessengerAction
             'reaction' => $this->react,
             'created_at' => now(),
         ])
-        ->setRelations([
-            'owner' => $this->messenger->getProvider(),
-            'message' => $this->getMessage(),
-        ]);
-
-        if (! $this->getMessage()->reacted) {
-            $this->getMessage()->update([
-                'reacted' => true,
+            ->setRelations([
+                'owner' => $this->messenger->getProvider(),
+                'message' => $this->getMessage(),
             ]);
-        }
     }
 }

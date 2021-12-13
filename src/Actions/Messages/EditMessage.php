@@ -89,7 +89,7 @@ class EditMessage extends BaseMessengerAction
 
         $this->setThread($thread)
             ->setMessage($message)
-            ->handleTransactions($newBody)
+            ->process($newBody)
             ->generateResource();
 
         if ($this->getMessage()->wasChanged()) {
@@ -117,13 +117,11 @@ class EditMessage extends BaseMessengerAction
      *
      * @throws Throwable
      */
-    private function handleTransactions(string $body): self
+    private function process(string $body): self
     {
-        if ($this->isChained()) {
-            $this->executeTransactions($body);
-        } else {
-            $this->database->transaction(fn () => $this->executeTransactions($body));
-        }
+        $this->isChained()
+            ? $this->handle($body)
+            : $this->database->transaction(fn () => $this->handle($body));
 
         return $this;
     }
@@ -132,7 +130,7 @@ class EditMessage extends BaseMessengerAction
      * @param  string  $body
      * @return $this
      */
-    private function executeTransactions(string $body): self
+    private function handle(string $body): self
     {
         $newBody = $this->emoji->toShort($body);
 

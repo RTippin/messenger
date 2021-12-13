@@ -54,12 +54,12 @@ class JoinWithInvite extends InviteAction
      */
     public function execute(Invite $invite): self
     {
-        $this->bailWhenFeatureDisabled();
+        $this->bailIfDisabled();
 
         $this->invite = $invite;
 
         $this->setThread($this->invite->thread)
-            ->handleTransactions()
+            ->process()
             ->fireEvents();
 
         return $this;
@@ -70,13 +70,11 @@ class JoinWithInvite extends InviteAction
      *
      * @throws Throwable
      */
-    private function handleTransactions(): self
+    private function process(): self
     {
-        if ($this->isChained()) {
-            $this->executeTransactions();
-        } else {
-            $this->database->transaction(fn () => $this->executeTransactions(), 3);
-        }
+        $this->isChained()
+            ? $this->handle()
+            : $this->database->transaction(fn () => $this->handle(), 3);
 
         return $this;
     }
@@ -87,7 +85,7 @@ class JoinWithInvite extends InviteAction
      *
      * @return void
      */
-    private function executeTransactions(): void
+    private function handle(): void
     {
         $this->incrementInviteUses();
 

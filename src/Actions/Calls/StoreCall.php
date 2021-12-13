@@ -58,10 +58,10 @@ class StoreCall extends NewCallAction
     {
         $this->setThread($thread);
 
-        $this->bailIfInitiateCallChecksFail();
+        $this->bailIfChecksFail();
 
         $this->setCallLockout()
-            ->handleTransactions($setupComplete)
+            ->process($setupComplete)
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();
@@ -75,13 +75,11 @@ class StoreCall extends NewCallAction
      *
      * @throws Throwable
      */
-    private function handleTransactions(bool $setupComplete): self
+    private function process(bool $setupComplete): self
     {
-        if ($this->isChained()) {
-            $this->executeTransactions($setupComplete);
-        } else {
-            $this->database->transaction(fn () => $this->executeTransactions($setupComplete), 3);
-        }
+        $this->isChained()
+            ? $this->handle($setupComplete)
+            : $this->database->transaction(fn () => $this->handle($setupComplete), 3);
 
         return $this;
     }
@@ -89,7 +87,7 @@ class StoreCall extends NewCallAction
     /**
      * @param  bool  $setupComplete
      */
-    private function executeTransactions(bool $setupComplete): void
+    private function handle(bool $setupComplete): void
     {
         $this->storeCall(Call::VIDEO, $setupComplete);
 

@@ -44,7 +44,7 @@ class UpdateBotAction extends BaseMessengerAction
      */
     public function execute(BotAction $action, ResolvedBotHandlerDTO $resolved): self
     {
-        $this->bailWhenFeatureDisabled();
+        $this->bailIfDisabled();
 
         $this->setBotAction($action)
             ->updateBotAction($resolved)
@@ -60,7 +60,7 @@ class UpdateBotAction extends BaseMessengerAction
     /**
      * @throws FeatureDisabledException
      */
-    private function bailWhenFeatureDisabled(): void
+    private function bailIfDisabled(): void
     {
         if (! $this->messenger->isBotsEnabled()) {
             throw new FeatureDisabledException('Bots are currently disabled.');

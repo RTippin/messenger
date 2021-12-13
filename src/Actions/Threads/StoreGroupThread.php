@@ -65,7 +65,7 @@ class StoreGroupThread extends NewThreadAction
      */
     public function execute(array $params): self
     {
-        $this->handleTransactions(
+        $this->process(
             $params['subject'],
             $params['providers'] ?? []
         )
@@ -83,13 +83,11 @@ class StoreGroupThread extends NewThreadAction
      *
      * @throws Throwable
      */
-    private function handleTransactions(string $subject, array $providers): self
+    private function process(string $subject, array $providers): self
     {
-        if ($this->isChained()) {
-            $this->executeTransactions($subject, $providers);
-        } else {
-            $this->database->transaction(fn () => $this->executeTransactions($subject, $providers));
-        }
+        $this->isChained()
+            ? $this->handle($subject, $providers)
+            : $this->database->transaction(fn () => $this->handle($subject, $providers));
 
         return $this;
     }
@@ -100,8 +98,9 @@ class StoreGroupThread extends NewThreadAction
      *
      * @param  string  $subject
      * @param  array  $providers
+     * @return void
      */
-    private function executeTransactions(string $subject, array $providers): void
+    private function handle(string $subject, array $providers): void
     {
         $this->storeThread($this->groupThreadAttributes($subject))
             ->chain(StoreSystemMessage::class)

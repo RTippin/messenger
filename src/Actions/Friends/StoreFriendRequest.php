@@ -94,7 +94,7 @@ class StoreFriendRequest extends BaseMessengerAction
             $params['recipient_id']
         );
 
-        $this->bailIfRecipientIsNotValid();
+        $this->bailIfChecksFail();
 
         $this->storeSentFriendRequest()
             ->generateResource()
@@ -117,7 +117,7 @@ class StoreFriendRequest extends BaseMessengerAction
      * @throws FriendException|ProviderNotFoundException
      * @noinspection PhpParamsInspection
      */
-    private function bailIfRecipientIsNotValid(): void
+    private function bailIfChecksFail(): void
     {
         if (is_null($this->recipient)) {
             throw new ProviderNotFoundException;

@@ -63,7 +63,7 @@ class ThreadApproval extends ThreadParticipantAction
 
         $this->setThread($thread);
 
-        $this->bailIfThreadDoesntNeedApproval();
+        $this->bailIfChecksFail();
 
         $this->handleTransactions()
             ->fireBroadcast()
@@ -135,7 +135,7 @@ class ThreadApproval extends ThreadParticipantAction
     /**
      * @throws ThreadApprovalException
      */
-    private function bailIfThreadDoesntNeedApproval(): void
+    private function bailIfChecksFail(): void
     {
         if ($this->getThread()->isGroup()) {
             throw new ThreadApprovalException('Group threads do not have approvals.');

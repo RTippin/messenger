@@ -212,6 +212,8 @@ class FileService
 
     /**
      * After an upload, reset the properties that were set.
+     *
+     * @return void
      */
     private function reset(): void
     {

@@ -43,7 +43,7 @@ class ArchiveBot extends BaseMessengerAction
      */
     public function execute(Bot $bot): self
     {
-        $this->bailIfBotsDisabled();
+        $this->bailIfDisabled();
 
         $this->setBot($bot)
             ->archiveBot()
@@ -56,7 +56,7 @@ class ArchiveBot extends BaseMessengerAction
     /**
      * @throws FeatureDisabledException
      */
-    private function bailIfBotsDisabled(): void
+    private function bailIfDisabled(): void
     {
         if (! $this->messenger->isBotsEnabled()) {
             throw new FeatureDisabledException('Bots are currently disabled.');

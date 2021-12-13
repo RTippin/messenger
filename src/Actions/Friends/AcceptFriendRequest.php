@@ -76,7 +76,7 @@ class AcceptFriendRequest extends BaseMessengerAction
     {
         $this->pending = $pending;
 
-        $this->handleTransactions()
+        $this->process()
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();
@@ -89,13 +89,11 @@ class AcceptFriendRequest extends BaseMessengerAction
      *
      * @throws Throwable
      */
-    private function handleTransactions(): self
+    private function process(): self
     {
-        if ($this->isChained()) {
-            $this->executeTransactions();
-        } else {
-            $this->database->transaction(fn () => $this->executeTransactions());
-        }
+        $this->isChained()
+            ? $this->handle()
+            : $this->database->transaction(fn () => $this->handle());
 
         return $this;
     }
@@ -103,9 +101,11 @@ class AcceptFriendRequest extends BaseMessengerAction
     /**
      * Execute transactions.
      *
+     * @return void
+     *
      * @throws Exception
      */
-    private function executeTransactions(): void
+    private function handle(): void
     {
         $this->storeMyFriend();
 
@@ -116,6 +116,8 @@ class AcceptFriendRequest extends BaseMessengerAction
 
     /**
      * Store friend relationship.
+     *
+     * @return void
      */
     private function storeMyFriend(): void
     {
@@ -133,6 +135,8 @@ class AcceptFriendRequest extends BaseMessengerAction
 
     /**
      * Store inverse friend relationship.
+     *
+     * @return void
      */
     private function storeInverseFriend(): void
     {
@@ -149,6 +153,8 @@ class AcceptFriendRequest extends BaseMessengerAction
     }
 
     /**
+     * @return void
+     *
      * @throws Exception
      */
     private function destroyPending(): void

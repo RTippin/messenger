@@ -12,6 +12,7 @@ trait Search
      * @param  Builder  $query
      * @param  string  $search
      * @param  array  $searchItems
+     * @return void
      */
     public static function getProviderSearchableBuilder(Builder $query,
                                                         string $search,

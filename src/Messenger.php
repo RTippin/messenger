@@ -78,6 +78,7 @@ final class Messenger
      *
      * @param  array  $providers
      * @param  bool  $overwrite
+     * @return void
      */
     public function registerProviders(array $providers, bool $overwrite = false): void
     {
@@ -295,6 +296,8 @@ final class Messenger
      * Flush any active and scoped provider set, reset our configs to defaults,
      * and flush the FriendDriver instance from the container.
      *
+     * @return void
+     *
      * @throws InvalidProviderException
      */
     public function flush(): void
@@ -318,6 +321,8 @@ final class Messenger
 
     /**
      * Add our Bot model to the providers.
+     *
+     * @return void
      */
     private function setBotProvider(): void
     {
@@ -348,6 +353,8 @@ final class Messenger
 
     /**
      * Flush any active instance of our FriendDriver from the container.
+     *
+     * @return void
      */
     private function flushFriendDriverInstance(): void
     {

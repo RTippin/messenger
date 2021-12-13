@@ -140,6 +140,7 @@ class BotHandlerResolverService
     /**
      * @param  \Illuminate\Validation\Validator  $validator
      * @param  array  $overrides
+     * @return void
      */
     private function addConditionalHandlerValidations(\Illuminate\Validation\Validator $validator, array $overrides): void
     {

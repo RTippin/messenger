@@ -10,7 +10,6 @@ use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\DataTransferObjects\PackagedBotDTO;
 use RTippin\Messenger\DataTransferObjects\ResolvedBotHandlerDTO;
 use RTippin\Messenger\Events\PackagedBotInstalledEvent;
-use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Http\Resources\BotResource;
 use RTippin\Messenger\Messenger;
@@ -42,21 +41,6 @@ class InstallPackagedBot extends BaseMessengerAction
     private PackagedBotResolverService $resolver;
 
     /**
-     * @var StoreBot
-     */
-    private StoreBot $storeBot;
-
-    /**
-     * @var StoreBotAction
-     */
-    private StoreBotAction $storeBotAction;
-
-    /**
-     * @var StoreBotAvatar
-     */
-    private StoreBotAvatar $storeBotAvatar;
-
-    /**
      * @var PackagedBotDTO
      */
     private PackagedBotDTO $package;
@@ -73,37 +57,29 @@ class InstallPackagedBot extends BaseMessengerAction
      * @param  Dispatcher  $dispatcher
      * @param  DatabaseManager  $database
      * @param  PackagedBotResolverService  $resolver
-     * @param  StoreBot  $storeBot
-     * @param  StoreBotAction  $storeBotAction
-     * @param  StoreBotAvatar  $storeBotAvatar
      */
     public function __construct(Messenger $messenger,
                                 Dispatcher $dispatcher,
                                 DatabaseManager $database,
-                                PackagedBotResolverService $resolver,
-                                StoreBot $storeBot,
-                                StoreBotAction $storeBotAction,
-                                StoreBotAvatar $storeBotAvatar)
+                                PackagedBotResolverService $resolver)
     {
         $this->messenger = $messenger;
         $this->dispatcher = $dispatcher;
         $this->database = $database;
         $this->resolver = $resolver;
-        $this->storeBot = $storeBot;
-        $this->storeBotAction = $storeBotAction;
-        $this->storeBotAvatar = $storeBotAvatar;
     }
 
     /**
      * @param  Thread  $thread
      * @param  PackagedBotDTO  $package
      * @return $this
+     * @throws FeatureDisabledException
      *
-     * @throws BotException|FeatureDisabledException|Throwable
+     * @throws Throwable|FeatureDisabledException
      */
     public function execute(Thread $thread, PackagedBotDTO $package): self
     {
-        $this->bailWhenFeatureDisabled();
+        $this->bailIfDisabled();
 
         $this->package = $package;
         $this->resolvedHandlers = $this->resolver->resolve(
@@ -112,7 +88,6 @@ class InstallPackagedBot extends BaseMessengerAction
         );
 
         $this->setThread($thread)
-            ->setupActions()
             ->process()
             ->generateResource()
             ->clearActionsCache()
@@ -124,7 +99,7 @@ class InstallPackagedBot extends BaseMessengerAction
     /**
      * @throws FeatureDisabledException
      */
-    private function bailWhenFeatureDisabled(): void
+    private function bailIfDisabled(): void
     {
         if (! $this->messenger->isBotsEnabled()) {
             throw new FeatureDisabledException('Bots are currently disabled.');
@@ -132,39 +107,23 @@ class InstallPackagedBot extends BaseMessengerAction
     }
 
     /**
-     * Disable any chained calls or events from being fired by our actions.
-     *
-     * @return $this
-     */
-    private function setupActions(): self
-    {
-        $this->storeBot->continuesChain()->withoutDispatches();
-        $this->storeBotAvatar->continuesChain()->withoutDispatches();
-        $this->storeBotAction->continuesChain()->withoutDispatches();
-
-        return $this;
-    }
-
-    /**
      * @return void
      *
-     * @throws BotException|FeatureDisabledException|Throwable
+     * @throws Throwable
      */
     private function process(): self
     {
         $this->isChained()
-            ? $this->performActions()
-            : $this->database->transaction(fn () => $this->performActions());
+            ? $this->handle()
+            : $this->database->transaction(fn () => $this->handle());
 
         return $this;
     }
 
     /**
      * @return void
-     *
-     * @throws FeatureDisabledException|BotException
      */
-    private function performActions(): void
+    private function handle(): void
     {
         $this->storeBot();
 
@@ -176,31 +135,52 @@ class InstallPackagedBot extends BaseMessengerAction
     }
 
     /**
-     * @throws FeatureDisabledException
+     * @return void
      */
     private function storeBot(): void
     {
-        $this->setBot(
-            $this->storeBot->execute($this->getThread(), [
+        $bot = $this->chain(StoreBot::class)
+            ->withoutDispatches()
+            ->execute($this->getThread(), [
                 'enabled' => $this->package->isEnabled,
                 'name' => $this->package->name,
                 'cooldown' => $this->package->cooldown,
                 'hide_actions' => $this->package->shouldHideActions,
-            ])->getBot()
-        );
+            ])
+            ->getBot();
+
+        $this->setBot($bot);
     }
 
     /**
-     * @throws FeatureDisabledException
+     * @param  ResolvedBotHandlerDTO  $handler
+     * @return void
+     */
+    private function storeBotAction(ResolvedBotHandlerDTO $handler): void
+    {
+        $this->chain(StoreBotAction::class)
+            ->withoutDispatches()
+            ->execute(
+                $this->getThread(),
+                $this->getBot(),
+                $handler,
+                true
+            );
+    }
+
+    /**
+     * @return void
      */
     private function storeBotAvatar(): void
     {
         if ($this->package->shouldInstallAvatar
             && $this->messenger->isBotAvatarEnabled()) {
-            $this->storeBotAvatar->execute(
-                $this->getBot(),
-                $this->generateUploadedFile(),
-            );
+            $this->chain(StoreBotAvatar::class)
+                ->withoutDispatches()
+                ->execute(
+                    $this->getBot(),
+                    $this->generateUploadedFile(),
+                );
         }
     }
 
@@ -212,22 +192,6 @@ class InstallPackagedBot extends BaseMessengerAction
         return new UploadedFile(
             $this->package->avatar,
             'avatar.'.$this->package->avatarExtension
-        );
-    }
-
-    /**
-     * @param  ResolvedBotHandlerDTO  $handler
-     * @return void
-     *
-     * @throws BotException|FeatureDisabledException
-     */
-    private function storeBotAction(ResolvedBotHandlerDTO $handler): void
-    {
-        $this->storeBotAction->execute(
-            $this->getThread(),
-            $this->getBot(),
-            $handler,
-            true
         );
     }
 

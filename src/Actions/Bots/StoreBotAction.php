@@ -64,7 +64,7 @@ class StoreBotAction extends BaseMessengerAction
     {
         $this->setThread($thread)->setBot($bot);
 
-        $this->bailIfCanAddBotActionFails($resolved, $withoutChecks);
+        $this->bailIfChecksFail($resolved, $withoutChecks);
 
         $this->storeBotAction($resolved)
             ->clearActionsCache()
@@ -80,7 +80,7 @@ class StoreBotAction extends BaseMessengerAction
      *
      * @throws FeatureDisabledException|BotException
      */
-    private function bailIfCanAddBotActionFails(ResolvedBotHandlerDTO $resolved, bool $withoutChecks): void
+    private function bailIfChecksFail(ResolvedBotHandlerDTO $resolved, bool $withoutChecks): void
     {
         if ($withoutChecks) {
             return;

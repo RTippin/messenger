@@ -15,7 +15,7 @@ class DestroyBotAvatar extends BotAvatarAction
      */
     public function execute(Bot $bot): self
     {
-        $this->bailWhenFeatureDisabled();
+        $this->bailIfDisabled();
 
         $this->setBot($bot)
             ->removeOldIfExist()

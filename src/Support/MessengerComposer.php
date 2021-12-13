@@ -463,6 +463,7 @@ class MessengerComposer
 
     /**
      * @param  BaseMessengerAction  $action
+     * @return void
      */
     private function silenceActionWhenSilent(BaseMessengerAction $action): void
     {
@@ -477,6 +478,8 @@ class MessengerComposer
 
     /**
      * Reset our state and unset the scoped provider.
+     *
+     * @return void
      *
      * @throws InvalidProviderException
      */

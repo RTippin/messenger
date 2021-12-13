@@ -22,6 +22,7 @@ class BotSubscriber
 
     /**
      * @param  NewMessageEvent  $event
+     * @return void
      */
     public function newMessage(NewMessageEvent $event): void
     {

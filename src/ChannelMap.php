@@ -18,6 +18,8 @@ trait ChannelMap
     /**
      * Register all broadcast channels used by messenger.
      *
+     * @return void
+     *
      * @throws BindingResolutionException
      */
     private function registerChannels(): void

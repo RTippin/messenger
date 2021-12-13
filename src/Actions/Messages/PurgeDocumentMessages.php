@@ -41,6 +41,7 @@ class PurgeDocumentMessages extends BaseMessengerAction
 
     /**
      * @param  Message  $document
+     * @return void
      */
     private function purge(Message $document): void
     {
@@ -51,6 +52,7 @@ class PurgeDocumentMessages extends BaseMessengerAction
 
     /**
      * @param  Message  $document
+     * @return void
      */
     private function destroyDocument(Message $document): void
     {
@@ -61,6 +63,7 @@ class PurgeDocumentMessages extends BaseMessengerAction
 
     /**
      * @param  Message  $document
+     * @return void
      */
     private function destroyMessage(Message $document): void
     {

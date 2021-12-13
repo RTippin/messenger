@@ -42,7 +42,7 @@ class ArchiveInvite extends InviteAction
      */
     public function execute(Invite $invite): self
     {
-        $this->bailWhenFeatureDisabled();
+        $this->bailIfDisabled();
 
         $this->invite = $invite;
 

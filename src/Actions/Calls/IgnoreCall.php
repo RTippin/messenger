@@ -84,6 +84,8 @@ class IgnoreCall extends BaseMessengerAction
     /**
      * End the private call that was ignored.
      *
+     * @return void
+     *
      * @throws Throwable
      */
     private function endCall(): void

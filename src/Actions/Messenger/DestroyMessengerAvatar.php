@@ -13,7 +13,7 @@ class DestroyMessengerAvatar extends MessengerAvatarAction
      */
     public function execute(): self
     {
-        $this->bailWhenFeatureDisabled();
+        $this->bailIfDisabled();
 
         $this->removeOldIfExist()->updateProviderAvatar(null);
 
@@ -23,7 +23,7 @@ class DestroyMessengerAvatar extends MessengerAvatarAction
     /**
      * @throws FeatureDisabledException
      */
-    private function bailWhenFeatureDisabled(): void
+    private function bailIfDisabled(): void
     {
         if (! $this->messenger->isProviderAvatarEnabled()) {
             throw new FeatureDisabledException('Avatar removal is currently disabled.');

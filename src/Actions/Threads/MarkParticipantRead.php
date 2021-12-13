@@ -70,6 +70,8 @@ class MarkParticipantRead extends BaseMessengerAction
     /**
      * Update participant last_read. If changed, dispatch
      * events and clear the cached last read message.
+     *
+     * @return void
      */
     private function markParticipantRead(): void
     {

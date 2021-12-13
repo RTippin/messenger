@@ -70,7 +70,7 @@ class StoreVideoMessage extends NewMessageAction
                             array $params,
                             ?string $senderIp = null): self
     {
-        $this->bailWhenFeatureDisabled();
+        $this->bailIfDisabled();
 
         $this->setThread($thread);
 
@@ -82,7 +82,7 @@ class StoreVideoMessage extends NewMessageAction
             ->setMessageOwner($this->messenger->getProvider())
             ->setSenderIp($senderIp);
 
-        $this->attemptTransactionOrRollbackFile($video);
+        $this->handleOrRollback($video);
 
         $this->finalize();
 
@@ -95,13 +95,14 @@ class StoreVideoMessage extends NewMessageAction
      * from storage and rethrow the exception.
      *
      * @param  string  $fileName
+     * @return void
      *
      * @throws Exception
      */
-    private function attemptTransactionOrRollbackFile(string $fileName): void
+    private function handleOrRollback(string $fileName): void
     {
         try {
-            $this->handleTransactions();
+            $this->process();
         } catch (Throwable $e) {
             $this->fileService
                 ->setDisk($this->getThread()->getStorageDisk())
@@ -114,7 +115,7 @@ class StoreVideoMessage extends NewMessageAction
     /**
      * @throws FeatureDisabledException
      */
-    private function bailWhenFeatureDisabled(): void
+    private function bailIfDisabled(): void
     {
         if (! $this->messenger->isMessageVideoUploadEnabled()) {
             throw new FeatureDisabledException('Video messages are currently disabled.');

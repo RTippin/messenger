@@ -41,6 +41,7 @@ class PurgeAudioMessages extends BaseMessengerAction
 
     /**
      * @param  Message  $audio
+     * @return void
      */
     private function purge(Message $audio): void
     {
@@ -51,6 +52,7 @@ class PurgeAudioMessages extends BaseMessengerAction
 
     /**
      * @param  Message  $audio
+     * @return void
      */
     private function destroyAudio(Message $audio): void
     {
@@ -61,6 +63,7 @@ class PurgeAudioMessages extends BaseMessengerAction
 
     /**
      * @param  Message  $audio
+     * @return void
      */
     private function destroyMessage(Message $audio): void
     {

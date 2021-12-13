@@ -150,19 +150,19 @@ abstract class NewMessageAction extends BaseMessengerAction
      *
      * @throws Throwable
      */
-    protected function handleTransactions(): self
+    protected function process(): self
     {
-        if ($this->isChained()) {
-            $this->executeTransactions();
-        } else {
-            $this->database->transaction(fn () => $this->executeTransactions(), 5);
-        }
+        $this->isChained()
+            ? $this->handle()
+            : $this->database->transaction(fn () => $this->handle(), 5);
 
         return $this;
     }
 
     /**
      * Complete the cycle.
+     *
+     * @return void
      */
     protected function finalize(): void
     {
@@ -233,6 +233,7 @@ abstract class NewMessageAction extends BaseMessengerAction
 
     /**
      * @param  string|null  $replyToId
+     * @return void
      */
     private function setReplyingToMessage(?string $replyToId): void
     {
@@ -251,8 +252,10 @@ abstract class NewMessageAction extends BaseMessengerAction
 
     /**
      * Store message. If not chained, touch thread and mark sender as read.
+     *
+     * @return void
      */
-    private function executeTransactions(): void
+    private function handle(): void
     {
         $this->storeMessage();
 

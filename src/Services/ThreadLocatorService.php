@@ -86,6 +86,8 @@ class ThreadLocatorService
 
     /**
      * Perform the lookup and set recipient/thread.
+     *
+     * @return $this
      */
     public function locate(): self
     {
@@ -113,7 +115,7 @@ class ThreadLocatorService
     /**
      * @throws ProviderNotFoundException
      */
-    public function throwNotFoundError()
+    public function throwNotFoundError(): void
     {
         throw new ProviderNotFoundException;
     }

@@ -41,6 +41,7 @@ class PurgeThreads extends BaseMessengerAction
 
     /**
      * @param  Thread  $thread
+     * @return void
      */
     private function purge(Thread $thread): void
     {
@@ -51,6 +52,7 @@ class PurgeThreads extends BaseMessengerAction
 
     /**
      * @param  Thread  $thread
+     * @return void
      */
     private function destroyDirectory(Thread $thread): void
     {
@@ -62,6 +64,7 @@ class PurgeThreads extends BaseMessengerAction
 
     /**
      * @param  Thread  $thread
+     * @return void
      */
     private function destroyThread(Thread $thread): void
     {

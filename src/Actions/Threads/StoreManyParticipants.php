@@ -94,7 +94,7 @@ class StoreManyParticipants extends ThreadParticipantAction
 
         $providers = $this->locateValidProviders($providers, $isNewGroup);
 
-        $this->handleTransactions($providers, $isNewGroup);
+        $this->process($providers, $isNewGroup);
 
         return $this;
     }
@@ -106,13 +106,11 @@ class StoreManyParticipants extends ThreadParticipantAction
      *
      * @throws Throwable
      */
-    private function handleTransactions(Collection $providers, bool $isNewGroup): void
+    private function process(Collection $providers, bool $isNewGroup): void
     {
-        if ($this->isChained()) {
-            $this->executeTransactions($providers, $isNewGroup);
-        } else {
-            $this->database->transaction(fn () => $this->executeTransactions($providers, $isNewGroup));
-        }
+        $this->isChained()
+            ? $this->handle($providers, $isNewGroup)
+            : $this->database->transaction(fn () => $this->handle($providers, $isNewGroup));
     }
 
     /**
@@ -121,8 +119,9 @@ class StoreManyParticipants extends ThreadParticipantAction
      *
      * @param  Collection  $providers
      * @param  bool  $isNewGroup
+     * @return void
      */
-    private function executeTransactions(Collection $providers, bool $isNewGroup): void
+    private function handle(Collection $providers, bool $isNewGroup): void
     {
         $this->setData($this->storeManyParticipants($providers, $isNewGroup));
 

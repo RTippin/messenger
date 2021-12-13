@@ -80,6 +80,7 @@ class PushNotificationService
      * for our listener to handle on the queue.
      *
      * @param  string|MessengerBroadcast  $abstract
+     * @return void
      */
     public function notify(string $abstract): void
     {
@@ -158,6 +159,7 @@ class PushNotificationService
     /**
      * @param  string  $broadcastAs
      * @param  Collection  $recipients
+     * @return void
      */
     private function dispatchNotification(string $broadcastAs, Collection $recipients): void
     {
@@ -170,6 +172,8 @@ class PushNotificationService
 
     /**
      * Reset our state.
+     *
+     * @return void
      */
     private function flush(): void
     {

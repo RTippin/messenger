@@ -41,6 +41,7 @@ class PurgeImageMessages extends BaseMessengerAction
 
     /**
      * @param  Message  $image
+     * @return void
      */
     private function purge(Message $image): void
     {
@@ -51,6 +52,7 @@ class PurgeImageMessages extends BaseMessengerAction
 
     /**
      * @param  Message  $image
+     * @return void
      */
     private function destroyImage(Message $image): void
     {
@@ -61,6 +63,7 @@ class PurgeImageMessages extends BaseMessengerAction
 
     /**
      * @param  Message  $image
+     * @return void
      */
     private function destroyMessage(Message $image): void
     {

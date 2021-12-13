@@ -262,6 +262,6 @@ class FriendBroker implements FriendDriver
      */
     private function sendEmptyCollection(): Collection
     {
-        return new Collection();
+        return new Collection;
     }
 }

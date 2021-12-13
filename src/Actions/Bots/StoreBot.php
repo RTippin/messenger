@@ -49,7 +49,7 @@ class StoreBot extends BaseMessengerAction
      */
     public function execute(Thread $thread, array $params): self
     {
-        $this->bailWhenFeatureDisabled();
+        $this->bailIfDisabled();
 
         $this->setThread($thread)
             ->storeBot($params)
@@ -63,7 +63,7 @@ class StoreBot extends BaseMessengerAction
     /**
      * @throws FeatureDisabledException
      */
-    private function bailWhenFeatureDisabled(): void
+    private function bailIfDisabled(): void
     {
         if (! $this->messenger->isBotsEnabled()) {
             throw new FeatureDisabledException('Bots are currently disabled.');

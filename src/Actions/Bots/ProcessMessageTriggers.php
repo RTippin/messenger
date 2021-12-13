@@ -90,7 +90,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
                             bool $isGroupAdmin = false,
                             ?string $senderIp = null): self
     {
-        $this->bailWhenFeatureDisabled();
+        $this->bailIfDisabled();
 
         $this->isGroupAdmin = $isGroupAdmin;
         $this->senderIp = $senderIp;
@@ -113,6 +113,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
      * a successful match.
      *
      * @param  BotAction  $action
+     * @return void
      */
     private function matchAndHandleAction(BotAction $action): void
     {
@@ -142,6 +143,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
      *
      * @param  BotAction  $action
      * @param  string|null  $trigger
+     * @return void
      */
     private function handleAction(BotAction $action, ?string $trigger = null): void
     {
@@ -175,7 +177,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
     /**
      * @throws FeatureDisabledException
      */
-    private function bailWhenFeatureDisabled(): void
+    private function bailIfDisabled(): void
     {
         if (! $this->messenger->isBotsEnabled()) {
             throw new FeatureDisabledException('Bots are currently disabled.');
@@ -212,6 +214,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
      * Set the bot being triggered, and start the action cooldown.
      *
      * @param  BotAction  $action
+     * @return void
      */
     private function botActionStarting(BotAction $action): void
     {
@@ -226,6 +229,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
      * initialized handler.
      *
      * @param  BotAction  $action
+     * @return void
      */
     private function botActionEnding(BotAction $action): void
     {
@@ -240,6 +244,8 @@ class ProcessMessageTriggers extends BaseMessengerAction
     /**
      * One all matching actions have been handled, we set any
      * bot cooldowns from used actions.
+     *
+     * @return void
      */
     private function startTriggeredBotCooldowns(): void
     {
@@ -251,6 +257,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
     /**
      * @param  BotAction  $action
      * @param  string|null  $trigger
+     * @return void
      */
     private function fireHandledEvent(BotAction $action, ?string $trigger): void
     {
@@ -266,6 +273,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
     /**
      * @param  BotAction  $action
      * @param  Throwable  $exception
+     * @return void
      */
     private function fireFailedEvent(BotAction $action, Throwable $exception): void
     {

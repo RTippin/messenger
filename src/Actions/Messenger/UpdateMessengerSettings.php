@@ -40,6 +40,7 @@ class UpdateMessengerSettings extends BaseMessengerAction
 
     /**
      * @param  int  $onlineStatus
+     * @return void
      */
     private function setOnlineCacheStatus(int $onlineStatus): void
     {

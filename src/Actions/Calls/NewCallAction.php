@@ -104,7 +104,7 @@ abstract class NewCallAction extends BaseMessengerAction
     /**
      * @throws FeatureDisabledException|NewCallException
      */
-    protected function bailIfInitiateCallChecksFail(): void
+    protected function bailIfChecksFail(): void
     {
         if (! $this->messenger->isCallingEnabled()
             || $this->messenger->isCallingTemporarilyDisabled()) {

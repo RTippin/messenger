@@ -75,6 +75,8 @@ final class MessengerBots
 
     /**
      * Flush any active handler and overrides set.
+     *
+     * @return void
      */
     public function flush(): void
     {
@@ -87,6 +89,7 @@ final class MessengerBots
      *
      * @param  array  $handlers
      * @param  bool  $overwrite
+     * @return void
      */
     public function registerHandlers(array $handlers, bool $overwrite = false): void
     {
@@ -273,6 +276,7 @@ final class MessengerBots
      *
      * @param  array  $packagedBots
      * @param  bool  $overwrite
+     * @return void
      */
     public function registerPackagedBots(array $packagedBots, bool $overwrite = false): void
     {

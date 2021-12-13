@@ -57,6 +57,8 @@ class CallBrokerTeardown extends BaseMessengerAction
 
     /**
      * Update the call so that we know teardown has been successful.
+     *
+     * @return void
      */
     private function updateCall(): void
     {

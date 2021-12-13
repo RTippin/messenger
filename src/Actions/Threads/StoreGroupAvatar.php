@@ -24,10 +24,10 @@ class StoreGroupAvatar extends GroupAvatarAction
      */
     public function execute(Thread $thread, UploadedFile $image): self
     {
-        $this->bailWhenFeatureDisabled();
+        $this->bailIfDisabled();
 
         $this->setThread($thread)
-            ->attemptTransactionOrRollbackFile($this->uploadAvatar($image))
+            ->handleOrRollback($this->uploadAvatar($image))
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();
@@ -45,7 +45,7 @@ class StoreGroupAvatar extends GroupAvatarAction
      *
      * @throws Exception
      */
-    private function attemptTransactionOrRollbackFile(string $fileName): self
+    private function handleOrRollback(string $fileName): self
     {
         try {
             return $this->removeOldIfExist()->updateGroupAvatar($fileName);

@@ -81,13 +81,14 @@ class RemoveReaction extends BaseMessengerAction
                             Message $message,
                             MessageReaction $reaction): self
     {
-        $this->bailWhenFeatureDisabled();
+        $this->bailIfDisabled();
 
-        $this->setThread($thread)->setMessage($message);
         $this->reaction = $reaction;
-        $this->reactionsCount = $this->getMessage()->reactions()->count();
+        $this->reactionsCount = $message->reactions()->count();
 
-        $this->handleTransactions()
+        $this->setThread($thread)
+            ->setMessage($message)
+            ->process()
             ->fireBroadcast()
             ->fireEvents();
 
@@ -99,7 +100,7 @@ class RemoveReaction extends BaseMessengerAction
      *
      * @throws FeatureDisabledException
      */
-    private function bailWhenFeatureDisabled(): void
+    private function bailIfDisabled(): void
     {
         if (! $this->messenger->isMessageReactionsEnabled()) {
             throw new FeatureDisabledException('Message reactions are currently disabled.');
@@ -111,12 +112,12 @@ class RemoveReaction extends BaseMessengerAction
      *
      * @throws Throwable
      */
-    private function handleTransactions(): self
+    private function process(): self
     {
         if ($this->isChained() || $this->reactionsCount > 1) {
-            $this->removeReaction();
+            $this->handle();
         } else {
-            $this->database->transaction(fn () => $this->removeReaction(), 3);
+            $this->database->transaction(fn () => $this->handle(), 3);
         }
 
         return $this;
@@ -192,9 +193,11 @@ class RemoveReaction extends BaseMessengerAction
     /**
      * Remove reaction. Mark the message as not reacted to when none left.
      *
+     * @return void
+     *
      * @throws Exception
      */
-    private function removeReaction(): void
+    private function handle(): void
     {
         $this->reaction->delete();
 
