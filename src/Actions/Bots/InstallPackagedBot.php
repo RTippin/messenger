@@ -73,7 +73,6 @@ class InstallPackagedBot extends BaseMessengerAction
      * @param  Thread  $thread
      * @param  PackagedBotDTO  $package
      * @return $this
-     * @throws FeatureDisabledException
      *
      * @throws Throwable|FeatureDisabledException
      */
