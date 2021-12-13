@@ -268,7 +268,7 @@ class BotHandlerResolverService
             'triggers.*',
         ];
 
-        $payload = (new Collection($data))
+        $payload = Collection::make($data)
             ->reject(fn ($value, $key) => in_array($key, $ruleKeys))
             ->toArray();
 

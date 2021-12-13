@@ -127,7 +127,7 @@ class BroadcastBroker implements BroadcastDriver
      */
     public function to($recipient): self
     {
-        $this->recipients = new Collection([$recipient]);
+        $this->recipients = Collection::make([$recipient]);
 
         return $this;
     }
@@ -138,7 +138,7 @@ class BroadcastBroker implements BroadcastDriver
     public function toPresence($entity): self
     {
         $this->usingPresence = true;
-        $this->recipients = new Collection([$entity]);
+        $this->recipients = Collection::make([$entity]);
 
         return $this;
     }

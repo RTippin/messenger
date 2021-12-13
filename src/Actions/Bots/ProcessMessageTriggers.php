@@ -94,7 +94,7 @@ class ProcessMessageTriggers extends BaseMessengerAction
 
         $this->isGroupAdmin = $isGroupAdmin;
         $this->senderIp = $senderIp;
-        $this->botsTriggered = new Collection;
+        $this->botsTriggered = Collection::make();
 
         $this->setThread($thread)->setMessage($message);
 

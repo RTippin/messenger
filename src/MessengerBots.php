@@ -61,8 +61,8 @@ final class MessengerBots
      */
     public function __construct()
     {
-        $this->handlers = new Collection;
-        $this->packagedBots = new Collection;
+        $this->handlers = Collection::make();
+        $this->packagedBots = Collection::make();
     }
 
     /**
@@ -94,7 +94,7 @@ final class MessengerBots
     public function registerHandlers(array $handlers, bool $overwrite = false): void
     {
         if ($overwrite) {
-            $this->handlers = new Collection;
+            $this->handlers = Collection::make();
         }
 
         foreach ($handlers as $handler) {
@@ -281,7 +281,7 @@ final class MessengerBots
     public function registerPackagedBots(array $packagedBots, bool $overwrite = false): void
     {
         if ($overwrite) {
-            $this->packagedBots = new Collection;
+            $this->packagedBots = Collection::make();
         }
 
         foreach ($packagedBots as $package) {

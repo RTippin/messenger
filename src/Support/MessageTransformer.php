@@ -88,7 +88,7 @@ class MessageTransformer
         return [
             $thread,
             $provider,
-            (new Collection(['call_id' => $call->id]))->toJson(),
+            Collection::make(['call_id' => $call->id])->toJson(),
             Message::VIDEO_CALL,
         ];
     }
@@ -504,9 +504,9 @@ class MessageTransformer
      */
     private static function generateParticipantJson(Participant $participant): string
     {
-        return (new Collection([
+        return Collection::make([
             'owner_id' => $participant->owner_id,
             'owner_type' => $participant->owner_type,
-        ]))->toJson();
+        ])->toJson();
     }
 }

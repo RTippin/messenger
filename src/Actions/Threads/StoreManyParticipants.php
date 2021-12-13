@@ -151,10 +151,10 @@ class StoreManyParticipants extends ThreadParticipantAction
         if (! count($providers)
             || ($this->messenger->shouldVerifyGroupThreadFriendship()
                 && ! $this->messenger->providerHasFriends())) {
-            return new Collection;
+            return Collection::make();
         }
 
-        return (new Collection($providers))
+        return Collection::make($providers)
             ->transform(fn (array $provider) => $this->getProvider($provider['alias'], $provider['id']))
             ->filter()
             ->when(

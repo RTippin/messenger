@@ -13,7 +13,7 @@ class NullFriendBroker implements FriendDriver
      */
     public function getProviderFriends(bool $withRelations = false)
     {
-        return new Collection;
+        return Collection::make();
     }
 
     /**
@@ -21,7 +21,7 @@ class NullFriendBroker implements FriendDriver
      */
     public function getProviderPendingFriends(bool $withRelations = false)
     {
-        return new Collection;
+        return Collection::make();
     }
 
     /**
@@ -29,7 +29,7 @@ class NullFriendBroker implements FriendDriver
      */
     public function getProviderSentFriends(bool $withRelations = false)
     {
-        return new Collection;
+        return Collection::make();
     }
 
     /**
@@ -77,6 +77,6 @@ class NullFriendBroker implements FriendDriver
      */
     public function getProviderFriendsNotInThread(Thread $thread)
     {
-        return new Collection;
+        return Collection::make();
     }
 }

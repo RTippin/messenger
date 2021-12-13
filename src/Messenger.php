@@ -40,7 +40,7 @@ final class Messenger
      */
     public function __construct()
     {
-        $this->providers = new Collection;
+        $this->providers = Collection::make();
         $this->setMessengerConfig();
         $this->setBotProvider();
     }
@@ -83,7 +83,7 @@ final class Messenger
     public function registerProviders(array $providers, bool $overwrite = false): void
     {
         if ($overwrite) {
-            $this->providers = new Collection;
+            $this->providers = Collection::make();
             $this->setBotProvider();
         }
 

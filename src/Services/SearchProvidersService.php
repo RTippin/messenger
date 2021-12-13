@@ -160,7 +160,7 @@ class SearchProvidersService
      */
     private function splitQuery(): self
     {
-        $this->searchQueryItems = (new Collection(preg_split('/[ \n,]+/', $this->searchQuery)))
+        $this->searchQueryItems = Collection::make(preg_split('/[ \n,]+/', $this->searchQuery))
             ->filter(fn ($value) => strlen($value) >= 2)
             ->uniqueStrict()
             ->take(4)

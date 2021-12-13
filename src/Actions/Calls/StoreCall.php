@@ -97,7 +97,7 @@ class StoreCall extends NewCallAction
 
         $this->getCall()->setRelation(
             'participants',
-            new Collection($participant->getCallParticipant())
+            Collection::make($participant->getCallParticipant())
         );
     }
 }

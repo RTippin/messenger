@@ -49,7 +49,7 @@ class EmojiService implements EmojiInterface
         // Get all phrases between each instance of two colons (:emoji:)
         preg_match_all('/:([^:]+):/', $this->toShort($string), $matches);
 
-        return (new Collection($matches[0]))
+        return Collection::make($matches[0])
             ->reject(fn (string $code) => ! $this->checkShortcodeExist($code))
             ->values()
             ->toArray();

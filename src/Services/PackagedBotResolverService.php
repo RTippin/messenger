@@ -45,7 +45,7 @@ class PackagedBotResolverService
      */
     public function resolve(Thread $thread, PackagedBotDTO $package): Collection
     {
-        $resolved = new Collection;
+        $resolved = Collection::make();
 
         $unique = $this->getThreadUniqueHandlers($thread);
 

@@ -349,7 +349,7 @@ trait MessengerConfig
      */
     public function getConfig(): array
     {
-        return (new Collection(get_object_vars($this)))
+        return Collection::make(get_object_vars($this))
             ->reject(fn ($value, $key) => in_array($key, self::$guarded))
             ->toArray();
     }

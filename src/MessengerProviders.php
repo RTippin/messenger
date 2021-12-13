@@ -553,7 +553,7 @@ trait MessengerProviders
      */
     private function filterCanList(array $providers, array $limits): array
     {
-        return (new Collection($providers))
+        return Collection::make($providers)
             ->reject(fn ($provider) => in_array($provider, $limits))
             ->values()
             ->toArray();
