@@ -7,29 +7,20 @@ use Illuminate\Validation\ValidationException;
 use RTippin\Messenger\DataTransferObjects\PackagedBotDTO;
 use RTippin\Messenger\DataTransferObjects\PackagedBotInstallDTO;
 use RTippin\Messenger\Exceptions\BotException;
-use RTippin\Messenger\MessengerBots;
-use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Thread;
 
 class PackagedBotResolverService
 {
-    /**
-     * @var MessengerBots
-     */
-    private MessengerBots $bots;
-
     /**
      * @var BotHandlerResolverService
      */
     private BotHandlerResolverService $resolver;
 
     /**
-     * @param  MessengerBots  $bots
      * @param  BotHandlerResolverService  $resolver
      */
-    public function __construct(MessengerBots $bots, BotHandlerResolverService $resolver)
+    public function __construct(BotHandlerResolverService $resolver)
     {
-        $this->bots = $bots;
         $this->resolver = $resolver;
     }
 
@@ -47,29 +38,13 @@ class PackagedBotResolverService
     {
         $resolved = Collection::make();
 
-        $unique = $this->getThreadUniqueHandlers($thread);
+        $package->applyInstallFilters($thread);
 
-        $authorized = $this->bots->getAuthorizedHandlers();
-
-        $package->installs
-            ->filter(fn (PackagedBotInstallDTO $install) => $authorized->contains($install->handler))
-            ->reject(fn (PackagedBotInstallDTO $install) => in_array($install->handler->class, $unique))
-            ->each(fn (PackagedBotInstallDTO $install) => $this->resolveHandlers($install, $resolved));
+        $package->canInstall->each(
+            fn (PackagedBotInstallDTO $install) => $this->resolveHandlers($install, $resolved)
+        );
 
         return $resolved;
-    }
-
-    /**
-     * @param  Thread  $thread
-     * @return array
-     */
-    private function getThreadUniqueHandlers(Thread $thread): array
-    {
-        return BotAction::uniqueFromThread($thread->id)
-            ->select(['handler'])
-            ->get()
-            ->transform(fn (BotAction $action) => $action->handler)
-            ->toArray();
     }
 
     /**

@@ -112,6 +112,19 @@ class BotAction extends Model implements Ownerable
     }
 
     /**
+     * @param  Thread  $thread
+     * @return array
+     */
+    public static function getUniqueHandlersInThread(Thread $thread): array
+    {
+        return self::uniqueFromThread($thread->id)
+            ->select(['handler'])
+            ->get()
+            ->map(fn (BotAction $action) => $action->handler)
+            ->toArray();
+    }
+
+    /**
      * Combine the final triggers to be a single string, separated by the
      * pipe (|), and removing duplicates.
      *
@@ -128,8 +141,8 @@ class BotAction extends Model implements Ownerable
             ? implode('|', $triggers)
             : $triggers;
 
-        return (new \Illuminate\Support\Collection(preg_split('/[|,]/', $triggers)))
-            ->transform(fn ($item) => trim($item))
+        return \Illuminate\Support\Collection::make(preg_split('/[|,]/', $triggers))
+            ->map(fn ($item) => trim($item))
             ->unique()
             ->filter()
             ->implode('|');
@@ -274,7 +287,7 @@ class BotAction extends Model implements Ownerable
     }
 
     /**
-     * @return array|string|null
+     * @return mixed|null
      */
     public function getPayload(?string $key = null)
     {

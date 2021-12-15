@@ -47,23 +47,10 @@ class AvailableBotHandlers
             $bot,
         ]);
 
-        $unique = $this->getThreadUniqueHandlers($thread);
+        $unique = BotAction::getUniqueHandlersInThread($thread);
 
         return $this->bots->getAuthorizedHandlers()
             ->reject(fn (BotActionHandlerDTO $handler) => in_array($handler->class, $unique))
             ->values();
-    }
-
-    /**
-     * @param  Thread  $thread
-     * @return array
-     */
-    private function getThreadUniqueHandlers(Thread $thread): array
-    {
-        return BotAction::uniqueFromThread($thread->id)
-            ->select(['handler'])
-            ->get()
-            ->transform(fn (BotAction $action) => $action->handler)
-            ->toArray();
     }
 }

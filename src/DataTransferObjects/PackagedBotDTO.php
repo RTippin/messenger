@@ -6,6 +6,8 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Support\Collection;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Facades\MessengerBots;
+use RTippin\Messenger\Models\BotAction;
+use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Support\PackagedBot;
 
@@ -72,6 +74,16 @@ class PackagedBotDTO implements Arrayable
     public Collection $installs;
 
     /**
+     * @var Collection|PackagedBotInstallDTO[]
+     */
+    public Collection $canInstall;
+
+    /**
+     * @var Collection|PackagedBotInstallDTO[]
+     */
+    public Collection $alreadyInstalled;
+
+    /**
      * @param  string  $packagedBot
      *
      * @see PackagedBot
@@ -92,6 +104,8 @@ class PackagedBotDTO implements Arrayable
         $this->shouldInstallAvatar = ! is_null($this->avatar);
         $this->avatarExtension = $this->getAvatarExtension();
         $this->shouldAuthorize = method_exists($packagedBot, 'authorize');
+        $this->canInstall = Collection::make();
+        $this->alreadyInstalled = Collection::make();
 
         $this->registerHandlers($packagedBot::installs());
 
@@ -108,8 +122,32 @@ class PackagedBotDTO implements Arrayable
             'name' => $this->name,
             'description' => $this->description,
             'avatar' => $this->generateAvatarPreviewRoutes(),
-            'installs' => $this->formatInstallsToArray(),
+            'installs' => $this->formatCanInstall(),
+            'already_installed' => $this->formatAlreadyInstalled(),
         ];
+    }
+
+    /**
+     * Apply all authorization and unique checks against
+     * the handlers defined to be installed.
+     *
+     * @param  Thread|null  $thread
+     * @return void
+     */
+    public function applyInstallFilters(?Thread $thread = null): void
+    {
+        $authorized = $this->filterAuthorizedInstalls();
+        $unique = ! is_null($thread)
+            ? BotAction::getUniqueHandlersInThread($thread)
+            : [];
+
+        $this->canInstall = $authorized->reject(
+            fn (PackagedBotInstallDTO $install) => in_array($install->handler->class, $unique)
+        )->values();
+
+        $this->alreadyInstalled = $authorized->filter(
+            fn (PackagedBotInstallDTO $install) => in_array($install->handler->class, $unique)
+        )->values();
     }
 
     /**
@@ -150,20 +188,6 @@ class PackagedBotDTO implements Arrayable
     }
 
     /**
-     * @return array
-     */
-    private function formatInstallsToArray(): array
-    {
-        $authorized = MessengerBots::getAuthorizedHandlers();
-
-        return $this->installs
-            ->filter(fn (PackagedBotInstallDTO $install) => $authorized->contains($install->handler))
-            ->sortBy(fn (PackagedBotInstallDTO $install) => $install->handler->name)
-            ->values()
-            ->toArray();
-    }
-
-    /**
      * @return string
      */
     private function getAvatarExtension(): string
@@ -199,5 +223,49 @@ class PackagedBotDTO implements Arrayable
             'alias' => $this->alias,
             'image' => 'avatar.'.$this->avatarExtension,
         ]);
+    }
+
+    /**
+     * @return Collection
+     */
+    private function filterAuthorizedInstalls(): Collection
+    {
+        $authorized = MessengerBots::getAuthorizedHandlers();
+
+        return $this->installs
+            ->filter(fn (PackagedBotInstallDTO $install) => $authorized->contains($install->handler))
+            ->values();
+    }
+
+    /**
+     * @return array
+     */
+    private function formatCanInstall(): array
+    {
+        $installs = $this->installs;
+
+        if ($this->canInstall->count()) {
+            $installs = $this->canInstall;
+        }
+
+        return $installs
+            ->sortBy(fn (PackagedBotInstallDTO $install) => $install->handler->name)
+            ->values()
+            ->toArray();
+    }
+
+    /**
+     * @return array
+     */
+    private function formatAlreadyInstalled(): array
+    {
+        if (! $this->alreadyInstalled->count()) {
+            return [];
+        }
+
+        return $this->alreadyInstalled
+            ->sortBy(fn (PackagedBotInstallDTO $install) => $install->handler->name)
+            ->values()
+            ->toArray();
     }
 }

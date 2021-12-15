@@ -5,6 +5,7 @@ namespace RTippin\Messenger\Http\Controllers\Actions;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Support\Collection;
+use RTippin\Messenger\DataTransferObjects\PackagedBotDTO;
 use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Thread;
@@ -30,6 +31,8 @@ class AvailableBotPackages
             $thread,
         ]);
 
-        return $bots->getAuthorizedPackagedBots();
+        return $bots->getAuthorizedPackagedBots()->each(
+            fn (PackagedBotDTO $package) => $package->applyInstallFilters($thread)
+        );
     }
 }

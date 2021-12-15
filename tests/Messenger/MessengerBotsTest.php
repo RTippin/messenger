@@ -98,20 +98,6 @@ class MessengerBotsTest extends MessengerTestCase
     }
 
     /** @test */
-    public function it_registers_bot_handlers_defined_in_a_packaged_bot()
-    {
-        $this->assertFalse($this->bots->isValidHandler(FunBotHandler::class));
-        $this->assertFalse($this->bots->isValidHandler(SillyBotHandler::class));
-        $this->assertFalse($this->bots->isValidHandler(BrokenBotHandler::class));
-
-        $this->bots->registerPackagedBots([FunBotPackage::class]);
-
-        $this->assertTrue($this->bots->isValidHandler(FunBotHandler::class));
-        $this->assertTrue($this->bots->isValidHandler(SillyBotHandler::class));
-        $this->assertTrue($this->bots->isValidHandler(BrokenBotHandler::class));
-    }
-
-    /** @test */
     public function it_can_get_unique_bot_handlers()
     {
         $this->bots->registerHandlers([
@@ -197,83 +183,27 @@ class MessengerBotsTest extends MessengerTestCase
             BrokenBotHandler::class,
             FunBotHandler::class,
         ]);
-        $handlers = [
-            [
-                'alias' => 'broken_bot',
-                'description' => 'This is a broken bot.',
-                'name' => 'Broken Bot',
-                'unique' => true,
-                'authorize' => false,
-                'triggers' => null,
-                'match' => null,
-            ],
-            [
-                'alias' => 'fun_bot',
-                'description' => 'This is a fun bot.',
-                'name' => 'Fun Bot',
-                'unique' => false,
-                'authorize' => false,
-                'triggers' => ['!test', '!more'],
-                'match' => MessengerBots::MATCH_EXACT_CASELESS,
-            ],
-            [
-                'alias' => 'silly_bot',
-                'description' => 'This is a silly bot.',
-                'name' => 'Silly Bot',
-                'unique' => true,
-                'authorize' => true,
-                'triggers' => null,
-                'match' => null,
-            ],
-        ];
 
-        $this->assertSame($handlers, $this->bots->getHandlers()->toArray());
+        $handlers = $this->bots->getHandlers();
+
+        $this->assertSame(3, $handlers->count());
+        $this->assertSame('broken_bot', $this->bots->getHandlers()[0]->alias);
+        $this->assertSame('fun_bot', $this->bots->getHandlers()[1]->alias);
+        $this->assertSame('silly_bot', $this->bots->getHandlers()[2]->alias);
     }
 
     /** @test */
     public function it_can_get_all_packaged_bots_sorting_by_name()
     {
-        SillyBotHandler::$authorized = true;
         $this->bots->registerPackagedBots([
             SillyBotPackage::class,
             FunBotPackage::class,
         ]);
-        $broken = $this->bots->getHandlers(BrokenBotHandler::class)->toArray();
-        $fun = $this->bots->getHandlers(FunBotHandler::class)->toArray();
-        $silly = $this->bots->getHandlers(SillyBotHandler::class)->toArray();
-        $packages = [
-            [
-                'alias' => 'fun_package',
-                'name' => 'Fun Package',
-                'description' => 'Fun package description.',
-                'avatar' => [
-                    'sm' => '/messenger/assets/bot-package/sm/fun_package/avatar.png',
-                    'md' => '/messenger/assets/bot-package/md/fun_package/avatar.png',
-                    'lg' => '/messenger/assets/bot-package/lg/fun_package/avatar.png',
-                ],
-                'installs' => [
-                    $broken,
-                    $fun,
-                    $silly,
-                ],
-            ],
-            [
-                'alias' => 'silly_package',
-                'name' => 'Silly Package',
-                'description' => 'Silly package description.',
-                'avatar' => [
-                    'sm' => '/messenger/assets/bot-package/sm/silly_package/avatar.png',
-                    'md' => '/messenger/assets/bot-package/md/silly_package/avatar.png',
-                    'lg' => '/messenger/assets/bot-package/lg/silly_package/avatar.png',
-                ],
-                'installs' => [
-                    $fun,
-                    $silly,
-                ],
-            ],
-        ];
 
-        $this->assertSame($packages, $this->bots->getPackagedBots()->toArray());
+        $packages = $this->bots->getPackagedBots();
+
+        $this->assertSame('fun_package', $packages->first()->alias);
+        $this->assertSame('silly_package', $packages->last()->alias);
     }
 
     /** @test */
@@ -283,77 +213,26 @@ class MessengerBotsTest extends MessengerTestCase
             FunBotHandler::class,
             SillyBotHandler::class,
         ]);
-        $fun = [
-            'alias' => 'fun_bot',
-            'description' => 'This is a fun bot.',
-            'name' => 'Fun Bot',
-            'unique' => false,
-            'authorize' => false,
-            'triggers' => ['!test', '!more'],
-            'match' => MessengerBots::MATCH_EXACT_CASELESS,
-        ];
-        $silly = [
-            'alias' => 'silly_bot',
-            'description' => 'This is a silly bot.',
-            'name' => 'Silly Bot',
-            'unique' => true,
-            'authorize' => true,
-            'triggers' => null,
-            'match' => null,
-        ];
 
-        $this->assertSame($silly, $this->bots->getHandlers('silly_bot')->toArray());
-        $this->assertSame($silly, $this->bots->getHandlers(SillyBotHandler::class)->toArray());
-        $this->assertSame($fun, $this->bots->getHandlers('fun_bot')->toArray());
-        $this->assertSame($fun, $this->bots->getHandlers(FunBotHandler::class)->toArray());
+        $this->assertSame('silly_bot', $this->bots->getHandlers('silly_bot')->alias);
+        $this->assertSame('silly_bot', $this->bots->getHandlers(SillyBotHandler::class)->alias);
+        $this->assertSame('fun_bot', $this->bots->getHandlers('fun_bot')->alias);
+        $this->assertSame('fun_bot', $this->bots->getHandlers(FunBotHandler::class)->alias);
         $this->assertNull($this->bots->getHandlers('unknown'));
     }
 
     /** @test */
     public function it_can_get_single_packaged_bot()
     {
-        SillyBotHandler::$authorized = true;
         $this->bots->registerPackagedBots([
             SillyBotPackage::class,
             FunBotPackage::class,
         ]);
-        $broken = $this->bots->getHandlers(BrokenBotHandler::class)->toArray();
-        $fun = $this->bots->getHandlers(FunBotHandler::class)->toArray();
-        $silly = $this->bots->getHandlers(SillyBotHandler::class)->toArray();
-        $funPackage = [
-            'alias' => 'fun_package',
-            'name' => 'Fun Package',
-            'description' => 'Fun package description.',
-            'avatar' => [
-                'sm' => '/messenger/assets/bot-package/sm/fun_package/avatar.png',
-                'md' => '/messenger/assets/bot-package/md/fun_package/avatar.png',
-                'lg' => '/messenger/assets/bot-package/lg/fun_package/avatar.png',
-            ],
-            'installs' => [
-                $broken,
-                $fun,
-                $silly,
-            ],
-        ];
-        $sillyPackage = [
-            'alias' => 'silly_package',
-            'name' => 'Silly Package',
-            'description' => 'Silly package description.',
-            'avatar' => [
-                'sm' => '/messenger/assets/bot-package/sm/silly_package/avatar.png',
-                'md' => '/messenger/assets/bot-package/md/silly_package/avatar.png',
-                'lg' => '/messenger/assets/bot-package/lg/silly_package/avatar.png',
-            ],
-            'installs' => [
-                $fun,
-                $silly,
-            ],
-        ];
 
-        $this->assertSame($funPackage, $this->bots->getPackagedBots('fun_package')->toArray());
-        $this->assertSame($funPackage, $this->bots->getPackagedBots(FunBotPackage::class)->toArray());
-        $this->assertSame($sillyPackage, $this->bots->getPackagedBots('silly_package')->toArray());
-        $this->assertSame($sillyPackage, $this->bots->getPackagedBots(SillyBotPackage::class)->toArray());
+        $this->assertSame('fun_package', $this->bots->getPackagedBots('fun_package')->alias);
+        $this->assertSame('fun_package', $this->bots->getPackagedBots(FunBotPackage::class)->alias);
+        $this->assertSame('silly_package', $this->bots->getPackagedBots('silly_package')->alias);
+        $this->assertSame('silly_package', $this->bots->getPackagedBots(SillyBotPackage::class)->alias);
         $this->assertNull($this->bots->getPackagedBots('unknown'));
     }
 
@@ -400,33 +279,6 @@ class MessengerBotsTest extends MessengerTestCase
 
         $this->assertCount(2, $this->bots->getPackagedBots());
         $this->assertCount(1, $this->bots->getAuthorizedPackagedBots());
-    }
-
-    /** @test */
-    public function it_filters_authorized_handlers_when_calling_to_array_on_packaged_bot_collection()
-    {
-        SillyBotHandler::$authorized = false;
-        $this->bots->registerPackagedBots([
-            FunBotPackage::class,
-        ]);
-        $broken = $this->bots->getHandlers(BrokenBotHandler::class)->toArray();
-        $fun = $this->bots->getHandlers(FunBotHandler::class)->toArray();
-        $funPackage = [
-            'alias' => 'fun_package',
-            'name' => 'Fun Package',
-            'description' => 'Fun package description.',
-            'avatar' => [
-                'sm' => '/messenger/assets/bot-package/sm/fun_package/avatar.png',
-                'md' => '/messenger/assets/bot-package/md/fun_package/avatar.png',
-                'lg' => '/messenger/assets/bot-package/lg/fun_package/avatar.png',
-            ],
-            'installs' => [
-                $broken,
-                $fun,
-            ],
-        ];
-
-        $this->assertSame($funPackage, $this->bots->getPackagedBots(FunBotPackage::class)->toArray());
     }
 
     /** @test */

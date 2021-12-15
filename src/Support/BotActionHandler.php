@@ -147,7 +147,7 @@ abstract class BotActionHandler
      * Decode the action's payload.
      *
      * @param  string|null  $key
-     * @return array|string|null
+     * @return mixed|null
      */
     public function getPayload(?string $key = null)
     {
