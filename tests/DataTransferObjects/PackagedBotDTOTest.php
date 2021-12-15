@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Tests\DataTransferObjects;
 
 use RTippin\Messenger\DataTransferObjects\PackagedBotDTO;
-
 use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
