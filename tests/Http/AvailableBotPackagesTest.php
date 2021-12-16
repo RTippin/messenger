@@ -4,6 +4,8 @@ namespace RTippin\Messenger\Tests\Http;
 
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Facades\MessengerBots;
+use RTippin\Messenger\Models\Bot;
+use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\Fixtures\FunBotPackage;
@@ -14,15 +16,21 @@ use RTippin\Messenger\Tests\HttpTestCase;
 class AvailableBotPackagesTest extends HttpTestCase
 {
     /** @test */
-    public function admin_can_view_available_packages()
+    public function it_displays_packages_filtering_installable_and_already_installed_unique_handlers()
     {
-        SillyBotHandler::$authorized = true;
         $this->logCurrentRequest();
+        SillyBotHandler::$authorized = true;
         MessengerBots::registerPackagedBots([
             FunBotPackage::class,
             SillyBotPackage::class,
         ]);
         $thread = $this->createGroupThread($this->tippin);
+        BotAction::factory()->for(
+            Bot::factory()->for($thread)->owner($this->tippin)->create()
+        )
+            ->owner($this->tippin)
+            ->handler(SillyBotHandler::class)
+            ->create();
         $this->actingAs($this->tippin);
 
         $this->getJson(route('api.messenger.threads.bots.packages.index', [
@@ -39,6 +47,8 @@ class AvailableBotPackagesTest extends HttpTestCase
                         [
                             'alias' => 'fun_bot',
                         ],
+                    ],
+                    'already_installed' => [
                         [
                             'alias' => 'silly_bot',
                         ],
@@ -50,6 +60,8 @@ class AvailableBotPackagesTest extends HttpTestCase
                         [
                             'alias' => 'fun_bot',
                         ],
+                    ],
+                    'already_installed' => [
                         [
                             'alias' => 'silly_bot',
                         ],
