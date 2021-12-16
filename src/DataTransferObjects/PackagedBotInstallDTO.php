@@ -21,9 +21,9 @@ class PackagedBotInstallDTO implements Arrayable
 
     /**
      * @param  string  $handler
-     * @param  array|null  $data
+     * @param  array  $data
      */
-    public function __construct(string $handler, ?array $data)
+    public function __construct(string $handler, array $data)
     {
         $this->handler = MessengerBots::getHandlers($handler);
         $this->data = $this->formatData($data);
