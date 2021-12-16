@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger\Tests\Messenger;
+namespace RTippin\Messenger\Tests\Support;
 
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Call;

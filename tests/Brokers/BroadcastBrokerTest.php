@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger\Tests\Messenger;
+namespace RTippin\Messenger\Tests\Brokers;
 
 use Exception;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcastNow;

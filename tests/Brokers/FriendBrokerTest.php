@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger\Tests\Messenger;
+namespace RTippin\Messenger\Tests\Brokers;
 
 use RTippin\Messenger\Brokers\FriendBroker;
 use RTippin\Messenger\Brokers\NullFriendBroker;
@@ -8,7 +8,7 @@ use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
-class FriendDriverTest extends FeatureTestCase
+class FriendBrokerTest extends FeatureTestCase
 {
     /** @test */
     public function it_uses_default_friend_broker()

@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger\Tests\Messenger;
+namespace RTippin\Messenger\Tests\Support;
 
 use Exception;
 use Illuminate\Http\UploadedFile;
