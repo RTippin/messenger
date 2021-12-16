@@ -8,6 +8,7 @@ use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\Support\MessengerComposer;
 use RTippin\Messenger\Tests\Fixtures\BrokenBotHandler;
 use RTippin\Messenger\Tests\Fixtures\FunBotHandler;
@@ -16,6 +17,24 @@ use RTippin\Messenger\Tests\MessengerTestCase;
 
 class BotActionHandlerTest extends MessengerTestCase
 {
+    /** @test */
+    public function it_shows_handlers_not_testing_by_default()
+    {
+        $this->assertFalse(FunBotHandler::isTesting());
+        $this->assertFalse(SillyBotHandler::isTesting());
+        $this->assertFalse(BrokenBotHandler::isTesting());
+    }
+
+    /** @test */
+    public function it_can_set_handlers_to_testing()
+    {
+        BotActionHandler::isTesting(true);
+
+        $this->assertTrue(FunBotHandler::isTesting());
+        $this->assertTrue(SillyBotHandler::isTesting());
+        $this->assertTrue(BrokenBotHandler::isTesting());
+    }
+
     /** @test */
     public function it_can_call_to_release_cooldown()
     {

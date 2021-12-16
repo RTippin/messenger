@@ -6,7 +6,6 @@ use InvalidArgumentException;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Facades\MessengerBots as BotsFacade;
 use RTippin\Messenger\MessengerBots;
-use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\Tests\Fixtures\BrokenBotHandler;
 use RTippin\Messenger\Tests\Fixtures\FunBotHandler;
 use RTippin\Messenger\Tests\Fixtures\FunBotPackage;
@@ -25,13 +24,6 @@ class MessengerBotsTest extends MessengerTestCase
         $this->bots = app(MessengerBots::class);
     }
 
-    protected function tearDown(): void
-    {
-        BotActionHandler::isTesting(false);
-
-        parent::tearDown();
-    }
-
     /** @test */
     public function messenger_bots_facade_same_instance_as_container()
     {
@@ -48,22 +40,6 @@ class MessengerBotsTest extends MessengerTestCase
     public function messenger_bots_alias_same_instance_as_container()
     {
         $this->assertSame($this->bots, app('messenger-bots'));
-    }
-
-    /** @test */
-    public function it_shows_handlers_not_testing_by_default()
-    {
-        $this->assertFalse(FunBotHandler::isTesting());
-        $this->assertFalse(SillyBotHandler::isTesting());
-    }
-
-    /** @test */
-    public function it_can_set_handlers_to_testing()
-    {
-        BotActionHandler::isTesting(true);
-
-        $this->assertTrue(FunBotHandler::isTesting());
-        $this->assertTrue(SillyBotHandler::isTesting());
     }
 
     /** @test */

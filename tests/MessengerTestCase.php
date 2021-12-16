@@ -7,6 +7,7 @@ use Illuminate\Foundation\Application;
 use Orchestra\Testbench\TestCase;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\MessengerServiceProvider;
+use RTippin\Messenger\Support\BotActionHandler;
 use RTippin\Messenger\Tests\Fixtures\CompanyModel;
 use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;
 use RTippin\Messenger\Tests\Fixtures\SillyBotPackage;
@@ -112,6 +113,7 @@ class MessengerTestCase extends TestCase
         CompanyModel::reset();
         SillyBotHandler::reset();
         SillyBotPackage::reset();
+        BotActionHandler::isTesting(false);
 
         parent::tearDown();
     }
