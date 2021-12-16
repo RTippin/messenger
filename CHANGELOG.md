@@ -3,6 +3,15 @@
 
 ---
 
+### [v1.16.0 (12-16-2021)](https://github.com/RTippin/messenger/compare/v1.15.0...v1.16.0)
+
+#### Changed
+- `PackagedBotDTO.php` now applies filters for authorization, can install, and already installed.
+- When viewing `PackagedBotDTO.php`'s through a request, `installed` and `already_installed` are now returned, where `already_installed` shows handlers flagged as unique that already exists in the thread.
+- Various testing refactor and docblock improvements.
+
+---
+
 ### [v1.15.0 (12-12-2021)](https://github.com/RTippin/messenger/compare/v1.14.0...v1.15.0)
 
 #### Added
