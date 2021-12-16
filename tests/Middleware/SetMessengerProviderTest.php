@@ -26,9 +26,7 @@ class SetMessengerProviderTest extends MessengerTestCase
     {
         $this->expectException(InvalidProviderException::class);
 
-        app(SetMessengerProvider::class)->handle(new Request, function ($request) {
-            $this->assertFalse(Messenger::isProviderSet());
-        }, 'required');
+        app(SetMessengerProvider::class)->handle(new Request, fn ($request) => null, 'required');
     }
 
     /** @test */
@@ -37,27 +35,21 @@ class SetMessengerProviderTest extends MessengerTestCase
         $this->expectException(InvalidProviderException::class);
 
         $request = new Request;
-        $request->setUserResolver(function () {
-            return new OtherModel;
-        });
+        $request->setUserResolver(fn () => new OtherModel);
 
-        app(SetMessengerProvider::class)->handle($request, function ($request) {
-            $this->assertFalse(Messenger::isProviderSet());
-        }, 'required');
+        app(SetMessengerProvider::class)->handle($request, fn ($request) => null, 'required');
     }
 
     /** @test */
     public function valid_user_provider_was_set()
     {
         $request = new Request;
-        $tippin = new UserModel([
+        $tippin = UserModel::factory()->make([
             'first' => 'Richard',
             'last' => 'Tippin',
             'email' => 'tippin@example.net',
         ]);
-        $request->setUserResolver(function () use ($tippin) {
-            return $tippin;
-        });
+        $request->setUserResolver(fn () => $tippin);
 
         app(SetMessengerProvider::class)->handle($request, function (Request $request) {
             $this->assertSame('tippin@example.net', $request->user()->email);
@@ -70,13 +62,11 @@ class SetMessengerProviderTest extends MessengerTestCase
     public function valid_company_provider_was_set()
     {
         $request = new Request;
-        $developers = new CompanyModel([
+        $developers = CompanyModel::factory()->make([
             'company_name' => 'Developers',
             'company_email' => 'developers@example.net',
         ]);
-        $request->setUserResolver(function () use ($developers) {
-            return $developers;
-        });
+        $request->setUserResolver(fn () => $developers);
 
         app(SetMessengerProvider::class)->handle($request, function (Request $request) {
             $this->assertSame('developers@example.net', $request->user()->company_email);
