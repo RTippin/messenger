@@ -31,4 +31,12 @@ class FunBotHandler extends BotActionHandler
             'special' => ['nullable', 'boolean'],
         ];
     }
+
+    public function errorMessages(): array
+    {
+        return [
+            'test' => 'Test Needed.',
+            'test.*' => 'Tests must be string.',
+        ];
+    }
 }

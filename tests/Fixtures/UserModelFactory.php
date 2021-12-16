@@ -8,6 +8,7 @@ use RTippin\Messenger\Models\Messenger;
 
 /**
  * @method UserModel create($attributes = [], ?Model $parent = null)
+ * @method UserModel make($attributes = [], ?Model $parent = null)
  */
 class UserModelFactory extends Factory
 {
