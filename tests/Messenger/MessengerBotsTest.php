@@ -237,26 +237,6 @@ class MessengerBotsTest extends MessengerTestCase
     }
 
     /** @test */
-    public function it_removes_trigger_overrides_if_match_override_is_match_any()
-    {
-        SillyBotHandler::$triggers = ['one', 'two'];
-        SillyBotHandler::$match = MessengerBots::MATCH_ANY;
-        $dto = [
-            'alias' => 'silly_bot',
-            'description' => 'This is a silly bot.',
-            'name' => 'Silly Bot',
-            'unique' => true,
-            'authorize' => true,
-            'triggers' => null,
-            'match' => MessengerBots::MATCH_ANY,
-        ];
-
-        $this->bots->registerHandlers([SillyBotHandler::class]);
-
-        $this->assertSame($dto, $this->bots->getHandlers(SillyBotHandler::class)->toArray());
-    }
-
-    /** @test */
     public function it_can_get_authorized_handlers()
     {
         $this->bots->registerHandlers([

@@ -137,9 +137,8 @@ class PackagedBotDTO implements Arrayable
     public function applyInstallFilters(?Thread $thread = null): void
     {
         $authorized = $this->filterAuthorizedInstalls();
-        $unique = ! is_null($thread)
-            ? BotAction::getUniqueHandlersInThread($thread)
-            : [];
+
+        $unique = ! is_null($thread) ? BotAction::getUniqueHandlersInThread($thread) : [];
 
         $this->canInstall = $authorized->reject(
             fn (PackagedBotInstallDTO $install) => in_array($install->handler->class, $unique)
