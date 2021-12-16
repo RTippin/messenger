@@ -138,7 +138,7 @@ class PackagedBotDTOTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_returns_array_without_filters_applied_sorting_by_name()
+    public function it_returns_empty_arrays_without_filters_applied()
     {
         $funPackage = new PackagedBotDTO(FunBotPackage::class);
 
@@ -151,11 +151,7 @@ class PackagedBotDTOTest extends FeatureTestCase
                 'md' => '/messenger/assets/bot-package/md/fun_package/avatar.png',
                 'lg' => '/messenger/assets/bot-package/lg/fun_package/avatar.png',
             ],
-            'installs' => [
-                (new BotActionHandlerDTO(BrokenBotHandler::class))->toArray(),
-                (new BotActionHandlerDTO(FunBotHandler::class))->toArray(),
-                (new BotActionHandlerDTO(SillyBotHandler::class))->toArray(),
-            ],
+            'installs' => [],
             'already_installed' => [],
         ];
 

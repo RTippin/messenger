@@ -122,8 +122,8 @@ class PackagedBotDTO implements Arrayable
             'name' => $this->name,
             'description' => $this->description,
             'avatar' => $this->generateAvatarPreviewRoutes(),
-            'installs' => $this->formatCanInstall(),
-            'already_installed' => $this->formatAlreadyInstalled(),
+            'installs' => $this->sortCanInstall(),
+            'already_installed' => $this->sortAlreadyInstalled(),
         ];
     }
 
@@ -239,15 +239,9 @@ class PackagedBotDTO implements Arrayable
     /**
      * @return array
      */
-    private function formatCanInstall(): array
+    private function sortCanInstall(): array
     {
-        $installs = $this->installs;
-
-        if ($this->canInstall->count()) {
-            $installs = $this->canInstall;
-        }
-
-        return $installs
+        return $this->canInstall
             ->sortBy(fn (PackagedBotInstallDTO $install) => $install->handler->name)
             ->values()
             ->toArray();
@@ -256,12 +250,8 @@ class PackagedBotDTO implements Arrayable
     /**
      * @return array
      */
-    private function formatAlreadyInstalled(): array
+    private function sortAlreadyInstalled(): array
     {
-        if (! $this->alreadyInstalled->count()) {
-            return [];
-        }
-
         return $this->alreadyInstalled
             ->sortBy(fn (PackagedBotInstallDTO $install) => $install->handler->name)
             ->values()
