@@ -7,6 +7,7 @@ use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
 use RTippin\Messenger\DataTransferObjects\PackagedBotInstallDTO;
 use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Tests\Fixtures\FunBotHandler;
+use RTippin\Messenger\Tests\Fixtures\SillyBotHandler;
 use RTippin\Messenger\Tests\MessengerTestCase;
 
 class PackagedBotInstallDTOTest extends MessengerTestCase
@@ -15,7 +16,10 @@ class PackagedBotInstallDTOTest extends MessengerTestCase
     {
         parent::setUp();
 
-        MessengerBots::registerHandlers([FunBotHandler::class]);
+        MessengerBots::registerHandlers([
+            FunBotHandler::class,
+            SillyBotHandler::class,
+        ]);
     }
 
     /** @test */
@@ -66,15 +70,87 @@ class PackagedBotInstallDTOTest extends MessengerTestCase
     public function it_sets_collection_with_extra_data()
     {
         $install = new PackagedBotInstallDTO(FunBotHandler::class, [
-            'enabled' => false,
-            'cooldown' => 0,
-            'admin_only' => true,
+            'test' => true,
         ]);
         $expects = [
             [
-                'enabled' => false,
+                'enabled' => true,
+                'cooldown' => 30,
+                'admin_only' => false,
+                'test' => true,
+            ],
+        ];
+
+        $this->assertSame($expects, $install->data->toArray());
+    }
+
+    /** @test */
+    public function it_sets_collection_of_data_with_multiple_arrays_merging_defaults()
+    {
+        $install = new PackagedBotInstallDTO(FunBotHandler::class, [
+            ['one' => true], ['two' => true],
+        ]);
+        $expects = [
+            [
+                'enabled' => true,
+                'cooldown' => 30,
+                'admin_only' => false,
+                'one' => true,
+            ],
+            [
+                'enabled' => true,
+                'cooldown' => 30,
+                'admin_only' => false,
+                'two' => true,
+            ],
+        ];
+
+        $this->assertSame($expects, $install->data->toArray());
+    }
+
+    /** @test */
+    public function it_sets_collection_of_data_with_multiple_arrays_overriding_defaults()
+    {
+        $install = new PackagedBotInstallDTO(FunBotHandler::class, [
+            [
+                'cooldown' => 120,
+                'one' => true,
+            ],
+            [
                 'cooldown' => 0,
-                'admin_only' => true,
+                'two' => true,
+            ],
+        ]);
+        $expects = [
+            [
+                'enabled' => true,
+                'cooldown' => 120,
+                'admin_only' => false,
+                'one' => true,
+            ],
+            [
+                'enabled' => true,
+                'cooldown' => 0,
+                'admin_only' => false,
+                'two' => true,
+            ],
+        ];
+
+        $this->assertSame($expects, $install->data->toArray());
+    }
+
+    /** @test */
+    public function it_keeps_first_entry_if_unique_flagged_handler_defines_more_than_one_array()
+    {
+        $install = new PackagedBotInstallDTO(SillyBotHandler::class, [
+            ['one' => true], ['two' => true],
+        ]);
+        $expects = [
+            [
+                'enabled' => true,
+                'cooldown' => 30,
+                'admin_only' => false,
+                'one' => true,
             ],
         ];
 
@@ -85,7 +161,8 @@ class PackagedBotInstallDTOTest extends MessengerTestCase
     public function it_returns_array_using_only_handler_dto()
     {
         $install = new PackagedBotInstallDTO(FunBotHandler::class, []);
+        $handler = new BotActionHandlerDTO(FunBotHandler::class);
 
-        $this->assertSame((new BotActionHandlerDTO(FunBotHandler::class))->toArray(), $install->toArray());
+        $this->assertSame($handler->toArray(), $install->toArray());
     }
 }
