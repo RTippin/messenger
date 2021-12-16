@@ -22,7 +22,7 @@ class CompanyModel extends User implements MessengerProvider
     use HasFactory,
         Messageable;
 
-    public static string $alias = 'company';
+    public static ?string $alias = 'company';
     public static bool $searchable = true;
     public static bool $friendable = true;
     public static bool $devices = true;

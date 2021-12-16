@@ -23,7 +23,7 @@ class UserModel extends User implements MessengerProvider
         Messageable,
         Search;
 
-    public static string $alias = 'user';
+    public static ?string $alias = 'user';
     public static bool $searchable = true;
     public static bool $friendable = true;
     public static bool $devices = true;
