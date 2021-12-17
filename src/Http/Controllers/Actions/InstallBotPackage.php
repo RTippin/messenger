@@ -62,7 +62,7 @@ class InstallBotPackage
             $thread,
         ]);
 
-        $package = $this->bots->getPackagedBots(
+        $package = $this->bots->getPackagedBot(
             $request->validated()['alias']
         );
 

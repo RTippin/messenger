@@ -35,7 +35,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         Messenger::setBots(false);
         MessengerBots::registerPackagedBots([FunBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBots(FunBotPackage::class);
+        $package = MessengerBots::getPackagedBot(FunBotPackage::class);
 
         $this->expectException(FeatureDisabledException::class);
         $this->expectExceptionMessage('Bots are currently disabled.');
@@ -48,7 +48,7 @@ class InstallPackagedBotTest extends FeatureTestCase
     {
         MessengerBots::registerPackagedBots([FunBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBots(FunBotPackage::class);
+        $package = MessengerBots::getPackagedBot(FunBotPackage::class);
 
         app(InstallPackagedBot::class)->execute($thread, $package);
 
@@ -69,7 +69,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         SillyBotPackage::$enabled = false;
         MessengerBots::registerPackagedBots([SillyBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
+        $package = MessengerBots::getPackagedBot(SillyBotPackage::class);
 
         app(InstallPackagedBot::class)->execute($thread, $package);
 
@@ -88,7 +88,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         SillyBotHandler::$authorized = true;
         MessengerBots::registerPackagedBots([FunBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBots(FunBotPackage::class);
+        $package = MessengerBots::getPackagedBot(FunBotPackage::class);
 
         app(InstallPackagedBot::class)->execute($thread, $package);
 
@@ -110,7 +110,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         SillyBotHandler::$authorized = false;
         MessengerBots::registerPackagedBots([FunBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBots(FunBotPackage::class);
+        $package = MessengerBots::getPackagedBot(FunBotPackage::class);
 
         app(InstallPackagedBot::class)->execute($thread, $package);
 
@@ -126,7 +126,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         SillyBotPackage::$installs = [];
         MessengerBots::registerPackagedBots([SillyBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
+        $package = MessengerBots::getPackagedBot(SillyBotPackage::class);
 
         app(InstallPackagedBot::class)->execute($thread, $package);
 
@@ -143,7 +143,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         SillyBotPackage::$installs = [];
         MessengerBots::registerPackagedBots([SillyBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
+        $package = MessengerBots::getPackagedBot(SillyBotPackage::class);
         $cache = Cache::spy();
 
         app(InstallPackagedBot::class)->execute($thread, $package);
@@ -158,7 +158,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         SillyBotPackage::$avatar = __DIR__.'/../Fixtures/404.png';
         MessengerBots::registerPackagedBots([SillyBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
+        $package = MessengerBots::getPackagedBot(SillyBotPackage::class);
 
         $bot = app(InstallPackagedBot::class)->execute($thread, $package)->getBot();
 
@@ -174,7 +174,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         SillyBotPackage::$avatar = __DIR__.'/../Fixtures/404.png';
         MessengerBots::registerPackagedBots([SillyBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
+        $package = MessengerBots::getPackagedBot(SillyBotPackage::class);
 
         $bot = app(InstallPackagedBot::class)->execute($thread, $package)->getBot();
 
@@ -188,7 +188,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         SillyBotPackage::$installs = [];
         MessengerBots::registerPackagedBots([SillyBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBots(SillyBotPackage::class);
+        $package = MessengerBots::getPackagedBot(SillyBotPackage::class);
         Event::fake([
             PackagedBotInstalledEvent::class,
         ]);
@@ -211,7 +211,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         Bus::fake();
         MessengerBots::registerPackagedBots([FunBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBots(FunBotPackage::class);
+        $package = MessengerBots::getPackagedBot(FunBotPackage::class);
 
         app(InstallPackagedBot::class)->execute($thread, $package);
 
@@ -225,7 +225,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         Bus::fake();
         MessengerBots::registerPackagedBots([FunBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBots(FunBotPackage::class);
+        $package = MessengerBots::getPackagedBot(FunBotPackage::class);
         Messenger::setSystemMessageSubscriber('queued', false);
 
         app(InstallPackagedBot::class)->execute($thread, $package);
@@ -240,7 +240,7 @@ class InstallPackagedBotTest extends FeatureTestCase
         Bus::fake();
         MessengerBots::registerPackagedBots([FunBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBots(FunBotPackage::class);
+        $package = MessengerBots::getPackagedBot(FunBotPackage::class);
         Messenger::setSystemMessageSubscriber('enabled', false);
 
         app(InstallPackagedBot::class)->execute($thread, $package);

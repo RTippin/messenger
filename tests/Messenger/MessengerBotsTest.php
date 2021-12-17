@@ -158,9 +158,9 @@ class MessengerBotsTest extends MessengerTestCase
         $handlers = $this->bots->getHandlers();
 
         $this->assertSame(3, $handlers->count());
-        $this->assertSame('broken_bot', $this->bots->getHandlers()[0]->alias);
-        $this->assertSame('fun_bot', $this->bots->getHandlers()[1]->alias);
-        $this->assertSame('silly_bot', $this->bots->getHandlers()[2]->alias);
+        $this->assertSame('broken_bot', $handlers[0]->alias);
+        $this->assertSame('fun_bot', $handlers[1]->alias);
+        $this->assertSame('silly_bot', $handlers[2]->alias);
     }
 
     /** @test */
@@ -173,8 +173,8 @@ class MessengerBotsTest extends MessengerTestCase
 
         $packages = $this->bots->getPackagedBots();
 
-        $this->assertSame('fun_package', $packages->first()->alias);
-        $this->assertSame('silly_package', $packages->last()->alias);
+        $this->assertSame('fun_package', $packages[0]->alias);
+        $this->assertSame('silly_package', $packages[1]->alias);
     }
 
     /** @test */
@@ -185,11 +185,11 @@ class MessengerBotsTest extends MessengerTestCase
             SillyBotHandler::class,
         ]);
 
-        $this->assertSame('silly_bot', $this->bots->getHandlers('silly_bot')->alias);
-        $this->assertSame('silly_bot', $this->bots->getHandlers(SillyBotHandler::class)->alias);
-        $this->assertSame('fun_bot', $this->bots->getHandlers('fun_bot')->alias);
-        $this->assertSame('fun_bot', $this->bots->getHandlers(FunBotHandler::class)->alias);
-        $this->assertNull($this->bots->getHandlers('unknown'));
+        $this->assertSame('silly_bot', $this->bots->getHandler('silly_bot')->alias);
+        $this->assertSame('silly_bot', $this->bots->getHandler(SillyBotHandler::class)->alias);
+        $this->assertSame('fun_bot', $this->bots->getHandler('fun_bot')->alias);
+        $this->assertSame('fun_bot', $this->bots->getHandler(FunBotHandler::class)->alias);
+        $this->assertNull($this->bots->getHandler('unknown'));
     }
 
     /** @test */
@@ -200,11 +200,11 @@ class MessengerBotsTest extends MessengerTestCase
             FunBotPackage::class,
         ]);
 
-        $this->assertSame('fun_package', $this->bots->getPackagedBots('fun_package')->alias);
-        $this->assertSame('fun_package', $this->bots->getPackagedBots(FunBotPackage::class)->alias);
-        $this->assertSame('silly_package', $this->bots->getPackagedBots('silly_package')->alias);
-        $this->assertSame('silly_package', $this->bots->getPackagedBots(SillyBotPackage::class)->alias);
-        $this->assertNull($this->bots->getPackagedBots('unknown'));
+        $this->assertSame('fun_package', $this->bots->getPackagedBot('fun_package')->alias);
+        $this->assertSame('fun_package', $this->bots->getPackagedBot(FunBotPackage::class)->alias);
+        $this->assertSame('silly_package', $this->bots->getPackagedBot('silly_package')->alias);
+        $this->assertSame('silly_package', $this->bots->getPackagedBot(SillyBotPackage::class)->alias);
+        $this->assertNull($this->bots->getPackagedBot('unknown'));
     }
 
     /** @test */

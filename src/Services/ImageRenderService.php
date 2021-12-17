@@ -235,7 +235,7 @@ class ImageRenderService
             return $this->renderDefaultImage('bot');
         }
 
-        $package = $this->bots->getPackagedBots($alias);
+        $package = $this->bots->getPackagedBot($alias);
 
         if (! $package->shouldInstallAvatar) {
             return $this->renderDefaultImage('bot');

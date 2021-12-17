@@ -149,6 +149,17 @@ final class MessengerBots
     }
 
     /**
+     * Get an individual handler.
+     *
+     * @param  string|null  $handlerOrAlias
+     * @return BotActionHandlerDTO|null
+     */
+    public function getHandler(string $handlerOrAlias): ?BotActionHandlerDTO
+    {
+        return $this->getHandlers($handlerOrAlias);
+    }
+
+    /**
      * Returns the handlers the end user is authorized to view/add.
      *
      * @return Collection
@@ -307,7 +318,7 @@ final class MessengerBots
      * Get a collection of packaged bots, or an individual packaged bot.
      *
      * @param  string|null  $packageOrAlias
-     * @return PackagedBotDTO|Collection|null
+     * @return PackagedBotDTO|Collection<PackagedBotDTO>|null
      */
     public function getPackagedBots(?string $packageOrAlias = null)
     {
@@ -320,6 +331,17 @@ final class MessengerBots
         return $this->packagedBots->get(
             $this->findPackagedBot($packageOrAlias)
         );
+    }
+
+    /**
+     * Get an individual packaged bot.
+     *
+     * @param  string|null  $packageOrAlias
+     * @return PackagedBotDTO|null
+     */
+    public function getPackagedBot(string $packageOrAlias): ?PackagedBotDTO
+    {
+        return $this->getPackagedBots($packageOrAlias);
     }
 
     /**

@@ -275,7 +275,7 @@ class BotAction extends Model implements Ownerable
      */
     public function getHandler(): ?BotActionHandlerDTO
     {
-        return MessengerBots::getHandlers($this->handler);
+        return MessengerBots::getHandler($this->handler);
     }
 
     /**
