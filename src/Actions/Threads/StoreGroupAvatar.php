@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Actions\Threads;
 
-use Exception;
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\FileServiceException;
@@ -20,7 +19,7 @@ class StoreGroupAvatar extends GroupAvatarAction
      *
      * @see GroupAvatarRequest
      *
-     * @throws FeatureDisabledException|FileServiceException|Exception
+     * @throws FeatureDisabledException|FileServiceException|Throwable
      */
     public function execute(Thread $thread, UploadedFile $image): self
     {
@@ -43,7 +42,7 @@ class StoreGroupAvatar extends GroupAvatarAction
      * @param  string  $fileName
      * @return $this
      *
-     * @throws Exception
+     * @throws Throwable
      */
     private function handleOrRollback(string $fileName): self
     {
@@ -54,7 +53,7 @@ class StoreGroupAvatar extends GroupAvatarAction
                 ->setDisk($this->getThread()->getStorageDisk())
                 ->destroy("{$this->getThread()->getAvatarDirectory()}/$fileName");
 
-            throw new Exception($e->getMessage(), $e->getCode(), $e);
+            throw $e;
         }
     }
 

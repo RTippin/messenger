@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Actions\Messages;
 
-use Exception;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use Illuminate\Http\UploadedFile;
@@ -97,7 +96,7 @@ class StoreAudioMessage extends NewMessageAction
      * @param  string  $fileName
      * @return void
      *
-     * @throws Exception
+     * @throws Throwable
      */
     private function handleOrRollback(string $fileName): void
     {
@@ -108,7 +107,7 @@ class StoreAudioMessage extends NewMessageAction
                 ->setDisk($this->getThread()->getStorageDisk())
                 ->destroy("{$this->getThread()->getAudioDirectory()}/$fileName");
 
-            throw new Exception($e->getMessage(), $e->getCode(), $e);
+            throw $e;
         }
     }
 

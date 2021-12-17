@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Actions\Bots;
 
-use Exception;
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\FileServiceException;
@@ -17,7 +16,7 @@ class StoreBotAvatar extends BotAvatarAction
      * @param  UploadedFile  $image
      * @return $this
      *
-     * @throws FeatureDisabledException|FileServiceException|Exception
+     * @throws FeatureDisabledException|FileServiceException|Throwable
      */
     public function execute(Bot $bot, UploadedFile $image): self
     {
@@ -41,7 +40,7 @@ class StoreBotAvatar extends BotAvatarAction
      *
      * @param  string  $fileName
      *
-     * @throws Exception
+     * @throws Throwable
      */
     private function handleOrRollback(string $fileName): void
     {
@@ -52,7 +51,7 @@ class StoreBotAvatar extends BotAvatarAction
                 ->setDisk($this->getBot()->getStorageDisk())
                 ->destroy("{$this->getBot()->getAvatarDirectory()}/$fileName");
 
-            throw new Exception($e->getMessage(), $e->getCode(), $e);
+            throw $e;
         }
     }
 

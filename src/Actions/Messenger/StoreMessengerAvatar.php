@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Actions\Messenger;
 
-use Exception;
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\FileServiceException;
@@ -18,7 +17,7 @@ class StoreMessengerAvatar extends MessengerAvatarAction
      *
      * @see MessengerAvatarRequest
      *
-     * @throws FeatureDisabledException|FileServiceException|Exception
+     * @throws FeatureDisabledException|FileServiceException|Throwable
      */
     public function execute(UploadedFile $image): self
     {
@@ -39,7 +38,7 @@ class StoreMessengerAvatar extends MessengerAvatarAction
      * @param  string  $fileName
      * @return void
      *
-     * @throws Exception
+     * @throws Throwable
      */
     private function handleOrRollback(string $fileName): void
     {
@@ -50,7 +49,7 @@ class StoreMessengerAvatar extends MessengerAvatarAction
                 ->setDisk($this->messenger->getAvatarStorage('disk'))
                 ->destroy("{$this->getDirectory()}/$fileName");
 
-            throw new Exception($e->getMessage(), $e->getCode(), $e);
+            throw $e;
         }
     }
 
