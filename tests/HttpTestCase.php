@@ -191,7 +191,7 @@ class HttpTestCase extends FeatureTestCase
      * @param  int  $size
      * @return int|string
      */
-    private static function formatBytes(int $size)
+    private function formatBytes(int $size)
     {
         if ($size > 0) {
             $base = log($size) / log(1024);
