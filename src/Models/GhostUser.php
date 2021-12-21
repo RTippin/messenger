@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Support\Helpers;
