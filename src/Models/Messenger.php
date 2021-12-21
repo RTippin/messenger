@@ -62,16 +62,6 @@ class Messenger extends Model implements Ownerable
     ];
 
     /**
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * @var string
-     */
-    public $keyType = 'string';
-
-    /**
      * @var array
      */
     protected $guarded = [];

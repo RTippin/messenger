@@ -56,16 +56,6 @@ class BotAction extends Model implements Ownerable
     protected $table = 'bot_actions';
 
     /**
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * @var string
-     */
-    public $keyType = 'string';
-
-    /**
      * The attributes that can be set with Mass Assignment.
      *
      * @var array

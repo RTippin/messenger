@@ -52,16 +52,6 @@ class Invite extends Model implements Ownerable
     protected $table = 'thread_invites';
 
     /**
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * @var string
-     */
-    public $keyType = 'string';
-
-    /**
      * The attributes that can be set with Mass Assignment.
      *
      * @var array

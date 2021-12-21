@@ -45,16 +45,6 @@ class CallParticipant extends Model implements Ownerable
     protected $table = 'call_participants';
 
     /**
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * @var string
-     */
-    public $keyType = 'string';
-
-    /**
      * @var array
      */
     protected $guarded = [];

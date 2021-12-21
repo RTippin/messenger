@@ -128,19 +128,9 @@ class Message extends Model implements Ownerable
     protected $dateFormat = 'Y-m-d H:i:s.u';
 
     /**
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
      * @var null|string
      */
     public ?string $temporaryId = null;
-
-    /**
-     * @var string
-     */
-    public $keyType = 'string';
 
     /**
      * The attributes that can be set with Mass Assignment.

@@ -64,16 +64,6 @@ class Call extends Model implements HasPresenceChannel, Ownerable
     protected $table = 'calls';
 
     /**
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * @var string
-     */
-    public $keyType = 'string';
-
-    /**
      * The attributes that can be set with Mass Assignment.
      *
      * @var array

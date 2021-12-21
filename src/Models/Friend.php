@@ -40,16 +40,6 @@ class Friend extends Model implements Ownerable
     protected $table = 'friends';
 
     /**
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * @var string
-     */
-    public $keyType = 'string';
-
-    /**
      * @var array
      */
     protected $guarded = [];

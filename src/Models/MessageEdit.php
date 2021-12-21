@@ -43,17 +43,7 @@ class MessageEdit extends Model
     /**
      * @var bool
      */
-    public $incrementing = false;
-
-    /**
-     * @var bool
-     */
     public $timestamps = false;
-
-    /**
-     * @var string
-     */
-    public $keyType = 'string';
 
     /**
      * The attributes that can be set with Mass Assignment.

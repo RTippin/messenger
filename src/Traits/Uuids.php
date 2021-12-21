@@ -8,9 +8,23 @@ use Illuminate\Support\Str;
 trait Uuids
 {
     /**
-     * On model creating, set the primary key to UUID.
+     * When the model is instantiated, set the primary
+     * key type to string and disable incrementing.
+     *
+     * @return void
      */
-    public static function bootUuids()
+    public function initializeUuids(): void
+    {
+        $this->setKeyType('string');
+        $this->setIncrementing(false);
+    }
+
+    /**
+     * On model creating, set the primary key to UUID.
+     *
+     * @return void
+     */
+    public static function bootUuids(): void
     {
         static::creating(function (Model $model) {
             $model->{$model->getKeyName()} = Str::orderedUuid()->toString();

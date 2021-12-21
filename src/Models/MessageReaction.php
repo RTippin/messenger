@@ -51,17 +51,7 @@ class MessageReaction extends Model implements Ownerable
     /**
      * @var bool
      */
-    public $incrementing = false;
-
-    /**
-     * @var bool
-     */
     public $timestamps = false;
-
-    /**
-     * @var string
-     */
-    public $keyType = 'string';
 
     /**
      * The attributes that can be set with Mass Assignment.

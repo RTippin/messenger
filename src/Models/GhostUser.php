@@ -39,11 +39,9 @@ class GhostUser extends Model
 
         parent::__construct($attributes);
 
-        if (Messenger::shouldUseUuids()) {
-            $this->{$this->getKeyName()} = Str::orderedUuid()->toString();
-        } else {
-            $this->{$this->getKeyName()} = 1234;
-        }
+        $this->{$this->getKeyName()} = Messenger::shouldUseUuids()
+            ? '952038b8-56ff-4be1-9bf6-780bbb26e33b'
+            : 123456789;
     }
 
     /**

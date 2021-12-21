@@ -40,16 +40,6 @@ class PendingFriend extends Model
     protected $table = 'pending_friends';
 
     /**
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * @var string
-     */
-    public $keyType = 'string';
-
-    /**
      * @var array
      */
     protected $guarded = [];

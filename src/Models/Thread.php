@@ -103,16 +103,6 @@ class Thread extends Model implements HasPresenceChannel
     protected $dateFormat = 'Y-m-d H:i:s.u';
 
     /**
-     * @var bool
-     */
-    public $incrementing = false;
-
-    /**
-     * @var string
-     */
-    public $keyType = 'string';
-
-    /**
      * The attributes that can't be set with Mass Assignment.
      *
      * @var array
