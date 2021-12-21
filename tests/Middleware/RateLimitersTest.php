@@ -20,7 +20,7 @@ class RateLimitersTest extends FeatureTestCase
     }
 
     /** @test */
-    public function setting_limit_to_zero_results_in_unlimited_request_per_minute()
+    public function setting_api_limit_to_zero_removes_rate_limiter()
     {
         Messenger::setApiRateLimit(0);
         $this->actingAs($this->tippin);
@@ -43,6 +43,18 @@ class RateLimitersTest extends FeatureTestCase
     }
 
     /** @test */
+    public function setting_search_api_limit_to_zero_removes_rate_limiter()
+    {
+        Messenger::setApiRateLimit(0)->setSearchRateLimit(0);
+        $this->actingAs($this->tippin);
+
+        $response = $this->getJson(route('api.messenger.search'));
+
+        $this->assertFalse($response->headers->has('X-Ratelimit-Limit'));
+        $this->assertFalse($response->headers->has('X-RateLimit-Remaining'));
+    }
+
+    /** @test */
     public function store_message_api_limits_request_60_per_minute()
     {
         $thread = $this->createGroupThread($this->tippin);
@@ -60,15 +72,40 @@ class RateLimitersTest extends FeatureTestCase
     }
 
     /** @test */
-    public function store_image_message_api_limits_request_15_per_minute()
+    public function setting_message_api_limit_to_zero_removes_rate_limiter()
+    {
+        Messenger::setApiRateLimit(0)->setMessageRateLimit(0);
+        $thread = $this->createGroupThread($this->tippin);
+        $this->actingAs($this->tippin);
+
+        $response = $this->postJson(route('api.messenger.threads.messages.store', [
+            'thread' => $thread->id,
+        ]), [
+            'message' => 'Hello!',
+            'temporary_id' => '123-456-789',
+        ]);
+
+        $this->assertFalse($response->headers->has('X-Ratelimit-Limit'));
+        $this->assertFalse($response->headers->has('X-RateLimit-Remaining'));
+    }
+
+    /**
+     * @test
+     * @dataProvider attachments
+     *
+     * @param $route
+     * @param $key
+     * @param $attachment
+     */
+    public function store_attachment_message_api_limits_request_15_per_minute($route, $key, $attachment)
     {
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
-        $response = $this->postJson(route('api.messenger.threads.images.store', [
+        $response = $this->postJson(route($route, [
             'thread' => $thread->id,
         ]), [
-            'image' => UploadedFile::fake()->image('picture.jpg'),
+            $key => $attachment,
             'temporary_id' => '123-456-789',
         ]);
 
@@ -76,20 +113,38 @@ class RateLimitersTest extends FeatureTestCase
         $this->assertEquals(14, $response->headers->get('X-RateLimit-Remaining'));
     }
 
-    /** @test */
-    public function store_document_message_api_limits_request_15_per_minute()
+    /**
+     * @test
+     * @dataProvider attachments
+     *
+     * @param $route
+     * @param $key
+     * @param $attachment
+     */
+    public function setting_attachment_message_api_limit_to_zero_removes_rate_limiter($route, $key, $attachment)
     {
+        Messenger::setApiRateLimit(0)->setAttachmentRateLimit(0);
         $thread = $this->createGroupThread($this->tippin);
         $this->actingAs($this->tippin);
 
-        $response = $this->postJson(route('api.messenger.threads.documents.store', [
+        $response = $this->postJson(route($route, [
             'thread' => $thread->id,
         ]), [
-            'document' => UploadedFile::fake()->create('test.pdf', 500, 'application/pdf'),
+            $key => $attachment,
             'temporary_id' => '123-456-789',
         ]);
 
-        $this->assertEquals(15, $response->headers->get('X-Ratelimit-Limit'));
-        $this->assertEquals(14, $response->headers->get('X-RateLimit-Remaining'));
+        $this->assertFalse($response->headers->has('X-Ratelimit-Limit'));
+        $this->assertFalse($response->headers->has('X-RateLimit-Remaining'));
+    }
+
+    public function attachments(): array
+    {
+        return [
+            'Image' => ['api.messenger.threads.images.store', 'image', UploadedFile::fake()->image('picture.png')],
+            'Document' => ['api.messenger.threads.documents.store', 'document', UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')],
+            'Audio' => ['api.messenger.threads.audio.store', 'audio', UploadedFile::fake()->create('test.mp3', 500, 'audio/mpeg')],
+            'Video' => ['api.messenger.threads.videos.store', 'video', UploadedFile::fake()->create('video.mp4', 500, 'video/mp4')],
+        ];
     }
 }
