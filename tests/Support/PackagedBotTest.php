@@ -64,7 +64,7 @@ class PackagedBotTest extends MessengerTestCase
                 'cooldown' => 30,
                 'enabled' => true,
                 'payload' => '{"test":["one","two"],"special":true}',
-            ]
+            ],
         ];
 
         $results = SillyBotPackage::testInstalls();
@@ -96,7 +96,7 @@ class PackagedBotTest extends MessengerTestCase
                 'cooldown' => 30,
                 'enabled' => true,
                 'payload' => null,
-            ]
+            ],
         ];
         $failed = [
             [
