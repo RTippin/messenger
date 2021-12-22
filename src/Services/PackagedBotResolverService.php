@@ -17,11 +17,29 @@ class PackagedBotResolverService
     private BotHandlerResolverService $resolver;
 
     /**
+     * @var Collection
+     */
+    private Collection $resolved;
+
+    /**
+     * @var Collection
+     */
+    private Collection $failed;
+
+    /**
+     * @var bool
+     */
+    private bool $logFailures;
+
+    /**
      * @param  BotHandlerResolverService  $resolver
      */
     public function __construct(BotHandlerResolverService $resolver)
     {
         $this->resolver = $resolver;
+        $this->resolved = Collection::make();
+        $this->failed = Collection::make();
+        $this->logFailures = false;
     }
 
     /**
@@ -36,15 +54,36 @@ class PackagedBotResolverService
      */
     public function resolve(Thread $thread, PackagedBotDTO $package): Collection
     {
-        $resolved = Collection::make();
-
         $package->applyInstallFilters($thread);
 
         $package->canInstall->each(
-            fn (PackagedBotInstallDTO $install) => $this->resolveHandlers($install, $resolved)
+            fn (PackagedBotInstallDTO $install) => $this->resolveHandlers($install)
         );
 
-        return $resolved;
+        return $this->resolved;
+    }
+
+    /**
+     * Transform a packaged bots install array into a collection of
+     * ResolvedBotHandlerDTO's without filtering or authorizing.
+     * Returns resolved handlers as well as failing handlers
+     * and their validation errors.
+     *
+     * @param  PackagedBotDTO  $package
+     * @return array
+     */
+    public function resolveForTesting(PackagedBotDTO $package): array
+    {
+        $this->logFailures = true;
+
+        $package->installs->each(
+            fn (PackagedBotInstallDTO $install) => $this->resolveHandlers($install)
+        );
+
+        return [
+            'resolved' => $this->resolved,
+            'failed' => $this->failed,
+        ];
     }
 
     /**
@@ -52,16 +91,14 @@ class PackagedBotResolverService
      * and attempt to resolve into a ResolvedBotHandlerDTO.
      *
      * @param  PackagedBotInstallDTO  $install
-     * @param  Collection  $resolved
      * @return void
      */
-    private function resolveHandlers(PackagedBotInstallDTO $install, Collection $resolved): void
+    private function resolveHandlers(PackagedBotInstallDTO $install): void
     {
         $install->data->each(
             fn (array $data) => $this->resolveOrDiscardHandler(
                 $data,
-                $install->handler->class,
-                $resolved
+                $install->handler->class
             )
         );
     }
@@ -69,17 +106,25 @@ class PackagedBotResolverService
     /**
      * @param  array  $data
      * @param  string  $handler
-     * @param  Collection  $resolved
      * @return void
      */
-    private function resolveOrDiscardHandler(array $data, string $handler, Collection $resolved): void
+    private function resolveOrDiscardHandler(array $data, string $handler): void
     {
         try {
-            $resolved->push(
+            $this->resolved->push(
                 $this->resolver->resolve($data, $handler)
             );
-        } catch (ValidationException|BotException $e) {
-            //Discard.
+        } catch (ValidationException $e) {
+            if ($this->logFailures) {
+                $this->failed->push([
+                    $handler => [
+                        'data' => $data,
+                        'errors' => $e->errors(),
+                    ]
+                ]);
+            }
+        } catch (BotException $e) {
+            //Ignore.
         }
     }
 }

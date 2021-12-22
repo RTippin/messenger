@@ -2,6 +2,9 @@
 
 namespace RTippin\Messenger\Support;
 
+use RTippin\Messenger\Facades\MessengerBots;
+use RTippin\Messenger\Services\PackagedBotResolverService;
+
 /**
  * To authorize the end user to view and install the packaged bot, you must define the
  * 'authorize()' method and return true|false. If unauthorized, it will also hide the
@@ -61,4 +64,19 @@ abstract class PackagedBot
      * @return array
      */
     abstract public static function installs(): array;
+
+    /**
+     * Compile the installation listing without using filters or authorization. Returns
+     * resolved handlers as well as failing handlers and their validation errors.
+     *
+     * @return array
+     */
+    public static function testInstalls(): array
+    {
+        MessengerBots::registerPackagedBots([static::class]);
+
+        $package = MessengerBots::getPackagedBot(static::class);
+
+        return app(PackagedBotResolverService::class)->resolveForTesting($package);
+    }
 }

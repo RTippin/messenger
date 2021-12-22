@@ -59,6 +59,47 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
     }
 
     /** @test */
+    public function it_returns_resolved_handlers_using_testing_method()
+    {
+        MessengerBots::registerPackagedBots([FunBotPackage::class]);
+        $package = MessengerBots::getPackagedBot(FunBotPackage::class);
+        $expects = [
+            [
+                'handler' => MessengerBots::getHandler(FunBotHandler::class)->toArray(),
+                'match' => 'exact:caseless',
+                'triggers' => '!test|!more',
+                'admin_only' => false,
+                'cooldown' => 30,
+                'enabled' => true,
+                'payload' => '{"test":["one","two"],"special":true}',
+            ],
+            [
+                'handler' => MessengerBots::getHandler(SillyBotHandler::class)->toArray(),
+                'match' => 'exact',
+                'triggers' => 'silly',
+                'admin_only' => false,
+                'cooldown' => 30,
+                'enabled' => true,
+                'payload' => null,
+            ],
+            [
+                'handler' => MessengerBots::getHandler(BrokenBotHandler::class)->toArray(),
+                'match' => 'contains',
+                'triggers' => 'broken',
+                'admin_only' => false,
+                'cooldown' => 30,
+                'enabled' => true,
+                'payload' => null,
+            ],
+        ];
+
+        $results = app(PackagedBotResolverService::class)->resolveForTesting($package);
+
+        $this->assertSame($expects, $results['resolved']->toArray());
+        $this->assertSame([], $results['failed']->toArray());
+    }
+
+    /** @test */
     public function it_ignores_unauthorized_handlers()
     {
         SillyBotHandler::$authorized = false;
@@ -135,16 +176,38 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
         SillyBotPackage::$installs = [
             FunBotHandler::class => [
                 'test' => null,
-                'special' => null,
+                'special' => 404,
+            ],
+            BrokenBotHandler::class => [
+                'triggers' => ['broken'],
+                'match' => \RTippin\Messenger\MessengerBots::MATCH_CONTAINS,
             ],
         ];
         MessengerBots::registerPackagedBots([SillyBotPackage::class]);
-        $thread = $this->createGroupThread($this->tippin);
         $package = MessengerBots::getPackagedBot(SillyBotPackage::class);
+        $resolver = app(PackagedBotResolverService::class);
+        $expects = [
+            [
+                FunBotHandler::class => [
+                    'data' => [
+                        'enabled' => true,
+                        'cooldown' => 30,
+                        'admin_only' => false,
+                        'test' => null,
+                        'special' => 404,
+                    ],
+                    'errors' => [
+                        'test' => ['Tests must be string.'],
+                        'special' => ['The special field must be true or false.'],
+                    ],
+                ],
+            ],
+        ];
 
-        $results = app(PackagedBotResolverService::class)->resolve($thread, $package);
+        $results = $resolver->resolveForTesting($package);
 
-        $this->assertCount(0, $results);
+        $this->assertCount(1, $results['resolved']);
+        $this->assertSame($expects, $results['failed']->toArray());
     }
 
     /** @test */
