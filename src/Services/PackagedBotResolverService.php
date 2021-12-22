@@ -120,7 +120,7 @@ class PackagedBotResolverService
                     $handler => [
                         'data' => $data,
                         'errors' => $e->errors(),
-                    ]
+                    ],
                 ]);
             }
         } catch (BotException $e) {
