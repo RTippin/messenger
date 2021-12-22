@@ -49,12 +49,17 @@ final class MessengerBots
     /**
      * @var BotActionHandler|null
      */
-    private ?BotActionHandler $activeHandler = null;
+    private ?BotActionHandler $activeHandler;
 
     /**
      * @var string|null
      */
-    private ?string $activeHandlerClass = null;
+    private ?string $activeHandlerClass;
+
+    /**
+     * @var bool
+     */
+    private bool $shouldAuthorize;
 
     /**
      * MessengerBots constructor.
@@ -63,6 +68,9 @@ final class MessengerBots
     {
         $this->handlers = Collection::make();
         $this->packagedBots = Collection::make();
+        $this->activeHandler = null;
+        $this->activeHandlerClass = null;
+        $this->shouldAuthorize = true;
     }
 
     /**
@@ -82,6 +90,20 @@ final class MessengerBots
     {
         $this->activeHandler = null;
         $this->activeHandlerClass = null;
+        $this->shouldAuthorize = true;
+    }
+
+    /**
+     * @param  bool|null  $shouldAuthorize
+     * @return bool
+     */
+    public function shouldAuthorize(?bool $shouldAuthorize = null): bool
+    {
+        if (is_null($shouldAuthorize)) {
+            return $this->shouldAuthorize;
+        }
+
+        return $this->shouldAuthorize = $shouldAuthorize;
     }
 
     /**
@@ -168,7 +190,7 @@ final class MessengerBots
     {
         return $this->handlers
             ->sortBy('name')
-            ->filter(fn (BotActionHandlerDTO $handler) => $this->authorizesHandler($handler))
+            ->filter(fn (BotActionHandlerDTO $handler) => $this->authorizeHandler($handler))
             ->values();
     }
 
@@ -367,7 +389,7 @@ final class MessengerBots
     {
         return $this->packagedBots
             ->sortBy('name')
-            ->filter(fn (PackagedBotDTO $package) => $this->authorizesPackagedBot($package))
+            ->filter(fn (PackagedBotDTO $package) => $this->authorizePackagedBot($package))
             ->values();
     }
 
@@ -427,9 +449,9 @@ final class MessengerBots
      *
      * @throws BotException
      */
-    private function authorizesHandler(BotActionHandlerDTO $handler): bool
+    public function authorizeHandler(BotActionHandlerDTO $handler): bool
     {
-        if ($handler->shouldAuthorize) {
+        if ($this->shouldAuthorize && $handler->shouldAuthorize) {
             return $this->initializeHandler($handler->class)->authorize();
         }
 
@@ -445,9 +467,9 @@ final class MessengerBots
      *
      * @throws BotException
      */
-    private function authorizesPackagedBot(PackagedBotDTO $package): bool
+    public function authorizePackagedBot(PackagedBotDTO $package): bool
     {
-        if ($package->shouldAuthorize) {
+        if ($this->shouldAuthorize && $package->shouldAuthorize) {
             return $this->initializePackagedBot($package->class)->authorize();
         }
 

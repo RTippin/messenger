@@ -208,8 +208,37 @@ class MessengerBotsTest extends MessengerTestCase
     }
 
     /** @test */
+    public function it_can_authorize_handler()
+    {
+        $this->bots->registerHandlers([
+            FunBotHandler::class,
+            SillyBotHandler::class,
+        ]);
+        $fun = $this->bots->getHandler(FunBotHandler::class);
+        $silly = $this->bots->getHandler(SillyBotHandler::class);
+
+        $this->assertTrue($this->bots->authorizeHandler($fun));
+        $this->assertFalse($this->bots->authorizeHandler($silly));
+    }
+
+    /** @test */
+    public function it_can_skip_authorizing_handler()
+    {
+        SillyBotHandler::$authorized = false;
+        $this->bots->registerHandlers([
+            SillyBotHandler::class,
+        ]);
+        $silly = $this->bots->getHandler(SillyBotHandler::class);
+
+        $this->bots->shouldAuthorize(false);
+
+        $this->assertTrue($this->bots->authorizeHandler($silly));
+    }
+
+    /** @test */
     public function it_can_get_authorized_handlers()
     {
+        SillyBotHandler::$authorized = false;
         $this->bots->registerHandlers([
             FunBotHandler::class,
             SillyBotHandler::class,
@@ -217,6 +246,35 @@ class MessengerBotsTest extends MessengerTestCase
 
         $this->assertCount(2, $this->bots->getHandlers());
         $this->assertCount(1, $this->bots->getAuthorizedHandlers());
+    }
+
+    /** @test */
+    public function it_can_authorize_packaged_bot()
+    {
+        SillyBotPackage::$authorized = false;
+        $this->bots->registerPackagedBots([
+            FunBotPackage::class,
+            SillyBotPackage::class,
+        ]);
+        $fun = $this->bots->getPackagedBot(FunBotPackage::class);
+        $silly = $this->bots->getPackagedBot(SillyBotPackage::class);
+
+        $this->assertTrue($this->bots->authorizePackagedBot($fun));
+        $this->assertFalse($this->bots->authorizePackagedBot($silly));
+    }
+
+    /** @test */
+    public function it_can_skip_authorizing_packaged_bot()
+    {
+        SillyBotPackage::$authorized = false;
+        $this->bots->registerPackagedBots([
+            SillyBotPackage::class,
+        ]);
+        $silly = $this->bots->getPackagedBot(SillyBotPackage::class);
+
+        $this->bots->shouldAuthorize(false);
+
+        $this->assertTrue($this->bots->authorizePackagedBot($silly));
     }
 
     /** @test */
@@ -496,16 +554,19 @@ class MessengerBotsTest extends MessengerTestCase
     }
 
     /** @test */
-    public function it_can_flush_active_handler()
+    public function it_can_be_flushed()
     {
         $this->bots->registerHandlers([FunBotHandler::class]);
         $this->bots->initializeHandler(FunBotHandler::class);
+        $this->bots->shouldAuthorize(false);
 
         $this->assertTrue($this->bots->isActiveHandlerSet());
+        $this->assertFalse($this->bots->shouldAuthorize());
 
         $this->bots->flush();
 
         $this->assertFalse($this->bots->isActiveHandlerSet());
+        $this->assertTrue($this->bots->shouldAuthorize());
     }
 }
 

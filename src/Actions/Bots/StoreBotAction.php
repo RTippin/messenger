@@ -90,26 +90,14 @@ class StoreBotAction extends BaseMessengerAction
             throw new FeatureDisabledException('Bots are currently disabled.');
         }
 
+        if (! $this->bots->authorizeHandler($resolved->handlerDTO)) {
+            throw new BotException("Not authorized to add ( {$resolved->handlerDTO->name} ) to {$this->getBot()->getProviderName()}.");
+        }
+
         if ($resolved->handlerDTO->unique
             && $this->threadHasHandler($resolved->handlerDTO->class)) {
             throw new BotException("You may only have one ( {$resolved->handlerDTO->name} ) in {$this->getThread()->name()} at a time.");
         }
-
-        if ($resolved->handlerDTO->shouldAuthorize
-            && ! $this->authorizeHandler($resolved->handlerDTO->class)) {
-            throw new BotException("Not authorized to add ( {$resolved->handlerDTO->name} ) to {$this->getBot()->getProviderName()}.");
-        }
-    }
-
-    /**
-     * @param  string  $handler
-     * @return bool
-     *
-     * @throws BotException
-     */
-    private function authorizeHandler(string $handler): bool
-    {
-        return $this->bots->initializeHandler($handler)->authorize();
     }
 
     /**

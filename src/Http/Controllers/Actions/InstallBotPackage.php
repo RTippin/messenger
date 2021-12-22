@@ -82,8 +82,7 @@ class InstallBotPackage
      */
     private function bailIfAuthorizationFails(PackagedBotDTO $package): void
     {
-        if ($package->shouldAuthorize
-            && ! $this->bots->initializePackagedBot($package->class)->authorize()) {
+        if (! $this->bots->authorizePackagedBot($package)) {
             throw new AuthorizationException('Not authorized to install that bot package.');
         }
     }

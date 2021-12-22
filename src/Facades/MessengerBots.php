@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static string|null getMatchDescription(?string $match = null)
  * @method static \RTippin\Messenger\MessengerBots getInstance()
  * @method static void flush()
+ * @method static bool shouldAuthorize(?bool $shouldAuthorize = null)
  * @method static void registerHandlers(array $handlers, bool $overwrite = false)
  * @method static array getHandlerClasses()
  * @method static array getUniqueHandlerClasses()
@@ -30,6 +31,8 @@ use Illuminate\Support\Facades\Facade;
  * @method static string|null findPackagedBot(string $packageOrAlias)
  * @method static bool isValidPackagedBot(?string $packageOrAlias)
  * @method static \RTippin\Messenger\Support\PackagedBot initializePackagedBot(string $packageOrAlias)
+ * @method static bool authorizeHandler(\RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO $handler)
+ * @method static bool authorizePackagedBot(\RTippin\Messenger\DataTransferObjects\PackagedBotDTO $package)
  *
  * @mixin \RTippin\Messenger\MessengerBots
  *
