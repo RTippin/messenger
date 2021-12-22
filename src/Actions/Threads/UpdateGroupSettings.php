@@ -31,11 +31,6 @@ class UpdateGroupSettings extends BaseMessengerAction
     private Dispatcher $dispatcher;
 
     /**
-     * @var bool
-     */
-    private bool $nameChanged;
-
-    /**
      * UpdateGroupSettings constructor.
      *
      * @param  Messenger  $messenger
@@ -65,7 +60,6 @@ class UpdateGroupSettings extends BaseMessengerAction
     public function execute(Thread $thread, array $params): self
     {
         $this->setThread($thread)
-            ->determineIfGroupNameChanged($params['subject'])
             ->updateThread($params)
             ->generateResource()
             ->fireBroadcast()
@@ -87,17 +81,6 @@ class UpdateGroupSettings extends BaseMessengerAction
         if (! $this->getThread()->wasChanged()) {
             $this->withoutDispatches();
         }
-
-        return $this;
-    }
-
-    /**
-     * @param  string  $name
-     * @return $this
-     */
-    private function determineIfGroupNameChanged(string $name): self
-    {
-        $this->nameChanged = $this->getThread()->subject !== $name;
 
         return $this;
     }
@@ -149,7 +132,7 @@ class UpdateGroupSettings extends BaseMessengerAction
             $this->dispatcher->dispatch(new ThreadSettingsEvent(
                 $this->messenger->getProvider(true),
                 $this->getThread(true),
-                $this->nameChanged
+                $this->getThread()->wasChanged('subject')
             ));
         }
     }
