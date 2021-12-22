@@ -1,6 +1,6 @@
 <?php
 
-namespace RTippin\Messenger\Http\Collections\Base;
+namespace RTippin\Messenger\Http\Collections;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\Json\ResourceCollection;

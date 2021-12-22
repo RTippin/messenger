@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Http\Collections;
 
 use Illuminate\Http\Request;
 use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use RTippin\Messenger\Http\Resources\SentFriendResource;
 use RTippin\Messenger\Models\SentFriend;
 use Throwable;

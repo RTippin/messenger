@@ -3,7 +3,6 @@
 namespace RTippin\Messenger\Http\Collections;
 
 use Illuminate\Http\Request;
-use RTippin\Messenger\Http\Collections\Base\MessengerCollection;
 use RTippin\Messenger\Http\Resources\BotResource;
 use Throwable;
 
