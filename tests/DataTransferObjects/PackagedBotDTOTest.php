@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\DataTransferObjects;
 
-use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
 use RTippin\Messenger\DataTransferObjects\PackagedBotDTO;
 use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Models\Bot;
@@ -101,8 +100,8 @@ class PackagedBotDTOTest extends FeatureTestCase
         SillyBotHandler::$authorized = false;
         $funPackage = new PackagedBotDTO(FunBotPackage::class);
         $expects = [
-            (new BotActionHandlerDTO(FunBotHandler::class))->toArray(),
-            (new BotActionHandlerDTO(BrokenBotHandler::class))->toArray(),
+            FunBotHandler::getDTO()->toArray(),
+            BrokenBotHandler::getDTO()->toArray(),
         ];
 
         $funPackage->applyInstallFilters();
@@ -118,11 +117,11 @@ class PackagedBotDTOTest extends FeatureTestCase
         $funPackage = new PackagedBotDTO(FunBotPackage::class);
         $thread = Thread::factory()->group()->create();
         $canInstall = [
-            (new BotActionHandlerDTO(FunBotHandler::class))->toArray(),
-            (new BotActionHandlerDTO(BrokenBotHandler::class))->toArray(),
+            FunBotHandler::getDTO()->toArray(),
+            BrokenBotHandler::getDTO()->toArray(),
         ];
         $alreadyInstalled = [
-            (new BotActionHandlerDTO(SillyBotHandler::class))->toArray(),
+            SillyBotHandler::getDTO()->toArray(),
         ];
         BotAction::factory()->for(
             Bot::factory()->for($thread)->owner($this->tippin)->create()
@@ -173,8 +172,8 @@ class PackagedBotDTOTest extends FeatureTestCase
                 'lg' => '/messenger/assets/bot-package/lg/fun_package/avatar.png',
             ],
             'installs' => [
-                (new BotActionHandlerDTO(BrokenBotHandler::class))->toArray(),
-                (new BotActionHandlerDTO(FunBotHandler::class))->toArray(),
+                BrokenBotHandler::getDTO()->toArray(),
+                FunBotHandler::getDTO()->toArray(),
             ],
             'already_installed' => [],
         ];
@@ -206,11 +205,11 @@ class PackagedBotDTOTest extends FeatureTestCase
                 'lg' => '/messenger/assets/bot-package/lg/fun_package/avatar.png',
             ],
             'installs' => [
-                (new BotActionHandlerDTO(BrokenBotHandler::class))->toArray(),
-                (new BotActionHandlerDTO(FunBotHandler::class))->toArray(),
+                BrokenBotHandler::getDTO()->toArray(),
+                FunBotHandler::getDTO()->toArray(),
             ],
             'already_installed' => [
-                (new BotActionHandlerDTO(SillyBotHandler::class))->toArray(),
+                SillyBotHandler::getDTO()->toArray(),
             ],
         ];
 

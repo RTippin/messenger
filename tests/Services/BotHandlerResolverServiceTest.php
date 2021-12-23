@@ -74,7 +74,7 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
     {
         $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
-            'handler' => $this->bots->getHandler(SillyBotHandler::class)->toArray(),
+            'handler' => SillyBotHandler::getDTO()->toArray(),
             'match' => MessengerBots::MATCH_EXACT,
             'triggers' => 'test',
             'admin_only' => true,
@@ -99,7 +99,7 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
     {
         $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
-            'handler' => $this->bots->getHandler(SillyBotHandler::class)->toArray(),
+            'handler' => SillyBotHandler::getDTO()->toArray(),
             'match' => MessengerBots::MATCH_EXACT,
             'triggers' => 'test',
             'admin_only' => true,
@@ -123,7 +123,7 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
     {
         $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
-            'handler' => $this->bots->getHandler(SillyBotHandler::class)->toArray(),
+            'handler' => SillyBotHandler::getDTO()->toArray(),
             'match' => MessengerBots::MATCH_EXACT,
             'triggers' => 'test',
             'admin_only' => true,
@@ -147,7 +147,7 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
     {
         $this->bots->registerHandlers([FunBotHandler::class]);
         $expects = [
-            'handler' => $this->bots->getHandler(FunBotHandler::class)->toArray(),
+            'handler' => FunBotHandler::getDTO()->toArray(),
             'match' => MessengerBots::MATCH_EXACT_CASELESS, //overwritten
             'triggers' => '!test|!more', //overwritten
             'admin_only' => true,
@@ -174,7 +174,7 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
     {
         $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
-            'handler' => $this->bots->getHandler(SillyBotHandler::class)->toArray(),
+            'handler' => SillyBotHandler::getDTO()->toArray(),
             'match' => MessengerBots::MATCH_ANY,
             'triggers' => null,
             'admin_only' => false,
@@ -200,7 +200,7 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
     {
         $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
-            'handler' => $this->bots->getHandler(SillyBotHandler::class)->toArray(),
+            'handler' => SillyBotHandler::getDTO()->toArray(),
             'match' => MessengerBots::MATCH_ANY,
             'triggers' => null, //omitted
             'admin_only' => false,
@@ -226,7 +226,7 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
         SillyBotHandler::$match = MessengerBots::MATCH_ANY;
         $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
-            'handler' => $this->bots->getHandler(SillyBotHandler::class)->toArray(),
+            'handler' => SillyBotHandler::getDTO()->toArray(),
             'match' => MessengerBots::MATCH_ANY, //overwritten
             'triggers' => null, //omitted
             'admin_only' => false,
@@ -251,7 +251,7 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
         SillyBotHandler::$triggers = ['one', 'two'];
         $this->bots->registerHandlers([SillyBotHandler::class]);
         $expects = [
-            'handler' => $this->bots->getHandler(SillyBotHandler::class)->toArray(),
+            'handler' => SillyBotHandler::getDTO()->toArray(),
             'match' => MessengerBots::MATCH_ANY,
             'triggers' => null, //omitted
             'admin_only' => false,
@@ -276,7 +276,7 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
     {
         $this->bots->registerHandlers([FunBotHandler::class]);
         $expects = [
-            'handler' => $this->bots->getHandler(FunBotHandler::class)->toArray(),
+            'handler' => FunBotHandler::getDTO()->toArray(),
             'match' => MessengerBots::MATCH_EXACT_CASELESS, //overwritten
             'triggers' => '!test|!more', //overwritten
             'admin_only' => true,

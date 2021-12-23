@@ -25,7 +25,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
         $package = FunBotPackage::getDTO();
         $expects = [
             [
-                'handler' => MessengerBots::getHandler(FunBotHandler::class)->toArray(),
+                'handler' => FunBotHandler::getDTO()->toArray(),
                 'match' => 'exact:caseless',
                 'triggers' => '!test|!more',
                 'admin_only' => false,
@@ -34,7 +34,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
                 'payload' => '{"test":["one","two"],"special":true}',
             ],
             [
-                'handler' => MessengerBots::getHandler(SillyBotHandler::class)->toArray(),
+                'handler' => SillyBotHandler::getDTO()->toArray(),
                 'match' => 'exact',
                 'triggers' => 'silly',
                 'admin_only' => false,
@@ -43,7 +43,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
                 'payload' => null,
             ],
             [
-                'handler' => MessengerBots::getHandler(BrokenBotHandler::class)->toArray(),
+                'handler' => BrokenBotHandler::getDTO()->toArray(),
                 'match' => 'contains',
                 'triggers' => 'broken',
                 'admin_only' => false,
@@ -65,7 +65,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
         $package = FunBotPackage::getDTO();
         $expects = [
             [
-                'handler' => MessengerBots::getHandler(FunBotHandler::class)->toArray(),
+                'handler' => FunBotHandler::getDTO()->toArray(),
                 'match' => 'exact:caseless',
                 'triggers' => '!test|!more',
                 'admin_only' => false,
@@ -74,7 +74,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
                 'payload' => '{"test":["one","two"],"special":true}',
             ],
             [
-                'handler' => MessengerBots::getHandler(SillyBotHandler::class)->toArray(),
+                'handler' => SillyBotHandler::getDTO()->toArray(),
                 'match' => 'exact',
                 'triggers' => 'silly',
                 'admin_only' => false,
@@ -83,7 +83,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
                 'payload' => null,
             ],
             [
-                'handler' => MessengerBots::getHandler(BrokenBotHandler::class)->toArray(),
+                'handler' => BrokenBotHandler::getDTO()->toArray(),
                 'match' => 'contains',
                 'triggers' => 'broken',
                 'admin_only' => false,
@@ -108,7 +108,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
         $package = FunBotPackage::getDTO();
         $expects = [
             [
-                'handler' => MessengerBots::getHandler(FunBotHandler::class)->toArray(),
+                'handler' => FunBotHandler::getDTO()->toArray(),
                 'match' => 'exact:caseless',
                 'triggers' => '!test|!more',
                 'admin_only' => false,
@@ -117,7 +117,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
                 'payload' => '{"test":["one","two"],"special":true}',
             ],
             [
-                'handler' => MessengerBots::getHandler(BrokenBotHandler::class)->toArray(),
+                'handler' => BrokenBotHandler::getDTO()->toArray(),
                 'match' => 'contains',
                 'triggers' => 'broken',
                 'admin_only' => false,
@@ -189,7 +189,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
         $thread = $this->createGroupThread($this->tippin);
         $expects = [
             [
-                'handler' => MessengerBots::getHandler(BrokenBotHandler::class)->toArray(),
+                'handler' => BrokenBotHandler::getDTO()->toArray(),
                 'match' => 'contains',
                 'triggers' => 'broken',
                 'admin_only' => false,
@@ -224,7 +224,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
         $package = SillyBotPackage::getDTO();
         $expects = [
             [
-                'handler' => MessengerBots::getHandler(FunBotHandler::class)->toArray(),
+                'handler' => FunBotHandler::getDTO()->toArray(),
                 'match' => 'exact:caseless',
                 'triggers' => '!test|!more',
                 'admin_only' => false,
@@ -233,7 +233,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
                 'payload' => '{"test":["one","two"],"special":true}',
             ],
             [
-                'handler' => MessengerBots::getHandler(FunBotHandler::class)->toArray(),
+                'handler' => FunBotHandler::getDTO()->toArray(),
                 'match' => 'exact:caseless',
                 'triggers' => '!test|!more',
                 'admin_only' => false,
@@ -266,7 +266,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
         $package = SillyBotPackage::getDTO();
         $expects = [
             [
-                'handler' => MessengerBots::getHandler(SillyBotHandler::class)->toArray(),
+                'handler' => SillyBotHandler::getDTO()->toArray(),
                 'match' => 'exact',
                 'triggers' => 'silly',
                 'admin_only' => true,
@@ -296,7 +296,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
         $package = SillyBotPackage::getDTO();
         $expects = [
             [
-                'handler' => MessengerBots::getHandler(SillyBotHandler::class)->toArray(),
+                'handler' => SillyBotHandler::getDTO()->toArray(),
                 'match' => 'exact',
                 'triggers' => 'silly',
                 'admin_only' => false,
