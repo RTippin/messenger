@@ -3,6 +3,24 @@
 
 ---
 
+### [v1.17.0 (12-23-2021)](https://github.com/RTippin/messenger/compare/v1.16.0...v1.17.0)
+
+#### Added
+- `getDTO` static method on both `BotActionHandler` and `PackagedBot`.
+- `testResolve` static method on `BotActionHandler` for aid in testing.
+- `testInstalls` static method on `PackagedBot` for aid in testing.
+- `authorizeHandler` and `authorizePackagedBot` methods on `MessengerBots`.
+- `shouldAuthorize` method on `MessengerBots`, allowing you to disable handler / bot package authorization for a single request cycle.
+- Singular methods `getHandler` and `getPackagedBot` on `MessengerBots` for single resource fetches.
+
+#### Changed
+- `Uuids` trait now sets the `incrementing` and `keyType` properties for models that use it.
+- Moved the namespace for the base `MessengerCollection`.
+- Consolidated bot handler / packaged bot authorization handling methods.
+- `GhostUser` primary ID is now static/unchanging.
+
+---
+
 ### [v1.16.0 (12-16-2021)](https://github.com/RTippin/messenger/compare/v1.15.0...v1.16.0)
 
 #### Changed
