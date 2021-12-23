@@ -22,7 +22,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
         SillyBotHandler::$authorized = true;
         MessengerBots::registerPackagedBots([FunBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBot(FunBotPackage::class);
+        $package = FunBotPackage::getDTO();
         $expects = [
             [
                 'handler' => MessengerBots::getHandler(FunBotHandler::class)->toArray(),
@@ -62,7 +62,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
     public function it_returns_resolved_handlers_using_testing_method()
     {
         MessengerBots::registerPackagedBots([FunBotPackage::class]);
-        $package = MessengerBots::getPackagedBot(FunBotPackage::class);
+        $package = FunBotPackage::getDTO();
         $expects = [
             [
                 'handler' => MessengerBots::getHandler(FunBotHandler::class)->toArray(),
@@ -105,7 +105,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
         SillyBotHandler::$authorized = false;
         MessengerBots::registerPackagedBots([FunBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBot(FunBotPackage::class);
+        $package = FunBotPackage::getDTO();
         $expects = [
             [
                 'handler' => MessengerBots::getHandler(FunBotHandler::class)->toArray(),
@@ -137,7 +137,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
     {
         MessengerBots::registerPackagedBots([FunBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBot(FunBotPackage::class);
+        $package = FunBotPackage::getDTO();
         BotAction::factory()->for(
             Bot::factory()->for($thread)->owner($this->tippin)->create()
         )
@@ -163,7 +163,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
         SillyBotPackage::$installs = [];
         MessengerBots::registerPackagedBots([SillyBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBot(SillyBotPackage::class);
+        $package = SillyBotPackage::getDTO();
 
         $results = app(PackagedBotResolverService::class)->resolve($thread, $package);
 
@@ -184,30 +184,24 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
             ],
         ];
         MessengerBots::registerPackagedBots([SillyBotPackage::class]);
-        $package = MessengerBots::getPackagedBot(SillyBotPackage::class);
+        $package = SillyBotPackage::getDTO();
         $resolver = app(PackagedBotResolverService::class);
+        $thread = $this->createGroupThread($this->tippin);
         $expects = [
             [
-                FunBotHandler::class => [
-                    'data' => [
-                        'enabled' => true,
-                        'cooldown' => 30,
-                        'admin_only' => false,
-                        'test' => null,
-                        'special' => 404,
-                    ],
-                    'errors' => [
-                        'test' => ['Tests must be string.'],
-                        'special' => ['The special field must be true or false.'],
-                    ],
-                ],
+                'handler' => MessengerBots::getHandler(BrokenBotHandler::class)->toArray(),
+                'match' => 'contains',
+                'triggers' => 'broken',
+                'admin_only' => false,
+                'cooldown' => 30,
+                'enabled' => true,
+                'payload' => null,
             ],
         ];
 
-        $results = $resolver->resolveForTesting($package);
+        $results = $resolver->resolve($thread, $package);
 
-        $this->assertCount(1, $results['resolved']);
-        $this->assertSame($expects, $results['failed']->toArray());
+        $this->assertSame($expects, $results->toArray());
     }
 
     /** @test */
@@ -227,7 +221,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
         ];
         MessengerBots::registerPackagedBots([SillyBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBot(SillyBotPackage::class);
+        $package = SillyBotPackage::getDTO();
         $expects = [
             [
                 'handler' => MessengerBots::getHandler(FunBotHandler::class)->toArray(),
@@ -269,7 +263,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
         ];
         MessengerBots::registerPackagedBots([SillyBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBot(SillyBotPackage::class);
+        $package = SillyBotPackage::getDTO();
         $expects = [
             [
                 'handler' => MessengerBots::getHandler(SillyBotHandler::class)->toArray(),
@@ -299,7 +293,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
         ];
         MessengerBots::registerPackagedBots([SillyBotPackage::class]);
         $thread = $this->createGroupThread($this->tippin);
-        $package = MessengerBots::getPackagedBot(SillyBotPackage::class);
+        $package = SillyBotPackage::getDTO();
         $expects = [
             [
                 'handler' => MessengerBots::getHandler(SillyBotHandler::class)->toArray(),

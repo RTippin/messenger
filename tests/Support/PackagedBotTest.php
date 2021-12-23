@@ -3,6 +3,8 @@
 namespace RTippin\Messenger\Tests\Support;
 
 use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
+use RTippin\Messenger\DataTransferObjects\PackagedBotDTO;
+use RTippin\Messenger\Facades\MessengerBots as MessengerBotsFacade;
 use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Tests\Fixtures\BrokenBotHandler;
 use RTippin\Messenger\Tests\Fixtures\FunBotHandler;
@@ -44,6 +46,32 @@ class PackagedBotTest extends MessengerTestCase
         ];
 
         $this->assertSame($expects, FunBotPackage::installs());
+    }
+
+    /** @test */
+    public function it_doesnt_have_dto_if_not_registered()
+    {
+        $this->assertNull(FunBotPackage::getDTO());
+    }
+
+    /** @test */
+    public function it_can_get_dto()
+    {
+        MessengerBotsFacade::registerPackagedBots([FunBotPackage::class]);
+        $package = FunBotPackage::getDTO();
+
+        $this->assertInstanceOf(PackagedBotDTO::class, $package);
+        $this->assertSame('fun_package', $package->alias);
+    }
+
+    /** @test */
+    public function it_registers_package_when_testing_installs()
+    {
+        $this->assertFalse(MessengerBotsFacade::isValidPackagedBot(FunBotPackage::class));
+
+        FunBotPackage::testInstalls();
+
+        $this->assertTrue(MessengerBotsFacade::isValidPackagedBot(FunBotPackage::class));
     }
 
     /** @test */
@@ -100,19 +128,18 @@ class PackagedBotTest extends MessengerTestCase
         ];
         $failed = [
             [
-                BrokenBotHandler::class => [
-                    'data' => [
-                        'enabled' => true,
-                        'cooldown' => -1,
-                        'admin_only' => false,
-                        'triggers' => null,
-                        'match' => null,
-                    ],
-                    'errors' => [
-                        'cooldown' => ['The cooldown must be between 0 and 900.'],
-                        'match' => ['The match field is required.'],
-                        'triggers' => ['The triggers field is required.'],
-                    ],
+                'handler' => BrokenBotHandler::class,
+                'data' => [
+                    'enabled' => true,
+                    'cooldown' => -1,
+                    'admin_only' => false,
+                    'triggers' => null,
+                    'match' => null,
+                ],
+                'errors' => [
+                    'cooldown' => ['The cooldown must be between 0 and 900.'],
+                    'match' => ['The match field is required.'],
+                    'triggers' => ['The triggers field is required.'],
                 ],
             ],
         ];

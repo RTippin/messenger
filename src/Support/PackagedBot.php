@@ -2,6 +2,8 @@
 
 namespace RTippin\Messenger\Support;
 
+use Illuminate\Support\Collection;
+use RTippin\Messenger\DataTransferObjects\PackagedBotDTO;
 use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Services\PackagedBotResolverService;
 
@@ -66,17 +68,25 @@ abstract class PackagedBot
     abstract public static function installs(): array;
 
     /**
+     * @return PackagedBotDTO|null
+     */
+    public static function getDTO(): ?PackagedBotDTO
+    {
+        return MessengerBots::getPackagedBot(static::class);
+    }
+
+    /**
      * Compile the installation listing without using filters or authorization. Returns
      * resolved handlers as well as failing handlers and their validation errors.
      *
-     * @return array
+     * @return array{resolved: Collection, failed: Collection}
      */
     public static function testInstalls(): array
     {
         MessengerBots::registerPackagedBots([static::class]);
 
-        $package = MessengerBots::getPackagedBot(static::class);
-
-        return app(PackagedBotResolverService::class)->resolveForTesting($package);
+        return app(PackagedBotResolverService::class)->resolveForTesting(
+            static::getDTO()
+        );
     }
 }

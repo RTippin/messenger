@@ -117,10 +117,9 @@ class PackagedBotResolverService
         } catch (ValidationException $e) {
             if ($this->logFailures) {
                 $this->failed->push([
-                    $handler => [
-                        'data' => $data,
-                        'errors' => $e->errors(),
-                    ],
+                    'handler' => $handler,
+                    'data' => $data,
+                    'errors' => $e->errors(),
                 ]);
             }
         } catch (BotException $e) {
