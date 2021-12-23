@@ -68,6 +68,8 @@ abstract class PackagedBot
     abstract public static function installs(): array;
 
     /**
+     * Get the packages DTO.
+     *
      * @return PackagedBotDTO|null
      */
     public static function getDTO(): ?PackagedBotDTO

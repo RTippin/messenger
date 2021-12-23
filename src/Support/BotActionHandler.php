@@ -3,7 +3,9 @@
 namespace RTippin\Messenger\Support;
 
 use Illuminate\Support\Str;
+use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
 use RTippin\Messenger\Exceptions\MessengerComposerException;
+use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
@@ -67,22 +69,6 @@ abstract class BotActionHandler
     protected bool $shouldReleaseCooldown = false;
 
     /**
-     * Helper method to globally set testing for action handlers. Allows
-     * extended handlers to configure different paths when testing.
-     *
-     * @param  bool|null  $testing
-     * @return bool
-     */
-    public static function isTesting(?bool $testing = null): bool
-    {
-        if (! is_null($testing)) {
-            self::$isTesting = $testing;
-        }
-
-        return self::$isTesting;
-    }
-
-    /**
      * Return an array containing the handlers settings and overrides to use.
      * REQUIRED
      * - 'alias' will be used to locate and attach your handler to a bot.
@@ -106,6 +92,32 @@ abstract class BotActionHandler
      * method called when executing the handler.
      */
     abstract public function handle(): void;
+
+    /**
+     * Helper method to globally set testing for action handlers. Allows
+     * extended handlers to configure different paths when testing.
+     *
+     * @param  bool|null  $testing
+     * @return bool
+     */
+    public static function isTesting(?bool $testing = null): bool
+    {
+        if (! is_null($testing)) {
+            self::$isTesting = $testing;
+        }
+
+        return self::$isTesting;
+    }
+
+    /**
+     * Get the handlers DTO.
+     *
+     * @return BotActionHandlerDTO|null
+     */
+    public static function getDTO(): ?BotActionHandlerDTO
+    {
+        return MessengerBots::getHandler(static::class);
+    }
 
     /**
      * Return the validation rules used when adding the action to a bot. Any rules

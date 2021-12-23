@@ -2,8 +2,11 @@
 
 namespace RTippin\Messenger\Tests\Support;
 
+use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
 use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Facades\MessengerBots as MessengerBotsFacade;
+use RTippin\Messenger\MessengerBots;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
@@ -33,6 +36,36 @@ class BotActionHandlerTest extends MessengerTestCase
         $this->assertTrue(FunBotHandler::isTesting());
         $this->assertTrue(SillyBotHandler::isTesting());
         $this->assertTrue(BrokenBotHandler::isTesting());
+    }
+
+    /** @test */
+    public function it_has_settings()
+    {
+        $expects = [
+            'alias' => 'fun_bot',
+            'description' => 'This is a fun bot.',
+            'name' => 'Fun Bot',
+            'triggers' => ['!test', '!more'],
+            'match' => MessengerBots::MATCH_EXACT_CASELESS,
+        ];
+
+        $this->assertSame($expects, FunBotHandler::getSettings());
+    }
+
+    /** @test */
+    public function it_doesnt_have_dto_if_not_registered()
+    {
+        $this->assertNull(FunBotHandler::getDTO());
+    }
+
+    /** @test */
+    public function it_can_get_dto()
+    {
+        MessengerBotsFacade::registerHandlers([FunBotHandler::class]);
+        $handler = FunBotHandler::getDTO();
+
+        $this->assertInstanceOf(BotActionHandlerDTO::class, $handler);
+        $this->assertSame('fun_bot', $handler->alias);
     }
 
     /** @test */
