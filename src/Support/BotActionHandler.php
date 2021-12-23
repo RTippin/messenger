@@ -124,6 +124,9 @@ abstract class BotActionHandler
     }
 
     /**
+     * Attempt to resolve the given parameters into a resolved
+     * bot handler. If it fails, return the validation errors.
+     *
      * @param  array  $params
      * @return array|ResolvedBotHandlerDTO
      *

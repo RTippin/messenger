@@ -351,6 +351,7 @@ class ReplyBot extends BotActionHandler
 - If the end user is unauthorized, the handler will be hidden from appearing in the available handlers list while adding actions to a bot. 
 - The handler will also be authorized while being part of a `PackagedBot` bundle. If a handler is unauthorized, it will be omitted from appearing under a `PackagedBot`'s install list as well as ignored during the `PackagedBot`'s install.
 - This does NOT authorize being triggered once added to a bot action.
+- If you want to disable authorization for a single request cycle, you can use the facade call: `MessengerBots::shouldAuthorize(false)`
 
 ```php
 <?php
@@ -396,6 +397,76 @@ class TestBot extends BotActionHandler
         $this->composer()->emitTyping()->message('I need authorization to be added to a bot!');
     }
 }
+```
+
+---
+
+### Testing Handlers
+- There are two static helper methods you can call from your handlers class to aid you while developing:
+
+### `getDTO()`
+- Returns the handlers DTO class.
+  - You must register your handler before using this method, otherwise it return `null`.
+
+```php
+use App\Bots\HelloBot;
+
+dump(HelloBot::getDto());
+```
+```bash
+RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO {#1668
+  +class: "App\Bots\HelloBot"
+  +alias: "hello"
+  +description: "Say hello when someone says hi!"
+  +name: "Hello Response"
+  +unique: false
+  +shouldAuthorize: false
+  +triggers: array:2 [
+    0 => "hello"
+    1 => "hi"
+    2 => "hey"
+  ]
+  +matchMethod: "contains:caseless"
+}
+```
+
+### `testResolve(array $params = [])`
+- Attempt to resolve the given parameters into a resolved bot handler. If it fails, the validation errors array will be returned.
+
+```php
+use App\Bots\HelloBot;
+
+$failed = HelloBot::testResolve();
+$resolved = HelloBot::testResolve([
+  'cooldown' => 0,
+  'admin_only' => false,
+  'enabled' => true,
+]);
+```
+```bash
+## Resolved
+RTippin\Messenger\DataTransferObjects\ResolvedBotHandlerDTO {#1677
+  +handlerDTO: RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO {...}
+  +matchMethod: "exact:caseless"
+  +enabled: true
+  +adminOnly: true
+  +cooldown: 0
+  +triggers: "hello|hi|hey"
+  +payload: null
+}
+
+## Failed
+array:4 [
+  "cooldown" => array:1 [
+    0 => "The cooldown field is required."
+  ]
+  "admin_only" => array:1 [
+    0 => "The admin only field is required."
+  ]
+  "enabled" => array:1 [
+    0 => "The enabled field is required."
+  ]
+]
 ```
 
 ---
@@ -667,6 +738,7 @@ public static function installs(): array
 - This method will be called during the http request cycle, giving you access to the current auth/session/etc.
 - If the end user is unauthorized, the package will be hidden from appearing in the available packages list while viewing packages to install.
 - `BotActionHandler`'s listed to install that are flagged to authorize, and fail authorization for the end user, will be ignored.
+- If you want to disable authorization for a single request cycle, you can use the facade call: `MessengerBots::shouldAuthorize(false)`
 
 **Example**
 
@@ -714,6 +786,107 @@ class TestBotPackage extends PackagedBot
         return auth()->user()->admin === true;
     }
 }
+```
+
+---
+
+### Testing Packaged Bots
+- There are two static helper methods you can call from your packaged bot class to aid you while developing:
+
+### `getDTO()`
+- Returns the packaged bot DTO class.
+  - You must register your packaged bot before using this method, otherwise it returns `null`.
+
+```php
+use App\Bots\TestBotPackage;
+
+dump(TestBotPackage::getDto());
+```
+```bash
+RTippin\Messenger\DataTransferObjects\PackagedBotDTO {#1655
+  +class: "App\Bots\TestBotPackage"
+  +alias: "test_package"
+  +name: "Test Package"
+  +description: "Test package description."
+  +avatar: null
+  +avatarExtension: "png"
+  +cooldown: 0
+  +isEnabled: true
+  +shouldHideActions: false
+  +shouldInstallAvatar: false
+  +shouldAuthorize: true
+  +installs: Illuminate\Support\Collection {#1650
+    #items: array:1 [
+      0 => RTippin\Messenger\DataTransferObjects\PackagedBotInstallDTO {#1657
+        +handler: RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO {...}
+        +data: Illuminate\Support\Collection {#1659
+          #items: array:1 [
+            0 => array:3 [
+              "enabled" => true
+              "cooldown" => 30
+              "admin_only" => false
+            ]
+          ]
+        }
+      }
+    ]
+  }
+  +canInstall: Illuminate\Support\Collection {#1647
+    #items: []
+  }
+  +alreadyInstalled: Illuminate\Support\Collection {#1649
+    #items: []
+  }
+}
+```
+
+### `testInstalls()`
+- Compile the installation listing without using filters or authorization. Returns resolved handlers as well as failing handlers and their validation errors.
+
+```php
+use App\Bots\TestBotPackage;
+
+dump(TestBotPackage::testInstalls());
+```
+```bash
+array:2 [
+  "resolved" => Illuminate\Support\Collection {#1651
+    #items: array:1 [
+      0 => RTippin\Messenger\DataTransferObjects\ResolvedBotHandlerDTO {#1662
+        +handlerDTO: RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO {...}
+          +matchMethod: "exact:caseless"
+          +enabled: true
+          +adminOnly: true
+          +cooldown: 0
+          +triggers: "hello|hi|hey"
+          +payload: null
+      }
+    ]
+  }
+  "failed" => Illuminate\Support\Collection {#1648
+    #items: array:1 [
+      0 => array:3 [
+        "handler" => "App\Bots\ReplyBot"
+        "data" => array:3 [
+          "enabled" => true
+          "cooldown" => 30
+          "admin_only" => false
+        ]
+        "errors" => array:3 [
+          "match" => array:1 [
+            0 => "The match field is required."
+          ]
+          "triggers" => array:1 [
+            0 => "The triggers field is required."
+          ]
+          "replies" => array:1 [
+            0 => "The replies field is required."
+          ]
+        ]
+      ]
+    ]
+  }
+]
 ```
 
 ---
