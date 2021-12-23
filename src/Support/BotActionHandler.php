@@ -3,13 +3,17 @@
 namespace RTippin\Messenger\Support;
 
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO;
+use RTippin\Messenger\DataTransferObjects\ResolvedBotHandlerDTO;
+use RTippin\Messenger\Exceptions\BotException;
 use RTippin\Messenger\Exceptions\MessengerComposerException;
 use RTippin\Messenger\Facades\MessengerBots;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\BotAction;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
+use RTippin\Messenger\Services\BotHandlerResolverService;
 
 /**
  * To authorize the end user add the action handler to a bot, you must define the
@@ -117,6 +121,23 @@ abstract class BotActionHandler
     public static function getDTO(): ?BotActionHandlerDTO
     {
         return MessengerBots::getHandler(static::class);
+    }
+
+    /**
+     * @param  array  $params
+     * @return array|ResolvedBotHandlerDTO
+     *
+     * @throws BotException
+     */
+    public static function testResolve(array $params = [])
+    {
+        MessengerBots::registerHandlers([static::class]);
+
+        try {
+            return app(BotHandlerResolverService::class)->resolve($params, static::class);
+        } catch (ValidationException $e) {
+            return $e->errors();
+        }
     }
 
     /**

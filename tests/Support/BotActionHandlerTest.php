@@ -69,6 +69,54 @@ class BotActionHandlerTest extends MessengerTestCase
     }
 
     /** @test */
+    public function it_registers_handler_when_testing_resolve()
+    {
+        $this->assertFalse(MessengerBotsFacade::isValidHandler(BrokenBotHandler::class));
+
+        BrokenBotHandler::testResolve();
+
+        $this->assertTrue(MessengerBotsFacade::isValidHandler(BrokenBotHandler::class));
+    }
+
+    /** @test */
+    public function it_can_test_resolving_handler()
+    {
+        $resolved = FunBotHandler::testResolve([
+            'match' => MessengerBots::MATCH_CONTAINS,
+            'cooldown' => 0,
+            'admin_only' => true,
+            'enabled' => true,
+            'test' => ['test'],
+            'special' => true,
+        ]);
+        $expects = [
+            'handler' => FunBotHandler::getDTO()->toArray(),
+            'match' => MessengerBots::MATCH_EXACT_CASELESS,
+            'triggers' => '!test|!more',
+            'admin_only' => true,
+            'cooldown' => 0,
+            'enabled' => true,
+            'payload' => '{"test":["test"],"special":true}',
+        ];
+
+        $this->assertSame($expects, $resolved->toArray());
+    }
+
+    /** @test */
+    public function it_returns_validation_errors_if_testing_resolve_fails()
+    {
+        $resolved = FunBotHandler::testResolve();
+        $expects = [
+            'cooldown' => ['The cooldown field is required.'],
+            'admin_only' => ['The admin only field is required.'],
+            'enabled' => ['The enabled field is required.'],
+            'test' => ['Tests must be string.'],
+        ];
+
+        $this->assertSame($expects, $resolved);
+    }
+
+    /** @test */
     public function it_can_call_to_release_cooldown()
     {
         $handler = new FunBotHandler;
