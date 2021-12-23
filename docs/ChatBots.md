@@ -854,12 +854,12 @@ array:2 [
     #items: array:1 [
       0 => RTippin\Messenger\DataTransferObjects\ResolvedBotHandlerDTO {#1662
         +handlerDTO: RTippin\Messenger\DataTransferObjects\BotActionHandlerDTO {...}
-          +matchMethod: "exact:caseless"
-          +enabled: true
-          +adminOnly: true
-          +cooldown: 0
-          +triggers: "hello|hi|hey"
-          +payload: null
+        +matchMethod: "exact:caseless"
+        +enabled: true
+        +adminOnly: true
+        +cooldown: 0
+        +triggers: "hello|hi|hey"
+        +payload: null
       }
     ]
   }
