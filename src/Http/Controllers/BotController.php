@@ -17,6 +17,7 @@ use RTippin\Messenger\Http\Request\BotRequest;
 use RTippin\Messenger\Http\Resources\BotResource;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\Thread;
+use Throwable;
 
 class BotController
 {
@@ -128,7 +129,7 @@ class BotController
      * @param  Bot  $bot
      * @return BotResource
      *
-     * @throws AuthorizationException|FeatureDisabledException
+     * @throws AuthorizationException|FeatureDisabledException|Throwable
      */
     public function storeAvatar(BotAvatarRequest $request,
                                 StoreBotAvatar $storeBotAvatar,

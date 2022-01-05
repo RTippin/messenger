@@ -107,7 +107,7 @@ class GroupThreadController
      * @param  Thread  $thread
      * @return ThreadSettingsResource
      *
-     * @throws FeatureDisabledException|AuthorizationException
+     * @throws FeatureDisabledException|AuthorizationException|Throwable
      */
     public function storeAvatar(GroupAvatarRequest $request,
                                 StoreGroupAvatar $storeGroupAvatar,
