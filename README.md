@@ -14,7 +14,7 @@
 
 ### Prerequisites
 - PHP `^7.4 | ^8.0 | ^8.1`
-- Laravel `^8.42`
+- Laravel `^8.70`
 - Route model binding enabled in your API / WEB middleware groups.
 
 ### Features

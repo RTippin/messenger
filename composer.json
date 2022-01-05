@@ -17,7 +17,7 @@
     "require": {
         "php": "^7.4|^8.0|^8.1",
         "ext-json": "*",
-        "laravel/framework": "^8.42",
+        "laravel/framework": "^8.70",
         "joypixels/emoji-toolkit": "^6.0",
         "intervention/image": "^2.5",
         "intervention/imagecache": "^2.5"
