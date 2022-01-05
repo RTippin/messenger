@@ -99,7 +99,7 @@ class SendKnock extends BaseMessengerAction
         $timeout = $this->messenger->getKnockTimeout();
 
         if ($timeout > 0) {
-            RateLimiter::hit($limiter, $timeout*60);
+            RateLimiter::hit($limiter, $timeout * 60);
         }
     }
 
