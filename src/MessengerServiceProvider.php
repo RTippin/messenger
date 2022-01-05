@@ -3,6 +3,7 @@
 namespace RTippin\Messenger;
 
 use Illuminate\Contracts\Container\BindingResolutionException;
+use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Support\ServiceProvider;
@@ -28,6 +29,7 @@ use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\EmojiInterface;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Contracts\VideoDriver;
+use RTippin\Messenger\Exceptions\Handler;
 use RTippin\Messenger\Http\Middleware\MessengerApi;
 use RTippin\Messenger\Listeners\BotSubscriber;
 use RTippin\Messenger\Listeners\CallSubscriber;
@@ -58,6 +60,7 @@ class MessengerServiceProvider extends ServiceProvider
         $this->app->bind(MessengerComposer::class, MessengerComposer::class);
         $this->app->bind(BroadcastDriver::class, BroadcastBroker::class);
         $this->app->bind(VideoDriver::class, NullVideoBroker::class);
+        $this->app->extend(ExceptionHandler::class, fn (ExceptionHandler $handler) => new Handler($handler));
         $this->app->alias(Messenger::class, 'messenger');
         $this->app->alias(MessengerBots::class, 'messenger-bots');
         $this->app->alias(MessengerComposer::class, 'messenger-composer');
@@ -137,7 +140,7 @@ class MessengerServiceProvider extends ServiceProvider
      *
      * @throws BindingResolutionException
      */
-    private function registerSubscribers()
+    private function registerSubscribers(): void
     {
         $events = $this->app->make(Dispatcher::class);
 
