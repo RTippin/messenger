@@ -34,7 +34,7 @@ class Handler implements ExceptionHandlerContract
         if ($e instanceof ModelNotFoundException
             && $request->routeIs('api.messenger*')) {
             return new JsonResponse([
-                'message' => "Unable to locate the {$this->transformModelNotFound($e)} you requested."
+                'message' => "Unable to locate the {$this->transformModelNotFound($e)} you requested.",
             ], 404);
         }
 
