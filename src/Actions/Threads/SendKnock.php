@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Actions\Threads;
 
 use Illuminate\Contracts\Events\Dispatcher;
+use Illuminate\Support\Facades\RateLimiter;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\KnockBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
@@ -56,17 +57,19 @@ class SendKnock extends BaseMessengerAction
      */
     public function execute(Thread $thread): self
     {
-        $this->setThread($thread);
-
-        $this->bailIfChecksFail();
-
-        $this->generateResource();
-
-        $thread->setKnockCacheLockout(
+        $limiter = $thread->getKnockCacheKey(
             $this->messenger->getProvider()
         );
 
-        $this->fireBroadcast()->fireEvents();
+        $this->setThread($thread);
+
+        $this->bailIfChecksFail($limiter);
+
+        $this->hitLimiter($limiter);
+
+        $this->generateResource()
+            ->fireBroadcast()
+            ->fireEvents();
 
         return $this;
     }
@@ -74,28 +77,43 @@ class SendKnock extends BaseMessengerAction
     /**
      * @throws FeatureDisabledException|KnockException
      */
-    private function bailIfChecksFail(): void
+    private function bailIfChecksFail(string $limiter): void
     {
         if (! $this->messenger->isKnockKnockEnabled()) {
             throw new FeatureDisabledException('Knocking is currently disabled.');
         }
 
-        if ($this->getThread()->hasKnockTimeout(
-            $this->messenger->getProvider()
-        )) {
-            throw new KnockException("You may only knock at {$this->getThread()->name()} once every {$this->messenger->getKnockTimeout()} minutes.");
+        if (RateLimiter::tooManyAttempts($limiter, 1)) {
+            $seconds = RateLimiter::availableIn($limiter);
+
+            throw new KnockException("You can't knock at {$this->getThread()->name()} for another $seconds seconds.");
         }
     }
 
     /**
+     * @param  string  $limiter
      * @return void
      */
-    private function generateResource(): void
+    private function hitLimiter(string $limiter): void
+    {
+        $timeout = $this->messenger->getKnockTimeout();
+
+        if ($timeout > 0) {
+            RateLimiter::hit($limiter, $timeout*60);
+        }
+    }
+
+    /**
+     * @return $this
+     */
+    private function generateResource(): self
     {
         $this->setJsonResource(new KnockBroadcastResource(
             $this->messenger->getProvider(),
             $this->getThread()
         ));
+
+        return $this;
     }
 
     /**

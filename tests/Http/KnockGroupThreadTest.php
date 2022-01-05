@@ -2,7 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\RateLimiter;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
@@ -37,17 +37,17 @@ class KnockGroupThreadTest extends HttpTestCase
     }
 
     /** @test */
-    public function forbidden_to_knock_at_thread_when_timeout_exist()
+    public function cannot_knock_when_rate_limit_exist()
     {
         $this->logCurrentRequest('GROUP');
         $thread = $this->createGroupThread($this->tippin);
-        Cache::put('knock.knock.'.$thread->id, true);
+        RateLimiter::hit($thread->getKnockCacheKey($this->tippin));
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
             'thread' => $thread->id,
         ]))
-            ->assertForbidden();
+            ->assertStatus(429);
     }
 
     /** @test */

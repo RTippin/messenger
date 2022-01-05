@@ -2,9 +2,9 @@
 
 namespace RTippin\Messenger\Exceptions;
 
-use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 
-class KnockException extends AuthorizationException
+class KnockException extends ThrottleRequestsException
 {
     /**
      * KnockException constructor.

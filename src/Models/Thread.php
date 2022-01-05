@@ -11,7 +11,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\HasPresenceChannel;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\ThreadFactory;
@@ -304,32 +303,6 @@ class Thread extends Model implements HasPresenceChannel
         return $this->isGroup()
             ? $baseKey
             : $baseKey.'.'.optional($provider)->getKey();
-    }
-
-    /**
-     * @param  MessengerProvider|null  $provider
-     */
-    public function setKnockCacheLockout(?MessengerProvider $provider = null)
-    {
-        if (Messenger::isKnockKnockEnabled()
-            && Messenger::getKnockTimeout() !== 0) {
-            Cache::put(
-                $this->getKnockCacheKey($provider),
-                true,
-                now()->addMinutes(Messenger::getKnockTimeout())
-            );
-        }
-    }
-
-    /**
-     * @param  MessengerProvider|null  $provider
-     * @return bool
-     */
-    public function hasKnockTimeout(?MessengerProvider $provider = null): bool
-    {
-        return Messenger::isKnockKnockEnabled()
-            && Messenger::getKnockTimeout() !== 0
-            && Cache::has($this->getKnockCacheKey($provider));
     }
 
     /**

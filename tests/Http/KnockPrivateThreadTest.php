@@ -2,7 +2,7 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\RateLimiter;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
@@ -23,10 +23,10 @@ class KnockPrivateThreadTest extends HttpTestCase
     }
 
     /** @test */
-    public function user_can_knock_at_thread_when_recipient_timeout_exist()
+    public function can_knock_when_recipient_rate_limit_exist()
     {
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
-        Cache::put("knock.knock.$thread->id.{$this->tippin->getKey()}", true);
+        RateLimiter::hit($thread->getKnockCacheKey($this->tippin));
         $this->actingAs($this->doe);
 
         $this->postJson(route('api.messenger.threads.knock', [
@@ -36,17 +36,17 @@ class KnockPrivateThreadTest extends HttpTestCase
     }
 
     /** @test */
-    public function user_forbidden_to_knock_at_thread_when_timeout_exist()
+    public function cannot_knock_when_rate_limit_exist()
     {
         $this->logCurrentRequest('PRIVATE');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
-        Cache::put("knock.knock.$thread->id.{$this->tippin->getKey()}", true);
+        RateLimiter::hit($thread->getKnockCacheKey($this->tippin));
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.knock', [
             'thread' => $thread->id,
         ]))
-            ->assertForbidden();
+            ->assertStatus(429);
     }
 
     /** @test */

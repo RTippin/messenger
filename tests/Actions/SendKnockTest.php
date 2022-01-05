@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Tests\Actions;
 
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\RateLimiter;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Threads\SendKnock;
 use RTippin\Messenger\Broadcasting\KnockBroadcast;
@@ -40,10 +41,10 @@ class SendKnockTest extends FeatureTestCase
     public function it_throws_exception_if_private_lockout_key_exist()
     {
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
-        $thread->setKnockCacheLockout($this->tippin);
+        RateLimiter::hit($thread->getKnockCacheKey($this->tippin), 300);
 
         $this->expectException(KnockException::class);
-        $this->expectExceptionMessage('You may only knock at John Doe once every 5 minutes.');
+        $this->expectExceptionMessage("You can't knock at John Doe for another 300 seconds.");
 
         app(SendKnock::class)->execute($thread);
     }
@@ -51,13 +52,50 @@ class SendKnockTest extends FeatureTestCase
     /** @test */
     public function it_throws_exception_if_group_lockout_key_exist()
     {
-        $thread = Thread::factory()->group()->create(['subject' => 'Test']);
-        $thread->setKnockCacheLockout($this->tippin);
+        $thread = Thread::factory()->group()->subject('Test Group')->create();
+        RateLimiter::hit($thread->getKnockCacheKey($this->tippin), 300);
 
         $this->expectException(KnockException::class);
-        $this->expectExceptionMessage('You may only knock at Test once every 5 minutes.');
+        $this->expectExceptionMessage("You can't knock at Test Group for another 300 seconds.");
 
         app(SendKnock::class)->execute($thread);
+    }
+
+    /** @test */
+    public function it_doesnt_hit_rate_limiter_if_timeout_zero()
+    {
+        Messenger::setKnockTimeout(0);
+        $thread = Thread::factory()->group()->create();
+        $limiter = RateLimiter::spy();
+
+        app(SendKnock::class)->execute($thread);
+
+        $limiter->shouldNotHaveReceived('hit');
+    }
+
+    /** @test */
+    public function it_hits_rate_limiter_if_timeout_not_zero()
+    {
+        $thread = Thread::factory()->group()->create();
+        $key = $thread->getKnockCacheKey($this->tippin);
+        $limiter = RateLimiter::spy();
+
+        app(SendKnock::class)->execute($thread);
+
+        $limiter->shouldHaveReceived('hit')->with($key, 300);
+    }
+
+    /** @test */
+    public function it_hits_rate_limiter_using_custom_timeout()
+    {
+        Messenger::setKnockTimeout(2);
+        $thread = Thread::factory()->group()->create();
+        $key = $thread->getKnockCacheKey($this->tippin);
+        $limiter = RateLimiter::spy();
+
+        app(SendKnock::class)->execute($thread);
+
+        $limiter->shouldHaveReceived('hit')->with($key, 120);
     }
 
     /** @test */
