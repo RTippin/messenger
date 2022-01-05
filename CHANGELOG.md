@@ -3,6 +3,22 @@
 
 ---
 
+### [v1.18.0 (01-05-2022)](https://github.com/RTippin/messenger/compare/v1.17.0...v1.18.0)
+
+#### Added
+- `Handler.php` to decorate the exception handler resolved from the container.
+
+#### Changed
+- All rate-limiting middleware is now defined directly on the routes and not within controller constructors.
+- Knocking uses a proper rate limiter now, throwing a throttle exception with the remaining seconds.
+- `ModelNotFound` exceptions thrown from messenger routes will be transformed into a sanitized message.
+- Minimum laravel version bumped to `^8.70`.
+
+#### Removed
+- Knock timeout setter/getter from `Thread.php` model.
+
+---
+
 ### [v1.17.0 (12-23-2021)](https://github.com/RTippin/messenger/compare/v1.16.0...v1.17.0)
 
 #### Added
