@@ -92,6 +92,7 @@ class KnockGroupThreadTest extends HttpTestCase
     /** @test */
     public function non_admin_without_permission_forbidden_to_knock_at_thread()
     {
+        $this->logCurrentRequest('GROUP');
         $thread = Thread::factory()->group()->create();
         Participant::factory()->for($thread)->owner($this->doe)->create();
         $this->actingAs($this->doe);

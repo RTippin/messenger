@@ -107,6 +107,7 @@ class KnockPrivateThreadTest extends HttpTestCase
     /** @test */
     public function non_participant_forbidden_to_knock_at_thread()
     {
+        $this->logCurrentRequest('PRIVATE');
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
         $this->actingAs($this->developers);
 
