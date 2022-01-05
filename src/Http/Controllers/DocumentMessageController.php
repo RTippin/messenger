@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Http\Controllers;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Routing\Controller;
 use RTippin\Messenger\Actions\Messages\StoreDocumentMessage;
 use RTippin\Messenger\Http\Collections\DocumentMessageCollection;
 use RTippin\Messenger\Http\Request\DocumentMessageRequest;
@@ -14,17 +13,9 @@ use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\DocumentMessageRepository;
 use Throwable;
 
-class DocumentMessageController extends Controller
+class DocumentMessageController
 {
     use AuthorizesRequests;
-
-    /**
-     * DocumentMessageController constructor.
-     */
-    public function __construct()
-    {
-        $this->middleware('throttle:messenger-attachment')->only('store');
-    }
 
     /**
      * Display a listing of the most recent document files.

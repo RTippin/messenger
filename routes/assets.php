@@ -17,14 +17,14 @@ use RTippin\Messenger\Http\Controllers\InviteController;
 |--------------------------------------------------------------------------
 */
 
-Route::name('assets.messenger.')->group(function () {
+Route::name('assets.messenger.')->scopeBindings()->group(function () {
     Route::prefix('threads/{thread}')->name('threads.')->group(function () {
         Route::get('avatar/{size}/{image}', RenderGroupAvatar::class)->name('avatar.render');
-        Route::get('bots/{bot:id}/avatar/{size}/{image}', RenderBotAvatar::class)->name('bots.avatar.render');
-        Route::get('gallery/{message:id}/{size}/{image}', RenderMessageImage::class)->name('gallery.render');
-        Route::get('files/{message:id}/{file}', DownloadMessageFile::class)->name('files.download');
-        Route::get('audio/{message:id}/{audio}', DownloadMessageAudio::class)->name('audio.download');
-        Route::get('videos/{message:id}/{video}', DownloadMessageVideo::class)->name('videos.download');
+        Route::get('bots/{bot}/avatar/{size}/{image}', RenderBotAvatar::class)->name('bots.avatar.render');
+        Route::get('gallery/{message}/{size}/{image}', RenderMessageImage::class)->name('gallery.render');
+        Route::get('files/{message}/{file}', DownloadMessageFile::class)->name('files.download');
+        Route::get('audio/{message}/{audio}', DownloadMessageAudio::class)->name('audio.download');
+        Route::get('videos/{message}/{video}', DownloadMessageVideo::class)->name('videos.download');
     });
     Route::get('invites/{invite:code}/avatar/{size}/{image}', [InviteController::class, 'renderAvatar'])->name('invites.avatar.render');
     Route::get('provider/{alias}/{id}/{size}/{image}', RenderProviderAvatar::class)->name('provider.avatar.render');

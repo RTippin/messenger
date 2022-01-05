@@ -6,7 +6,6 @@ use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Routing\Controller;
 use RTippin\Messenger\Actions\Messages\ArchiveMessage;
 use RTippin\Messenger\Actions\Messages\EditMessage;
 use RTippin\Messenger\Actions\Messages\RemoveEmbeds;
@@ -21,17 +20,9 @@ use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\MessageRepository;
 use Throwable;
 
-class MessageController extends Controller
+class MessageController
 {
     use AuthorizesRequests;
-
-    /**
-     * MessageController constructor.
-     */
-    public function __construct()
-    {
-        $this->middleware('throttle:messenger-message')->only('store');
-    }
 
     /**
      * Display a listing of the most recent messages.

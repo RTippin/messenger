@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Http\Controllers;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Routing\Controller;
 use RTippin\Messenger\Actions\Messages\StoreAudioMessage;
 use RTippin\Messenger\Exceptions\FileServiceException;
 use RTippin\Messenger\Http\Collections\AudioMessageCollection;
@@ -15,17 +14,9 @@ use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\AudioMessageRepository;
 use Throwable;
 
-class AudioMessageController extends Controller
+class AudioMessageController
 {
     use AuthorizesRequests;
-
-    /**
-     * AudioMessageController constructor.
-     */
-    public function __construct()
-    {
-        $this->middleware('throttle:messenger-attachment')->only('store');
-    }
 
     /**
      * Display a listing of the most recent audio files.

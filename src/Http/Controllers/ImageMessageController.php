@@ -4,7 +4,6 @@ namespace RTippin\Messenger\Http\Controllers;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Routing\Controller;
 use RTippin\Messenger\Actions\Messages\StoreImageMessage;
 use RTippin\Messenger\Exceptions\FileServiceException;
 use RTippin\Messenger\Http\Collections\ImageMessageCollection;
@@ -15,17 +14,9 @@ use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Repositories\ImageMessageRepository;
 use Throwable;
 
-class ImageMessageController extends Controller
+class ImageMessageController
 {
     use AuthorizesRequests;
-
-    /**
-     * ImageMessageController constructor.
-     */
-    public function __construct()
-    {
-        $this->middleware('throttle:messenger-attachment')->only('store');
-    }
 
     /**
      * Display a listing of the most recent image files.

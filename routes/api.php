@@ -52,19 +52,13 @@ use RTippin\Messenger\Http\Controllers\VideoMessageController;
 |--------------------------------------------------------------------------
 */
 
-Route::name('api.messenger.')->group(function () {
+Route::name('api.messenger.')->scopeBindings()->group(function () {
     //Messenger view service settings
     Route::get('/', [MessengerController::class, 'index'])->name('info');
     //Invitation join
     Route::post('join/{invite:code}', JoinGroupInvite::class)->name('invites.join.store');
     //Search
-    Route::get('search/{query?}', Search::class)->name('search');
-    //Friend routes
-    Route::prefix('friends')->name('friends.')->group(function () {
-        Route::apiResource('pending', PendingFriendController::class)->except('store');
-        Route::apiResource('sent', SentFriendController::class)->except('update');
-    });
-    Route::apiResource('friends', FriendController::class)->except(['update', 'store']);
+    Route::get('search/{query?}', Search::class)->middleware('throttle:messenger-search')->name('search');
     //Base messenger routes
     Route::post('heartbeat', StatusHeartbeat::class)->name('heartbeat');
     Route::get('active-calls', [MessengerController::class, 'activeCalls'])->name('active.calls');
@@ -73,27 +67,14 @@ Route::name('api.messenger.')->group(function () {
     Route::post('avatar', [MessengerController::class, 'updateAvatar'])->name('avatar.update');
     Route::delete('avatar', [MessengerController::class, 'destroyAvatar'])->name('avatar.destroy');
     Route::get('unread-threads-count', UnreadThreadsCount::class)->name('unread.threads.count');
-    Route::apiResource('groups', GroupThreadController::class)->only(['index', 'store']);
     Route::get('groups/page/{group}', [GroupThreadController::class, 'paginate'])->name('groups.page');
-    Route::apiResource('privates', PrivateThreadController::class)->only(['index', 'store']);
     Route::get('privates/page/{private}', [PrivateThreadController::class, 'paginate'])->name('privates.page');
     Route::get('privates/recipient/{alias}/{id}', FindRecipientThread::class)->name('privates.locate');
     //Thread resources
+    Route::get('threads/page/{thread}', [ThreadController::class, 'paginate'])->name('threads.page');
     Route::prefix('threads/{thread}')->name('threads.')->group(function () {
-        //Pagination
-        Route::get('participants/page/{participant:id}', [ParticipantController::class, 'paginate'])->name('participants.page');
-        Route::get('messages/page/{message:id}', [MessageController::class, 'paginate'])->name('messages.page');
-        Route::get('messages/{message:id}/history', [MessageController::class, 'showEdits'])->name('messages.history');
-        Route::get('calls/page/{call:id}', [CallController::class, 'paginate'])->name('calls.page');
-        Route::get('logs/page/{log:id}', [SystemMessageController::class, 'paginate'])->name('logs.page');
-        Route::get('images/page/{image:id}', [ImageMessageController::class, 'paginate'])->name('images.page');
-        Route::get('documents/page/{document:id}', [DocumentMessageController::class, 'paginate'])->name('documents.page');
-        Route::get('audio/page/{audio:id}', [AudioMessageController::class, 'paginate'])->name('audio.page');
-        Route::get('videos/page/{video:id}', [VideoMessageController::class, 'paginate'])->name('videos.page');
         //Common
-        Route::delete('messages/{message:id}/embeds', [MessageController::class, 'removeEmbeds'])->name('messages.embeds.destroy');
-        //TODO v2 remove {relations?}
-        Route::get('load/{relations?}', ThreadLoader::class)->name('loader');
+        Route::get('load/{relations?}', ThreadLoader::class)->name('loader'); //TODO v2 remove {relations?}
         Route::get('logs', [SystemMessageController::class, 'index'])->name('logs');
         Route::get('mark-read', MarkThreadRead::class)->name('mark.read');
         Route::get('is-unread', IsThreadUnread::class)->name('is.unread');
@@ -101,6 +82,7 @@ Route::name('api.messenger.')->group(function () {
         Route::get('check-archive', ThreadArchiveState::class)->name('archive.check');
         Route::post('mute', MuteThread::class)->name('mute');
         Route::post('unmute', UnmuteThread::class)->name('unmute');
+        Route::get('logs/page/{log}', [SystemMessageController::class, 'paginate'])->name('logs.page');
         //Groups
         Route::post('leave', [GroupThreadController::class, 'leave'])->name('leave');
         Route::get('settings', [GroupThreadController::class, 'settings'])->name('settings');
@@ -110,40 +92,79 @@ Route::name('api.messenger.')->group(function () {
         Route::get('add-participants', FilterAddParticipants::class)->name('add.participants');
         //Privates
         Route::post('approval', PrivateThreadApproval::class)->name('approval');
+        //Messages
+        Route::prefix('messages')->name('messages.')->group(function () {
+            Route::post('/', [MessageController::class, 'store'])->middleware('throttle:messenger-message')->name('store');
+            Route::get('page/{message}', [MessageController::class, 'paginate'])->name('page');
+            Route::get('{message}/history', [MessageController::class, 'showEdits'])->name('history');
+            Route::delete('{message}/embeds', [MessageController::class, 'removeEmbeds'])->name('embeds.destroy');
+        });
+        //Image Messages
+        Route::prefix('images')->name('images.')->group(function () {
+            Route::get('page/{image}', [ImageMessageController::class, 'paginate'])->name('page');
+            Route::get('/', [ImageMessageController::class, 'index'])->name('index');
+            Route::post('/', [ImageMessageController::class, 'store'])->middleware('throttle:messenger-attachment')->name('store');
+        });
+        //Document Messages
+        Route::prefix('documents')->name('documents.')->group(function () {
+            Route::get('page/{document}', [DocumentMessageController::class, 'paginate'])->name('page');
+            Route::get('/', [DocumentMessageController::class, 'index'])->name('index');
+            Route::post('/', [DocumentMessageController::class, 'store'])->middleware('throttle:messenger-attachment')->name('store');
+        });
+        //Audio Messages
+        Route::prefix('audio')->name('audio.')->group(function () {
+            Route::get('page/{audio}', [AudioMessageController::class, 'paginate'])->name('page');
+            Route::get('/', [AudioMessageController::class, 'index'])->name('index');
+            Route::post('/', [AudioMessageController::class, 'store'])->middleware('throttle:messenger-attachment')->name('store');
+        });
+        //Video Messages
+        Route::prefix('videos')->name('videos.')->group(function () {
+            Route::get('videos/page/{video}', [VideoMessageController::class, 'paginate'])->name('page');
+            Route::get('/', [VideoMessageController::class, 'index'])->name('index');
+            Route::post('/', [VideoMessageController::class, 'store'])->middleware('throttle:messenger-attachment')->name('store');
+        });
+        //Participants
+        Route::prefix('participants')->name('participants.')->group(function () {
+            Route::get('page/{participant}', [ParticipantController::class, 'paginate'])->name('page');
+            Route::post('{participant}/promote', PromoteAdmin::class)->name('promote');
+            Route::post('{participant}/demote', DemoteAdmin::class)->name('demote');
+        });
+        //Bot Packages
+        Route::prefix('bots/packages')->name('bots.packages.')->group(function () {
+            Route::get('/', AvailableBotPackages::class)->name('index');
+            Route::post('/', InstallBotPackage::class)->name('store');
+        });
+        //Bots
+        Route::prefix('bots/{bot}')->name('bots.')->group(function () {
+            Route::get('add-handlers', AvailableBotHandlers::class)->name('handlers');
+            Route::post('avatar', [BotController::class, 'storeAvatar'])->name('avatar.store');
+            Route::delete('avatar', [BotController::class, 'destroyAvatar'])->name('avatar.destroy');
+        });
+        //Calls
+        Route::prefix('calls')->name('calls.')->group(function () {
+            Route::get('page/{call}', [CallController::class, 'paginate'])->name('page');
+            Route::post('{call}/join', JoinCall::class)->name('join');
+            Route::post('{call}/leave', LeaveCall::class)->name('leave');
+            Route::post('{call}/end', EndCall::class)->name('end');
+            Route::post('{call}/ignore', IgnoreCall::class)->name('ignore');
+            Route::get('{call}/heartbeat', CallHeartbeat::class)->name('heartbeat');
+        });
     });
-    //main API resources
+    //Core API resources
+    Route::apiResource('groups', GroupThreadController::class)->only(['index', 'store']);
+    Route::apiResource('privates', PrivateThreadController::class)->only(['index', 'store']);
     Route::apiResource('threads', ThreadController::class)->except(['store', 'update']);
-    Route::get('threads/page/{thread}', [ThreadController::class, 'paginate'])->name('threads.page');
-    Route::apiResource('threads.participants', ParticipantController::class)->scoped();
-    Route::prefix('threads/{thread}/participants/{participant:id}')->name('threads.participants.')->group(function () {
-        Route::post('promote', PromoteAdmin::class)->name('promote');
-        Route::post('demote', DemoteAdmin::class)->name('demote');
+    Route::apiResource('threads.participants', ParticipantController::class);
+    Route::apiResource('threads.bots', BotController::class);
+    Route::apiResource('threads.bots.actions', BotActionController::class);
+    Route::apiResource('threads.messages', MessageController::class)->except('store');
+    Route::apiResource('threads.messages.reactions', MessageReactionController::class)->except(['show', 'update']);
+    Route::apiResource('threads.invites', InviteController::class)->except(['show', 'update']);
+    Route::apiResource('threads.calls', CallController::class)->except(['update', 'destroy']);
+    Route::apiResource('threads.calls.participants', CallParticipantController::class)->except(['store', 'destroy']);
+    Route::prefix('friends')->name('friends.')->group(function () {
+        Route::apiResource('pending', PendingFriendController::class)->except('store');
+        Route::apiResource('sent', SentFriendController::class)->except('update');
     });
-    Route::prefix('threads/{thread}/bots/packages')->name('threads.bots.packages.')->group(function () {
-        Route::get('/', AvailableBotPackages::class)->name('index');
-        Route::post('/', InstallBotPackage::class)->name('store');
-    });
-    Route::apiResource('threads.bots', BotController::class)->scoped();
-    Route::apiResource('threads.bots.actions', BotActionController::class)->scoped();
-    Route::prefix('threads/{thread}/bots/{bot:id}')->name('threads.bots.')->group(function () {
-        Route::get('add-handlers', AvailableBotHandlers::class)->name('handlers');
-        Route::post('avatar', [BotController::class, 'storeAvatar'])->name('avatar.store');
-        Route::delete('avatar', [BotController::class, 'destroyAvatar'])->name('avatar.destroy');
-    });
-    Route::apiResource('threads.messages', MessageController::class)->scoped();
-    Route::apiResource('threads.messages.reactions', MessageReactionController::class)->scoped()->only(['index', 'store', 'destroy']);
-    Route::apiResource('threads.images', ImageMessageController::class)->scoped()->only(['index', 'store']);
-    Route::apiResource('threads.documents', DocumentMessageController::class)->scoped()->only(['index', 'store']);
-    Route::apiResource('threads.audio', AudioMessageController::class)->scoped()->only(['index', 'store']);
-    Route::apiResource('threads.videos', VideoMessageController::class)->scoped()->only(['index', 'store']);
-    Route::apiResource('threads.invites', InviteController::class)->scoped()->only(['index', 'store', 'destroy']);
-    Route::apiResource('threads.calls', CallController::class)->scoped()->except(['update', 'destroy']);
-    Route::prefix('threads/{thread}/calls/{call:id}')->name('threads.calls.')->group(function () {
-        Route::post('join', JoinCall::class)->name('join');
-        Route::post('leave', LeaveCall::class)->name('leave');
-        Route::post('end', EndCall::class)->name('end');
-        Route::post('ignore', IgnoreCall::class)->name('ignore');
-        Route::get('heartbeat', CallHeartbeat::class)->name('heartbeat');
-    });
-    Route::apiResource('threads.calls.participants', CallParticipantController::class)->scoped()->except(['store', 'destroy']);
+    Route::apiResource('friends', FriendController::class)->except(['update', 'store']);
 });
