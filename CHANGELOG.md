@@ -12,6 +12,7 @@
 - All rate-limiting middleware is now defined directly on the routes and not within controller constructors.
 - Knocking uses a proper rate limiter now, throwing a throttle exception with the remaining seconds.
 - `ModelNotFound` exceptions thrown from messenger routes will be transformed into a sanitized message.
+- Routes now use the `scopedBindings` flag instead of defining them per route.
 - Minimum laravel version bumped to `^8.70`.
 
 #### Removed
