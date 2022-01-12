@@ -28,6 +28,6 @@ class MarkThreadRead
         return $markParticipantRead->execute(
             $thread->currentParticipant(),
             $thread
-        )->getMessageResponse();
+        )->getSuccessResponse();
     }
 }

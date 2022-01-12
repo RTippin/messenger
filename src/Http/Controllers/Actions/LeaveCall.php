@@ -35,6 +35,6 @@ class LeaveCall
         return $leaveCall->execute(
             $call,
             $call->currentCallParticipant()
-        )->getMessageResponse();
+        )->getSuccessResponse();
     }
 }

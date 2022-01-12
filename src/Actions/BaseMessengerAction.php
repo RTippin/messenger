@@ -31,14 +31,9 @@ abstract class BaseMessengerAction
     private $data = null;
 
     /**
-     * @var null|JsonResource|mixed
+     * @var null|JsonResource
      */
-    private $jsonResource = null;
-
-    /**
-     * @var null|JsonResponse|mixed
-     */
-    private $messageResponse = null;
+    private ?JsonResource $jsonResource = null;
 
     /**
      * @var Thread|null
@@ -182,13 +177,11 @@ abstract class BaseMessengerAction
     /**
      * Returns a json resource the action may be holding, if any.
      *
-     * @return JsonResource|JsonResponse|mixed
+     * @return JsonResource|JsonResponse
      */
     public function getJsonResource()
     {
-        return ! is_null($this->jsonResource)
-            ? $this->jsonResource
-            : new JsonResponse([]);
+        return $this->jsonResource ?? $this->getSuccessResponse();
     }
 
     /**
@@ -211,28 +204,13 @@ abstract class BaseMessengerAction
     }
 
     /**
-     * @return JsonResponse|mixed|null
+     * @return JsonResponse
      */
-    public function getMessageResponse()
+    public function getSuccessResponse(): JsonResponse
     {
-        if (! is_null($this->messageResponse)) {
-            return $this->messageResponse;
-        }
-
         return new JsonResponse([
             'message' => 'success',
         ]);
-    }
-
-    /**
-     * @param $messageResponse
-     * @return $this
-     */
-    public function setMessageResponse($messageResponse): self
-    {
-        $this->messageResponse = $messageResponse;
-
-        return $this;
     }
 
     /**

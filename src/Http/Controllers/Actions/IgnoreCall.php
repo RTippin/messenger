@@ -33,6 +33,6 @@ class IgnoreCall
             $thread,
         ]);
 
-        return $ignoreCall->execute($thread, $call)->getMessageResponse();
+        return $ignoreCall->execute($thread, $call)->getSuccessResponse();
     }
 }

@@ -30,6 +30,6 @@ class PrivateThreadApproval
         return $threadApproval->execute(
             $thread,
             $request->validated()['approve']
-        )->getMessageResponse();
+        )->getSuccessResponse();
     }
 }

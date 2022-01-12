@@ -25,6 +25,6 @@ class UnmuteThread
     {
         $this->authorize('mutes', $thread);
 
-        return $unmuteThread->execute($thread)->getMessageResponse();
+        return $unmuteThread->execute($thread)->getSuccessResponse();
     }
 }

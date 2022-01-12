@@ -92,6 +92,6 @@ class CallParticipantController
             $call,
             $participant,
             $request->validated()['kicked']
-        )->getMessageResponse();
+        )->getSuccessResponse();
     }
 }
