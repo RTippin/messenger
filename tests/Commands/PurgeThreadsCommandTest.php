@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Commands;
 
-use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Bus;
 use RTippin\Messenger\Jobs\PurgeThreads;
 use RTippin\Messenger\Models\Thread;
@@ -68,11 +67,10 @@ class PurgeThreadsCommandTest extends FeatureTestCase
     /** @test */
     public function it_finds_multiple_threads()
     {
-        Thread::factory()
-            ->state(new Sequence(
+        Thread::factory()->sequence(
                 ['deleted_at' => now()->subDays(8)],
                 ['deleted_at' => now()->subDays(10)],
-            ))
+            )
             ->count(2)
             ->create();
 

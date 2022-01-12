@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Commands;
 
-use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Bus;
 use RTippin\Messenger\Jobs\PurgeImageMessages;
 use RTippin\Messenger\Models\Message;
@@ -83,10 +82,10 @@ class PurgeImagesCommandTest extends FeatureTestCase
             ->for(Thread::factory()->create())
             ->owner($this->tippin)
             ->image()
-            ->state(new Sequence(
+            ->sequence(
                 ['deleted_at' => now()->subDays(8)],
                 ['deleted_at' => now()->subDays(10)],
-            ))
+            )
             ->count(2)
             ->create();
 

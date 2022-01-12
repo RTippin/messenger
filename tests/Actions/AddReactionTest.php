@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Actions\Messages\AddReaction;
@@ -75,7 +74,7 @@ class AddReactionTest extends FeatureTestCase
         MessageReaction::factory()
             ->for($message)
             ->owner($this->tippin)
-            ->state(new Sequence(
+            ->sequence(
                 ['reaction' => ':one:'],
                 ['reaction' => ':two:'],
                 ['reaction' => ':three:'],
@@ -86,7 +85,7 @@ class AddReactionTest extends FeatureTestCase
                 ['reaction' => ':eight:'],
                 ['reaction' => ':nine:'],
                 ['reaction' => ':ten:'],
-            ))
+            )
             ->count(10)
             ->create();
 
@@ -104,7 +103,7 @@ class AddReactionTest extends FeatureTestCase
         MessageReaction::factory()
             ->for($message)
             ->owner($this->tippin)
-            ->state(new Sequence(
+            ->sequence(
                 ['reaction' => ':one:'],
                 ['reaction' => ':two:'],
                 ['reaction' => ':three:'],
@@ -116,7 +115,7 @@ class AddReactionTest extends FeatureTestCase
                 ['reaction' => ':nine:'],
                 ['reaction' => ':ten:'],
                 ['reaction' => ':eleven:'],
-            ))
+            )
             ->count(11)
             ->create();
 
@@ -154,7 +153,7 @@ class AddReactionTest extends FeatureTestCase
         MessageReaction::factory()
             ->for($message)
             ->owner($this->tippin)
-            ->state(new Sequence(
+            ->sequence(
                 ['reaction' => ':one:'],
                 ['reaction' => ':two:'],
                 ['reaction' => ':three:'],
@@ -164,7 +163,7 @@ class AddReactionTest extends FeatureTestCase
                 ['reaction' => ':seven:'],
                 ['reaction' => ':eight:'],
                 ['reaction' => ':nine:'],
-            ))
+            )
             ->count(9)
             ->create();
 
@@ -181,7 +180,7 @@ class AddReactionTest extends FeatureTestCase
         MessageReaction::factory()
             ->for($message)
             ->owner($this->doe)
-            ->state(new Sequence(
+            ->sequence(
                 ['reaction' => ':one:'],
                 ['reaction' => ':two:'],
                 ['reaction' => ':three:'],
@@ -192,7 +191,7 @@ class AddReactionTest extends FeatureTestCase
                 ['reaction' => ':eight:'],
                 ['reaction' => ':nine:'],
                 ['reaction' => ':joy:'],
-            ))
+            )
             ->count(10)
             ->create();
 

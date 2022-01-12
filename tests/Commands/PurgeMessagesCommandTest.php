@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Commands;
 
-use Illuminate\Database\Eloquent\Factories\Sequence;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
@@ -51,10 +50,10 @@ class PurgeMessagesCommandTest extends FeatureTestCase
         Message::factory()
             ->for(Thread::factory()->create())
             ->owner($this->tippin)
-            ->state(new Sequence(
+            ->sequence(
                 ['deleted_at' => now()->subDays(8)],
                 ['deleted_at' => now()->subDays(10)],
-            ))
+            )
             ->count(2)
             ->create();
 

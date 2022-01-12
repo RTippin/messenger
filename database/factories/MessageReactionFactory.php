@@ -43,6 +43,6 @@ class MessageReactionFactory extends Factory
      */
     public function reaction(string $reaction): self
     {
-        return $this->state(fn (array $attributes) => ['reaction' => $reaction]);
+        return $this->state(['reaction' => $reaction]);
     }
 }

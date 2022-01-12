@@ -40,7 +40,7 @@ class ParticipantFactory extends Factory
      */
     public function admin(): self
     {
-        return $this->state(fn (array $attributes) => Participant::AdminPermissions);
+        return $this->state(Participant::AdminPermissions);
     }
 
     /**
@@ -50,7 +50,7 @@ class ParticipantFactory extends Factory
      */
     public function pending(): self
     {
-        return $this->state(fn (array $attributes) => ['pending' => true]);
+        return $this->state(['pending' => true]);
     }
 
     /**
@@ -60,7 +60,7 @@ class ParticipantFactory extends Factory
      */
     public function muted(): self
     {
-        return $this->state(fn (array $attributes) => ['muted' => true]);
+        return $this->state(['muted' => true]);
     }
 
     /**
@@ -70,6 +70,6 @@ class ParticipantFactory extends Factory
      */
     public function read(): self
     {
-        return $this->state(fn (array $attributes) => ['last_read' => now()]);
+        return $this->state(['last_read' => now()]);
     }
 }

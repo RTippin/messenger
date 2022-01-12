@@ -25,6 +25,6 @@ trait FactoryHelper
      */
     public function trashed(?Carbon $trashedAt = null): self
     {
-        return $this->state(fn (array $attributes) => ['deleted_at' => $trashedAt ?: now()]);
+        return $this->state(['deleted_at' => $trashedAt ?: now()]);
     }
 }

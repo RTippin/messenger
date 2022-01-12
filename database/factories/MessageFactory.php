@@ -44,7 +44,7 @@ class MessageFactory extends Factory
      */
     public function body(?string $body): self
     {
-        return $this->state(fn (array $attributes) => ['body' => $body]);
+        return $this->state(['body' => $body]);
     }
 
     /**
@@ -54,7 +54,7 @@ class MessageFactory extends Factory
      */
     public function image(): self
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state([
             'type' => Message::IMAGE_MESSAGE,
             'body' => 'picture.jpg',
         ]);
@@ -67,7 +67,7 @@ class MessageFactory extends Factory
      */
     public function document(): self
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state([
             'type' => Message::DOCUMENT_MESSAGE,
             'body' => 'document.pdf',
         ]);
@@ -80,7 +80,7 @@ class MessageFactory extends Factory
      */
     public function audio(): self
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state([
             'type' => Message::AUDIO_MESSAGE,
             'body' => 'sound.mp3',
         ]);
@@ -93,7 +93,7 @@ class MessageFactory extends Factory
      */
     public function video(): self
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state([
             'type' => Message::VIDEO_MESSAGE,
             'body' => 'video.mov',
         ]);
@@ -107,7 +107,7 @@ class MessageFactory extends Factory
      */
     public function system(?int $type = null): self
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state([
             'type' => $type ?: rand(90, 104),
             'body' => 'This is a system message.',
         ]);
@@ -120,7 +120,7 @@ class MessageFactory extends Factory
      */
     public function edited(): self
     {
-        return $this->state(fn (array $attributes) => ['edited' => true]);
+        return $this->state(['edited' => true]);
     }
 
     /**
@@ -130,7 +130,7 @@ class MessageFactory extends Factory
      */
     public function reacted(): self
     {
-        return $this->state(fn (array $attributes) => ['reacted' => true]);
+        return $this->state(['reacted' => true]);
     }
 
     /**
@@ -141,6 +141,6 @@ class MessageFactory extends Factory
      */
     public function reply(string $messageId): self
     {
-        return $this->state(fn (array $attributes) => ['reply_to_id' => $messageId]);
+        return $this->state(['reply_to_id' => $messageId]);
     }
 }

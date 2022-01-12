@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Http;
 
-use Illuminate\Database\Eloquent\Factories\Sequence;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\MessageReaction;
@@ -97,26 +96,26 @@ class MessageReactionTest extends HttpTestCase
         MessageReaction::factory()
             ->for($message)
             ->owner($this->tippin)
-            ->state(new Sequence(
+            ->sequence(
                 ['reaction' => ':one:'],
                 ['reaction' => ':two:'],
                 ['reaction' => ':three:'],
                 ['reaction' => ':four:'],
                 ['reaction' => ':five:'],
-            ))
+            )
             ->count(5)
             ->create();
         MessageReaction::factory()
             ->for($message)
             ->owner($this->doe)
-            ->state(new Sequence(
+            ->sequence(
                 ['reaction' => ':one:'],
                 ['reaction' => ':two:'],
                 ['reaction' => ':three:'],
                 ['reaction' => ':four:'],
                 ['reaction' => ':five:'],
                 ['reaction' => ':six:'],
-            ))
+            )
             ->count(6)
             ->create();
         $this->actingAs($this->tippin);

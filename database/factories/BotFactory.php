@@ -43,7 +43,7 @@ class BotFactory extends Factory
      */
     public function name(string $name): self
     {
-        return $this->state(fn (array $attributes) => ['name' => $name]);
+        return $this->state(['name' => $name]);
     }
 
     /**
@@ -54,7 +54,7 @@ class BotFactory extends Factory
      */
     public function cooldown(int $cooldown): self
     {
-        return $this->state(fn (array $attributes) => ['cooldown' => $cooldown]);
+        return $this->state(['cooldown' => $cooldown]);
     }
 
     /**
@@ -64,7 +64,7 @@ class BotFactory extends Factory
      */
     public function disabled(): self
     {
-        return $this->state(fn (array $attributes) => ['enabled' => false]);
+        return $this->state(['enabled' => false]);
     }
 
     /**
@@ -74,6 +74,6 @@ class BotFactory extends Factory
      */
     public function hideActions(): self
     {
-        return $this->state(fn (array $attributes) => ['hide_actions' => true]);
+        return $this->state(['hide_actions' => true]);
     }
 }

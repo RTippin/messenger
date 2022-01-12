@@ -45,7 +45,7 @@ class InviteFactory extends Factory
      */
     public function expires($expires): self
     {
-        return $this->state(fn (array $attributes) => ['expires_at' => $expires]);
+        return $this->state(['expires_at' => $expires]);
     }
 
     /**
@@ -55,7 +55,7 @@ class InviteFactory extends Factory
      */
     public function testing(): self
     {
-        return $this->state(fn (array $attributes) => ['code' => 'TEST1234']);
+        return $this->state(['code' => 'TEST1234']);
     }
 
     /**
@@ -65,7 +65,7 @@ class InviteFactory extends Factory
      */
     public function invalid(): self
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state([
             'max_use' => 5,
             'uses' => 5,
             'expires_at' => now()->subHour(),

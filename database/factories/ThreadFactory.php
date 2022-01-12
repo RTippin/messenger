@@ -38,7 +38,7 @@ class ThreadFactory extends Factory
      */
     public function group(): self
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state([
             'type' => Thread::GROUP,
             'subject' => $this->faker->company,
             'image' => null,
@@ -55,7 +55,7 @@ class ThreadFactory extends Factory
      */
     public function subject(string $subject): self
     {
-        return $this->state(fn (array $attributes) => ['subject' => $subject]);
+        return $this->state(['subject' => $subject]);
     }
 
     /**
@@ -65,6 +65,6 @@ class ThreadFactory extends Factory
      */
     public function locked(): self
     {
-        return $this->state(fn (array $attributes) => ['lockout' => true]);
+        return $this->state(['lockout' => true]);
     }
 }

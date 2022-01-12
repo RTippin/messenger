@@ -41,7 +41,7 @@ class CallParticipantFactory extends Factory
      */
     public function left(): self
     {
-        return $this->state(fn (array $attributes) => ['left_call' => now()]);
+        return $this->state(['left_call' => now()]);
     }
 
     /**
@@ -51,6 +51,6 @@ class CallParticipantFactory extends Factory
      */
     public function kicked(): self
     {
-        return $this->state(fn (array $attributes) => ['kicked' => true]);
+        return $this->state(['kicked' => true]);
     }
 }

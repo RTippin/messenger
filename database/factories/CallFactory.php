@@ -47,7 +47,7 @@ class CallFactory extends Factory
      */
     public function setup(): self
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state([
             'setup_complete' => true,
             'room_id' => '123456789',
             'room_pin' => 'PIN',
@@ -63,7 +63,7 @@ class CallFactory extends Factory
      */
     public function ended(): self
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state([
             'setup_complete' => true,
             'teardown_complete' => true,
             'call_ended' => now(),

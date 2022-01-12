@@ -48,7 +48,7 @@ class BotActionFactory extends Factory
      */
     public function cooldown(int $cooldown): self
     {
-        return $this->state(fn (array $attributes) => ['cooldown' => $cooldown]);
+        return $this->state(['cooldown' => $cooldown]);
     }
 
     /**
@@ -58,7 +58,7 @@ class BotActionFactory extends Factory
      */
     public function disabled(): self
     {
-        return $this->state(fn (array $attributes) => ['enabled' => false]);
+        return $this->state(['enabled' => false]);
     }
 
     /**
@@ -69,7 +69,7 @@ class BotActionFactory extends Factory
      */
     public function handler(string $handler): self
     {
-        return $this->state(fn (array $attributes) => ['handler' => $handler]);
+        return $this->state(['handler' => $handler]);
     }
 
     /**
@@ -80,7 +80,7 @@ class BotActionFactory extends Factory
      */
     public function triggers(?string $triggers): self
     {
-        return $this->state(fn (array $attributes) => ['triggers' => $triggers]);
+        return $this->state(['triggers' => $triggers]);
     }
 
     /**
@@ -95,7 +95,7 @@ class BotActionFactory extends Factory
             $payload = json_encode($payload);
         }
 
-        return $this->state(fn (array $attributes) => ['payload' => $payload]);
+        return $this->state(['payload' => $payload]);
     }
 
     /**
@@ -106,7 +106,7 @@ class BotActionFactory extends Factory
      */
     public function match(string $match): self
     {
-        return $this->state(fn (array $attributes) => ['match' => $match]);
+        return $this->state(['match' => $match]);
     }
 
     /**
@@ -116,6 +116,6 @@ class BotActionFactory extends Factory
      */
     public function admin(): self
     {
-        return $this->state(fn (array $attributes) => ['admin_only' => true]);
+        return $this->state(['admin_only' => true]);
     }
 }

@@ -2,7 +2,6 @@
 
 namespace RTippin\Messenger\Tests\Actions;
 
-use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use RTippin\Messenger\Actions\BaseMessengerAction;
@@ -278,10 +277,10 @@ class ProcessMessageTriggersTest extends FeatureTestCase
         BotAction::factory()
             ->for($bot)
             ->owner($this->tippin)
-            ->state(new Sequence(
+            ->sequence(
                 ['handler' => FunBotHandler::class],
                 ['handler' => SillyBotHandler::class],
-            ))
+            )
             ->triggers('!test')
             ->count(2)
             ->create();
@@ -395,11 +394,11 @@ class ProcessMessageTriggersTest extends FeatureTestCase
         BotAction::factory()
             ->for($bot)
             ->owner($this->tippin)
-            ->state(new Sequence(
+            ->sequence(
                 ['handler' => FunBotHandler::class],
                 ['handler' => SillyBotHandler::class],
                 ['handler' => BrokenBotHandler::class],
-            ))
+            )
             ->triggers('!test')
             ->count(3)
             ->create();
