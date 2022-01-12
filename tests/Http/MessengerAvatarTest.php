@@ -71,7 +71,7 @@ class MessengerAvatarTest extends HttpTestCase
         $this->actingAs($this->tippin);
 
         $this->deleteJson(route('api.messenger.avatar.destroy'))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */

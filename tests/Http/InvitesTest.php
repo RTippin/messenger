@@ -148,7 +148,7 @@ class InvitesTest extends HttpTestCase
             'thread' => $thread->id,
             'invite' => $invite->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */
@@ -163,7 +163,7 @@ class InvitesTest extends HttpTestCase
             'thread' => $thread->id,
             'invite' => $invite->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */

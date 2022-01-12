@@ -9,7 +9,6 @@ use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\FriendRemovedBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\FriendRemovedEvent;
-use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Models\Friend;
 use Throwable;
 
@@ -71,7 +70,6 @@ class RemoveFriend extends BaseMessengerAction
 
         $this->setInverseFriend()
             ->process()
-            ->generateResource()
             ->fireBroadcast()
             ->fireEvents();
 
@@ -88,18 +86,6 @@ class RemoveFriend extends BaseMessengerAction
         $this->isChained()
             ? $this->handle()
             : $this->database->transaction(fn () => $this->handle());
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    private function generateResource(): self
-    {
-        $this->setJsonResource(new ProviderResource(
-            $this->friend->party
-        ));
 
         return $this;
     }

@@ -2,7 +2,7 @@
 
 namespace RTippin\Messenger\Http\Controllers;
 
-use Exception;
+use Illuminate\Http\JsonResponse;
 use RTippin\Messenger\Actions\Messenger\DestroyMessengerAvatar;
 use RTippin\Messenger\Actions\Messenger\StoreMessengerAvatar;
 use RTippin\Messenger\Actions\Messenger\UpdateMessengerSettings;
@@ -14,6 +14,7 @@ use RTippin\Messenger\Http\Request\MessengerSettingsRequest;
 use RTippin\Messenger\Http\Resources\MessengerResource;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Repositories\ThreadRepository;
+use Throwable;
 
 class MessengerController
 {
@@ -90,7 +91,7 @@ class MessengerController
      * @param  StoreMessengerAvatar  $storeAvatar
      * @return MessengerResource
      *
-     * @throws FeatureDisabledException|FileServiceException|Exception
+     * @throws FeatureDisabledException|FileServiceException|Throwable
      */
     public function updateAvatar(MessengerAvatarRequest $request, StoreMessengerAvatar $storeAvatar): MessengerResource
     {
@@ -105,16 +106,12 @@ class MessengerController
      * Remove the providers avatar.
      *
      * @param  DestroyMessengerAvatar  $destroyMessengerAvatar
-     * @return MessengerResource
+     * @return JsonResponse
      *
      * @throws FeatureDisabledException
      */
-    public function destroyAvatar(DestroyMessengerAvatar $destroyMessengerAvatar): MessengerResource
+    public function destroyAvatar(DestroyMessengerAvatar $destroyMessengerAvatar): JsonResponse
     {
-        $destroyMessengerAvatar->execute();
-
-        return new MessengerResource(
-            $this->messenger->getProviderMessenger()
-        );
+        return $destroyMessengerAvatar->execute()->getEmptyResponse();
     }
 }

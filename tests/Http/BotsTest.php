@@ -251,7 +251,7 @@ class BotsTest extends HttpTestCase
             'thread' => $thread->id,
             'bot' => $bot->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */
@@ -266,7 +266,7 @@ class BotsTest extends HttpTestCase
             'thread' => $thread->id,
             'bot' => $bot->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */

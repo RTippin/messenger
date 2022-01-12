@@ -56,7 +56,7 @@ class ArchivePrivateThreadTest extends HttpTestCase
         $this->deleteJson(route('api.messenger.threads.destroy', [
             'thread' => $this->thread->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */
@@ -67,7 +67,7 @@ class ArchivePrivateThreadTest extends HttpTestCase
         $this->deleteJson(route('api.messenger.threads.destroy', [
             'thread' => $this->thread->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */

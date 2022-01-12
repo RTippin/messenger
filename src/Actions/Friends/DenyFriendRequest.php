@@ -8,7 +8,6 @@ use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\FriendDeniedBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\FriendDeniedEvent;
-use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Models\PendingFriend;
 
 class DenyFriendRequest extends BaseMessengerAction
@@ -53,7 +52,6 @@ class DenyFriendRequest extends BaseMessengerAction
         $this->pendingFriend = $pending;
 
         $this->destroyPendingFriend()
-            ->generateResource()
             ->fireBroadcast()
             ->fireEvents();
 
@@ -68,18 +66,6 @@ class DenyFriendRequest extends BaseMessengerAction
     private function destroyPendingFriend(): self
     {
         $this->pendingFriend->delete();
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    private function generateResource(): self
-    {
-        $this->setJsonResource(new ProviderResource(
-            $this->pendingFriend->sender
-        ));
 
         return $this;
     }

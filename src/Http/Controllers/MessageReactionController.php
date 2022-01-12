@@ -100,6 +100,6 @@ class MessageReactionController
             $thread,
             $message,
             $reaction
-        )->getMessageResponse();
+        )->getEmptyResponse();
     }
 }

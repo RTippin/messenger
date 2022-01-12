@@ -153,20 +153,20 @@ class BotController
      * @param  DestroyBotAvatar  $destroyBotAvatar
      * @param  Thread  $thread
      * @param  Bot  $bot
-     * @return BotResource
+     * @return JsonResponse
      *
      * @throws AuthorizationException|FeatureDisabledException
      */
     public function destroyAvatar(DestroyBotAvatar $destroyBotAvatar,
                                   Thread $thread,
-                                  Bot $bot): BotResource
+                                  Bot $bot): JsonResponse
     {
         $this->authorize('update', [
             $bot,
             $thread,
         ]);
 
-        return $destroyBotAvatar->execute($bot)->getJsonResource();
+        return $destroyBotAvatar->execute($bot)->getEmptyResponse();
     }
 
     /**
@@ -188,6 +188,6 @@ class BotController
             $thread,
         ]);
 
-        return $archiveBot->execute($bot)->getMessageResponse();
+        return $archiveBot->execute($bot)->getEmptyResponse();
     }
 }

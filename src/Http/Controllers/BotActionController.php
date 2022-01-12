@@ -159,6 +159,6 @@ class BotActionController
             $bot,
         ]);
 
-        return $removeBotAction->execute($action)->getMessageResponse();
+        return $removeBotAction->execute($action)->getEmptyResponse();
     }
 }

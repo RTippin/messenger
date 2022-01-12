@@ -162,7 +162,7 @@ class GroupMessageTest extends HttpTestCase
             'thread' => $thread->id,
             'message' => $message->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */
@@ -190,7 +190,7 @@ class GroupMessageTest extends HttpTestCase
             'thread' => $thread->id,
             'message' => $message->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */

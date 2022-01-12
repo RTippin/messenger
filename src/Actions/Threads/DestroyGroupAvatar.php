@@ -21,8 +21,7 @@ class DestroyGroupAvatar extends GroupAvatarAction
 
         $this->setThread($thread)
             ->removeOldIfExist()
-            ->updateGroupAvatar(null)
-            ->generateResource();
+            ->updateGroupAvatar(null);
 
         if ($this->getThread()->wasChanged()) {
             $this->fireBroadcast()->fireEvents();

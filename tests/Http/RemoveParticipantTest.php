@@ -51,7 +51,7 @@ class RemoveParticipantTest extends HttpTestCase
             'thread' => $thread->id,
             'participant' => $participant->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */
@@ -65,7 +65,7 @@ class RemoveParticipantTest extends HttpTestCase
             'thread' => $thread->id,
             'participant' => $participant->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */

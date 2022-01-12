@@ -211,7 +211,7 @@ class MessageReactionTest extends HttpTestCase
             'message' => $message->id,
             'reaction' => $reaction->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */
@@ -244,7 +244,7 @@ class MessageReactionTest extends HttpTestCase
             'message' => $message->id,
             'reaction' => $reaction->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /**

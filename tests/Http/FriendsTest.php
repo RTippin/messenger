@@ -40,7 +40,7 @@ class FriendsTest extends HttpTestCase
         $this->deleteJson(route('api.messenger.friends.destroy', [
             'friend' => $friend->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */

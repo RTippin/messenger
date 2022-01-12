@@ -5,13 +5,13 @@ namespace RTippin\Messenger\Http\Controllers;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 use RTippin\Messenger\Actions\Friends\CancelFriendRequest;
 use RTippin\Messenger\Actions\Friends\StoreFriendRequest;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Exceptions\FriendException;
 use RTippin\Messenger\Http\Collections\SentFriendCollection;
 use RTippin\Messenger\Http\Request\FriendRequest;
-use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Http\Resources\SentFriendResource;
 use RTippin\Messenger\Models\SentFriend;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
@@ -75,14 +75,14 @@ class SentFriendController
      *
      * @param  CancelFriendRequest  $cancelFriendRequest
      * @param  SentFriend  $sent
-     * @return ProviderResource
+     * @return JsonResponse
      *
      * @throws Exception|AuthorizationException
      */
-    public function destroy(CancelFriendRequest $cancelFriendRequest, SentFriend $sent): ProviderResource
+    public function destroy(CancelFriendRequest $cancelFriendRequest, SentFriend $sent): JsonResponse
     {
         $this->authorize('delete', $sent);
 
-        return $cancelFriendRequest->execute($sent)->getJsonResource();
+        return $cancelFriendRequest->execute($sent)->getEmptyResponse();
     }
 }

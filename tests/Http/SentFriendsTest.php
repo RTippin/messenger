@@ -102,7 +102,7 @@ class SentFriendsTest extends HttpTestCase
         $this->deleteJson(route('api.messenger.friends.sent.destroy', [
             'sent' => $sent->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */

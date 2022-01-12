@@ -187,7 +187,7 @@ class MessageController
         return $removeEmbeds->execute(
             $thread,
             $message
-        )->getMessageResponse();
+        )->getEmptyResponse();
     }
 
     /**
@@ -212,6 +212,6 @@ class MessageController
         return $archiveMessage->execute(
             $thread,
             $message
-        )->getMessageResponse();
+        )->getEmptyResponse();
     }
 }

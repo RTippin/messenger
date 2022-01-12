@@ -126,15 +126,15 @@ class GroupThreadController
      *
      * @param  DestroyGroupAvatar  $destroyGroupAvatar
      * @param  Thread  $thread
-     * @return ThreadSettingsResource
+     * @return JsonResponse
      *
      * @throws AuthorizationException|FeatureDisabledException
      */
-    public function destroyAvatar(DestroyGroupAvatar $destroyGroupAvatar, Thread $thread): ThreadSettingsResource
+    public function destroyAvatar(DestroyGroupAvatar $destroyGroupAvatar, Thread $thread): JsonResponse
     {
         $this->authorize('settings', $thread);
 
-        return $destroyGroupAvatar->execute($thread)->getJsonResource();
+        return $destroyGroupAvatar->execute($thread)->getEmptyResponse();
     }
 
     /**

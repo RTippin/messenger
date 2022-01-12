@@ -225,7 +225,7 @@ class PrivateMessageTest extends HttpTestCase
             'thread' => $thread->id,
             'message' => $message->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */

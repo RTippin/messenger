@@ -5,13 +5,13 @@ namespace RTippin\Messenger\Http\Controllers;
 use Exception;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 use RTippin\Messenger\Actions\Friends\AcceptFriendRequest;
 use RTippin\Messenger\Actions\Friends\DenyFriendRequest;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Http\Collections\PendingFriendCollection;
 use RTippin\Messenger\Http\Resources\FriendResource;
 use RTippin\Messenger\Http\Resources\PendingFriendResource;
-use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Models\PendingFriend;
 use Throwable;
 
@@ -73,14 +73,14 @@ class PendingFriendController
      *
      * @param  DenyFriendRequest  $denyFriendRequest
      * @param  PendingFriend  $pending
-     * @return ProviderResource
+     * @return JsonResponse
      *
      * @throws Exception|AuthorizationException
      */
-    public function destroy(DenyFriendRequest $denyFriendRequest, PendingFriend $pending): ProviderResource
+    public function destroy(DenyFriendRequest $denyFriendRequest, PendingFriend $pending): JsonResponse
     {
         $this->authorize('delete', $pending);
 
-        return $denyFriendRequest->execute($pending)->getJsonResource();
+        return $denyFriendRequest->execute($pending)->getEmptyResponse();
     }
 }

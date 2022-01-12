@@ -126,6 +126,6 @@ class InviteController
             $thread,
         ]);
 
-        return $archiveInvite->execute($invite)->getMessageResponse();
+        return $archiveInvite->execute($invite)->getEmptyResponse();
     }
 }

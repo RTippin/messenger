@@ -434,7 +434,7 @@ class BotActionsTest extends HttpTestCase
             'bot' => $bot->id,
             'action' => $action->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */
@@ -451,7 +451,7 @@ class BotActionsTest extends HttpTestCase
             'bot' => $bot->id,
             'action' => $action->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */

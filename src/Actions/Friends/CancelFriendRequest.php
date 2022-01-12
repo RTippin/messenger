@@ -8,7 +8,6 @@ use RTippin\Messenger\Actions\BaseMessengerAction;
 use RTippin\Messenger\Broadcasting\FriendCancelledBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Events\FriendCancelledEvent;
-use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Models\SentFriend;
 
 class CancelFriendRequest extends BaseMessengerAction
@@ -53,7 +52,6 @@ class CancelFriendRequest extends BaseMessengerAction
         $this->sentFriend = $sent;
 
         $this->destroySentFriend()
-            ->generateResource()
             ->fireBroadcast()
             ->fireEvents();
 
@@ -68,18 +66,6 @@ class CancelFriendRequest extends BaseMessengerAction
     private function destroySentFriend(): self
     {
         $this->sentFriend->delete();
-
-        return $this;
-    }
-
-    /**
-     * @return $this
-     */
-    private function generateResource(): self
-    {
-        $this->setJsonResource(new ProviderResource(
-            $this->sentFriend->recipient
-        ));
 
         return $this;
     }

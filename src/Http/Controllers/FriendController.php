@@ -4,11 +4,11 @@ namespace RTippin\Messenger\Http\Controllers;
 
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
+use Illuminate\Http\JsonResponse;
 use RTippin\Messenger\Actions\Friends\RemoveFriend;
 use RTippin\Messenger\Contracts\FriendDriver;
 use RTippin\Messenger\Http\Collections\FriendCollection;
 use RTippin\Messenger\Http\Resources\FriendResource;
-use RTippin\Messenger\Http\Resources\ProviderResource;
 use RTippin\Messenger\Models\Friend;
 use Throwable;
 
@@ -53,16 +53,14 @@ class FriendController
      *
      * @param  RemoveFriend  $removeFriend
      * @param  Friend  $friend
-     * @return ProviderResource
+     * @return JsonResponse
      *
      * @throws Throwable|AuthorizationException
-     *
-     * @todo Return success response, not json resource.
      */
-    public function destroy(RemoveFriend $removeFriend, Friend $friend): ProviderResource
+    public function destroy(RemoveFriend $removeFriend, Friend $friend): JsonResponse
     {
         $this->authorize('delete', $friend);
 
-        return $removeFriend->execute($friend)->getJsonResource();
+        return $removeFriend->execute($friend)->getEmptyResponse();
     }
 }

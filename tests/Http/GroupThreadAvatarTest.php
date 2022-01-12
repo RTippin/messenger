@@ -95,7 +95,7 @@ class GroupThreadAvatarTest extends HttpTestCase
         $this->deleteJson(route('api.messenger.threads.avatar.destroy', [
             'thread' => $thread->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */

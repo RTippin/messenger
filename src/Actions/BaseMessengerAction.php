@@ -203,6 +203,14 @@ abstract class BaseMessengerAction
     }
 
     /**
+     * @return JsonResponse
+     */
+    public function getEmptyResponse(): JsonResponse
+    {
+        return new JsonResponse(null, 204);
+    }
+
+    /**
      * @return JsonResponse|mixed|null
      */
     public function getMessageResponse()

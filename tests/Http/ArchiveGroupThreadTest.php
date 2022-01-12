@@ -69,7 +69,7 @@ class ArchiveGroupThreadTest extends HttpTestCase
         $this->deleteJson(route('api.messenger.threads.destroy', [
             'thread' => $thread->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */

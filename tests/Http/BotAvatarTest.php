@@ -129,7 +129,7 @@ class BotAvatarTest extends HttpTestCase
             'thread' => $thread->id,
             'bot' => $bot->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */
@@ -144,7 +144,7 @@ class BotAvatarTest extends HttpTestCase
             'thread' => $thread->id,
             'bot' => $bot->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */

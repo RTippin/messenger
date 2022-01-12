@@ -169,6 +169,6 @@ class ParticipantController
         return $removeParticipant->execute(
             $thread,
             $participant
-        )->getMessageResponse();
+        )->getEmptyResponse();
     }
 }

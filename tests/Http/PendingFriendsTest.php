@@ -56,7 +56,7 @@ class PendingFriendsTest extends HttpTestCase
         $this->deleteJson(route('api.messenger.friends.pending.destroy', [
             'pending' => $pending->id,
         ]))
-            ->assertSuccessful();
+            ->assertStatus(204);
     }
 
     /** @test */
