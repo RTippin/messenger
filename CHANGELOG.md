@@ -3,6 +3,17 @@
 
 ---
 
+### [v1.19.0 (01-12-2022)](https://github.com/RTippin/messenger/compare/v1.18.0...v1.19.0)
+
+#### Added
+- `getEmptyResponse` to `BaseMessengerAction`.
+
+#### Changed
+- All `DELETE` routes now only return an empty response with a `204` status code. (Previously some returned json resources or json success messages)
+- Renamed `getMessageResponse` to `getSuccessResponse` in `BaseMessengerAction`.
+
+---
+
 ### [v1.18.0 (01-05-2022)](https://github.com/RTippin/messenger/compare/v1.17.0...v1.18.0)
 
 #### Added
