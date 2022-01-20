@@ -3,6 +3,7 @@
 namespace RTippin\Messenger\Contracts;
 
 use Illuminate\Support\Collection;
+use RTippin\Messenger\Broadcasting\MessengerBroadcast;
 use RTippin\Messenger\Models\Thread;
 
 /**
@@ -76,7 +77,7 @@ interface BroadcastDriver
      * Check the abstract event class implements our interface so that we may
      * inject the channels and resource, then broadcast the resource!
      *
-     * @param  string|BroadcastEvent  $abstract
+     * @param  string|MessengerBroadcast  $abstract
      */
     public function broadcast(string $abstract): void;
 }
