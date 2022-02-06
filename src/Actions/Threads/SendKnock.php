@@ -83,7 +83,8 @@ class SendKnock extends BaseMessengerAction
             throw new FeatureDisabledException('Knocking is currently disabled.');
         }
 
-        if (RateLimiter::tooManyAttempts($limiter, 1)) {
+        if ($this->messenger->getKnockTimeout() > 0
+            && RateLimiter::tooManyAttempts($limiter, 1)) {
             $seconds = RateLimiter::availableIn($limiter);
 
             throw new KnockException("You can't knock at {$this->getThread()->name()} for another $seconds seconds.");
@@ -96,10 +97,8 @@ class SendKnock extends BaseMessengerAction
      */
     private function hitLimiter(string $limiter): void
     {
-        $timeout = $this->messenger->getKnockTimeout();
-
-        if ($timeout > 0) {
-            RateLimiter::hit($limiter, $timeout * 60);
+        if ($this->messenger->getKnockTimeout() > 0) {
+            RateLimiter::hit($limiter, $this->messenger->getKnockTimeout() * 60);
         }
     }
 

@@ -44,7 +44,6 @@ class SendKnockTest extends FeatureTestCase
         RateLimiter::hit($thread->getKnockCacheKey($this->tippin), 300);
 
         $this->expectException(KnockException::class);
-        $this->expectExceptionMessage("You can't knock at John Doe for another 300 seconds.");
 
         app(SendKnock::class)->execute($thread);
     }
@@ -56,7 +55,6 @@ class SendKnockTest extends FeatureTestCase
         RateLimiter::hit($thread->getKnockCacheKey($this->tippin), 300);
 
         $this->expectException(KnockException::class);
-        $this->expectExceptionMessage("You can't knock at Test Group for another 300 seconds.");
 
         app(SendKnock::class)->execute($thread);
     }
