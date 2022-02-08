@@ -7,14 +7,18 @@
 [![License][ico-license]][link-license]
 
 ---
+
 ![Preview](https://raw.githubusercontent.com/RTippin/messenger/1.x/docs/images/image1.png?raw=true)
----
 
 ---
 
 ### Prerequisites
-- PHP `^7.4 | ^8.0 | ^8.1`
-- Laravel `^8.70`
+
+| Laravel |         PHP          |   Messenger |
+|---------|:--------------------:|------------:|
+| `8.x`   | `^7.4` `^8.0` `^8.1` | `<= 1.19.1` |
+| `9.x`   |   `^8.0.2` `^8.1`    | `>= 1.20.0` |
+
 - Route model binding enabled in your API / WEB middleware groups.
 
 ### Features
