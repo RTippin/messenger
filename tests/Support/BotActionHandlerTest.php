@@ -96,7 +96,7 @@ class BotActionHandlerTest extends MessengerTestCase
             'admin_only' => true,
             'cooldown' => 0,
             'enabled' => true,
-            'payload' => '{"test":["test"],"special":true}',
+            'payload' => '{"special":true,"test":["test"]}',
         ];
 
         $this->assertSame($expects, $resolved->toArray());

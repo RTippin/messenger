@@ -31,7 +31,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
                 'admin_only' => false,
                 'cooldown' => 30,
                 'enabled' => true,
-                'payload' => '{"test":["one","two"],"special":true}',
+                'payload' => '{"special":true,"test":["one","two"]}',
             ],
             [
                 'handler' => SillyBotHandler::getDTO()->toArray(),
@@ -71,7 +71,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
                 'admin_only' => false,
                 'cooldown' => 30,
                 'enabled' => true,
-                'payload' => '{"test":["one","two"],"special":true}',
+                'payload' => '{"special":true,"test":["one","two"]}',
             ],
             [
                 'handler' => SillyBotHandler::getDTO()->toArray(),
@@ -114,7 +114,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
                 'admin_only' => false,
                 'cooldown' => 30,
                 'enabled' => true,
-                'payload' => '{"test":["one","two"],"special":true}',
+                'payload' => '{"special":true,"test":["one","two"]}',
             ],
             [
                 'handler' => BrokenBotHandler::getDTO()->toArray(),
@@ -230,7 +230,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
                 'admin_only' => false,
                 'cooldown' => 30,
                 'enabled' => true,
-                'payload' => '{"test":["one","two"],"special":true}',
+                'payload' => '{"special":true,"test":["one","two"]}',
             ],
             [
                 'handler' => FunBotHandler::getDTO()->toArray(),
@@ -239,7 +239,7 @@ class PackagedBotResolverServiceTest extends FeatureTestCase
                 'admin_only' => false,
                 'cooldown' => 30,
                 'enabled' => true,
-                'payload' => '{"test":["three","four"],"special":false}',
+                'payload' => '{"special":false,"test":["three","four"]}',
             ],
         ];
 

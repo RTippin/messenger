@@ -271,8 +271,7 @@ class AssetsTest extends HttpTestCase
         ]))
             ->assertSuccessful()
             ->assertDownload()
-            ->assertHeader('content-disposition', 'attachment; filename=foo.pdf')
-            ->assertHeader('content-type', 'application/pdf');
+            ->assertHeader('content-disposition', 'attachment; filename=foo.pdf');
     }
 
     /** @test */
@@ -328,8 +327,7 @@ class AssetsTest extends HttpTestCase
         ]))
             ->assertSuccessful()
             ->assertDownload()
-            ->assertHeader('content-disposition', 'attachment; filename=foo.mp3')
-            ->assertHeader('content-type', 'audio/mpeg');
+            ->assertHeader('content-disposition', 'attachment; filename=foo.mp3');
     }
 
     /** @test */
@@ -405,8 +403,7 @@ class AssetsTest extends HttpTestCase
         ]))
             ->assertSuccessful()
             ->assertDownload()
-            ->assertHeader('content-disposition', 'attachment; filename=foo.mov')
-            ->assertHeader('content-type', 'video/quicktime');
+            ->assertHeader('content-disposition', 'attachment; filename=foo.mov');
     }
 
     /** @test */

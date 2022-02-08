@@ -299,7 +299,7 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
     public function it_formats_payload_using_handler_custom_rules_only()
     {
         $this->bots->registerHandlers([FunBotHandler::class]);
-        $expects = '{"test":{"test":"fun","more":"yes","ok":"dokie"},"special":true}';
+        $expects = '{"special":true,"test":{"test":"fun","more":"yes","ok":"dokie"}}';
         $results = $this->resolver->resolve([
             'handler' => 'fun_bot',
             'cooldown' => 0,

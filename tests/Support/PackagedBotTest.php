@@ -91,7 +91,7 @@ class PackagedBotTest extends MessengerTestCase
                 'admin_only' => false,
                 'cooldown' => 30,
                 'enabled' => true,
-                'payload' => '{"test":["one","two"],"special":true}',
+                'payload' => '{"special":true,"test":["one","two"]}',
             ],
         ];
 

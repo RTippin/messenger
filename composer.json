@@ -15,16 +15,16 @@
         "Messenger"
     ],
     "require": {
-        "php": "^7.4|^8.0|^8.1",
+        "php": "^8.0.2|^8.1",
         "ext-json": "*",
-        "laravel/framework": "^8.70",
+        "laravel/framework": "^9.0",
         "joypixels/emoji-toolkit": "^6.0",
         "intervention/image": "^2.5",
         "intervention/imagecache": "^2.5"
     },
     "require-dev": {
         "phpunit/phpunit": "~9.0",
-        "orchestra/testbench": "~5|~6"
+        "orchestra/testbench": "~7"
     },
     "autoload": {
         "files": [
