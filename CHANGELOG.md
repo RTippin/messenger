@@ -3,6 +3,13 @@
 
 ---
 
+### [v1.20.0 (02-08-2022)](https://github.com/RTippin/messenger/compare/v1.19.0...v1.20.0)
+
+#### Changed
+- Updated dependencies for `laravel ^9.x` and `PHP ^8.0.2`.
+
+---
+
 ### [v1.19.0 (01-12-2022)](https://github.com/RTippin/messenger/compare/v1.18.0...v1.19.0)
 
 #### Added
