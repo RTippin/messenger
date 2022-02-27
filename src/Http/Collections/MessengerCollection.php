@@ -303,6 +303,6 @@ abstract class MessengerCollection extends ResourceCollection
             break;
         }
 
-        return (bool) $this->collection->firstWhere('id', optional($model)->getKey());
+        return (bool) $this->collection->firstWhere('id', $model?->getKey());
     }
 }

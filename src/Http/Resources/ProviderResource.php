@@ -213,11 +213,9 @@ class ProviderResource extends JsonResource
      */
     private function getFriendResourceId(int $friendStatus): ?string
     {
-        return optional(
-            app(FriendDriver::class)->getFriendResource(
-                $friendStatus,
-                $this->provider
-            )
-        )->id;
+        return app(FriendDriver::class)->getFriendResource(
+            $friendStatus,
+            $this->provider
+        )?->id;
     }
 }

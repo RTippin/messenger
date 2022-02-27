@@ -295,7 +295,7 @@ abstract class NewMessageAction extends BaseMessengerAction
                 'owner_id' => $this->messageOwner->getKey(),
                 'owner_type' => $this->messageOwner->getMorphClass(),
                 'body' => $this->messageBody,
-                'reply_to_id' => optional($this->replyingTo)->id,
+                'reply_to_id' => $this->replyingTo?->id,
                 'extra' => $this->messageExtraData,
             ])
             ->setRelations([

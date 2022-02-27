@@ -284,7 +284,7 @@ class Message extends Model implements Ownerable
         return Cache::remember(
             self::getReplyMessageCacheKey($this->reply_to_id),
             now()->addWeek(),
-            fn () => optional($this->replyTo)->load('owner')
+            fn () => $this->replyTo?->load('owner')
         );
     }
 

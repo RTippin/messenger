@@ -140,7 +140,7 @@ class RemoveFriend extends BaseMessengerAction
         if ($this->shouldFireEvents()) {
             $this->dispatcher->dispatch(new FriendRemovedEvent(
                 $this->friend->withoutRelations(),
-                optional($this->inverseFriend)->withoutRelations()
+                $this->inverseFriend?->withoutRelations()
             ));
         }
     }

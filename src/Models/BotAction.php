@@ -241,7 +241,7 @@ class BotAction extends Model implements Ownerable
      */
     public function getTriggers(): array
     {
-        if (optional($this->getHandler())->triggers) {
+        if ($this->getHandler()?->triggers) {
             return $this->getHandler()->triggers;
         }
 
@@ -255,7 +255,7 @@ class BotAction extends Model implements Ownerable
      */
     public function getMatchMethod(): string
     {
-        return optional($this->getHandler())->matchMethod ?: $this->match;
+        return $this->getHandler()?->matchMethod ?: $this->match;
     }
 
     /**

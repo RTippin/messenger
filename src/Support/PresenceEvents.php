@@ -188,7 +188,7 @@ class PresenceEvents
                 'provider_alias' => Messenger::findProviderAlias($provider),
                 'name' => $provider->getProviderName(),
                 'avatar' => $provider->getProviderAvatarRoute(),
-                'message_id' => optional($message)->id,
+                'message_id' => $message?->id,
             ];
         }
 

@@ -302,7 +302,7 @@ class Thread extends Model implements HasPresenceChannel
 
         return $this->isGroup()
             ? $baseKey
-            : $baseKey.'.'.optional($provider)->getKey();
+            : $baseKey.'.'.$provider?->getKey();
     }
 
     /**
