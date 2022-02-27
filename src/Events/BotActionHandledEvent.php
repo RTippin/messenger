@@ -19,5 +19,6 @@ class BotActionHandledEvent
         public BotAction $action,
         public Message $message,
         public ?string $trigger
-    ){}
+    ) {
+    }
 }

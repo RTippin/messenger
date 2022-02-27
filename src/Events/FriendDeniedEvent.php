@@ -14,5 +14,6 @@ class FriendDeniedEvent
      */
     public function __construct(
         public PendingFriend $friend
-    ){}
+    ) {
+    }
 }

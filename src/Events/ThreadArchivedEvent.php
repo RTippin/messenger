@@ -17,5 +17,6 @@ class ThreadArchivedEvent
     public function __construct(
         public ?MessengerProvider $provider,
         public Thread $thread
-    ){}
+    ) {
+    }
 }

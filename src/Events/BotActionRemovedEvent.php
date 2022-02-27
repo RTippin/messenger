@@ -16,5 +16,6 @@ class BotActionRemovedEvent
     public function __construct(
         public ?MessengerProvider $provider,
         public array $action
-    ){}
+    ) {
+    }
 }

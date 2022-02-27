@@ -20,5 +20,6 @@ class InviteUsedEvent
         public MessengerProvider $provider,
         public Thread $thread,
         public Invite $invite
-    ){}
+    ) {
+    }
 }

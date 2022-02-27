@@ -19,5 +19,6 @@ class ThreadSettingsEvent
         public MessengerProvider $provider,
         public Thread $thread,
         public bool $nameChanged
-    ){}
+    ) {
+    }
 }

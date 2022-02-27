@@ -18,5 +18,6 @@ class StatusHeartbeatEvent
         public MessengerProvider $provider,
         public bool $away,
         public string $IP
-    ){}
+    ) {
+    }
 }

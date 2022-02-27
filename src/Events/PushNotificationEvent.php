@@ -18,5 +18,6 @@ class PushNotificationEvent
         public string $broadcastAs,
         public array $data,
         public Collection $recipients
-    ){}
+    ) {
+    }
 }

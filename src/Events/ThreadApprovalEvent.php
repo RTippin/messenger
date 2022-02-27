@@ -19,5 +19,6 @@ class ThreadApprovalEvent
         public MessengerProvider $provider,
         public Thread $thread,
         public bool $approved
-    ){}
+    ) {
+    }
 }

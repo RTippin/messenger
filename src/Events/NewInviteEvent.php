@@ -14,5 +14,6 @@ class NewInviteEvent
      */
     public function __construct(
         public Invite $invite
-    ){}
+    ) {
+    }
 }

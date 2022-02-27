@@ -17,5 +17,6 @@ class MessageArchivedEvent
     public function __construct(
         public MessengerProvider $provider,
         public Message $message
-    ){}
+    ) {
+    }
 }

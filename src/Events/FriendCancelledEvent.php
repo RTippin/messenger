@@ -14,5 +14,6 @@ class FriendCancelledEvent
      */
     public function __construct(
         public SentFriend $friend
-    ){}
+    ) {
+    }
 }

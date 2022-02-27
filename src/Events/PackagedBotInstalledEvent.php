@@ -20,5 +20,6 @@ class PackagedBotInstalledEvent
         public PackagedBotDTO $packagedBot,
         public Thread $thread,
         public MessengerProvider $provider
-    ){}
+    ) {
+    }
 }

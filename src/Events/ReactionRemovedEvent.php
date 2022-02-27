@@ -16,5 +16,6 @@ class ReactionRemovedEvent
     public function __construct(
         public MessengerProvider $provider,
         public array $reaction
-    ){}
+    ) {
+    }
 }

@@ -16,5 +16,6 @@ class FriendRemovedEvent
     public function __construct(
         public Friend $friend,
         public ?Friend $inverseFriend
-    ){}
+    ) {
+    }
 }

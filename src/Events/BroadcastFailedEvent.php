@@ -17,5 +17,6 @@ class BroadcastFailedEvent
         public array $channels,
         public array $with,
         public Throwable $exception
-    ){}
+    ) {
+    }
 }

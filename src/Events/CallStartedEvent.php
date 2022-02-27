@@ -17,5 +17,6 @@ class CallStartedEvent
     public function __construct(
         public Call $call,
         public Thread $thread
-    ){}
+    ) {
+    }
 }

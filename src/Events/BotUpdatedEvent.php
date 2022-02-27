@@ -19,5 +19,6 @@ class BotUpdatedEvent
         public MessengerProvider $provider,
         public Bot $bot,
         public string $originalName
-    ){}
+    ) {
+    }
 }

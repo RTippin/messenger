@@ -20,5 +20,6 @@ class ParticipantPermissionsEvent
         public MessengerProvider $provider,
         public Thread $thread,
         public Participant $participant
-    ){}
+    ) {
+    }
 }
