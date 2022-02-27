@@ -11,24 +11,11 @@ class BotAvatarEvent
     use SerializesModels;
 
     /**
-     * @var MessengerProvider
-     */
-    public MessengerProvider $provider;
-
-    /**
-     * @var Bot
-     */
-    public Bot $bot;
-
-    /**
-     * Create a new event instance.
-     *
      * @param  MessengerProvider  $provider
      * @param  Bot  $bot
      */
-    public function __construct(MessengerProvider $provider, Bot $bot)
-    {
-        $this->provider = $provider;
-        $this->bot = $bot;
-    }
+    public function __construct(
+        public MessengerProvider $provider,
+        public Bot $bot
+    ){}
 }

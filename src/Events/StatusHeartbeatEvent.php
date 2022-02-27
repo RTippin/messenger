@@ -10,33 +10,13 @@ class StatusHeartbeatEvent
     use SerializesModels;
 
     /**
-     * @var MessengerProvider
-     */
-    public MessengerProvider $provider;
-
-    /**
-     * @var string
-     */
-    public string $IP;
-
-    /**
-     * @var bool
-     */
-    public bool $away;
-
-    /**
-     * Create a new event instance.
-     *
      * @param  MessengerProvider  $provider
      * @param  bool  $away
      * @param  string  $IP
      */
-    public function __construct(MessengerProvider $provider,
-                                bool $away,
-                                string $IP)
-    {
-        $this->provider = $provider;
-        $this->IP = $IP;
-        $this->away = $away;
-    }
+    public function __construct(
+        public MessengerProvider $provider,
+        public bool $away,
+        public string $IP
+    ){}
 }

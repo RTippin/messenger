@@ -10,17 +10,9 @@ class ParticipantUnMutedEvent
     use SerializesModels;
 
     /**
-     * @var Participant
-     */
-    public Participant $participant;
-
-    /**
-     * Create a new event instance.
-     *
      * @param  Participant  $participant
      */
-    public function __construct(Participant $participant)
-    {
-        $this->participant = $participant;
-    }
+    public function __construct(
+        public Participant $participant
+    ){}
 }

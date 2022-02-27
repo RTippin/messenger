@@ -10,17 +10,9 @@ class NewBotActionEvent
     use SerializesModels;
 
     /**
-     * @var BotAction
-     */
-    public BotAction $botAction;
-
-    /**
-     * Create a new event instance.
-     *
      * @param  BotAction  $botAction
      */
-    public function __construct(BotAction $botAction)
-    {
-        $this->botAction = $botAction;
-    }
+    public function __construct(
+        public BotAction $botAction
+    ){}
 }

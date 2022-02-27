@@ -11,24 +11,11 @@ class ThreadArchivedEvent
     use SerializesModels;
 
     /**
-     * @var Thread
-     */
-    public Thread $thread;
-
-    /**
-     * @var null|MessengerProvider
-     */
-    public ?MessengerProvider $provider;
-
-    /**
-     * Create a new event instance.
-     *
      * @param  null|MessengerProvider  $provider
      * @param  Thread  $thread
      */
-    public function __construct(?MessengerProvider $provider, Thread $thread)
-    {
-        $this->thread = $thread;
-        $this->provider = $provider;
-    }
+    public function __construct(
+        public ?MessengerProvider $provider,
+        public Thread $thread
+    ){}
 }

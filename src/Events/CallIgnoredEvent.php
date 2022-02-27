@@ -11,24 +11,11 @@ class CallIgnoredEvent
     use SerializesModels;
 
     /**
-     * @var Call
-     */
-    public Call $call;
-
-    /**
-     * @var MessengerProvider
-     */
-    public MessengerProvider $provider;
-
-    /**
-     * Create a new event instance.
-     *
      * @param  Call  $call
      * @param  MessengerProvider  $provider
      */
-    public function __construct(Call $call, MessengerProvider $provider)
-    {
-        $this->call = $call;
-        $this->provider = $provider;
-    }
+    public function __construct(
+        public Call $call,
+        public MessengerProvider $provider
+    ){}
 }

@@ -11,24 +11,11 @@ class CallStartedEvent
     use SerializesModels;
 
     /**
-     * @var Call
-     */
-    public Call $call;
-
-    /**
-     * @var Thread
-     */
-    public Thread $thread;
-
-    /**
-     * Create a new event instance.
-     *
      * @param  Call  $call
      * @param  Thread  $thread
      */
-    public function __construct(Call $call, Thread $thread)
-    {
-        $this->call = $call;
-        $this->thread = $thread;
-    }
+    public function __construct(
+        public Call $call,
+        public Thread $thread
+    ){}
 }
