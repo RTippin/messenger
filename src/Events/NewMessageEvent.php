@@ -21,5 +21,6 @@ class NewMessageEvent
         public Thread $thread,
         public bool $isGroupAdmin,
         public ?string $senderIp = null
-    ){}
+    ) {
+    }
 }

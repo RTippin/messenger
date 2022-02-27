@@ -14,5 +14,6 @@ class FriendRequestEvent
      */
     public function __construct(
         public SentFriend $friend
-    ){}
+    ) {
+    }
 }

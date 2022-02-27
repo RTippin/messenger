@@ -14,5 +14,6 @@ class ParticipantReadEvent
      */
     public function __construct(
         public Participant $participant
-    ){}
+    ) {
+    }
 }

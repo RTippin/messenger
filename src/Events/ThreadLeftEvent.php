@@ -20,5 +20,6 @@ class ThreadLeftEvent
         public MessengerProvider $provider,
         public Thread $thread,
         public Participant $participant
-    ){}
+    ) {
+    }
 }

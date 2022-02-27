@@ -17,5 +17,6 @@ class CallIgnoredEvent
     public function __construct(
         public Call $call,
         public MessengerProvider $provider
-    ){}
+    ) {
+    }
 }

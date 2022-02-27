@@ -17,5 +17,6 @@ class BotActionUpdatedEvent
     public function __construct(
         public MessengerProvider $provider,
         public BotAction $action
-    ){}
+    ) {
+    }
 }

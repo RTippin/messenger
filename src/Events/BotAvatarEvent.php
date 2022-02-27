@@ -17,5 +17,6 @@ class BotAvatarEvent
     public function __construct(
         public MessengerProvider $provider,
         public Bot $bot
-    ){}
+    ) {
+    }
 }

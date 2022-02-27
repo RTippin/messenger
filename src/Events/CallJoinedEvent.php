@@ -17,5 +17,6 @@ class CallJoinedEvent
     public function __construct(
         public Call $call,
         public CallParticipant $participant
-    ){}
+    ) {
+    }
 }

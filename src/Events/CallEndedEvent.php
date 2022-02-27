@@ -17,5 +17,6 @@ class CallEndedEvent
     public function __construct(
         public ?MessengerProvider $provider,
         public Call $call
-    ){}
+    ) {
+    }
 }

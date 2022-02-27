@@ -16,5 +16,6 @@ class MessageEditedEvent
     public function __construct(
         public Message $message,
         public ?string $originalBody
-    ){}
+    ) {
+    }
 }

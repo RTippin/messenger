@@ -14,5 +14,6 @@ class ReactionAddedEvent
      */
     public function __construct(
         public MessageReaction $reaction
-    ){}
+    ) {
+    }
 }

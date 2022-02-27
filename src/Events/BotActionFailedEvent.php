@@ -17,5 +17,6 @@ class BotActionFailedEvent
     public function __construct(
         public BotAction $action,
         public Throwable $exception
-    ){}
+    ) {
+    }
 }

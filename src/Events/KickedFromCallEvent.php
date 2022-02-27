@@ -20,5 +20,6 @@ class KickedFromCallEvent
         public MessengerProvider $provider,
         public Call $call,
         public CallParticipant $participant
-    ){}
+    ) {
+    }
 }

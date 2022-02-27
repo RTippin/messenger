@@ -17,5 +17,6 @@ class InviteArchivedEvent
     public function __construct(
         public ?MessengerProvider $provider,
         public Invite $invite
-    ){}
+    ) {
+    }
 }

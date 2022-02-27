@@ -20,5 +20,6 @@ class ParticipantsAddedEvent
         public MessengerProvider $provider,
         public Thread $thread,
         public Collection $participants
-    ){}
+    ) {
+    }
 }

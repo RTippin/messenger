@@ -14,5 +14,6 @@ class NewBotActionEvent
      */
     public function __construct(
         public BotAction $botAction
-    ){}
+    ) {
+    }
 }

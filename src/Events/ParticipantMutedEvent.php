@@ -14,5 +14,6 @@ class ParticipantMutedEvent
      */
     public function __construct(
         public Participant $participant
-    ){}
+    ) {
+    }
 }
