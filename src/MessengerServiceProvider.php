@@ -51,19 +51,65 @@ class MessengerServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/messenger.php', 'messenger');
+        $this->mergeConfigFrom(
+            path: __DIR__.'/../config/messenger.php',
+            key: 'messenger'
+        );
 
-        $this->app->singleton(Messenger::class, Messenger::class);
-        $this->app->singleton(MessengerBots::class, MessengerBots::class);
-        $this->app->singleton(FriendDriver::class, FriendBroker::class);
-        $this->app->singleton(EmojiInterface::class, EmojiService::class);
-        $this->app->bind(MessengerComposer::class, MessengerComposer::class);
-        $this->app->bind(BroadcastDriver::class, BroadcastBroker::class);
-        $this->app->bind(VideoDriver::class, NullVideoBroker::class);
-        $this->app->extend(ExceptionHandler::class, fn (ExceptionHandler $handler) => new Handler($handler));
-        $this->app->alias(Messenger::class, 'messenger');
-        $this->app->alias(MessengerBots::class, 'messenger-bots');
-        $this->app->alias(MessengerComposer::class, 'messenger-composer');
+        $this->app->singleton(
+            abstract: Messenger::class,
+            concrete: Messenger::class
+        );
+
+        $this->app->singleton(
+            abstract: MessengerBots::class,
+            concrete: MessengerBots::class
+        );
+
+        $this->app->singleton(
+            abstract: FriendDriver::class,
+            concrete: FriendBroker::class
+        );
+
+        $this->app->singleton(
+            abstract: EmojiInterface::class,
+            concrete: EmojiService::class
+        );
+
+        $this->app->bind(
+            abstract: MessengerComposer::class,
+            concrete: MessengerComposer::class
+        );
+
+        $this->app->bind(
+            abstract: BroadcastDriver::class,
+            concrete: BroadcastBroker::class
+        );
+
+        $this->app->bind(
+            abstract: VideoDriver::class,
+            concrete: NullVideoBroker::class
+        );
+
+        $this->app->extend(
+            abstract: ExceptionHandler::class,
+            closure: fn (ExceptionHandler $handler): Handler => new Handler($handler)
+        );
+
+        $this->app->alias(
+            abstract: Messenger::class,
+            alias:  'messenger'
+        );
+
+        $this->app->alias(
+            abstract: MessengerBots::class,
+            alias: 'messenger-bots'
+        );
+
+        $this->app->alias(
+            abstract: MessengerComposer::class,
+            alias: 'messenger-composer'
+        );
     }
 
     /**
@@ -120,17 +166,20 @@ class MessengerServiceProvider extends ServiceProvider
 
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
-        $this->publishes([
-            __DIR__.'/../config/messenger.php' => config_path('messenger.php'),
-        ], 'messenger.config');
+        $this->publishes(
+            paths: [__DIR__.'/../config/messenger.php' => config_path('messenger.php')],
+            groups: 'messenger.config'
+        );
 
-        $this->publishes([
-            __DIR__.'/../stubs/MessengerServiceProvider.stub' => app_path('Providers/MessengerServiceProvider.php'),
-        ], 'messenger.provider');
+        $this->publishes(
+            paths: [__DIR__.'/../stubs/MessengerServiceProvider.stub' => app_path('Providers/MessengerServiceProvider.php')],
+            groups: 'messenger.provider'
+        );
 
-        $this->publishes([
-            __DIR__.'/../database/migrations' => database_path('migrations'),
-        ], 'messenger.migrations');
+        $this->publishes(
+            paths: [__DIR__.'/../database/migrations' => database_path('migrations')],
+            groups: 'messenger.migrations'
+        );
     }
 
     /**

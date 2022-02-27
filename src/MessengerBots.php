@@ -37,7 +37,7 @@ final class MessengerBots
     ];
 
     /**
-     * @var Collection|BotActionHandlerDTO[]
+     * @var Collection<BotActionHandlerDTO>
      */
     private Collection $handlers;
 
@@ -146,7 +146,7 @@ final class MessengerBots
     public function getUniqueHandlerClasses(): array
     {
         return $this->handlers
-            ->filter(fn (BotActionHandlerDTO $handler) => $handler->unique)
+            ->filter(fn (BotActionHandlerDTO $handler): bool => $handler->unique)
             ->keys()
             ->toArray();
     }
@@ -157,7 +157,7 @@ final class MessengerBots
      * @param  string|null  $handlerOrAlias
      * @return BotActionHandlerDTO|Collection|null
      */
-    public function getHandlers(?string $handlerOrAlias = null)
+    public function getHandlers(?string $handlerOrAlias = null): BotActionHandlerDTO|Collection|null
     {
         if (is_null($handlerOrAlias)) {
             return $this->handlers
@@ -173,7 +173,7 @@ final class MessengerBots
     /**
      * Get an individual handler.
      *
-     * @param  string|null  $handlerOrAlias
+     * @param  string  $handlerOrAlias
      * @return BotActionHandlerDTO|null
      */
     public function getHandler(string $handlerOrAlias): ?BotActionHandlerDTO
@@ -190,7 +190,7 @@ final class MessengerBots
     {
         return $this->handlers
             ->sortBy('name')
-            ->filter(fn (BotActionHandlerDTO $handler) => $this->authorizeHandler($handler))
+            ->filter(fn (BotActionHandlerDTO $handler): bool => $this->authorizeHandler($handler))
             ->values();
     }
 
@@ -203,7 +203,7 @@ final class MessengerBots
     {
         return $this->handlers
             ->sortBy('alias')
-            ->map(fn (BotActionHandlerDTO $handler) => $handler->alias)
+            ->map(fn (BotActionHandlerDTO $handler): string => $handler->alias)
             ->flatten()
             ->toArray();
     }
@@ -242,7 +242,7 @@ final class MessengerBots
         }
 
         return $this->handlers->search(
-            fn (BotActionHandlerDTO $handler) =>  $handler->alias === $handlerOrAlias
+            fn (BotActionHandlerDTO $handler): bool =>  $handler->alias === $handlerOrAlias
         ) ?: null;
     }
 
@@ -342,7 +342,7 @@ final class MessengerBots
      * @param  string|null  $packageOrAlias
      * @return PackagedBotDTO|Collection<PackagedBotDTO>|null
      */
-    public function getPackagedBots(?string $packageOrAlias = null)
+    public function getPackagedBots(?string $packageOrAlias = null): PackagedBotDTO|Collection|null
     {
         if (is_null($packageOrAlias)) {
             return $this->packagedBots
@@ -358,7 +358,7 @@ final class MessengerBots
     /**
      * Get an individual packaged bot.
      *
-     * @param  string|null  $packageOrAlias
+     * @param  string  $packageOrAlias
      * @return PackagedBotDTO|null
      */
     public function getPackagedBot(string $packageOrAlias): ?PackagedBotDTO
@@ -375,7 +375,7 @@ final class MessengerBots
     {
         return $this->packagedBots
             ->sortBy('alias')
-            ->map(fn (PackagedBotDTO $package) => $package->alias)
+            ->map(fn (PackagedBotDTO $package): string => $package->alias)
             ->flatten()
             ->toArray();
     }
@@ -383,13 +383,13 @@ final class MessengerBots
     /**
      * Returns the packaged bots the end user is authorized to view/add.
      *
-     * @return Collection|PackagedBotDTO[]
+     * @return Collection<PackagedBotDTO>
      */
     public function getAuthorizedPackagedBots(): Collection
     {
         return $this->packagedBots
             ->sortBy('name')
-            ->filter(fn (PackagedBotDTO $package) => $this->authorizePackagedBot($package))
+            ->filter(fn (PackagedBotDTO $package): bool => $this->authorizePackagedBot($package))
             ->values();
     }
 
@@ -406,7 +406,7 @@ final class MessengerBots
         }
 
         return $this->packagedBots->search(
-            fn (PackagedBotDTO $package) =>  $package->alias === $packageOrAlias
+            fn (PackagedBotDTO $package): bool =>  $package->alias === $packageOrAlias
         ) ?: null;
     }
 

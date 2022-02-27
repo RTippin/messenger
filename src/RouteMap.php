@@ -30,7 +30,10 @@ trait RouteMap
         $kernel = $this->app->make(Kernel::class);
         $router = $this->app->make(Router::class);
 
-        $this->registerMiddleware($kernel, $router);
+        $this->registerMiddleware(
+            kernel: $kernel,
+            router:  $router
+        );
 
         $this->registerRoutes($router);
 
@@ -48,7 +51,10 @@ trait RouteMap
     {
         $kernel->prependToMiddlewarePriority(MessengerApi::class);
 
-        $router->aliasMiddleware('messenger.provider', SetMessengerProvider::class);
+        $router->aliasMiddleware(
+            name: 'messenger.provider',
+            class: SetMessengerProvider::class
+        );
     }
 
     /**
@@ -59,17 +65,20 @@ trait RouteMap
      */
     private function registerRoutes(Router $router): void
     {
-        $router->group($this->apiRouteConfiguration(), function () {
-            $this->loadRoutesFrom(__DIR__.'/../routes/api.php');
-        });
+        $router->group(
+            attributes: $this->apiRouteConfiguration(),
+            routes: fn () => $this->loadRoutesFrom(__DIR__.'/../routes/api.php')
+        );
 
-        $router->group($this->apiRouteConfiguration(true), function () {
-            $this->loadRoutesFrom(__DIR__.'/../routes/invite_api.php');
-        });
+        $router->group(
+            attributes: $this->apiRouteConfiguration(invite: true),
+            routes: fn () => $this->loadRoutesFrom(__DIR__.'/../routes/invite_api.php')
+        );
 
-        $router->group($this->assetsRouteConfiguration(), function () {
-            $this->loadRoutesFrom(__DIR__.'/../routes/assets.php');
-        });
+        $router->group(
+            attributes: $this->assetsRouteConfiguration(),
+            routes: fn () => $this->loadRoutesFrom(__DIR__.'/../routes/assets.php')
+        );
     }
 
     /**
@@ -81,14 +90,14 @@ trait RouteMap
     {
         RateLimiter::for('messenger-api', function (Request $request) {
             return Messenger::getApiRateLimit() > 0
-                ? Limit::perMinute(Messenger::getApiRateLimit())->by(optional($request->user())->getKey() ?: $request->ip())
+                ? Limit::perMinute(Messenger::getApiRateLimit())->by($request->user()?->getKey() ?: $request->ip())
                 : Limit::none();
         });
 
         RateLimiter::for('messenger-message', function (Request $request) {
             return Messenger::getMessageRateLimit() > 0
                 ? Limit::perMinute(Messenger::getMessageRateLimit())->by(
-                    $request->route()->originalParameter('thread').'.'.optional($request->user())->getKey() ?: $request->ip()
+                    $request->route()->originalParameter('thread').'.'.$request->user()?->getKey() ?: $request->ip()
                 )
                 : Limit::none();
         });
@@ -96,14 +105,14 @@ trait RouteMap
         RateLimiter::for('messenger-attachment', function (Request $request) {
             return Messenger::getAttachmentRateLimit() > 0
                 ? Limit::perMinute(Messenger::getAttachmentRateLimit())->by(
-                    $request->route()->originalParameter('thread').'.'.optional($request->user())->getKey() ?: $request->ip()
+                    $request->route()->originalParameter('thread').'.'.$request->user()?->getKey() ?: $request->ip()
                 )
                 : Limit::none();
         });
 
         RateLimiter::for('messenger-search', function (Request $request) {
             return Messenger::getSearchRateLimit() > 0
-                ? Limit::perMinute(Messenger::getSearchRateLimit())->by(optional($request->user())->getKey() ?: $request->ip())
+                ? Limit::perMinute(Messenger::getSearchRateLimit())->by($request->user()?->getKey() ?: $request->ip())
                 : Limit::none();
         });
     }

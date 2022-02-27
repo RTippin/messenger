@@ -83,11 +83,11 @@ trait MessengerProviders
      *
      * @param  MessengerProvider|mixed|null  $provider
      * @param  bool  $scoped
-     * @return $this
+     * @return MessengerProviders|Messenger
      *
      * @throws InvalidProviderException
      */
-    public function setProvider($provider = null, bool $scoped = false): self
+    public function setProvider(mixed $provider = null, bool $scoped = false): self
     {
         if (! $this->isValidMessengerProvider($provider)) {
             $this->throwProviderError();
@@ -116,13 +116,16 @@ trait MessengerProviders
      * Overwrites our active provider while preserving any prior provider set.
      *
      * @param  MessengerProvider|mixed|null  $provider
-     * @return $this
+     * @return MessengerProviders|Messenger
      *
      * @throws InvalidProviderException
      */
-    public function setScopedProvider($provider = null): self
+    public function setScopedProvider(mixed $provider = null): self
     {
-        $this->setProvider($provider, true);
+        $this->setProvider(
+            provider: $provider,
+            scoped: true
+        );
 
         return $this;
     }
@@ -134,7 +137,7 @@ trait MessengerProviders
      * @param  MessengerProvider|mixed|null  $provider
      * @return MessengerModel|null
      */
-    public function getProviderMessenger($provider = null): ?MessengerModel
+    public function getProviderMessenger(mixed $provider = null): ?MessengerModel
     {
         if ($this->isProviderSet()
             && (is_null($provider)
@@ -165,7 +168,7 @@ trait MessengerProviders
      *
      * @param  bool  $scoped
      * @param  bool  $flush
-     * @return $this
+     * @return MessengerProviders|Messenger
      *
      * @throws InvalidProviderException
      */
@@ -200,7 +203,7 @@ trait MessengerProviders
     /**
      * Unset the active scoped provider. Re-set the previous provider, if one was set.
      *
-     * @return $this
+     * @return MessengerProviders|Messenger
      *
      * @throws InvalidProviderException
      */
@@ -215,7 +218,7 @@ trait MessengerProviders
      * Get the current or scoped Messenger Provider.
      *
      * @param  bool  $withoutRelations
-     * @return MessengerProvider|Model|null
+     * @return MessengerProvider|null
      */
     public function getProvider(bool $withoutRelations = false): ?MessengerProvider
     {
@@ -266,11 +269,10 @@ trait MessengerProviders
      * @param  MessengerProvider|Model|null  $provider
      * @return bool
      */
-    public function canMessageProviderFirst($provider = null): bool
+    public function canMessageProviderFirst(mixed $provider = null): bool
     {
-        return $provider
-            && is_object($provider)
-            && in_array(get_class($provider), $this->providerCanMessageFirst);
+        return is_object($provider)
+            && in_array($provider::class, $this->providerCanMessageFirst);
     }
 
     /**
@@ -280,11 +282,10 @@ trait MessengerProviders
      * @param  MessengerProvider|Model|null  $provider
      * @return bool
      */
-    public function canFriendProvider($provider = null): bool
+    public function canFriendProvider(mixed $provider = null): bool
     {
-        return $provider
-            && is_object($provider)
-            && in_array(get_class($provider), $this->providerCanFriend);
+        return is_object($provider)
+            && in_array($provider::class, $this->providerCanFriend);
     }
 
     /**
@@ -293,11 +294,10 @@ trait MessengerProviders
      * @param  MessengerProvider|Model|null  $provider
      * @return bool
      */
-    public function canSearchProvider($provider = null): bool
+    public function canSearchProvider(mixed $provider = null): bool
     {
-        return $provider
-            && is_object($provider)
-            && in_array(get_class($provider), $this->providerCanSearch);
+        return is_object($provider)
+            && in_array($provider::class, $this->providerCanSearch);
     }
 
     /**
@@ -383,10 +383,10 @@ trait MessengerProviders
     public function getSearchableForCurrentProvider(): array
     {
         return $this->providers->filter(
-            fn (MessengerProviderDTO $provider) => in_array($provider->class, $this->providerCanSearch)
+            fn (MessengerProviderDTO $provider): bool => in_array($provider->class, $this->providerCanSearch)
                 && $provider->searchable
         )
-            ->map(fn (MessengerProviderDTO $provider) => $provider->morphClass)
+            ->map(fn (MessengerProviderDTO $provider): string => $provider->morphClass)
             ->flatten()
             ->toArray();
     }
@@ -397,7 +397,7 @@ trait MessengerProviders
      * @param  null|string|MessengerProvider  $provider
      * @return void
      */
-    public function setProviderToOnline($provider = null): void
+    public function setProviderToOnline(mixed $provider = null): void
     {
         $provider = $provider ?: $this->getProvider();
 
@@ -416,7 +416,7 @@ trait MessengerProviders
      * @param  null|string|MessengerProvider  $provider
      * @return void
      */
-    public function setProviderToOffline($provider = null): void
+    public function setProviderToOffline(mixed $provider = null): void
     {
         $provider = $provider ?: $this->getProvider();
 
@@ -432,7 +432,7 @@ trait MessengerProviders
      * @param  null|string|MessengerProvider  $provider
      * @return void
      */
-    public function setProviderToAway($provider = null): void
+    public function setProviderToAway(mixed $provider = null): void
     {
         $provider = $provider ?: $this->getProvider();
 
@@ -449,7 +449,7 @@ trait MessengerProviders
      * @param  null|string|MessengerProvider  $provider
      * @return bool
      */
-    public function isProviderOnline($provider = null): bool
+    public function isProviderOnline(mixed $provider = null): bool
     {
         $provider = $provider ?: $this->getProvider();
 
@@ -467,7 +467,7 @@ trait MessengerProviders
      * @param  null|string|MessengerProvider  $provider
      * @return bool
      */
-    public function isProviderAway($provider = null): bool
+    public function isProviderAway(mixed $provider = null): bool
     {
         $provider = $provider ?: $this->getProvider();
 
@@ -486,7 +486,7 @@ trait MessengerProviders
      * @param  null|string|MessengerProvider  $provider
      * @return int
      */
-    public function getProviderOnlineStatus($provider = null): int
+    public function getProviderOnlineStatus(mixed $provider = null): int
     {
         $provider = $provider ?: $this->getProvider();
 
@@ -554,7 +554,7 @@ trait MessengerProviders
     private function filterCanList(array $providers, array $limits): array
     {
         return Collection::make($providers)
-            ->reject(fn ($provider) => in_array($provider, $limits))
+            ->reject(fn ($provider): bool => in_array($provider, $limits))
             ->values()
             ->toArray();
     }
@@ -603,9 +603,9 @@ trait MessengerProviders
     private function setToOnline(MessengerProvider $provider): void
     {
         Cache::put(
-            "{$this->findProviderAlias($provider)}:online:{$provider->getKey()}",
-            'online',
-            now()->addMinutes($this->getOnlineCacheLifetime())
+            key: "{$this->findProviderAlias($provider)}:online:{$provider->getKey()}",
+            value: 'online',
+            ttl: now()->addMinutes($this->getOnlineCacheLifetime())
         );
     }
 
@@ -616,9 +616,9 @@ trait MessengerProviders
     private function setToAway(MessengerProvider $provider): void
     {
         Cache::put(
-            "{$this->findProviderAlias($provider)}:online:{$provider->getKey()}",
-            'away',
-            now()->addMinutes($this->getOnlineCacheLifetime())
+            key: "{$this->findProviderAlias($provider)}:online:{$provider->getKey()}",
+            value: 'away',
+            ttl: now()->addMinutes($this->getOnlineCacheLifetime())
         );
     }
 

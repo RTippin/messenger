@@ -21,7 +21,7 @@ final class Messenger
         MessengerConfig;
 
     /**
-     * @var Collection|MessengerProviderDTO[]
+     * @var Collection<MessengerProviderDTO>
      */
     private Collection $providers;
 
@@ -102,7 +102,7 @@ final class Messenger
      * @param  MessengerProvider|string|null  $provider
      * @return bool
      */
-    public function isValidMessengerProvider($provider = null): bool
+    public function isValidMessengerProvider(mixed $provider = null): bool
     {
         return (bool) $this->findProviderAlias($provider);
     }
@@ -113,15 +113,15 @@ final class Messenger
      * @param  MessengerProvider|string|null  $provider
      * @return string|null
      */
-    public function findProviderAlias($provider = null): ?string
+    public function findProviderAlias(mixed $provider = null): ?string
     {
         $baseClass = $this->getClassNameString($provider);
 
         $search = $this->providers->search(
-            fn (MessengerProviderDTO $item) => $this->isBaseOrMorphClass($item, $baseClass)
+            fn (MessengerProviderDTO $item): bool => $this->isBaseOrMorphClass($item, $baseClass)
         ) ?: null;
 
-        return optional($this->getProviderDTO($search))->alias ?: null;
+        return $this->getProviderDTO($search)?->alias;
     }
 
     /**
@@ -133,7 +133,10 @@ final class Messenger
     public function findAliasProvider(string $alias): ?string
     {
         return $this->providers->search(
-            fn (MessengerProviderDTO $provider) => in_array($alias, [$provider->alias, $provider->morphClass])
+            fn (MessengerProviderDTO $provider): bool => in_array($alias, [
+                $provider->alias,
+                $provider->morphClass,
+            ])
         ) ?: null;
     }
 
@@ -147,7 +150,7 @@ final class Messenger
     public function getAllProviders(bool $returnFullClass = false): array
     {
         $providers = $this->providers->reject(
-            fn (MessengerProviderDTO $provider) => $provider->alias === 'bot'
+            fn (MessengerProviderDTO $provider): bool => $provider->alias === 'bot'
         );
 
         if ($returnFullClass) {
@@ -155,7 +158,7 @@ final class Messenger
         }
 
         return $providers
-            ->map(fn (MessengerProviderDTO $provider) => $provider->morphClass)
+            ->map(fn (MessengerProviderDTO $provider): string => $provider->morphClass)
             ->flatten()
             ->toArray();
     }
@@ -176,12 +179,12 @@ final class Messenger
      * @param  MessengerProvider|string|null  $provider
      * @return bool
      */
-    public function isProviderSearchable($provider = null): bool
+    public function isProviderSearchable(mixed $provider = null): bool
     {
         $baseClass = $this->getClassNameString($provider);
 
         return (bool) $this->providers->search(
-            fn (MessengerProviderDTO $item) => $this->isBaseOrMorphClass($item, $baseClass)
+            fn (MessengerProviderDTO $item): bool => $this->isBaseOrMorphClass($item, $baseClass)
                 && $item->searchable
         );
     }
@@ -192,12 +195,12 @@ final class Messenger
      * @param  MessengerProvider|string|null  $provider
      * @return bool
      */
-    public function isProviderFriendable($provider = null): bool
+    public function isProviderFriendable(mixed $provider = null): bool
     {
         $baseClass = $this->getClassNameString($provider);
 
         return (bool) $this->providers->search(
-            fn (MessengerProviderDTO $item) => $this->isBaseOrMorphClass($item, $baseClass)
+            fn (MessengerProviderDTO $item): bool => $this->isBaseOrMorphClass($item, $baseClass)
                 && $item->friendable
         );
     }
@@ -209,10 +212,10 @@ final class Messenger
     public function getProviderDefaultAvatarPath(string $alias): ?string
     {
         $search = $this->providers->search(
-            fn (MessengerProviderDTO $provider) => $provider->alias === $alias
+            fn (MessengerProviderDTO $provider): bool => $provider->alias === $alias
         ) ?: null;
 
-        return optional($this->getProviderDTO($search))->defaultAvatarPath ?: null;
+        return $this->getProviderDTO($search)?->defaultAvatarPath;
     }
 
     /**
@@ -225,7 +228,7 @@ final class Messenger
     public function getAllSearchableProviders(bool $returnFullClass = false): array
     {
         $providers = $this->providers->filter(
-            fn (MessengerProviderDTO $provider) => $provider->searchable
+            fn (MessengerProviderDTO $provider): bool => $provider->searchable
         );
 
         if ($returnFullClass) {
@@ -233,7 +236,7 @@ final class Messenger
         }
 
         return $providers
-            ->map(fn (MessengerProviderDTO $provider) => $provider->morphClass)
+            ->map(fn (MessengerProviderDTO $provider): string => $provider->morphClass)
             ->flatten()
             ->toArray();
     }
@@ -248,7 +251,7 @@ final class Messenger
     public function getAllFriendableProviders(bool $returnFullClass = false): array
     {
         $providers = $this->providers->filter(
-            fn (MessengerProviderDTO $provider) => $provider->friendable
+            fn (MessengerProviderDTO $provider): bool => $provider->friendable
         );
 
         if ($returnFullClass) {
@@ -256,7 +259,7 @@ final class Messenger
         }
 
         return $providers
-            ->map(fn (MessengerProviderDTO $provider) => $provider->morphClass)
+            ->map(fn (MessengerProviderDTO $provider): string => $provider->morphClass)
             ->flatten()
             ->toArray();
     }
@@ -271,7 +274,7 @@ final class Messenger
     public function getAllProvidersWithDevices(bool $returnFullClass = false): array
     {
         $providers = $this->providers->filter(
-            fn (MessengerProviderDTO $provider) => $provider->hasDevices
+            fn (MessengerProviderDTO $provider): bool => $provider->hasDevices
         );
 
         if ($returnFullClass) {
@@ -279,7 +282,7 @@ final class Messenger
         }
 
         return $providers
-            ->map(fn (MessengerProviderDTO $provider) => $provider->morphClass)
+            ->map(fn (MessengerProviderDTO $provider): string => $provider->morphClass)
             ->flatten()
             ->toArray();
     }
@@ -302,17 +305,17 @@ final class Messenger
      */
     public function flush(): void
     {
-        $this->unsetProvider(false, true);
+        $this->unsetProvider(flush: true);
         $this->setMessengerConfig();
         $this->flushFriendDriverInstance();
         self::shouldUseAbsoluteRoutes(config('messenger.use_absolute_routes'));
     }
 
     /**
-     * @param $provider
-     * @return Model|string|null
+     * @param  mixed  $provider
+     * @return string|null
      */
-    private function getClassNameString($provider = null): ?string
+    private function getClassNameString(mixed $provider = null): ?string
     {
         return $provider instanceof Model
             ? $provider->getMorphClass()
