@@ -965,19 +965,6 @@ class MessengerTest extends MessengerTestCase
         $this->assertSame('test', $this->messenger->getCallSubscriber('channel'));
         $this->assertSame('test', $this->messenger->getSystemMessageSubscriber('channel'));
     }
-
-    /** @test */
-    public function it_can_set_new_feature_configs_if_missing_from_main_config()
-    {
-        config([
-            'messenger.files.message_videos' => null,
-        ]);
-        $this->messenger->flush();
-
-        $this->assertFalse($this->messenger->isMessageVideoUploadEnabled());
-        $this->assertSame(0, $this->messenger->getMessageVideoSizeLimit());
-        $this->assertSame('NaN', $this->messenger->getMessageVideoMimeTypes());
-    }
 }
 
 class TestVideoBroker implements VideoDriver

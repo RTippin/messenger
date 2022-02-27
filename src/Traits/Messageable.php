@@ -4,8 +4,6 @@ namespace RTippin\Messenger\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
-use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
 use RTippin\Messenger\Support\Helpers;
 
@@ -127,17 +125,5 @@ trait Messageable
         }
 
         return $this->isOnlineCache = Messenger::getProviderOnlineStatus($this);
-    }
-
-    /**
-     * Verbose meaning of the online status number.
-     *
-     * @deprecated To be removed in v2. No longer used in the backend.
-     *
-     * @return string
-     */
-    public function getProviderOnlineStatusVerbose(): string
-    {
-        return Str::lower(MessengerProvider::ONLINE_STATUS[$this->getProviderOnlineStatus()]);
     }
 }

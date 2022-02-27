@@ -1541,6 +1541,9 @@ trait MessengerConfig
         $this->messageDocumentUpload = config('messenger.files.message_documents.upload');
         $this->messageDocumentSizeLimit = config('messenger.files.message_documents.size_limit');
         $this->messageDocumentMimeTypes = config('messenger.files.message_documents.mime_types');
+        $this->messageVideoUpload = config('messenger.files.message_videos.upload');
+        $this->messageVideoSizeLimit = config('messenger.files.message_videos.size_limit');
+        $this->messageVideoMimeTypes = config('messenger.files.message_videos.mime_types');
         $this->searchPageCount = config('messenger.collections.search.page_count');
         $this->threadsIndexCount = config('messenger.collections.threads.index_count');
         $this->threadsPageCount = config('messenger.collections.threads.page_count');
@@ -1559,20 +1562,5 @@ trait MessengerConfig
             'calls' => config('messenger.calling.subscriber'),
             'system_messages' => config('messenger.system_messages.subscriber'),
         ];
-
-        $this->setNewFeatureConfigs();
-    }
-
-    /**
-     * Set configs that were added before a major release, as we
-     * need to check if the nested config value exists.
-     *
-     * @TODO Remove in v2.
-     */
-    private function setNewFeatureConfigs(): void
-    {
-        $this->messageVideoUpload = config('messenger.files.message_videos.upload') ?? false;
-        $this->messageVideoSizeLimit = config('messenger.files.message_videos.size_limit') ?? 0;
-        $this->messageVideoMimeTypes = config('messenger.files.message_videos.mime_types') ?? 'NaN';
     }
 }

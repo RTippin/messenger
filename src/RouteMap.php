@@ -10,7 +10,6 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\RateLimiter;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Http\Middleware\AuthenticateOptional;
 use RTippin\Messenger\Http\Middleware\MessengerApi;
 use RTippin\Messenger\Http\Middleware\SetMessengerProvider;
 
@@ -50,9 +49,6 @@ trait RouteMap
         $kernel->prependToMiddlewarePriority(MessengerApi::class);
 
         $router->aliasMiddleware('messenger.provider', SetMessengerProvider::class);
-
-        /** @deprecated */
-        $router->aliasMiddleware('auth.optional', AuthenticateOptional::class);
     }
 
     /**
