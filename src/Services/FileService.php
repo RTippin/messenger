@@ -9,16 +9,30 @@ use RTippin\Messenger\Exceptions\FileServiceException;
 
 class FileService
 {
+    /**
+     * @deprecated removing in v2
+     */
     const TYPE_IMAGE = 'image';
-    const TYPE_DOCUMENT = 'document';
-    const TYPE_AUDIO = 'audio';
-    const TYPE_VIDEO = 'video';
-    const TYPE_DEFAULT = null;
 
     /**
-     * @var string|null
+     * @deprecated removing in v2
      */
-    private ?string $type = null;
+    const TYPE_DOCUMENT = 'document';
+
+    /**
+     * @deprecated removing in v2
+     */
+    const TYPE_AUDIO = 'audio';
+
+    /**
+     * @deprecated removing in v2
+     */
+    const TYPE_VIDEO = 'video';
+
+    /**
+     * @deprecated removing in v2
+     */
+    const TYPE_DEFAULT = null;
 
     /**
      * @var string|null
@@ -51,13 +65,13 @@ class FileService
     }
 
     /**
+     * @deprecated Removing in v2
+     *
      * @param  string  $type
      * @return $this
      */
     public function setType(string $type): self
     {
-        $this->type = $type;
-
         return $this;
     }
 
@@ -166,17 +180,13 @@ class FileService
             return "$this->name.$extension";
         }
 
-        $originalName = $this->getOriginalName($file);
+        $originalName = preg_replace(
+            '/[^\w\-]/',
+            '',
+            $this->getOriginalName($file)
+        );
 
-        switch ($this->type) {
-            case self::TYPE_IMAGE:
-                return "{$originalName}_img_".Str::uuid()->toString().".$extension";
-            case self::TYPE_DOCUMENT:
-            case self::TYPE_AUDIO:
-            case self::TYPE_VIDEO:
-                return "{$originalName}_".now()->timestamp.".$extension";
-            default: return "$originalName.$extension";
-        }
+        return "{$originalName}_".Str::uuid()->toString().".$extension";
     }
 
     /**
@@ -217,7 +227,6 @@ class FileService
      */
     private function reset(): void
     {
-        $this->type = null;
         $this->disk = null;
         $this->directory = null;
         $this->name = null;

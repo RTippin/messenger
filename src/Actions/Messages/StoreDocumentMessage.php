@@ -130,7 +130,6 @@ class StoreDocumentMessage extends NewMessageAction
     private function upload(UploadedFile $file): string
     {
         return $this->fileService
-            ->setType(FileService::TYPE_DOCUMENT)
             ->setDisk($this->getThread()->getStorageDisk())
             ->setDirectory($this->getThread()->getDocumentsDirectory())
             ->upload($file);

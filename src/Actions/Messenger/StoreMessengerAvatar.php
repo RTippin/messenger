@@ -6,7 +6,6 @@ use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Exceptions\FeatureDisabledException;
 use RTippin\Messenger\Exceptions\FileServiceException;
 use RTippin\Messenger\Http\Request\MessengerAvatarRequest;
-use RTippin\Messenger\Services\FileService;
 use Throwable;
 
 class StoreMessengerAvatar extends MessengerAvatarAction
@@ -72,7 +71,6 @@ class StoreMessengerAvatar extends MessengerAvatarAction
     private function upload(UploadedFile $file): string
     {
         return $this->fileService
-            ->setType(FileService::TYPE_IMAGE)
             ->setDisk($this->messenger->getAvatarStorage('disk'))
             ->setDirectory($this->getDirectory())
             ->upload($file);
