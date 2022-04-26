@@ -64,7 +64,7 @@ class EndCallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_does_nothing_if_ending_cache_key_exist()
+    public function it_does_nothing_if_cache_lock_exist()
     {
         BaseMessengerAction::enableEvents();
         Event::fake([
@@ -72,7 +72,7 @@ class EndCallTest extends FeatureTestCase
             CallEndedEvent::class,
         ]);
         $call = Call::factory()->for(Thread::factory()->create())->owner($this->tippin)->ended()->create();
-        Cache::put("call:$call->id:ending", true);
+        Cache::lock("call:$call->id:ending", 10)->acquire();
 
         app(EndCall::class)->execute($call);
 

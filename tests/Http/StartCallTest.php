@@ -82,7 +82,7 @@ class StartCallTest extends HttpTestCase
     public function forbidden_to_start_call_when_creating_call_timeout_exist()
     {
         $thread = $this->createGroupThread($this->tippin);
-        Cache::put("call:$thread->id:starting", true);
+        Cache::lock("call:$thread->id:starting", 10)->acquire();
         $this->actingAs($this->tippin);
 
         $this->postJson(route('api.messenger.threads.calls.store', [

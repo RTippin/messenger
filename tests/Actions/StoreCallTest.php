@@ -67,11 +67,11 @@ class StoreCallTest extends FeatureTestCase
     }
 
     /** @test */
-    public function it_throws_exception_if_cache_lockout_key_exist()
+    public function it_throws_exception_if_cache_lock_exist()
     {
         $thread = Thread::factory()->group()->create(['subject' => 'Test']);
 
-        Cache::put("call:$thread->id:starting", true);
+        Cache::lock("call:$thread->id:starting", 10)->acquire();
 
         $this->expectException(NewCallException::class);
         $this->expectExceptionMessage('Test has a call awaiting creation.');
