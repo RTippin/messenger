@@ -19,6 +19,8 @@
   - The [NullVideoBroker][link-video-broker] will be set as the default [VideoDriver][link-video-driver].
 - You must create your own [VideoDriver][link-video-driver] implementation if you wish to interact with your 3rd party video provider of choice.
 - Provided is an event subscriber ([CallSubscriber][link-call-subscriber]) to listen and react to calling events. You may choose to enable it, whether it puts jobs on the queue or not, and which queue channel its jobs are dispatched on.
+- **Note:** The calling system uses atomic cache locks. Your cache driver must be one that supports locking to use the calling system.
+  - See more on atomic locks: [https://laravel.com/docs/9.x/cache#atomic-locks](https://laravel.com/docs/9.x/cache#atomic-locks)
 
 ---
 

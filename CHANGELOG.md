@@ -3,6 +3,23 @@
 
 ---
 
+### [v1.21.0 (04-25-2022)](https://github.com/RTippin/messenger/compare/v1.20.0...v1.21.0)
+
+#### Added
+- Atomic locks when starting or ending a call.
+- Uploaded file name sanitization.
+
+#### Changed
+- `FileService` no longer names a file based on a `type` specified.
+- Starting and ending a call no longer use simple cache keys for their lockouts. Atomic locks are now used.
+  - Due to this, your cache driver must support atomic locks. See: [https://laravel.com/docs/9.x/cache#atomic-locks](https://laravel.com/docs/9.x/cache#atomic-locks)
+- Deprecated:
+  - `setCallLockout` method in the `NewCallAction`. This method now does nothing and is no longer needed.
+  - `setType` method in `FileService`. This method now does nothing and is no longer needed.
+  - All `TYPE_` constants in `FileService`.
+
+---
+
 ### [v1.20.0 (02-08-2022)](https://github.com/RTippin/messenger/compare/v1.19.0...v1.20.0)
 
 #### Changed
