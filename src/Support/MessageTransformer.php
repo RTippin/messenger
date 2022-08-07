@@ -6,6 +6,7 @@ use Exception;
 use Illuminate\Support\Collection;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Facades\MessengerTypes;
 use RTippin\Messenger\Models\Call;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Message;
@@ -71,7 +72,7 @@ class MessageTransformer
             $thread,
             $provider,
             'joined',
-            Message::PARTICIPANT_JOINED_WITH_INVITE,
+            MessengerTypes::code('PARTICIPANT_JOINED_WITH_INVITE'),
         ];
     }
 
@@ -89,7 +90,7 @@ class MessageTransformer
             $thread,
             $provider,
             Collection::make(['call_id' => $call->id])->toJson(),
-            Message::VIDEO_CALL,
+            MessengerTypes::code('VIDEO_CALL'),
         ];
     }
 
@@ -104,7 +105,7 @@ class MessageTransformer
             $thread,
             $provider,
             'updated the avatar',
-            Message::GROUP_AVATAR_CHANGED,
+            MessengerTypes::code('GROUP_AVATAR_CHANGED'),
         ];
     }
 
@@ -119,7 +120,7 @@ class MessageTransformer
             $thread,
             $provider,
             ($thread->isGroup() ? 'archived the group' : 'archived the conversation'),
-            Message::THREAD_ARCHIVED,
+            MessengerTypes::code('THREAD_ARCHIVED'),
         ];
     }
 
@@ -137,7 +138,7 @@ class MessageTransformer
             $thread,
             $provider,
             "created $subject",
-            Message::GROUP_CREATED,
+            MessengerTypes::code('GROUP_CREATED'),
         ];
     }
 
@@ -155,7 +156,7 @@ class MessageTransformer
             $thread,
             $provider,
             "renamed the group to $subject",
-            Message::GROUP_RENAMED,
+            MessengerTypes::code('GROUP_RENAMED'),
         ];
     }
 
@@ -173,7 +174,7 @@ class MessageTransformer
             $thread,
             $provider,
             self::generateParticipantJson($participant),
-            Message::DEMOTED_ADMIN,
+            MessengerTypes::code('DEMOTED_ADMIN'),
         ];
     }
 
@@ -191,7 +192,7 @@ class MessageTransformer
             $thread,
             $provider,
             self::generateParticipantJson($participant),
-            Message::PROMOTED_ADMIN,
+            MessengerTypes::code('PROMOTED_ADMIN'),
         ];
     }
 
@@ -206,7 +207,7 @@ class MessageTransformer
             $thread,
             $provider,
             'left',
-            Message::PARTICIPANT_LEFT_GROUP,
+            MessengerTypes::code('PARTICIPANT_LEFT_GROUP'),
         ];
     }
 
@@ -224,7 +225,7 @@ class MessageTransformer
             $thread,
             $provider,
             self::generateParticipantJson($participant),
-            Message::PARTICIPANT_REMOVED,
+            MessengerTypes::code('PARTICIPANT_REMOVED'),
         ];
     }
 
@@ -247,7 +248,7 @@ class MessageTransformer
             $thread,
             $provider,
             $body,
-            Message::PARTICIPANTS_ADDED,
+            MessengerTypes::code('PARTICIPANTS_ADDED'),
         ];
     }
 
@@ -265,7 +266,7 @@ class MessageTransformer
             $thread,
             $provider,
             "added the BOT - $botName",
-            Message::BOT_ADDED,
+            MessengerTypes::code('BOT_ADDED'),
         ];
     }
 
@@ -285,7 +286,7 @@ class MessageTransformer
             $thread,
             $provider,
             "renamed the BOT ( $oldName ) to $botName",
-            Message::BOT_RENAMED,
+            MessengerTypes::code('BOT_RENAMED'),
         ];
     }
 
@@ -303,7 +304,7 @@ class MessageTransformer
             $thread,
             $provider,
             "updated the avatar for the BOT - $botName",
-            Message::BOT_AVATAR_CHANGED,
+            MessengerTypes::code('BOT_AVATAR_CHANGED'),
         ];
     }
 
@@ -321,7 +322,7 @@ class MessageTransformer
             $thread,
             $provider,
             "removed the BOT - $botName",
-            Message::BOT_REMOVED,
+            MessengerTypes::code('BOT_REMOVED'),
         ];
     }
 
@@ -339,7 +340,7 @@ class MessageTransformer
             $thread,
             $provider,
             "installed the BOT - $packageName",
-            Message::BOT_PACKAGE_INSTALLED,
+            MessengerTypes::code('BOT_PACKAGE_INSTALLED'),
         ];
     }
 

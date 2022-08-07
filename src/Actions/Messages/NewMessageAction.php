@@ -10,6 +10,7 @@ use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Events\NewMessageEvent;
+use RTippin\Messenger\Facades\MessengerTypes;
 use RTippin\Messenger\Http\Request\BaseMessageRequest;
 use RTippin\Messenger\Http\Resources\MessageResource;
 use RTippin\Messenger\Models\Bot;
@@ -277,7 +278,7 @@ abstract class NewMessageAction extends BaseMessengerAction
      */
     private function shouldMarkRead(): bool
     {
-        return in_array($this->messageType, Message::NonSystemTypes)
+        return in_array($this->messageType, MessengerTypes::getNonSystemTypes())
             && ! $this->messageOwner instanceof Bot;
     }
 

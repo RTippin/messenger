@@ -15,6 +15,7 @@ use RTippin\Messenger\Contracts\HasPresenceChannel;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Database\Factories\ThreadFactory;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Facades\MessengerTypes;
 use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\ScopesProvider;
 use RTippin\Messenger\Traits\Uuids;
@@ -236,7 +237,7 @@ class Thread extends Model implements HasPresenceChannel
     public function logs(): HasMany
     {
         return $this->hasMany(Message::class)
-            ->whereNotIn('type', Message::NonSystemTypes);
+            ->whereNotIn('type', MessengerTypes::getNonSystemTypes());
     }
 
     /**

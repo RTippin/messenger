@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Tests\Http;
 
 use Illuminate\Http\UploadedFile;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Facades\MessengerTypes;
 use RTippin\Messenger\Models\Message;
 use RTippin\Messenger\Models\Participant;
 use RTippin\Messenger\Models\Thread;
@@ -64,7 +65,7 @@ class VideoMessageTest extends HttpTestCase
             ->assertJson([
                 'thread_id' => $thread->id,
                 'temporary_id' => '123-456-789',
-                'type' => Message::VIDEO_MESSAGE,
+                'type' => MessengerTypes::code('VIDEO_MESSAGE'),
                 'type_verbose' => 'VIDEO_MESSAGE',
             ]);
     }

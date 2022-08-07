@@ -6,6 +6,7 @@ use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\DatabaseManager;
 use RTippin\Messenger\Contracts\BroadcastDriver;
 use RTippin\Messenger\Contracts\EmojiInterface;
+use RTippin\Messenger\Facades\MessengerTypes;
 use RTippin\Messenger\Http\Request\MessageRequest;
 use RTippin\Messenger\Messenger;
 use RTippin\Messenger\Models\Message;
@@ -67,7 +68,7 @@ class StoreMessage extends NewMessageAction
                             ?string $senderIp = null): self
     {
         $this->setThread($thread)
-            ->setMessageType(Message::MESSAGE)
+            ->setMessageType(MessengerTypes::code('MESSAGE'))
             ->setMessageBody($this->emoji->toShort($params['message']) ?: null)
             ->setMessageOptionalParameters($params)
             ->setMessageOwner($this->messenger->getProvider())

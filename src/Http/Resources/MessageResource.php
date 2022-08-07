@@ -90,18 +90,7 @@ class MessageResource extends JsonResource
             'reactions' => $this->when($this->addRelatedItems && $this->message->isReacted(),
                 fn () => $this->addReactions()
             ),
-            'document' => $this->when($this->message->isDocument(),
-                fn () => $this->message->getDocumentDownloadRoute()
-            ),
-            'audio' => $this->when($this->message->isAudio(),
-                fn () => $this->message->getAudioDownloadRoute()
-            ),
-            'video' => $this->when($this->message->isVideo(),
-                fn () => $this->message->getVideoDownloadRoute()
-            ),
-            $this->mergeWhen($this->message->isImage(),
-                fn () => $this->linksForImage()
-            ),
+            $this->merge(fn () => $this->message->getResourceData()),
             $this->mergeWhen($this->addRelatedItems,
                 fn () => $this->addReplyToMessage()
             ),
@@ -142,17 +131,4 @@ class MessageResource extends JsonResource
         ))->resolve();
     }
 
-    /**
-     * @return array
-     */
-    public function linksForImage(): array
-    {
-        return [
-            'image' => [
-                'sm' => $this->message->getImageViewRoute('sm'),
-                'md' => $this->message->getImageViewRoute('md'),
-                'lg' => $this->message->getImageViewRoute('lg'),
-            ],
-        ];
-    }
 }

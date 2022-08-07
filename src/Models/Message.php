@@ -13,9 +13,11 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
+use RTippin\Messenger\Contracts\MessageTypeProvider;
 use RTippin\Messenger\Contracts\Ownerable;
 use RTippin\Messenger\Database\Factories\MessageFactory;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Facades\MessengerTypes;
 use RTippin\Messenger\Support\Helpers;
 use RTippin\Messenger\Traits\HasOwner;
 use RTippin\Messenger\Traits\ScopesProvider;
@@ -66,29 +68,13 @@ class Message extends Model implements Ownerable
     const DOCUMENT_MESSAGE = 2;
     const AUDIO_MESSAGE = 3;
     const VIDEO_MESSAGE = 4;
-    const PARTICIPANT_JOINED_WITH_INVITE = 88;
-    const VIDEO_CALL = 90;
-    const GROUP_AVATAR_CHANGED = 91;
-    const THREAD_ARCHIVED = 92;
-    const GROUP_CREATED = 93;
-    const GROUP_RENAMED = 94;
-    const DEMOTED_ADMIN = 95;
-    const PROMOTED_ADMIN = 96;
-    const PARTICIPANT_LEFT_GROUP = 97;
-    const PARTICIPANT_REMOVED = 98;
-    const PARTICIPANTS_ADDED = 99;
-    const BOT_ADDED = 100;
-    const BOT_RENAMED = 101;
-    const BOT_AVATAR_CHANGED = 102;
-    const BOT_REMOVED = 103;
-    const BOT_PACKAGE_INSTALLED = 104;
-    const NonSystemTypes = [
-        self::MESSAGE,
-        self::IMAGE_MESSAGE,
-        self::DOCUMENT_MESSAGE,
-        self::AUDIO_MESSAGE,
-        self::VIDEO_MESSAGE,
-    ];
+//    const NonSystemTypes = [
+//        self::MESSAGE,
+//        self::IMAGE_MESSAGE,
+//        self::DOCUMENT_MESSAGE,
+//        self::AUDIO_MESSAGE,
+//        self::VIDEO_MESSAGE,
+//    ];
     const TYPE = [
         0 => 'MESSAGE',
         1 => 'IMAGE_MESSAGE',
@@ -214,7 +200,7 @@ class Message extends Model implements Ownerable
      */
     public function scopeNonSystem(Builder $query): Builder
     {
-        return $query->whereIn('type', self::NonSystemTypes);
+        return $query->whereIn('type', MessengerTypes::getNonSystemTypes());
     }
 
     /**
@@ -225,7 +211,7 @@ class Message extends Model implements Ownerable
      */
     public function scopeSystem(Builder $query): Builder
     {
-        return $query->whereNotIn('type', self::NonSystemTypes);
+        return $query->whereNotIn('type', MessengerTypes::getNonSystemTypes());
     }
 
     /**
@@ -488,7 +474,7 @@ class Message extends Model implements Ownerable
      */
     public function isSystemMessage(): bool
     {
-        return ! in_array($this->type, self::NonSystemTypes);
+        return ! in_array($this->type, MessengerTypes::getNonSystemTypes());
     }
 
     /**
@@ -545,6 +531,15 @@ class Message extends Model implements Ownerable
     public function temporaryId(): ?string
     {
         return $this->temporaryId;
+    }
+
+    public function getMessageTypeProvider(): MessageTypeProvider {
+//        dump($this->type);
+        return MessengerTypes::getMessageType($this->type);
+    }
+
+    public function getResourceData() {
+        return $this->getMessageTypeProvider()->getResourceData($this);
     }
 
     /**

@@ -4,6 +4,7 @@ namespace RTippin\Messenger\Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Database\Eloquent\Model;
+use RTippin\Messenger\Facades\MessengerTypes;
 use RTippin\Messenger\Models\Message;
 
 /**
@@ -29,7 +30,7 @@ class MessageFactory extends Factory
     public function definition(): array
     {
         return [
-            'type' => Message::MESSAGE,
+            'type' => MessengerTypes::code('MESSAGE'),
             'body' => $this->faker->realText(rand(10, 200), rand(1, 4)),
             'edited' => false,
             'reacted' => false,
@@ -55,7 +56,7 @@ class MessageFactory extends Factory
     public function image(): self
     {
         return $this->state([
-            'type' => Message::IMAGE_MESSAGE,
+            'type' => MessengerTypes::code('IMAGE_MESSAGE'),
             'body' => 'picture.jpg',
         ]);
     }
@@ -68,7 +69,7 @@ class MessageFactory extends Factory
     public function document(): self
     {
         return $this->state([
-            'type' => Message::DOCUMENT_MESSAGE,
+            'type' => MessengerTypes::code('DOCUMENT_MESSAGE'),
             'body' => 'document.pdf',
         ]);
     }
@@ -81,7 +82,7 @@ class MessageFactory extends Factory
     public function audio(): self
     {
         return $this->state([
-            'type' => Message::AUDIO_MESSAGE,
+            'type' => MessengerTypes::code('AUDIO_MESSAGE'),
             'body' => 'sound.mp3',
         ]);
     }
@@ -94,7 +95,7 @@ class MessageFactory extends Factory
     public function video(): self
     {
         return $this->state([
-            'type' => Message::VIDEO_MESSAGE,
+            'type' => MessengerTypes::code('VIDEO_MESSAGE'),
             'body' => 'video.mov',
         ]);
     }

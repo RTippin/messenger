@@ -34,6 +34,12 @@ use RTippin\Messenger\Http\Middleware\MessengerApi;
 use RTippin\Messenger\Listeners\BotSubscriber;
 use RTippin\Messenger\Listeners\CallSubscriber;
 use RTippin\Messenger\Listeners\SystemMessageSubscriber;
+use RTippin\Messenger\MessageTypes\Audio;
+use RTippin\Messenger\MessageTypes\Document;
+use RTippin\Messenger\MessageTypes\Image;
+use RTippin\Messenger\MessageTypes\Message;
+use RTippin\Messenger\MessageTypes\System;
+use RTippin\Messenger\MessageTypes\Video;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Services\EmojiService;
 use RTippin\Messenger\Support\MessengerComposer;
@@ -51,17 +57,19 @@ class MessengerServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/messenger.php', 'messenger');
+        $this->mergeConfigFrom(__DIR__ . '/../config/messenger.php', 'messenger');
 
         $this->app->singleton(Messenger::class, Messenger::class);
+        $this->app->singleton(MessengerTypes::class, MessengerTypes::class);
         $this->app->singleton(MessengerBots::class, MessengerBots::class);
         $this->app->singleton(FriendDriver::class, FriendBroker::class);
         $this->app->singleton(EmojiInterface::class, EmojiService::class);
         $this->app->bind(MessengerComposer::class, MessengerComposer::class);
         $this->app->bind(BroadcastDriver::class, BroadcastBroker::class);
         $this->app->bind(VideoDriver::class, NullVideoBroker::class);
-        $this->app->extend(ExceptionHandler::class, fn (ExceptionHandler $handler) => new Handler($handler));
+        $this->app->extend(ExceptionHandler::class, fn(ExceptionHandler $handler) => new Handler($handler));
         $this->app->alias(Messenger::class, 'messenger');
+        $this->app->alias(MessengerTypes::class, 'messenger-types');
         $this->app->alias(MessengerBots::class, 'messenger-bots');
         $this->app->alias(MessengerComposer::class, 'messenger-composer');
     }
@@ -87,6 +95,7 @@ class MessengerServiceProvider extends ServiceProvider
         $this->registerPolicies();
         $this->registerSubscribers();
         $this->registerChannels();
+        $this->registerMessageTypes();
 
         if ($this->app->runningInConsole()) {
             $this->bootForConsole();
@@ -118,18 +127,18 @@ class MessengerServiceProvider extends ServiceProvider
             PurgeVideosCommand::class,
         ]);
 
-        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
 
         $this->publishes([
-            __DIR__.'/../config/messenger.php' => config_path('messenger.php'),
+            __DIR__ . '/../config/messenger.php' => config_path('messenger.php'),
         ], 'messenger.config');
 
         $this->publishes([
-            __DIR__.'/../stubs/MessengerServiceProvider.stub' => app_path('Providers/MessengerServiceProvider.php'),
+            __DIR__ . '/../stubs/MessengerServiceProvider.stub' => app_path('Providers/MessengerServiceProvider.php'),
         ], 'messenger.provider');
 
         $this->publishes([
-            __DIR__.'/../database/migrations' => database_path('migrations'),
+            __DIR__ . '/../database/migrations' => database_path('migrations'),
         ], 'messenger.migrations');
     }
 
@@ -147,6 +156,35 @@ class MessengerServiceProvider extends ServiceProvider
         $events->subscribe(CallSubscriber::class);
         $events->subscribe(SystemMessageSubscriber::class);
         $events->subscribe(BotSubscriber::class);
+    }
+
+    private function registerMessageTypes(): void
+    {
+        $types = $this->app->make(MessengerTypes::class);
+
+        $types->registerProviders([
+            Message::class,
+            Document::class,
+            Image::class,
+            Audio::class,
+            Video::class,
+            new System(88, 'PARTICIPANT_JOINED_WITH_INVITE'),
+            new System(90, 'VIDEO_CALL'),
+            new System(91, 'GROUP_AVATAR_CHANGED'),
+            new System(92, 'THREAD_ARCHIVED'),
+            new System(93, 'GROUP_CREATED'),
+            new System(94, 'GROUP_RENAMED'),
+            new System(95, 'DEMOTED_ADMIN'),
+            new System(96, 'PROMOTED_ADMIN'),
+            new System(97, 'PARTICIPANT_LEFT_GROUP'),
+            new System(98, 'PARTICIPANT_REMOVED'),
+            new System(99, 'PARTICIPANTS_ADDED'),
+            new System(100, 'BOT_ADDED'),
+            new System(101, 'BOT_RENAMED'),
+            new System(102, 'BOT_AVATAR_CHANGED'),
+            new System(103, 'BOT_REMOVED'),
+            new System(104, 'BOT_PACKAGE_INSTALLED'),
+        ]);
     }
 
     /**

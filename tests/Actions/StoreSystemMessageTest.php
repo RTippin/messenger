@@ -9,7 +9,7 @@ use RTippin\Messenger\Actions\Messages\StoreSystemMessage;
 use RTippin\Messenger\Broadcasting\NewMessageBroadcast;
 use RTippin\Messenger\Events\NewMessageEvent;
 use RTippin\Messenger\Facades\Messenger;
-use RTippin\Messenger\Models\Message;
+use RTippin\Messenger\Facades\MessengerTypes;
 use RTippin\Messenger\Models\Thread;
 use RTippin\Messenger\Tests\FeatureTestCase;
 
@@ -20,11 +20,11 @@ class StoreSystemMessageTest extends FeatureTestCase
     {
         $thread = Thread::factory()->group()->create();
 
-        app(StoreSystemMessage::class)->execute($thread, $this->tippin, 'system', Message::GROUP_CREATED);
+        app(StoreSystemMessage::class)->execute($thread, $this->tippin, 'system', MessengerTypes::code('GROUP_CREATED'));
 
         $this->assertDatabaseHas('messages', [
             'thread_id' => $thread->id,
-            'type' => Message::GROUP_CREATED,
+            'type' => MessengerTypes::code('GROUP_CREATED'),
             'body' => 'system',
         ]);
     }
@@ -36,7 +36,7 @@ class StoreSystemMessageTest extends FeatureTestCase
         $updated = now()->addMinutes(5)->format('Y-m-d H:i:s.u');
         Carbon::setTestNow($updated);
 
-        app(StoreSystemMessage::class)->execute($thread, $this->tippin, 'system', Message::GROUP_CREATED);
+        app(StoreSystemMessage::class)->execute($thread, $this->tippin, 'system', MessengerTypes::code('GROUP_CREATED'));
 
         $this->assertDatabaseHas('threads', [
             'id' => $thread->id,
@@ -55,7 +55,7 @@ class StoreSystemMessageTest extends FeatureTestCase
         Messenger::setSystemMessages(false);
         $thread = Thread::factory()->group()->create();
 
-        app(StoreSystemMessage::class)->execute($thread, $this->tippin, 'system', Message::GROUP_CREATED);
+        app(StoreSystemMessage::class)->execute($thread, $this->tippin, 'system', MessengerTypes::code('GROUP_CREATED'));
 
         $this->assertDatabaseCount('messages', 0);
         Event::assertNotDispatched(NewMessageBroadcast::class);
@@ -72,7 +72,7 @@ class StoreSystemMessageTest extends FeatureTestCase
         ]);
         $thread = $this->createPrivateThread($this->tippin, $this->doe);
 
-        app(StoreSystemMessage::class)->execute($thread, $this->tippin, 'system', Message::GROUP_CREATED);
+        app(StoreSystemMessage::class)->execute($thread, $this->tippin, 'system', MessengerTypes::code('GROUP_CREATED'));
 
         Event::assertDispatched(function (NewMessageBroadcast $event) use ($thread) {
             $this->assertContains('private-messenger.user.'.$this->doe->getKey(), $event->broadcastOn());
@@ -94,6 +94,8 @@ class StoreSystemMessageTest extends FeatureTestCase
      */
     public function it_stores_message_type_using_description($type)
     {
+        $type = MessengerTypes::code($type);
+
         $thread = Thread::factory()->group()->create();
 
         app(StoreSystemMessage::class)->execute($thread, $this->tippin, 'system', $type);
@@ -107,22 +109,22 @@ class StoreSystemMessageTest extends FeatureTestCase
     public function messageTypes(): array
     {
         return [
-            [Message::PARTICIPANT_JOINED_WITH_INVITE],
-            [Message::VIDEO_CALL],
-            [Message::GROUP_AVATAR_CHANGED],
-            [Message::THREAD_ARCHIVED],
-            [Message::GROUP_CREATED],
-            [Message::GROUP_RENAMED],
-            [Message::DEMOTED_ADMIN],
-            [Message::PROMOTED_ADMIN],
-            [Message::PARTICIPANT_LEFT_GROUP],
-            [Message::PARTICIPANT_REMOVED],
-            [Message::PARTICIPANTS_ADDED],
-            [Message::BOT_ADDED],
-            [Message::BOT_RENAMED],
-            [Message::BOT_AVATAR_CHANGED],
-            [Message::BOT_REMOVED],
-            [Message::BOT_PACKAGE_INSTALLED],
+            ['PARTICIPANT_JOINED_WITH_INVITE'],
+            ['VIDEO_CALL'],
+            ['GROUP_AVATAR_CHANGED'],
+            ['THREAD_ARCHIVED'],
+            ['GROUP_CREATED'],
+            ['GROUP_RENAMED'],
+            ['DEMOTED_ADMIN'],
+            ['PROMOTED_ADMIN'],
+            ['PARTICIPANT_LEFT_GROUP'],
+            ['PARTICIPANT_REMOVED'],
+            ['PARTICIPANTS_ADDED'],
+            ['BOT_ADDED'],
+            ['BOT_RENAMED'],
+            ['BOT_AVATAR_CHANGED'],
+            ['BOT_REMOVED'],
+            ['BOT_PACKAGE_INSTALLED'],
         ];
     }
 }

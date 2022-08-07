@@ -7,6 +7,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Contracts\MessengerProvider;
 use RTippin\Messenger\Facades\Messenger;
+use RTippin\Messenger\Facades\MessengerTypes;
 use RTippin\Messenger\Models\Bot;
 use RTippin\Messenger\Models\GhostUser;
 use RTippin\Messenger\Models\Message;
@@ -347,7 +348,7 @@ class MessageTest extends FeatureTestCase
     {
         $message = Message::factory()->for(
             Thread::factory()->create()
-        )->owner($this->tippin)->system(Message::GROUP_CREATED)->create();
+        )->owner($this->tippin)->system(MessengerTypes::code('GROUP_CREATED'))->create();
 
         $this->assertTrue($message->isSystemMessage());
         $this->assertFalse($message->notSystemMessage());
