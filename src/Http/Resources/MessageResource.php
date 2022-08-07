@@ -130,5 +130,4 @@ class MessageResource extends JsonResource
                 : $this->message->reactions()->with('owner')->get()
         ))->resolve();
     }
-
 }

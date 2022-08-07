@@ -3,9 +3,6 @@
 namespace RTippin\Messenger\Facades;
 
 use Illuminate\Support\Facades\Facade;
-use RTippin\Messenger\Contracts\MessengerProvider;
-use RTippin\Messenger\Models\GhostUser;
-use RTippin\Messenger\Models\Participant;
 
 /**
  * @mixin \RTippin\Messenger\MessengerTypes

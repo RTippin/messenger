@@ -57,7 +57,7 @@ class MessengerServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/messenger.php', 'messenger');
+        $this->mergeConfigFrom(__DIR__.'/../config/messenger.php', 'messenger');
 
         $this->app->singleton(Messenger::class, Messenger::class);
         $this->app->singleton(MessengerTypes::class, MessengerTypes::class);
@@ -67,7 +67,7 @@ class MessengerServiceProvider extends ServiceProvider
         $this->app->bind(MessengerComposer::class, MessengerComposer::class);
         $this->app->bind(BroadcastDriver::class, BroadcastBroker::class);
         $this->app->bind(VideoDriver::class, NullVideoBroker::class);
-        $this->app->extend(ExceptionHandler::class, fn(ExceptionHandler $handler) => new Handler($handler));
+        $this->app->extend(ExceptionHandler::class, fn (ExceptionHandler $handler) => new Handler($handler));
         $this->app->alias(Messenger::class, 'messenger');
         $this->app->alias(MessengerTypes::class, 'messenger-types');
         $this->app->alias(MessengerBots::class, 'messenger-bots');
@@ -127,18 +127,18 @@ class MessengerServiceProvider extends ServiceProvider
             PurgeVideosCommand::class,
         ]);
 
-        $this->loadMigrationsFrom(__DIR__ . '/../database/migrations');
+        $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
         $this->publishes([
-            __DIR__ . '/../config/messenger.php' => config_path('messenger.php'),
+            __DIR__.'/../config/messenger.php' => config_path('messenger.php'),
         ], 'messenger.config');
 
         $this->publishes([
-            __DIR__ . '/../stubs/MessengerServiceProvider.stub' => app_path('Providers/MessengerServiceProvider.php'),
+            __DIR__.'/../stubs/MessengerServiceProvider.stub' => app_path('Providers/MessengerServiceProvider.php'),
         ], 'messenger.provider');
 
         $this->publishes([
-            __DIR__ . '/../database/migrations' => database_path('migrations'),
+            __DIR__.'/../database/migrations' => database_path('migrations'),
         ], 'messenger.migrations');
     }
 

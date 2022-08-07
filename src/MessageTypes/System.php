@@ -9,10 +9,8 @@ class System extends Base
     public function __construct(
         int $code = null,
         string $verbose = null,
-    )
-    {
+    ) {
         $this->code = $code ?? $this->code;
         $this->verbose = $verbose ?? $this->verbose;
     }
-
 }

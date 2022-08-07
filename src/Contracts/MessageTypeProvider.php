@@ -6,7 +6,6 @@ use RTippin\Messenger\Models\Message;
 
 interface MessageTypeProvider
 {
-
     public function getVerbose(): string;
 
     public function getCode(): int;
@@ -14,5 +13,4 @@ interface MessageTypeProvider
     public function isSystemType(): bool;
 
     public function getResourceData(Message $message): ?array;
-
 }

@@ -533,12 +533,14 @@ class Message extends Model implements Ownerable
         return $this->temporaryId;
     }
 
-    public function getMessageTypeProvider(): MessageTypeProvider {
+    public function getMessageTypeProvider(): MessageTypeProvider
+    {
 //        dump($this->type);
         return MessengerTypes::getMessageType($this->type);
     }
 
-    public function getResourceData() {
+    public function getResourceData()
+    {
         return $this->getMessageTypeProvider()->getResourceData($this);
     }
 
