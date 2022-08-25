@@ -130,7 +130,6 @@ class StoreVideoMessage extends NewMessageAction
     private function upload(UploadedFile $file): string
     {
         return $this->fileService
-            ->setType(FileService::TYPE_VIDEO)
             ->setDisk($this->getThread()->getStorageDisk())
             ->setDirectory($this->getThread()->getVideoDirectory())
             ->upload($file);

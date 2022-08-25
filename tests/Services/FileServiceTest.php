@@ -25,11 +25,9 @@ class FileServiceTest extends TestCase
     {
         $image = UploadedFile::fake()->image('test.jpg');
 
-        $name = $this->fileService->setDisk('messenger')
-            ->setType(FileService::TYPE_IMAGE)
-            ->upload($image);
+        $name = $this->fileService->setDisk('messenger')->upload($image);
 
-        $this->assertStringContainsString('test_img_', $name);
+        $this->assertStringContainsString('test_', $name);
         Storage::disk('messenger')->assertExists($name);
     }
 
@@ -38,9 +36,7 @@ class FileServiceTest extends TestCase
     {
         $document = UploadedFile::fake()->create('test_123_rev_2.pdf', 500, 'application/pdf');
 
-        $name = $this->fileService->setDisk('messenger')
-            ->setType(FileService::TYPE_DOCUMENT)
-            ->upload($document);
+        $name = $this->fileService->setDisk('messenger')->upload($document);
 
         $this->assertNotSame('test_123_rev_2.pdf', $name);
         $this->assertStringContainsString('test_123_rev_2', $name);
@@ -53,7 +49,6 @@ class FileServiceTest extends TestCase
         $image = UploadedFile::fake()->image('test.jpg');
 
         $name = $this->fileService->setDisk('messenger')
-            ->setType(FileService::TYPE_IMAGE)
             ->setDirectory('test/1234')
             ->upload($image);
 
@@ -70,17 +65,6 @@ class FileServiceTest extends TestCase
             ->upload($document);
 
         $this->assertSame('test_renamed.pdf', $name);
-        Storage::disk('messenger')->assertExists($name);
-    }
-
-    /** @test */
-    public function it_can_name_file_using_default_without_type()
-    {
-        $document = UploadedFile::fake()->create('test_123.pdf', 500, 'application/pdf');
-
-        $name = $this->fileService->setDisk('messenger')->upload($document);
-
-        $this->assertSame('test_123.pdf', $name);
         Storage::disk('messenger')->assertExists($name);
     }
 

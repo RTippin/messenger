@@ -60,8 +60,7 @@ class StoreCall extends NewCallAction
 
         $this->bailIfChecksFail();
 
-        $this->setCallLockout()
-            ->process($setupComplete)
+        $this->process($setupComplete)
             ->generateResource()
             ->fireBroadcast()
             ->fireEvents();

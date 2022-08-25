@@ -68,14 +68,11 @@ class EndCall extends BaseMessengerAction
     {
         $this->setCall($call);
 
-        if (! $this->hasNoEndingLockout()) {
-            $this->setEndingLockout();
-
-            if ($this->getCall()->isActive()) {
-                $this->process()
-                    ->fireBroadcast()
-                    ->fireEvents();
-            }
+        if ($this->getCall()->isActive()
+            && $this->acquireLock()) {
+            $this->process()
+                ->fireBroadcast()
+                ->fireEvents();
         }
 
         return $this;
@@ -84,17 +81,12 @@ class EndCall extends BaseMessengerAction
     /**
      * @return bool
      */
-    private function hasNoEndingLockout(): bool
+    private function acquireLock(): bool
     {
-        return Cache::has("call:{$this->getCall()->id}:ending");
-    }
-
-    /**
-     * @return void
-     */
-    private function setEndingLockout(): void
-    {
-        Cache::put("call:{$this->getCall()->id}:ending", true, 10);
+        return Cache::lock(
+            name: "call:{$this->getCall()->id}:ending",
+            seconds: 10
+        )->acquire();
     }
 
     /**

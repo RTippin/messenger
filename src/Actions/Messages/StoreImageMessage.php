@@ -130,7 +130,6 @@ class StoreImageMessage extends NewMessageAction
     private function upload(UploadedFile $file): string
     {
         return $this->fileService
-            ->setType(FileService::TYPE_IMAGE)
             ->setDisk($this->getThread()->getStorageDisk())
             ->setDirectory($this->getThread()->getImagesDirectory())
             ->upload($file);

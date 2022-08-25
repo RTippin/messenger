@@ -2,6 +2,7 @@
 
 namespace RTippin\Messenger\Actions\Calls;
 
+use Illuminate\Contracts\Cache\Lock;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Support\Facades\Cache;
 use RTippin\Messenger\Actions\BaseMessengerAction;
@@ -30,6 +31,11 @@ abstract class NewCallAction extends BaseMessengerAction
      * @var Dispatcher
      */
     protected Dispatcher $dispatcher;
+
+    /**
+     * @var Lock
+     */
+    protected Lock $atomicLock;
 
     /**
      * NewCallAction constructor.
@@ -106,27 +112,31 @@ abstract class NewCallAction extends BaseMessengerAction
      */
     protected function bailIfChecksFail(): void
     {
+        if (! $this->acquireLock()) {
+            throw new NewCallException("{$this->getThread()->name()} has a call awaiting creation.");
+        }
+
         if (! $this->messenger->isCallingEnabled()
             || $this->messenger->isCallingTemporarilyDisabled()) {
+            $this->atomicLock->release();
+
             throw new FeatureDisabledException('Calling is currently disabled.');
         }
 
         if ($this->getThread()->hasActiveCall()) {
-            throw new NewCallException("{$this->getThread()->name()} already has an active call.");
-        }
+            $this->atomicLock->release();
 
-        if (Cache::get("call:{$this->getThread()->id}:starting")) {
-            throw new NewCallException("{$this->getThread()->name()} has a call awaiting creation.");
+            throw new NewCallException("{$this->getThread()->name()} already has an active call.");
         }
     }
 
     /**
+     * @deprecated removing in v2.
+     *
      * @return $this
      */
     protected function setCallLockout(): self
     {
-        Cache::put("call:{$this->getThread()->id}:starting", true, 10);
-
         return $this;
     }
 
@@ -154,5 +164,18 @@ abstract class NewCallAction extends BaseMessengerAction
         );
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    private function acquireLock(): bool
+    {
+        $this->atomicLock = Cache::lock(
+            "call:{$this->getThread()->id}:starting",
+            10
+        );
+
+        return $this->atomicLock->acquire();
     }
 }
