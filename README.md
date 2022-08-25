@@ -48,15 +48,7 @@
 - Private threads auto-lock when the recipient is not found / deleted.
 
 ### Upcoming for v2
-- Temporary Ephemeral conversations.
-- Improved API pagination / filters.
-- Condense attachment routes.
-- Possible extraction of friends system.
-- Improved image manipulation / saving of multiple sizes.
-- Encryption of messages (E2E is the long term goal).
-- Translations for internal messages.
-- Pinned messages.
-- Chat-bots able to trigger off of an event.
+- Please see the [2.x Branch][link-2x-branch] for more information.
 
 ### Notes
 - This is a `Laravel` package and must be installed in a `laravel` application to run.
@@ -143,3 +135,4 @@ If you discover any security related issues, please email author instead of usin
 [link-messenger-composer]: docs/Composer.md
 [link-changelog]: https://github.com/RTippin/messenger/blob/1.x/CHANGELOG.md
 [link-license]: https://github.com/RTippin/messenger/blob/1.x/LICENSE.md
+[link-2x-branch]: https://github.com/RTippin/messenger/tree/2.x
