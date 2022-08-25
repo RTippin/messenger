@@ -1,0 +1,45 @@
+name: tests-2x
+
+on:
+  push:
+    branches:
+      - 2.x
+  pull_request:
+    branches:
+      - 2.x
+
+jobs:
+  tests:
+    runs-on: ubuntu-20.04
+
+    strategy:
+      fail-fast: true
+      matrix:
+        php: [8.1]
+        laravel: [^9.0]
+        use-uuid: [false, true]
+        morph-maps: [false, true]
+
+    name: PHP ${{ matrix.php }} | Laravel ${{ matrix.laravel }} | UUID ${{ matrix.use-uuid }} | MorphMap ${{ matrix.morph-maps }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: ${{ matrix.php }}
+          tools: composer:v2
+          coverage: none
+
+      - name: Install dependencies
+        run: |
+          composer require "illuminate/contracts=${{ matrix.laravel }}" --no-update
+          composer update --prefer-dist --no-interaction --no-progress
+
+      - name: Execute tests
+        env:
+          USE_UUID: ${{ matrix.use-uuid }}
+          USE_MORPH_MAPS: ${{ matrix.morph-maps }}
+        run: vendor/bin/phpunit --verbose
