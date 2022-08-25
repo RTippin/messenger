@@ -25,11 +25,19 @@ class FileService
     private ?string $name = null;
 
     /**
+     * @var FilesystemManager
+     */
+    private FilesystemManager $filesystemManager;
+
+    /**
+     * FileService constructor.
+     *
      * @param  FilesystemManager  $filesystemManager
      */
-    public function __construct(
-        private readonly FilesystemManager $filesystemManager
-    ){}
+    public function __construct(FilesystemManager $filesystemManager)
+    {
+        $this->filesystemManager = $filesystemManager;
+    }
 
     /**
      * @param  string  $disk
