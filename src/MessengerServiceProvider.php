@@ -6,6 +6,7 @@ use Illuminate\Contracts\Container\BindingResolutionException;
 use Illuminate\Contracts\Debug\ExceptionHandler;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Database\Eloquent\Relations\Relation;
+use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 use RTippin\Messenger\Brokers\BroadcastBroker;
 use RTippin\Messenger\Brokers\FriendBroker;
@@ -40,9 +41,9 @@ use RTippin\Messenger\Support\MessengerComposer;
 
 class MessengerServiceProvider extends ServiceProvider
 {
-    use ChannelMap,
-        PolicyMap,
-        RouteMap;
+    use ChannelMap;
+    use PolicyMap;
+    use RouteMap;
 
     /**
      * Register Messenger's services.
@@ -207,10 +208,10 @@ class MessengerServiceProvider extends ServiceProvider
      */
     private function mergeApiMiddleware($middleware): array
     {
-        $merged = array_merge([MessengerApi::class], is_array($middleware) ? $middleware : [$middleware]);
-
-        $merged[] = 'throttle:messenger-api';
-
-        return $merged;
+        return [
+            MessengerApi::class,
+            ...Arr::wrap($middleware),
+            'throttle:messenger-api',
+        ];
     }
 }

@@ -63,18 +63,18 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class Thread extends Model implements HasPresenceChannel
 {
-    use HasFactory,
-        ScopesProvider,
-        SoftDeletes,
-        Uuids;
+    use HasFactory;
+    use ScopesProvider;
+    use SoftDeletes;
+    use Uuids;
 
-    const PRIVATE = 1;
-    const GROUP = 2;
-    const TYPE = [
+    public const PRIVATE = 1;
+    public const GROUP = 2;
+    public const TYPE = [
         1 => 'PRIVATE',
         2 => 'GROUP',
     ];
-    const DefaultSettings = [
+    public const DefaultSettings = [
         'type' => self::PRIVATE,
         'subject' => null,
         'image' => null,

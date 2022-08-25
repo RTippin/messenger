@@ -11,10 +11,10 @@ use RTippin\Messenger\Jobs\Middleware\FlushMessengerServices;
 
 abstract class BaseMessengerJob implements ShouldQueue
 {
-    use Dispatchable,
-        InteractsWithQueue,
-        Queueable,
-        SerializesModels;
+    use Dispatchable;
+    use InteractsWithQueue;
+    use Queueable;
+    use SerializesModels;
 
     /**
      * Get the middleware the job should pass through.
@@ -23,6 +23,6 @@ abstract class BaseMessengerJob implements ShouldQueue
      */
     public function middleware(): array
     {
-        return [new FlushMessengerServices];
+        return [new FlushMessengerServices()];
     }
 }

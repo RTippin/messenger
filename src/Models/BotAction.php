@@ -44,9 +44,9 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class BotAction extends Model implements Ownerable
 {
-    use HasFactory,
-        HasOwner,
-        Uuids;
+    use HasFactory;
+    use HasOwner;
+    use Uuids;
 
     /**
      * The database table used by the model.

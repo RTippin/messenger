@@ -21,7 +21,7 @@ class ImageRenderService
     /**
      * Extensions we do not want to send through to intervention.
      */
-    const IGNORED_EXTENSIONS = [
+    public const IGNORED_EXTENSIONS = [
         'gif',
         'svg',
         'webp',

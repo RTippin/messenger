@@ -32,10 +32,10 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class CallParticipant extends Model implements Ownerable
 {
-    use HasFactory,
-        HasOwner,
-        ScopesProvider,
-        Uuids;
+    use HasFactory;
+    use HasOwner;
+    use ScopesProvider;
+    use Uuids;
 
     /**
      * The database table used by the model.

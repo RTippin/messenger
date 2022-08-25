@@ -120,7 +120,7 @@ class StoreFriendRequest extends BaseMessengerAction
     private function bailIfChecksFail(): void
     {
         if (is_null($this->recipient)) {
-            throw new ProviderNotFoundException;
+            throw new ProviderNotFoundException();
         }
 
         if ($this->messenger->getProvider()->is($this->recipient)) {

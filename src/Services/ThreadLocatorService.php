@@ -117,7 +117,7 @@ class ThreadLocatorService
      */
     public function throwNotFoundError(): void
     {
-        throw new ProviderNotFoundException;
+        throw new ProviderNotFoundException();
     }
 
     /**

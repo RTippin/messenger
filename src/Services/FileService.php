@@ -10,31 +10,6 @@ use RTippin\Messenger\Exceptions\FileServiceException;
 class FileService
 {
     /**
-     * @deprecated removing in v2
-     */
-    const TYPE_IMAGE = 'image';
-
-    /**
-     * @deprecated removing in v2
-     */
-    const TYPE_DOCUMENT = 'document';
-
-    /**
-     * @deprecated removing in v2
-     */
-    const TYPE_AUDIO = 'audio';
-
-    /**
-     * @deprecated removing in v2
-     */
-    const TYPE_VIDEO = 'video';
-
-    /**
-     * @deprecated removing in v2
-     */
-    const TYPE_DEFAULT = null;
-
-    /**
      * @var string|null
      */
     private ?string $disk = 'public';
@@ -50,30 +25,11 @@ class FileService
     private ?string $name = null;
 
     /**
-     * @var FilesystemManager
-     */
-    private FilesystemManager $filesystemManager;
-
-    /**
-     * FileService constructor.
-     *
      * @param  FilesystemManager  $filesystemManager
      */
-    public function __construct(FilesystemManager $filesystemManager)
-    {
-        $this->filesystemManager = $filesystemManager;
-    }
-
-    /**
-     * @deprecated Removing in v2
-     *
-     * @param  string  $type
-     * @return $this
-     */
-    public function setType(string $type): self
-    {
-        return $this;
-    }
+    public function __construct(
+        private readonly FilesystemManager $filesystemManager
+    ){}
 
     /**
      * @param  string  $disk

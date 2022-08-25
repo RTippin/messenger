@@ -52,13 +52,13 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class Participant extends Model implements Ownerable
 {
-    use HasFactory,
-        HasOwner,
-        ScopesProvider,
-        SoftDeletes,
-        Uuids;
+    use HasFactory;
+    use HasOwner;
+    use ScopesProvider;
+    use SoftDeletes;
+    use Uuids;
 
-    const DefaultPermissions = [
+    public const DefaultPermissions = [
         'add_participants' => false,
         'manage_bots' => false,
         'manage_invites' => false,
@@ -69,7 +69,7 @@ class Participant extends Model implements Ownerable
         'send_knocks' => false,
         'send_messages' => true,
     ];
-    const AdminPermissions = [
+    public const AdminPermissions = [
         'add_participants' => true,
         'manage_bots' => true,
         'manage_invites' => true,

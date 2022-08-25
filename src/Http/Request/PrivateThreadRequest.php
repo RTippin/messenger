@@ -18,7 +18,7 @@ class PrivateThreadRequest extends BaseMessageRequest
         $messageLimit = Messenger::getMessageSizeLimit();
 
         return [
-            'recipient_id' => ['required', new IntegerOrString],
+            'recipient_id' => ['required', new IntegerOrString()],
             'recipient_alias' => ['required', 'string'],
             'message' => ['required_without_all:document,image,audio,video', 'string', "max:$messageLimit"],
             'extra' => ['nullable', 'array'],

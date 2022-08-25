@@ -44,10 +44,10 @@ use RTippin\Messenger\Traits\ScopesProvider;
  */
 class Bot extends Model implements MessengerProvider, Ownerable
 {
-    use HasFactory,
-        HasOwner,
-        ScopesProvider,
-        SoftDeletes;
+    use HasFactory;
+    use HasOwner;
+    use ScopesProvider;
+    use SoftDeletes;
 
     /**
      * Create a new Eloquent model instance.

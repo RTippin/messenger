@@ -40,11 +40,11 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class Invite extends Model implements Ownerable
 {
-    use HasFactory,
-        HasOwner,
-        ScopesProvider,
-        SoftDeletes,
-        Uuids;
+    use HasFactory;
+    use HasOwner;
+    use ScopesProvider;
+    use SoftDeletes;
+    use Uuids;
 
     /**
      * @var string

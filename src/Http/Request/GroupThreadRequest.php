@@ -18,7 +18,7 @@ class GroupThreadRequest extends FormRequest
             'subject' => ['required', 'string', 'min:2', 'max:255'],
             'providers' => ['nullable', 'array', 'min:1'],
             'providers.*.alias' => ['required_with:providers', 'string'],
-            'providers.*.id' => ['required_with:providers', new IntegerOrString],
+            'providers.*.id' => ['required_with:providers', new IntegerOrString()],
         ];
     }
 }

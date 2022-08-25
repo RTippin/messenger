@@ -29,10 +29,10 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class MessageReaction extends Model implements Ownerable
 {
-    use HasFactory,
-        HasOwner,
-        Uuids,
-        ScopesProvider;
+    use HasFactory;
+    use HasOwner;
+    use ScopesProvider;
+    use Uuids;
 
     /**
      * The database table used by the model.

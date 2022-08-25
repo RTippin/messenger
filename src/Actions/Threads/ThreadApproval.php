@@ -146,7 +146,7 @@ class ThreadApproval extends ThreadParticipantAction
         }
 
         if (! $this->getThread()->isAwaitingMyApproval()) {
-            throw new ThreadApprovalException;
+            throw new ThreadApprovalException();
         }
     }
 }

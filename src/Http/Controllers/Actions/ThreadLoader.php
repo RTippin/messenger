@@ -15,7 +15,7 @@ class ThreadLoader
     /**
      * Eager load relations on thread.
      */
-    const LOAD = [
+    public const LOAD = [
         'latestMessage.owner',
         'participants.owner',
         'activeCall.participants.owner',

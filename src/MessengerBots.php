@@ -15,16 +15,16 @@ final class MessengerBots
     /**
      * Methods we may use to match a trigger from within a message.
      */
-    const MATCH_ANY = 'any';
-    const MATCH_CONTAINS = 'contains';
-    const MATCH_CONTAINS_CASELESS = 'contains:caseless';
-    const MATCH_CONTAINS_ANY = 'contains:any';
-    const MATCH_CONTAINS_ANY_CASELESS = 'contains:any:caseless';
-    const MATCH_EXACT = 'exact';
-    const MATCH_EXACT_CASELESS = 'exact:caseless';
-    const MATCH_STARTS_WITH = 'starts:with';
-    const MATCH_STARTS_WITH_CASELESS = 'starts:with:caseless';
-    const BotActionMatchMethods = [
+    public const MATCH_ANY = 'any';
+    public const MATCH_CONTAINS = 'contains';
+    public const MATCH_CONTAINS_CASELESS = 'contains:caseless';
+    public const MATCH_CONTAINS_ANY = 'contains:any';
+    public const MATCH_CONTAINS_ANY_CASELESS = 'contains:any:caseless';
+    public const MATCH_EXACT = 'exact';
+    public const MATCH_EXACT_CASELESS = 'exact:caseless';
+    public const MATCH_STARTS_WITH = 'starts:with';
+    public const MATCH_STARTS_WITH_CASELESS = 'starts:with:caseless';
+    public const BotActionMatchMethods = [
         self::MATCH_ANY => 'The action will be triggered for any message sent.',
         self::MATCH_CONTAINS => 'The trigger can be anywhere within a message. Cannot be part of or inside another word.',
         self::MATCH_CONTAINS_CASELESS => 'Same as "contains", but is case insensitive.',

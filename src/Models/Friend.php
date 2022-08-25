@@ -29,10 +29,10 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class Friend extends Model implements Ownerable
 {
-    use HasFactory,
-        HasOwner,
-        ScopesProvider,
-        Uuids;
+    use HasFactory;
+    use HasOwner;
+    use ScopesProvider;
+    use Uuids;
 
     /**
      * @var string

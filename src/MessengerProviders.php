@@ -564,7 +564,7 @@ trait MessengerProviders
      */
     public function throwProviderError(): void
     {
-        throw new InvalidProviderException;
+        throw new InvalidProviderException();
     }
 
     /**
@@ -574,7 +574,7 @@ trait MessengerProviders
      */
     private function setGhostProvider(): void
     {
-        $this->ghost = new GhostUser;
+        $this->ghost = new GhostUser();
     }
 
     /**
@@ -584,7 +584,7 @@ trait MessengerProviders
      */
     private function setGhostBot(): void
     {
-        $this->ghostBot = (new GhostUser)->ghostBot();
+        $this->ghostBot = (new GhostUser())->ghostBot();
     }
 
     /**

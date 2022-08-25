@@ -23,8 +23,8 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class MessageEdit extends Model
 {
-    use HasFactory,
-        Uuids;
+    use HasFactory;
+    use Uuids;
 
     /**
      * The database table used by the model.

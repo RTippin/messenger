@@ -2,17 +2,18 @@
 
 namespace RTippin\Messenger\Contracts;
 
+use Eloquent;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * @mixin Model|\Eloquent
+ * @mixin Model|Eloquent
  */
 interface MessengerProvider
 {
-    const OFFLINE = 0;
-    const ONLINE = 1;
-    const AWAY = 2;
-    const ONLINE_STATUS = [
+    public const OFFLINE = 0;
+    public const ONLINE = 1;
+    public const AWAY = 2;
+    public const ONLINE_STATUS = [
         0 => 'OFFLINE',
         1 => 'ONLINE',
         2 => 'AWAY',

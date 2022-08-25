@@ -131,16 +131,6 @@ abstract class NewCallAction extends BaseMessengerAction
     }
 
     /**
-     * @deprecated removing in v2.
-     *
-     * @return $this
-     */
-    protected function setCallLockout(): self
-    {
-        return $this;
-    }
-
-    /**
      * @param  int  $type
      * @param  bool  $isSetupComplete
      * @return $this

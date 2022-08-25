@@ -10,11 +10,11 @@ use RTippin\Messenger\Models\Thread;
 
 interface FriendDriver
 {
-    const NOT_FRIEND = 0;
-    const FRIEND = 1;
-    const SENT_FRIEND_REQUEST = 2;
-    const PENDING_FRIEND_REQUEST = 3;
-    const STATUS = [
+    public const NOT_FRIEND = 0;
+    public const FRIEND = 1;
+    public const SENT_FRIEND_REQUEST = 2;
+    public const PENDING_FRIEND_REQUEST = 3;
+    public const STATUS = [
         0 => 'NOT_FRIEND',
         1 => 'FRIEND',
         2 => 'SENT_FRIEND_REQUEST',

@@ -46,13 +46,13 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class Call extends Model implements HasPresenceChannel, Ownerable
 {
-    use HasFactory,
-        HasOwner,
-        ScopesProvider,
-        Uuids;
+    use HasFactory;
+    use HasOwner;
+    use ScopesProvider;
+    use Uuids;
 
-    const VIDEO = 1;
-    const TYPE = [
+    public const VIDEO = 1;
+    public const TYPE = [
         1 => 'VIDEO',
     ];
 

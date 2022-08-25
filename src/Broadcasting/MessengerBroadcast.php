@@ -8,8 +8,8 @@ use Illuminate\Queue\SerializesModels;
 
 abstract class MessengerBroadcast implements ShouldBroadcastNow
 {
-    use InteractsWithSockets,
-        SerializesModels;
+    use InteractsWithSockets;
+    use SerializesModels;
 
     /**
      * @var array

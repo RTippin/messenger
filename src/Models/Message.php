@@ -55,41 +55,41 @@ use RTippin\Messenger\Traits\Uuids;
  */
 class Message extends Model implements Ownerable
 {
-    use HasFactory,
-        HasOwner,
-        ScopesProvider,
-        SoftDeletes,
-        Uuids;
+    use HasFactory;
+    use HasOwner;
+    use ScopesProvider;
+    use SoftDeletes;
+    use Uuids;
 
-    const MESSAGE = 0;
-    const IMAGE_MESSAGE = 1;
-    const DOCUMENT_MESSAGE = 2;
-    const AUDIO_MESSAGE = 3;
-    const VIDEO_MESSAGE = 4;
-    const PARTICIPANT_JOINED_WITH_INVITE = 88;
-    const VIDEO_CALL = 90;
-    const GROUP_AVATAR_CHANGED = 91;
-    const THREAD_ARCHIVED = 92;
-    const GROUP_CREATED = 93;
-    const GROUP_RENAMED = 94;
-    const DEMOTED_ADMIN = 95;
-    const PROMOTED_ADMIN = 96;
-    const PARTICIPANT_LEFT_GROUP = 97;
-    const PARTICIPANT_REMOVED = 98;
-    const PARTICIPANTS_ADDED = 99;
-    const BOT_ADDED = 100;
-    const BOT_RENAMED = 101;
-    const BOT_AVATAR_CHANGED = 102;
-    const BOT_REMOVED = 103;
-    const BOT_PACKAGE_INSTALLED = 104;
-    const NonSystemTypes = [
+    public const MESSAGE = 0;
+    public const IMAGE_MESSAGE = 1;
+    public const DOCUMENT_MESSAGE = 2;
+    public const AUDIO_MESSAGE = 3;
+    public const VIDEO_MESSAGE = 4;
+    public const PARTICIPANT_JOINED_WITH_INVITE = 88;
+    public const VIDEO_CALL = 90;
+    public const GROUP_AVATAR_CHANGED = 91;
+    public const THREAD_ARCHIVED = 92;
+    public const GROUP_CREATED = 93;
+    public const GROUP_RENAMED = 94;
+    public const DEMOTED_ADMIN = 95;
+    public const PROMOTED_ADMIN = 96;
+    public const PARTICIPANT_LEFT_GROUP = 97;
+    public const PARTICIPANT_REMOVED = 98;
+    public const PARTICIPANTS_ADDED = 99;
+    public const BOT_ADDED = 100;
+    public const BOT_RENAMED = 101;
+    public const BOT_AVATAR_CHANGED = 102;
+    public const BOT_REMOVED = 103;
+    public const BOT_PACKAGE_INSTALLED = 104;
+    public const NonSystemTypes = [
         self::MESSAGE,
         self::IMAGE_MESSAGE,
         self::DOCUMENT_MESSAGE,
         self::AUDIO_MESSAGE,
         self::VIDEO_MESSAGE,
     ];
-    const TYPE = [
+    public const TYPE = [
         0 => 'MESSAGE',
         1 => 'IMAGE_MESSAGE',
         2 => 'DOCUMENT_MESSAGE',
