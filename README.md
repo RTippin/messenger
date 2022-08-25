@@ -8,90 +8,24 @@
 
 ---
 
-![Preview](https://raw.githubusercontent.com/RTippin/messenger/1.x/docs/images/image1.png?raw=true)
-
----
-
 ### Prerequisites
 
-| Laravel |         PHP          |   Messenger |
-|---------|:--------------------:|------------:|
-| `8.x`   | `^7.4` `^8.0` `^8.1` | `<= 1.19.1` |
-| `9.x`   |   `^8.0.2` `^8.1`    | `>= 1.20.0` |
+| Laravel |  PHP   | Messenger |
+|:-------:|:------:|:---------:|
+|  `9.x`  | `^8.1` | `>= 2.x`  |
 
-- Route model binding enabled in your API / WEB middleware groups.
-
-### Features
-- Realtime messaging between multiple models.
-- RESTful API, allowing you to create your own UI or connect to your mobile app.
-- Private and group threads.
-- Message reactions, replies, edits, and deletion.
-- Send image, document, audio, and video messages.
-- Group thread chat-bots. [Ready-made bots][link-messenger-bots]
-- Customize and create your own chat-bot handlers and bot packages. See the [Chat Bots][link-chat-bots] documentation.
-- Add participants in a group thread from your friends list.
-- Permissions per participant within a group thread.
-- Friends, Search, and Online status systems.
-- Private thread approval when the two participants are not friends.
-- Provider avatars, group thread avatars, and bot avatars.
-- Underlying calling system you can extend. See the [Calling][link-calling] documentation.
-- Group thread invitation links (like discord).
-- All endpoints are protected behind policies.
-- Scheduled commands for automated cleanup and checks.
-- Queued jobs fired from our event subscribers.
-- Most features can be toggled at runtime using our `Messenger` facade.
-- `MessengerComposer` facade allows you to have easy access to the core actions anywhere within your own app, such as sending messages, images, reactions, and more.
-- You can implement or extend your own `BroadcastDriver`, `VideoDriver`, and `FriendDriver`, simply by binding your classes into the container.
-- Support for morph maps on your provider models. See: [Morph Maps][link-morph-maps]
-- Optional extra payload when sending messages to allow custom json to be stored with the message.
-- Owner relationships returns a `Ghost Profile` when not found (null-object pattern).
-- Private threads auto-lock when the recipient is not found / deleted.
-
-### Upcoming for v2
-- Please see the [2.x Branch][link-2x-branch] for more information.
-
-### Notes
-- This is a `Laravel` package and must be installed in a `laravel` application to run.
-- Read through the [`messenger.php`][link-config] config file before migrating!
-- This is a pure backend driven package providing an API to interact with, thus no web UI or websocket implementation will be setup for you.
-- Calling is disabled by default. You are responsible for implementing your own media server or connecting to a 3rd party provider.
-- Configure your laravel applications broadcast driver and set up your websocket implementation to utilize the real-time broadcast emitted.
-
----
-
-# Installation
-
-### Composer
-
-```bash
-composer require rtippin/messenger
-```
-
-### To complete the setup, please refer to the installation documentation listed below:
-
----
-
-# Documentation
-
-- ### [Install / Registering Providers][link-installation]
-- ### [Configuration][link-configuration]
-- ### [Commands][link-commands]
-- ### [Broadcasting][link-broadcasting]
-- ### [Events][link-events]
-- ### [Chat Bots][link-chat-bots]
-- ### [Calling][link-calling]
-- ### [Messenger Composer][link-messenger-composer]
-- ### [Helpers / Facades][link-helpers]
-- ### [API Explorer][link-api-explorer]
-
----
-
-## Addons / Demo
-
-- [Messenger Bots][link-messenger-bots] - Pre-made bots you can register within this package.
-- [Messenger Faker][link-messenger-faker] - Adds commands useful in development environments to mock/seed realtime events and messages.
-- [Messenger Web UI][link-messenger-ui] - Ready-made web routes and publishable views / assets, including default images.
-- [Demo App][link-demo-source] - A demo laravel app with this core package installed, including a [Live Demo][link-live-demo].
+### TODO
+- Improved API pagination / filters.
+- Condense attachment routes.
+- Removal of friends system.
+- Translations for internal messages.
+- Pinned messages.
+- Chat-bots able to trigger off of an event.
+- Temporary Ephemeral conversations.
+- Overhaul relations / database columns.
+- Allow extending of message types.
+- Rework participant permissions/roles.
+- Possible modularizing components, such as calling and bots, to be separate plugins.
 
 ---
 
@@ -113,26 +47,7 @@ If you discover any security related issues, please email author instead of usin
 [link-test]: https://github.com/RTippin/messenger/actions
 [ico-test]: https://img.shields.io/github/workflow/status/rtippin/messenger/tests?style=plastic
 [link-downloads]: https://packagist.org/packages/rtippin/messenger
-[link-license]: https://packagist.org/packages/rtippin/messenger
 [link-styleci]: https://styleci.io/repos/309521487
 [link-author]: https://github.com/rtippin
-[link-config]: https://github.com/RTippin/messenger/blob/1.x/config/messenger.php
-[link-api-explorer]: https://tippindev.com/api-explorer
-[link-morph-maps]: https://laravel.com/docs/8.x/eloquent-relationships#custom-polymorphic-types
-[link-messenger-bots]: https://github.com/RTippin/messenger-bots
-[link-messenger-faker]: https://github.com/RTippin/messenger-faker
-[link-messenger-ui]: https://github.com/RTippin/messenger-ui
-[link-demo-source]: https://github.com/RTippin/messenger-demo
-[link-live-demo]: https://tippindev.com
-[link-installation]: docs/Installation.md
-[link-configuration]: docs/Configuration.md
-[link-commands]: docs/Commands.md
-[link-broadcasting]: docs/Broadcasting.md
-[link-events]: docs/Events.md
-[link-calling]: docs/Calling.md
-[link-chat-bots]: docs/ChatBots.md
-[link-helpers]: docs/Helpers.md
-[link-messenger-composer]: docs/Composer.md
-[link-changelog]: https://github.com/RTippin/messenger/blob/1.x/CHANGELOG.md
-[link-license]: https://github.com/RTippin/messenger/blob/1.x/LICENSE.md
-[link-2x-branch]: https://github.com/RTippin/messenger/tree/2.x
+[link-changelog]: https://github.com/RTippin/messenger/blob/2.x/CHANGELOG.md
+[link-license]: https://github.com/RTippin/messenger/blob/2.x/LICENSE.md
