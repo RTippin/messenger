@@ -55,7 +55,6 @@ class AssetsTest extends HttpTestCase
             'image' => 'unknown.jpg',
         ]))
             ->assertSuccessful()
-            ->assertHeader('content-type', 'image/png')
             ->assertHeaderMissing('content-disposition')
             ->assertHeader('content-length', 95);
     }
@@ -70,7 +69,6 @@ class AssetsTest extends HttpTestCase
             'image' => 'default.png',
         ]))
             ->assertSuccessful()
-            ->assertHeader('content-type', 'image/png')
             ->assertHeaderMissing('content-disposition')
             ->assertHeader('content-length', 95);
     }
@@ -109,7 +107,6 @@ class AssetsTest extends HttpTestCase
             'image' => 'unknown.jpg',
         ]))
             ->assertSuccessful()
-            ->assertHeader('content-type', 'image/png')
             ->assertHeaderMissing('content-disposition')
             ->assertHeader('content-length', 95);
     }
@@ -125,7 +122,6 @@ class AssetsTest extends HttpTestCase
             'image' => 'default.png',
         ]))
             ->assertSuccessful()
-            ->assertHeader('content-type', 'image/png')
             ->assertHeaderMissing('content-disposition')
             ->assertHeader('content-length', 95);
     }
@@ -168,7 +164,6 @@ class AssetsTest extends HttpTestCase
             'image' => 'unknown.jpg',
         ]))
             ->assertSuccessful()
-            ->assertHeader('content-type', 'image/png')
             ->assertHeaderMissing('content-disposition')
             ->assertHeader('content-length', 95);
     }
@@ -186,7 +181,6 @@ class AssetsTest extends HttpTestCase
             'image' => 'default.png',
         ]))
             ->assertSuccessful()
-            ->assertHeader('content-type', 'image/png')
             ->assertHeaderMissing('content-disposition')
             ->assertHeader('content-length', 95);
     }
@@ -229,7 +223,6 @@ class AssetsTest extends HttpTestCase
             'image' => 'unknown.jpg',
         ]))
             ->assertSuccessful()
-            ->assertHeader('content-type', 'image/png')
             ->assertHeaderMissing('content-disposition')
             ->assertHeader('content-length', 95);
     }
@@ -247,7 +240,6 @@ class AssetsTest extends HttpTestCase
             'image' => 'foo.jpg',
         ]))
             ->assertSuccessful()
-            ->assertHeader('content-type', 'image/png')
             ->assertHeaderMissing('content-disposition')
             ->assertHeader('content-length', 95);
     }
@@ -345,9 +337,7 @@ class AssetsTest extends HttpTestCase
             'thread' => $thread->id,
             'message' => $message->id,
             'audio' => 'foo.mp3',
-        ]).'?stream=true')
-            ->assertSuccessful()
-            ->assertHeader('content-type', 'application/x-empty');
+        ]).'?stream=true')->assertSuccessful();
     }
 
     /** @test */
@@ -421,9 +411,7 @@ class AssetsTest extends HttpTestCase
             'thread' => $thread->id,
             'message' => $message->id,
             'video' => 'foo.mov',
-        ]).'?stream=true')
-            ->assertSuccessful()
-            ->assertHeader('content-type', 'application/x-empty');
+        ]).'?stream=true')->assertSuccessful();
     }
 
     /** @test */
@@ -514,7 +502,6 @@ class AssetsTest extends HttpTestCase
             'image' => 'unknown.jpg',
         ]))
             ->assertSuccessful()
-            ->assertHeader('content-type', 'image/png')
             ->assertHeaderMissing('content-disposition')
             ->assertHeader('content-length', 95);
     }
@@ -531,7 +518,6 @@ class AssetsTest extends HttpTestCase
             'image' => 'default.png',
         ]))
             ->assertSuccessful()
-            ->assertHeader('content-type', 'image/png')
             ->assertHeaderMissing('content-disposition')
             ->assertHeader('content-length', 95);
     }
@@ -549,7 +535,6 @@ class AssetsTest extends HttpTestCase
             'image' => 'avatar.jpg',
         ]))
             ->assertSuccessful()
-            ->assertHeader('content-type', 'image/jpeg')
             ->assertHeaderMissing('content-disposition')
             ->assertHeader('content-length', 7503);
     }
@@ -564,7 +549,6 @@ class AssetsTest extends HttpTestCase
             'image' => 'avatar.png',
         ]))
             ->assertSuccessful()
-            ->assertHeader('content-type', 'image/png')
             ->assertHeaderMissing('content-disposition')
             ->assertHeader('content-length', 95);
     }
