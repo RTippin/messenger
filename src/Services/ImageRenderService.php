@@ -283,6 +283,7 @@ class ImageRenderService
 
     /**
      * @todo Add cache back in
+     *
      * @param  string  $file
      * @param  string  $size
      * @return BinaryFileResponse|Response
