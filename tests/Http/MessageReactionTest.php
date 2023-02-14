@@ -290,7 +290,7 @@ class MessageReactionTest extends HttpTestCase
             ->assertJsonValidationErrors('reaction');
     }
 
-    public function passesEmojiValidation(): array
+    public static function passesEmojiValidation(): array
     {
         return [
             'Basic emoji shortcode' => [':poop:'],
@@ -303,7 +303,7 @@ class MessageReactionTest extends HttpTestCase
         ];
     }
 
-    public function failsEmojiValidation(): array
+    public static function failsEmojiValidation(): array
     {
         return [
             'Unknown emoji shortcode' => [':unknown:'],

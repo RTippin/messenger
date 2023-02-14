@@ -310,7 +310,7 @@ class InvitesTest extends HttpTestCase
             ->assertSuccessful();
     }
 
-    public function inviteValidationFailsUses(): array
+    public static function inviteValidationFailsUses(): array
     {
         return [
             'Uses cannot be empty' => [''],
@@ -322,7 +322,7 @@ class InvitesTest extends HttpTestCase
         ];
     }
 
-    public function inviteValidationFailsExpires(): array
+    public static function inviteValidationFailsExpires(): array
     {
         return [
             'Expires cannot be array' => [[0, 1]],
@@ -333,7 +333,7 @@ class InvitesTest extends HttpTestCase
         ];
     }
 
-    public function inviteValidationPassesExpires(): array
+    public static function inviteValidationPassesExpires(): array
     {
         return [
             'Expires can be 10 minutes from now' => [fn () => now()->addMinutes(10)],

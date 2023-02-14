@@ -236,7 +236,7 @@ class GroupThreadSettingsTest extends HttpTestCase
             ->assertJsonValidationErrors('subject');
     }
 
-    public function settingsFailsValidation(): array
+    public static function settingsFailsValidation(): array
     {
         return [
             'Value cannot be an INT' => [2],
@@ -248,7 +248,7 @@ class GroupThreadSettingsTest extends HttpTestCase
         ];
     }
 
-    public function subjectFailsValidation(): array
+    public static function subjectFailsValidation(): array
     {
         return [
             'Subject cannot be an INT' => [2],

@@ -66,11 +66,12 @@ class HttpTestCase extends FeatureTestCase
      * @param  string  $uri
      * @param  array  $data
      * @param  array  $headers
+     * @param  int  $options
      * @return TestResponse
      */
-    public function json($method, $uri, array $data = [], array $headers = []): TestResponse
+    public function json($method, $uri, array $data = [], array $headers = [], $options = 0): TestResponse
     {
-        $response = parent::json($method, $uri, $data, $headers);
+        $response = parent::json($method, $uri, $data, $headers, $options);
 
         if ($this->shouldLogCurrentRequest) {
             $this->storeTestResponse(

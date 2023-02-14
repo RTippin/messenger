@@ -104,7 +104,7 @@ class StoreSystemMessageTest extends FeatureTestCase
         ]);
     }
 
-    public function messageTypes(): array
+    public static function messageTypes(): array
     {
         return [
             [Message::PARTICIPANT_JOINED_WITH_INVITE],

@@ -158,7 +158,7 @@ class GroupThreadsTest extends HttpTestCase
             ->assertJsonValidationErrors($errors);
     }
 
-    public function subjectFailsValidation(): array
+    public static function subjectFailsValidation(): array
     {
         return [
             'Subject cannot be an INT' => [2],
@@ -171,7 +171,7 @@ class GroupThreadsTest extends HttpTestCase
         ];
     }
 
-    public function providersFailValidation(): array
+    public static function providersFailValidation(): array
     {
         return [
             'Alias and ID cannot be null' => [

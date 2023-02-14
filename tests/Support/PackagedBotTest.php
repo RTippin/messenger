@@ -137,7 +137,7 @@ class PackagedBotTest extends MessengerTestCase
                     'match' => null,
                 ],
                 'errors' => [
-                    'cooldown' => ['The cooldown must be between 0 and 900.'],
+                    'cooldown' => ['The cooldown field must be between 0 and 900.'],
                     'match' => ['The match field is required.'],
                     'triggers' => ['The triggers field is required.'],
                 ],

@@ -75,7 +75,7 @@ class MessengerSettingsTest extends HttpTestCase
             ]);
     }
 
-    public function settingsValidation(): array
+    public static function settingsValidation(): array
     {
         return [
             'Toggle cannot be int and status cannot be null' => [2, null],

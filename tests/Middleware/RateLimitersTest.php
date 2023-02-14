@@ -138,7 +138,7 @@ class RateLimitersTest extends FeatureTestCase
         $this->assertFalse($response->headers->has('X-RateLimit-Remaining'));
     }
 
-    public function attachments(): array
+    public static function attachments(): array
     {
         return [
             'Image' => ['api.messenger.threads.images.store', 'image', UploadedFile::fake()->image('picture.png')],

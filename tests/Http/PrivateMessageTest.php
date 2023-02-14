@@ -356,7 +356,7 @@ class PrivateMessageTest extends HttpTestCase
             ]);
     }
 
-    public function messagePassesValidation(): array
+    public static function messagePassesValidation(): array
     {
         return [
             'Fields can be one character' => ['x', 'x'],
@@ -366,7 +366,7 @@ class PrivateMessageTest extends HttpTestCase
         ];
     }
 
-    public function messageFailsValidation(): array
+    public static function messageFailsValidation(): array
     {
         return [
             'Fields cannot be empty' => ['', ''],
@@ -379,7 +379,7 @@ class PrivateMessageTest extends HttpTestCase
         ];
     }
 
-    public function messageExtraFailsValidation(): array
+    public static function messageExtraFailsValidation(): array
     {
         return [
             'Cannot be string' => ['yes'],
@@ -388,7 +388,7 @@ class PrivateMessageTest extends HttpTestCase
         ];
     }
 
-    public function messageExtraPassesValidation(): array
+    public static function messageExtraPassesValidation(): array
     {
         return [
             'Can be array' => [['testing' => true], ['testing' => true]],

@@ -282,6 +282,7 @@ class ImageRenderService
     }
 
     /**
+     * @todo Add cache back in
      * @param  string  $file
      * @param  string  $size
      * @return BinaryFileResponse|Response
@@ -301,11 +302,15 @@ class ImageRenderService
                 ? $width = null
                 : $height = null;
 
-            $resize = $this->imageManager->cache(function ($image) use ($file, $width, $height) {
-                return $image->make($file)->resize($width, $height, function ($constraint) {
-                    $constraint->aspectRatio();
-                });
-            }, 120);
+//            $resize = $this->imageManager->cache(function ($image) use ($file, $width, $height) {
+//                return $image->make($file)->resize($width, $height, function ($constraint) {
+//                    $constraint->aspectRatio();
+//                });
+//            }, 120);
+
+            $resize = $this->imageManager->make($file)->resize($width, $height, function ($constraint) {
+                $constraint->aspectRatio();
+            });
 
             return $this->imageManager->make($resize)->response();
         } catch (Exception $e) {

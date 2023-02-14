@@ -316,7 +316,7 @@ class BotActionTest extends FeatureTestCase
         $this->assertSame($result, $results);
     }
 
-    public function triggersGetFormatted(): array
+    public static function triggersGetFormatted(): array
     {
         return [
             'Single trigger' => ['test', 'test'],

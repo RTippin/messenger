@@ -56,7 +56,7 @@ class StatusHeartbeatTest extends HttpTestCase
             ->assertJsonValidationErrors('away');
     }
 
-    public function awayValidation(): array
+    public static function awayValidation(): array
     {
         return [
             'Away cannot be empty' => [''],

@@ -98,7 +98,7 @@ class FindRecipientThreadTest extends HttpTestCase
             ->assertNotFound();
     }
 
-    public function locatorValidation(): array
+    public static function locatorValidation(): array
     {
         return [
             'Not found user INT ID' => ['user', 404],

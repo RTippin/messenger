@@ -189,7 +189,7 @@ class DocumentMessageTest extends HttpTestCase
             ->assertJsonValidationErrors('document');
     }
 
-    public function documentFailsValidation(): array
+    public static function documentFailsValidation(): array
     {
         return [
             'Document cannot be empty' => [''],
@@ -205,7 +205,7 @@ class DocumentMessageTest extends HttpTestCase
         ];
     }
 
-    public function documentPassesValidation(): array
+    public static function documentPassesValidation(): array
     {
         return [
             'Document can be pdf file' => [UploadedFile::fake()->create('test.pdf', 500, 'application/pdf')],

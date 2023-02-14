@@ -1,6 +1,6 @@
 /vendor
 /.idea
 composer.lock
-.phpunit.result.cache
+/.phpunit.cache
 _ide_helper.php
 .phpstorm.meta.php

@@ -182,7 +182,7 @@ class ImageMessageTest extends HttpTestCase
             ->assertJsonValidationErrors('image');
     }
 
-    public function imageFailedValidation(): array
+    public static function imageFailedValidation(): array
     {
         return [
             'Image cannot be empty' => [''],
@@ -197,7 +197,7 @@ class ImageMessageTest extends HttpTestCase
         ];
     }
 
-    public function imagePassesValidation(): array
+    public static function imagePassesValidation(): array
     {
         return [
             'Image can be jpeg' => [UploadedFile::fake()->create('image.jpeg', 500, 'image/jpeg')],

@@ -236,7 +236,7 @@ class BotAvatarTest extends HttpTestCase
             ->assertJsonValidationErrors('image');
     }
 
-    public function avatarFailedValidation(): array
+    public static function avatarFailedValidation(): array
     {
         return [
             'Avatar cannot be empty' => [''],
@@ -251,7 +251,7 @@ class BotAvatarTest extends HttpTestCase
         ];
     }
 
-    public function avatarPassesValidation(): array
+    public static function avatarPassesValidation(): array
     {
         return [
             'Avatar can be jpeg' => [UploadedFile::fake()->create('image.jpeg', 500, 'image/jpeg')],

@@ -192,7 +192,7 @@ class PrivateThreadsTest extends HttpTestCase
             ->assertJsonValidationErrors($errors);
     }
 
-    public function messageFailsValidation(): array
+    public static function messageFailsValidation(): array
     {
         return [
             'Message cannot be empty' => [''],
@@ -204,7 +204,7 @@ class PrivateThreadsTest extends HttpTestCase
         ];
     }
 
-    public function recipientFailsValidation(): array
+    public static function recipientFailsValidation(): array
     {
         return [
             'Alias and ID cannot be empty' => ['', '', ['recipient_alias', 'recipient_id']],

@@ -189,7 +189,7 @@ class AudioMessageTest extends HttpTestCase
             ->assertJsonValidationErrors('audio');
     }
 
-    public function audioFailsValidation(): array
+    public static function audioFailsValidation(): array
     {
         return [
             'Audio cannot be empty' => [''],
@@ -203,7 +203,7 @@ class AudioMessageTest extends HttpTestCase
         ];
     }
 
-    public function audioPassesValidation(): array
+    public static function audioPassesValidation(): array
     {
         return [
             'Audio can be 10240 kb max limit' => [UploadedFile::fake()->create('test.mp3', 10240, 'audio/mpeg')],

@@ -195,7 +195,7 @@ class BotMatchingServiceTest extends FeatureTestCase
         $this->assertFalse($this->service->matches(MessengerBots::MATCH_CONTAINS_ANY_CASELESS, '!Contains', $string));
     }
 
-    public function stringMatchesExact(): array
+    public static function stringMatchesExact(): array
     {
         return [
             'Exact string' => ['!Exact'],
@@ -205,7 +205,7 @@ class BotMatchingServiceTest extends FeatureTestCase
         ];
     }
 
-    public function stringMatchesManyTriggers(): array
+    public static function stringMatchesManyTriggers(): array
     {
         return [
             ['!Exact'],
@@ -215,7 +215,7 @@ class BotMatchingServiceTest extends FeatureTestCase
         ];
     }
 
-    public function stringMatchesExactCaseless(): array
+    public static function stringMatchesExactCaseless(): array
     {
         return [
             'Exact caseless string' => ['!ExAcT'],
@@ -225,7 +225,7 @@ class BotMatchingServiceTest extends FeatureTestCase
         ];
     }
 
-    public function stringNotExact(): array
+    public static function stringNotExact(): array
     {
         return [
             'Contains another letter' => ['!Exactt'],
@@ -237,7 +237,7 @@ class BotMatchingServiceTest extends FeatureTestCase
         ];
     }
 
-    public function stringMatchesStartsWith(): array
+    public static function stringMatchesStartsWith(): array
     {
         return [
             'Starts-with exact string' => ['!Starts'],
@@ -249,7 +249,7 @@ class BotMatchingServiceTest extends FeatureTestCase
         ];
     }
 
-    public function stringMatchesStartsWithCaseless(): array
+    public static function stringMatchesStartsWithCaseless(): array
     {
         return [
             'Starts-with exact string' => ['!StArTs'],
@@ -261,7 +261,7 @@ class BotMatchingServiceTest extends FeatureTestCase
         ];
     }
 
-    public function stringNotStartsWith(): array
+    public static function stringNotStartsWith(): array
     {
         return [
             'Contains another letter' => ['!Startss'],
@@ -271,7 +271,7 @@ class BotMatchingServiceTest extends FeatureTestCase
         ];
     }
 
-    public function stringMatchesContains(): array
+    public static function stringMatchesContains(): array
     {
         return [
             'Contains exact string' => ['!Contains'],
@@ -284,7 +284,7 @@ class BotMatchingServiceTest extends FeatureTestCase
         ];
     }
 
-    public function stringMatchesContainsCaseless(): array
+    public static function stringMatchesContainsCaseless(): array
     {
         return [
             'Contains exact string' => ['!CoNtAiNs'],
@@ -297,7 +297,7 @@ class BotMatchingServiceTest extends FeatureTestCase
         ];
     }
 
-    public function stringNotContains(): array
+    public static function stringNotContains(): array
     {
         return [
             'Ends with another letter' => ['!Containss something'],
@@ -307,7 +307,7 @@ class BotMatchingServiceTest extends FeatureTestCase
         ];
     }
 
-    public function stringMatchesContainsAny(): array
+    public static function stringMatchesContainsAny(): array
     {
         return [
             'Part of a leading string' => ['testing!Contains'],
@@ -316,7 +316,7 @@ class BotMatchingServiceTest extends FeatureTestCase
         ];
     }
 
-    public function stringMatchesContainsAnyCaseless(): array
+    public static function stringMatchesContainsAnyCaseless(): array
     {
         return [
             'Part of a leading string' => ['testing!CoNtaInS'],
@@ -325,7 +325,7 @@ class BotMatchingServiceTest extends FeatureTestCase
         ];
     }
 
-    public function stringNotContainsAny(): array
+    public static function stringNotContainsAny(): array
     {
         return [
             'Missing letter' => ['!Contain'],

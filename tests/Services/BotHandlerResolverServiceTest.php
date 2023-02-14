@@ -443,7 +443,7 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
         }
     }
 
-    public function baseRulesetFailsValidation(): array
+    public static function baseRulesetFailsValidation(): array
     {
         return [
             'Attempt 1' => [null, null, null, null, null],
@@ -455,7 +455,7 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
         ];
     }
 
-    public function triggersFailValidation(): array
+    public static function triggersFailValidation(): array
     {
         return [
             'Cannot be empty array' => [[[]], ['triggers.0']],
@@ -469,7 +469,7 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
         ];
     }
 
-    public function passesValidatingMatches(): array
+    public static function passesValidatingMatches(): array
     {
         return [
             'any' => [MessengerBots::MATCH_ANY],
@@ -484,7 +484,7 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
         ];
     }
 
-    public function passesValidatingCooldown(): array
+    public static function passesValidatingCooldown(): array
     {
         return [
             'Can be lowest value' => [0],
@@ -495,7 +495,7 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
         ];
     }
 
-    public function handlerRulesFailValidation(): array
+    public static function handlerRulesFailValidation(): array
     {
         return [
             'Attempt 1' => [null, ['test']],

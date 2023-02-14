@@ -189,7 +189,7 @@ class VideoMessageTest extends HttpTestCase
             ->assertJsonValidationErrors('video');
     }
 
-    public function videoFailsValidation(): array
+    public static function videoFailsValidation(): array
     {
         return [
             'Video cannot be empty' => [''],
@@ -204,7 +204,7 @@ class VideoMessageTest extends HttpTestCase
         ];
     }
 
-    public function videoPassesValidation(): array
+    public static function videoPassesValidation(): array
     {
         return [
             'Video can be avi' => [UploadedFile::fake()->create('video.avi', 500, 'video/x-msvideo')],

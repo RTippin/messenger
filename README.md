@@ -18,6 +18,7 @@
 |---------|:--------------------:|------------:|
 | `8.x`   | `^7.4` `^8.0` `^8.1` | `<= 1.19.1` |
 | `9.x`   |   `^8.0.2` `^8.1`    | `>= 1.20.0` |
+| `10.x`  |    `^8.1` `^8.2`     | `>= 1.22.0` |
 
 - Route model binding enabled in your API / WEB middleware groups.
 
@@ -111,7 +112,7 @@ If you discover any security related issues, please email author instead of usin
 [ico-license]: https://img.shields.io/github/license/RTippin/messenger?style=plastic
 [link-packagist]: https://packagist.org/packages/rtippin/messenger
 [link-test]: https://github.com/RTippin/messenger/actions
-[ico-test]: https://img.shields.io/github/workflow/status/rtippin/messenger/tests?style=plastic
+[ico-test]: https://img.shields.io/github/actions/workflow/status/rtippin/messenger/test.yml?branch=1.x&style=plastic
 [link-downloads]: https://packagist.org/packages/rtippin/messenger
 [link-license]: https://packagist.org/packages/rtippin/messenger
 [link-styleci]: https://styleci.io/repos/309521487

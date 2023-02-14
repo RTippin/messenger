@@ -174,7 +174,7 @@ class UpdateParticipantPermissionsTest extends HttpTestCase
             ]);
     }
 
-    public function permissionsValidation(): array
+    public static function permissionsValidation(): array
     {
         return [
             'Values cannot be empty' => [''],

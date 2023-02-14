@@ -499,7 +499,7 @@ class BotsTest extends HttpTestCase
             ->assertSuccessful();
     }
 
-    public function botFailsValidation(): array
+    public static function botFailsValidation(): array
     {
         return [
             'All values required' => [null, null, null, null, ['name', 'enabled', 'hide_actions', 'cooldown']],
@@ -512,7 +512,7 @@ class BotsTest extends HttpTestCase
         ];
     }
 
-    public function botPassesValidation(): array
+    public static function botPassesValidation(): array
     {
         return [
             'Bot name min 2 characters, false booleans, min 0 cooldown' => ['Te', false, false, 0],

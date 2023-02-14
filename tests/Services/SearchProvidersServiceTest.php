@@ -138,7 +138,7 @@ class SearchProvidersServiceTest extends FeatureTestCase
         $this->assertSame($expected, $search);
     }
 
-    public function splitQueries(): array
+    public static function splitQueries(): array
     {
         return [
             ['Tippin', ['Tippin']],
@@ -148,7 +148,7 @@ class SearchProvidersServiceTest extends FeatureTestCase
         ];
     }
 
-    public function splitQueriesDuplicates(): array
+    public static function splitQueriesDuplicates(): array
     {
         return [
             ['Tippin Tippin', ['Tippin']],

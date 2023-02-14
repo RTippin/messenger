@@ -276,7 +276,7 @@ class AddParticipantsTest extends HttpTestCase
             ->assertJsonValidationErrors($errors);
     }
 
-    public function providersValidation(): array
+    public static function providersValidation(): array
     {
         return [
             'Alias and ID cannot be null' => [

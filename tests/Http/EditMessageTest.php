@@ -239,7 +239,7 @@ class EditMessageTest extends HttpTestCase
             ->assertJsonValidationErrors('message');
     }
 
-    public function editPassesValidation(): array
+    public static function editPassesValidation(): array
     {
         return [
             'Edit can be one character' => ['x'],
@@ -249,7 +249,7 @@ class EditMessageTest extends HttpTestCase
         ];
     }
 
-    public function editFailsValidation(): array
+    public static function editFailsValidation(): array
     {
         return [
             'Edit cannot be empty' => [''],

@@ -118,7 +118,7 @@ class InstallBotPackageTest extends HttpTestCase
             ->assertJsonValidationErrors(['alias']);
     }
 
-    public function aliasFailsValidation(): array
+    public static function aliasFailsValidation(): array
     {
         return [
             'Alias is required' => [null],

@@ -143,7 +143,7 @@ trait HelperTrait
         );
     }
 
-    public function modelsWithOwner(): array
+    public static function modelsWithOwner(): array
     {
         return [
             'Bot Model' => [

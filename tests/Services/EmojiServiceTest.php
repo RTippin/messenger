@@ -87,7 +87,7 @@ class EmojiServiceTest extends MessengerTestCase
         $this->assertSame($expected, $this->emoji->toShort($string));
     }
 
-    public function stringInputs(): array
+    public static function stringInputs(): array
     {
         return [
             ['Test string. No emoji to see here.', 'Test string. No emoji to see here.'],
@@ -103,7 +103,7 @@ class EmojiServiceTest extends MessengerTestCase
         ];
     }
 
-    public function hasEmojiStrings(): array
+    public static function hasEmojiStrings(): array
     {
         return [
             ['We are 😀', 'We are :grinning:'],
@@ -116,7 +116,7 @@ class EmojiServiceTest extends MessengerTestCase
         ];
     }
 
-    public function doesntHaveEmojiStrings(): array
+    public static function doesntHaveEmojiStrings(): array
     {
         return [
             ['Test string. No emoji to see here.'],
@@ -127,7 +127,7 @@ class EmojiServiceTest extends MessengerTestCase
         ];
     }
 
-    public function hasShortcodeResponse(): array
+    public static function hasShortcodeResponse(): array
     {
         return [
             ['We are 😀', [':grinning:']],
@@ -138,7 +138,7 @@ class EmojiServiceTest extends MessengerTestCase
         ];
     }
 
-    public function hasSingleShortcodeResponse(): array
+    public static function hasSingleShortcodeResponse(): array
     {
         return [
             ['We are 😀', ':grinning:'],
