@@ -17,9 +17,10 @@
     "require": {
         "php": "^8.1|^8.2",
         "ext-json": "*",
-        "laravel/framework": "^10.0",
+        "intervention/image": "^2.5",
+        "intervention/imagecache": "^2.5",
         "joypixels/emoji-toolkit": "^6.0",
-        "intervention/image": "^2.5"
+        "laravel/framework": "^10.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^10.0",
