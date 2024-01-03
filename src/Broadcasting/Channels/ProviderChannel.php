@@ -24,7 +24,7 @@ class ProviderChannel
     /**
      * Authenticate the provider's access to the channel.
      *
-     * @param $user
+     * @param  $user
      * @param  string|null  $alias
      * @param  string|null  $id
      * @return bool

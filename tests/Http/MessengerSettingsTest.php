@@ -46,10 +46,11 @@ class MessengerSettingsTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider settingsValidation
      *
-     * @param $boolInput
-     * @param $intInput
+     * @param  $boolInput
+     * @param  $intInput
      */
     public function updating_messenger_settings_checks_booleans_and_integer($boolInput, $intInput)
     {

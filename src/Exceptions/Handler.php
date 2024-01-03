@@ -66,8 +66,8 @@ class Handler implements ExceptionHandlerContract
     }
 
     /**
-     * @param $method
-     * @param $parameters
+     * @param  $method
+     * @param  $parameters
      * @return mixed
      */
     public function __call($method, $parameters)

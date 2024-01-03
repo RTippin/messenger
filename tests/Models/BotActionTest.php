@@ -305,8 +305,9 @@ class BotActionTest extends FeatureTestCase
     /**
      * @test
      *
-     * @param $triggers
-     * @param $result
+     * @param  $triggers
+     * @param  $result
+     *
      * @dataProvider triggersGetFormatted
      */
     public function it_formats_triggers($triggers, $result)

@@ -242,7 +242,7 @@ final class MessengerBots
         }
 
         return $this->handlers->search(
-            fn (BotActionHandlerDTO $handler) =>  $handler->alias === $handlerOrAlias
+            fn (BotActionHandlerDTO $handler) => $handler->alias === $handlerOrAlias
         ) ?: null;
     }
 
@@ -406,7 +406,7 @@ final class MessengerBots
         }
 
         return $this->packagedBots->search(
-            fn (PackagedBotDTO $package) =>  $package->alias === $packageOrAlias
+            fn (PackagedBotDTO $package) => $package->alias === $packageOrAlias
         ) ?: null;
     }
 

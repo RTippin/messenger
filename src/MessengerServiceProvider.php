@@ -153,7 +153,7 @@ class MessengerServiceProvider extends ServiceProvider
      * Prepend our API middleware, merge additional
      * middleware, append throttle middleware.
      *
-     * @param $middleware
+     * @param  $middleware
      * @return array
      */
     private function mergeApiMiddleware($middleware): array

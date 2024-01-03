@@ -147,9 +147,10 @@ class DocumentMessageTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider documentPassesValidation
      *
-     * @param $documentValue
+     * @param  $documentValue
      */
     public function send_document_message_passes_document_validation($documentValue)
     {
@@ -168,9 +169,10 @@ class DocumentMessageTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider documentFailsValidation
      *
-     * @param $documentValue
+     * @param  $documentValue
      */
     public function send_document_message_fails_document_validation($documentValue)
     {

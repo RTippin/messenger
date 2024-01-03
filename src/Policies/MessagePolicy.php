@@ -30,7 +30,7 @@ class MessagePolicy
     /**
      * Determine whether the provider can view messages.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -44,7 +44,7 @@ class MessagePolicy
     /**
      * Determine whether the provider can view the message.
      *
-     * @param $user
+     * @param  $user
      * @param  Message  $message
      * @param  Thread  $thread
      * @return Response
@@ -60,7 +60,7 @@ class MessagePolicy
     /**
      * Determine whether the provider can view the message edits.
      *
-     * @param $user
+     * @param  $user
      * @param  Message  $message
      * @param  Thread  $thread
      * @return Response
@@ -79,7 +79,7 @@ class MessagePolicy
     /**
      * Determine whether the provider can create a message.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -93,7 +93,7 @@ class MessagePolicy
     /**
      * Determine whether the provider can create a document message.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -107,7 +107,7 @@ class MessagePolicy
     /**
      * Determine whether the provider can create an audio message.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -121,7 +121,7 @@ class MessagePolicy
     /**
      * Determine whether the provider can create an image message.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -135,7 +135,7 @@ class MessagePolicy
     /**
      * Determine whether the provider can create a video message.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -149,7 +149,7 @@ class MessagePolicy
     /**
      * Determine whether the provider can edit the message.
      *
-     * @param $user
+     * @param  $user
      * @param  Message  $message
      * @param  Thread  $thread
      * @return Response
@@ -167,7 +167,7 @@ class MessagePolicy
     /**
      * Determine whether the provider can remove embeds from the message.
      *
-     * @param $user
+     * @param  $user
      * @param  Message  $message
      * @param  Thread  $thread
      * @return Response
@@ -186,7 +186,7 @@ class MessagePolicy
     /**
      * Determine whether the provider can delete the message.
      *
-     * @param $user
+     * @param  $user
      * @param  Message  $message
      * @param  Thread  $thread
      * @return Response

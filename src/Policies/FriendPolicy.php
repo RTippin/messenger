@@ -29,7 +29,7 @@ class FriendPolicy
     /**
      * Determine whether the provider can view friends.
      *
-     * @param $user
+     * @param  $user
      * @return Response
      */
     public function viewAny($user): Response
@@ -40,7 +40,7 @@ class FriendPolicy
     /**
      * Determine whether the provider can view a friend.
      *
-     * @param $user
+     * @param  $user
      * @param  Friend  $friend
      * @return Response
      */
@@ -55,7 +55,7 @@ class FriendPolicy
     /**
      * Determine whether the provider can delete the friend.
      *
-     * @param $user
+     * @param  $user
      * @param  Friend  $friend
      * @return Response
      */

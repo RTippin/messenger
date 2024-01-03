@@ -12,6 +12,7 @@ use RTippin\Messenger\Models\Bot;
  * @property string|int $owner_id
  * @property string $owner_type
  * @property-read Model|MessengerProvider $owner
+ *
  * @mixin Model|\Eloquent
  */
 trait HasOwner

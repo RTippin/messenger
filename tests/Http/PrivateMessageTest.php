@@ -261,10 +261,11 @@ class PrivateMessageTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider messagePassesValidation
      *
-     * @param $messageValue
-     * @param $tempIdValue
+     * @param  $messageValue
+     * @param  $tempIdValue
      */
     public function send_message_passes_validations($messageValue, $tempIdValue)
     {
@@ -282,10 +283,11 @@ class PrivateMessageTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider messageFailsValidation
      *
-     * @param $messageValue
-     * @param $tempIdValue
+     * @param  $messageValue
+     * @param  $tempIdValue
      */
     public function send_message_fails_validations($messageValue, $tempIdValue)
     {
@@ -308,9 +310,10 @@ class PrivateMessageTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider messageExtraFailsValidation
      *
-     * @param $extraValue
+     * @param  $extraValue
      */
     public function send_message_extra_fails_validation($extraValue)
     {
@@ -333,10 +336,11 @@ class PrivateMessageTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider messageExtraPassesValidation
      *
-     * @param $extraValue
-     * @param $extraOutput
+     * @param  $extraValue
+     * @param  $extraOutput
      */
     public function send_message_extra_passes_validation($extraValue, $extraOutput)
     {

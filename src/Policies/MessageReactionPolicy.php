@@ -31,7 +31,7 @@ class MessageReactionPolicy
     /**
      * Determine whether the provider can view message reactions.
      *
-     * @param $user
+     * @param  $user
      * @param  Message  $message
      * @param  Thread  $thread
      * @return Response
@@ -47,7 +47,7 @@ class MessageReactionPolicy
     /**
      * Determine whether the provider can create a message reaction.
      *
-     * @param $user
+     * @param  $user
      * @param  Message  $message
      * @param  Thread  $thread
      * @return Response
@@ -65,7 +65,7 @@ class MessageReactionPolicy
     /**
      * Determine whether the provider can delete the message reaction.
      *
-     * @param $user
+     * @param  $user
      * @param  MessageReaction  $reaction
      * @param  Thread  $thread
      * @param  Message  $message

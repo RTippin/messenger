@@ -82,10 +82,11 @@ class FindRecipientThreadTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider locatorValidation
      *
-     * @param $alias
-     * @param $id
+     * @param  $alias
+     * @param  $id
      */
     public function private_thread_locator_returns_not_found_on_invalid_id_or_alias($alias, $id)
     {

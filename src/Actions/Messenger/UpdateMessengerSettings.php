@@ -47,13 +47,13 @@ class UpdateMessengerSettings extends BaseMessengerAction
         switch ($onlineStatus) {
             case 0:
                 $this->messenger->setProviderToOffline();
-            break;
+                break;
             case 1:
                 $this->messenger->setProviderToOnline();
-            break;
+                break;
             case 2:
                 $this->messenger->setProviderToAway();
-            break;
+                break;
         }
     }
 }

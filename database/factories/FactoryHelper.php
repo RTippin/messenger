@@ -9,7 +9,7 @@ trait FactoryHelper
     /**
      * Owner relation to add.
      *
-     * @param $owner
+     * @param  $owner
      * @return $this
      */
     public function owner($owner): self

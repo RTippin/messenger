@@ -157,10 +157,10 @@ class EditMessage extends BaseMessengerAction
     private function generateResource(): void
     {
         $this->setJsonResource(new MessageResource(
-                $this->getMessage(),
-                $this->getThread(),
-                true
-            )
+            $this->getMessage(),
+            $this->getThread(),
+            true
+        )
         );
     }
 

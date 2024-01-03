@@ -142,9 +142,10 @@ class ImageMessageTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider imagePassesValidation
      *
-     * @param $imageValue
+     * @param  $imageValue
      */
     public function send_image_message_upload_passes_validation($imageValue)
     {
@@ -162,9 +163,10 @@ class ImageMessageTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider imageFailedValidation
      *
-     * @param $imageValue
+     * @param  $imageValue
      */
     public function send_image_message_upload_fails_validation($imageValue)
     {

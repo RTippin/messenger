@@ -14,7 +14,7 @@ class BotPolicy
     /**
      * Determine whether the provider can view thread bots.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -29,7 +29,7 @@ class BotPolicy
     /**
      * Determine whether the provider can view the bot.
      *
-     * @param $user
+     * @param  $user
      * @param  Bot  $bot
      * @param  Thread  $thread
      * @return Response
@@ -46,7 +46,7 @@ class BotPolicy
     /**
      * Determine whether the provider can create a new bot.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -60,7 +60,7 @@ class BotPolicy
     /**
      * Determine whether the provider can edit the bot.
      *
-     * @param $user
+     * @param  $user
      * @param  Bot  $bot
      * @param  Thread  $thread
      * @return Response
@@ -76,7 +76,7 @@ class BotPolicy
     /**
      * Determine whether the provider can delete the bot.
      *
-     * @param $user
+     * @param  $user
      * @param  Bot  $bot
      * @param  Thread  $thread
      * @return Response

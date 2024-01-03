@@ -30,7 +30,7 @@ class InvitePolicy
     /**
      * Determine whether the provider can view thread invites.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -44,7 +44,7 @@ class InvitePolicy
     /**
      * Determine whether the provider can create a thread invite.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -63,7 +63,7 @@ class InvitePolicy
     /**
      * Determine whether the provider can delete the invite.
      *
-     * @param $user
+     * @param  $user
      * @param  Invite  $invite
      * @param  Thread  $thread
      * @return Response
@@ -79,7 +79,7 @@ class InvitePolicy
     /**
      * Determine whether the provider can join using the invite.
      *
-     * @param $user
+     * @param  $user
      * @param  Invite  $code
      * @return Response
      */

@@ -270,37 +270,37 @@ abstract class MessengerCollection extends ResourceCollection
         switch ($this->collectionType) {
             case 'threads':
                 $model = app(ThreadRepository::class)->getProviderOldestThread();
-            break;
+                break;
             case 'groups':
                 $model = app(GroupThreadRepository::class)->getProviderOldestGroupThread();
-            break;
+                break;
             case 'privates':
                 $model = app(PrivateThreadRepository::class)->getProviderOldestPrivateThread();
-            break;
+                break;
             case 'participants':
                 $model = $this->thread->participants()->latest()->first();
-            break;
+                break;
             case 'messages':
                 $model = $this->thread->messages()->oldest()->first();
-            break;
+                break;
             case 'calls':
                 $model = $this->thread->calls()->videoCall()->oldest()->first();
-            break;
+                break;
             case 'logs':
                 $model = $this->thread->messages()->system()->oldest()->first();
-            break;
+                break;
             case 'images':
                 $model = $this->thread->messages()->image()->oldest()->first();
-            break;
+                break;
             case 'audio':
                 $model = $this->thread->messages()->audio()->oldest()->first();
-            break;
+                break;
             case 'documents':
                 $model = $this->thread->messages()->document()->oldest()->first();
-            break;
+                break;
             case 'videos':
                 $model = $this->thread->messages()->video()->oldest()->first();
-            break;
+                break;
         }
 
         return (bool) $this->collection->firstWhere('id', optional($model)->getKey());

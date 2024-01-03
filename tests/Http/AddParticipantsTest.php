@@ -257,10 +257,11 @@ class AddParticipantsTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider providersValidation
      *
-     * @param $providers
-     * @param $errors
+     * @param  $providers
+     * @param  $errors
      */
     public function add_participants_checks_providers($providers, $errors)
     {

@@ -27,7 +27,7 @@ class SearchCollection extends MessengerCollection
     /**
      * SearchCollection constructor.
      *
-     * @param $resource
+     * @param  $resource
      * @param  null  $searchQuery
      * @param  array|null  $searchQueryItems
      * @param  bool  $addOptions

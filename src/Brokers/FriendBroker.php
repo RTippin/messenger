@@ -219,7 +219,7 @@ class FriendBroker implements FriendDriver
     }
 
     /**
-     * @param $model
+     * @param  $model
      * @return Friend|null
      */
     private function getFriend($model): ?Friend
@@ -232,7 +232,7 @@ class FriendBroker implements FriendDriver
     }
 
     /**
-     * @param $model
+     * @param  $model
      * @return SentFriend|null
      */
     private function getSentFriend($model): ?SentFriend
@@ -245,7 +245,7 @@ class FriendBroker implements FriendDriver
     }
 
     /**
-     * @param $model
+     * @param  $model
      * @return PendingFriend|null
      */
     private function getPendingFriend($model): ?PendingFriend

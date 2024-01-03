@@ -419,9 +419,10 @@ class BroadcastBrokerTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider modelsWithOwner
      *
-     * @param $model
+     * @param  $model
      */
     public function it_broadcast_to_ownerable_models_owner($model)
     {

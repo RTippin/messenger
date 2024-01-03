@@ -15,7 +15,7 @@ class CallParticipantPolicy
     /**
      * Determine whether the provider can view call participants.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @param  Call  $call
      * @return Response
@@ -31,7 +31,7 @@ class CallParticipantPolicy
     /**
      * Determine whether the provider can view the call participant.
      *
-     * @param $user
+     * @param  $user
      * @param  CallParticipant  $participant
      * @param  Thread  $thread
      * @param  Call  $call
@@ -52,7 +52,7 @@ class CallParticipantPolicy
     /**
      * Determine whether the provider can update the call participant.
      *
-     * @param $user
+     * @param  $user
      * @param  CallParticipant  $participant
      * @param  Thread  $thread
      * @param  Call  $call
