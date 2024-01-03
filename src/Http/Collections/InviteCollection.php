@@ -13,7 +13,7 @@ class InviteCollection extends MessengerCollection
     /**
      * InviteCollection constructor.
      *
-     * @param $resource
+     * @param  $resource
      * @param  Thread  $thread
      */
     public function __construct($resource, Thread $thread)

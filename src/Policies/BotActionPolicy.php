@@ -15,7 +15,7 @@ class BotActionPolicy
     /**
      * Determine whether the provider can view bot actions.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @param  Bot  $bot
      * @return Response
@@ -34,7 +34,7 @@ class BotActionPolicy
     /**
      * Determine whether the provider can view the bot action.
      *
-     * @param $user
+     * @param  $user
      * @param  BotAction  $action
      * @param  Thread  $thread
      * @param  Bot  $bot
@@ -58,7 +58,7 @@ class BotActionPolicy
     /**
      * Determine whether the provider can create a new bot action.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @param  Bot  $bot
      * @return Response
@@ -74,7 +74,7 @@ class BotActionPolicy
     /**
      * Determine whether the provider can edit the bot action.
      *
-     * @param $user
+     * @param  $user
      * @param  BotAction  $action
      * @param  Thread  $thread
      * @param  Bot  $bot
@@ -95,7 +95,7 @@ class BotActionPolicy
     /**
      * Determine whether the provider can delete the bot action.
      *
-     * @param $user
+     * @param  $user
      * @param  BotAction  $action
      * @param  Thread  $thread
      * @param  Bot  $bot

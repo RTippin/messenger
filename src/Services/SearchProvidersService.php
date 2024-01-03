@@ -139,7 +139,7 @@ class SearchProvidersService
     }
 
     /**
-     * @param $query
+     * @param  $query
      * @return SearchProvidersService
      */
     private function sanitizeQuery($query): self

@@ -118,7 +118,7 @@ class MessageTransformer
         return [
             $thread,
             $provider,
-            ($thread->isGroup() ? 'archived the group' : 'archived the conversation'),
+            $thread->isGroup() ? 'archived the group' : 'archived the conversation',
             Message::THREAD_ARCHIVED,
         ];
     }

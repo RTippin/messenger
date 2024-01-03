@@ -40,7 +40,7 @@ class InviteFactory extends Factory
     /**
      * Indicate thread is a group.
      *
-     * @param $expires
+     * @param  $expires
      * @return $this
      */
     public function expires($expires): self

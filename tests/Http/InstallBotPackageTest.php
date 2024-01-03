@@ -98,9 +98,10 @@ class InstallBotPackageTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider aliasFailsValidation
      *
-     * @param $alias
+     * @param  $alias
      */
     public function install_packaged_bot_fails_alias_validation($alias)
     {

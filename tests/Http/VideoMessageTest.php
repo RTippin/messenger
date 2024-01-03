@@ -147,9 +147,10 @@ class VideoMessageTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider videoPassesValidation
      *
-     * @param $videoValue
+     * @param  $videoValue
      */
     public function send_video_message_passes_video_validation($videoValue)
     {
@@ -168,9 +169,10 @@ class VideoMessageTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider videoFailsValidation
      *
-     * @param $videoValue
+     * @param  $videoValue
      */
     public function send_video_message_fails_video_validation($videoValue)
     {

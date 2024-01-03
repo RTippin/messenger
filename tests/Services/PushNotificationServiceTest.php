@@ -109,7 +109,7 @@ class PushNotificationServiceTest extends FeatureTestCase
                 ->push(CompanyModel::get())
                 ->values()
                 ->flatten()
-            )
+        )
             ->with(self::WITH)
             ->notify(FakeNotifyEvent::class);
 
@@ -180,9 +180,10 @@ class PushNotificationServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider modelsWithOwner
      *
-     * @param $model
+     * @param  $model
      */
     public function it_notifies_ownerable_models_owner($model)
     {

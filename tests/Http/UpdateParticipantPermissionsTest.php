@@ -141,9 +141,10 @@ class UpdateParticipantPermissionsTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider permissionsValidation
      *
-     * @param $permissionValue
+     * @param  $permissionValue
      */
     public function update_group_participant_checks_boolean_values($permissionValue)
     {

@@ -112,10 +112,11 @@ class SearchProvidersServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider splitQueries
      *
-     * @param $query
-     * @param $expected
+     * @param  $query
+     * @param  $expected
      */
     public function it_splits_query_by_space_or_comma_into_array($query, $expected)
     {
@@ -126,10 +127,11 @@ class SearchProvidersServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider splitQueriesDuplicates
      *
-     * @param $query
-     * @param $expected
+     * @param  $query
+     * @param  $expected
      */
     public function it_splits_query_removes_duplicates($query, $expected)
     {

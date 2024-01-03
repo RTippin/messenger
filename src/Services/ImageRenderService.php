@@ -262,13 +262,13 @@ class ImageRenderService
         switch ($alias) {
             case 'ghost':
                 $default = $this->messenger->getDefaultGhostAvatar();
-            break;
+                break;
             case 'bot':
                 $default = $this->messenger->getDefaultBotAvatar();
-            break;
+                break;
             case 'thread':
                 $default = $this->messenger->getDefaultThreadAvatar();
-            break;
+                break;
             default: $default = is_null($alias)
                 ? null
                 : $this->messenger->getProviderDefaultAvatarPath($alias);

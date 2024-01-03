@@ -176,9 +176,10 @@ class GroupThreadSettingsTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider settingsFailsValidation
      *
-     * @param $fieldValue
+     * @param  $fieldValue
      */
     public function group_settings_fails_validating_booleans($fieldValue)
     {
@@ -211,9 +212,10 @@ class GroupThreadSettingsTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider subjectFailsValidation
      *
-     * @param $subject
+     * @param  $subject
      */
     public function group_settings_fails_validating_subject($subject)
     {

@@ -19,9 +19,10 @@ class BotMatchingServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider stringMatchesExact
      *
-     * @param $string
+     * @param  $string
      */
     public function it_matches_exact($string)
     {
@@ -30,9 +31,10 @@ class BotMatchingServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider stringMatchesExactCaseless
      *
-     * @param $string
+     * @param  $string
      */
     public function it_matches_exact_caseless($string)
     {
@@ -41,9 +43,10 @@ class BotMatchingServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider stringNotExact
      *
-     * @param $string
+     * @param  $string
      */
     public function it_doesnt_match_exact($string)
     {
@@ -52,9 +55,10 @@ class BotMatchingServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider stringNotExact
      *
-     * @param $string
+     * @param  $string
      */
     public function it_doesnt_match_exact_caseless($string)
     {
@@ -63,9 +67,10 @@ class BotMatchingServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider stringMatchesStartsWith
      *
-     * @param $string
+     * @param  $string
      */
     public function it_matches_starts_with($string)
     {
@@ -74,9 +79,10 @@ class BotMatchingServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider stringMatchesStartsWithCaseless
      *
-     * @param $string
+     * @param  $string
      */
     public function it_matches_starts_with_caseless($string)
     {
@@ -85,9 +91,10 @@ class BotMatchingServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider stringNotStartsWith
      *
-     * @param $string
+     * @param  $string
      */
     public function it_doesnt_match_starts_with($string)
     {
@@ -96,9 +103,10 @@ class BotMatchingServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider stringNotStartsWith
      *
-     * @param $string
+     * @param  $string
      */
     public function it_doesnt_match_starts_with_caseless($string)
     {
@@ -107,9 +115,10 @@ class BotMatchingServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider stringMatchesContains
      *
-     * @param $string
+     * @param  $string
      */
     public function it_matches_contains($string)
     {
@@ -118,9 +127,10 @@ class BotMatchingServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider stringMatchesContainsCaseless
      *
-     * @param $string
+     * @param  $string
      */
     public function it_matches_contains_caseless($string)
     {
@@ -129,9 +139,10 @@ class BotMatchingServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider stringNotContains
      *
-     * @param $string
+     * @param  $string
      */
     public function it_doesnt_match_contains($string)
     {
@@ -140,9 +151,10 @@ class BotMatchingServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider stringNotContains
      *
-     * @param $string
+     * @param  $string
      */
     public function it_doesnt_match_contains_caseless($string)
     {
@@ -151,10 +163,11 @@ class BotMatchingServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider stringMatchesContains
      * @dataProvider stringMatchesContainsAny
      *
-     * @param $string
+     * @param  $string
      */
     public function it_matches_contains_any($string)
     {
@@ -163,10 +176,11 @@ class BotMatchingServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider stringMatchesContainsCaseless
      * @dataProvider stringMatchesContainsAnyCaseless
      *
-     * @param $string
+     * @param  $string
      */
     public function it_matches_contains_any_caseless($string)
     {
@@ -175,9 +189,10 @@ class BotMatchingServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider stringNotContainsAny
      *
-     * @param $string
+     * @param  $string
      */
     public function it_doesnt_match_contains_any($string)
     {
@@ -186,9 +201,10 @@ class BotMatchingServiceTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider stringNotContainsAny
      *
-     * @param $string
+     * @param  $string
      */
     public function it_doesnt_match_contains_any_caseless($string)
     {

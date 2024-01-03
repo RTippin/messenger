@@ -68,9 +68,9 @@ class PurgeThreadsCommandTest extends FeatureTestCase
     public function it_finds_multiple_threads()
     {
         Thread::factory()->sequence(
-                ['deleted_at' => now()->subDays(8)],
-                ['deleted_at' => now()->subDays(10)],
-            )
+            ['deleted_at' => now()->subDays(8)],
+            ['deleted_at' => now()->subDays(10)],
+        )
             ->count(2)
             ->create();
 

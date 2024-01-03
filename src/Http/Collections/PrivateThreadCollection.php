@@ -12,7 +12,7 @@ class PrivateThreadCollection extends MessengerCollection
     /**
      * GroupThreadCollection constructor.
      *
-     * @param $resource
+     * @param  $resource
      * @param  bool  $paginate
      * @param  string|null  $pageId
      */

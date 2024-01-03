@@ -412,7 +412,7 @@ class ThreadTest extends FeatureTestCase
     public function cannot_message_if_disabled_in_thread_settings()
     {
         Messenger::setProvider($this->tippin);
-        $thread = Thread::factory()->group()->create(['messaging' =>  false]);
+        $thread = Thread::factory()->group()->create(['messaging' => false]);
         Participant::factory()->for($thread)->owner($this->tippin)->admin()->create();
 
         $this->assertFalse($thread->canMessage());

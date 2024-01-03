@@ -248,9 +248,10 @@ class MessageReactionTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider passesEmojiValidation
      *
-     * @param $string
+     * @param  $string
      */
     public function it_passes_validating_has_valid_emoji($string)
     {
@@ -269,9 +270,10 @@ class MessageReactionTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider failsEmojiValidation
      *
-     * @param $string
+     * @param  $string
      */
     public function it_fails_validating_has_valid_emoji($string)
     {

@@ -91,11 +91,12 @@ class RateLimitersTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider attachments
      *
-     * @param $route
-     * @param $key
-     * @param $attachment
+     * @param  $route
+     * @param  $key
+     * @param  $attachment
      */
     public function store_attachment_message_api_limits_request_15_per_minute($route, $key, $attachment)
     {
@@ -115,11 +116,12 @@ class RateLimitersTest extends FeatureTestCase
 
     /**
      * @test
+     *
      * @dataProvider attachments
      *
-     * @param $route
-     * @param $key
-     * @param $attachment
+     * @param  $route
+     * @param  $key
+     * @param  $attachment
      */
     public function setting_attachment_message_api_limit_to_zero_removes_rate_limiter($route, $key, $attachment)
     {

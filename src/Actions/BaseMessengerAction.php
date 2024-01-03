@@ -185,7 +185,7 @@ abstract class BaseMessengerAction
     }
 
     /**
-     * @param $resource
+     * @param  $resource
      * @return $this
      */
     public function setJsonResource($resource): self
@@ -229,7 +229,7 @@ abstract class BaseMessengerAction
     }
 
     /**
-     * @param $data
+     * @param  $data
      * @return $this
      */
     public function setData($data): self

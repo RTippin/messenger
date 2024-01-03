@@ -179,10 +179,10 @@ abstract class NewMessageAction extends BaseMessengerAction
     private function generateResource(): self
     {
         $this->setJsonResource(new MessageResource(
-                $this->getMessage(),
-                $this->getThread(),
-                true
-            )
+            $this->getMessage(),
+            $this->getThread(),
+            true
+        )
         );
 
         return $this;

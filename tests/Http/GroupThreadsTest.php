@@ -121,9 +121,10 @@ class GroupThreadsTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider subjectFailsValidation
      *
-     * @param $subject
+     * @param  $subject
      */
     public function store_new_group_fails_validating_subject($subject)
     {
@@ -139,10 +140,11 @@ class GroupThreadsTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider providersFailValidation
      *
-     * @param $providers
-     * @param $errors
+     * @param  $providers
+     * @param  $errors
      */
     public function store_new_group_fails_validating_providers($providers, $errors)
     {

@@ -14,7 +14,7 @@ class ParticipantPolicy
     /**
      * Determine whether the provider can view participants.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -28,7 +28,7 @@ class ParticipantPolicy
     /**
      * Determine whether the provider can view the participant.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -42,7 +42,7 @@ class ParticipantPolicy
     /**
      * Determine whether the provider can create a participant.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -56,7 +56,7 @@ class ParticipantPolicy
     /**
      * Determine whether the provider can update the participant.
      *
-     * @param $user
+     * @param  $user
      * @param  Participant  $participant
      * @param  Thread  $thread
      * @return Response
@@ -76,7 +76,7 @@ class ParticipantPolicy
     /**
      * Determine whether the provider can promote the participant.
      *
-     * @param $user
+     * @param  $user
      * @param  Participant  $participant
      * @param  Thread  $thread
      * @return Response
@@ -96,7 +96,7 @@ class ParticipantPolicy
     /**
      * Determine whether the provider can demote the participant.
      *
-     * @param $user
+     * @param  $user
      * @param  Participant  $participant
      * @param  Thread  $thread
      * @return Response
@@ -116,7 +116,7 @@ class ParticipantPolicy
     /**
      * Determine whether the provider can delete the participant.
      *
-     * @param $user
+     * @param  $user
      * @param  Participant  $participant
      * @param  Thread  $thread
      * @return Response

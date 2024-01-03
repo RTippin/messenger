@@ -30,7 +30,7 @@ class ThreadChannel
     /**
      * Authenticate the provider's access to the channel.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return ProviderResource
      *

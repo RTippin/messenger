@@ -12,7 +12,7 @@ class ThreadCollection extends MessengerCollection
     /**
      * ThreadCollection constructor.
      *
-     * @param $resource
+     * @param  $resource
      * @param  bool  $paginate
      * @param  string|null  $pageId
      */

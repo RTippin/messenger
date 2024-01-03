@@ -115,6 +115,7 @@ class StoreFriendRequest extends BaseMessengerAction
 
     /**
      * @throws FriendException|ProviderNotFoundException
+     *
      * @noinspection PhpParamsInspection
      */
     private function bailIfChecksFail(): void

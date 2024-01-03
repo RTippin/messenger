@@ -29,7 +29,7 @@ class PendingFriendPolicy
     /**
      * Determine whether the provider can view pending friends.
      *
-     * @param $user
+     * @param  $user
      * @return Response
      */
     public function viewAny($user): Response
@@ -42,7 +42,7 @@ class PendingFriendPolicy
     /**
      * Determine whether the provider can view the pending friend.
      *
-     * @param $user
+     * @param  $user
      * @param  PendingFriend  $pending
      * @return Response
      */
@@ -57,7 +57,7 @@ class PendingFriendPolicy
     /**
      * Determine whether the provider can accept the pending friend.
      *
-     * @param $user
+     * @param  $user
      * @param  PendingFriend  $pending
      * @return Response
      */
@@ -72,7 +72,7 @@ class PendingFriendPolicy
     /**
      * Determine whether the provider can deny the pending friend.
      *
-     * @param $user
+     * @param  $user
      * @param  PendingFriend  $pending
      * @return Response
      */

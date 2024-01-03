@@ -29,7 +29,7 @@ class SentFriendPolicy
     /**
      * Determine whether the provider can view sent friend request.
      *
-     * @param $user
+     * @param  $user
      * @return Response
      */
     public function viewAny($user): Response
@@ -42,7 +42,7 @@ class SentFriendPolicy
     /**
      * Determine whether the provider can view the sent friend request.
      *
-     * @param $user
+     * @param  $user
      * @param  SentFriend  $sent
      * @return Response
      */
@@ -57,7 +57,7 @@ class SentFriendPolicy
     /**
      * Determine whether the provider can add new friend request.
      *
-     * @param $user
+     * @param  $user
      * @return Response
      */
     public function create($user): Response
@@ -70,7 +70,7 @@ class SentFriendPolicy
     /**
      * Determine whether the provider can cancel sent friend request.
      *
-     * @param $user
+     * @param  $user
      * @param  SentFriend  $sent
      * @return Response
      */

@@ -87,9 +87,10 @@ class MessengerAvatarTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider avatarPassesValidation
      *
-     * @param $avatarValue
+     * @param  $avatarValue
      */
     public function avatar_upload_passes_validation($avatarValue)
     {
@@ -103,9 +104,10 @@ class MessengerAvatarTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider avatarFailedValidation
      *
-     * @param $avatarValue
+     * @param  $avatarValue
      */
     public function avatar_upload_fails_validation($avatarValue)
     {

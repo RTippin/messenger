@@ -309,7 +309,7 @@ final class Messenger
     }
 
     /**
-     * @param $provider
+     * @param  $provider
      * @return Model|string|null
      */
     private function getClassNameString($provider = null): ?string

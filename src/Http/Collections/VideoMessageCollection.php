@@ -12,7 +12,7 @@ class VideoMessageCollection extends MessengerCollection
     /**
      * VideoMessageCollection constructor.
      *
-     * @param $resource
+     * @param  $resource
      * @param  Thread  $thread
      * @param  bool  $paginate
      * @param  string|null  $pageId

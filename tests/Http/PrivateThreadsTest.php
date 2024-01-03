@@ -152,9 +152,10 @@ class PrivateThreadsTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider messageFailsValidation
      *
-     * @param $messageValue
+     * @param  $messageValue
      */
     public function create_new_private_fails_validating_message($messageValue)
     {
@@ -172,11 +173,12 @@ class PrivateThreadsTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider recipientFailsValidation
      *
-     * @param $aliasValue
-     * @param $idValue
-     * @param $errors
+     * @param  $aliasValue
+     * @param  $idValue
+     * @param  $errors
      */
     public function create_new_private_fails_validating_recipient_values($aliasValue, $idValue, $errors)
     {

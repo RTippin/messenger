@@ -32,8 +32,8 @@ class FriendFactory extends Factory
     /**
      * Owner and party relations to add.
      *
-     * @param $owner
-     * @param $party
+     * @param  $owner
+     * @param  $party
      * @return $this
      */
     public function providers($owner, $party): self

@@ -32,8 +32,8 @@ class SentFriendFactory extends Factory
     /**
      * Sender and recipient relations to add.
      *
-     * @param $sender
-     * @param $recipient
+     * @param  $sender
+     * @param  $recipient
      * @return $this
      */
     public function providers($sender, $recipient): self

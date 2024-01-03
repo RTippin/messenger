@@ -153,6 +153,7 @@ class StoreGroupThread extends NewThreadAction
 
     /**
      * @param  array  $providers
+     *
      * @mixin StoreManyParticipants
      *
      * @return array

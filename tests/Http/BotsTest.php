@@ -392,13 +392,14 @@ class BotsTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider botFailsValidation
      *
-     * @param $name
-     * @param $enabled
-     * @param $hide
-     * @param $cooldown
-     * @param $errors
+     * @param  $name
+     * @param  $enabled
+     * @param  $hide
+     * @param  $cooldown
+     * @param  $errors
      */
     public function store_bot_fails_validation($name, $enabled, $hide, $cooldown, $errors)
     {
@@ -420,12 +421,13 @@ class BotsTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider botPassesValidation
      *
-     * @param $name
-     * @param $enabled
-     * @param $hide
-     * @param $cooldown
+     * @param  $name
+     * @param  $enabled
+     * @param  $hide
+     * @param  $cooldown
      */
     public function store_bot_passes_validation($name, $enabled, $hide, $cooldown)
     {
@@ -445,12 +447,13 @@ class BotsTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider botFailsValidation
      *
-     * @param $name
-     * @param $enabled
-     * @param $cooldown
-     * @param $errors
+     * @param  $name
+     * @param  $enabled
+     * @param  $cooldown
+     * @param  $errors
      */
     public function update_bot_fails_validation($name, $enabled, $hide, $cooldown, $errors)
     {
@@ -474,12 +477,13 @@ class BotsTest extends HttpTestCase
 
     /**
      * @test
+     *
      * @dataProvider botPassesValidation
      *
-     * @param $name
-     * @param $enabled
-     * @param $hide
-     * @param $cooldown
+     * @param  $name
+     * @param  $enabled
+     * @param  $hide
+     * @param  $cooldown
      */
     public function update_bot_passes_validation($name, $enabled, $hide, $cooldown)
     {

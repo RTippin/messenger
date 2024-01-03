@@ -12,7 +12,7 @@ class SystemMessageCollection extends MessengerCollection
     /**
      * SystemMessageCollection constructor.
      *
-     * @param $resource
+     * @param  $resource
      * @param  Thread  $thread
      * @param  bool  $paginate
      * @param  string|null  $pageId

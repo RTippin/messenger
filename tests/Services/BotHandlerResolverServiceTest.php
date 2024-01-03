@@ -319,11 +319,12 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
     /**
      * @test
      *
-     * @param $match
-     * @param $cooldown
-     * @param $admin
-     * @param $enabled
-     * @param $triggers
+     * @param  $match
+     * @param  $cooldown
+     * @param  $admin
+     * @param  $enabled
+     * @param  $triggers
+     *
      * @dataProvider baseRulesetFailsValidation
      */
     public function it_fails_validating_base_ruleset($match, $cooldown, $admin, $enabled, $triggers)
@@ -351,8 +352,9 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
     /**
      * @test
      *
-     * @param $triggers
-     * @param $errorKeys
+     * @param  $triggers
+     * @param  $errorKeys
+     *
      * @dataProvider triggersFailValidation
      */
     public function it_fails_validating_triggers($triggers, $errorKeys)
@@ -378,7 +380,8 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
     /**
      * @test
      *
-     * @param $matches
+     * @param  $matches
+     *
      * @dataProvider passesValidatingMatches
      */
     public function it_passes_validating_matches($matches)
@@ -399,7 +402,8 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
     /**
      * @test
      *
-     * @param $cooldown
+     * @param  $cooldown
+     *
      * @dataProvider passesValidatingCooldown
      */
     public function it_passes_validating_cooldown($cooldown)
@@ -420,8 +424,9 @@ class BotHandlerResolverServiceTest extends MessengerTestCase
     /**
      * @test
      *
-     * @param $extra
-     * @param $errorKeys
+     * @param  $extra
+     * @param  $errorKeys
+     *
      * @dataProvider handlerRulesFailValidation
      */
     public function it_fails_validating_handler_rules($extra, $errorKeys)

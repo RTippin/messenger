@@ -23,7 +23,7 @@ class ThreadPolicy
     /**
      * Determine whether the provider can view the thread.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -37,7 +37,7 @@ class ThreadPolicy
     /**
      * Determine whether the provider can join the thread socket channel.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -53,7 +53,7 @@ class ThreadPolicy
     /**
      * Determine whether the provider can accept or deny a pending thread request.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -68,7 +68,7 @@ class ThreadPolicy
     /**
      * Determine whether the provider can use a group thread method.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -83,7 +83,7 @@ class ThreadPolicy
     /**
      * Determine whether the provider can add group participants.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -97,7 +97,7 @@ class ThreadPolicy
     /**
      * Determine whether the provider can send a knock.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -111,7 +111,7 @@ class ThreadPolicy
     /**
      * Determine whether the provider can use a private thread method.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -135,7 +135,7 @@ class ThreadPolicy
     /**
      * Determine whether the provider can manage the group thread settings.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -151,7 +151,7 @@ class ThreadPolicy
     /**
      * Determine whether the provider can update the thread.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -167,7 +167,7 @@ class ThreadPolicy
     /**
      * Determine whether the provider can mute or unmute the thread.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -182,7 +182,7 @@ class ThreadPolicy
     /**
      * Determine whether the provider can leave group thread.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
@@ -206,7 +206,7 @@ class ThreadPolicy
     /**
      * Determine whether the provider can delete the thread.
      *
-     * @param $user
+     * @param  $user
      * @param  Thread  $thread
      * @return Response
      */
