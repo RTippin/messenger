@@ -64,7 +64,7 @@ final class Messenger
      * @param  bool|null  $shouldUseAbsoluteRoutes
      * @return bool
      */
-    public static function shouldUseAbsoluteRoutes(bool $shouldUseAbsoluteRoutes = null): bool
+    public static function shouldUseAbsoluteRoutes(?bool $shouldUseAbsoluteRoutes = null): bool
     {
         if (is_null($shouldUseAbsoluteRoutes)) {
             return self::$useAbsoluteRoutes;
